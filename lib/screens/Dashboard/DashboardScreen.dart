@@ -83,12 +83,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 12,
         backgroundColor: Colors.white,
+        leadingWidth: 200,
         leading: Padding(
-            padding: EdgeInsets.only(left: 18),
-            child: SvgPicture.asset('assets/Logo.svg',
-                semanticsLabel: 'BOLDO Logo')),
+          padding: const EdgeInsets.only(left: 10.0),
+          child:
+              SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+        ),
       ),
       body: getPage(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
