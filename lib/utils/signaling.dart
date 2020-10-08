@@ -90,6 +90,7 @@ class Signaling {
 
     if (peerConnection != null) {
       peerConnection.close();
+      peerConnection = null;
     }
     if (_socket != null) {
       _send('disconnect', {});
@@ -138,18 +139,15 @@ class Signaling {
 
           var pc = await _createPeerConnection(id, media, false);
           peerConnection = pc;
-          try {
-            await pc.setRemoteDescription(
-                RTCSessionDescription(sdp['sdp'], sdp['type']));
-            await _createAnswer(id, pc, media, callerID);
-            if (this._remoteCandidates.length > 0) {
-              _remoteCandidates.forEach((candidate) async {
-                await pc.addCandidate(candidate);
-              });
-              _remoteCandidates.clear();
-            }
-          } catch (e) {
-            print(e);
+
+          await pc.setRemoteDescription(
+              RTCSessionDescription(sdp['sdp'], sdp['type']));
+          await _createAnswer(id, pc, media, callerID);
+          if (this._remoteCandidates.length > 0) {
+            _remoteCandidates.forEach((candidate) async {
+              await pc.addCandidate(candidate);
+            });
+            _remoteCandidates.clear();
           }
         }
         break;
@@ -158,12 +156,8 @@ class Signaling {
           var sdp = message["sdp"];
           var pc = peerConnection;
           if (pc != null) {
-            try {
-              await pc.setRemoteDescription(
-                  RTCSessionDescription(sdp['sdp'], sdp['type']));
-            } catch (e) {
-              print(e);
-            }
+            await pc.setRemoteDescription(
+                RTCSessionDescription(sdp['sdp'], sdp['type']));
           }
         }
         break;
