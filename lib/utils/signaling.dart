@@ -22,15 +22,12 @@ enum SignalingState {
 typedef void SignalingStateCallback(SignalingState state);
 typedef void StreamStateCallback(MediaStream stream);
 typedef void OtherEventCallback(dynamic event);
-typedef void DataChannelMessageCallback(
-    RTCDataChannel dc, RTCDataChannelMessage data);
-typedef void DataChannelCallback(RTCDataChannel dc);
 
 class Signaling {
   SimpleWebSocket _socket;
   String remoteUser;
   RTCPeerConnection peerConnection;
-  RTCDataChannel dataChannel;
+
   var _remoteCandidates = [];
 
   MediaStream _localStream;
@@ -41,8 +38,7 @@ class Signaling {
   StreamStateCallback onRemoveRemoteStream;
   OtherEventCallback onPeersUpdate;
   OtherEventCallback onEventUpdate;
-  DataChannelMessageCallback onDataChannelMessage;
-  DataChannelCallback onDataChannel;
+
   String roomNumber;
 
   Signaling(this.roomNumber);
@@ -110,9 +106,6 @@ class Signaling {
       _localStream = null;
     }
 
-    if (dataChannel != null) {
-      dataChannel.close();
-    }
     if (peerConnection != null) {
       peerConnection.close();
     }
@@ -193,9 +186,6 @@ class Signaling {
           _createPeerConnection(peerId, media, useScreen, isHost: false)
               .then((pc) {
             peerConnection = pc;
-            if (media == 'data') {
-              _createDataChannel(peerId, pc);
-            }
 
             _createOffer(peerId, pc, media);
           });
@@ -296,28 +286,7 @@ class Signaling {
       });
     };
 
-    pc.onDataChannel = (channel) {
-      _addDataChannel(id, channel);
-    };
-
     return pc;
-  }
-
-  _addDataChannel(id, RTCDataChannel channel) {
-    channel.onDataChannelState = (e) {};
-    channel.onMessage = (RTCDataChannelMessage data) {
-      if (this.onDataChannelMessage != null)
-        this.onDataChannelMessage(channel, data);
-    };
-    dataChannel = channel;
-
-    if (this.onDataChannel != null) this.onDataChannel(channel);
-  }
-
-  _createDataChannel(id, RTCPeerConnection pc, {label: 'fileTransfer'}) async {
-    RTCDataChannelInit dataChannelDict = RTCDataChannelInit();
-    RTCDataChannel channel = await pc.createDataChannel(label, dataChannelDict);
-    _addDataChannel(id, channel);
   }
 
   _createOffer(String id, RTCPeerConnection pc, String media) async {
