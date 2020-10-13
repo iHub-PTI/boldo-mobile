@@ -267,9 +267,17 @@ class Signaling {
     };
 
     pc.onIceConnectionState = (state) {
-      if (state == RTCIceConnectionState.RTCIceConnectionStateDisconnected ||
-          state == RTCIceConnectionState.RTCIceConnectionStateClosed ||
+      if (state == RTCIceConnectionState.RTCIceConnectionStateDisconnected) {
+        //show timeout popup
+        print("DISCONNECED");
+      }
+      if (state == RTCIceConnectionState.RTCIceConnectionStateConnected) {
+        //close the timeout popup;
+        print("CONNECTED");
+      }
+      if (state == RTCIceConnectionState.RTCIceConnectionStateClosed ||
           state == RTCIceConnectionState.RTCIceConnectionStateFailed) {
+        print("CLOSED OR FAILED");
         bye();
       }
     };
