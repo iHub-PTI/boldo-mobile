@@ -22,5 +22,5 @@ Create a `.env` file in the projet's root folder with the following contents:
 ```
 SERVER_ADDRESS = https://boldo-server.herokuapp.com
 SOCKETS_ADDRESS = https://boldo-sockets.herokuapp.com
-KEYCLOAK_ADDRESS = https://sso-test.pti.org.py
+KEYCLOAK_REALM_ADDRESS = https://sso-test.pti.org.py/auth/realms/iHub/
 ```

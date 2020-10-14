@@ -29,15 +29,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> authenticate() async {
-    String keyCloakAddress = DotEnv().env['KEYCLOAK_ADDRESS'];
+    String keycloakRealmAddress = DotEnv().env['KEYCLOAK_REALM_ADDRESS'];
     String serverAddress = DotEnv().env['SERVER_ADDRESS'];
 
-    var authorizationEndPoint = "$keyCloakAddress/auth/realms/PTI-Health/";
     var clientId = "boldo-patient";
 
     oidc.Credential credential;
 
-    var issuer = await oidc.Issuer.discover(Uri.parse(authorizationEndPoint));
+    var issuer = await oidc.Issuer.discover(Uri.parse(keycloakRealmAddress));
     var client = new oidc.Client(issuer, clientId);
     //auth from browser
     var authenticator = oidc.Authenticator(
