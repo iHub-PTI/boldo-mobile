@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../constant.dart';
+
 class DoctorProfileScreen extends StatefulWidget {
   DoctorProfileScreen({Key key}) : super(key: key);
 
@@ -36,14 +38,11 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                   icon: Icon(
                     Icons.chevron_left_rounded,
                     size: 28,
-                    color: Color(0xff364152),
+                    color: boldoTitleTextColor,
                   ),
                   label: Text(
                     'Perfil',
-                    style: TextStyle(
-                        color: Color(0xff364152),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 20),
+                    style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                   ),
                 ),
                 SizedBox(
@@ -61,20 +60,15 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                       ),
                       Text(
                         "Dra. Susan Giménez",
-                        style: TextStyle(
-                            color: Color(0xff364152),
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16),
+                        style: boldoHeadingTextStyle,
                       ),
                       SizedBox(
                         height: 4,
                       ),
                       Text(
                         "Dermatología",
-                        style: TextStyle(
-                            color: Color(0xffDF6D51),
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14),
+                        style: boldoHeadingTextStyle.copyWith(
+                            color: boldoCategoryColor),
                       ),
                     ],
                   ),
@@ -89,81 +83,56 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                       ),
                       Text(
                         "Biografía",
-                        style: TextStyle(
-                            color: Color(0xff364152),
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16),
+                        style: boldoHeadingTextStyle,
                       ),
                       SizedBox(
                         height: 4,
                       ),
                       Text(
-                        "Recibida en la Universidad Nacional de Asunción en Dermatología. Especialización en Dermatología Estética. Miembro de la Asociación LADERM. ",
-                        style: TextStyle(
-                            color: Color(0xff6B7280),
-                            fontWeight: FontWeight.normal,
-                            height: 1.5,
-                            fontSize: 16),
-                      ),
+                          "Recibida en la Universidad Nacional de Asunción en Dermatología. Especialización en Dermatología Estética. Miembro de la Asociación LADERM. ",
+                          style: boldoSubTextStyle.copyWith(
+                              height: 1.5, fontSize: 16)),
                       SizedBox(
                         height: 24,
                       ),
                       Text(
                         "Idiomas",
-                        style: TextStyle(
-                            color: Color(0xff364152),
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16),
+                        style: boldoHeadingTextStyle,
                       ),
                       SizedBox(
                         height: 4,
                       ),
                       Text(
                         "- Español",
-                        style: TextStyle(
-                            color: Color(0xff6B7280),
-                            fontWeight: FontWeight.normal,
-                            fontSize: 16),
+                        style: boldoSubTextStyle.copyWith(fontSize: 16),
                       ),
                       SizedBox(
                         height: 4,
                       ),
                       Text(
                         "- Inglés",
-                        style: TextStyle(
-                            color: Color(0xff6B7280),
-                            fontWeight: FontWeight.normal,
-                            fontSize: 16),
+                        style: boldoSubTextStyle.copyWith(fontSize: 16),
                       ),
                       SizedBox(
                         height: 4,
                       ),
                       Text(
                         "- Alemán",
-                        style: TextStyle(
-                            color: Color(0xff6B7280),
-                            fontWeight: FontWeight.normal,
-                            fontSize: 16),
+                        style: boldoSubTextStyle.copyWith(fontSize: 16),
                       ),
                       SizedBox(
                         height: 24,
                       ),
                       Text(
                         "Registro Profesional",
-                        style: TextStyle(
-                            color: Color(0xff364152),
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16),
+                        style: boldoHeadingTextStyle,
                       ),
                       SizedBox(
                         height: 4,
                       ),
                       Text(
                         "Nro. 45.786 ",
-                        style: TextStyle(
-                            color: Color(0xff6B7280),
-                            fontWeight: FontWeight.normal,
-                            fontSize: 16),
+                        style: boldoSubTextStyle.copyWith(fontSize: 16),
                       ),
                     ],
                   ),

@@ -4,6 +4,8 @@ import 'package:openid_client/openid_client_io.dart' as oidc;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import '../../constant.dart';
 import './tabs/HomeTab.dart';
 import './tabs/DoctorsTab.dart';
 
@@ -93,39 +95,43 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       body: getPage(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
+        showUnselectedLabels: false,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              size: 30,
+            icon: SvgPicture.asset(
+              'assets/icon/homeIcon.svg',
+              semanticsLabel: 'Doctor Icon',
+              color: _selectedIndex == 0
+                  ? boldoDarkPrimaryColor
+                  : boldoMainGrayColor,
             ),
-            label: 'Home',
+            label: 'Inicio',
           ),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-              size: 30,
+            icon: SvgPicture.asset(
+              'assets/icon/doctorIcon.svg',
+              semanticsLabel: 'Doctor Icon',
+              color: _selectedIndex == 1
+                  ? boldoDarkPrimaryColor
+                  : boldoMainGrayColor,
             ),
-            label: 'Doctors',
+            label: 'Médicos',
           ),
-          !_authenticated
-              ? BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.login,
-                    size: 30,
-                  ),
-                  label: 'Authenticate',
-                )
-              : BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.settings,
-                    size: 30,
-                  ),
-                  label: 'Settings',
-                ),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(
+              !_authenticated
+                  ? 'assets/icon/profileIcon.svg'
+                  : 'assets/icon/settingsIcon.svg',
+              semanticsLabel: 'Doctor Icon',
+              color: _selectedIndex == 2
+                  ? boldoDarkPrimaryColor
+                  : boldoMainGrayColor,
+            ),
+            label: !_authenticated ? 'Authenticate' : "Settings",
+          )
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: boldoDarkPrimaryColor,
         onTap: (index) => setState(() {
           _selectedIndex = index;
         }),
