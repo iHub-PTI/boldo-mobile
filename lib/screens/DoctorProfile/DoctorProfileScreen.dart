@@ -37,7 +37,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                   },
                   icon: Icon(
                     Icons.chevron_left_rounded,
-                    size: 28,
+                    size: 25,
                     color: boldoTitleTextColor,
                   ),
                   label: Text(
