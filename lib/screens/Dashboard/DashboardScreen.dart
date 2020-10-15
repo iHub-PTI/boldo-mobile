@@ -50,9 +50,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     //get token and send it to the server from here
     var responseData = await credential.getTokenResponse();
     try {
-      Response response =
-          await Dio().post("$serverAddress/api/auth/code", data: {
-        "tokenData": responseData,
+      Response response = await Dio().post("$serverAddress/code", data: {
+        "accessToken": responseData.accessToken,
+        "refreshToken": responseData.refreshToken,
       });
       setState(() {
         _authenticated = true;

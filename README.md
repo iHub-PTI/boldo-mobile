@@ -20,7 +20,7 @@ samples, guidance on mobile development, and a full API reference.
 Create a `.env` file in the projet's root folder with the following contents:
 
 ```
-SERVER_ADDRESS = https://boldo-server.herokuapp.com
-SOCKETS_ADDRESS = https://boldo-sockets.herokuapp.com
-KEYCLOAK_REALM_ADDRESS = https://sso-test.pti.org.py/auth/realms/iHub/
+SOCKETS_ADDRESS = http://localhost:8000
+SERVER_ADDRESS = http://localhost:8008
+KEYCLOAK_REALM_ADDRESS = http://localhost:8080/auth/realms/iHub/
 ```
