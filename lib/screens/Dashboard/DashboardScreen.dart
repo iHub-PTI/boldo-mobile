@@ -83,15 +83,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leadingWidth: 200,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 10.0),
-          child:
-              SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
-        ),
-      ),
       body: getPage(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         showUnselectedLabels: false,

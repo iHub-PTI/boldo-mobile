@@ -46,31 +46,42 @@ class _DoctorsTabState extends State<DoctorsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 20),
-      width: MediaQuery.of(context).size.width,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: Text("Médicos",
-                style: boldoHeadingTextStyle.copyWith(fontSize: 20)),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Expanded(
-            child: loading
-                ? Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    itemCount: doctors.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return _DoctorCard(doctor: doctors[index]);
-                    },
-                  ),
-          )
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leadingWidth: 200,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 10.0),
+          child:
+              SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+        ),
+      ),
+      body: Container(
+        padding: EdgeInsets.symmetric(vertical: 20),
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Text("Médicos",
+                  style: boldoHeadingTextStyle.copyWith(fontSize: 20)),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Expanded(
+              child: loading
+                  ? Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      itemCount: doctors.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return _DoctorCard(doctor: doctors[index]);
+                      },
+                    ),
+            )
+          ],
+        ),
       ),
     );
   }
