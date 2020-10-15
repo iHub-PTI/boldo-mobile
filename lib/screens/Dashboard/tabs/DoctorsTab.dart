@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../constant.dart';
+import '../../Booking/BookingScreen.dart';
 import '../../DoctorProfile/DoctorProfileScreen.dart';
 import '../../../models/Doctor.dart';
 
@@ -65,7 +66,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
                 : ListView.builder(
                     itemCount: doctors.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return DoctorCard(doctor: doctors[index]);
+                      return _DoctorCard(doctor: doctors[index]);
                     },
                   ),
           )
@@ -75,8 +76,8 @@ class _DoctorsTabState extends State<DoctorsTab> {
   }
 }
 
-class DoctorCard extends StatelessWidget {
-  const DoctorCard({
+class _DoctorCard extends StatelessWidget {
+  const _DoctorCard({
     Key key,
     @required this.doctor,
   }) : super(key: key);
@@ -113,7 +114,7 @@ class DoctorCard extends StatelessWidget {
                         padding: const EdgeInsets.only(bottom: 2),
                         child: Text(
                           doctor.name,
-                          style: boldoHeadingTextStyle.copyWith(fontSize: 16),
+                          style: boldoHeadingTextStyle,
                         ),
                       ),
                       Text(
@@ -150,7 +151,7 @@ class DoctorCard extends StatelessWidget {
                       },
                       child: Text(
                         'Ver Perfil',
-                        style: boldoHeadingTextStyle.copyWith(fontSize: 16),
+                        style: boldoHeadingTextStyle,
                       ),
                     ),
                   ),
@@ -164,10 +165,17 @@ class DoctorCard extends StatelessWidget {
                   child: SizedBox(
                     height: 52,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BookingScreen(),
+                          ),
+                        );
+                      },
                       child: Text(
                         'Reservar',
-                        style: boldoHeadingTextStyle.copyWith(fontSize: 16),
+                        style: boldoHeadingTextStyle,
                       ),
                     ),
                   ),
