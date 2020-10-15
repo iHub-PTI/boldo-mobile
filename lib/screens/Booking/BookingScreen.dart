@@ -2,6 +2,7 @@ import 'package:boldo/widgets/calendar/Calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import './BookingConfirmScreen.dart';
 import '../../constant.dart';
 
 class BookingScreen extends StatefulWidget {
@@ -12,6 +13,7 @@ class BookingScreen extends StatefulWidget {
 }
 
 class _BookingScreenState extends State<BookingScreen> {
+  String _selectedBookingHour;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,6 +57,105 @@ class _BookingScreenState extends State<BookingScreen> {
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16),
                 child: _BookCalendar(),
+              ),
+              Center(
+                child: Text(
+                  "14 de septiembre del 2020",
+                  style: boldoHeadingTextStyle.copyWith(
+                      fontWeight: FontWeight.normal, fontSize: 14),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  width: double.infinity,
+                  constraints: BoxConstraints(
+                    maxWidth: 350,
+                  ),
+                  child: Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    spacing: 13,
+                    runSpacing: 27,
+                    children: [
+                      ...[
+                        "08:00",
+                        "08:20",
+                        "08:40",
+                        "08:45",
+                        "09:20",
+                        "09:40",
+                        "10:40",
+                        "11:00",
+                        "11:20",
+                        "13:20",
+                        "14:40",
+                        '15:00'
+                      ]
+                          .map((e) => GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedBookingHour =
+                                        _selectedBookingHour == e ? null : e;
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: _selectedBookingHour == e
+                                          ? boldoLightSecondaryActionColor
+                                          : boldoBackgroundLightColor,
+                                      borderRadius: BorderRadius.circular(9),
+                                      border: Border.all(
+                                          color: _selectedBookingHour == e
+                                              ? boldoDarkPrimaryColor
+                                              : boldoMainGrayColor)),
+                                  width: 60,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      e,
+                                      textAlign: TextAlign.center,
+                                      style: boldoHeadingTextStyle.copyWith(
+                                          fontSize: 14,
+                                          color: _selectedBookingHour == e
+                                              ? Colors.white
+                                              : boldoTitleTextColor),
+                                    ),
+                                  ),
+                                ),
+                              ))
+                          .toList()
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              Container(
+                padding: const EdgeInsets.only(left: 16, right: 16),
+                margin: EdgeInsets.only(bottom: 16),
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: boldoDarkPrimaryLighterColor,
+                  ),
+                  onPressed: _selectedBookingHour != null
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => BookingConfirmScreen(
+                                      bookingDate: DateTime.now(),
+                                      bookingHour: _selectedBookingHour,
+                                    )),
+                          );
+                        }
+                      : null,
+                  child: const Text("Aceptar"),
+                ),
               )
             ],
           ),
@@ -85,77 +186,6 @@ class _BookCalendar extends StatelessWidget {
         SizedBox(
           height: 25,
         ),
-        Center(
-          child: Text(
-            "14 de septiembre del 2020",
-            style: boldoHeadingTextStyle.copyWith(
-                fontWeight: FontWeight.normal, fontSize: 14),
-          ),
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Center(
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            width: double.infinity,
-            constraints: BoxConstraints(
-              maxWidth: 350,
-            ),
-            child: Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              spacing: 13,
-              runSpacing: 10,
-              children: [
-                ...[
-                  "08:00",
-                  "08:20",
-                  "08:40",
-                  "08:40",
-                  "09:20",
-                  "09:40",
-                  "10:40",
-                  "11:00",
-                  "11:20",
-                  "13:20",
-                  "14:40",
-                  '15:00'
-                ]
-                    .map((e) => Card(
-                          child: Container(
-                            width: 60,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                e,
-                                textAlign: TextAlign.center,
-                                style: boldoHeadingTextStyle.copyWith(
-                                    fontSize: 14),
-                              ),
-                            ),
-                          ),
-                        ))
-                    .toList()
-              ],
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 40,
-        ),
-        Container(
-          margin: EdgeInsets.only(bottom: 16),
-          width: double.infinity,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              primary: boldoDarkPrimaryLighterColor,
-            ),
-            onPressed: () {
-              //
-            },
-            child: Text("Aceptar"),
-          ),
-        )
       ],
     );
   }
@@ -232,12 +262,14 @@ class _BookDoctorCard extends StatelessWidget {
             ),
             child: TextButton(
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => DoctorProfileScreen(),
-                //   ),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => BookingConfirmScreen(
+                            bookingDate: DateTime.now(),
+                            bookingHour: "14:30",
+                          )),
+                );
               },
               child: Text(
                 'Reservar ahora',

@@ -205,7 +205,7 @@ class CalendarDay extends StatelessWidget {
                             ? boldoCategoryColor
                             : !calendarItem.itemDate.isAfter(
                                     DateTime(now.year, now.month, now.day - 1))
-                                ? boldoTextLightGrayColor
+                                ? boldoMainGrayColor
                                 : boldoTitleTextColor,
                     fontSize: 17,
                   ),
