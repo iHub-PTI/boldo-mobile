@@ -27,7 +27,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
     try {
       String serverAddress = DotEnv().env['SERVER_ADDRESS'];
 
-      Response response = await Dio().get("$serverAddress/api/doctors");
+      Response response = await Dio().get("$serverAddress/doctors");
 
       if (response.statusCode == 200) {
         List<Doctor> doctorsList = List<Doctor>.from(
