@@ -21,11 +21,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool _authenticated = false;
   _urlLauncher(String url) async {
     print(url);
-    if (await canLaunch(url)) {
-      await launch(url, forceWebView: true);
-    } else {
-      throw 'Could not launch $url';
-    }
+    await launch(url, forceWebView: true);
+    // FIXME: canLaunch returns false from Android 30 onwards!
+    // Fixing this requires setting package visibility
+    // https://developer.android.com/training/basics/intents/package-visibility#package-name
+    // if (await canLaunch(url)) {
+    // } else {
+    //   throw 'Could not launch $url';
+    // }
   }
 
   Future<void> authenticate() async {
