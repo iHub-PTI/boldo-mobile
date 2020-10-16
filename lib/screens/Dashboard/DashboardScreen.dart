@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:openid_client/openid_client_io.dart' as oidc;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../constant.dart';
 import './tabs/HomeTab.dart';
 import './tabs/DoctorsTab.dart';
+import './tabs/SettingTag.dart';
 
 class DashboardScreen extends StatefulWidget {
   DashboardScreen({Key key}) : super(key: key);
@@ -51,19 +51,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
     closeWebView();
 
     //get token and send it to the server from here
-    var responseData = await credential.getTokenResponse();
-    try {
-      Response response = await Dio().post("$serverAddress/code", data: {
-        "accessToken": responseData.accessToken,
-        "refreshToken": responseData.refreshToken,
-      });
-      setState(() {
-        _authenticated = true;
-      });
-      print(response);
-    } catch (e) {
-      print(e);
-    }
+    //var responseData = await credential.getTokenResponse();
+
+    setState(() {
+      _authenticated = true;
+    });
+    // try {
+    //   print(responseData);
+    //   Response response = await Dio().post("$serverAddress/code", data: {
+    //     "accessToken": responseData.accessToken,
+    //     "refreshToken": responseData.refreshToken,
+    //   });
+    //   setState(() {
+    //     _authenticated = true;
+    //   });
+    //   print(response);
+    // } catch (e) {
+    //   print(e);
+    // }
   }
 
   Widget getPage(int index) {
@@ -74,11 +79,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return DoctorsTab();
     }
     if (index == 2) {
-      authenticate();
-      setState(() {
-        _selectedIndex = 1;
-      });
-      return DoctorsTab();
+      if (!_authenticated) {
+        authenticate();
+        return Center(child: CircularProgressIndicator());
+      }
+
+      return SettingsTab();
     }
     return HomeTab();
   }
@@ -124,7 +130,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ? boldoDarkPrimaryColor
                     : boldoMainGrayColor,
               ),
-              label: !_authenticated ? 'Authenticate' : "Settings",
+              label: !_authenticated ? 'Cuenta' : "Config",
             )
           ],
           currentIndex: _selectedIndex,

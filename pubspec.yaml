@@ -34,6 +34,7 @@ dependencies:
   flutter_dotenv: ^2.1.0
   page_view_indicator: ^2.0.4
   google_fonts: ^1.1.0
+  provider: ^4.3.2+2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -49,6 +50,7 @@ flutter_icons:
   android: 'launcher_icon'
   ios: true
   image_path: 'assets/icon/icon.png'
+  adaptive_icon_background: '#fff'
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

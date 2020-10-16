@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.interTextTheme(
           Theme.of(context).textTheme,
         ),
-        primarySwatch: Colors.blue,
+        brightness: Brightness.light,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: onboardingCompleted ? DashboardScreen() : HeroScreen(),
