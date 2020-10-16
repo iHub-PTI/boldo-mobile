@@ -6,7 +6,8 @@ const boldoBackgroundLightColor = Color(0xFFFBFDFE);
 const boldoTitleTextColor = Color(0xFF364152);
 const boldoTextLightColor = Color(0xFF6B7280);
 const boldoMainGrayColor = Color(0xFFE5E7EB);
-
+const boldoSecondaryStrong = Color(0xFFF08F77);
+const boldoSecondaryWeak = Color(0xFFf3d7d1);
 const boldoLightSecondaryActionColor = Color(0xFF65CFD3);
 const boldoDarkPrimaryColor = Color(0xFF13A5A9);
 const boldoDarkPrimaryLighterColor = Color(0xFF27BEC2);

@@ -1,29 +1,32 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import './screens/Dashboard/DashboardScreen.dart';
+import './screens/Hero/HeroScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   initializeDateFormatting();
   Intl.defaultLocale = "es";
-  LicenseRegistry.addLicense(() async* {
-    final license = await rootBundle.loadString('google_fonts/OFL.txt');
-    yield LicenseEntryWithLineBreaks(['google_fonts'], license);
-  });
   await DotEnv().load('.env');
   GestureBinding.instance.resamplingEnabled = true;
-  runApp(MyApp());
+
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool onboardingCompleted = prefs.getBool("onboardingCompleted") ?? false;
+
+  runApp(MyApp(onboardingCompleted: onboardingCompleted));
 }
 
 class MyApp extends StatelessWidget {
+  final bool onboardingCompleted;
+  const MyApp({Key key, @required this.onboardingCompleted}) : super(key: key);
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,7 +38,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: DashboardScreen(),
+      home: onboardingCompleted ? DashboardScreen() : HeroScreen(),
     );
   }
 }

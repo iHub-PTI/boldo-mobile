@@ -85,49 +85,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: getPage(_selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        showUnselectedLabels: false,
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/icon/homeIcon.svg',
-              semanticsLabel: 'Doctor Icon',
-              color: _selectedIndex == 0
-                  ? boldoDarkPrimaryColor
-                  : boldoMainGrayColor,
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        body: getPage(_selectedIndex),
+        bottomNavigationBar: BottomNavigationBar(
+          showUnselectedLabels: false,
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                'assets/icon/homeIcon.svg',
+                semanticsLabel: 'Doctor Icon',
+                color: _selectedIndex == 0
+                    ? boldoDarkPrimaryColor
+                    : boldoMainGrayColor,
+              ),
+              label: 'Inicio',
             ),
-            label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/icon/doctorIcon.svg',
-              semanticsLabel: 'Doctor Icon',
-              color: _selectedIndex == 1
-                  ? boldoDarkPrimaryColor
-                  : boldoMainGrayColor,
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                'assets/icon/doctorIcon.svg',
+                semanticsLabel: 'Doctor Icon',
+                color: _selectedIndex == 1
+                    ? boldoDarkPrimaryColor
+                    : boldoMainGrayColor,
+              ),
+              label: 'Médicos',
             ),
-            label: 'Médicos',
-          ),
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              !_authenticated
-                  ? 'assets/icon/profileIcon.svg'
-                  : 'assets/icon/settingsIcon.svg',
-              semanticsLabel: 'Doctor Icon',
-              color: _selectedIndex == 2
-                  ? boldoDarkPrimaryColor
-                  : boldoMainGrayColor,
-            ),
-            label: !_authenticated ? 'Authenticate' : "Settings",
-          )
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: boldoDarkPrimaryColor,
-        onTap: (index) => setState(() {
-          _selectedIndex = index;
-        }),
+            BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                !_authenticated
+                    ? 'assets/icon/profileIcon.svg'
+                    : 'assets/icon/settingsIcon.svg',
+                semanticsLabel: 'Doctor Icon',
+                color: _selectedIndex == 2
+                    ? boldoDarkPrimaryColor
+                    : boldoMainGrayColor,
+              ),
+              label: !_authenticated ? 'Authenticate' : "Settings",
+            )
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: boldoDarkPrimaryColor,
+          onTap: (index) => setState(() {
+            _selectedIndex = index;
+          }),
+        ),
       ),
     );
   }

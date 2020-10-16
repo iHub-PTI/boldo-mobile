@@ -1,0 +1,222 @@
+import 'package:boldo/screens/Dashboard/DashboardScreen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:page_view_indicator/page_view_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../Dashboard/DashboardScreen.dart';
+import '../../constant.dart';
+
+class HeroScreen extends StatelessWidget {
+  final List<CarouselSlide> items = [
+    CarouselSlide(
+      key: UniqueKey(),
+      image: 'assets/hero/hero1.png',
+      index: 0,
+    ),
+    CarouselSlide(
+      key: UniqueKey(),
+      image: 'assets/hero/hero2.png',
+      index: 1,
+    ),
+    CarouselSlide(
+      key: UniqueKey(),
+      image: 'assets/hero/hero3.png',
+      index: 2,
+    )
+  ];
+
+  final pageIndexNotifier = ValueNotifier<int>(0);
+  final pageController = PageController(viewportFraction: 1.1);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          width: MediaQuery.of(context).size.width,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 45,
+                ),
+                Align(
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    height: 360,
+                    width: 270,
+                    child: Card(
+                      margin: EdgeInsets.zero,
+                      clipBehavior: Clip.antiAlias,
+                      elevation: 6,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: PageView.builder(
+                        itemCount: 3,
+                        controller: pageController,
+                        onPageChanged: (i) => pageIndexNotifier.value = i,
+                        itemBuilder: (context, int currentIdx) {
+                          return FractionallySizedBox(
+                              widthFactor: 1 / pageController.viewportFraction,
+                              child: items[currentIdx]);
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                ValueListenableBuilder(
+                  valueListenable: pageIndexNotifier,
+                  builder: (context, index, child) {
+                    return _buildPageViewIndicator(context, index);
+                  },
+                ),
+                SizedBox(
+                  height: 48,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: boldoDarkPrimaryLighterColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                        onPressed: () async {
+                          final SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          prefs.setBool("onboardingCompleted", true);
+                        },
+                        child: Text("Iniciar Sesión")),
+                    SizedBox(
+                      width: 30,
+                    ),
+                    OutlineButton(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      onPressed: () async {
+                        final SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        prefs.setBool("onboardingCompleted", true);
+                      },
+                      child: Text("Registrarse"),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 48,
+                ),
+                Text(
+                  "¿Quieres dar un vistazo?",
+                  style: boldoSubTextStyle,
+                  textAlign: TextAlign.center,
+                ),
+                TextButton(
+                  onPressed: () async {
+                    final SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.setBool("onboardingCompleted", true);
+
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DashboardScreen(),
+                        ));
+                  },
+                  child: Text(
+                    'Explora Boldo',
+                    style:
+                        boldoSubTextStyle.copyWith(color: boldoSecondaryStrong),
+                  ),
+                ),
+              ],
+            ),
+          )),
+    );
+  }
+
+  Widget _buildPageViewIndicator(BuildContext context, int indexPageView) {
+    return Column(
+      children: [
+        PageViewIndicator(
+          pageIndexNotifier: pageIndexNotifier,
+          length: 3,
+          normalBuilder: (animationController, index) => Circle(
+            size: 10,
+            color: index < indexPageView
+                ? boldoSecondaryStrong
+                : boldoMainGrayColor,
+          ),
+          highlightedBuilder: (animationController, index) => ScaleTransition(
+            scale: CurvedAnimation(
+              parent: animationController,
+              curve: Curves.ease,
+            ),
+            child: Container(
+              height: 20,
+              width: 20,
+              decoration: BoxDecoration(
+                  color: boldoSecondaryWeak,
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
+              child: Align(
+                alignment: Alignment.center,
+                child: Circle(
+                  size: 10,
+                  color: boldoSecondaryStrong,
+                ),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        SizedBox(
+          width: 220,
+          child: Text(
+            indexPageView == 0
+                ? "Acceso a médicos de confianza de forma instantánea"
+                : indexPageView == 1
+                    ? "Reserva una consulta en línea con un médico"
+                    : "Fácil acceso a tus citas pasadas y futuras",
+            style: boldoSubTextStyle,
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class CarouselSlide extends StatelessWidget {
+  final String image;
+  final int index;
+
+  const CarouselSlide({
+    Key key,
+    @required this.image,
+    @required this.index,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.0),
+        child: Image.asset(
+          image,
+          width: double.infinity,
+        ),
+      ),
+    );
+  }
+}
