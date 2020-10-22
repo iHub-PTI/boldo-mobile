@@ -1,4 +1,4 @@
-package com.example.boldo;
+package com.penguin.boldo;
 
 import io.flutter.embedding.android.FlutterActivity;
 

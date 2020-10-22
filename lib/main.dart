@@ -1,11 +1,16 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:logger/logger.dart';
+
+import './provider/auth_provider.dart';
 import './screens/Dashboard/DashboardScreen.dart';
 import './screens/Hero/HeroScreen.dart';
 
@@ -18,14 +23,47 @@ void main() async {
 
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   bool onboardingCompleted = prefs.getBool("onboardingCompleted") ?? false;
-
-  runApp(MyApp(onboardingCompleted: onboardingCompleted));
+  final storage = new FlutterSecureStorage();
+  String value = await storage.read(key: "accessToken");
+  runApp(MyApp(
+    onboardingCompleted: onboardingCompleted,
+    session: value,
+  ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final bool onboardingCompleted;
-  const MyApp({Key key, @required this.onboardingCompleted}) : super(key: key);
-  // This widget is the root of your application.
+  final String session;
+  const MyApp(
+      {Key key, @required this.onboardingCompleted, @required this.session})
+      : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Logger logger = Logger();
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthProvider>(
+            create: (_) => AuthProvider(widget.session != null ? true : false)),
+      ],
+      child: FullApp(onboardingCompleted: widget.onboardingCompleted),
+    );
+  }
+}
+
+class FullApp extends StatelessWidget {
+  const FullApp({
+    Key key,
+    @required this.onboardingCompleted,
+  }) : super(key: key);
+
+  final bool onboardingCompleted;
 
   @override
   Widget build(BuildContext context) {
