@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import './BookingConfirmScreen.dart';
-import '../../constant.dart';
+import '../../constants.dart';
 
 class BookingScreen extends StatefulWidget {
   BookingScreen({Key key}) : super(key: key);
@@ -30,32 +30,32 @@ class _BookingScreenState extends State<BookingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 18,
               ),
               TextButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.chevron_left_rounded,
                   size: 25,
-                  color: boldoTitleTextColor,
+                  color: Constants.extraColor400,
                 ),
                 label: Text(
                   'Reservar',
                   style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 18,
               ),
-              _BookDoctorCard(),
-              SizedBox(
+              const _BookDoctorCard(),
+              const SizedBox(
                 height: 12,
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16),
+              const Padding(
+                padding: EdgeInsets.only(left: 16, right: 16),
                 child: _BookCalendar(),
               ),
               Center(
@@ -65,14 +65,14 @@ class _BookingScreenState extends State<BookingScreen> {
                       fontWeight: FontWeight.normal, fontSize: 14),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Center(
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   width: double.infinity,
-                  constraints: BoxConstraints(
+                  constraints: const BoxConstraints(
                     maxWidth: 350,
                   ),
                   child: Wrap(
@@ -104,13 +104,13 @@ class _BookingScreenState extends State<BookingScreen> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                       color: _selectedBookingHour == e
-                                          ? boldoLightSecondaryActionColor
-                                          : boldoBackgroundLightColor,
+                                          ? Constants.primaryColor400
+                                          : Constants.tertiaryColor100,
                                       borderRadius: BorderRadius.circular(9),
                                       border: Border.all(
                                           color: _selectedBookingHour == e
-                                              ? boldoDarkPrimaryColor
-                                              : boldoMainGrayColor)),
+                                              ? Constants.secondaryColor500
+                                              : Constants.extraColor200)),
                                   width: 60,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -121,7 +121,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                           fontSize: 14,
                                           color: _selectedBookingHour == e
                                               ? Colors.white
-                                              : boldoTitleTextColor),
+                                              : Constants.extraColor400),
                                     ),
                                   ),
                                 ),
@@ -131,16 +131,16 @@ class _BookingScreenState extends State<BookingScreen> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 40,
               ),
               Container(
                 padding: const EdgeInsets.only(left: 16, right: 16),
-                margin: EdgeInsets.only(bottom: 16),
+                margin: const EdgeInsets.only(bottom: 16),
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: boldoDarkPrimaryLighterColor,
+                    primary: Constants.primaryColor500,
                   ),
                   onPressed: _selectedBookingHour != null
                       ? () {
@@ -173,17 +173,17 @@ class _BookCalendar extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Más fechas',
           style: boldoHeadingTextStyle,
         ),
-        SizedBox(
+        const SizedBox(
           height: 18,
         ),
         CustomCalendar(
           selectedDate: DateTime.now(),
         ),
-        SizedBox(
+        const SizedBox(
           height: 25,
         ),
       ],
@@ -209,7 +209,7 @@ class _BookDoctorCard extends StatelessWidget {
         children: [
           Container(
             height: 96,
-            padding: EdgeInsets.only(top: 18, right: 19, bottom: 16),
+            padding: const EdgeInsets.only(top: 18, right: 19, bottom: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,17 +230,17 @@ class _BookDoctorCard extends StatelessWidget {
                           "Disponible Hoy!",
                           style: boldoHeadingTextStyle.copyWith(fontSize: 14),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 4,
                         ),
-                        Text(
+                        const Text(
                           "Lunes 7 de septiembre",
                           style: boldoSubTextStyle,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 4,
                         ),
-                        Text(
+                        const Text(
                           "14:30 horas",
                           style: boldoSubTextStyle,
                         ),
@@ -253,8 +253,8 @@ class _BookDoctorCard extends StatelessWidget {
           Container(
             width: double.infinity,
             height: 52,
-            decoration: BoxDecoration(
-              color: boldoBackgroundLightColor,
+            decoration: const BoxDecoration(
+              color: Constants.tertiaryColor100,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(8),
                 bottomRight: Radius.circular(8),
@@ -274,7 +274,7 @@ class _BookDoctorCard extends StatelessWidget {
               child: Text(
                 'Reservar ahora',
                 style: boldoHeadingTextStyle.copyWith(
-                    color: boldoDarkPrimaryLighterColor),
+                    color: Constants.primaryColor500),
               ),
             ),
           ),

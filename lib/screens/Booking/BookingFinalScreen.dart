@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../screens/Dashboard/DashboardScreen.dart';
-import '../../constant.dart';
+import '../../constants.dart';
 
 class BookingFinalScreen extends StatefulWidget {
   BookingFinalScreen({
@@ -34,11 +34,11 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                 padding: const EdgeInsets.only(left: 16, right: 16),
                 child: Column(
                   children: [
-                    Text(
+                    const Text(
                       "¡Su consulta ha sido agendada!",
                       style: boldoSubTextStyle,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 40,
                     ),
                     Container(
@@ -46,13 +46,13 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          primary: boldoDarkPrimaryLighterColor,
+                          primary: Constants.primaryColor500,
                         ),
                         onPressed: null,
                         child: const Text("Ver reserva"),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 16,
                     ),
                     Container(

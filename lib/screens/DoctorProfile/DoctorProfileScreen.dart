@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../constant.dart';
+import '../../constants.dart';
 
 class DoctorProfileScreen extends StatefulWidget {
   DoctorProfileScreen({Key key}) : super(key: key);
@@ -28,24 +28,24 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 24,
                 ),
                 TextButton.icon(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.chevron_left_rounded,
                     size: 25,
-                    color: boldoTitleTextColor,
+                    color: Constants.extraColor400,
                   ),
                   label: Text(
                     'Perfil',
                     style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 24,
                 ),
                 Align(
@@ -55,20 +55,20 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                       SvgPicture.asset(
                         'assets/images/DoctorImage.svg',
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 2,
                       ),
-                      Text(
+                      const Text(
                         "Dra. Susan Giménez",
                         style: boldoHeadingTextStyle,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 4,
                       ),
                       Text(
                         "Dermatología",
                         style: boldoHeadingTextStyle.copyWith(
-                            color: boldoCategoryColor),
+                            color: Constants.otherColor100),
                       ),
                     ],
                   ),
@@ -78,56 +78,56 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 24,
                       ),
-                      Text(
+                      const Text(
                         "Biografía",
                         style: boldoHeadingTextStyle,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 4,
                       ),
                       Text(
                           "Recibida en la Universidad Nacional de Asunción en Dermatología. Especialización en Dermatología Estética. Miembro de la Asociación LADERM. ",
                           style: boldoSubTextStyle.copyWith(
                               height: 1.5, fontSize: 16)),
-                      SizedBox(
+                      const SizedBox(
                         height: 24,
                       ),
-                      Text(
+                      const Text(
                         "Idiomas",
                         style: boldoHeadingTextStyle,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 4,
                       ),
                       Text(
                         "- Español",
                         style: boldoSubTextStyle.copyWith(fontSize: 16),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 4,
                       ),
                       Text(
                         "- Inglés",
                         style: boldoSubTextStyle.copyWith(fontSize: 16),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 4,
                       ),
                       Text(
                         "- Alemán",
                         style: boldoSubTextStyle.copyWith(fontSize: 16),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 24,
                       ),
-                      Text(
+                      const Text(
                         "Registro Profesional",
                         style: boldoHeadingTextStyle,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 4,
                       ),
                       Text(

@@ -1,4 +1,4 @@
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart' as io;
 
 typedef void OnMessageCallback(String tag, dynamic msg);
 typedef void OnCloseCallback(int code, String reason);
@@ -6,7 +6,7 @@ typedef void OnOpenCallback();
 
 class SimpleWebSocket {
   String url;
-  IO.Socket socket;
+  io.Socket socket;
   String roomNumber;
   OnOpenCallback onOpen;
   OnMessageCallback onMessage;
@@ -14,9 +14,9 @@ class SimpleWebSocket {
 
   SimpleWebSocket(this.url, this.roomNumber);
 
-  connect() async {
+  void connect() async {
     try {
-      socket = IO.io(url, <String, dynamic>{
+      socket = io.io(url, <String, dynamic>{
         'transports': ['websocket'],
         'autoConnect': false,
       });
@@ -49,21 +49,20 @@ class SimpleWebSocket {
       socket.on('disconnect', (e) {
         print('disconnect');
       });
-      socket.on('fromServer', (_) => print(_));
     } catch (e) {
       print(e);
       // this.onClose(500, e.toString());
     }
   }
 
-  send(event, data) {
+  void send(event, data) {
     if (socket != null) {
       socket.emit(event, data);
       print('send: $event - $data');
     }
   }
 
-  close() {
+  void close() {
     if (socket != null) {
       send("disconnect", {});
       socket.close();

@@ -19,19 +19,19 @@ class _CallScreenState extends State<CallScreen> {
   bool _inCalling = false;
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     initRenderers();
     _connect();
   }
 
-  initRenderers() async {
+  void initRenderers() async {
     await _localRenderer.initialize();
     await _remoteRenderer.initialize();
   }
 
   @override
-  deactivate() {
+  void deactivate() {
     super.deactivate();
 
     if (_signaling != null) _signaling.close();
@@ -46,12 +46,12 @@ class _CallScreenState extends State<CallScreen> {
       _signaling.onStateChange = (SignalingState state) {
         switch (state) {
           case SignalingState.CallStateNew:
-            this.setState(() {
+            setState(() {
               _inCalling = true;
             });
             break;
           case SignalingState.CallStateBye:
-            this.setState(() {
+            setState(() {
               _localRenderer.srcObject = null;
               _remoteRenderer.srcObject = null;
               _inCalling = false;
@@ -86,14 +86,14 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
-  _hangUp() {
+  void _hangUp() {
     if (_signaling != null) {
       _signaling.bye();
       Navigator.pop(context);
     }
   }
 
-  _switchCamera() {
+  void _switchCamera() {
     _signaling.switchCamera();
   }
 
@@ -134,7 +134,7 @@ class _CallScreenState extends State<CallScreen> {
                         heroTag: "btn3",
                         onPressed: _hangUp,
                         tooltip: 'Hangup',
-                        child: Icon(Icons.call_end),
+                        child: const Icon(Icons.call_end),
                         backgroundColor: Colors.pink,
                       ),
                     ]),
@@ -150,11 +150,12 @@ class _CallScreenState extends State<CallScreen> {
                         top: 0.0,
                         bottom: 0.0,
                         child: Container(
-                          margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                          margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.height,
                           child: RTCVideoView(_remoteRenderer),
-                          decoration: BoxDecoration(color: Colors.black54),
+                          decoration:
+                              const BoxDecoration(color: Colors.black54),
                         )),
                     Positioned(
                       left: 20.0,
@@ -165,7 +166,7 @@ class _CallScreenState extends State<CallScreen> {
                         height:
                             orientation == Orientation.portrait ? 120.0 : 90.0,
                         child: RTCVideoView(_localRenderer),
-                        decoration: BoxDecoration(color: Colors.black54),
+                        decoration: const BoxDecoration(color: Colors.black54),
                       ),
                     ),
                   ]),
@@ -183,7 +184,7 @@ class _CallScreenState extends State<CallScreen> {
                             fontSize: 18,
                             fontWeight: FontWeight.w500),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Text(
@@ -215,7 +216,7 @@ Future<bool> yesOrNoDialog(
       return AlertDialog(
         title: Text(
           text,
-          style: TextStyle(fontSize: 16),
+          style: const TextStyle(fontSize: 16),
         ),
         actions: <Widget>[
           FlatButton(

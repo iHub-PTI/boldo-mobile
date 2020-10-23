@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../models/CalendarItem.dart';
 
-monthBuilder({@required DateTime buildDate}) async {
+List<List<CalendarItem>> monthBuilder({@required DateTime buildDate}) {
   List<List<CalendarItem>> chunkArrays = [[], [], [], [], [], []];
   int fillingArray = 0;
   int day = 1;
@@ -49,5 +49,5 @@ monthBuilder({@required DateTime buildDate}) async {
     }
   }
 
-  return {"chunkArrays": chunkArrays};
+  return chunkArrays;
 }

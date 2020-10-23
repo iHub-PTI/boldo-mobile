@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../constant.dart';
+import '../../../constants.dart';
 
 class HomeTab extends StatefulWidget {
   HomeTab({Key key}) : super(key: key);
@@ -21,11 +21,11 @@ class _HomeTabState extends State<HomeTab> {
         toolbarHeight: 110,
         flexibleSpace: Center(
           child: Container(
-            margin: EdgeInsets.only(top: 30),
+            margin: const EdgeInsets.only(top: 30),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 SizedBox(
@@ -35,7 +35,7 @@ class _HomeTabState extends State<HomeTab> {
                     'assets/images/DoctorImage.svg',
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Column(
@@ -45,12 +45,12 @@ class _HomeTabState extends State<HomeTab> {
                     Text(
                       "¡Bienvenido!",
                       style: boldoHeadingTextStyle.copyWith(
-                          fontSize: 24, color: boldoDarkPrimaryLighterColor),
+                          fontSize: 24, color: Constants.primaryColor500),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 4,
                     ),
-                    Text("Lunes, 14 de septiembre"),
+                    const Text("Lunes, 14 de septiembre"),
                   ],
                 )
               ],
@@ -71,7 +71,7 @@ class _HomeTabState extends State<HomeTab> {
                     fontSize: 18,
                     fontWeight: FontWeight.w500),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Container(
