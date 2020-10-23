@@ -37,14 +37,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       final AuthorizationTokenResponse result =
           await appAuth.authorizeAndExchangeCode(
-        AuthorizationTokenRequest('boldo-doctor', 'com.penguin.boldo:/login',
+        AuthorizationTokenRequest('boldo-patient', 'com.penguin.boldo:/login',
             discoveryUrl:
                 '$keycloakRealmAddress/.well-known/openid-configuration',
-            scopes: ['openid'],
+            scopes: ['openid', 'offline_access'],
             allowInsecureConnections: true),
       );
-      logger.i(result.idToken);
-      logger.i(result.refreshToken);
+      logger.i("Logged In");
       await storage.write(key: "accessToken", value: result.accessToken);
       await storage.write(key: "refreshToken", value: result.refreshToken);
 
