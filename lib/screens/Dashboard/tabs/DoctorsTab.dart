@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../constant.dart';
@@ -125,7 +124,7 @@ class _DoctorCard extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 2),
                         child: Text(
-                          doctor.name,
+                          "${doctor.givenName} ${doctor.familyName}",
                           style: boldoHeadingTextStyle,
                         ),
                       ),

@@ -1,23 +1,27 @@
 class Doctor {
-  int id;
-  String name;
+  String id;
+  String familyName;
+  String givenName;
 
   Doctor({
     this.id,
-    this.name,
+    this.familyName,
+    this.givenName,
   });
 
   factory Doctor.fromJson(Map<String, dynamic> json) {
     return Doctor(
       id: json["id"],
-      name: json["name"],
+      familyName: json["familyName"],
+      givenName: json["givenName"],
     );
   }
 
   Map<String, dynamic> tojson() {
     return <String, dynamic>{
       "id": id,
-      "name": name,
+      "familyName": familyName,
+      "givenName": givenName,
     };
   }
 }
