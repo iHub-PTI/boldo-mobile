@@ -214,8 +214,8 @@ class Signaling {
   }
 
   void connect() async {
-    String socketsAddress = DotEnv().env['SOCKETS_ADDRESS'];
-
+    String socketsAddress = String.fromEnvironment('SOCKETS_ADDRESS',
+        defaultValue: DotEnv().env['SOCKETS_ADDRESS']);
     if (_socket != null) {
       _socket.close();
       _socket = null;

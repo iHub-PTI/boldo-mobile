@@ -76,41 +76,41 @@ class HeroScreen extends StatelessWidget {
                     return _buildPageViewIndicator(context, index);
                   },
                 ),
-                const SizedBox(
-                  height: 48,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Constants.primaryColor500,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                        ),
-                        onPressed: () async {
-                          final SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          prefs.setBool("onboardingCompleted", true);
-                        },
-                        child: const Text("Iniciar Sesión")),
-                    const SizedBox(
-                      width: 30,
-                    ),
-                    OutlineButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      onPressed: () async {
-                        final SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        prefs.setBool("onboardingCompleted", true);
-                      },
-                      child: const Text("Registrarse"),
-                    )
-                  ],
-                ),
+                // const SizedBox(
+                //   height: 48,
+                // ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     ElevatedButton(
+                //         style: ElevatedButton.styleFrom(
+                //           primary: Constants.primaryColor500,
+                //           shape: RoundedRectangleBorder(
+                //             borderRadius: BorderRadius.circular(6),
+                //           ),
+                //         ),
+                //         onPressed: () async {
+                //           final SharedPreferences prefs =
+                //               await SharedPreferences.getInstance();
+                //           prefs.setBool("onboardingCompleted", true);
+                //         },
+                //         child: const Text("Iniciar Sesión")),
+                //     const SizedBox(
+                //       width: 30,
+                //     ),
+                //     OutlineButton(
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(6),
+                //       ),
+                //       onPressed: () async {
+                //         final SharedPreferences prefs =
+                //             await SharedPreferences.getInstance();
+                //         prefs.setBool("onboardingCompleted", true);
+                //       },
+                //       child: const Text("Registrarse"),
+                //     )
+                //   ],
+                // ),
                 const SizedBox(
                   height: 48,
                 ),

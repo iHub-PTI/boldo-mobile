@@ -13,6 +13,7 @@ import 'package:logger/logger.dart';
 import './provider/auth_provider.dart';
 import './screens/Dashboard/DashboardScreen.dart';
 import './screens/Hero/HeroScreen.dart';
+import './constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -68,8 +69,9 @@ class FullApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'BOLDO',
+      title: 'Boldo',
       theme: ThemeData(
+        primaryColor: Colors.white,
         scaffoldBackgroundColor: Colors.white,
         textTheme: GoogleFonts.interTextTheme(
           Theme.of(context).textTheme,
