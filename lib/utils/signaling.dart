@@ -114,10 +114,9 @@ class Signaling {
 
     _remoteCandidates.clear();
     _socket.close();
-    print(doctorDisconnect);
+
     if (onStateChange != null) {
       if (doctorDisconnect != null && doctorDisconnect == true) {
-        print("WHY THE FUCK");
         onStateChange(SignalingState.ConnectionEndedByDoctor);
       } else {
         onStateChange(SignalingState.CallStateBye);
