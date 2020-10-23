@@ -38,49 +38,6 @@ class _SettingsTabState extends State<SettingsTab> {
             children: [
               ElevatedButton(
                 onPressed: () async {
-                  final storage = new FlutterSecureStorage();
-                  String accessToken = await storage.read(key: "accessToken");
-                  logger.i(accessToken);
-                  try {
-                    String serverAddress = DotEnv().env['SERVER_ADDRESS'];
-                    print(serverAddress);
-                    Dio dio = Dio();
-                    dio.options.headers['Authorization'] =
-                        "Bearer $accessToken";
-
-                    Response response = await dio.get(
-                      "$serverAddress/profile",
-                    );
-                    print(response);
-                  } catch (e) {
-                    logger.e(e);
-                  }
-                },
-                child: Text("Profile with token"),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  final storage = new FlutterSecureStorage();
-                  String value = await storage.read(key: "accessToken");
-                  print(value);
-                  try {
-                    String serverAddress = DotEnv().env['SERVER_ADDRESS'];
-                    print(serverAddress);
-                    Dio dio = Dio();
-                    dio.options.headers['Cookie'] = "connect.sid=$value";
-                    print("poop");
-                    Response response = await dio.get(
-                      "$serverAddress/profile",
-                    );
-                    print(response);
-                  } catch (e) {
-                    logger.e(e);
-                  }
-                },
-                child: Text("Profile"),
-              ),
-              ElevatedButton(
-                onPressed: () async {
                   Provider.of<AuthProvider>(context, listen: false)
                       .setAuthenticated(isAuthenticated: false);
                   final storage = new FlutterSecureStorage();
@@ -91,22 +48,6 @@ class _SettingsTabState extends State<SettingsTab> {
                       builder: (context) => DashboardScreen(),
                     ),
                   );
-                  // final storage = new FlutterSecureStorage();
-                  // String value = await storage.read(key: "session");
-                  // print(value);
-                  // try {
-                  //   String serverAddress = DotEnv().env['SERVER_ADDRESS'];
-                  //   print(serverAddress);
-                  //   Dio dio = Dio();
-                  //   dio.options.headers['Cookie'] = "connect.sid=$value";
-                  //   print("poop");
-                  //   Response response = await dio.get(
-                  //     "$serverAddress/logout",
-                  //   );
-                  //   print(response);
-                  // } catch (e) {
-                  //   print(e);
-                  // }
                 },
                 child: Text("Logout"),
               ),

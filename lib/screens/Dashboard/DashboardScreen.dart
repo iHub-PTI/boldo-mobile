@@ -52,64 +52,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       Provider.of<AuthProvider>(context, listen: false)
           .setAuthenticated(isAuthenticated: true);
-      // Response response = await Dio().get(
-      //     "$serverAddress/appauth?session_state=${result.authorizationAdditionalParameters["session_state"]}&code=${result.authorizationCode}&auth_callback=1&scope=openid&redirect_uri=com.penguin.boldo:/login");
-
-      // final AuthorizationResponse result = await appAuth.authorize(
-      //   AuthorizationRequest('boldo-doctor', "com.penguin.boldo:/login",
-      //       discoveryUrl:
-      //           '$keycloakRealmAddress/.well-known/openid-configuration',
-      //       scopes: [
-      //         'openid',
-      //       ],
-      //       allowInsecureConnections: true),
-      // );
-      //logger.i(result.authorizationCode);
-
-      // Response response = await Dio().get(
-      //     "$serverAddress/appauth?session_state=${result.authorizationAdditionalParameters["session_state"]}&code=${result.authorizationCode}&auth_callback=1&scope=openid&redirect_uri=com.penguin.boldo:/login");
-      // Response response = await Dio().get(
-      //     "$serverAddress/appauth?session_state=${result.authorizationAdditionalParameters["session_state"]}&code=${result.authorizationCode}&auth_callback=1&scope=openid&redirect_uri=com.penguin.boldo:/login");
-      // await storage.write(
-      //     key: "session", value: response.headers["set-session"] as String);
-
-      // logger.i(response.data);
-      // logger.i(response.statusCode);
-      // logger.i(response.headers);
-
-      // if (response.statusCode != 200) {
-      //   setState(() {
-      //     _selectedIndex = 0;
-      //   });
-      //   logger.e("ERROR");
-      //   // final snackBar = SnackBar(
-      //   //     content: Text('Authentication failed! No cookie availible'));
-      //   // Scaffold.of(context).showSnackBar(snackBar);
-      //   return;
-      // }
-
-      // var reduceResponse = response.headers["set-cookie"].fold({}, (prev, e) {
-      //   var firstEl = e.split("; ")[0];
-
-      //   var anotherArr = firstEl.split("=");
-
-      //   prev[anotherArr[0]] = anotherArr[1];
-
-      //   return prev;
-      // });
-
-      // if (reduceResponse == null || reduceResponse["connect.sid"] == null) {
-      //   setState(() {
-      //     _selectedIndex = 0;
-      //   });
-      //   logger.e("ERROR");
-      //   // final snackBar = SnackBar(
-      //   //     content: Text('Authentication failed! No cookie availible'));
-      //   // Scaffold.of(context).showSnackBar(snackBar);
-      //   return;
-      // }
-
-      // storage.write(key: "session", value: reduceResponse["connect.sid"]);
     } catch (err) {
       // final snackBar = SnackBar(content: Text('Authenticaton Failed!'));
       // Scaffold.of(context).showSnackBar(snackBar);
