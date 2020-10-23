@@ -1,5 +1,5 @@
 class Doctor {
-  String id;
+  int id;
   String familyName;
   String givenName;
 

@@ -43,7 +43,7 @@ class _CallScreenState extends State<CallScreen> {
     if (_signaling == null) {
       _signaling = Signaling(widget.roomNumber)..connect();
 
-      _signaling.onStateChange = (SignalingState state) {
+      _signaling.onStateChange = (SignalingState state) async {
         switch (state) {
           case SignalingState.CallStateNew:
             setState(() {
@@ -69,6 +69,17 @@ class _CallScreenState extends State<CallScreen> {
             break;
           case SignalingState.ConnectionOpen:
             break;
+          case SignalingState.ConnectionEndedByDoctor:
+            print("ENDED BY DOCTOR");
+            setState(() {
+              _localRenderer.srcObject = null;
+              _remoteRenderer.srcObject = null;
+              _inCalling = false;
+            });
+            await infoDialog(
+                context: context, text: "The doctor has left the call");
+            Navigator.pop(context);
+            break;
         }
       };
 
@@ -88,7 +99,7 @@ class _CallScreenState extends State<CallScreen> {
 
   void _hangUp() {
     if (_signaling != null) {
-      _signaling.bye();
+      _signaling.bye(doctorDisconnect: false);
       Navigator.pop(context);
     }
   }
@@ -228,6 +239,35 @@ Future<bool> yesOrNoDialog(
               Navigator.of(context).pop(false);
             },
           ),
+          FlatButton(
+            child: Text(
+              yesButton,
+              style: TextStyle(color: positive ? Colors.green : Colors.red),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Future infoDialog(
+    {BuildContext context,
+    String text,
+    String yesButton = "OK",
+    bool positive = false}) async {
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(
+          text,
+          style: const TextStyle(fontSize: 16),
+        ),
+        actions: <Widget>[
           FlatButton(
             child: Text(
               yesButton,

@@ -34,6 +34,10 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                 padding: const EdgeInsets.only(left: 16, right: 16),
                 child: Column(
                   children: [
+                    Image.asset(
+                      'assets/images/Booking.png',
+                      width: double.infinity,
+                    ),
                     const Text(
                       "¡Su consulta ha sido agendada!",
                       style: boldoSubTextStyle,

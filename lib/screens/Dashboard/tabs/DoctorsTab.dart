@@ -29,8 +29,9 @@ class _DoctorsTabState extends State<DoctorsTab> {
       String serverAddress = DotEnv().env['SERVER_ADDRESS'];
 
       Response response = await Dio().get("$serverAddress/doctors");
-
+      print(response.statusCode);
       if (response.statusCode == 200) {
+        print("yeah...");
         List<Doctor> doctorsList = List<Doctor>.from(
             response.data["doctors"].map((i) => Doctor.fromJson(i)));
 

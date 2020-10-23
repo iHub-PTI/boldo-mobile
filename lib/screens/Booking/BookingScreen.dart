@@ -109,7 +109,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                       borderRadius: BorderRadius.circular(9),
                                       border: Border.all(
                                           color: _selectedBookingHour == e
-                                              ? Constants.secondaryColor500
+                                              ? Constants.primaryColor600
                                               : Constants.extraColor200)),
                                   width: 60,
                                   child: Padding(

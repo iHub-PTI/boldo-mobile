@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:html';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:logger/logger.dart';
 
 import 'websocket.dart';
 
@@ -15,6 +15,7 @@ enum SignalingState {
   ConnectionOpen,
   ConnectionClosed,
   ConnectionError,
+  ConnectionEndedByDoctor
 }
 
 /*
@@ -101,7 +102,7 @@ class Signaling {
     }
   }
 
-  void bye() {
+  void bye({bool doctorDisconnect = false}) {
     if (_localStream != null) {
       _localStream.dispose();
       _localStream = null;
@@ -111,11 +112,17 @@ class Signaling {
       peerConnection.close();
     }
 
-    if (onStateChange != null) {
-      onStateChange(SignalingState.CallStateBye);
-    }
     _remoteCandidates.clear();
     _socket.close();
+    print(doctorDisconnect);
+    if (onStateChange != null) {
+      if (doctorDisconnect != null && doctorDisconnect == true) {
+        print("WHY THE FUCK");
+        onStateChange(SignalingState.ConnectionEndedByDoctor);
+      } else {
+        onStateChange(SignalingState.CallStateBye);
+      }
+    }
   }
 
   void onMessage(tag, message) async {
@@ -269,16 +276,18 @@ class Signaling {
     };
 
     pc.onIceConnectionState = (state) {
-      if (state == RTCIceConnectionState.RTCIceConnectionStateDisconnected) {
-        //show timeout popup
-        print("DISCONNECED");
+      Logger logger = Logger();
+      logger.i(state);
+      if (state == RTCIceConnectionState.RTCIceConnectionStateClosed) {
+        bye(doctorDisconnect: true);
       }
       if (state == RTCIceConnectionState.RTCIceConnectionStateConnected) {
         //close the timeout popup;
         print("CONNECTED");
       }
-      if (state == RTCIceConnectionState.RTCIceConnectionStateClosed ||
-          state == RTCIceConnectionState.RTCIceConnectionStateFailed) {
+
+      if (state == RTCIceConnectionState.RTCIceConnectionStateFailed ||
+          state == RTCIceConnectionState.RTCIceConnectionStateDisconnected) {
         print("CLOSED OR FAILED");
         bye();
       }
