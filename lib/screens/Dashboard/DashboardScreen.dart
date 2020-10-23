@@ -29,7 +29,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   GlobalKey scaffoldKey = GlobalKey();
 
   Future<void> authenticate() async {
-    String keycloakRealmAddress = DotEnv().env['KEYCLOAK_REALM_ADDRESS'];
+    String keycloakRealmAddress = String.fromEnvironment(
+        'KEYCLOAK_REALM_ADDRESS',
+        defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
 
     FlutterAppAuth appAuth = FlutterAppAuth();
 

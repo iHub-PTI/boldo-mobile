@@ -26,7 +26,8 @@ class _DoctorsTabState extends State<DoctorsTab> {
 
   void getDoctors() async {
     try {
-      String serverAddress = DotEnv().env['SERVER_ADDRESS'];
+      String serverAddress = String.fromEnvironment('SERVER_ADDRESS',
+          defaultValue: DotEnv().env['SERVER_ADDRESS']);
 
       Response response = await Dio().get("$serverAddress/doctors");
       print(response.statusCode);

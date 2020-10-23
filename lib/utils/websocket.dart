@@ -1,3 +1,4 @@
+import 'package:logger/logger.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 typedef void OnMessageCallback(String tag, dynamic msg);
@@ -11,7 +12,7 @@ class SimpleWebSocket {
   OnOpenCallback onOpen;
   OnMessageCallback onMessage;
   OnCloseCallback onClose;
-
+  Logger logger = Logger();
   SimpleWebSocket(this.url, this.roomNumber);
 
   void connect() async {
@@ -28,6 +29,11 @@ class SimpleWebSocket {
 
         onOpen();
       });
+
+      socket.on('end_call', (data) {
+        onMessage('end_call', data);
+      });
+
       socket.emit('start call', roomNumber);
       socket.on('call partner', (data) {
         onMessage('call partner', data);
@@ -44,8 +50,10 @@ class SimpleWebSocket {
       socket.on('ice-candidate', (data) {
         onMessage('ice-candidate', data);
       });
+
       socket.on('exception', (e) => print('Exception: $e'));
       socket.on('connect_error', (e) => print('Connect error: $e'));
+
       socket.on('disconnect', (e) {
         print('disconnect');
       });

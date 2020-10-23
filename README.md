@@ -17,9 +17,9 @@ The mobile app is specifically for patients.
 
    ```
    # ####################### Online #######################
-   # SOCKETS_ADDRESS = https://sockets.boldo.penguin.software
-   # SERVER_ADDRESS = https://api.boldo.penguin.software
-   # KEYCLOAK_REALM_ADDRESS = https://sso-test.pti.org.py/auth/realms/iHub
+    SOCKETS_ADDRESS = https://sockets.boldo.penguin.software
+    SERVER_ADDRESS = https://api.boldo.penguin.software
+    KEYCLOAK_REALM_ADDRESS = https://sso-test.pti.org.py/auth/realms/iHub
 
    # ###################### Android ######################
    # SOCKETS_ADDRESS = http://10.0.2.2:8000
@@ -27,9 +27,9 @@ The mobile app is specifically for patients.
    # KEYCLOAK_REALM_ADDRESS = http://10.0.2.2:8080/auth/realms/iHub
 
    # ######################## iOs ########################
-   SOCKETS_ADDRESS = http://localhost:8000
-   SERVER_ADDRESS = http://localhost:8008
-   KEYCLOAK_REALM_ADDRESS = http://localhost:8080/auth/realms/iHub
+   # SOCKETS_ADDRESS = http://localhost:8000
+   # SERVER_ADDRESS = http://localhost:8008
+   # KEYCLOAK_REALM_ADDRESS = http://localhost:8080/auth/realms/iHub
    ```
 
    Note: Uncomment the Android secion in case you want to run it on an Android.
@@ -37,6 +37,15 @@ The mobile app is specifically for patients.
 4. `flutter run` - to start the app on an available device
 
 Note: You can check the availability of connected devices by running `flutter doctor`.
+
+## Building the app
+
+```
+ flutter build apk --split-per-abi \
+ --dart-define=SOCKETS_ADDRESS=https://sockets.boldo.penguin.software \
+ --dart-define=SERVER_ADDRESS=https://api.boldo.penguin.software \
+ --dart-define=KEYCLOAK_REALM_ADDRESS=https://sso-test.pti.org.py/auth/realms/iHub
+```
 
 ## Supported Platforms
 

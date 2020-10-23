@@ -40,7 +40,7 @@ class Signaling {
   StreamStateCallback onRemoveRemoteStream;
   OtherEventCallback onPeersUpdate;
   OtherEventCallback onEventUpdate;
-
+  Logger logger = Logger();
   String roomNumber;
 
   Signaling(this.roomNumber);
@@ -114,10 +114,9 @@ class Signaling {
 
     _remoteCandidates.clear();
     _socket.close();
-    print(doctorDisconnect);
+
     if (onStateChange != null) {
-      if (doctorDisconnect != null && doctorDisconnect == true) {
-        print("WHY THE FUCK");
+      if (doctorDisconnect) {
         onStateChange(SignalingState.ConnectionEndedByDoctor);
       } else {
         onStateChange(SignalingState.CallStateBye);
@@ -127,6 +126,11 @@ class Signaling {
 
   void onMessage(tag, message) async {
     switch (tag) {
+      case 'end_call':
+        {
+          bye(doctorDisconnect: true);
+        }
+        break;
       case 'offer':
         {
           var id = 'caller';
@@ -210,8 +214,8 @@ class Signaling {
   }
 
   void connect() async {
-    String socketsAddress = DotEnv().env['SOCKETS_ADDRESS'];
-
+    String socketsAddress = String.fromEnvironment('SOCKETS_ADDRESS',
+        defaultValue: DotEnv().env['SOCKETS_ADDRESS']);
     if (_socket != null) {
       _socket.close();
       _socket = null;
@@ -279,7 +283,7 @@ class Signaling {
       Logger logger = Logger();
       logger.i(state);
       if (state == RTCIceConnectionState.RTCIceConnectionStateClosed) {
-        bye(doctorDisconnect: true);
+        bye(doctorDisconnect: false);
       }
       if (state == RTCIceConnectionState.RTCIceConnectionStateConnected) {
         //close the timeout popup;
