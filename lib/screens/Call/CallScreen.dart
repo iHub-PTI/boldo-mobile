@@ -62,15 +62,12 @@ class _CallScreenState extends State<CallScreen> {
 
           case SignalingState.CallStateRinging:
           case SignalingState.ConnectionClosed:
-            print("CLOSED");
             break;
           case SignalingState.ConnectionError:
-            print("ERROR");
             break;
           case SignalingState.ConnectionOpen:
             break;
           case SignalingState.ConnectionEndedByDoctor:
-            print("ENDED BY DOCTOR");
             setState(() {
               _localRenderer.srcObject = null;
               _remoteRenderer.srcObject = null;
