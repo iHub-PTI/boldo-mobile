@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:logger/logger.dart';
 
 import 'websocket.dart';
 
@@ -14,6 +15,7 @@ enum SignalingState {
   ConnectionOpen,
   ConnectionClosed,
   ConnectionError,
+  ConnectionEndedByDoctor
 }
 
 /*
@@ -78,7 +80,7 @@ class Signaling {
     'optional': [],
   };
 
-  close() {
+  void close() {
     if (_localStream != null) {
       _localStream.dispose();
       _localStream = null;
@@ -100,7 +102,7 @@ class Signaling {
     }
   }
 
-  void bye() {
+  void bye({bool doctorDisconnect = false}) {
     if (_localStream != null) {
       _localStream.dispose();
       _localStream = null;
@@ -110,11 +112,17 @@ class Signaling {
       peerConnection.close();
     }
 
-    if (this.onStateChange != null) {
-      this.onStateChange(SignalingState.CallStateBye);
-    }
     _remoteCandidates.clear();
     _socket.close();
+    print(doctorDisconnect);
+    if (onStateChange != null) {
+      if (doctorDisconnect != null && doctorDisconnect == true) {
+        print("WHY THE FUCK");
+        onStateChange(SignalingState.ConnectionEndedByDoctor);
+      } else {
+        onStateChange(SignalingState.CallStateBye);
+      }
+    }
   }
 
   void onMessage(tag, message) async {
@@ -126,8 +134,8 @@ class Signaling {
           var callerID = message["caller"];
           var media = 'call';
 
-          if (this.onStateChange != null) {
-            this.onStateChange(SignalingState.CallStateNew);
+          if (onStateChange != null) {
+            onStateChange(SignalingState.CallStateNew);
           }
 
           var pc = await _createPeerConnection(id, media, false);
@@ -136,7 +144,7 @@ class Signaling {
           await pc.setRemoteDescription(
               RTCSessionDescription(sdp['sdp'], sdp['type']));
           await _createAnswer(id, pc, media, callerID);
-          if (this._remoteCandidates.length > 0) {
+          if (_remoteCandidates.isNotEmpty) {
             _remoteCandidates.forEach((candidate) async {
               await pc.addCandidate(candidate);
             });
@@ -179,8 +187,8 @@ class Signaling {
           String media = "video";
           bool useScreen = false;
           remoteUser = message;
-          if (this.onStateChange != null) {
-            this.onStateChange(SignalingState.CallStateNew);
+          if (onStateChange != null) {
+            onStateChange(SignalingState.CallStateNew);
           }
 
           _createPeerConnection(peerId, media, useScreen, isHost: false)
@@ -216,17 +224,17 @@ class Signaling {
 
     _socket.onMessage = (tag, message) {
       print('Received data: $tag - $message');
-      this.onMessage(tag, message);
+      onMessage(tag, message);
     };
 
     _socket.onClose = (int code, String reason) {
       print('Closed by server [$code => $reason]!');
-      if (this.onStateChange != null) {
-        this.onStateChange(SignalingState.ConnectionClosed);
+      if (onStateChange != null) {
+        onStateChange(SignalingState.ConnectionClosed);
       }
     };
 
-    await _socket.connect();
+    _socket.connect();
   }
 
   Future<MediaStream> createStream(media, userScreen) async {
@@ -247,13 +255,14 @@ class Signaling {
     MediaStream stream = userScreen
         ? await MediaDevices.getDisplayMedia(mediaConstraints)
         : await MediaDevices.getUserMedia(mediaConstraints);
-    if (this.onLocalStream != null) {
-      this.onLocalStream(stream);
+    if (onLocalStream != null) {
+      onLocalStream(stream);
     }
     return stream;
   }
 
-  _createPeerConnection(id, media, userScreen, {isHost = false}) async {
+  Future<dynamic> _createPeerConnection(id, media, userScreen,
+      {isHost = false}) async {
     if (media != 'data') _localStream = await createStream(media, userScreen);
     RTCPeerConnection pc = await createPeerConnection(_iceServers, _config);
     if (media != 'data') pc.addStream(_localStream);
@@ -267,28 +276,30 @@ class Signaling {
     };
 
     pc.onIceConnectionState = (state) {
-      if (state == RTCIceConnectionState.RTCIceConnectionStateDisconnected) {
-        //show timeout popup
-        print("DISCONNECED");
+      Logger logger = Logger();
+      logger.i(state);
+      if (state == RTCIceConnectionState.RTCIceConnectionStateClosed) {
+        bye(doctorDisconnect: true);
       }
       if (state == RTCIceConnectionState.RTCIceConnectionStateConnected) {
         //close the timeout popup;
         print("CONNECTED");
       }
-      if (state == RTCIceConnectionState.RTCIceConnectionStateClosed ||
-          state == RTCIceConnectionState.RTCIceConnectionStateFailed) {
+
+      if (state == RTCIceConnectionState.RTCIceConnectionStateFailed ||
+          state == RTCIceConnectionState.RTCIceConnectionStateDisconnected) {
         print("CLOSED OR FAILED");
         bye();
       }
     };
 
     pc.onAddStream = (stream) {
-      if (this.onAddRemoteStream != null) this.onAddRemoteStream(stream);
+      if (onAddRemoteStream != null) onAddRemoteStream(stream);
       //_remoteStreams.add(stream);
     };
 
     pc.onRemoveStream = (stream) {
-      if (this.onRemoveRemoteStream != null) this.onRemoveRemoteStream(stream);
+      if (onRemoveRemoteStream != null) onRemoveRemoteStream(stream);
       _remoteStreams.removeWhere((it) {
         return (it.id == stream.id);
       });
@@ -297,7 +308,8 @@ class Signaling {
     return pc;
   }
 
-  _createOffer(String id, RTCPeerConnection pc, String media) async {
+  Future<void> _createOffer(
+      String id, RTCPeerConnection pc, String media) async {
     try {
       RTCSessionDescription s =
           await pc.createOffer(media == 'data' ? _dcConstraints : _constraints);
@@ -310,7 +322,8 @@ class Signaling {
     }
   }
 
-  _createAnswer(String id, RTCPeerConnection pc, media, String callerID) async {
+  Future<void> _createAnswer(
+      String id, RTCPeerConnection pc, media, String callerID) async {
     try {
       RTCSessionDescription s = await pc
           .createAnswer(media == 'data' ? _dcConstraints : _constraints);
@@ -323,21 +336,21 @@ class Signaling {
     }
   }
 
-  _send(event, data) {
+  void _send(event, data) {
     _socket.send(event, data);
   }
 
-  emitOfferEvent(sdp) {
+  void emitOfferEvent(sdp) {
     _send('offer',
         {'caller': _socket.socket.id, "target": remoteUser, 'sdp': sdp});
   }
 
-  emitAnswerEvent(sdp, callerID) {
+  void emitAnswerEvent(sdp, callerID) {
     _send('answer',
         {'sdp': sdp, "target": callerID, "caller": _socket.socket.id});
   }
 
-  emitIceCandidateEvent(candidate) {
+  void emitIceCandidateEvent(candidate) {
     _send('ice-candidate', {'target': remoteUser, 'candidate': candidate});
   }
 }

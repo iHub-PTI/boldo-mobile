@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../constant.dart';
+import '../../constants.dart';
 import './BookingFinalScreen.dart';
 
 class BookingConfirmScreen extends StatefulWidget {
@@ -32,28 +32,28 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 18,
               ),
               TextButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.chevron_left_rounded,
                   size: 25,
-                  color: boldoTitleTextColor,
+                  color: Constants.extraColor400,
                 ),
                 label: Text(
                   'Reservar',
                   style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 18,
               ),
-              _DoctorProfileWidget(),
-              SizedBox(
+              const _DoctorProfileWidget(),
+              const SizedBox(
                 height: 8,
               ),
               Padding(
@@ -62,16 +62,16 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                   bookingHour: widget.bookingHour,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 50,
               ),
               Container(
                 padding: const EdgeInsets.only(left: 16, right: 16),
-                margin: EdgeInsets.only(bottom: 16),
+                margin: const EdgeInsets.only(bottom: 16),
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: boldoDarkPrimaryLighterColor,
+                    primary: Constants.primaryColor500,
                   ),
                   onPressed: () {
                     Navigator.push(
@@ -99,25 +99,25 @@ class _DoctorBookingInfoWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           "Fecha",
           style: boldoHeadingTextStyle,
         ),
-        SizedBox(
+        const SizedBox(
           height: 7,
         ),
         Text(
           "Lunes 7 de septiembre del 2020",
           style: boldoSubTextStyle.copyWith(fontSize: 16),
         ),
-        SizedBox(
+        const SizedBox(
           height: 24,
         ),
-        Text(
+        const Text(
           "Hora",
           style: boldoHeadingTextStyle,
         ),
-        SizedBox(
+        const SizedBox(
           height: 7,
         ),
         Text(
@@ -144,7 +144,8 @@ class _DoctorProfileWidget extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.only(top: 24, right: 19, bottom: 24, left: 19),
+            padding:
+                const EdgeInsets.only(top: 24, right: 19, bottom: 24, left: 19),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -154,7 +155,7 @@ class _DoctorProfileWidget extends StatelessWidget {
                     SvgPicture.asset(
                       'assets/images/ProfileImage.svg',
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 16,
                     ),
                     Column(
@@ -166,19 +167,19 @@ class _DoctorProfileWidget extends StatelessWidget {
                           style: boldoHeadingTextStyle.copyWith(
                               fontWeight: FontWeight.normal),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 5,
                         ),
                         Text(
                           "Dermatología",
                           style: boldoSubTextStyle.copyWith(
-                              color: boldoCategoryColor),
+                              color: Constants.otherColor100),
                         ),
                       ],
                     )
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 16,
                 ),
                 Text(

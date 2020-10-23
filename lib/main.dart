@@ -23,7 +23,7 @@ void main() async {
 
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   bool onboardingCompleted = prefs.getBool("onboardingCompleted") ?? false;
-  final storage = new FlutterSecureStorage();
+  const storage = FlutterSecureStorage();
   String value = await storage.read(key: "accessToken");
   runApp(MyApp(
     onboardingCompleted: onboardingCompleted,
@@ -70,6 +70,7 @@ class FullApp extends StatelessWidget {
     return MaterialApp(
       title: 'BOLDO',
       theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
         textTheme: GoogleFonts.interTextTheme(
           Theme.of(context).textTheme,
         ),

@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../constant.dart';
+import '../../../constants.dart';
 import '../../Booking/BookingScreen.dart';
 import '../../DoctorProfile/DoctorProfileScreen.dart';
 import '../../../models/Doctor.dart';
@@ -24,13 +24,14 @@ class _DoctorsTabState extends State<DoctorsTab> {
     super.initState();
   }
 
-  getDoctors() async {
+  void getDoctors() async {
     try {
       String serverAddress = DotEnv().env['SERVER_ADDRESS'];
 
       Response response = await Dio().get("$serverAddress/doctors");
-
+      print(response.statusCode);
       if (response.statusCode == 200) {
+        print("yeah...");
         List<Doctor> doctorsList = List<Doctor>.from(
             response.data["doctors"].map((i) => Doctor.fromJson(i)));
 
@@ -57,7 +58,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.symmetric(vertical: 20),
         width: MediaQuery.of(context).size.width,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,12 +68,12 @@ class _DoctorsTabState extends State<DoctorsTab> {
               child: Text("Médicos",
                   style: boldoHeadingTextStyle.copyWith(fontSize: 20)),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Expanded(
               child: loading
-                  ? Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
                       itemCount: doctors.length,
                       itemBuilder: (BuildContext context, int index) {
@@ -114,7 +115,7 @@ class _DoctorCard extends StatelessWidget {
                 SvgPicture.asset(
                   'assets/images/ProfileImage.svg',
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 16,
                 ),
                 Column(
@@ -128,13 +129,13 @@ class _DoctorCard extends StatelessWidget {
                           style: boldoHeadingTextStyle,
                         ),
                       ),
-                      Text(
+                      const Text(
                         "Dermatología",
                         style: boldoSubTextStyle,
                       ),
                       Text("Disponible Hoy!",
                           style: boldoSubTextStyle.copyWith(
-                              fontSize: 12, color: boldoDarkPrimaryColor))
+                              fontSize: 12, color: Constants.secondaryColor500))
                     ])
               ],
             ),
@@ -142,7 +143,7 @@ class _DoctorCard extends StatelessWidget {
           Container(
             width: double.infinity,
             height: 1,
-            color: Color(0xffE5E7EB),
+            color: const Color(0xffE5E7EB),
           ),
           Container(
             height: 52,
@@ -160,7 +161,7 @@ class _DoctorCard extends StatelessWidget {
                           ),
                         );
                       },
-                      child: Text(
+                      child: const Text(
                         'Ver Perfil',
                         style: boldoHeadingTextStyle,
                       ),
@@ -170,7 +171,7 @@ class _DoctorCard extends StatelessWidget {
                 Container(
                   height: double.infinity,
                   width: 1,
-                  color: Color(0xffE5E7EB),
+                  color: const Color(0xffE5E7EB),
                 ),
                 Expanded(
                   child: SizedBox(
@@ -184,7 +185,7 @@ class _DoctorCard extends StatelessWidget {
                           ),
                         );
                       },
-                      child: Text(
+                      child: const Text(
                         'Reservar',
                         style: boldoHeadingTextStyle,
                       ),

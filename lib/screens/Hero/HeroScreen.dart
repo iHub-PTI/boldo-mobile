@@ -6,7 +6,7 @@ import 'package:page_view_indicator/page_view_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Dashboard/DashboardScreen.dart';
-import '../../constant.dart';
+import '../../constants.dart';
 
 class HeroScreen extends StatelessWidget {
   final List<CarouselSlide> items = [
@@ -34,12 +34,12 @@ class HeroScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-          padding: EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 20),
           width: MediaQuery.of(context).size.width,
           child: SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 45,
                 ),
                 Align(
@@ -67,7 +67,7 @@ class HeroScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 ValueListenableBuilder(
@@ -76,7 +76,7 @@ class HeroScreen extends StatelessWidget {
                     return _buildPageViewIndicator(context, index);
                   },
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 48,
                 ),
                 Row(
@@ -84,7 +84,7 @@ class HeroScreen extends StatelessWidget {
                   children: [
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          primary: boldoDarkPrimaryLighterColor,
+                          primary: Constants.primaryColor500,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
@@ -94,8 +94,8 @@ class HeroScreen extends StatelessWidget {
                               await SharedPreferences.getInstance();
                           prefs.setBool("onboardingCompleted", true);
                         },
-                        child: Text("Iniciar Sesión")),
-                    SizedBox(
+                        child: const Text("Iniciar Sesión")),
+                    const SizedBox(
                       width: 30,
                     ),
                     OutlineButton(
@@ -107,14 +107,14 @@ class HeroScreen extends StatelessWidget {
                             await SharedPreferences.getInstance();
                         prefs.setBool("onboardingCompleted", true);
                       },
-                      child: Text("Registrarse"),
+                      child: const Text("Registrarse"),
                     )
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 48,
                 ),
-                Text(
+                const Text(
                   "¿Quieres dar un vistazo?",
                   style: boldoSubTextStyle,
                   textAlign: TextAlign.center,
@@ -133,8 +133,8 @@ class HeroScreen extends StatelessWidget {
                   },
                   child: Text(
                     'Explora Boldo',
-                    style:
-                        boldoSubTextStyle.copyWith(color: boldoSecondaryStrong),
+                    style: boldoSubTextStyle.copyWith(
+                        color: Constants.secondaryColor500),
                   ),
                 ),
               ],
@@ -152,8 +152,8 @@ class HeroScreen extends StatelessWidget {
           normalBuilder: (animationController, index) => Circle(
             size: 10,
             color: index < indexPageView
-                ? boldoSecondaryStrong
-                : boldoMainGrayColor,
+                ? Constants.secondaryColor500
+                : Constants.extraColor200,
           ),
           highlightedBuilder: (animationController, index) => ScaleTransition(
             scale: CurvedAnimation(
@@ -163,20 +163,20 @@ class HeroScreen extends StatelessWidget {
             child: Container(
               height: 20,
               width: 20,
-              decoration: BoxDecoration(
-                  color: boldoSecondaryWeak,
+              decoration: const BoxDecoration(
+                  color: Constants.secondaryColor200,
                   borderRadius: BorderRadius.all(Radius.circular(20))),
               child: Align(
                 alignment: Alignment.center,
                 child: Circle(
                   size: 10,
-                  color: boldoSecondaryStrong,
+                  color: Constants.secondaryColor500,
                 ),
               ),
             ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 20,
         ),
         SizedBox(

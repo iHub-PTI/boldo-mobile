@@ -7,7 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/auth_provider.dart';
-import '../../constant.dart';
+import '../../constants.dart';
 import './tabs/HomeTab.dart';
 import './tabs/DoctorsTab.dart';
 import 'tabs/SettingTab.dart';
@@ -33,7 +33,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     FlutterAppAuth appAuth = FlutterAppAuth();
 
-    final storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     try {
       final AuthorizationTokenResponse result =
           await appAuth.authorizeAndExchangeCode(
@@ -71,7 +71,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
       if (!isAuthenticated) {
         authenticate();
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       }
 
       return SettingsTab();
@@ -99,8 +99,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   'assets/icon/homeIcon.svg',
                   semanticsLabel: 'Doctor Icon',
                   color: _selectedIndex == 0
-                      ? boldoDarkPrimaryColor
-                      : boldoMainGrayColor,
+                      ? Constants.secondaryColor500
+                      : Constants.extraColor200,
                 ),
                 label: 'Inicio',
               ),
@@ -109,8 +109,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   'assets/icon/doctorIcon.svg',
                   semanticsLabel: 'Doctor Icon',
                   color: _selectedIndex == 1
-                      ? boldoDarkPrimaryColor
-                      : boldoMainGrayColor,
+                      ? Constants.secondaryColor500
+                      : Constants.extraColor200,
                 ),
                 label: 'Médicos',
               ),
@@ -121,14 +121,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       : 'assets/icon/settingsIcon.svg',
                   semanticsLabel: 'Doctor Icon',
                   color: _selectedIndex == 2
-                      ? boldoDarkPrimaryColor
-                      : boldoMainGrayColor,
+                      ? Constants.secondaryColor500
+                      : Constants.extraColor200,
                 ),
                 label: !isAuthenticated ? 'Cuenta' : "Config",
               )
             ],
             currentIndex: _selectedIndex,
-            selectedItemColor: boldoDarkPrimaryColor,
+            selectedItemColor: Constants.secondaryColor500,
             onTap: (index) => setState(() {
               _selectedIndex = index;
             }),

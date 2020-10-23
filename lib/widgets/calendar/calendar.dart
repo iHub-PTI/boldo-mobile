@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../models/CalendarItem.dart';
 import './utils/monthBuilder.dart';
-import '../../constant.dart';
+import '../../constants.dart';
 
 class CustomCalendar extends StatefulWidget {
   final DateTime selectedDate;
@@ -31,7 +31,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
     super.initState();
   }
 
-  getItemsForDay({@required DateTime itemDate}) {
+  void getItemsForDay({@required DateTime itemDate}) {
     //set the calendaritem as selected
     setState(() {
       selectedItem = itemDate;
@@ -39,17 +39,17 @@ class _CustomCalendarState extends State<CustomCalendar> {
     //fetch the data related to the calendarItem.
   }
 
-  getCalendarItems({DateTime selectedDate}) async {
+  void getCalendarItems({DateTime selectedDate}) async {
     setState(() {
       _calendarLoading = true;
       selectedMonth = selectedDate;
     });
 
-    var newState = await monthBuilder(buildDate: selectedDate);
+    var chunkArrays = monthBuilder(buildDate: selectedDate);
 
     setState(() {
       _calendarLoading = false;
-      calendarItems = newState["chunkArrays"];
+      calendarItems = chunkArrays;
     });
   }
 
@@ -68,11 +68,11 @@ class _CustomCalendarState extends State<CustomCalendar> {
                       selectedDate: DateTime(
                           selectedMonth.year, selectedMonth.month - 1));
                 },
-                icon: Icon(
+                icon: const Icon(
                   Icons.chevron_left_rounded,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               Text(
@@ -80,7 +80,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                 style: boldoHeadingTextStyle.copyWith(
                     fontWeight: FontWeight.normal),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               IconButton(
@@ -90,17 +90,17 @@ class _CustomCalendarState extends State<CustomCalendar> {
                         selectedDate: DateTime(
                             selectedMonth.year, selectedMonth.month + 1));
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.chevron_right_rounded,
                   )),
             ],
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Container(
-          constraints: BoxConstraints(
+          constraints: const BoxConstraints(
             maxWidth: 350,
           ),
           child: Column(
@@ -113,11 +113,12 @@ class _CustomCalendarState extends State<CustomCalendar> {
                         (e) => Container(
                           height: 40,
                           width: 40,
-                          margin: EdgeInsets.all(4),
+                          margin: const EdgeInsets.all(4),
                           child: Center(
                             child: Text(
                               e,
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -125,13 +126,13 @@ class _CustomCalendarState extends State<CustomCalendar> {
                       .toList()
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 8,
               ),
               if (_calendarLoading == true)
                 Container(
                     height: 300,
-                    child: Center(child: CircularProgressIndicator())),
+                    child: const Center(child: CircularProgressIndicator())),
               if (_calendarLoading == false)
                 for (int i = 0; i < 6; i++)
                   Row(
@@ -188,7 +189,7 @@ class CalendarDay extends StatelessWidget {
       child: Container(
         height: 40,
         width: 40,
-        margin: EdgeInsets.all(4),
+        margin: const EdgeInsets.all(4),
         child: Center(
           child: itemEmpty
               ? Container()
@@ -202,20 +203,20 @@ class CalendarDay extends StatelessWidget {
                                         DateTime(now.year, now.month, now.day))
                                     .inDays ==
                                 0
-                            ? boldoCategoryColor
+                            ? Constants.otherColor100
                             : !calendarItem.itemDate.isAfter(
                                     DateTime(now.year, now.month, now.day - 1))
-                                ? boldoMainGrayColor
-                                : boldoTitleTextColor,
+                                ? Constants.extraColor200
+                                : Constants.extraColor400,
                     fontSize: 17,
                   ),
                 ),
         ),
         decoration: BoxDecoration(
             color: !itemEmpty && calendarItem.itemDate == selectedItem
-                ? boldoCategoryColor
+                ? Constants.otherColor100
                 : Colors.transparent,
-            borderRadius: BorderRadius.all(Radius.circular(20))),
+            borderRadius: const BorderRadius.all(Radius.circular(20))),
       ),
     );
   }

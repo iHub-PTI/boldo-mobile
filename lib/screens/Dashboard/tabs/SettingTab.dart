@@ -39,7 +39,7 @@ class _SettingsTabState extends State<SettingsTab> {
                 onPressed: () async {
                   Provider.of<AuthProvider>(context, listen: false)
                       .setAuthenticated(isAuthenticated: false);
-                  final storage = new FlutterSecureStorage();
+                  const storage = FlutterSecureStorage();
                   await storage.deleteAll();
                   Navigator.push(
                     context,
@@ -48,7 +48,7 @@ class _SettingsTabState extends State<SettingsTab> {
                     ),
                   );
                 },
-                child: Text("Logout"),
+                child: const Text("Logout"),
               ),
               Text(
                 "Coming Soon!",

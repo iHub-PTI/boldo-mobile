@@ -1,0 +1,69 @@
+analyzer:
+  strong-mode:
+    implicit-dynamic: true
+  errors:
+    missing_required_param: error
+    missing_return: error
+    todo: ignore
+  exclude:
+    - 'bin/cache/**'
+linter:
+  rules:
+    - avoid_empty_else
+    - avoid_slow_async_io
+    - cancel_subscriptions
+    - control_flow_in_finally
+    - empty_statements
+    - hash_and_equals
+    - iterable_contains_unrelated_type
+    - list_remove_unrelated_type
+    - no_adjacent_strings_in_list
+    - no_duplicate_case_values
+    - test_types_in_equals
+    - throw_in_finally
+    - unrelated_type_equality_checks
+    - valid_regexps
+
+    # === style rules ===
+    - always_declare_return_types
+    - always_require_non_null_named_parameters
+    - annotate_overrides
+    - avoid_init_to_null
+    - avoid_null_checks_in_equality_operators
+    - avoid_return_types_on_setters
+    - await_only_futures
+    - camel_case_types
+    - empty_catches
+    - empty_constructor_bodies
+    - implementation_imports
+    - library_names
+    - library_prefixes
+    - non_constant_identifier_names
+    - only_throw_errors
+    - overridden_fields
+    - package_api_docs
+    - package_prefixed_library_names
+    - prefer_adjacent_string_concatenation
+    - prefer_collection_literals
+    - prefer_conditional_assignment
+    - prefer_const_constructors
+    - prefer_contains
+    - prefer_equal_for_default_values
+    - prefer_initializing_formals
+    - prefer_is_empty
+    - prefer_is_not_empty
+    - prefer_void_to_null
+    - slash_for_doc_comments
+    - curly_braces_in_flow_control_structures
+    - type_init_formals
+    - unnecessary_brace_in_string_interps
+    - unnecessary_const
+    - unnecessary_getters_setters
+    - unnecessary_lambdas
+    - unnecessary_new
+    - unnecessary_null_aware_assignments
+    - unnecessary_null_in_if_null_operators
+    - unnecessary_statements
+    - unnecessary_this
+
+    - package_names
