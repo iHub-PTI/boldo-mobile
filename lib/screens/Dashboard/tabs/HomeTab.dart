@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'dart:math';
 
 import '../../Call/CallScreen.dart';
 import '../../../constants.dart';
@@ -62,76 +61,76 @@ class _HomeTabState extends State<HomeTab> {
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,
-        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-          Card(
-            elevation: 5,
-            margin:
-                const EdgeInsets.only(bottom: 24, left: 16, right: 16, top: 24),
-            shape: RoundedRectangleBorder(
-              side: const BorderSide(color: Colors.white70, width: 1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  height: 105,
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        child: ListView(children: [
+          for (String appointment in ["1", "2", "3"])
+            Card(
+              elevation: 5,
+              margin: const EdgeInsets.only(
+                  bottom: 24, left: 16, right: 16, top: 24),
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(color: Colors.white70, width: 1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    height: 105,
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const Text(
+                            "Sala de espera",
+                            style: boldoHeadingTextStyle,
+                          ),
+                          const SizedBox(
+                            height: 3,
+                          ),
+                          Text(
+                              "La sala de espera de tu consulta con Dr. House ya se encuentra habilitada. ",
+                              style: boldoSubTextStyle.copyWith(
+                                height: 1.2,
+                                fontSize: 15,
+                              ))
+                        ]),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 1,
+                    color: const Color(0xffE5E7EB),
+                  ),
+                  Container(
+                    height: 52,
+                    child: Row(
                       children: [
-                        const Text(
-                          "Sala de espera",
-                          style: boldoHeadingTextStyle,
-                        ),
-                        const SizedBox(
-                          height: 3,
-                        ),
-                        Text(
-                            "La sala de espera de tu consulta con Dr. House ya se encuentra habilitada. ",
-                            style: boldoSubTextStyle.copyWith(
-                              height: 1.2,
-                              fontSize: 15,
-                            ))
-                      ]),
-                ),
-                Container(
-                  width: double.infinity,
-                  height: 1,
-                  color: const Color(0xffE5E7EB),
-                ),
-                Container(
-                  height: 52,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 52,
-                          child: TextButton(
-                            onPressed: () {
-                              String roomNumber =
-                                  Random().nextInt(123).toString();
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        CallScreen(roomNumber: roomNumber),
-                                  ));
-                            },
-                            child: Text(
-                              'Ingresar',
-                              style: boldoHeadingTextStyle.copyWith(
-                                  color: Constants.primaryColor500),
+                        Expanded(
+                          child: SizedBox(
+                            height: 52,
+                            child: TextButton(
+                              onPressed: () {
+                                String appointmentId = appointment;
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CallScreen(
+                                          appointmentId: appointmentId),
+                                    ));
+                              },
+                              child: Text(
+                                'Ingresar',
+                                style: boldoHeadingTextStyle.copyWith(
+                                    color: Constants.primaryColor500),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          )
+                ],
+              ),
+            )
 
           // Text(
           //   "Agrega tu primera cita",

@@ -26,6 +26,7 @@ typedef void StreamStateCallback(MediaStream stream);
 typedef void OtherEventCallback(dynamic event);
 
 class Signaling {
+  bool _inCalling = false;
   SimpleWebSocket _socket;
   String remoteUser;
   RTCPeerConnection peerConnection;
@@ -41,9 +42,9 @@ class Signaling {
   OtherEventCallback onPeersUpdate;
   OtherEventCallback onEventUpdate;
   Logger logger = Logger();
-  String roomNumber;
+  String appointmentId;
 
-  Signaling(this.roomNumber);
+  Signaling(this.appointmentId);
 
   Map<String, dynamic> _iceServers = {
     'iceServers': [
@@ -124,30 +125,39 @@ class Signaling {
     }
   }
 
+  void emitEndCallEvent() {
+    _send('end call', appointmentId);
+  }
+
+  void leaveWaitingRoom() {
+    _send('patient not ready', appointmentId);
+  }
+
   void onMessage(tag, message) async {
     switch (tag) {
-      case 'end_call':
+      case 'find patient':
+        {
+          if (_inCalling) return;
+          //if the patient is in the waiting room then emit "patient ready"
+          _send('patient ready', appointmentId);
+        }
+        break;
+      case 'end call':
         {
           bye(doctorDisconnect: true);
         }
         break;
       case 'offer':
         {
-          var id = 'caller';
           var sdp = message["sdp"];
-          var callerID = message["caller"];
           var media = 'call';
 
-          if (onStateChange != null) {
-            onStateChange(SignalingState.CallStateNew);
-          }
-
-          var pc = await _createPeerConnection(id, media, false);
+          var pc = await _createPeerConnection(media, false);
           peerConnection = pc;
 
           await pc.setRemoteDescription(
               RTCSessionDescription(sdp['sdp'], sdp['type']));
-          await _createAnswer(id, pc, media, callerID);
+          await _createAnswer(pc, media);
           if (_remoteCandidates.isNotEmpty) {
             _remoteCandidates.forEach((candidate) async {
               await pc.addCandidate(candidate);
@@ -187,19 +197,19 @@ class Signaling {
         break;
       case 'call partner':
         {
-          String peerId = message;
           String media = "video";
           bool useScreen = false;
           remoteUser = message;
           if (onStateChange != null) {
             onStateChange(SignalingState.CallStateNew);
           }
+          _inCalling = true;
+          _send('patient in call', appointmentId);
 
-          _createPeerConnection(peerId, media, useScreen, isHost: false)
-              .then((pc) {
+          _createPeerConnection(media, useScreen, isHost: false).then((pc) {
             peerConnection = pc;
 
-            _createOffer(peerId, pc, media);
+            _createOffer(pc, media);
           });
         }
         break;
@@ -216,11 +226,12 @@ class Signaling {
   void connect() async {
     String socketsAddress = String.fromEnvironment('SOCKETS_ADDRESS',
         defaultValue: DotEnv().env['SOCKETS_ADDRESS']);
+
     if (_socket != null) {
       _socket.close();
       _socket = null;
     }
-    _socket = SimpleWebSocket(socketsAddress, roomNumber);
+    _socket = SimpleWebSocket(socketsAddress, appointmentId);
 
     _socket.onOpen = () {
       this?.onStateChange(SignalingState.ConnectionOpen);
@@ -265,7 +276,7 @@ class Signaling {
     return stream;
   }
 
-  Future<dynamic> _createPeerConnection(id, media, userScreen,
+  Future<dynamic> _createPeerConnection(media, userScreen,
       {isHost = false}) async {
     if (media != 'data') _localStream = await createStream(media, userScreen);
     RTCPeerConnection pc = await createPeerConnection(_iceServers, _config);
@@ -312,29 +323,30 @@ class Signaling {
     return pc;
   }
 
-  Future<void> _createOffer(
-      String id, RTCPeerConnection pc, String media) async {
+  Future<void> _createOffer(RTCPeerConnection pc, String media) async {
     try {
       RTCSessionDescription s =
           await pc.createOffer(media == 'data' ? _dcConstraints : _constraints);
       pc.setLocalDescription(s);
 
-      final sdp = {'sdp': s.sdp, 'type': s.type};
+      final sdp = {
+        'sdp': s.sdp,
+        'type': s.type,
+      };
       emitOfferEvent(sdp);
     } catch (e) {
       print(e.toString());
     }
   }
 
-  Future<void> _createAnswer(
-      String id, RTCPeerConnection pc, media, String callerID) async {
+  Future<void> _createAnswer(RTCPeerConnection pc, media) async {
     try {
       RTCSessionDescription s = await pc
           .createAnswer(media == 'data' ? _dcConstraints : _constraints);
       pc.setLocalDescription(s);
 
       final sdp = {'sdp': s.sdp, 'type': s.type};
-      emitAnswerEvent(sdp, callerID);
+      emitAnswerEvent(sdp);
     } catch (e) {
       print(e.toString());
     }
@@ -345,16 +357,18 @@ class Signaling {
   }
 
   void emitOfferEvent(sdp) {
-    _send('offer',
-        {'caller': _socket.socket.id, "target": remoteUser, 'sdp': sdp});
+    _send('offer', {"appointmentId": appointmentId, 'sdp': sdp});
   }
 
-  void emitAnswerEvent(sdp, callerID) {
-    _send('answer',
-        {'sdp': sdp, "target": callerID, "caller": _socket.socket.id});
+  void emitAnswerEvent(sdp) {
+    _send('answer', {
+      'sdp': sdp,
+      "appointmentId": appointmentId,
+    });
   }
 
   void emitIceCandidateEvent(candidate) {
-    _send('ice-candidate', {'target': remoteUser, 'candidate': candidate});
+    _send('ice-candidate',
+        {'appointmentId': appointmentId, 'candidate': candidate});
   }
 }

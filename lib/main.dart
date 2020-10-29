@@ -13,7 +13,6 @@ import 'package:logger/logger.dart';
 import './provider/auth_provider.dart';
 import './screens/Dashboard/DashboardScreen.dart';
 import './screens/Hero/HeroScreen.dart';
-import './constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

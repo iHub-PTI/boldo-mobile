@@ -8,12 +8,12 @@ typedef void OnOpenCallback();
 class SimpleWebSocket {
   String url;
   io.Socket socket;
-  String roomNumber;
+  String appointmentId;
   OnOpenCallback onOpen;
   OnMessageCallback onMessage;
   OnCloseCallback onClose;
   Logger logger = Logger();
-  SimpleWebSocket(this.url, this.roomNumber);
+  SimpleWebSocket(this.url, this.appointmentId);
 
   void connect() async {
     try {
@@ -25,16 +25,18 @@ class SimpleWebSocket {
 
       // Dart client
       socket.on('connect', (_) {
-        print('connected');
-
+        socket.emit('patient ready', appointmentId);
         onOpen();
       });
 
-      socket.on('end_call', (data) {
-        onMessage('end_call', data);
+      socket.on('find patient', (data) {
+        onMessage('find patient', data);
       });
 
-      socket.emit('start call', roomNumber);
+      socket.on('end call', (data) {
+        onMessage('end call', data);
+      });
+
       socket.on('call partner', (data) {
         onMessage('call partner', data);
       });
@@ -58,8 +60,7 @@ class SimpleWebSocket {
         print('disconnect');
       });
     } catch (e) {
-      print(e);
-      // this.onClose(500, e.toString());
+      logger.e(e);
     }
   }
 
@@ -73,7 +74,8 @@ class SimpleWebSocket {
   void close() {
     if (socket != null) {
       send("disconnect", {});
-      socket.close();
+      socket.disconnect();
+      socket.clearListeners();
     }
   }
 }

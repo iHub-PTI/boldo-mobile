@@ -6,8 +6,8 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import '../../utils/signaling.dart';
 
 class CallScreen extends StatefulWidget {
-  CallScreen({Key key, @required this.roomNumber}) : super(key: key);
-  final String roomNumber;
+  CallScreen({Key key, @required this.appointmentId}) : super(key: key);
+  final String appointmentId;
   @override
   _CallScreenState createState() => _CallScreenState();
 }
@@ -41,7 +41,7 @@ class _CallScreenState extends State<CallScreen> {
 
   void _connect() async {
     if (_signaling == null) {
-      _signaling = Signaling(widget.roomNumber)..connect();
+      _signaling = Signaling(widget.appointmentId)..connect();
 
       _signaling.onStateChange = (SignalingState state) async {
         switch (state) {
@@ -94,11 +94,16 @@ class _CallScreenState extends State<CallScreen> {
     }
   }
 
-  void _hangUp() {
+  void _cleanUp() {
     if (_signaling != null) {
       _signaling.bye(doctorDisconnect: false);
-      Navigator.pop(context);
     }
+  }
+
+  void _hangUp() {
+    _signaling.emitEndCallEvent();
+    _cleanUp();
+    Navigator.of(context).pop();
   }
 
   void _switchCamera() {
@@ -115,7 +120,14 @@ class _CallScreenState extends State<CallScreen> {
             context: context, text: "Are you sure you want to exit the call?");
 
         if (popupResonse) {
-          _hangUp();
+          if (_inCalling) {
+            //emit end call event
+            _hangUp();
+          } else {
+            //emit patient not ready event
+            _signaling.leaveWaitingRoom();
+            _cleanUp();
+          }
         }
 
         return popupResonse;
