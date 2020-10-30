@@ -7,12 +7,16 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter_appauth/flutter_appauth.dart';
 
+import './network/http.dart';
 import './provider/auth_provider.dart';
 import './screens/Dashboard/DashboardScreen.dart';
 import './screens/Hero/HeroScreen.dart';
+
+final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +28,83 @@ void main() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   bool onboardingCompleted = prefs.getBool("onboardingCompleted") ?? false;
   const storage = FlutterSecureStorage();
-  String value = await storage.read(key: "accessToken");
+  String value = await storage.read(key: "access_token");
+
+  String baseUrl = String.fromEnvironment('SERVER_ADDRESS',
+      defaultValue: DotEnv().env['SERVER_ADDRESS']);
+
+  dio.options.baseUrl = baseUrl;
+
+  String accessToken;
+  FlutterAppAuth appAuth = FlutterAppAuth();
+  //setup interceptors
+  dio.interceptors
+      .add(InterceptorsWrapper(onRequest: (RequestOptions options) async {
+    accessToken ??= await storage.read(key: "access_token");
+    options.headers["authorization"] = "bearer $accessToken";
+
+    return options;
+  }, onError: (DioError error) async {
+    if (error.response?.statusCode == 403) {
+      try {
+        await storage.deleteAll();
+        accessToken = null;
+        navKey.currentState.push(
+          MaterialPageRoute(
+            builder: (context) => DashboardScreen(setLoggedOut: true),
+          ),
+        );
+      } catch (e) {
+        print(e);
+      }
+    }
+    if (error.response?.statusCode == 401) {
+      RequestOptions options = error.response.request;
+      if ("bearer $accessToken" != options.headers["authorization"]) {
+        options.headers["authorization"] = "bearer $accessToken";
+        return dio.request(options.path, options: options);
+      }
+      dio.lock();
+      dio.interceptors.responseLock.lock();
+      dio.interceptors.errorLock.lock();
+
+      String keycloakRealmAddress = String.fromEnvironment(
+          'KEYCLOAK_REALM_ADDRESS',
+          defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
+      final String refreshToken = await storage.read(key: "refresh_token");
+
+      try {
+        final TokenResponse result = await appAuth.token(TokenRequest(
+            'boldo-patient', 'com.penguin.boldo:/login',
+            discoveryUrl:
+                '$keycloakRealmAddress/.well-known/openid-configuration',
+            refreshToken: refreshToken,
+            scopes: ['openid', 'offline_access']));
+        await storage.write(key: "access_token", value: result.accessToken);
+        await storage.write(key: "refresh_token", value: result.refreshToken);
+        accessToken = result.accessToken;
+        dio.unlock();
+        dio.interceptors.responseLock.unlock();
+        dio.interceptors.errorLock.unlock();
+        //retry request
+        return dio.request(options.path, options: options);
+      } catch (e) {
+        dio.unlock();
+        dio.interceptors.responseLock.unlock();
+        dio.interceptors.errorLock.unlock();
+        await storage.deleteAll();
+        accessToken = null;
+        navKey.currentState.push(
+          MaterialPageRoute(
+            builder: (context) => DashboardScreen(setLoggedOut: true),
+          ),
+        );
+        return error;
+      }
+    }
+    return error;
+  }));
+
   runApp(MyApp(
     onboardingCompleted: onboardingCompleted,
     session: value,
@@ -68,6 +148,7 @@ class FullApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navKey,
       title: 'Boldo',
       theme: ThemeData(
         primaryColor: Colors.white,

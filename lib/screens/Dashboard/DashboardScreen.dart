@@ -13,9 +13,8 @@ import './tabs/DoctorsTab.dart';
 import 'tabs/SettingTab.dart';
 
 class DashboardScreen extends StatefulWidget {
-  DashboardScreen({
-    Key key,
-  }) : super(key: key);
+  final bool setLoggedOut;
+  DashboardScreen({Key key, this.setLoggedOut = false}) : super(key: key);
 
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
@@ -27,6 +26,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
 
   GlobalKey scaffoldKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.setLoggedOut) {
+      Future.microtask(() => Provider.of<AuthProvider>(context, listen: false)
+          .setAuthenticated(isAuthenticated: false));
+    }
+  }
 
   Future<void> authenticate() async {
     String keycloakRealmAddress = String.fromEnvironment(
@@ -46,8 +54,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             allowInsecureConnections: true),
       );
       logger.i("Logged In");
-      await storage.write(key: "accessToken", value: result.accessToken);
-      await storage.write(key: "refreshToken", value: result.refreshToken);
+      await storage.write(key: "access_token", value: result.accessToken);
+      await storage.write(key: "refresh_token", value: result.refreshToken);
 
       Provider.of<AuthProvider>(context, listen: false)
           .setAuthenticated(isAuthenticated: true);

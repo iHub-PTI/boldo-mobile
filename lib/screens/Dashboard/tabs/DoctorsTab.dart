@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../constants.dart';
 import '../../Booking/BookingScreen.dart';
 import '../../DoctorProfile/DoctorProfileScreen.dart';
 import '../../../models/Doctor.dart';
+import '../../../network/http.dart';
 
 class DoctorsTab extends StatefulWidget {
   DoctorsTab({Key key}) : super(key: key);
@@ -26,13 +26,8 @@ class _DoctorsTabState extends State<DoctorsTab> {
 
   void getDoctors() async {
     try {
-      String serverAddress = String.fromEnvironment('SERVER_ADDRESS',
-          defaultValue: DotEnv().env['SERVER_ADDRESS']);
-
-      Response response = await Dio().get("$serverAddress/doctors");
-      print(response.statusCode);
+      Response response = await dio.get("/doctors");
       if (response.statusCode == 200) {
-        print("yeah...");
         List<Doctor> doctorsList = List<Doctor>.from(
             response.data["doctors"].map((i) => Doctor.fromJson(i)));
 

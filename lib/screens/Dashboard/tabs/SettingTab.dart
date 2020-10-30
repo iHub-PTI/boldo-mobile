@@ -2,10 +2,10 @@ import 'package:boldo/screens/Dashboard/DashboardScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-
+import 'package:dio/dio.dart';
+import '../../../network/http.dart';
 import '../../../provider/auth_provider.dart';
 
 class SettingsTab extends StatefulWidget {
@@ -49,6 +49,17 @@ class _SettingsTabState extends State<SettingsTab> {
                   );
                 },
                 child: const Text("Logout"),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    Response response = await dio.get("/me");
+                    logger.i(response);
+                  } catch (e) {
+                    logger.e(e);
+                  }
+                },
+                child: const Text("GET AUTH DATA"),
               ),
               Text(
                 "Coming Soon!",
