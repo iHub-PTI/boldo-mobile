@@ -130,11 +130,17 @@ class Signaling {
   }
 
   void leaveWaitingRoom() {
-    _send('patient not ready', appointmentId);
+    _send('peer not ready', appointmentId);
   }
 
   void onMessage(tag, message) async {
     switch (tag) {
+      case 'connect error':
+        {
+          //move patient out of the room
+          onStateChange(SignalingState.ConnectionError);
+        }
+        break;
       case 'find patient':
         {
           if (_inCalling) return;

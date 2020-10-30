@@ -54,7 +54,9 @@ class SimpleWebSocket {
       });
 
       socket.on('exception', (e) => print('Exception: $e'));
-      socket.on('connect_error', (e) => print('Connect error: $e'));
+      socket.on('connect_error', (e) {
+        onMessage('connect error', e);
+      });
 
       socket.on('disconnect', (e) {
         print('disconnect');

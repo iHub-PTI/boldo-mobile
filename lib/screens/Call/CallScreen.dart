@@ -64,6 +64,7 @@ class _CallScreenState extends State<CallScreen> {
           case SignalingState.ConnectionClosed:
             break;
           case SignalingState.ConnectionError:
+            Navigator.pop(context);
             break;
           case SignalingState.ConnectionOpen:
             break;
@@ -124,7 +125,7 @@ class _CallScreenState extends State<CallScreen> {
             //emit end call event
             _hangUp();
           } else {
-            //emit patient not ready event
+            //emit peer not ready event
             _signaling.leaveWaitingRoom();
             _cleanUp();
           }
