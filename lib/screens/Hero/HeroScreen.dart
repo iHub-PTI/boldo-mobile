@@ -126,10 +126,11 @@ class HeroScreen extends StatelessWidget {
                     prefs.setBool("onboardingCompleted", true);
 
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DashboardScreen(),
-                        ));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DashboardScreen(),
+                      ),
+                    );
                   },
                   child: Text(
                     'Explora Boldo',

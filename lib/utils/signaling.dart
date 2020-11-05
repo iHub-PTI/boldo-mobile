@@ -97,6 +97,11 @@ class Signaling {
     }
   }
 
+  void setLocalMedia(MediaStream stream) async {
+    _localStream = stream;
+    onLocalStream(stream);
+  }
+
   void switchCamera() {
     if (_localStream != null) {
       _localStream.getVideoTracks()[0].switchCamera();
@@ -230,6 +235,7 @@ class Signaling {
   }
 
   void connect() async {
+    _localStream = await createStream();
     String socketsAddress = String.fromEnvironment('SOCKETS_ADDRESS',
         defaultValue: DotEnv().env['SOCKETS_ADDRESS']);
 
@@ -258,7 +264,7 @@ class Signaling {
     _socket.connect();
   }
 
-  Future<MediaStream> createStream(media, userScreen) async {
+  Future<MediaStream> createStream() async {
     final Map<String, dynamic> mediaConstraints = {
       'audio': true,
       'video': {
@@ -273,10 +279,10 @@ class Signaling {
       }
     };
 
-    MediaStream stream = userScreen
-        ? await MediaDevices.getDisplayMedia(mediaConstraints)
-        : await MediaDevices.getUserMedia(mediaConstraints);
+    MediaStream stream = await MediaDevices.getUserMedia(mediaConstraints);
+
     if (onLocalStream != null) {
+      logger.i("NOTIFY UPDATE");
       onLocalStream(stream);
     }
     return stream;
@@ -284,7 +290,6 @@ class Signaling {
 
   Future<dynamic> _createPeerConnection(media, userScreen,
       {isHost = false}) async {
-    if (media != 'data') _localStream = await createStream(media, userScreen);
     RTCPeerConnection pc = await createPeerConnection(_iceServers, _config);
     if (media != 'data') pc.addStream(_localStream);
     pc.onIceCandidate = (candidate) {
