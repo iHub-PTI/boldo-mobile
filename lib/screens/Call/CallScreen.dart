@@ -6,6 +6,7 @@ import 'package:logger/logger.dart';
 
 import '../../utils/signaling.dart';
 import '../../constants.dart';
+import '../../size_config.dart';
 
 import './components/speed_dial.dart';
 import './components/waiting_room_popup.dart';
@@ -22,14 +23,22 @@ class CallScreen extends StatefulWidget {
 }
 
 class _CallScreenState extends State<CallScreen> {
+  GlobalKey _key = GlobalKey();
+
   Signaling _signaling;
   RTCVideoRenderer _localRenderer = RTCVideoRenderer();
   RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
   bool _inCalling = false;
   bool _showingConnectionProblemPopup = true;
+
+  double xCameraPos = 16.0;
+  double yCameraPos = 340.0;
+
   @override
   void initState() {
     super.initState();
+    yCameraPos = SizeConfig.safeBlockVertical * 64;
+
     initRenderers();
     _connect();
   }
@@ -251,20 +260,62 @@ class _CallScreenState extends State<CallScreen> {
                           ),
                         ),
                         Positioned(
-                          left: 16.0,
-                          bottom: 140.0,
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(8),
+                          key: _key,
+                          left: xCameraPos,
+                          top: yCameraPos,
+                          child: Draggable(
+                            feedback: ClipRRect(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                              child: Container(
+                                width: orientation == Orientation.portrait
+                                    ? 120
+                                    : 160,
+                                height: orientation == Orientation.portrait
+                                    ? 160
+                                    : 120,
+                                child: RTCVideoView(_localRenderer),
+                              ),
                             ),
-                            child: Container(
-                              width: orientation == Orientation.portrait
-                                  ? 120
-                                  : 160,
-                              height: orientation == Orientation.portrait
-                                  ? 160
-                                  : 120,
-                              child: RTCVideoView(_localRenderer),
+                            childWhenDragging: Container(),
+                            onDragEnd: (drag) {
+                              double valY = drag.offset.dy;
+                              double valX = drag.offset.dx;
+                              if (drag.offset.dy <
+                                  SizeConfig.safeBlockVertical * 14) {
+                                valY = SizeConfig.safeBlockVertical * 14;
+                              } else if (drag.offset.dy >
+                                  SizeConfig.safeBlockVertical * 66) {
+                                valY = SizeConfig.safeBlockVertical * 66;
+                              }
+                              if (drag.offset.dx <
+                                  SizeConfig.safeBlockHorizontal * 4) {
+                                valX = SizeConfig.safeBlockHorizontal * 4;
+                              } else if (drag.offset.dx >
+                                  SizeConfig.safeBlockHorizontal * 65) {
+                                valX = SizeConfig.safeBlockHorizontal * 65;
+                              }
+
+                              setState(() {
+                                yCameraPos = valY;
+
+                                xCameraPos = valX;
+                              });
+                            },
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                              child: Container(
+                                width: orientation == Orientation.portrait
+                                    ? 120
+                                    : 160,
+                                height: orientation == Orientation.portrait
+                                    ? 160
+                                    : 120,
+                                child: RTCVideoView(_localRenderer),
+                              ),
                             ),
                           ),
                         ),

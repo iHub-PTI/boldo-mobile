@@ -16,6 +16,8 @@ import './provider/auth_provider.dart';
 import './screens/Dashboard/DashboardScreen.dart';
 import './screens/Hero/HeroScreen.dart';
 
+import './size_config.dart';
+
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
 void main() async {
@@ -159,7 +161,18 @@ class FullApp extends StatelessWidget {
         brightness: Brightness.light,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: onboardingCompleted ? DashboardScreen() : HeroScreen(),
+      home: LandingScreen(onboardingCompleted: onboardingCompleted),
     );
+  }
+}
+
+class LandingScreen extends StatelessWidget {
+  const LandingScreen({Key key, @required this.onboardingCompleted})
+      : super(key: key);
+  final bool onboardingCompleted;
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    return onboardingCompleted ? DashboardScreen() : HeroScreen();
   }
 }
