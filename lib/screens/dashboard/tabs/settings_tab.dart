@@ -1,4 +1,4 @@
-import 'package:boldo/screens/Dashboard/DashboardScreen.dart';
+import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';

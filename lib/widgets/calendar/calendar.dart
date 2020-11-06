@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/CalendarItem.dart';
-import './utils/monthBuilder.dart';
+import 'utils/month_builder.dart';
 import '../../constants.dart';
 
 class CustomCalendar extends StatefulWidget {

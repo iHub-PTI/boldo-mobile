@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../screens/Dashboard/DashboardScreen.dart';
+import '../dashboard/dashboard_screen.dart';
 import '../../constants.dart';
 
 class BookingFinalScreen extends StatefulWidget {

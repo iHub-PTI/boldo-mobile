@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../Call/CallScreen.dart';
+import '../../call/call_screen.dart';
 import '../../../constants.dart';
 
 class HomeTab extends StatefulWidget {

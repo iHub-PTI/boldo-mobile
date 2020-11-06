@@ -8,9 +8,9 @@ import 'package:provider/provider.dart';
 
 import '../../provider/auth_provider.dart';
 import '../../constants.dart';
-import './tabs/HomeTab.dart';
-import './tabs/DoctorsTab.dart';
-import 'tabs/SettingTab.dart';
+import 'tabs/home_tab.dart';
+import 'tabs/doctors_tab.dart';
+import 'tabs/settings_tab.dart';
 
 class DashboardScreen extends StatefulWidget {
   final bool setLoggedOut;

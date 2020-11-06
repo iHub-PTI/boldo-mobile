@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../constants.dart';
-import './BookingFinalScreen.dart';
+import 'booking_final_screen.dart';
 
 class BookingConfirmScreen extends StatefulWidget {
   final String bookingHour;

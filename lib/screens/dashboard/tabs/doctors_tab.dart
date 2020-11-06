@@ -3,8 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../constants.dart';
-import '../../Booking/BookingScreen.dart';
-import '../../DoctorProfile/DoctorProfileScreen.dart';
+import '../../booking/booking_screen.dart';
+import '../../doctor_profile/doctor_profile_screen.dart';
 import '../../../models/Doctor.dart';
 import '../../../network/http.dart';
 

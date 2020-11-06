@@ -1,3 +1,4 @@
+import 'package:boldo/screens/offline/offline_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -11,10 +12,11 @@ import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 
+import './network/connection_status.dart';
 import './network/http.dart';
 import './provider/auth_provider.dart';
-import './screens/Dashboard/DashboardScreen.dart';
-import './screens/Hero/HeroScreen.dart';
+import './screens/dashboard/dashboard_screen.dart';
+import './screens/Hero/hero_screen.dart';
 
 import './size_config.dart';
 
@@ -26,7 +28,9 @@ void main() async {
   Intl.defaultLocale = "es";
   await DotEnv().load('.env');
   GestureBinding.instance.resamplingEnabled = true;
-
+  ConnectionStatusSingleton connectionStatus =
+      ConnectionStatusSingleton.getInstance();
+  connectionStatus.initialize();
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   bool onboardingCompleted = prefs.getBool("onboardingCompleted") ?? false;
   const storage = FlutterSecureStorage();
@@ -59,8 +63,7 @@ void main() async {
       } catch (e) {
         print(e);
       }
-    }
-    if (error.response?.statusCode == 401) {
+    } else if (error.response?.statusCode == 401) {
       RequestOptions options = error.response.request;
       if ("bearer $accessToken" != options.headers["authorization"]) {
         options.headers["authorization"] = "bearer $accessToken";
@@ -103,6 +106,16 @@ void main() async {
         );
         return error;
       }
+    }
+    ConnectionStatusSingleton connectionStatus =
+        ConnectionStatusSingleton.getInstance();
+    bool hasInternet = await connectionStatus.checkConnection();
+    if (!hasInternet) {
+      navKey.currentState.push(
+        MaterialPageRoute(
+          builder: (context) => const OfflineScreen(),
+        ),
+      );
     }
     return error;
   }));
@@ -166,13 +179,19 @@ class FullApp extends StatelessWidget {
   }
 }
 
-class LandingScreen extends StatelessWidget {
+class LandingScreen extends StatefulWidget {
   const LandingScreen({Key key, @required this.onboardingCompleted})
       : super(key: key);
   final bool onboardingCompleted;
+
+  @override
+  _LandingScreenState createState() => _LandingScreenState();
+}
+
+class _LandingScreenState extends State<LandingScreen> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return onboardingCompleted ? DashboardScreen() : HeroScreen();
+    return widget.onboardingCompleted ? DashboardScreen() : HeroScreen();
   }
 }

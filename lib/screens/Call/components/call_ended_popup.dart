@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:core';
 
-import '../../Dashboard/DashboardScreen.dart';
+import '../../dashboard/dashboard_screen.dart';
 import '../../../constants.dart';
 
 Future<bool> callEndedPopup({@required BuildContext context}) async {

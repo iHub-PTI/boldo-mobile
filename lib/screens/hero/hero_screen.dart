@@ -1,11 +1,11 @@
-import 'package:boldo/screens/Dashboard/DashboardScreen.dart';
+import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:page_view_indicator/page_view_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Dashboard/DashboardScreen.dart';
+import '../dashboard/dashboard_screen.dart';
 import '../../constants.dart';
 
 class HeroScreen extends StatelessWidget {

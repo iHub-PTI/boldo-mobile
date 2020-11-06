@@ -2,7 +2,7 @@ import 'package:boldo/widgets/calendar/Calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import './BookingConfirmScreen.dart';
+import './booking_confirm_screen.dart';
 import '../../constants.dart';
 
 class BookingScreen extends StatefulWidget {

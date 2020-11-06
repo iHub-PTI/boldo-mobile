@@ -2,18 +2,19 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:logger/logger.dart';
 
 import '../../utils/signaling.dart';
 import '../../constants.dart';
 import '../../size_config.dart';
+import '../../network/connection_status.dart';
 
-import './components/speed_dial.dart';
-import './components/waiting_room_popup.dart';
-import './components/connection_problem_popup.dart';
-import './components/call_ended_popup.dart';
+import 'components/speed_dial.dart';
+import 'components/waiting_room_popup.dart';
+import 'components/connection_problem_popup.dart';
+import 'components/call_ended_popup.dart';
 
-import '../Dashboard/DashboardScreen.dart';
+import '../offline/offline_screen.dart';
+import '../dashboard/dashboard_screen.dart';
 
 class CallScreen extends StatefulWidget {
   CallScreen({Key key, @required this.appointmentId}) : super(key: key);
@@ -29,7 +30,7 @@ class _CallScreenState extends State<CallScreen> {
   RTCVideoRenderer _localRenderer = RTCVideoRenderer();
   RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
   bool _inCalling = false;
-  bool _showingConnectionProblemPopup = true;
+  bool _showingConnectionProblemPopup = false;
 
   double xCameraPos = 16.0;
   double yCameraPos = 340.0;
@@ -137,13 +138,25 @@ class _CallScreenState extends State<CallScreen> {
   void _hangUp() async {
     _signaling.emitEndCallEvent();
     _cleanUp();
+    //if no internet then show the offline screen
+    ConnectionStatusSingleton connectionStatus =
+        ConnectionStatusSingleton.getInstance();
+    bool hasInternet = await connectionStatus.checkConnection();
+    if (!hasInternet) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const OfflineScreen(),
+        ),
+      );
+      return;
+    }
     await callEndedPopup(
       context: context,
     );
   }
 
   void _switchCamera() {
-    print("switch camera");
     _signaling.switchCamera();
   }
 
