@@ -1,7 +1,8 @@
-import 'package:boldo/widgets/calendar/Calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../widgets/calendar/calendar.dart';
+import '../../widgets/wrapper.dart';
 import './booking_confirm_screen.dart';
 import '../../constants.dart';
 
@@ -16,150 +17,137 @@ class _BookingScreenState extends State<BookingScreen> {
   String _selectedBookingHour;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          leadingWidth: 200,
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 10.0),
-            child: SvgPicture.asset('assets/Logo.svg',
-                semanticsLabel: 'BOLDO Logo'),
+    return CustomWrapper(
+      children: [
+        const SizedBox(
+          height: 18,
+        ),
+        TextButton.icon(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(
+            Icons.chevron_left_rounded,
+            size: 25,
+            color: Constants.extraColor400,
+          ),
+          label: Text(
+            'Reservar',
+            style: boldoHeadingTextStyle.copyWith(fontSize: 20),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 18,
-              ),
-              TextButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(
-                  Icons.chevron_left_rounded,
-                  size: 25,
-                  color: Constants.extraColor400,
-                ),
-                label: Text(
-                  'Reservar',
-                  style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                ),
-              ),
-              const SizedBox(
-                height: 18,
-              ),
-              const _BookDoctorCard(),
-              const SizedBox(
-                height: 12,
-              ),
-              const Padding(
-                padding: EdgeInsets.only(left: 16, right: 16),
-                child: _BookCalendar(),
-              ),
-              Center(
-                child: Text(
-                  "14 de septiembre del 2020",
-                  style: boldoHeadingTextStyle.copyWith(
-                      fontWeight: FontWeight.normal, fontSize: 14),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Center(
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  width: double.infinity,
-                  constraints: const BoxConstraints(
-                    maxWidth: 350,
-                  ),
-                  child: Wrap(
-                    alignment: WrapAlignment.spaceBetween,
-                    spacing: 13,
-                    runSpacing: 27,
-                    children: [
-                      ...[
-                        "08:00",
-                        "08:20",
-                        "08:40",
-                        "08:45",
-                        "09:20",
-                        "09:40",
-                        "10:40",
-                        "11:00",
-                        "11:20",
-                        "13:20",
-                        "14:40",
-                        '15:00'
-                      ]
-                          .map((e) => GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedBookingHour =
-                                        _selectedBookingHour == e ? null : e;
-                                  });
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: _selectedBookingHour == e
-                                          ? Constants.primaryColor400
-                                          : Constants.tertiaryColor100,
-                                      borderRadius: BorderRadius.circular(9),
-                                      border: Border.all(
-                                          color: _selectedBookingHour == e
-                                              ? Constants.primaryColor600
-                                              : Constants.extraColor200)),
-                                  width: 60,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      e,
-                                      textAlign: TextAlign.center,
-                                      style: boldoHeadingTextStyle.copyWith(
-                                          fontSize: 14,
-                                          color: _selectedBookingHour == e
-                                              ? Colors.white
-                                              : Constants.extraColor400),
-                                    ),
-                                  ),
-                                ),
-                              ))
-                          .toList()
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              Container(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                margin: const EdgeInsets.only(bottom: 16),
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Constants.primaryColor500,
-                  ),
-                  onPressed: _selectedBookingHour != null
-                      ? () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => BookingConfirmScreen(
-                                      bookingDate: DateTime.now(),
-                                      bookingHour: _selectedBookingHour,
-                                    )),
-                          );
-                        }
-                      : null,
-                  child: const Text("Aceptar"),
-                ),
-              )
-            ],
+        const SizedBox(
+          height: 18,
+        ),
+        const _BookDoctorCard(),
+        const SizedBox(
+          height: 12,
+        ),
+        const Padding(
+          padding: EdgeInsets.only(left: 16, right: 16),
+          child: _BookCalendar(),
+        ),
+        Center(
+          child: Text(
+            "14 de septiembre del 2020",
+            style: boldoHeadingTextStyle.copyWith(
+                fontWeight: FontWeight.normal, fontSize: 14),
           ),
-        ));
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Center(
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            width: double.infinity,
+            constraints: const BoxConstraints(
+              maxWidth: 350,
+            ),
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              spacing: 13,
+              runSpacing: 27,
+              children: [
+                ...[
+                  "08:00",
+                  "08:20",
+                  "08:40",
+                  "08:45",
+                  "09:20",
+                  "09:40",
+                  "10:40",
+                  "11:00",
+                  "11:20",
+                  "13:20",
+                  "14:40",
+                  '15:00'
+                ]
+                    .map((e) => GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedBookingHour =
+                                  _selectedBookingHour == e ? null : e;
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: _selectedBookingHour == e
+                                    ? Constants.primaryColor400
+                                    : Constants.tertiaryColor100,
+                                borderRadius: BorderRadius.circular(9),
+                                border: Border.all(
+                                    color: _selectedBookingHour == e
+                                        ? Constants.primaryColor600
+                                        : Constants.extraColor200)),
+                            width: 60,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                e,
+                                textAlign: TextAlign.center,
+                                style: boldoHeadingTextStyle.copyWith(
+                                    fontSize: 14,
+                                    color: _selectedBookingHour == e
+                                        ? Colors.white
+                                        : Constants.extraColor400),
+                              ),
+                            ),
+                          ),
+                        ))
+                    .toList()
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 40,
+        ),
+        Container(
+          padding: const EdgeInsets.only(left: 16, right: 16),
+          margin: const EdgeInsets.only(bottom: 16),
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Constants.primaryColor500,
+            ),
+            onPressed: _selectedBookingHour != null
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => BookingConfirmScreen(
+                                bookingDate: DateTime.now(),
+                                bookingHour: _selectedBookingHour,
+                              )),
+                    );
+                  }
+                : null,
+            child: const Text("Aceptar"),
+          ),
+        )
+      ],
+    );
   }
 }
 

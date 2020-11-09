@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../widgets/wrapper.dart';
 import '../../constants.dart';
 import 'booking_final_screen.dart';
 
@@ -18,74 +19,60 @@ class BookingConfirmScreen extends StatefulWidget {
 class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          leadingWidth: 200,
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 10.0),
-            child: SvgPicture.asset('assets/Logo.svg',
-                semanticsLabel: 'BOLDO Logo'),
+    return CustomWrapper(
+      children: [
+        const SizedBox(
+          height: 18,
+        ),
+        TextButton.icon(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(
+            Icons.chevron_left_rounded,
+            size: 25,
+            color: Constants.extraColor400,
+          ),
+          label: Text(
+            'Reservar',
+            style: boldoHeadingTextStyle.copyWith(fontSize: 20),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 18,
-              ),
-              TextButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(
-                  Icons.chevron_left_rounded,
-                  size: 25,
-                  color: Constants.extraColor400,
-                ),
-                label: Text(
-                  'Reservar',
-                  style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                ),
-              ),
-              const SizedBox(
-                height: 18,
-              ),
-              const _DoctorProfileWidget(),
-              const SizedBox(
-                height: 8,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                child: _DoctorBookingInfoWidget(
-                  bookingHour: widget.bookingHour,
-                ),
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-              Container(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                margin: const EdgeInsets.only(bottom: 16),
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Constants.primaryColor500,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => BookingFinalScreen()),
-                    );
-                  },
-                  child: const Text("Confirmar"),
-                ),
-              )
-            ],
+        const SizedBox(
+          height: 18,
+        ),
+        const _DoctorProfileWidget(),
+        const SizedBox(
+          height: 8,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16),
+          child: _DoctorBookingInfoWidget(
+            bookingHour: widget.bookingHour,
           ),
-        ));
+        ),
+        const SizedBox(
+          height: 50,
+        ),
+        Container(
+          padding: const EdgeInsets.only(left: 16, right: 16),
+          margin: const EdgeInsets.only(bottom: 16),
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Constants.primaryColor500,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => BookingFinalScreen()),
+              );
+            },
+            child: const Text("Confirmar"),
+          ),
+        )
+      ],
+    );
   }
 }
 
