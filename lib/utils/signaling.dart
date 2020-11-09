@@ -139,6 +139,7 @@ class Signaling {
   }
 
   void onMessage(tag, message) async {
+    logger.i(tag);
     switch (tag) {
       case 'connect error':
         {

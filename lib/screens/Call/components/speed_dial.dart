@@ -106,10 +106,13 @@ class SpeedDialState extends State<SpeedDial> with TickerProviderStateMixin {
                   transform:
                       Matrix4.rotationZ(_controller.value * 0.5 * math.pi),
                   alignment: FractionalOffset.center,
-                  child: SvgPicture.asset(
-                    'assets/icon/dotsvertical.svg',
-                    semanticsLabel: 'Vertical Dots Icon',
-                    color: Colors.white,
+                  child: RotatedBox(
+                    quarterTurns: 1,
+                    child: SvgPicture.asset(
+                      'assets/icon/dotsvertical.svg',
+                      semanticsLabel: 'Vertical Dots Icon',
+                      color: Colors.white,
+                    ),
                   ),
                 );
               },
