@@ -28,8 +28,8 @@ class _DoctorsTabState extends State<DoctorsTab> {
     try {
       Response response = await dio.get("/doctors");
       if (response.statusCode == 200) {
-        List<Doctor> doctorsList = List<Doctor>.from(
-            response.data["doctors"].map((i) => Doctor.fromJson(i)));
+        List<Doctor> doctorsList =
+            List<Doctor>.from(response.data.map((i) => Doctor.fromJson(i)));
 
         setState(() {
           loading = false;
