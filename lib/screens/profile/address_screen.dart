@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';
-import '../../widgets/wrapper.dart';
-import '../../widgets/custom_dropdown.dart';
-import '../../widgets/custom_form_input.dart';
+import 'package:provider/provider.dart';
 
+import '../../widgets/wrapper.dart';
+import '../../widgets/custom_form_input.dart';
+import '../../provider/user_provider.dart';
 import '../../constants.dart';
+
+import '../../network/http.dart';
 
 class AddressScreen extends StatefulWidget {
   AddressScreen({Key key}) : super(key: key);
@@ -36,16 +38,23 @@ class _AddressScreenState extends State<AddressScreen> {
     });
 
     try {
-      // Response response = await dio.post("/profile/patient", data: {
-      //   "givenName": givenName,
-      //   "familyName": familyName,
-      //   "birthDate": birthDate,
-      //   "job": job,
-      //   "gender": gender,
-      //   "email": email,
-      //   "phone": phone
-      // });
-      //print(response);
+      UserProvider userProvider =
+          Provider.of<UserProvider>(context, listen: false);
+      Response response = await dio.post("/profile/patient", data: {
+        "givenName": userProvider.getGivenName,
+        "familyName": userProvider.getFamilyName,
+        "birthDate": userProvider.getBirthDate,
+        "job": userProvider.getJob,
+        "gender": userProvider.getGender,
+        "email": userProvider.getEmail,
+        "phone": userProvider.getPhone,
+        "street": userProvider.getStreet,
+        "neighborhood": userProvider.getNeighborhood,
+        "city": userProvider.getCity,
+        "addressDescription": userProvider.getAddressDescription,
+      });
+
+      print(response);
       setState(() {
         _loading = false;
       });
@@ -66,6 +75,8 @@ class _AddressScreenState extends State<AddressScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
     return CustomWrapper(
       children: [
         const SizedBox(height: 20),
@@ -92,43 +103,66 @@ class _AddressScreenState extends State<AddressScreen> {
             key: _formKey,
             child: Column(
               children: [
-                CustomFormInput(
-                  label: "Calle",
-                  secondaryLabel: "Opcional",
-                  changeValueCallback: (String val) {
-                    setState(() {
-                      street = val;
-                    });
+                Selector<UserProvider, String>(
+                  builder: (_, data, __) {
+                    return CustomFormInput(
+                      initialValue: data ?? "",
+                      label: "Calle",
+                      secondaryLabel: "Opcional",
+                      changeValueCallback: (String val) {
+                        userProvider.setUserData(street: val);
+                      },
+                    );
                   },
+                  selector: (buildContext, userProvider) =>
+                      userProvider.getStreet,
                 ),
                 const SizedBox(height: 20),
-                CustomFormInput(
-                    label: "Barrio",
-                    secondaryLabel: "Opcional",
-                    changeValueCallback: (String val) {
-                      setState(() {
-                        neighborhood = val;
-                      });
-                    }),
+                Selector<UserProvider, String>(
+                  builder: (_, data, __) {
+                    return CustomFormInput(
+                      initialValue: data ?? "",
+                      label: "Barrio",
+                      secondaryLabel: "Opcional",
+                      changeValueCallback: (String val) {
+                        userProvider.setUserData(neighborhood: val);
+                      },
+                    );
+                  },
+                  selector: (buildContext, userProvider) =>
+                      userProvider.getNeighborhood,
+                ),
                 const SizedBox(height: 20),
-                CustomFormInput(
-                    label: "Ciudad",
-                    secondaryLabel: "Opcional",
-                    changeValueCallback: (String val) {
-                      setState(() {
-                        city = val;
-                      });
-                    }),
+                Selector<UserProvider, String>(
+                  builder: (_, data, __) {
+                    return CustomFormInput(
+                      initialValue: data ?? "",
+                      label: "Ciudad",
+                      secondaryLabel: "Opcional",
+                      changeValueCallback: (String val) {
+                        userProvider.setUserData(city: val);
+                      },
+                    );
+                  },
+                  selector: (buildContext, userProvider) =>
+                      userProvider.getCity,
+                ),
                 const SizedBox(height: 20),
-                CustomFormInput(
-                    maxLines: 6,
-                    label: "Referencia",
-                    secondaryLabel: "Opcional",
-                    changeValueCallback: (String val) {
-                      setState(() {
-                        addressDescription = val;
-                      });
-                    }),
+                Selector<UserProvider, String>(
+                  builder: (_, data, __) {
+                    return CustomFormInput(
+                      initialValue: data ?? "",
+                      maxLines: 6,
+                      label: "Referencia",
+                      secondaryLabel: "Opcional",
+                      changeValueCallback: (String val) {
+                        userProvider.setUserData(addressDescription: val);
+                      },
+                    );
+                  },
+                  selector: (buildContext, userProvider) =>
+                      userProvider.getAddressDescription,
+                ),
                 const SizedBox(height: 24),
                 Container(
                   margin: const EdgeInsets.only(bottom: 16),

@@ -1,3 +1,4 @@
+import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/screens/offline/offline_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -145,6 +146,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
         ChangeNotifierProvider<AuthProvider>(
             create: (_) => AuthProvider(widget.session != null ? true : false)),
       ],
