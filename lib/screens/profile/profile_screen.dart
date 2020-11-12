@@ -127,7 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
               const SizedBox(
-                height: 18,
+                height: 20,
               ),
               CustomFormInput(
                 label: "Apellido",
@@ -141,7 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               //CustomDropdown(),
               const SizedBox(
-                height: 18,
+                height: 20,
               ),
               CustomFormInput(
                 secondaryLabel: "Opcional",
@@ -154,7 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
               const SizedBox(
-                height: 18,
+                height: 20,
               ),
               CustomDropdown(
                 label: "Género",
@@ -171,7 +171,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
               const SizedBox(
-                height: 18,
+                height: 20,
               ),
               CustomFormInput(
                 label: "Fecha de nacimiento",
@@ -186,7 +186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
 
               const SizedBox(
-                height: 18,
+                height: 20,
               ),
               CustomFormInput(
                 label: "Correo electrónico",
@@ -198,7 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
               const SizedBox(
-                height: 18,
+                height: 20,
               ),
               CustomFormInput(
                 isPhoneNumber: true,
@@ -212,7 +212,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
               const SizedBox(
-                height: 18,
+                height: 20,
               ),
               ListTile(
                 onTap: () {

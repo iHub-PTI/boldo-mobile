@@ -6,9 +6,9 @@ String validatePassword(String password) {
   // RegExp hasUpper = RegExp(r'[A-Z]');
   // RegExp hasLower = RegExp(r'[a-z]');
   // RegExp hasDigit = RegExp(r'\d');
-
-  if (password.length < 8)
-    return 'The password must have at least 8 characters';
+  if (password.length < 1) return 'The password must have at least 1 character';
+  // if (password.length < 8)
+  //   return 'The password must have at least 8 characters';
   // if (!hasUpper.hasMatch(password))
   //   return 'The password must have at least one uppercase character';
   // if (!hasLower.hasMatch(password))
@@ -55,8 +55,9 @@ String valdiateLasttName(String value) {
 }
 
 String validatePasswordConfirmation(String pass2, String pass1) {
+  print(pass2);
+  print(pass1);
   return (pass2 == pass1) ? null : "The two passwords must match";
-  // Note that _pass1 is populated when a password is entered
 }
 
 // Phone number formatter

@@ -22,7 +22,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
     return CustomWrapper(
       children: [
         const SizedBox(
-          height: 18,
+          height: 20,
         ),
         TextButton.icon(
           onPressed: () {
@@ -39,7 +39,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
           ),
         ),
         const SizedBox(
-          height: 18,
+          height: 20,
         ),
         const _DoctorProfileWidget(),
         const SizedBox(

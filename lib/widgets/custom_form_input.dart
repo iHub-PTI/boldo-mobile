@@ -99,11 +99,11 @@ class _CustomFormInputState extends State<CustomFormInput> {
           ),
         ),
         ConstrainedBox(
-          constraints: widget.maxLines == 1
-              ? BoxConstraints(
-                  minHeight: SizeConfig.safeBlockHorizontal * 11,
-                  maxHeight: SizeConfig.safeBlockHorizontal * 20)
-              : null,
+          constraints: BoxConstraints(
+              minHeight: SizeConfig.safeBlockHorizontal * 11,
+              maxHeight: widget.maxLines == 1
+                  ? SizeConfig.safeBlockHorizontal * 20
+                  : 999),
           child: GestureDetector(
             onTap: () async {
               if (!widget.isDateTime) return;

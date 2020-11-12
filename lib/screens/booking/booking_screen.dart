@@ -20,7 +20,7 @@ class _BookingScreenState extends State<BookingScreen> {
     return CustomWrapper(
       children: [
         const SizedBox(
-          height: 18,
+          height: 20,
         ),
         TextButton.icon(
           onPressed: () {
@@ -37,7 +37,7 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ),
         const SizedBox(
-          height: 18,
+          height: 20,
         ),
         const _BookDoctorCard(),
         const SizedBox(
@@ -166,7 +166,7 @@ class _BookCalendar extends StatelessWidget {
           style: boldoHeadingTextStyle,
         ),
         const SizedBox(
-          height: 18,
+          height: 20,
         ),
         CustomCalendar(
           selectedDate: DateTime.now(),
