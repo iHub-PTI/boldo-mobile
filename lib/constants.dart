@@ -56,3 +56,48 @@ const boldoSubTextStyle = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.normal,
     color: Constants.extraColor300);
+
+ThemeData boldoTheme = ThemeData(
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      textStyle: const TextStyle(fontWeight: FontWeight.w500),
+      primary: Constants.primaryColor500,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(6),
+      ),
+    ),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(6),
+      borderSide: const BorderSide(
+        color: Constants.extraColor200,
+        width: 1.0,
+      ),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(6),
+      borderSide: const BorderSide(
+        color: Constants.extraColor200,
+        width: 1.25,
+      ),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(6),
+      borderSide: const BorderSide(
+        color: Constants.extraColor200,
+      ),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(6),
+      borderSide: const BorderSide(
+        color: Constants.extraColor200,
+        width: 1.0,
+      ),
+    ),
+  ),
+  primaryColor: Colors.white,
+  scaffoldBackgroundColor: Colors.white,
+  brightness: Brightness.light,
+  visualDensity: VisualDensity.adaptivePlatformDensity,
+);

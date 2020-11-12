@@ -18,6 +18,7 @@ import './provider/auth_provider.dart';
 import './screens/dashboard/dashboard_screen.dart';
 import './screens/Hero/hero_screen.dart';
 
+import './constants.dart';
 import './size_config.dart';
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
@@ -165,43 +166,10 @@ class FullApp extends StatelessWidget {
     return MaterialApp(
       navigatorKey: navKey,
       title: 'Boldo',
-      theme: ThemeData(
-        inputDecorationTheme: InputDecorationTheme(
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(
-              color: Color(0xffD2D6DC),
-              width: 1.0,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(
-              color: Color(0xffD2D6DC),
-              width: 1.25,
-            ),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(
-              color: Color(0xffD2D6DC),
-            ),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(
-              color: Color(0xffD2D6DC),
-              width: 1.0,
-            ),
-          ),
-        ),
-        primaryColor: Colors.white,
-        scaffoldBackgroundColor: Colors.white,
+      theme: boldoTheme.copyWith(
         textTheme: GoogleFonts.interTextTheme(
-          Theme.of(context).textTheme,
+          boldoTheme.textTheme,
         ),
-        brightness: Brightness.light,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: LandingScreen(onboardingCompleted: onboardingCompleted),
     );

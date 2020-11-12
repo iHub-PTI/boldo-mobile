@@ -168,7 +168,7 @@ class _SettingsTabState extends State<SettingsTab> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SvgPicture.asset(
-                        'assets/icon/poweroff.svg',
+                        'assets/icon/powersettings.svg',
                       ),
                       const SizedBox(
                         width: 10,
