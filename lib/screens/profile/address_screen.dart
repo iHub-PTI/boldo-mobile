@@ -68,9 +68,7 @@ class _AddressScreenState extends State<AddressScreen> {
   Widget build(BuildContext context) {
     return CustomWrapper(
       children: [
-        const SizedBox(
-          height: 20,
-        ),
+        const SizedBox(height: 20),
         TextButton.icon(
           onPressed: () {
             Navigator.pop(context);
@@ -81,13 +79,11 @@ class _AddressScreenState extends State<AddressScreen> {
             color: Constants.extraColor400,
           ),
           label: Text(
-            'Contraseña',
+            'Dirección',
             style: boldoHeadingTextStyle.copyWith(fontSize: 20),
           ),
         ),
-        const SizedBox(
-          height: 20,
-        ),
+        const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Form(
@@ -98,51 +94,42 @@ class _AddressScreenState extends State<AddressScreen> {
               children: [
                 CustomFormInput(
                   label: "Calle",
-                  validator: null,
+                  secondaryLabel: "Opcional",
                   changeValueCallback: (String val) {
                     setState(() {
                       street = val;
                     });
                   },
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 CustomFormInput(
                     label: "Barrio",
-                    validator: null,
+                    secondaryLabel: "Opcional",
                     changeValueCallback: (String val) {
                       setState(() {
                         neighborhood = val;
                       });
                     }),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 CustomFormInput(
                     label: "Ciudad",
-                    validator: null,
+                    secondaryLabel: "Opcional",
                     changeValueCallback: (String val) {
                       setState(() {
                         city = val;
                       });
                     }),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 CustomFormInput(
                     maxLines: 6,
                     label: "Referencia",
                     secondaryLabel: "Opcional",
-                    validator: null,
                     changeValueCallback: (String val) {
                       setState(() {
                         addressDescription = val;
                       });
                     }),
-                const SizedBox(
-                  height: 24,
-                ),
+                const SizedBox(height: 24),
                 Container(
                   margin: const EdgeInsets.only(bottom: 16),
                   width: double.infinity,

@@ -136,7 +136,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
                       color: Constants.extraColor300,
                       fontSize: SizeConfig.safeBlockHorizontal * 4.40),
                   decoration: InputDecoration(
-                    // isDense: true,
+                    isCollapsed: true,
                     prefixIcon: widget.isPhoneNumber
                         ? Container(
                             height: 50,
@@ -184,8 +184,8 @@ class _CustomFormInputState extends State<CustomFormInput> {
                                 ),
                               )
                             : null,
-                    contentPadding:
-                        const EdgeInsets.only(left: 15, right: 15, top: 10),
+                    contentPadding: const EdgeInsets.only(
+                        left: 15, right: 15, top: 18, bottom: 15),
                   ),
                   //keyboardType: TextInputType.emailAddress,
                   validator: widget.validator,

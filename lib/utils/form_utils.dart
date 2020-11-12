@@ -55,8 +55,6 @@ String valdiateLasttName(String value) {
 }
 
 String validatePasswordConfirmation(String pass2, String pass1) {
-  print(pass2);
-  print(pass1);
   return (pass2 == pass1) ? null : "The two passwords must match";
 }
 

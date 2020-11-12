@@ -35,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    gender = "male";
+    gender = "unknown";
     birthDate = "1980-01-01";
   }
 
@@ -163,6 +163,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   {"title": "Male", "value": 'male'},
                   {"title": "Female", "value": 'female'},
                   {"title": "Other", "value": 'other'},
+                  {"title": "Select your gender", "value": 'unknown'},
                 ],
                 onChanged: (String val) {
                   setState(() {

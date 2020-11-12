@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import '../../widgets/wrapper.dart';
-import '../../widgets/custom_dropdown.dart';
+
 import '../../widgets/custom_form_input.dart';
 import '../../network/http.dart';
 import '../../constants.dart';
@@ -18,7 +18,7 @@ class PasswordResetScreen extends StatefulWidget {
 class _PasswordResetScreenState extends State<PasswordResetScreen> {
   bool _validate = false;
   bool _loading = false;
-  String oldPassword, newPassword, repeatNewPassword;
+  String currentPassword, newPassword, confirmation;
   String errorMessage = '';
   final _formKey = GlobalKey<FormState>();
 
@@ -104,7 +104,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                   obscureText: true,
                   changeValueCallback: (String val) {
                     setState(() {
-                      oldPassword = val;
+                      currentPassword = val;
                     });
                   },
                 ),
@@ -134,7 +134,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                   obscureText: true,
                   changeValueCallback: (String val) {
                     setState(() {
-                      repeatNewPassword = val;
+                      confirmation = val;
                     });
                   },
                 ),
