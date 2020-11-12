@@ -59,23 +59,20 @@ String validatePasswordConfirmation(String pass2, String pass1) {
   // Note that _pass1 is populated when a password is entered
 }
 
+// Phone number formatter
 class ValidatorInputFormatter implements TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
-    List commas = [];
     for (int i = 0; i < newValue.text.length; i++) {
       if (newValue.text[i] == "-") {
-        if (i != 0) {
-          return oldValue;
-        }
+        return oldValue;
       }
       if (newValue.text[i] == '.') {
-        if (commas.isEmpty) {
-          commas.add(newValue.text[i]);
-        } else {
-          return oldValue;
-        }
+        return oldValue;
+      }
+      if (newValue.text[i] == ',') {
+        return oldValue;
       }
     }
     return newValue;

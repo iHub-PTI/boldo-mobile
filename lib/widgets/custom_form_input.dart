@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 
 import '../constants.dart';
 import '../size_config.dart';
@@ -20,12 +21,14 @@ class CustomFormInput extends StatefulWidget {
   final Function(String) changeValueCallback;
   final bool obscureText;
   final onChanged;
+  final List<TextInputFormatter> inputFormatters;
   CustomFormInput(
       {Key key,
       @required this.label,
-      @required this.validator,
+      this.validator,
       @required this.changeValueCallback,
       this.isDateTime = false,
+      this.inputFormatters = const [],
       this.maxLines = 1,
       this.customSVGIcon,
       this.isPhoneNumber = false,
@@ -122,6 +125,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
                 ignoring: widget.isDateTime,
                 child: TextFormField(
                   maxLines: widget.maxLines,
+                  inputFormatters: widget.inputFormatters,
                   keyboardType:
                       widget.isPhoneNumber ? TextInputType.number : null,
                   obscureText: widget.obscureText,

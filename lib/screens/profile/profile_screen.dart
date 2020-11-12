@@ -204,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 isPhoneNumber: true,
                 secondaryLabel: "Opcional",
                 label: "Número de teléfono",
-                validator: null,
+                inputFormatters: [ValidatorInputFormatter()],
                 changeValueCallback: (String val) {
                   setState(() {
                     phone = val;
