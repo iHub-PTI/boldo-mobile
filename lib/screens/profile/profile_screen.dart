@@ -53,6 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         givenName: response.data["givenName"],
         familyName: response.data["familyName"],
         gender: response.data["gender"],
+        city: response.data["city"],
         email: response.data["email"],
         phone: response.data["phone"],
         notify: true,
@@ -225,15 +226,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 20),
                     Selector<UserProvider, String>(
                       builder: (_, data, __) {
+                        String selectedvalue = data ?? "unknown";
+                        List<Map<String, String>> itemsList = [
+                          {"title": "Male", "value": 'male'},
+                          {"title": "Female", "value": 'female'},
+                          {"title": "Other", "value": 'other'}
+                        ];
+                        if (selectedvalue == "unknown") {
+                          itemsList.add({
+                            "title": "Select your gender",
+                            "value": 'unknown'
+                          });
+                        }
                         return CustomDropdown(
                           label: "Género",
-                          selectedValue: data ?? 'unknown',
-                          itemsList: [
-                            {"title": "Male", "value": 'male'},
-                            {"title": "Female", "value": 'female'},
-                            {"title": "Other", "value": 'other'},
-                            {"title": "Select your gender", "value": 'unknown'},
-                          ],
+                          selectedValue: selectedvalue,
+                          itemsList: itemsList,
                           onChanged: (String val) {
                             userProvider.setUserData(gender: val, notify: true);
                           },

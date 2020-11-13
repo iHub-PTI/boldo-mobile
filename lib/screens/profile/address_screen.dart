@@ -48,6 +48,7 @@ class _AddressScreenState extends State<AddressScreen> {
         "gender": userProvider.getGender,
         "email": userProvider.getEmail,
         "phone": userProvider.getPhone,
+        "photoUrl": userProvider.getPhotoUrl,
         "street": userProvider.getStreet,
         "neighborhood": userProvider.getNeighborhood,
         "city": userProvider.getCity,
