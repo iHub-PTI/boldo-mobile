@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'dart:math';
-import 'package:path_provider/path_provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:file_picker/file_picker.dart';
@@ -8,7 +9,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
-
+import 'package:http/http.dart' as http;
+import '../../../provider/user_provider.dart';
 import '../../../network/http.dart';
 
 class ProfileImage extends StatefulWidget {
@@ -19,6 +21,7 @@ class ProfileImage extends StatefulWidget {
 }
 
 class _ProfileImageState extends State<ProfileImage> {
+  bool _isLoading = false;
   String _profileImage;
 
   @override
@@ -43,15 +46,36 @@ class _ProfileImageState extends State<ProfileImage> {
           height: 128,
           width: 128,
           child: Card(
-            child: _profileImage != null
-                ? ClipOval(
-                    child: Image.file(
-                      File(_profileImage),
-                      fit: BoxFit.cover,
-                    ),
+            child: _isLoading
+                ? const Padding(
+                    padding: EdgeInsets.all(26.0),
+                    child: CircularProgressIndicator(),
                   )
-                : SvgPicture.asset(
-                    'assets/images/DoctorImageMale.svg',
+                : ClipOval(
+                    child: Selector<UserProvider, String>(
+                      builder: (_, data, __) {
+                        if (data == null) {
+                          return SvgPicture.asset(
+                            'assets/images/DoctorImageMale.svg',
+                          );
+                        }
+                        return CachedNetworkImage(
+                          fit: BoxFit.cover,
+                          imageUrl: data,
+                          progressIndicatorBuilder:
+                              (context, url, downloadProgress) => Padding(
+                            padding: const EdgeInsets.all(26.0),
+                            child: CircularProgressIndicator(
+                              value: downloadProgress.progress,
+                            ),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        );
+                      },
+                      selector: (buildContext, userProvider) =>
+                          userProvider.getPhotoUrl,
+                    ),
                   ),
             elevation: 4.0,
             shape: const CircleBorder(),
@@ -100,43 +124,35 @@ class _ProfileImageState extends State<ProfileImage> {
 
                   if (croppedFile != null) {
                     try {
-                      // setState(() {
-                      //   isLoading = true;
-                      // });
-                      // Response response = await dio.get("/presigned");
-                      // print(response);
-
-                      var documentDirectory =
-                          await getApplicationDocumentsDirectory();
-                      final String path = documentDirectory.path;
-
-                      Random random = Random();
-                      int randomNumber = random.nextInt(10000);
-                      final File newImage =
-                          await croppedFile.copy('$path/$randomNumber.jpg');
-                      imageCache.clear();
-                      final SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      prefs.setString("profileImage", newImage.path);
-                      //user.avatarLocalPath = newImage.path;
-                      // user.avatar = response.data["key"];
-
-                      // await http.put(response.data["url"],
-                      //     body: croppedFile.readAsBytesSync());
-
-                      // await dio.post("/user", data: {
-                      //   "avatar": response.data["key"],
-                      // });
-
                       setState(() {
-                        _profileImage = newImage.path;
+                        _isLoading = true;
+                      });
+                      Response response = await dio.get("/presigned");
+
+                      imageCache.clear();
+
+                      Provider.of<UserProvider>(context, listen: false)
+                          .setUserData(
+                              photoUrl: response.data["location"],
+                              notify: true);
+
+                      await http.put(response.data["uploadUrl"],
+                          body: croppedFile.readAsBytesSync());
+                      setState(() {
+                        _isLoading = false;
                       });
                     } catch (err) {
+                      setState(() {
+                        _isLoading = false;
+                      });
                       print(err);
                     }
                   }
                 }
               } on PlatformException catch (e) {
+                setState(() {
+                  _isLoading = false;
+                });
                 print("Unsupported operation" + e.toString());
               }
             },

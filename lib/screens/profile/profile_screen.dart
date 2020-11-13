@@ -42,8 +42,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _fetchProfileData() async {
     try {
       Response response = await dio.get("/profile/patient");
-
+      print(response);
       Provider.of<UserProvider>(context, listen: false).setUserData(
+        addressDescription: response.data["addressDescription"],
+        job: response.data["job"],
+        neighborhood: response.data["neighborhood"],
+        street: response.data["street"],
+        photoUrl: response.data["photoUrl"],
         birthDate: response.data["birthDate"],
         givenName: response.data["givenName"],
         familyName: response.data["familyName"],
@@ -96,6 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         "gender": userProvider.getGender,
         "email": userProvider.getEmail,
         "phone": userProvider.getPhone,
+        "photoUrl": userProvider.getPhotoUrl,
         "street": userProvider.getStreet,
         "neighborhood": userProvider.getNeighborhood,
         "city": userProvider.getCity,

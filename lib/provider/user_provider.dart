@@ -12,7 +12,8 @@ class UserProvider with ChangeNotifier {
       _street,
       _neighborhood,
       _city,
-      _addressDescription;
+      _addressDescription,
+      _photoUrl;
 
   String get getGivenName => _givenName;
   String get getFamilyName => _familyName;
@@ -25,6 +26,7 @@ class UserProvider with ChangeNotifier {
   String get getNeighborhood => _neighborhood;
   String get getCity => _city;
   String get getAddressDescription => _addressDescription;
+  String get getPhotoUrl => _photoUrl;
 
   void setUserData({
     String givenName,
@@ -36,6 +38,7 @@ class UserProvider with ChangeNotifier {
     String phone,
     String street,
     String neighborhood,
+    String photoUrl,
     String city,
     String addressDescription,
     bool notify = false,
@@ -51,6 +54,7 @@ class UserProvider with ChangeNotifier {
     _neighborhood = neighborhood ?? _neighborhood;
     _city = city ?? _city;
     _addressDescription = addressDescription ?? _addressDescription;
+    _photoUrl = photoUrl ?? _photoUrl;
 
     if (notify) {
       notifyListeners();
