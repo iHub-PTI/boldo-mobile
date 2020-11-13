@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import '../../widgets/wrapper.dart';
 
+import '../../widgets/custom_form_button.dart';
 import '../../widgets/custom_form_input.dart';
-import '../../network/http.dart';
 import '../../constants.dart';
-
+import '../../network/http.dart';
 import '../../utils/form_utils.dart';
 
 class PasswordResetScreen extends StatefulWidget {
@@ -17,12 +19,13 @@ class PasswordResetScreen extends StatefulWidget {
 
 class _PasswordResetScreenState extends State<PasswordResetScreen> {
   bool _validate = false;
-  bool _loading = false;
-  String currentPassword, newPassword, confirmation;
-  String errorMessage = '';
+  bool loading = false;
+  String _currentPassword, _newPassword, _confirmation;
+  String _errorMessage;
+  String _successMessage;
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> _onUpdatePassword() async {
+  Future<void> _updatePassword() async {
     if (!_formKey.currentState.validate()) {
       setState(() {
         _validate = true;
@@ -32,37 +35,49 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
 
     _formKey.currentState.save();
     setState(() {
-      errorMessage = "";
-      _loading = true;
+      _errorMessage = null;
+      _successMessage = null;
+      loading = true;
     });
 
     try {
-      // Response response = await dio.post("/profile/patient", data: {
-      //   "givenName": givenName,
-      //   "familyName": familyName,
-      //   "birthDate": birthDate,
-      //   "job": job,
-      //   "gender": gender,
-      //   "email": email,
-      //   "phone": phone
-      // });
-      //print(response);
+      String baseUrlKeyCloack = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
+          defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
+      dio.options.baseUrl = baseUrlKeyCloack;
+      Response response = await dio.post(
+        "/account/credentials/password",
+        data: {
+          "currentPassword": _currentPassword,
+          "newPassword": _newPassword,
+          "confirmation": _confirmation
+        },
+      );
+      print("response below");
+      print(response);
+
       setState(() {
-        _loading = false;
+        _successMessage = "The password has been updated!";
+        loading = false;
       });
     } on DioError catch (err) {
       print(err);
+
       setState(() {
-        errorMessage = "Something went wrong. Please try again later.";
-        _loading = false;
+        _errorMessage = err.response.statusCode == 400
+            ? "Incorrect password"
+            : "Something went wrong. Please try again later.";
+        loading = false;
       });
     } catch (err) {
       print(err);
       setState(() {
-        errorMessage = "Something went wrong. Please try again later.";
-        _loading = false;
+        _errorMessage = "Something went wrong. Please try again later.";
+        loading = false;
       });
     }
+    String baseUrlServer = String.fromEnvironment('SERVER_ADDRESS',
+        defaultValue: DotEnv().env['SERVER_ADDRESS']);
+    dio.options.baseUrl = baseUrlServer;
   }
 
   @override
@@ -104,7 +119,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                   obscureText: true,
                   changeValueCallback: (String val) {
                     setState(() {
-                      currentPassword = val;
+                      _currentPassword = val;
                     });
                   },
                 ),
@@ -116,10 +131,10 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                   customSVGIcon: "assets/icon/eyeoff.svg",
                   validator: validatePassword,
                   obscureText: true,
-                  onChanged: (String val) => setState(() => newPassword = val),
+                  onChanged: (String val) => setState(() => _newPassword = val),
                   changeValueCallback: (String val) {
                     setState(() {
-                      newPassword = val;
+                      _newPassword = val;
                     });
                   },
                 ),
@@ -130,28 +145,51 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                   label: "Confirmar contraseña nueva",
                   customSVGIcon: "assets/icon/eyeoff.svg",
                   validator: (pass2) =>
-                      validatePasswordConfirmation(pass2, newPassword),
+                      validatePasswordConfirmation(pass2, _newPassword),
                   obscureText: true,
                   changeValueCallback: (String val) {
                     setState(() {
-                      confirmation = val;
+                      _confirmation = val;
                     });
                   },
                 ),
                 const SizedBox(
-                  height: 56,
+                  height: 26,
                 ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Constants.primaryColor500,
-                    ),
-                    onPressed: _loading ? null : _onUpdatePassword,
-                    child: const Text("Guardar"),
+                SizedBox(
+                  height: 18,
+                  child: Column(
+                    children: [
+                      if (_errorMessage != null)
+                        Text(
+                          _errorMessage,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Constants.otherColor100,
+                          ),
+                        ),
+                      if (_successMessage != null)
+                        Text(
+                          _successMessage,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Constants.primaryColor600,
+                          ),
+                        ),
+                    ],
                   ),
-                )
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                CustomFormButton(
+                  loading: loading,
+                  text: "Guardar",
+                  actionCallback: _updatePassword,
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
               ],
             ),
           ),

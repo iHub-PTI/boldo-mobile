@@ -4,7 +4,9 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
+import '../provider/user_provider.dart';
 import '../constants.dart';
 import '../size_config.dart';
 
@@ -107,15 +109,19 @@ class _CustomFormInputState extends State<CustomFormInput> {
           child: GestureDetector(
             onTap: () async {
               if (!widget.isDateTime) return;
+              String birthDate =
+                  Provider.of<UserProvider>(context, listen: false)
+                      .getBirthDate;
 
               await DatePicker.showDatePicker(context,
-                  currentTime: DateTime.parse(
-                      _textEditingController.text ?? "1980-01-01"),
+                  locale: LocaleType.es,
+                  currentTime: DateTime.parse(birthDate ?? "1980-01-01"),
                   showTitleActions: true, onConfirm: (DateTime dt) {
-                String newTime = DateFormat('yyyy-MM-dd').format(dt);
+                // String newTime = DateFormat('yyyy-MM-dd').format(dt);
 
-                _textEditingController.text = newTime;
-                widget.changeValueCallback(newTime);
+                _textEditingController.text =
+                    DateFormat('dd.MM.yyyy').format(dt).toString();
+                // widget.changeValueCallback(newTime);
               });
             },
             child: Container(

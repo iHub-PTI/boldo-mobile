@@ -42,6 +42,8 @@ void main() async {
       defaultValue: DotEnv().env['SERVER_ADDRESS']);
 
   dio.options.baseUrl = baseUrl;
+  dio.options.headers['content-Type'] = 'application/json';
+  dio.options.headers['accept'] = 'application/json';
 
   String accessToken;
   FlutterAppAuth appAuth = FlutterAppAuth();
@@ -53,6 +55,7 @@ void main() async {
 
     return options;
   }, onError: (DioError error) async {
+    print("base url is ${error.request.baseUrl}");
     if (error.response?.statusCode == 403) {
       try {
         await storage.deleteAll();

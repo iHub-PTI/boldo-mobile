@@ -1,12 +1,15 @@
+import 'package:boldo/widgets/custom_form_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import './address_screen.dart';
 import './password_reset_screen.dart';
 import './components/profile_image.dart';
 
+import './actions/sharedActions.dart';
 import '../../widgets/custom_dropdown.dart';
 import '../../widgets/custom_form_input.dart';
 import '../../widgets/wrapper.dart';
@@ -27,9 +30,11 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _validate = false;
-  bool _loading = false;
-  bool _initialLoad = true;
-  String _errorMessage;
+  bool loading = false;
+  bool _dataLoaded = false;
+  bool _dataLoading = true;
+  String errorMessage;
+  String successMessage;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -42,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _fetchProfileData() async {
     try {
       Response response = await dio.get("/profile/patient");
-      print(response);
+
       Provider.of<UserProvider>(context, listen: false).setUserData(
         addressDescription: response.data["addressDescription"],
         job: response.data["job"],
@@ -60,19 +65,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
 
       setState(() {
-        _initialLoad = false;
+        _dataLoading = false;
+        _dataLoaded = true;
       });
     } on DioError catch (err) {
       print(err);
       setState(() {
-        _errorMessage = "Something went wrong. Please try again later.";
-        _initialLoad = false;
+        _dataLoading = false;
+        _dataLoaded = false;
       });
     } catch (err) {
       print(err);
       setState(() {
-        _errorMessage = "Something went wrong. Please try again later.";
-        _initialLoad = false;
+        _dataLoading = false;
+        _dataLoaded = false;
       });
     }
   }
@@ -87,45 +93,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     _formKey.currentState.save();
     setState(() {
-      _errorMessage = null;
-      _loading = true;
+      errorMessage = null;
+      successMessage = null;
+      loading = true;
     });
-
-    try {
-      UserProvider userProvider =
-          Provider.of<UserProvider>(context, listen: false);
-      Response response = await dio.post("/profile/patient", data: {
-        "givenName": userProvider.getGivenName,
-        "familyName": userProvider.getFamilyName,
-        "birthDate": userProvider.getBirthDate,
-        "job": userProvider.getJob,
-        "gender": userProvider.getGender,
-        "email": userProvider.getEmail,
-        "phone": userProvider.getPhone,
-        "photoUrl": userProvider.getPhotoUrl,
-        "street": userProvider.getStreet,
-        "neighborhood": userProvider.getNeighborhood,
-        "city": userProvider.getCity,
-        "addressDescription": userProvider.getAddressDescription,
-      });
-
-      print(response);
-      setState(() {
-        _loading = false;
-      });
-    } on DioError catch (err) {
-      print(err);
-      setState(() {
-        _errorMessage = "Something went wrong. Please try again later.";
-        _loading = false;
-      });
-    } catch (err) {
-      print(err);
-      setState(() {
-        _errorMessage = "Something went wrong. Please try again later.";
-        _loading = false;
-      });
-    }
+    Map<String, String> updateResponse = await updateProfile(context: context);
+    setState(() {
+      errorMessage = updateResponse["errorMessage"];
+      successMessage = updateResponse["successMessage"];
+      loading = false;
+    });
   }
 
   @override
@@ -150,13 +127,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: boldoHeadingTextStyle.copyWith(fontSize: 20),
         ),
       ),
-      if (_initialLoad)
+      if (_dataLoading)
         const Center(
-            child: Padding(
-          padding: EdgeInsets.only(top: 48.0),
-          child: CircularProgressIndicator(),
-        )),
-      if (!_initialLoad)
+          child: Padding(
+            padding: EdgeInsets.only(top: 48.0),
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      if (!_dataLoading && !_dataLoaded)
+        const Center(
+          child: Text(
+            "Something went wrong. Please try again later.",
+            style: TextStyle(
+              fontSize: 14,
+              color: Constants.otherColor100,
+            ),
+          ),
+        ),
+      if (!_dataLoading && _dataLoaded)
         Column(
           children: [
             const SizedBox(
@@ -257,11 +245,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       builder: (_, data, __) {
                         return CustomFormInput(
                           label: "Fecha de nacimiento",
-                          initialValue: data,
+                          initialValue: DateFormat('dd.MM.yyyy')
+                              .format(DateTime.parse(data ?? "1980-01-01"))
+                              .toString(),
                           validator: null,
                           isDateTime: true,
                           changeValueCallback: (String val) {
-                            userProvider.setUserData(birthDate: val);
+                            var inputFormat = DateFormat("dd.MM.yyyy");
+                            var date1 = inputFormat.parse(val);
+
+                            var outputFormat = DateFormat("yyyy-MM-dd");
+
+                            userProvider.setUserData(
+                              birthDate: outputFormat.format(date1),
+                            );
                           },
                         );
                       },
@@ -358,30 +355,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       trailing: const Icon(Icons.chevron_right),
                     ),
                     const SizedBox(
-                      height: 24,
+                      height: 8,
                     ),
-                    if (_errorMessage != null)
-                      Text(
-                        "$_errorMessage",
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Constants.otherColor100,
-                        ),
+                    SizedBox(
+                      height: 18,
+                      child: Column(
+                        children: [
+                          if (errorMessage != null)
+                            Text(
+                              errorMessage,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Constants.otherColor100,
+                              ),
+                            ),
+                          if (successMessage != null)
+                            Text(
+                              successMessage,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Constants.primaryColor600,
+                              ),
+                            ),
+                        ],
                       ),
+                    ),
                     const SizedBox(
-                      height: 12,
+                      height: 8,
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Constants.primaryColor500,
-                        ),
-                        onPressed: _loading ? null : _updateProfile,
-                        child: const Text("Guardar"),
-                      ),
-                    )
+                    CustomFormButton(
+                      loading: loading,
+                      text: "Guardar",
+                      actionCallback: _updateProfile,
+                    ),
+
+                    const SizedBox(
+                      height: 16,
+                    ),
                   ],
                 ),
               ),

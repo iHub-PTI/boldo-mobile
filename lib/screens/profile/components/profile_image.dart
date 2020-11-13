@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../../../provider/user_provider.dart';
@@ -22,21 +20,6 @@ class ProfileImage extends StatefulWidget {
 
 class _ProfileImageState extends State<ProfileImage> {
   bool _isLoading = false;
-  String _profileImage;
-
-  @override
-  void initState() {
-    _setProfileImage();
-    super.initState();
-  }
-
-  Future<void> _setProfileImage() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.getString("profileImage");
-    setState(() {
-      _profileImage = prefs.getString("profileImage");
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

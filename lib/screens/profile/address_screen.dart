@@ -1,13 +1,12 @@
+import 'package:boldo/screens/profile/actions/sharedActions.dart';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
 
+import '../../widgets/custom_form_button.dart';
 import '../../widgets/wrapper.dart';
 import '../../widgets/custom_form_input.dart';
 import '../../provider/user_provider.dart';
 import '../../constants.dart';
-
-import '../../network/http.dart';
 
 class AddressScreen extends StatefulWidget {
   AddressScreen({Key key}) : super(key: key);
@@ -18,9 +17,10 @@ class AddressScreen extends StatefulWidget {
 
 class _AddressScreenState extends State<AddressScreen> {
   bool _validate = false;
-  bool _loading = false;
+  bool loading = false;
   String street, neighborhood, city, addressDescription;
-  String errorMessage = '';
+  String errorMessage;
+  String successMessage;
   final _formKey = GlobalKey<FormState>();
 
   Future<void> _updateLocation() async {
@@ -33,45 +33,16 @@ class _AddressScreenState extends State<AddressScreen> {
 
     _formKey.currentState.save();
     setState(() {
-      errorMessage = "";
-      _loading = true;
+      errorMessage = null;
+      successMessage = null;
+      loading = true;
     });
-
-    try {
-      UserProvider userProvider =
-          Provider.of<UserProvider>(context, listen: false);
-      Response response = await dio.post("/profile/patient", data: {
-        "givenName": userProvider.getGivenName,
-        "familyName": userProvider.getFamilyName,
-        "birthDate": userProvider.getBirthDate,
-        "job": userProvider.getJob,
-        "gender": userProvider.getGender,
-        "email": userProvider.getEmail,
-        "phone": userProvider.getPhone,
-        "photoUrl": userProvider.getPhotoUrl,
-        "street": userProvider.getStreet,
-        "neighborhood": userProvider.getNeighborhood,
-        "city": userProvider.getCity,
-        "addressDescription": userProvider.getAddressDescription,
-      });
-
-      print(response);
-      setState(() {
-        _loading = false;
-      });
-    } on DioError catch (err) {
-      print(err);
-      setState(() {
-        errorMessage = "Something went wrong. Please try again later.";
-        _loading = false;
-      });
-    } catch (err) {
-      print(err);
-      setState(() {
-        errorMessage = "Something went wrong. Please try again later.";
-        _loading = false;
-      });
-    }
+    Map<String, String> updateResponse = await updateProfile(context: context);
+    setState(() {
+      errorMessage = updateResponse["errorMessage"];
+      successMessage = updateResponse["successMessage"];
+      loading = false;
+    });
   }
 
   @override
@@ -164,18 +135,39 @@ class _AddressScreenState extends State<AddressScreen> {
                   selector: (buildContext, userProvider) =>
                       userProvider.getAddressDescription,
                 ),
-                const SizedBox(height: 24),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Constants.primaryColor500,
-                    ),
-                    onPressed: _loading ? null : _updateLocation,
-                    child: const Text("Guardar"),
+                const SizedBox(height: 26),
+                SizedBox(
+                  height: 18,
+                  child: Column(
+                    children: [
+                      if (errorMessage != null)
+                        Text(
+                          errorMessage,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Constants.otherColor100,
+                          ),
+                        ),
+                      if (successMessage != null)
+                        Text(
+                          successMessage,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Constants.primaryColor600,
+                          ),
+                        ),
+                    ],
                   ),
-                )
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                CustomFormButton(
+                  loading: loading,
+                  text: "Guardar",
+                  actionCallback: _updateLocation,
+                ),
+                const SizedBox(height: 16),
               ],
             ),
           ),
