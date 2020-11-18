@@ -35,8 +35,6 @@ String validateEmail(String email) {
 String valdiateFirstName(String value) {
   if (value.isNotEmpty == false)
     return "First Name is Required";
-  else if (value.length < 4)
-    return "The First Name must have at least 4 characters";
   else if (value.length > 30)
     return "The First Name is too long";
   else
@@ -46,8 +44,6 @@ String valdiateFirstName(String value) {
 String valdiateLasttName(String value) {
   if (value.isNotEmpty == false)
     return "Last Name is Required";
-  else if (value.length < 4)
-    return "The Last Name must have at least 4 characters";
   else if (value.length > 30)
     return "The Last Name is too long";
   else
