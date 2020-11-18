@@ -32,7 +32,7 @@ The mobile app is specifically for patients.
    # KEYCLOAK_REALM_ADDRESS = http://localhost:8080/auth/realms/iHub
    ```
 
-   Note: Uncomment the Android secion in case you want to run it on an Android.
+   Note: Uncomment the Android secion in case you want to run it on an Android and you have the servers running on localhost.
 
 4. `flutter run` - to start the app on an available device
 
