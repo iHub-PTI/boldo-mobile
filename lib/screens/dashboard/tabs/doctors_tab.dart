@@ -18,10 +18,19 @@ class DoctorsTab extends StatefulWidget {
 class _DoctorsTabState extends State<DoctorsTab> {
   List<Doctor> doctors = [];
   bool loading = true;
+  bool _mounted;
+
   @override
   void initState() {
+    _mounted = true;
     getDoctors();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _mounted = false;
+    super.dispose();
   }
 
   void getDoctors() async {
@@ -30,7 +39,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
       if (response.statusCode == 200) {
         List<Doctor> doctorsList =
             List<Doctor>.from(response.data.map((i) => Doctor.fromJson(i)));
-
+        if (!_mounted) return;
         setState(() {
           loading = false;
           doctors = doctorsList;

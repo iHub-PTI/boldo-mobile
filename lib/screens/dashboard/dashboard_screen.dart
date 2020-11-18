@@ -1,3 +1,4 @@
+import 'package:boldo/provider/utils_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
@@ -23,7 +24,6 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   Logger logger = Logger();
   FlutterAppAuth appAuth = FlutterAppAuth();
-  int _selectedIndex = 0;
 
   GlobalKey scaffoldKey = GlobalKey();
 
@@ -64,9 +64,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       // Scaffold.of(context).showSnackBar(snackBar);
       logger.e(err);
     }
-    setState(() {
-      _selectedIndex = 0;
-    });
+    Provider.of<UtilsProvider>(context, listen: false)
+        .setSelectedPageIndex(pageIndex: 0);
   }
 
   Widget getPage(int index) {
@@ -92,59 +91,64 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
-      child: Scaffold(
-        key: scaffoldKey,
-        body: getPage(_selectedIndex),
-        bottomNavigationBar:
-            Consumer<AuthProvider>(builder: (context, myInstance, child) {
-          bool isAuthenticated = myInstance.getAuthenticated;
-          return BottomNavigationBar(
-            showUnselectedLabels: false,
-            items: <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/icon/homeIcon.svg',
-                  semanticsLabel: 'Doctor Icon',
-                  color: _selectedIndex == 0
-                      ? Constants.secondaryColor500
-                      : Constants.extraColor200,
-                ),
-                label: 'Inicio',
-              ),
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  'assets/icon/doctorIcon.svg',
-                  semanticsLabel: 'Doctor Icon',
-                  color: _selectedIndex == 1
-                      ? Constants.secondaryColor500
-                      : Constants.extraColor200,
-                ),
-                label: 'Médicos',
-              ),
-              BottomNavigationBarItem(
-                icon: SvgPicture.asset(
-                  !isAuthenticated
-                      ? 'assets/icon/profileIcon.svg'
-                      : 'assets/icon/settingsIcon.svg',
-                  semanticsLabel: 'Doctor Icon',
-                  color: _selectedIndex == 2
-                      ? Constants.secondaryColor500
-                      : Constants.extraColor200,
-                ),
-                label: !isAuthenticated ? 'Cuenta' : "Config",
-              )
-            ],
-            currentIndex: _selectedIndex,
-            selectedItemColor: Constants.secondaryColor500,
-            onTap: (index) => setState(() {
-              _selectedIndex = index;
-            }),
-          );
-        }),
-      ),
-    );
+        onWillPop: () async {
+          return false;
+        },
+        child: Selector<UtilsProvider, int>(
+          selector: (buildContext, userProvider) =>
+              userProvider.getSelectedPageIndex,
+          builder: (_, _selectedPageIndex, __) {
+            return Scaffold(
+              key: scaffoldKey,
+              body: getPage(_selectedPageIndex),
+              bottomNavigationBar:
+                  Consumer<AuthProvider>(builder: (context, myInstance, child) {
+                bool isAuthenticated = myInstance.getAuthenticated;
+                return BottomNavigationBar(
+                    showUnselectedLabels: false,
+                    items: <BottomNavigationBarItem>[
+                      BottomNavigationBarItem(
+                        icon: SvgPicture.asset(
+                          'assets/icon/homeIcon.svg',
+                          semanticsLabel: 'Doctor Icon',
+                          color: _selectedPageIndex == 0
+                              ? Constants.secondaryColor500
+                              : Constants.extraColor200,
+                        ),
+                        label: 'Inicio',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: SvgPicture.asset(
+                          'assets/icon/doctorIcon.svg',
+                          semanticsLabel: 'Doctor Icon',
+                          color: _selectedPageIndex == 1
+                              ? Constants.secondaryColor500
+                              : Constants.extraColor200,
+                        ),
+                        label: 'Médicos',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: SvgPicture.asset(
+                          !isAuthenticated
+                              ? 'assets/icon/profileIcon.svg'
+                              : 'assets/icon/settingsIcon.svg',
+                          semanticsLabel: 'Doctor Icon',
+                          color: _selectedPageIndex == 2
+                              ? Constants.secondaryColor500
+                              : Constants.extraColor200,
+                        ),
+                        label: !isAuthenticated ? 'Cuenta' : "Config",
+                      )
+                    ],
+                    currentIndex: _selectedPageIndex,
+                    selectedItemColor: Constants.secondaryColor500,
+                    onTap: (index) {
+                      Provider.of<UtilsProvider>(context, listen: false)
+                          .setSelectedPageIndex(pageIndex: index);
+                    });
+              }),
+            );
+          },
+        ));
   }
 }
