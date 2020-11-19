@@ -1,3 +1,4 @@
+import 'package:boldo/screens/filter/filter_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -55,9 +56,25 @@ class _DoctorsTabState extends State<DoctorsTab> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FilterScreen(),
+                ),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: SvgPicture.asset('assets/icon/filter.svg'),
+            ),
+          )
+        ],
         leadingWidth: 200,
         leading: Padding(
-          padding: const EdgeInsets.only(left: 10.0),
+          padding: const EdgeInsets.only(left: 16.0),
           child:
               SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
         ),

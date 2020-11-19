@@ -111,7 +111,8 @@ class AppointmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     int daysDifference =
         DateTime.parse(appointment.start).difference(DateTime.now()).inDays;
-    print(daysDifference);
+    bool isPast = DateTime.parse(appointment.start).isBefore(DateTime.now());
+
     return Card(
       elevation: 1.4,
       shape: RoundedRectangleBorder(
@@ -128,7 +129,7 @@ class AppointmentCard extends StatelessWidget {
                 topLeft: Radius.circular(6),
                 bottomLeft: Radius.circular(6),
               ),
-              color: daysDifference == 0
+              color: daysDifference == 0 && !isPast
                   ? Constants.primaryColor500
                   : Constants.tertiaryColor200,
             ),
@@ -138,7 +139,7 @@ class AppointmentCard extends StatelessWidget {
                 Text(
                   DateFormat('MMM').format(DateTime.parse(appointment.start)),
                   style: TextStyle(
-                    color: daysDifference == 0
+                    color: daysDifference == 0 && !isPast
                         ? Constants.extraColor100
                         : Constants.primaryColor500,
                     fontSize: 18,
@@ -147,7 +148,7 @@ class AppointmentCard extends StatelessWidget {
                 Text(
                   DateFormat('dd').format(DateTime.parse(appointment.start)),
                   style: TextStyle(
-                    color: daysDifference == 0
+                    color: daysDifference == 0 && !isPast
                         ? Constants.extraColor100
                         : Constants.primaryColor500,
                     fontSize: 16,
@@ -180,7 +181,7 @@ class AppointmentCard extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
-              if (daysDifference == 0)
+              if (daysDifference == 0 && !isPast)
                 Column(
                   children: [
                     const SizedBox(

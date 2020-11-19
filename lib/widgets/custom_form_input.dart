@@ -183,7 +183,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
                         ? widget.customIcon
                         : widget.customSVGIcon != null
                             ? Padding(
-                                padding: const EdgeInsets.all(14.0),
+                                padding: const EdgeInsets.all(16.0),
                                 child: SvgPicture.asset(
                                   widget.customSVGIcon,
                                   color: Constants.extraColor300,
