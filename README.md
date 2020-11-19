@@ -47,6 +47,10 @@ Note: You can check the availability of connected devices by running `flutter do
  --dart-define=KEYCLOAK_REALM_ADDRESS=https://sso-test.pti.org.py/auth/realms/iHub
 ```
 
+## Known issues
+
+The webRTC java library causes a lot of unnecessary comments. To disable them you can add `!org.webrtc` as a filter in your VSCode debug console.
+
 ## Supported Platforms
 
 To allow as many people as possible access to health services, this applications aims to run also on old devices. Currently we support the following minmal platform versions:
