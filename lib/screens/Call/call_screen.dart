@@ -1,7 +1,9 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:socket_io_client/socket_io_client.dart' as io;
 
 import '../../utils/signaling.dart';
 import '../../constants.dart';
@@ -34,10 +36,20 @@ class _CallScreenState extends State<CallScreen> {
 
   double xCameraPos = 16.0;
   double yCameraPos = 340.0;
+  io.Socket socket;
+
+  String socketsAddress = String.fromEnvironment('SOCKETS_ADDRESS',
+      defaultValue: DotEnv().env['SOCKETS_ADDRESS']);
 
   @override
   void initState() {
     super.initState();
+    socket = io.io(socketsAddress, <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': true,
+    });
+    socket.emit('patient ready', widget.appointmentId);
+
     yCameraPos = SizeConfig.safeBlockVertical * 64;
 
     initRenderers();
@@ -69,8 +81,6 @@ class _CallScreenState extends State<CallScreen> {
 
   void _connect() async {
     if (_signaling == null) {
-      _signaling = Signaling(widget.appointmentId)..connect();
-
       _signaling.onStateChange = (SignalingState state) async {
         switch (state) {
           case SignalingState.CallStateNew:

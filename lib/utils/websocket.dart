@@ -7,21 +7,22 @@ typedef void OnOpenCallback();
 
 class SimpleWebSocket {
   String url;
-  io.Socket socket;
   String appointmentId;
+  io.Socket socket;
+
   OnOpenCallback onOpen;
   OnMessageCallback onMessage;
   OnCloseCallback onClose;
   Logger logger = Logger();
   SimpleWebSocket(this.url, this.appointmentId);
 
-  void connect() async {
+  connect() async {
     try {
-      socket = io.io(url, <String, dynamic>{
-        'transports': ['websocket'],
-        'autoConnect': false,
-      });
-      socket.connect();
+      // socket = io.io(url, <String, dynamic>{
+      //   'transports': ['websocket'],
+      //   'autoConnect': false,
+      // });
+      // socket.connect();
 
       // Dart client
       socket.on('connect', (_) {
@@ -37,18 +38,10 @@ class SimpleWebSocket {
         onMessage('end call', data);
       });
 
-      socket.on('call partner', (data) {
-        onMessage('call partner', data);
-      });
-      socket.on('call host', (data) {
-        onMessage('call host', data);
-      });
       socket.on('offer', (data) {
         onMessage('offer', data);
       });
-      socket.on('answer', (data) {
-        onMessage('answer', data);
-      });
+
       socket.on('ice-candidate', (data) {
         onMessage('ice-candidate', data);
       });
