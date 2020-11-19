@@ -24,16 +24,21 @@ final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   initializeDateFormatting();
   Intl.defaultLocale = "es";
+
   await DotEnv().load('.env');
+
   GestureBinding.instance.resamplingEnabled = true;
-  ConnectionStatusSingleton connectionStatus =
-      ConnectionStatusSingleton.getInstance();
-  connectionStatus.initialize();
+
+  ConnectionStatusSingleton.getInstance().initialize();
+
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   bool onboardingCompleted = prefs.getBool("onboardingCompleted") ?? false;
+
   initDio(navKey: navKey);
+
   const storage = FlutterSecureStorage();
   String value = await storage.read(key: "access_token");
 
