@@ -1,11 +1,11 @@
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/provider/utils_provider.dart';
+import 'package:boldo/screens/call/video_call.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointments_tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../call/call_screen.dart';
 import '../../../constants.dart';
 import '../../../provider/auth_provider.dart';
 
@@ -398,7 +398,7 @@ class AppointmentsCard extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  CallScreen(appointmentId: appointmentId),
+                                  VideoCall(appointmentId: appointmentId),
                             ));
                       },
                       child: Text(
