@@ -8,15 +8,6 @@ List<List<CalendarItem>> monthBuilder({@required DateTime buildDate}) {
   int day = 1;
 
   while (day <= DateTime(buildDate.year, buildDate.month + 1, 0).day) {
-    // String clearDate = new DateFormat('yyyy-MM-dd')
-    //     .format(DateTime(buildDate.year, buildDate.month, day));
-
-    // var allWorkoutsForDay = allWorkoutsForMonth
-    //     .where(
-    //       (element) => element.start_date.substring(0, 10) == clearDate,
-    //     )
-    //     .toList();
-
     chunkArrays[fillingArray].add(CalendarItem(
         itemDate: DateTime(buildDate.year, buildDate.month, day),
         isEmpty: false));

@@ -1,8 +1,10 @@
+import 'package:boldo/models/Specialization.dart';
+import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/filter/splecialities_filter_screen.dart';
 import 'package:boldo/widgets/custom_form_input.dart';
 import 'package:boldo/widgets/wrapper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 import '../../constants.dart';
 
@@ -41,9 +43,9 @@ class FilterScreen extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const SpecialitiesFilterScreen(),
-                    ),
+                    PageRouteBuilder(
+                        pageBuilder: (_, __, ___) =>
+                            const SpecialitiesFilterScreen()),
                   );
                 },
                 child: Container(
@@ -57,6 +59,69 @@ class FilterScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
+              Selector<UtilsProvider, List<Specialization>>(
+                selector: (buildContext, userProvider) =>
+                    userProvider.getListOfSpecializations,
+                builder: (_, listOfSpecializations, __) {
+                  if (listOfSpecializations.length == 0)
+                    return const SizedBox();
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Wrap(
+                        alignment: WrapAlignment.start,
+                        spacing: 10.0, // gap between adjacent chips
+                        runSpacing: 8, // gap between lines
+                        children: <Widget>[
+                          for (Specialization specialization
+                              in listOfSpecializations)
+                            Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xffF3FAF7),
+                                borderRadius: BorderRadius.circular(9),
+                                border: Border.all(
+                                    color: Constants.primaryColor600),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 5),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      '${specialization.description}',
+                                      style: boldoHeadingTextStyle.copyWith(
+                                          fontSize: 12,
+                                          color: Constants.primaryColor600),
+                                    ),
+                                    const SizedBox(
+                                      width: 4,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Provider.of<UtilsProvider>(context,
+                                                listen: false)
+                                            .removeSpecialization(
+                                                specializationId:
+                                                    specialization.id);
+                                      },
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 16,
+                                        color: Constants.primaryColor600,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 28),
               BuildLanguages(),
