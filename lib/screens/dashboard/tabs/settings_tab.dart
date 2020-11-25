@@ -3,6 +3,7 @@ import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
@@ -155,8 +156,15 @@ class _SettingsTabState extends State<SettingsTab> {
               ListTile(
                 onTap: () async {
                   try {
-                    // Response response = await dio.get(
-                    //     "/realms/{realm-name}/protocol/openid-connect/revoke");
+                    String baseUrlKeyCloack = String.fromEnvironment(
+                        'KEYCLOAK_REALM_ADDRESS',
+                        defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
+                    dio.options.baseUrl = baseUrlKeyCloack;
+                    Response response = await dio.get(
+                      "/protocol/openid-connect/revoke",
+                    );
+                    print("response below");
+                    print(response);
 
                     Provider.of<AuthProvider>(context, listen: false)
                         .setAuthenticated(isAuthenticated: false);
@@ -175,6 +183,10 @@ class _SettingsTabState extends State<SettingsTab> {
                   } catch (err) {
                     print(err);
                   }
+                  String baseUrlServer = String.fromEnvironment(
+                      'SERVER_ADDRESS',
+                      defaultValue: DotEnv().env['SERVER_ADDRESS']);
+                  dio.options.baseUrl = baseUrlServer;
                 },
                 leading: SizedBox(
                   height: double.infinity,

@@ -260,11 +260,12 @@ class _HomeTabState extends State<HomeTab> {
                         children: [
                           for (Appointment appointment
                               in waitingRoomAppointments)
-                            WaitingRoomCard(),
+                            WaitingRoomCard(appointment: appointment),
                         ],
                       ),
                     ),
                     const SliverAppBar(
+                      automaticallyImplyLeading: false,
                       pinned: true,
                       flexibleSpace: TabBar(
                         labelColor: Constants.primaryColor600,
@@ -334,7 +335,9 @@ class _HomeTabState extends State<HomeTab> {
 }
 
 class WaitingRoomCard extends StatelessWidget {
-  const WaitingRoomCard({Key key}) : super(key: key);
+  final Appointment appointment;
+  const WaitingRoomCard({Key key, @required this.appointment})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -384,12 +387,11 @@ class WaitingRoomCard extends StatelessWidget {
                     height: 52,
                     child: TextButton(
                       onPressed: () {
-                        String appointmentId = "1";
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  VideoCall(appointmentId: appointmentId),
+                                  VideoCall(appointmentId: appointment.id),
                             ));
                       },
                       child: Text(
