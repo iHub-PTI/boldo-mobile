@@ -12,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:boldo/screens/call/video_call.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/models/Appointment.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../network/http.dart';
 import '../../../constants.dart';
@@ -36,11 +37,14 @@ class _HomeTabState extends State<HomeTab> {
   bool _loading = true;
   bool _mounted;
 
+  String profileURL;
+  String gender = "male";
+
   @override
   void initState() {
     _mounted = true;
     _initAppointments();
-
+    _getProfileData();
     super.initState();
   }
 
@@ -52,6 +56,18 @@ class _HomeTabState extends State<HomeTab> {
       _isolate.kill(priority: Isolate.immediate);
     }
     super.dispose();
+  }
+
+  Future _getProfileData() async {
+    bool isAuthenticated =
+        Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
+    if (!isAuthenticated) return;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      profileURL = prefs.getString("profile_url");
+      gender = prefs.getString("gender");
+    });
   }
 
   static void _updateWaitingRoomsList(Map map) async {
@@ -206,17 +222,19 @@ class _HomeTabState extends State<HomeTab> {
                     return SizedBox(
                       height: 60,
                       width: 60,
-                      child: data == null
-                          ? SvgPicture.asset(
-                              isAuthenticated
-                                  ? 'assets/images/DoctorImage.svg'
-                                  : 'assets/images/LogoIcon.svg',
-                            )
-                          : ClipOval(
-                              clipBehavior: Clip.antiAlias,
-                              child: CachedNetworkImage(
+                      child: ClipOval(
+                        clipBehavior: Clip.antiAlias,
+                        child: data == null && profileURL == null
+                            ? SvgPicture.asset(
+                                isAuthenticated
+                                    ? gender == "female"
+                                        ? 'assets/images/femalePatient.svg'
+                                        : 'assets/images/malePatient.svg'
+                                    : 'assets/images/LogoIcon.svg',
+                              )
+                            : CachedNetworkImage(
                                 fit: BoxFit.cover,
-                                imageUrl: data,
+                                imageUrl: data ?? profileURL,
                                 progressIndicatorBuilder:
                                     (context, url, downloadProgress) => Padding(
                                   padding: const EdgeInsets.all(26.0),
@@ -227,7 +245,7 @@ class _HomeTabState extends State<HomeTab> {
                                 errorWidget: (context, url, error) =>
                                     const Icon(Icons.error),
                               ),
-                            ),
+                      ),
                     );
                   },
                   selector: (buildContext, userProvider) =>

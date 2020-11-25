@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../provider/user_provider.dart';
 import '../../../network/http.dart';
@@ -25,6 +26,11 @@ Future<Map<String, String>> updateProfile(
       "city": userProvider.getCity,
       "addressDescription": userProvider.getAddressDescription,
     });
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("profile_url", userProvider.getPhotoUrl);
+    await prefs.setString("gender", userProvider.getGender);
+
     return {"successMessage": "Profile updated successfully."};
   } on DioError catch (err) {
     print(err);

@@ -1,11 +1,14 @@
+import 'package:boldo/network/http.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../provider/auth_provider.dart';
 import '../../constants.dart';
@@ -56,12 +59,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
           allowInsecureConnections: true,
         ),
       );
-      logger.i("Logged In");
+
       await storage.write(key: "access_token", value: result.accessToken);
       await storage.write(key: "refresh_token", value: result.refreshToken);
 
       Provider.of<AuthProvider>(context, listen: false)
           .setAuthenticated(isAuthenticated: true);
+      Response response = await dio.get("/profile/patient");
+      if (response.data["photoUrl"] != null) {
+        //
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString("profile_url", response.data["photoUrl"]);
+        await prefs.setString("gender", response.data["gender"]);
+      }
     } catch (err) {
       // final snackBar = SnackBar(content: Text('Authenticaton Failed!'));
       // Scaffold.of(context).showSnackBar(snackBar);

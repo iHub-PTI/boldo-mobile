@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import './address_screen.dart';
 import './password_reset_screen.dart';
 import './components/profile_image.dart';
@@ -64,6 +65,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         notify: true,
       );
 
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("profile_url", response.data["photoUrl"]);
+      await prefs.setString("gender", response.data["gender"]);
       setState(() {
         _dataLoading = false;
         _dataLoaded = true;
