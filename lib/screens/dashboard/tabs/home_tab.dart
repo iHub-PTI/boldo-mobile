@@ -5,6 +5,7 @@ import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:boldo/screens/call/video_call.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/models/Appointment.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../network/http.dart';
@@ -34,16 +36,26 @@ class _HomeTabState extends State<HomeTab> {
   List<Appointment> upcomingWaitingRoomAppointments = [];
   List<Appointment> waitingRoomAppointments = [];
 
+  bool _dataFetchError = false;
   bool _loading = true;
   bool _mounted;
 
   String profileURL;
   String gender = "male";
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    // monitor network fetch
+    await getAppointmentsData();
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
 
   @override
   void initState() {
     _mounted = true;
-    _initAppointments();
+    getAppointmentsData();
     _getProfileData();
     super.initState();
   }
@@ -118,15 +130,20 @@ class _HomeTabState extends State<HomeTab> {
     _receivePort.listen(_handleWaitingRoomsListUpdate);
   }
 
-  Future<void> _initAppointments() async {
+  Future<void> getAppointmentsData() async {
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
     if (!isAuthenticated) {
       setState(() {
         _loading = false;
+        _dataFetchError = false;
       });
       return;
     }
+    setState(() {
+      _loading = true;
+      _dataFetchError = false;
+    });
     try {
       Response response = await dio.get("/appointments");
 
@@ -168,6 +185,7 @@ class _HomeTabState extends State<HomeTab> {
       _receivePort.listen(_handleWaitingRoomsListUpdate);
 
       setState(() {
+        _dataFetchError = false;
         _loading = false;
         upcomingWaitingRoomAppointments = upcomingWaitingRoomAppointmetsList;
         waitingRoomAppointments = allAppointmets.where(
@@ -188,10 +206,16 @@ class _HomeTabState extends State<HomeTab> {
         pastAppointments = pastAppointmentsItems;
         futureAppointments = upcomingAppointmentsItems;
       });
-    } on DioError catch (err) {
-      print(err);
+    } on DioError catch (_) {
+      setState(() {
+        _loading = false;
+        _dataFetchError = true;
+      });
     } catch (err) {
-      print(err);
+      setState(() {
+        _loading = false;
+        _dataFetchError = true;
+      });
     }
   }
 
@@ -274,88 +298,103 @@ class _HomeTabState extends State<HomeTab> {
           ),
         ),
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : !isAuthenticated || !hasAppointments
-              ? const EmptyAppointmentsState(size: "big")
-              : DefaultTabController(
-                  length: 2,
-                  child: CustomScrollView(slivers: <Widget>[
-                    SliverToBoxAdapter(
-                      child: Column(
-                        children: [
-                          for (Appointment appointment
-                              in waitingRoomAppointments)
-                            WaitingRoomCard(appointment: appointment),
-                        ],
-                      ),
-                    ),
-                    const SliverAppBar(
-                      automaticallyImplyLeading: false,
-                      pinned: true,
-                      flexibleSpace: TabBar(
-                        labelColor: Constants.primaryColor600,
-                        unselectedLabelColor: Constants.extraColor300,
-                        indicatorColor: Constants.primaryColor600,
-                        labelStyle: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500),
-                        tabs: [
-                          Tab(
-                            text: "Próximas Citas",
+      body: _dataFetchError
+          ? DataFetchErrorWidget(retryCallback: getAppointmentsData)
+          : _loading
+              ? const Center(child: CircularProgressIndicator())
+              : !isAuthenticated || !hasAppointments
+                  ? const EmptyAppointmentsState(size: "big")
+                  : DefaultTabController(
+                      length: 2,
+                      child: SmartRefresher(
+                        enablePullDown: true,
+                        enablePullUp: false,
+                        header: const MaterialClassicHeader(
+                          color: Constants.primaryColor800,
+                        ),
+                        controller: _refreshController,
+                        onRefresh: _onRefresh,
+                        child: CustomScrollView(slivers: <Widget>[
+                          SliverToBoxAdapter(
+                            child: Column(
+                              children: [
+                                for (Appointment appointment
+                                    in waitingRoomAppointments)
+                                  WaitingRoomCard(appointment: appointment),
+                              ],
+                            ),
                           ),
-                          Tab(
-                            text: "Citas Pasadas",
-                          ),
-                        ],
-                      ),
-                      elevation: 0,
-                    ),
-                    SliverFillRemaining(
-                      child: TabBarView(
-                        children: <Widget>[
-                          futureAppointments.length > 0
-                              ? Padding(
-                                  padding: const EdgeInsets.only(top: 24.0),
-                                  child: ListView(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    children: [
-                                      for (Appointment appointment
-                                          in futureAppointments)
-                                        AppointmentCard(
-                                          appointment: appointment,
-                                        ),
-                                    ],
-                                  ),
-                                )
-                              : const Center(
-                                  child: EmptyAppointmentsState(size: "small"),
+                          const SliverAppBar(
+                            automaticallyImplyLeading: false,
+                            pinned: true,
+                            flexibleSpace: TabBar(
+                              labelColor: Constants.primaryColor600,
+                              unselectedLabelColor: Constants.extraColor300,
+                              indicatorColor: Constants.primaryColor600,
+                              labelStyle: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w500),
+                              tabs: [
+                                Tab(
+                                  text: "Próximas Citas",
                                 ),
-                          pastAppointments.length > 0
-                              ? Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 24.0,
-                                  ),
-                                  child: ListView.builder(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount: pastAppointments.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return AppointmentCard(
-                                        appointment: pastAppointments[index],
-                                      );
-                                    },
-                                  ),
-                                )
-                              : const Center(
-                                  child: EmptyAppointmentsState(size: "small"),
-                                )
-                        ],
+                                Tab(
+                                  text: "Citas Pasadas",
+                                ),
+                              ],
+                            ),
+                            elevation: 0,
+                          ),
+                          SliverFillRemaining(
+                            child: TabBarView(
+                              children: <Widget>[
+                                futureAppointments.length > 0
+                                    ? Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 24.0),
+                                        child: ListView(
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          children: [
+                                            for (Appointment appointment
+                                                in futureAppointments)
+                                              AppointmentCard(
+                                                appointment: appointment,
+                                              ),
+                                          ],
+                                        ),
+                                      )
+                                    : const Center(
+                                        child: EmptyAppointmentsState(
+                                            size: "small"),
+                                      ),
+                                pastAppointments.length > 0
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 24.0,
+                                        ),
+                                        child: ListView.builder(
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemCount: pastAppointments.length,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return AppointmentCard(
+                                              appointment:
+                                                  pastAppointments[index],
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    : const Center(
+                                        child: EmptyAppointmentsState(
+                                            size: "small"),
+                                      )
+                              ],
+                            ),
+                          )
+                        ]),
                       ),
-                    )
-                  ]),
-                ),
+                    ),
     );
   }
 }
@@ -431,6 +470,55 @@ class WaitingRoomCard extends StatelessWidget {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class DataFetchErrorWidget extends StatelessWidget {
+  final Function() retryCallback;
+  const DataFetchErrorWidget({Key key, @required this.retryCallback})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            "An error occured",
+            style: TextStyle(
+                color: Constants.otherColor100,
+                fontSize: 18,
+                fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(
+            height: 17,
+          ),
+          Container(
+            child: const Text(
+              "Somethign went wrong while fetching your data",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Constants.extraColor300,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+            onPressed: retryCallback,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Text("Retry"),
+            ),
+          )
         ],
       ),
     );
