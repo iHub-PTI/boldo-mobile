@@ -103,6 +103,14 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Future<void> _initAppointments() async {
+    bool isAuthenticated =
+        Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
+    if (!isAuthenticated) {
+      setState(() {
+        _loading = false;
+      });
+      return;
+    }
     try {
       Response response = await dio.get("/appointments");
 

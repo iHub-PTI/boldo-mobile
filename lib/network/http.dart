@@ -26,7 +26,6 @@ void initDio({@required GlobalKey<NavigatorState> navKey}) {
     InterceptorsWrapper(
       onRequest: (RequestOptions options) async {
         accessToken ??= await storage.read(key: "access_token");
-        print('token is ${accessToken}');
         options.headers["authorization"] = "bearer $accessToken";
 
         return options;

@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:boldo/network/http.dart';
 import 'package:boldo/provider/user_provider.dart';
+import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +11,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-
+import 'package:http/http.dart' as http;
 import '../../../widgets/wrapper.dart';
 import '../dashboard_screen.dart';
 import '../../../provider/auth_provider.dart';
@@ -159,34 +162,36 @@ class _SettingsTabState extends State<SettingsTab> {
                     String baseUrlKeyCloack = String.fromEnvironment(
                         'KEYCLOAK_REALM_ADDRESS',
                         defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
-                    dio.options.baseUrl = baseUrlKeyCloack;
-                    Response response = await dio.get(
-                      "/protocol/openid-connect/revoke",
-                    );
-                    print("response below");
-                    print(response);
+
+                    const storage = FlutterSecureStorage();
+                    String refreshToken =
+                        await storage.read(key: "refresh_token");
+                    Map<String, dynamic> body = {
+                      "refresh_token": refreshToken,
+                      "client_id": "boldo-patient"
+                    };
+
+                    await http.post(
+                        "$baseUrlKeyCloack/protocol/openid-connect/logout",
+                        body: body,
+                        headers: {
+                          "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        encoding: Encoding.getByName("utf-8"));
 
                     Provider.of<AuthProvider>(context, listen: false)
                         .setAuthenticated(isAuthenticated: false);
                     Provider.of<UserProvider>(context, listen: false)
                         .clearProvider();
-                    const storage = FlutterSecureStorage();
+
                     await storage.deleteAll();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DashboardScreen(),
-                      ),
-                    );
+                    Provider.of<UtilsProvider>(context, listen: false)
+                        .setSelectedPageIndex(pageIndex: 0);
                   } on DioError catch (err) {
                     print(err);
                   } catch (err) {
                     print(err);
                   }
-                  String baseUrlServer = String.fromEnvironment(
-                      'SERVER_ADDRESS',
-                      defaultValue: DotEnv().env['SERVER_ADDRESS']);
-                  dio.options.baseUrl = baseUrlServer;
                 },
                 leading: SizedBox(
                   height: double.infinity,
