@@ -20,8 +20,7 @@ class AppointmentCard extends StatelessWidget {
         .inDays;
     // bool isPast =
     //     DateTime.parse(appointment.start).toLocal().isBefore(DateTime.now());
-    bool isToday =
-        daysDifference == 0 && appointment.waitingRoomStatus != "closed";
+    bool isToday = daysDifference == 0 && appointment.status != "closed";
     return Card(
       elevation: 1.4,
       shape: RoundedRectangleBorder(

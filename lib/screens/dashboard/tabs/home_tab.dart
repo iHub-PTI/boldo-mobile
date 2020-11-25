@@ -145,8 +145,8 @@ class _HomeTabState extends State<HomeTab> {
       _dataFetchError = false;
     });
     try {
-      Response response = await dio.get("/appointments");
-
+      Response response = await dio.get("/profile/patient/appointments");
+      print(response);
       List<Appointment> allAppointmets = List<Appointment>.from(
           response.data.map((i) => Appointment.fromJson(i)));
 
@@ -169,7 +169,7 @@ class _HomeTabState extends State<HomeTab> {
 
       List<Appointment> upcomingWaitingRoomAppointmetsList = allAppointmets
           .where((element) =>
-              element.waitingRoomStatus == "upcoming" &&
+              element.status == "upcoming" &&
               DateTime.now()
                   .add(const Duration(minutes: 15))
                   .isBefore(DateTime.parse(element.start).toLocal()))
@@ -190,11 +190,11 @@ class _HomeTabState extends State<HomeTab> {
         upcomingWaitingRoomAppointments = upcomingWaitingRoomAppointmetsList;
         waitingRoomAppointments = allAppointmets.where(
           (element) {
-            if (element.waitingRoomStatus == "open") {
+            if (element.status == "open") {
               return true;
             }
 
-            if (element.waitingRoomStatus == "upcoming" &&
+            if (element.status == "upcoming" &&
                 DateTime.now()
                     .add(const Duration(minutes: 15))
                     .isAfter(DateTime.parse(element.start).toLocal())) {
