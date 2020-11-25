@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:isolate';
+
+import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +25,13 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
-  List<Appointment> upcomingAppointments = [];
+  Isolate _isolate;
+  ReceivePort _receivePort = ReceivePort();
+
+  List<Appointment> futureAppointments = [];
   List<Appointment> pastAppointments = [];
+  List<Appointment> upcomingWaitingRoomAppointments = [];
+  List<Appointment> waitingRoomAppointments = [];
 
   bool _loading = true;
   bool _mounted;
@@ -29,23 +39,76 @@ class _HomeTabState extends State<HomeTab> {
   @override
   void initState() {
     _mounted = true;
-    _getAppointments();
+    _initAppointments();
+
     super.initState();
   }
 
   @override
   void dispose() {
     _mounted = false;
+    if (_isolate != null) {
+      _receivePort.close();
+      _isolate.kill(priority: Isolate.immediate);
+    }
     super.dispose();
   }
 
-  Future<void> _getAppointments() async {
+  static void _updateWaitingRoomsList(Map map) async {
+    Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      for (Appointment appointment in map["upcomingWaitingRoomAppointments"]) {
+        if (DateTime.now()
+            .add(const Duration(minutes: 15))
+            .isAfter(DateTime.parse(appointment.start).toLocal())) {
+          timer.cancel();
+          map['port'].send({"newAppointment": appointment});
+          break;
+        }
+      }
+    });
+  }
+
+  void _handleWaitingRoomsListUpdate(dynamic data) async {
+    _isolate.kill(priority: Isolate.immediate);
+    _isolate = null;
+    _receivePort.close();
+    _receivePort = null;
+    //if appointment doesnt exist in the list of appointments then update the state
+    bool hasAppointment = waitingRoomAppointments
+        .any((element) => element.id == data["newAppointment"].id);
+    List<Appointment> updatedUpcomingAppointments =
+        upcomingWaitingRoomAppointments
+            .where((element) => element.id != data["newAppointment"].id)
+            .toList();
+    if (!hasAppointment) {
+      setState(() {
+        upcomingWaitingRoomAppointments = updatedUpcomingAppointments;
+        waitingRoomAppointments = [
+          ...waitingRoomAppointments,
+          data["newAppointment"]
+        ];
+      });
+    }
+    if (updatedUpcomingAppointments.isEmpty) return;
+    _receivePort = ReceivePort();
+    // restart the isolate with new data
+    _isolate = await Isolate.spawn(
+      _updateWaitingRoomsList,
+      {
+        'port': _receivePort.sendPort,
+        'upcomingWaitingRoomAppointments': updatedUpcomingAppointments,
+      },
+    );
+    _receivePort.listen(_handleWaitingRoomsListUpdate);
+  }
+
+  Future<void> _initAppointments() async {
     try {
       Response response = await dio.get("/appointments");
 
       List<Appointment> allAppointmets = List<Appointment>.from(
           response.data.map((i) => Appointment.fromJson(i)));
-      // print(allAppointmets);
+
       if (!_mounted) return;
 
       List<Appointment> pastAppointmentsItems = allAppointmets
@@ -62,11 +125,44 @@ class _HomeTabState extends State<HomeTab> {
 
       upcomingAppointmentsItems.sort(
           (a, b) => DateTime.parse(a.start).compareTo(DateTime.parse(b.start)));
+
+      List<Appointment> upcomingWaitingRoomAppointmetsList = allAppointmets
+          .where((element) =>
+              element.waitingRoomStatus == "upcoming" &&
+              DateTime.now()
+                  .add(const Duration(minutes: 15))
+                  .isBefore(DateTime.parse(element.start).toLocal()))
+          .toList();
+
+      _isolate = await Isolate.spawn(
+        _updateWaitingRoomsList,
+        {
+          'port': _receivePort.sendPort,
+          'upcomingWaitingRoomAppointments': upcomingWaitingRoomAppointmetsList,
+        },
+      );
+      _receivePort.listen(_handleWaitingRoomsListUpdate);
+
       setState(() {
         _loading = false;
+        upcomingWaitingRoomAppointments = upcomingWaitingRoomAppointmetsList;
+        waitingRoomAppointments = allAppointmets.where(
+          (element) {
+            if (element.waitingRoomStatus == "open") {
+              return true;
+            }
 
+            if (element.waitingRoomStatus == "upcoming" &&
+                DateTime.now()
+                    .add(const Duration(minutes: 15))
+                    .isAfter(DateTime.parse(element.start).toLocal())) {
+              return true;
+            }
+            return false;
+          },
+        ).toList();
         pastAppointments = pastAppointmentsItems;
-        upcomingAppointments = upcomingAppointmentsItems;
+        futureAppointments = upcomingAppointmentsItems;
       });
     } on DioError catch (err) {
       print(err);
@@ -78,7 +174,7 @@ class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     bool hasAppointments =
-        pastAppointments.length != 0 || upcomingAppointments.length != 0;
+        pastAppointments.length != 0 || futureAppointments.length != 0;
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
 
@@ -97,14 +193,37 @@ class _HomeTabState extends State<HomeTab> {
                 const SizedBox(
                   width: 10,
                 ),
-                SizedBox(
-                  height: 60,
-                  width: 60,
-                  child: SvgPicture.asset(
-                    isAuthenticated
-                        ? 'assets/images/DoctorImage.svg'
-                        : 'assets/images/LogoIcon.svg',
-                  ),
+                Selector<UserProvider, String>(
+                  builder: (_, data, __) {
+                    return SizedBox(
+                      height: 60,
+                      width: 60,
+                      child: data == null
+                          ? SvgPicture.asset(
+                              isAuthenticated
+                                  ? 'assets/images/DoctorImage.svg'
+                                  : 'assets/images/LogoIcon.svg',
+                            )
+                          : ClipOval(
+                              clipBehavior: Clip.antiAlias,
+                              child: CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                imageUrl: data,
+                                progressIndicatorBuilder:
+                                    (context, url, downloadProgress) => Padding(
+                                  padding: const EdgeInsets.all(26.0),
+                                  child: CircularProgressIndicator(
+                                    value: downloadProgress.progress,
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                              ),
+                            ),
+                    );
+                  },
+                  selector: (buildContext, userProvider) =>
+                      userProvider.getPhotoUrl,
                 ),
                 const SizedBox(
                   width: 10,
@@ -136,8 +255,14 @@ class _HomeTabState extends State<HomeTab> {
               : DefaultTabController(
                   length: 2,
                   child: CustomScrollView(slivers: <Widget>[
-                    const SliverToBoxAdapter(
-                      child: WaitingRoomCard(),
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          for (Appointment appointment
+                              in waitingRoomAppointments)
+                            WaitingRoomCard(),
+                        ],
+                      ),
                     ),
                     const SliverAppBar(
                       pinned: true,
@@ -161,41 +286,44 @@ class _HomeTabState extends State<HomeTab> {
                     SliverFillRemaining(
                       child: TabBarView(
                         children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: upcomingAppointments.length > 0 ? 24.0 : 0,
-                            ),
-                            child: upcomingAppointments.length > 0
-                                ? ListView(
+                          futureAppointments.length > 0
+                              ? Padding(
+                                  padding: const EdgeInsets.only(top: 24.0),
+                                  child: ListView(
                                     physics:
                                         const NeverScrollableScrollPhysics(),
                                     children: [
                                       for (Appointment appointment
-                                          in upcomingAppointments)
+                                          in futureAppointments)
                                         AppointmentCard(
                                           appointment: appointment,
                                         ),
                                     ],
-                                  )
-                                : const Center(
-                                    child:
-                                        EmptyAppointmentsState(size: "small"),
                                   ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              top: 24.0,
-                            ),
-                            child: ListView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: pastAppointments.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return AppointmentCard(
-                                  appointment: pastAppointments[index],
-                                );
-                              },
-                            ),
-                          )
+                                )
+                              : const Center(
+                                  child: EmptyAppointmentsState(size: "small"),
+                                ),
+                          pastAppointments.length > 0
+                              ? Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 24.0,
+                                  ),
+                                  child: ListView.builder(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: pastAppointments.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return AppointmentCard(
+                                        appointment: pastAppointments[index],
+                                      );
+                                    },
+                                  ),
+                                )
+                              : const Center(
+                                  child: EmptyAppointmentsState(size: "small"),
+                                )
                         ],
                       ),
                     )

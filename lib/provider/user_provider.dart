@@ -27,6 +27,21 @@ class UserProvider with ChangeNotifier {
   String get getCity => _city;
   String get getAddressDescription => _addressDescription;
   String get getPhotoUrl => _photoUrl;
+  void clearProvider() {
+    _givenName = null;
+    _familyName = null;
+    _birthDate = null;
+    _job = null;
+    _gender = null;
+    _email = null;
+    _phone = null;
+    _street = null;
+    _neighborhood = null;
+    _city = null;
+    _addressDescription = null;
+    _photoUrl = null;
+    notifyListeners();
+  }
 
   void setUserData({
     String givenName,

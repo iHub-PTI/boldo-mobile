@@ -1,17 +1,28 @@
+import 'package:flutter/cupertino.dart';
+
 class Appointment {
+  String waitingRoomStatus;
   String id;
   String start;
   String end;
   String description;
   Doctor doctor;
 
-  Appointment({this.id, this.start, this.end, this.description, this.doctor});
+  Appointment({
+    @required this.id,
+    @required this.start,
+    @required this.end,
+    this.description,
+    @required this.doctor,
+    @required this.waitingRoomStatus,
+  });
 
   Appointment.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     start = json['start'];
     end = json['end'];
     description = json['description'];
+    waitingRoomStatus = json["waitingRoomStatus"];
     doctor = json['doctor'] != null ? Doctor.fromJson(json['doctor']) : null;
   }
 
@@ -20,6 +31,7 @@ class Appointment {
     data['id'] = id;
     data['start'] = start;
     data['end'] = end;
+    data["waitingRoomStatus"] = waitingRoomStatus;
     data['description'] = description;
     if (doctor != null) {
       data['doctor'] = doctor.toJson();

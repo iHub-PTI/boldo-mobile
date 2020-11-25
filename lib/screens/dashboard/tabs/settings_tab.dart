@@ -1,4 +1,7 @@
+import 'package:boldo/network/http.dart';
+import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -151,16 +154,27 @@ class _SettingsTabState extends State<SettingsTab> {
               ),
               ListTile(
                 onTap: () async {
-                  Provider.of<AuthProvider>(context, listen: false)
-                      .setAuthenticated(isAuthenticated: false);
-                  const storage = FlutterSecureStorage();
-                  await storage.deleteAll();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DashboardScreen(),
-                    ),
-                  );
+                  try {
+                    // Response response = await dio.get(
+                    //     "/realms/{realm-name}/protocol/openid-connect/revoke");
+
+                    Provider.of<AuthProvider>(context, listen: false)
+                        .setAuthenticated(isAuthenticated: false);
+                    Provider.of<UserProvider>(context, listen: false)
+                        .clearProvider();
+                    const storage = FlutterSecureStorage();
+                    await storage.deleteAll();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DashboardScreen(),
+                      ),
+                    );
+                  } on DioError catch (err) {
+                    print(err);
+                  } catch (err) {
+                    print(err);
+                  }
                 },
                 leading: SizedBox(
                   height: double.infinity,

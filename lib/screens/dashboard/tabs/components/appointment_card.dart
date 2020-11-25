@@ -14,10 +14,14 @@ class AppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int daysDifference =
-        DateTime.parse(appointment.start).difference(DateTime.now()).inDays;
-    bool isPast = DateTime.parse(appointment.start).isBefore(DateTime.now());
-
+    int daysDifference = DateTime.parse(appointment.start)
+        .toLocal()
+        .difference(DateTime.now())
+        .inDays;
+    // bool isPast =
+    //     DateTime.parse(appointment.start).toLocal().isBefore(DateTime.now());
+    bool isToday =
+        daysDifference == 0 && appointment.waitingRoomStatus != "closed";
     return Card(
       elevation: 1.4,
       shape: RoundedRectangleBorder(
@@ -34,7 +38,7 @@ class AppointmentCard extends StatelessWidget {
                 topLeft: Radius.circular(6),
                 bottomLeft: Radius.circular(6),
               ),
-              color: daysDifference == 0 && !isPast
+              color: isToday
                   ? Constants.primaryColor500
                   : Constants.tertiaryColor200,
             ),
@@ -44,7 +48,7 @@ class AppointmentCard extends StatelessWidget {
                 Text(
                   DateFormat('MMM').format(DateTime.parse(appointment.start)),
                   style: TextStyle(
-                    color: daysDifference == 0 && !isPast
+                    color: isToday
                         ? Constants.extraColor100
                         : Constants.primaryColor500,
                     fontSize: 18,
@@ -53,7 +57,7 @@ class AppointmentCard extends StatelessWidget {
                 Text(
                   DateFormat('dd').format(DateTime.parse(appointment.start)),
                   style: TextStyle(
-                    color: daysDifference == 0 && !isPast
+                    color: isToday
                         ? Constants.extraColor100
                         : Constants.primaryColor500,
                     fontSize: 16,
@@ -86,7 +90,7 @@ class AppointmentCard extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
-              if (daysDifference == 0 && !isPast)
+              if (isToday)
                 Column(
                   children: [
                     const SizedBox(
