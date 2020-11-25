@@ -1,7 +1,9 @@
+import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/filter/filter_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 import '../../booking/booking_screen.dart';
@@ -36,7 +38,20 @@ class _DoctorsTabState extends State<DoctorsTab> {
 
   void getDoctors() async {
     try {
-      Response response = await dio.get("/doctors");
+      List<String> listOfLanguages =
+          Provider.of<UtilsProvider>(context, listen: false).getListOfLanguages;
+      List<String> listOfSpecializations =
+          Provider.of<UtilsProvider>(context, listen: false)
+              .getListOfSpecializations
+              .map((e) => e.id)
+              .toList();
+      Map<String, dynamic> queryParameters = {
+        'languages': listOfLanguages ?? [],
+        'specialties': listOfSpecializations ?? [],
+      };
+
+      Response response =
+          await dio.get("/doctors", queryParameters: queryParameters);
       if (response.statusCode == 200) {
         List<Doctor> doctorsList =
             List<Doctor>.from(response.data.map((i) => Doctor.fromJson(i)));
@@ -66,9 +81,40 @@ class _DoctorsTabState extends State<DoctorsTab> {
                 ),
               );
             },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: SvgPicture.asset('assets/icon/filter.svg'),
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: SvgPicture.asset('assets/icon/filter.svg'),
+                  ),
+                ),
+                Selector<UtilsProvider, bool>(
+                  selector: (buildContext, userProvider) =>
+                      userProvider.getFilterState,
+                  builder: (_, data, __) {
+                    if (data) {
+                      return Positioned(
+                        right: 13,
+                        top: 13,
+                        child: Container(
+                          padding: const EdgeInsets.all(1),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 9,
+                            minHeight: 9,
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox();
+                  },
+                ),
+              ],
             ),
           )
         ],
