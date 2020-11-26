@@ -29,7 +29,7 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   Isolate _isolate;
-  ReceivePort _receivePort = ReceivePort();
+  ReceivePort _receivePort;
 
   List<Appointment> futureAppointments = [];
   List<Appointment> pastAppointments = [];
@@ -133,6 +133,15 @@ class _HomeTabState extends State<HomeTab> {
   Future<void> getAppointmentsData() async {
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
+
+    if (_isolate != null) {
+      _isolate.kill(priority: Isolate.immediate);
+      _isolate = null;
+    }
+    if (_receivePort != null) {
+      _receivePort.close();
+      _receivePort = null;
+    }
     if (!isAuthenticated) {
       setState(() {
         _loading = false;
@@ -153,12 +162,10 @@ class _HomeTabState extends State<HomeTab> {
       if (!_mounted) return;
 
       List<Appointment> pastAppointmentsItems = allAppointmets
-          .where(
-              (element) => DateTime.now().isAfter(DateTime.parse(element.end)))
+          .where((element) => element.status == "closed")
           .toList();
       List<Appointment> upcomingAppointmentsItems = allAppointmets
-          .where(
-              (element) => DateTime.now().isBefore(DateTime.parse(element.end)))
+          .where((element) => element.status != "closed")
           .toList();
 
       pastAppointmentsItems.sort(
@@ -174,7 +181,8 @@ class _HomeTabState extends State<HomeTab> {
                   .add(const Duration(minutes: 15))
                   .isBefore(DateTime.parse(element.start).toLocal()))
           .toList();
-
+      if (!_mounted) return;
+      _receivePort = ReceivePort();
       _isolate = await Isolate.spawn(
         _updateWaitingRoomsList,
         {
@@ -183,7 +191,7 @@ class _HomeTabState extends State<HomeTab> {
         },
       );
       _receivePort.listen(_handleWaitingRoomsListUpdate);
-
+      if (!_mounted) return;
       setState(() {
         _dataFetchError = false;
         _loading = false;
@@ -206,15 +214,18 @@ class _HomeTabState extends State<HomeTab> {
         pastAppointments = pastAppointmentsItems;
         futureAppointments = upcomingAppointmentsItems;
       });
-    } on DioError catch (_) {
+    } on DioError catch (err) {
+      print(err);
       setState(() {
         _loading = false;
         _dataFetchError = true;
       });
     } catch (err) {
+      print(err);
+
       setState(() {
         _loading = false;
-        _dataFetchError = true;
+        _dataFetchError = false;
       });
     }
   }
