@@ -64,8 +64,12 @@ class _HomeTabState extends State<HomeTab> {
   void dispose() {
     _mounted = false;
     if (_isolate != null) {
-      _receivePort.close();
       _isolate.kill(priority: Isolate.immediate);
+      _isolate = null;
+    }
+    if (_receivePort != null) {
+      _receivePort.close();
+      _receivePort = null;
     }
     super.dispose();
   }
