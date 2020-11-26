@@ -18,9 +18,8 @@ class AppointmentCard extends StatelessWidget {
         .toLocal()
         .difference(DateTime.now())
         .inDays;
-    // bool isPast =
-    //     DateTime.parse(appointment.start).toLocal().isBefore(DateTime.now());
     bool isToday = daysDifference == 0 && appointment.status != "closed";
+
     return Card(
       elevation: 1.4,
       shape: RoundedRectangleBorder(
@@ -71,9 +70,9 @@ class AppointmentCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Dr. Gregory House",
-                style: TextStyle(
+              Text(
+                "Dr. ${appointment.doctor.givenName} ${appointment.doctor.familyName}",
+                style: const TextStyle(
                   color: Constants.extraColor400,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -82,9 +81,9 @@ class AppointmentCard extends StatelessWidget {
               const SizedBox(
                 height: 4,
               ),
-              const Text(
-                "Clínico General",
-                style: TextStyle(
+              Text(
+                "${appointment.doctor.addressDescription}",
+                style: const TextStyle(
                   color: Constants.extraColor300,
                   fontSize: 14,
                 ),
