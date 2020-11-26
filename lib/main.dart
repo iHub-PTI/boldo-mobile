@@ -11,14 +11,14 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
 
-import './network/connection_status.dart';
-import './network/http.dart';
-import './provider/auth_provider.dart';
-import './screens/dashboard/dashboard_screen.dart';
-import './screens/Hero/hero_screen.dart';
+import 'package:boldo/network/connection_status.dart';
+import 'package:boldo/network/http.dart';
+import 'package:boldo/provider/auth_provider.dart';
+import 'package:boldo/screens/dashboard/dashboard_screen.dart';
+import 'package:boldo/screens/Hero/hero_screen.dart';
 
-import './constants.dart';
-import './size_config.dart';
+import 'package:boldo/constants.dart';
+import 'package:boldo/size_config.dart';
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
@@ -87,6 +87,7 @@ class FullApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       navigatorKey: navKey,
       title: 'Boldo',
       theme: boldoTheme.copyWith(
