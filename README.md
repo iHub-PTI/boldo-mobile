@@ -49,7 +49,7 @@ Note: You can check the availability of connected devices by running `flutter do
 
 ## Known issues
 
-The webRTC and chatty libraries causes a lot of unnecessary comments. To disable them you can add `!org.webrtc,!I/chatty` as a filter in your VSCode debug console.
+The webRTC and chatty libraries causes a lot of unnecessary comments. To disable them you can add `!org.webrtc,!I/chatty` as a filter in your VSCode debug console. To ignore even more, add those as well `!E/CameraCaptureSession,!EGL_emulation,!FlutterWebRTCPlugin,!HostConnection`.
 
 ## Supported Platforms
 

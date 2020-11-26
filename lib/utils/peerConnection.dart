@@ -25,7 +25,7 @@ class PeerConnection {
   Function(CallState) onStateChange;
 
   PeerConnection(
-      {this.localStream, @required this.room, @required this.socket}) {}
+      {this.localStream, @required this.room, @required this.socket});
 
   Future<void> init() async {
     peerConnection = await createPeerConnection(
@@ -130,7 +130,8 @@ class PeerConnection {
       'mandatory': {
         'OfferToReceiveAudio': true,
         'OfferToReceiveVideo': true,
-      }
+      },
+      'optional': []
     });
     peerConnection.setLocalDescription(s);
 
@@ -144,11 +145,12 @@ class PeerConnection {
     print('🧹🧹🧹 CLEANUP 🧹🧹🧹');
     socket.off('ice candidate');
 
+    await peerConnection.close();
+
     peerConnection.onAddStream = null;
     peerConnection.onIceCandidate = null;
     peerConnection.onIceConnectionState = null;
 
-    await peerConnection.close();
     peerConnection = null;
   }
 }
