@@ -442,7 +442,7 @@ class WaitingRoomCard extends StatelessWidget {
                     height: 3,
                   ),
                   Text(
-                      "La sala de espera de tu consulta con Dr. House ya se encuentra habilitada. ",
+                      "La sala de espera de tu consulta con Dr. ${appointment.doctor.familyName} ya se encuentra habilitada. ",
                       style: boldoSubTextStyle.copyWith(
                         height: 1.2,
                         fontSize: 15,
