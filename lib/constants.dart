@@ -34,6 +34,14 @@ class Constants {
   static const Color tertiaryColor800 = Color(0xff66625D);
   static const Color tertiaryColor900 = Color(0xff33312F);
 
+  // gray palette
+  static const Color grayColor50 = Color(0xffFBFDFE);
+  static const Color grayColor200 = Color(0xffEDF2F7);
+  static const Color grayColor500 = Color(0xffA0AEC0);
+  static const Color grayColor700 = Color(0xff364152);
+  static const Color grayColor800 = Color(0xff27303F);
+
+  // FIXME!
   // extra color palette
   static const Color extraColor100 = Color(0xffFFFFFF);
   static const Color extraColor200 = Color(0xffE5E7EB);
