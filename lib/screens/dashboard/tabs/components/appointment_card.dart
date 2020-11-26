@@ -1,8 +1,9 @@
-import 'package:boldo/constants.dart';
-import 'package:boldo/models/Appointment.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+import 'package:boldo/constants.dart';
+import 'package:boldo/models/Appointment.dart';
 
 class AppointmentCard extends StatelessWidget {
   final Appointment appointment;
@@ -44,7 +45,8 @@ class AppointmentCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  DateFormat('MMM').format(DateTime.parse(appointment.start)),
+                  DateFormat('MMM')
+                      .format(DateTime.parse(appointment.start).toLocal()),
                   style: TextStyle(
                     color: isToday
                         ? Constants.extraColor100
@@ -53,7 +55,8 @@ class AppointmentCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  DateFormat('dd').format(DateTime.parse(appointment.start)),
+                  DateFormat('dd')
+                      .format(DateTime.parse(appointment.start).toLocal()),
                   style: TextStyle(
                     color: isToday
                         ? Constants.extraColor100
@@ -64,9 +67,7 @@ class AppointmentCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(
-            width: 10,
-          ),
+          const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -91,12 +92,10 @@ class AppointmentCard extends StatelessWidget {
               if (isToday)
                 Column(
                   children: [
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    const Text(
-                      "¡Hoy!",
-                      style: TextStyle(
+                    const SizedBox(height: 4),
+                    Text(
+                      "¡Hoy! - ${DateFormat('HH:MM').format(DateTime.parse(appointment.start).toLocal())}",
+                      style: const TextStyle(
                         color: Constants.primaryColor600,
                         fontSize: 12,
                       ),
@@ -106,9 +105,7 @@ class AppointmentCard extends StatelessWidget {
               if (daysDifference > 0)
                 Column(
                   children: [
-                    const SizedBox(
-                      height: 4,
-                    ),
+                    const SizedBox(height: 4),
                     Text(
                       "En $daysDifference días",
                       style: const TextStyle(
