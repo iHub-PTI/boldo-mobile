@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
-import '../../../constants.dart';
+import 'package:boldo/models/Appointment.dart';
+import 'package:boldo/constants.dart';
 
 class WaitingRoom extends StatelessWidget {
   final RTCVideoRenderer localRenderer;
+  final Appointment appointment;
   const WaitingRoom({
     Key key,
     @required this.localRenderer,
+    @required this.appointment,
   }) : super(key: key);
 
   @override
@@ -32,10 +35,10 @@ class WaitingRoom extends StatelessWidget {
                   fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
-            const Text(
-              "En breve Dr. House iniciará \n la videollamada",
+            Text(
+              "En breve ${appointment.doctor.givenName} ${appointment.doctor.familyName} iniciará \n la videollamada",
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                   height: 1.5,
                   color: Constants.extraColor300,
                   fontWeight: FontWeight.w400,

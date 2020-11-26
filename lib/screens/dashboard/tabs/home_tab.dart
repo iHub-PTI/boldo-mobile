@@ -471,7 +471,7 @@ class WaitingRoomCard extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  VideoCall(appointmentId: appointment.id),
+                                  VideoCall(appointment: appointment),
                             ));
                       },
                       child: Text(

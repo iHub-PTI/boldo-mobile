@@ -1,5 +1,3 @@
-import 'package:boldo/network/http.dart';
-import 'package:boldo/provider/utils_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
@@ -10,15 +8,23 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../provider/auth_provider.dart';
-import '../../constants.dart';
-import 'tabs/home_tab.dart';
-import 'tabs/doctors_tab.dart';
-import 'tabs/settings_tab.dart';
+import 'package:boldo/models/Appointment.dart';
+import 'package:boldo/network/http.dart';
+import 'package:boldo/provider/utils_provider.dart';
+import 'package:boldo/screens/Call/components/call_ended_popup.dart';
+import 'package:boldo/screens/dashboard/tabs/home_tab.dart';
+import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
+import 'package:boldo/screens/dashboard/tabs/settings_tab.dart';
+import 'package:boldo/provider/auth_provider.dart';
+import 'package:boldo/constants.dart';
 
 class DashboardScreen extends StatefulWidget {
   final bool setLoggedOut;
-  DashboardScreen({Key key, this.setLoggedOut = false}) : super(key: key);
+  final Appointment appointmentPopupData;
+
+  DashboardScreen(
+      {Key key, this.setLoggedOut = false, this.appointmentPopupData})
+      : super(key: key);
 
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
@@ -37,6 +43,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
       Future.microtask(() => Provider.of<AuthProvider>(context, listen: false)
           .setAuthenticated(isAuthenticated: false));
     }
+
+    if (widget.appointmentPopupData != null)
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await callEndedPopup(
+            context: context, appointment: widget.appointmentPopupData);
+      });
   }
 
   Future<void> authenticate() async {
