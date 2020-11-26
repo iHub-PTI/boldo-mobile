@@ -1,4 +1,5 @@
 import 'package:boldo/provider/utils_provider.dart';
+import 'package:boldo/screens/dashboard/tabs/components/custom_search.dart';
 import 'package:boldo/screens/filter/filter_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -10,6 +11,7 @@ import '../../booking/booking_screen.dart';
 import '../../doctor_profile/doctor_profile_screen.dart';
 import '../../../models/Doctor.dart';
 import '../../../network/http.dart';
+import '../../../utils/helpers.dart';
 
 class DoctorsTab extends StatefulWidget {
   DoctorsTab({Key key}) : super(key: key);
@@ -36,8 +38,11 @@ class _DoctorsTabState extends State<DoctorsTab> {
     super.dispose();
   }
 
-  void getDoctors() async {
+  void getDoctors({String text = ""}) async {
     try {
+      setState(() {
+        loading = true;
+      });
       List<String> listOfLanguages =
           Provider.of<UtilsProvider>(context, listen: false).getListOfLanguages;
       List<String> listOfSpecializations =
@@ -45,13 +50,12 @@ class _DoctorsTabState extends State<DoctorsTab> {
               .getListOfSpecializations
               .map((e) => e.id)
               .toList();
-      Map<String, dynamic> queryParameters = {
+
+      Response response = await dio.get("/doctors", queryParameters: {
         'languages': listOfLanguages ?? [],
         'specialties': listOfSpecializations ?? [],
-      };
-
-      Response response =
-          await dio.get("/doctors", queryParameters: queryParameters);
+        "text": text,
+      });
       if (response.statusCode == 200) {
         List<Doctor> doctorsList =
             List<Doctor>.from(response.data.map((i) => Doctor.fromJson(i)));
@@ -136,9 +140,13 @@ class _DoctorsTabState extends State<DoctorsTab> {
               child: Text("Médicos",
                   style: boldoHeadingTextStyle.copyWith(fontSize: 20)),
             ),
-            const SizedBox(
-              height: 20,
+            const SizedBox(height: 5),
+            Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              child: CustomSearchBar(
+                  changeTextCallback: (text) => getDoctors(text: text)),
             ),
+            const SizedBox(height: 25),
             Expanded(
               child: loading
                   ? const Center(child: CircularProgressIndicator())
@@ -193,7 +201,7 @@ class _DoctorCard extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 2),
                         child: Text(
-                          "${doctor.givenName} ${doctor.familyName}",
+                          "${getDoctorPrefix(doctor.gender)} ${doctor.familyName}",
                           style: boldoHeadingTextStyle,
                         ),
                       ),

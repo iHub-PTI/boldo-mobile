@@ -6,6 +6,7 @@ import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/screens/Call/components/speed_dial.dart';
 import 'package:boldo/size_config.dart';
+import '../../../utils/helpers.dart';
 
 class Call extends StatelessWidget {
   final RTCVideoRenderer localRenderer;
@@ -47,7 +48,7 @@ class Call extends StatelessWidget {
         title: Padding(
           padding: const EdgeInsets.only(bottom: 24.0),
           child: Text(
-            "${appointment.doctor.givenName} ${appointment.doctor.familyName}",
+            "${getDoctorPrefix(appointment.doctor.gender)} ${appointment.doctor.familyName}",
             style: const TextStyle(color: Constants.grayColor800),
           ),
         ),

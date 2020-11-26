@@ -4,6 +4,7 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/constants.dart';
+import '../../../utils/helpers.dart';
 
 class WaitingRoom extends StatelessWidget {
   final RTCVideoRenderer localRenderer;
@@ -36,7 +37,7 @@ class WaitingRoom extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "En breve ${appointment.doctor.givenName} ${appointment.doctor.familyName} iniciará \n la videollamada",
+              "En breve ${getDoctorPrefix(appointment.doctor.gender)} ${appointment.doctor.familyName} iniciará \n la videollamada",
               textAlign: TextAlign.center,
               style: const TextStyle(
                   height: 1.5,
