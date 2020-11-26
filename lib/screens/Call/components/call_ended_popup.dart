@@ -1,3 +1,4 @@
+import 'package:boldo/utils/helpers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
@@ -42,7 +43,7 @@ Future<bool> callEndedPopup(
                     Image.asset('assets/images/Avatar.png'),
                     const SizedBox(height: 6),
                     Text(
-                      "${appointment.doctor.givenName} ${appointment.doctor.familyName}",
+                      "${getDoctorPrefix(appointment.doctor.gender)} ${appointment.doctor.familyName}",
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                           color: Constants.extraColor400,

@@ -1,3 +1,4 @@
+import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -72,7 +73,7 @@ class AppointmentCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Dr. ${appointment.doctor.givenName} ${appointment.doctor.familyName}",
+                "${getDoctorPrefix(appointment.doctor.gender)} ${appointment.doctor.familyName}",
                 style: const TextStyle(
                   color: Constants.extraColor400,
                   fontSize: 14,

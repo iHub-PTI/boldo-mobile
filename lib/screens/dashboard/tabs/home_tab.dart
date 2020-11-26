@@ -16,6 +16,7 @@ import 'package:boldo/models/Appointment.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../utils/helpers.dart';
 import '../../../network/http.dart';
 import '../../../constants.dart';
 import '../../../provider/auth_provider.dart';
@@ -446,7 +447,7 @@ class WaitingRoomCard extends StatelessWidget {
                     height: 3,
                   ),
                   Text(
-                      "La sala de espera de tu consulta con Dr. ${appointment.doctor.familyName} ya se encuentra habilitada. ",
+                      "La sala de espera de tu consulta con ${getDoctorPrefix(appointment.doctor.gender)} ${appointment.doctor.familyName} ya se encuentra habilitada. ",
                       style: boldoSubTextStyle.copyWith(
                         height: 1.2,
                         fontSize: 15,

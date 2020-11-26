@@ -11,6 +11,7 @@ import '../../booking/booking_screen.dart';
 import '../../doctor_profile/doctor_profile_screen.dart';
 import '../../../models/Doctor.dart';
 import '../../../network/http.dart';
+import '../../../utils/helpers.dart';
 
 class DoctorsTab extends StatefulWidget {
   DoctorsTab({Key key}) : super(key: key);
@@ -200,7 +201,7 @@ class _DoctorCard extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 2),
                         child: Text(
-                          "${doctor.givenName} ${doctor.familyName}",
+                          "${getDoctorPrefix(doctor.gender)} ${doctor.familyName}",
                           style: boldoHeadingTextStyle,
                         ),
                       ),
