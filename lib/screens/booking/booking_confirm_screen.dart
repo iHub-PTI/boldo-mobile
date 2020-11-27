@@ -1,15 +1,21 @@
+import 'package:boldo/models/Doctor.dart';
+import 'package:boldo/widgets/custom_form_button.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:intl/intl.dart';
+import 'package:dio/dio.dart';
+import '../../network/http.dart';
 import '../../widgets/wrapper.dart';
 import '../../constants.dart';
+import '../../utils/helpers.dart';
 import 'booking_final_screen.dart';
 
 class BookingConfirmScreen extends StatefulWidget {
-  final String bookingHour;
+  final Doctor doctor;
   final DateTime bookingDate;
   BookingConfirmScreen(
-      {Key key, @required this.bookingHour, @required this.bookingDate})
+      {Key key, @required this.bookingDate, @required this.doctor})
       : super(key: key);
 
   @override
@@ -17,6 +23,8 @@ class BookingConfirmScreen extends StatefulWidget {
 }
 
 class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
+  bool _loading = false;
+  String _error = "";
   @override
   Widget build(BuildContext context) {
     return CustomWrapper(
@@ -41,44 +49,77 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
         const SizedBox(
           height: 20,
         ),
-        const _DoctorProfileWidget(),
+        _DoctorProfileWidget(doctor: widget.doctor),
         const SizedBox(
           height: 8,
         ),
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16),
           child: _DoctorBookingInfoWidget(
-            bookingHour: widget.bookingHour,
+            bookingDate: widget.bookingDate,
           ),
         ),
         const SizedBox(
           height: 50,
         ),
-        Container(
-          padding: const EdgeInsets.only(left: 16, right: 16),
-          margin: const EdgeInsets.only(bottom: 16),
-          width: double.infinity,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              primary: Constants.primaryColor500,
+        Center(
+          child: Text(
+            _error,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Constants.otherColor100,
             ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => BookingFinalScreen()),
-              );
-            },
-            child: const Text("Confirmar"),
           ),
-        )
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16),
+          child: CustomFormButton(
+            text: "Confirmar",
+            loading: _loading,
+            actionCallback: () async {
+              try {
+                setState(() {
+                  _loading = true;
+                  _error = "";
+                });
+
+                await dio
+                    .post("/profile/patient/appointments", queryParameters: {
+                  'start': widget.bookingDate.toIso8601String(),
+                  "doctorId": widget.doctor.id,
+                });
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BookingFinalScreen()),
+                );
+              } on DioError catch (err) {
+                print(err);
+                setState(() {
+                  _loading = false;
+                  _error = "Somethig went wrong, please try again later.";
+                });
+              } catch (err) {
+                print(err);
+                setState(() {
+                  _loading = false;
+                  _error = "Somethig went wrong, please try again later.";
+                });
+              }
+            },
+          ),
+        ),
       ],
     );
   }
 }
 
 class _DoctorBookingInfoWidget extends StatelessWidget {
-  final String bookingHour;
-  const _DoctorBookingInfoWidget({Key key, @required this.bookingHour})
+  final DateTime bookingDate;
+  const _DoctorBookingInfoWidget({Key key, @required this.bookingDate})
       : super(key: key);
 
   @override
@@ -94,7 +135,7 @@ class _DoctorBookingInfoWidget extends StatelessWidget {
           height: 7,
         ),
         Text(
-          "Lunes 7 de septiembre del 2020",
+          DateFormat('EEEE, dd MMMM yyyy').format(bookingDate).capitalize(),
           style: boldoSubTextStyle.copyWith(fontSize: 16),
         ),
         const SizedBox(
@@ -108,7 +149,7 @@ class _DoctorBookingInfoWidget extends StatelessWidget {
           height: 7,
         ),
         Text(
-          "$bookingHour horas",
+          "${DateFormat('HH:MM').format(bookingDate)} horas",
           style: boldoSubTextStyle.copyWith(fontSize: 16),
         ),
       ],
@@ -117,7 +158,9 @@ class _DoctorBookingInfoWidget extends StatelessWidget {
 }
 
 class _DoctorProfileWidget extends StatelessWidget {
-  const _DoctorProfileWidget({Key key}) : super(key: key);
+  final Doctor doctor;
+  const _DoctorProfileWidget({Key key, @required this.doctor})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -139,8 +182,31 @@ class _DoctorProfileWidget extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SvgPicture.asset(
-                      'assets/images/ProfileImage.svg',
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: SizedBox(
+                        height: 72,
+                        width: 72,
+                        child: doctor.photoUrl == null
+                            ? SvgPicture.asset(
+                                doctor.gender == "female"
+                                    ? 'assets/images/femaleDoctor.svg'
+                                    : 'assets/images/maleDoctor.svg',
+                                fit: BoxFit.cover)
+                            : CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                imageUrl: doctor.photoUrl,
+                                progressIndicatorBuilder:
+                                    (context, url, downloadProgress) => Padding(
+                                  padding: const EdgeInsets.all(26.0),
+                                  child: CircularProgressIndicator(
+                                    value: downloadProgress.progress,
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                              ),
+                      ),
                     ),
                     const SizedBox(
                       width: 16,
@@ -150,7 +216,7 @@ class _DoctorProfileWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Dra. Susan Giménez",
+                          "${getDoctorPrefix(doctor.gender)} ${doctor.givenName} ${doctor.familyName}",
                           style: boldoHeadingTextStyle.copyWith(
                               fontWeight: FontWeight.normal),
                         ),
@@ -169,10 +235,10 @@ class _DoctorProfileWidget extends StatelessWidget {
                 const SizedBox(
                   height: 16,
                 ),
-                Text(
-                    "Recibida en la Universidad Nacional de Asunción en Dermatología. Especialización en Dermatología Estética. Miembro de la Asociación LADERM. ",
-                    style:
-                        boldoSubTextStyle.copyWith(fontSize: 16, height: 1.5)),
+                if (doctor.biography != null)
+                  Text(doctor.biography,
+                      style: boldoSubTextStyle.copyWith(
+                          fontSize: 16, height: 1.5)),
               ],
             ),
           ),

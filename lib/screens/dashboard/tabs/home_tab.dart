@@ -160,7 +160,7 @@ class _HomeTabState extends State<HomeTab> {
     });
     try {
       Response response = await dio.get("/profile/patient/appointments");
-      print(response);
+
       List<Appointment> allAppointmets = List<Appointment>.from(
           response.data.map((i) => Appointment.fromJson(i)));
 

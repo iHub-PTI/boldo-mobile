@@ -7,11 +7,11 @@ import '../../constants.dart';
 
 class CustomCalendar extends StatefulWidget {
   final DateTime selectedDate;
+  final Function(DateTime changeDateCallback) changeDateCallback;
 
-  CustomCalendar({
-    Key key,
-    @required this.selectedDate,
-  }) : super(key: key);
+  CustomCalendar(
+      {Key key, @required this.selectedDate, @required this.changeDateCallback})
+      : super(key: key);
 
   @override
   _CustomCalendarState createState() => _CustomCalendarState();
@@ -22,21 +22,12 @@ final List<String> listOfDays = ["D", "L", "M", "M", "J", "V", "S"];
 class _CustomCalendarState extends State<CustomCalendar> {
   List<List<CalendarItem>> calendarItems;
   bool _calendarLoading = true;
-  DateTime selectedItem;
   DateTime selectedMonth;
 
   @override
   void initState() {
     getCalendarItems(selectedDate: widget.selectedDate);
     super.initState();
-  }
-
-  void getItemsForDay({@required DateTime itemDate}) {
-    //set the calendaritem as selected
-    setState(() {
-      selectedItem = itemDate;
-    });
-    //fetch the data related to the calendarItem.
   }
 
   void getCalendarItems({DateTime selectedDate}) async {
@@ -46,6 +37,22 @@ class _CustomCalendarState extends State<CustomCalendar> {
     });
 
     var chunkArrays = monthBuilder(buildDate: selectedDate);
+    DateTime now = DateTime(DateTime.now().year, DateTime.now().month);
+    int daysDirrenrence = selectedDate.difference(widget.selectedDate).inDays;
+
+    if (now ==
+            DateTime(
+              selectedMonth.year,
+              selectedMonth.month,
+            ) &&
+        daysDirrenrence != 0) {
+      widget.changeDateCallback(DateTime.now());
+      print("month change1");
+      //if same month then find a day we can select. otherwise sleect the first day of the mont.
+    } else if (daysDirrenrence != 0) {
+      print("month change2");
+      widget.changeDateCallback(selectedDate);
+    }
 
     setState(() {
       _calendarLoading = false;
@@ -64,9 +71,18 @@ class _CustomCalendarState extends State<CustomCalendar> {
               IconButton(
                 iconSize: 28,
                 onPressed: () {
-                  getCalendarItems(
-                      selectedDate: DateTime(
-                          selectedMonth.year, selectedMonth.month - 1));
+                  DateTime now =
+                      DateTime(DateTime.now().year, DateTime.now().month);
+                  DateTime pastMonth = DateTime(
+                    selectedMonth.year,
+                    selectedMonth.month - 1,
+                  );
+
+                  if (now == pastMonth || now.isBefore(pastMonth)) {
+                    getCalendarItems(
+                      selectedDate: pastMonth,
+                    );
+                  }
                 },
                 icon: const Icon(
                   Icons.chevron_left_rounded,
@@ -87,8 +103,11 @@ class _CustomCalendarState extends State<CustomCalendar> {
                   iconSize: 28,
                   onPressed: () {
                     getCalendarItems(
-                        selectedDate: DateTime(
-                            selectedMonth.year, selectedMonth.month + 1));
+                      selectedDate: DateTime(
+                        selectedMonth.year,
+                        selectedMonth.month + 1,
+                      ),
+                    );
                   },
                   icon: const Icon(
                     Icons.chevron_right_rounded,
@@ -142,8 +161,9 @@ class _CustomCalendarState extends State<CustomCalendar> {
                       ...calendarItems[i]
                           .map((calendarItem) => CalendarDay(
                                 calendarItem: calendarItem,
-                                selectedItem: selectedItem,
-                                getItemsForDayCallback: getItemsForDay,
+                                selectedItem: widget.selectedDate,
+                                getItemsForDayCallback:
+                                    widget.changeDateCallback,
                               ))
                           .toList(),
                     ],
@@ -183,7 +203,7 @@ class CalendarDay extends StatelessWidget {
         }
 
         getItemsForDayCallback(
-          itemDate: calendarItem.itemDate,
+          calendarItem.itemDate,
         );
       },
       child: Container(
@@ -196,7 +216,9 @@ class CalendarDay extends StatelessWidget {
               : Text(
                   calendarItem.itemDate.day.toString(),
                   style: TextStyle(
-                    color: calendarItem.itemDate == selectedItem
+                    color: calendarItem.itemDate ==
+                            DateTime(selectedItem.year, selectedItem.month,
+                                selectedItem.day)
                         ? Colors.white
                         : calendarItem.itemDate
                                     .difference(
@@ -213,7 +235,10 @@ class CalendarDay extends StatelessWidget {
                 ),
         ),
         decoration: BoxDecoration(
-            color: !itemEmpty && calendarItem.itemDate == selectedItem
+            color: !itemEmpty &&
+                    calendarItem.itemDate ==
+                        DateTime(selectedItem.year, selectedItem.month,
+                            selectedItem.day)
                 ? Constants.otherColor100
                 : Colors.transparent,
             borderRadius: const BorderRadius.all(Radius.circular(20))),

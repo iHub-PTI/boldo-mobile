@@ -1,7 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
+import '../../network/http.dart';
 import '../../widgets/calendar/calendar.dart';
 import '../../widgets/wrapper.dart';
 import './booking_confirm_screen.dart';
@@ -17,7 +19,73 @@ class BookingScreen extends StatefulWidget {
 }
 
 class _BookingScreenState extends State<BookingScreen> {
-  String _selectedBookingHour;
+  bool _loading = true;
+  bool _loadingCalendar = false;
+  String nextAvailability;
+  DateTime _selectedBookingHour;
+  List<String> _availabilities = [];
+
+  List<DateTime> _availabilitiesForDay = [];
+  String _errorMessage = "";
+  DateTime _selectedDate = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData(DateTime.now());
+  }
+
+  List<DateTime> findAvailabilitesForDay(
+      List<String> allAvailabilites, DateTime day) {
+    List<DateTime> availabilitiesForDay = [];
+    for (String availability in allAvailabilites) {
+      DateTime parsedAvailability = DateTime.parse(availability).toLocal();
+      //we do this because we need to have a dateTime object with 00:00:00 HH:MM:SS for comparison
+      DateTime dateWithOutHours = DateTime(parsedAvailability.year,
+          parsedAvailability.month, parsedAvailability.day);
+
+      if (dateWithOutHours == DateTime(day.year, day.month, day.day)) {
+        availabilitiesForDay.add(DateTime.parse(availability).toLocal());
+      }
+    }
+    availabilitiesForDay.sort((a, b) => a.compareTo(b));
+    return availabilitiesForDay;
+  }
+
+  Future fetchData(DateTime date) async {
+    try {
+      Response response = await dio
+          .get("/doctors/${widget.doctor.id}/availability", queryParameters: {
+        'start': date,
+        'end': DateTime(date.year, date.month + 1, 0),
+      });
+      List<String> allAvailabilities =
+          response.data["availabilities"].cast<String>();
+      setState(() {
+        _availabilitiesForDay =
+            findAvailabilitesForDay(allAvailabilities, date);
+        _availabilities = allAvailabilities;
+        nextAvailability = response.data["nextAvailability"];
+        _loading = false;
+        _loadingCalendar = false;
+      });
+    } on DioError catch (err) {
+      print(err);
+      setState(() {
+        _errorMessage = "Something went wrong, please try again later.";
+        _loading = false;
+        _loadingCalendar = false;
+      });
+    } catch (err) {
+      print(err);
+      setState(() {
+        _errorMessage = "Something went wrong, please try again later.";
+        _loading = false;
+        _loadingCalendar = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomWrapper(
@@ -42,123 +110,173 @@ class _BookingScreenState extends State<BookingScreen> {
         const SizedBox(
           height: 20,
         ),
-        if (widget.doctor.nextAvailability != null)
-          _BookDoctorCard(doctor: widget.doctor),
-        const SizedBox(
-          height: 12,
-        ),
-        const Padding(
-          padding: EdgeInsets.only(left: 16, right: 16),
-          child: _BookCalendar(),
-        ),
-        Center(
-          child: Text(
-            "14 de septiembre del 2020",
-            style: boldoHeadingTextStyle.copyWith(
-                fontWeight: FontWeight.normal, fontSize: 14),
-          ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Center(
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            width: double.infinity,
-            constraints: const BoxConstraints(
-              maxWidth: 350,
+        if (_loading) const Center(child: CircularProgressIndicator()),
+        if (_errorMessage == "")
+          Center(
+            child: Text(
+              _errorMessage,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Constants.otherColor100,
+              ),
             ),
-            child: Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              spacing: 13,
-              runSpacing: 27,
-              children: [
-                ...[
-                  "08:00",
-                  "08:20",
-                  "08:40",
-                  "08:45",
-                  "09:20",
-                  "09:40",
-                  "10:40",
-                  "11:00",
-                  "11:20",
-                  "13:20",
-                  "14:40",
-                  '15:00'
-                ]
-                    .map((e) => GestureDetector(
-                          onTap: () {
+          ),
+        if (_loading == false && _errorMessage == "")
+          Column(
+            children: [
+              if (nextAvailability != null)
+                _BookDoctorCard(
+                    doctor: widget.doctor, nextAvailability: nextAvailability),
+              const SizedBox(
+                height: 12,
+              ),
+              if (_loadingCalendar)
+                const Center(child: CircularProgressIndicator()),
+              if (!_loadingCalendar)
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16, right: 16),
+                      child: _BookCalendar(
+                          selectedDate: _selectedDate,
+                          changeDateCallback: (DateTime newDate) {
+                            if (DateTime(newDate.year, newDate.month) !=
+                                DateTime(
+                                    _selectedDate.year, _selectedDate.month)) {
+                              setState(() {
+                                _selectedBookingHour = null;
+                                _loadingCalendar = true;
+                                _selectedDate = newDate;
+                              });
+                              fetchData(newDate);
+
+                              return;
+                            }
                             setState(() {
-                              _selectedBookingHour =
-                                  _selectedBookingHour == e ? null : e;
+                              _selectedBookingHour = null;
+                              _availabilitiesForDay = findAvailabilitesForDay(
+                                  _availabilities, newDate);
+                              _selectedDate = newDate;
                             });
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: _selectedBookingHour == e
-                                    ? Constants.primaryColor400
-                                    : Constants.tertiaryColor100,
-                                borderRadius: BorderRadius.circular(9),
-                                border: Border.all(
-                                    color: _selectedBookingHour == e
-                                        ? Constants.primaryColor600
-                                        : Constants.extraColor200)),
-                            width: 60,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                e,
-                                textAlign: TextAlign.center,
-                                style: boldoHeadingTextStyle.copyWith(
-                                    fontSize: 14,
-                                    color: _selectedBookingHour == e
-                                        ? Colors.white
-                                        : Constants.extraColor400),
-                              ),
-                            ),
-                          ),
-                        ))
-                    .toList()
-              ],
-            ),
+                          }),
+                    ),
+                    Center(
+                      child: Text(
+                        DateFormat('dd MMMM yyyy').format(_selectedDate),
+                        style: boldoHeadingTextStyle.copyWith(
+                            fontWeight: FontWeight.normal, fontSize: 14),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    if (_availabilitiesForDay.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          "The doctor is not availible in this day.",
+                          style: boldoHeadingTextStyle.copyWith(fontSize: 13),
+                        ),
+                      ),
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        width: double.infinity,
+                        constraints: const BoxConstraints(
+                          maxWidth: 350,
+                        ),
+                        child: Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 20,
+                          runSpacing: 27,
+                          children: [
+                            ..._availabilitiesForDay
+                                .map((e) => GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _selectedBookingHour =
+                                              _selectedBookingHour == e
+                                                  ? null
+                                                  : e;
+                                        });
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: _selectedBookingHour == e
+                                                ? Constants.primaryColor400
+                                                : Constants.tertiaryColor100,
+                                            borderRadius:
+                                                BorderRadius.circular(9),
+                                            border: Border.all(
+                                                color: _selectedBookingHour == e
+                                                    ? Constants.primaryColor600
+                                                    : Constants.extraColor200)),
+                                        width: 60,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            DateFormat('HH:MM').format(e),
+                                            textAlign: TextAlign.center,
+                                            style:
+                                                boldoHeadingTextStyle.copyWith(
+                                                    fontSize: 14,
+                                                    color:
+                                                        _selectedBookingHour ==
+                                                                e
+                                                            ? Colors.white
+                                                            : Constants
+                                                                .extraColor400),
+                                          ),
+                                        ),
+                                      ),
+                                    ))
+                                .toList()
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(left: 16, right: 16),
+                      margin: const EdgeInsets.only(bottom: 16),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Constants.primaryColor500,
+                        ),
+                        onPressed: _selectedBookingHour != null
+                            ? () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BookingConfirmScreen(
+                                      bookingDate: _selectedBookingHour,
+                                      doctor: widget.doctor,
+                                    ),
+                                  ),
+                                );
+                              }
+                            : null,
+                        child: const Text("Aceptar"),
+                      ),
+                    )
+                  ],
+                ),
+            ],
           ),
-        ),
-        const SizedBox(
-          height: 40,
-        ),
-        Container(
-          padding: const EdgeInsets.only(left: 16, right: 16),
-          margin: const EdgeInsets.only(bottom: 16),
-          width: double.infinity,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              primary: Constants.primaryColor500,
-            ),
-            onPressed: _selectedBookingHour != null
-                ? () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => BookingConfirmScreen(
-                                bookingDate: DateTime.now(),
-                                bookingHour: _selectedBookingHour,
-                              )),
-                    );
-                  }
-                : null,
-            child: const Text("Aceptar"),
-          ),
-        )
       ],
     );
   }
 }
 
 class _BookCalendar extends StatelessWidget {
-  const _BookCalendar({
-    Key key,
-  }) : super(key: key);
+  final DateTime selectedDate;
+  final Function(DateTime changeDateCallback) changeDateCallback;
+  const _BookCalendar(
+      {Key key, @required this.selectedDate, @required this.changeDateCallback})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -173,8 +291,7 @@ class _BookCalendar extends StatelessWidget {
           height: 20,
         ),
         CustomCalendar(
-          selectedDate: DateTime.now(),
-        ),
+            selectedDate: selectedDate, changeDateCallback: changeDateCallback),
         const SizedBox(
           height: 25,
         ),
@@ -184,8 +301,11 @@ class _BookCalendar extends StatelessWidget {
 }
 
 class _BookDoctorCard extends StatelessWidget {
-  const _BookDoctorCard({Key key, @required this.doctor}) : super(key: key);
+  const _BookDoctorCard(
+      {Key key, @required this.doctor, @required this.nextAvailability})
+      : super(key: key);
 
+  final String nextAvailability;
   final Doctor doctor;
 
   @override
@@ -193,8 +313,7 @@ class _BookDoctorCard extends StatelessWidget {
     String availabilityText = "";
     bool isToday = false;
 
-    DateTime parsedAvailability =
-        DateTime.parse(doctor.nextAvailability).toLocal();
+    DateTime parsedAvailability = DateTime.parse(nextAvailability).toLocal();
     int daysDifference = parsedAvailability.difference(DateTime.now()).inDays;
 
     isToday = daysDifference == 0;
@@ -282,8 +401,7 @@ class _BookDoctorCard extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => BookingConfirmScreen(
                       bookingDate: parsedAvailability,
-                      bookingHour:
-                          DateFormat('HH:MM').format(parsedAvailability),
+                      doctor: doctor,
                     ),
                   ),
                 );

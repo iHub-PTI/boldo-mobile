@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:provider/provider.dart';
+import 'package:boldo/provider/utils_provider.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../../constants.dart';
 
@@ -45,26 +46,28 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                     const SizedBox(
                       height: 40,
                     ),
-                    Container(
-                      padding: const EdgeInsets.only(left: 16, right: 16),
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Constants.primaryColor500,
-                        ),
-                        onPressed: null,
-                        child: const Text("Ver reserva"),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
+                    // Container(
+                    //   padding: const EdgeInsets.only(left: 16, right: 16),
+                    //   width: double.infinity,
+                    //   child: ElevatedButton(
+                    //     style: ElevatedButton.styleFrom(
+                    //       primary: Constants.primaryColor500,
+                    //     ),
+                    //     onPressed: null,
+                    //     child: const Text("Ver reserva"),
+                    //   ),
+                    // ),
+                    // const SizedBox(
+                    //   height: 16,
+                    // ),
                     Container(
                       padding: const EdgeInsets.only(left: 16, right: 16),
                       width: double.infinity,
                       child: OutlinedButton(
                         //  style: style1,
                         onPressed: () {
+                          Provider.of<UtilsProvider>(context, listen: false)
+                              .setSelectedPageIndex(pageIndex: 0);
                           Navigator.push(
                             context,
                             MaterialPageRoute(

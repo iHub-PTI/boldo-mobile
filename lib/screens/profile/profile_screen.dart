@@ -250,8 +250,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         return CustomFormInput(
                           label: "Fecha de nacimiento",
                           initialValue: DateFormat('dd.MM.yyyy')
-                              .format(DateTime.parse(data ?? "1980-01-01"))
-                              .toString(),
+                              .format(DateTime.parse(data ?? "1980-01-01")),
                           validator: null,
                           isDateTime: true,
                           changeValueCallback: (String val) {
