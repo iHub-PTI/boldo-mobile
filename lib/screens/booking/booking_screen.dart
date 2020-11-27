@@ -57,7 +57,7 @@ class _BookingScreenState extends State<BookingScreen> {
       Response response = await dio
           .get("/doctors/${widget.doctor.id}/availability", queryParameters: {
         'start': date.toIso8601String(),
-        'end': DateTime(date.year, date.month + 1, 0),
+        'end': DateTime(date.year, date.month + 1, 0).toIso8601String(),
       });
       List<String> allAvailabilities =
           response.data["availabilities"].cast<String>();
