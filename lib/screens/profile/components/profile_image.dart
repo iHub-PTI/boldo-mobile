@@ -36,28 +36,36 @@ class _ProfileImageState extends State<ProfileImage> {
                   )
                 : ClipOval(
                     child: Selector<UserProvider, String>(
-                      builder: (_, data, __) {
-                        if (data == null) {
-                          return SvgPicture.asset(
-                            'assets/images/DoctorImageMale.svg',
-                          );
-                        }
-                        return CachedNetworkImage(
-                          fit: BoxFit.cover,
-                          imageUrl: data,
-                          progressIndicatorBuilder:
-                              (context, url, downloadProgress) => Padding(
-                            padding: const EdgeInsets.all(26.0),
-                            child: CircularProgressIndicator(
-                              value: downloadProgress.progress,
-                            ),
-                          ),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
+                      builder: (_, gender, __) {
+                        return Selector<UserProvider, String>(
+                          builder: (_, data, __) {
+                            if (data == null) {
+                              return SvgPicture.asset(
+                                gender != null && gender == "female"
+                                    ? 'assets/images/femalePatient.svg'
+                                    : 'assets/images/malePatient.svg',
+                              );
+                            }
+                            return CachedNetworkImage(
+                              fit: BoxFit.cover,
+                              imageUrl: data,
+                              progressIndicatorBuilder:
+                                  (context, url, downloadProgress) => Padding(
+                                padding: const EdgeInsets.all(26.0),
+                                child: CircularProgressIndicator(
+                                  value: downloadProgress.progress,
+                                ),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                            );
+                          },
+                          selector: (buildContext, userProvider) =>
+                              userProvider.getPhotoUrl,
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getPhotoUrl,
+                          userProvider.getGender,
                     ),
                   ),
             elevation: 4.0,

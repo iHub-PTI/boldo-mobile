@@ -6,7 +6,7 @@ import 'package:boldo/widgets/custom_form_input.dart';
 import 'package:boldo/widgets/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../../helpers/languages.dart';
 import '../../constants.dart';
 
 class FilterScreen extends StatelessWidget {
@@ -172,13 +172,6 @@ class FilterScreen extends StatelessWidget {
     );
   }
 }
-
-List<Map<String, String>> defaultLanguagesList = [
-  {"value": "es", "name": "Español"},
-  {"value": "gn", "name": "Guaraní"},
-  {"value": "pt", "name": "Portugués"},
-  {"value": "en", "name": "Inglés"},
-];
 
 class BuildLanguages extends StatelessWidget {
   const BuildLanguages({Key key}) : super(key: key);

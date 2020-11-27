@@ -1,18 +1,19 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../models/Doctor.dart';
 import '../../constants.dart';
+import '../../utils/helpers.dart';
+import '../../helpers/languages.dart';
 
-class DoctorProfileScreen extends StatefulWidget {
-  DoctorProfileScreen({Key key}) : super(key: key);
+class DoctorProfileScreen extends StatelessWidget {
+  const DoctorProfileScreen({Key key, @required this.doctor}) : super(key: key);
+  final Doctor doctor;
 
-  @override
-  _DoctorProfileScreenState createState() => _DoctorProfileScreenState();
-}
-
-class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
   @override
   Widget build(BuildContext context) {
+    print(doctor.biography);
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -52,18 +53,44 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                   alignment: Alignment.center,
                   child: Column(
                     children: [
-                      SvgPicture.asset(
-                        'assets/images/DoctorImage.svg',
+                      Card(
+                        elevation: 4.0,
+                        shape: const CircleBorder(),
+                        clipBehavior: Clip.antiAlias,
+                        child: SizedBox(
+                          height: 128,
+                          width: 128,
+                          child: doctor.photoUrl == null
+                              ? SvgPicture.asset(
+                                  doctor.gender == "female"
+                                      ? 'assets/images/femaleDoctor.svg'
+                                      : 'assets/images/maleDoctor.svg',
+                                  fit: BoxFit.cover)
+                              : CachedNetworkImage(
+                                  fit: BoxFit.cover,
+                                  imageUrl: doctor.photoUrl,
+                                  progressIndicatorBuilder:
+                                      (context, url, downloadProgress) =>
+                                          Padding(
+                                    padding: const EdgeInsets.all(26.0),
+                                    child: CircularProgressIndicator(
+                                      value: downloadProgress.progress,
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                ),
+                        ),
                       ),
                       const SizedBox(
-                        height: 2,
+                        height: 9,
                       ),
-                      const Text(
-                        "Dra. Susan Giménez",
+                      Text(
+                        "${getDoctorPrefix(doctor.gender)} ${doctor.givenName} ${doctor.familyName}",
                         style: boldoHeadingTextStyle,
                       ),
                       const SizedBox(
-                        height: 4,
+                        height: 6,
                       ),
                       Text(
                         "Dermatología",
@@ -81,59 +108,60 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                       const SizedBox(
                         height: 24,
                       ),
-                      const Text(
-                        "Biografía",
-                        style: boldoHeadingTextStyle,
-                      ),
+                      if (doctor.biography != null)
+                        Column(
+                          children: [
+                            const Text(
+                              "Biografía",
+                              style: boldoHeadingTextStyle,
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            Text(doctor.biography,
+                                style: boldoSubTextStyle.copyWith(
+                                    height: 1.5, fontSize: 16)),
+                            const SizedBox(
+                              height: 12,
+                            ),
+                          ],
+                        ),
                       const SizedBox(
-                        height: 4,
+                        height: 12,
                       ),
-                      Text(
-                          "Recibida en la Universidad Nacional de Asunción en Dermatología. Especialización en Dermatología Estética. Miembro de la Asociación LADERM. ",
-                          style: boldoSubTextStyle.copyWith(
-                              height: 1.5, fontSize: 16)),
-                      const SizedBox(
-                        height: 24,
-                      ),
-                      const Text(
-                        "Idiomas",
-                        style: boldoHeadingTextStyle,
-                      ),
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      Text(
-                        "- Español",
-                        style: boldoSubTextStyle.copyWith(fontSize: 16),
-                      ),
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      Text(
-                        "- Inglés",
-                        style: boldoSubTextStyle.copyWith(fontSize: 16),
-                      ),
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      Text(
-                        "- Alemán",
-                        style: boldoSubTextStyle.copyWith(fontSize: 16),
-                      ),
+                      if (doctor.languages != null &&
+                          doctor.languages.isNotEmpty)
+                        Column(
+                          children: [
+                            const Text(
+                              "Idiomas",
+                              style: boldoHeadingTextStyle,
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            _buildLanguages(doctor.languages),
+                          ],
+                        ),
                       const SizedBox(
                         height: 24,
                       ),
-                      const Text(
-                        "Registro Profesional",
-                        style: boldoHeadingTextStyle,
-                      ),
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      Text(
-                        "Nro. 45.786 ",
-                        style: boldoSubTextStyle.copyWith(fontSize: 16),
-                      ),
+                      if (doctor.license != null)
+                        Column(
+                          children: [
+                            const Text(
+                              "Registro Profesional",
+                              style: boldoHeadingTextStyle,
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            Text(
+                              "Nro. ${doctor.license}",
+                              style: boldoSubTextStyle.copyWith(fontSize: 16),
+                            ),
+                          ],
+                        )
                     ],
                   ),
                 ),
@@ -141,6 +169,27 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
             ),
           ),
         ));
+  }
+
+  Widget _buildLanguages(List<String> languages) {
+    List<Widget> list = [];
+    for (String language in languages) {
+      Map<String, String> myValue = allLanguagesList.firstWhere(
+          (element) => element["value"] == language,
+          orElse: () => null);
+      if (myValue != null) {
+        list.add(Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Text(
+            "- ${myValue["name"]}",
+            style: boldoSubTextStyle.copyWith(fontSize: 16),
+          ),
+        ));
+      }
+    }
+    return Column(
+      children: list,
+    );
   }
 }
 

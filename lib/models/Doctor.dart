@@ -13,6 +13,9 @@ class Doctor {
   String phone;
   String photoUrl;
   String street;
+  String biography;
+  String license;
+  List<String> languages;
 
   Doctor(
       {this.addressDescription,
@@ -20,9 +23,12 @@ class Doctor {
       this.city,
       this.email,
       this.familyName,
+      this.license,
       this.gender,
       this.givenName,
+      this.languages,
       this.id,
+      this.biography,
       this.identifier,
       this.job,
       this.neighborhood,
@@ -35,7 +41,10 @@ class Doctor {
     birthDate = json['birthDate'];
     city = json['city'];
     email = json['email'];
+    biography = json["biography"];
+    license = json["license"];
     familyName = json['familyName'];
+    languages = json["languages"].cast<String>();
     gender = json['gender'];
     givenName = json['givenName'];
     id = json['id'];
@@ -51,7 +60,10 @@ class Doctor {
     final Map<String, dynamic> data = {};
     data['addressDescription'] = addressDescription;
     data['birthDate'] = birthDate;
+    data["biography"] = biography;
+    data["license"] = license;
     data['city'] = city;
+    data["languages"] = languages;
     data['email'] = email;
     data['familyName'] = familyName;
     data['gender'] = gender;

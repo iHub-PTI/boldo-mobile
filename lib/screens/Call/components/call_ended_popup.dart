@@ -2,9 +2,10 @@ import 'package:boldo/utils/helpers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
-
+import 'package:intl/intl.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/constants.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 Future<bool> callEndedPopup(
     {@required BuildContext context, @required Appointment appointment}) async {
@@ -40,8 +41,33 @@ Future<bool> callEndedPopup(
                           fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(height: 24),
-                    Image.asset('assets/images/Avatar.png'),
-                    const SizedBox(height: 6),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: SizedBox(
+                        height: 72,
+                        width: 72,
+                        child: appointment.doctor.photoUrl == null
+                            ? SvgPicture.asset(
+                                appointment.doctor.gender == "female"
+                                    ? 'assets/images/femaleDoctor.svg'
+                                    : 'assets/images/maleDoctor.svg',
+                                fit: BoxFit.cover)
+                            : CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                imageUrl: appointment.doctor.photoUrl,
+                                progressIndicatorBuilder:
+                                    (context, url, downloadProgress) => Padding(
+                                  padding: const EdgeInsets.all(26.0),
+                                  child: CircularProgressIndicator(
+                                    value: downloadProgress.progress,
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
                     Text(
                       "${getDoctorPrefix(appointment.doctor.gender)} ${appointment.doctor.familyName}",
                       textAlign: TextAlign.center,
@@ -67,7 +93,11 @@ Future<bool> callEndedPopup(
                             style: boldoHeadingTextStyle,
                           ),
                           const SizedBox(height: 4),
-                          Text("Lunes 7 de septiembre del 2020",
+                          Text(
+                              DateFormat('EEEE, dd MMMM YYYY')
+                                  .format(DateTime.parse(appointment.start)
+                                      .toLocal())
+                                  .capitalize(),
                               style: boldoSubTextStyle.copyWith(fontSize: 16)),
                           const SizedBox(height: 24),
                           const Text(
@@ -76,7 +106,7 @@ Future<bool> callEndedPopup(
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            "14:30 horas",
+                            "${DateFormat('HH:MM').format(DateTime.parse(appointment.start).toLocal())} horas",
                             style: boldoSubTextStyle.copyWith(fontSize: 16),
                           ),
                         ],

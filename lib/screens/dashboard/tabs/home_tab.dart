@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:isolate';
-
+import 'package:intl/intl.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -306,7 +306,11 @@ class _HomeTabState extends State<HomeTab> {
                     const SizedBox(
                       height: 4,
                     ),
-                    const Text("Lunes, 14 de septiembre"),
+                    Text(
+                      DateFormat('EEEE, dd MMMM')
+                          .format(DateTime.now())
+                          .capitalize(),
+                    ),
                   ],
                 )
               ],
@@ -340,33 +344,39 @@ class _HomeTabState extends State<HomeTab> {
                               ],
                             ),
                           ),
-                          const SliverAppBar(
-                            automaticallyImplyLeading: false,
-                            pinned: true,
-                            flexibleSpace: TabBar(
-                              labelColor: Constants.primaryColor600,
-                              unselectedLabelColor: Constants.extraColor300,
-                              indicatorColor: Constants.primaryColor600,
-                              labelStyle: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w500),
-                              tabs: [
-                                Tab(
-                                  text: "Próximas Citas",
-                                ),
-                                Tab(
-                                  text: "Citas Pasadas",
-                                ),
-                              ],
+                          const SliverPadding(
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            sliver: SliverAppBar(
+                              automaticallyImplyLeading: false,
+                              pinned: true,
+                              flexibleSpace: TabBar(
+                                labelColor: Constants.primaryColor600,
+                                unselectedLabelColor: Constants.extraColor300,
+                                indicatorColor: Constants.primaryColor600,
+                                labelStyle: TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.w500),
+                                tabs: [
+                                  Tab(
+                                    text: "Próximas Citas",
+                                  ),
+                                  Tab(
+                                    text: "Citas Pasadas",
+                                  ),
+                                ],
+                              ),
+                              elevation: 0,
                             ),
-                            elevation: 0,
                           ),
                           SliverFillRemaining(
                             child: TabBarView(
                               children: <Widget>[
                                 futureAppointments.length > 0
                                     ? Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 24.0),
+                                        padding: const EdgeInsets.only(
+                                          top: 24.0,
+                                          left: 6,
+                                          right: 6,
+                                        ),
                                         child: ListView(
                                           physics:
                                               const NeverScrollableScrollPhysics(),
@@ -386,6 +396,8 @@ class _HomeTabState extends State<HomeTab> {
                                 pastAppointments.length > 0
                                     ? Padding(
                                         padding: const EdgeInsets.only(
+                                          left: 6,
+                                          right: 6,
                                           top: 24.0,
                                         ),
                                         child: ListView.builder(

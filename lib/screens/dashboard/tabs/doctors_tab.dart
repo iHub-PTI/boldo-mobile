@@ -1,6 +1,7 @@
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/custom_search.dart';
 import 'package:boldo/screens/filter/filter_screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -188,8 +189,31 @@ class _DoctorCard extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                SvgPicture.asset(
-                  'assets/images/ProfileImage.svg',
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: SizedBox(
+                    height: 64,
+                    width: 64,
+                    child: doctor.photoUrl == null
+                        ? SvgPicture.asset(
+                            doctor.gender == "female"
+                                ? 'assets/images/femaleDoctor.svg'
+                                : 'assets/images/maleDoctor.svg',
+                            fit: BoxFit.cover)
+                        : CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl: doctor.photoUrl,
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) => Padding(
+                              padding: const EdgeInsets.all(26.0),
+                              child: CircularProgressIndicator(
+                                value: downloadProgress.progress,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                          ),
+                  ),
                 ),
                 const SizedBox(
                   width: 16,
@@ -233,7 +257,8 @@ class _DoctorCard extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DoctorProfileScreen(),
+                            builder: (context) =>
+                                DoctorProfileScreen(doctor: doctor),
                           ),
                         );
                       },
