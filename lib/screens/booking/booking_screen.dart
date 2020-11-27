@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 import '../../widgets/calendar/calendar.dart';
 import '../../widgets/wrapper.dart';
 import './booking_confirm_screen.dart';
 import '../../constants.dart';
+import '../../models/Doctor.dart';
+import '../../utils/helpers.dart';
 
 class BookingScreen extends StatefulWidget {
-  BookingScreen({Key key}) : super(key: key);
-
+  BookingScreen({Key key, @required this.doctor}) : super(key: key);
+  final Doctor doctor;
   @override
   _BookingScreenState createState() => _BookingScreenState();
 }
@@ -39,7 +42,8 @@ class _BookingScreenState extends State<BookingScreen> {
         const SizedBox(
           height: 20,
         ),
-        const _BookDoctorCard(),
+        if (widget.doctor.nextAvailability != null)
+          _BookDoctorCard(doctor: widget.doctor),
         const SizedBox(
           height: 12,
         ),
@@ -180,12 +184,28 @@ class _BookCalendar extends StatelessWidget {
 }
 
 class _BookDoctorCard extends StatelessWidget {
-  const _BookDoctorCard({
-    Key key,
-  }) : super(key: key);
+  const _BookDoctorCard({Key key, @required this.doctor}) : super(key: key);
+
+  final Doctor doctor;
 
   @override
   Widget build(BuildContext context) {
+    String availabilityText = "";
+    bool isToday = false;
+
+    DateTime parsedAvailability =
+        DateTime.parse(doctor.nextAvailability).toLocal();
+    int daysDifference = parsedAvailability.difference(DateTime.now()).inDays;
+
+    isToday = daysDifference == 0;
+
+    if (isToday) {
+      availabilityText = "Disponible Hoy!";
+    } else if (daysDifference > 0) {
+      availabilityText =
+          "Disponible ${DateFormat('EEEE, dd MMMM').format(parsedAvailability)}";
+    }
+
     return Card(
       elevation: 5,
       margin: const EdgeInsets.only(bottom: 24, left: 16, right: 16),
@@ -215,21 +235,28 @@ class _BookDoctorCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Disponible Hoy!",
-                          style: boldoHeadingTextStyle.copyWith(fontSize: 14),
+                          availabilityText,
+                          style: boldoHeadingTextStyle.copyWith(
+                            fontSize: 14,
+                            color: isToday
+                                ? Constants.primaryColor600
+                                : Constants.secondaryColor500,
+                          ),
                         ),
                         const SizedBox(
                           height: 4,
                         ),
-                        const Text(
-                          "Lunes 7 de septiembre",
+                        Text(
+                          DateFormat('EEEE, dd MMMM')
+                              .format(parsedAvailability)
+                              .capitalize(),
                           style: boldoSubTextStyle,
                         ),
                         const SizedBox(
                           height: 4,
                         ),
-                        const Text(
-                          "14:30 horas",
+                        Text(
+                          "${DateFormat('HH:MM').format(parsedAvailability)} horas",
                           style: boldoSubTextStyle,
                         ),
                       ],
@@ -253,10 +280,12 @@ class _BookDoctorCard extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => BookingConfirmScreen(
-                            bookingDate: DateTime.now(),
-                            bookingHour: "14:30",
-                          )),
+                    builder: (context) => BookingConfirmScreen(
+                      bookingDate: parsedAvailability,
+                      bookingHour:
+                          DateFormat('HH:MM').format(parsedAvailability),
+                    ),
+                  ),
                 );
               },
               child: Text(

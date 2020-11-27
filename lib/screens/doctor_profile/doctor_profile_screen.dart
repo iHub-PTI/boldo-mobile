@@ -13,7 +13,6 @@ class DoctorProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(doctor.biography);
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -146,7 +145,7 @@ class DoctorProfileScreen extends StatelessWidget {
                       const SizedBox(
                         height: 24,
                       ),
-                      if (doctor.license != null)
+                      if (doctor.license != null && doctor.license != "")
                         Column(
                           children: [
                             const Text(

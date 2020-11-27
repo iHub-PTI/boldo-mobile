@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 import '../../../constants.dart';
 import '../../booking/booking_screen.dart';
@@ -57,6 +58,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
         'specialties': listOfSpecializations ?? [],
         "text": text,
       });
+
       if (response.statusCode == 200) {
         List<Doctor> doctorsList =
             List<Doctor>.from(response.data.map((i) => Doctor.fromJson(i)));
@@ -175,6 +177,23 @@ class _DoctorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String availabilityText = "No availability in the next 30 days";
+    bool isToday = false;
+    if (doctor.nextAvailability != null) {
+      DateTime parsedAvailability =
+          DateTime.parse(doctor.nextAvailability).toLocal();
+      int daysDifference = parsedAvailability.difference(DateTime.now()).inDays;
+
+      isToday = daysDifference == 0;
+
+      if (isToday) {
+        availabilityText = "Disponible Hoy!";
+      } else if (daysDifference > 0) {
+        availabilityText =
+            "Disponible ${DateFormat('EEEE, dd MMMM').format(parsedAvailability)}";
+      }
+    }
+
     return Card(
       elevation: 5,
       margin: const EdgeInsets.only(bottom: 24, left: 16, right: 16),
@@ -233,9 +252,12 @@ class _DoctorCard extends StatelessWidget {
                         "Dermatología",
                         style: boldoSubTextStyle,
                       ),
-                      Text("Disponible Hoy!",
+                      Text(availabilityText,
                           style: boldoSubTextStyle.copyWith(
-                              fontSize: 12, color: Constants.secondaryColor500))
+                              fontSize: 12,
+                              color: isToday
+                                  ? Constants.primaryColor600
+                                  : Constants.secondaryColor500))
                     ])
               ],
             ),
@@ -282,7 +304,7 @@ class _DoctorCard extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => BookingScreen(),
+                            builder: (context) => BookingScreen(doctor: doctor),
                           ),
                         );
                       },

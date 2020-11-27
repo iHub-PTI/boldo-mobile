@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:boldo/network/http.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
@@ -13,7 +12,6 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import '../../../widgets/wrapper.dart';
-import '../dashboard_screen.dart';
 import '../../../provider/auth_provider.dart';
 import '../../../constants.dart';
 

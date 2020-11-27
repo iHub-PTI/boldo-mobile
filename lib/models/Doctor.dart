@@ -15,6 +15,7 @@ class Doctor {
   String street;
   String biography;
   String license;
+  String nextAvailability;
   List<String> languages;
 
   Doctor(
@@ -28,6 +29,7 @@ class Doctor {
       this.givenName,
       this.languages,
       this.id,
+      this.nextAvailability,
       this.biography,
       this.identifier,
       this.job,
@@ -40,6 +42,7 @@ class Doctor {
     addressDescription = json['addressDescription'];
     birthDate = json['birthDate'];
     city = json['city'];
+    nextAvailability = json["nextAvailability"];
     email = json['email'];
     biography = json["biography"];
     license = json["license"];
@@ -62,6 +65,7 @@ class Doctor {
     data['birthDate'] = birthDate;
     data["biography"] = biography;
     data["license"] = license;
+    data["nextAvailability"] = nextAvailability;
     data['city'] = city;
     data["languages"] = languages;
     data['email'] = email;
