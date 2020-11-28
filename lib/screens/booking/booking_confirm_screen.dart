@@ -149,7 +149,7 @@ class _DoctorBookingInfoWidget extends StatelessWidget {
           height: 7,
         ),
         Text(
-          "${DateFormat('HH:MM').format(bookingDate)} horas",
+          "${DateFormat('HH:mm').format(bookingDate)} horas",
           style: boldoSubTextStyle.copyWith(fontSize: 16),
         ),
       ],
