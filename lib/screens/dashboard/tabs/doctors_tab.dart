@@ -24,7 +24,8 @@ class DoctorsTab extends StatefulWidget {
 
 class _DoctorsTabState extends State<DoctorsTab> {
   List<Doctor> doctors = [];
-  bool loading = true;
+  bool _loading = true;
+
   bool _mounted;
 
   @override
@@ -43,7 +44,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
   void getDoctors({String text = ""}) async {
     try {
       setState(() {
-        loading = true;
+        _loading = true;
       });
       List<String> listOfLanguages =
           Provider.of<UtilsProvider>(context, listen: false).getListOfLanguages;
@@ -63,13 +64,17 @@ class _DoctorsTabState extends State<DoctorsTab> {
         List<Doctor> doctorsList =
             List<Doctor>.from(response.data.map((i) => Doctor.fromJson(i)));
         if (!_mounted) return;
-        setState(() {
-          loading = false;
-          doctors = doctorsList;
-        });
+        doctors = doctorsList;
       }
     } catch (e) {
       print(e);
+
+      ///FIXME: SHOW AN ERROR MESSAGE TO THE USER
+
+    } finally {
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
@@ -151,7 +156,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
             ),
             const SizedBox(height: 25),
             Expanded(
-              child: loading
+              child: _loading
                   ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
                       itemCount: doctors.length,
