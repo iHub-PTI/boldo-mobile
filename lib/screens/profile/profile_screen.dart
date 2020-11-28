@@ -392,9 +392,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       actionCallback: _updateProfile,
                     ),
 
-                    const SizedBox(
-                      height: 16,
-                    ),
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),
