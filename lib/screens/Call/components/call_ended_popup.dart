@@ -106,7 +106,7 @@ Future<bool> callEndedPopup(
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            "${DateFormat('HH:MM').format(DateTime.parse(appointment.start).toLocal())} horas",
+                            "${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())} horas",
                             style: boldoSubTextStyle.copyWith(fontSize: 16),
                           ),
                         ],

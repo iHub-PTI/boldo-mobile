@@ -215,7 +215,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Text(
-                                            DateFormat('HH:MM').format(e),
+                                            DateFormat('HH:mm').format(e),
                                             textAlign: TextAlign.center,
                                             style:
                                                 boldoHeadingTextStyle.copyWith(
@@ -375,7 +375,7 @@ class _BookDoctorCard extends StatelessWidget {
                           height: 4,
                         ),
                         Text(
-                          "${DateFormat('HH:MM').format(parsedAvailability)} horas",
+                          "${DateFormat('HH:mm').format(parsedAvailability)} horas",
                           style: boldoSubTextStyle,
                         ),
                       ],
