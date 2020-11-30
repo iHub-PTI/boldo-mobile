@@ -86,9 +86,8 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                   _error = "";
                 });
 
-                await dio
-                    .post("/profile/patient/appointments", queryParameters: {
-                  'start': widget.bookingDate.toIso8601String(),
+                await dio.post("/profile/patient/appointments", data: {
+                  'start': widget.bookingDate.toUtc().toIso8601String(),
                   "doctorId": widget.doctor.id,
                 });
 

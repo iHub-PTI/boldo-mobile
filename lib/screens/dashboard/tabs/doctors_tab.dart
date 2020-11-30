@@ -62,8 +62,8 @@ class _DoctorsTabState extends State<DoctorsTab> {
       });
       if (!_mounted) return;
       if (response.statusCode == 200) {
-        List<Doctor> doctorsList =
-            List<Doctor>.from(response.data.map((i) => Doctor.fromJson(i)));
+        List<Doctor> doctorsList = List<Doctor>.from(
+            response.data['items'].map((i) => Doctor.fromJson(i)));
         if (!_mounted) return;
         doctors = doctorsList;
       }
