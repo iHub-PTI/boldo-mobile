@@ -179,6 +179,12 @@ class _VideoCallState extends State<VideoCall> {
     localStream.getVideoTracks()[0].switchCamera();
   }
 
+  void muteCall() {
+    //FIXME: Test if code below mutes/unmutes the camera
+    // final newState = !localStream.getAudioTracks()[0].enabled;
+    // localStream.getAudioTracks()[0].enabled = newState;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -199,7 +205,10 @@ class _VideoCallState extends State<VideoCall> {
               ],
             )
           : WaitingRoom(
-              localRenderer: localRenderer, appointment: widget.appointment),
+              localRenderer: localRenderer,
+              appointment: widget.appointment,
+              muteCall: muteCall,
+            ),
     );
   }
 }
