@@ -15,7 +15,7 @@ import 'package:boldo/network/connection_status.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
-import 'package:boldo/screens/Hero/hero_screen.dart';
+import 'package:boldo/screens/hero/hero_screen.dart';
 
 import 'package:boldo/constants.dart';
 import 'package:boldo/size_config.dart';

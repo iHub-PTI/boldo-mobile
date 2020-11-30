@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:boldo/screens/call/video_call.dart';
+import 'package:boldo/screens/Call/video_call.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';

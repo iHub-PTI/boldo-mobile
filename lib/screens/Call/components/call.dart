@@ -34,13 +34,13 @@ class Call extends StatelessWidget {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
               colors: <Color>[
                 Colors.white,
                 Color.fromRGBO(255, 255, 255, 0.65),
                 Color.fromRGBO(255, 255, 255, 0)
               ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
           ),
         ),
