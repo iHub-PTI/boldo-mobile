@@ -6,14 +6,23 @@ import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/constants.dart';
 import '../../../utils/helpers.dart';
 
-class WaitingRoom extends StatelessWidget {
+class WaitingRoom extends StatefulWidget {
   final RTCVideoRenderer localRenderer;
   final Appointment appointment;
+  final Function() muteCall;
   const WaitingRoom({
     Key key,
     @required this.localRenderer,
     @required this.appointment,
+    @required this.muteCall,
   }) : super(key: key);
+
+  @override
+  _WaitingRoomState createState() => _WaitingRoomState();
+}
+
+class _WaitingRoomState extends State<WaitingRoom> {
+  bool _muted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +46,7 @@ class WaitingRoom extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              "En breve ${getDoctorPrefix(appointment.doctor.gender)} ${appointment.doctor.familyName} iniciará \n la videollamada",
+              "En breve ${getDoctorPrefix(widget.appointment.doctor.gender)} ${widget.appointment.doctor.familyName} iniciará \n la videollamada",
               textAlign: TextAlign.center,
               style: const TextStyle(
                   height: 1.5,
@@ -57,7 +66,7 @@ class WaitingRoom extends StatelessWidget {
                     child: Container(
                       width: orientation == Orientation.portrait ? 200 : 266,
                       height: orientation == Orientation.portrait ? 266 : 200,
-                      child: RTCVideoView(localRenderer),
+                      child: RTCVideoView(widget.localRenderer),
                     ),
                   ),
                 );
@@ -89,18 +98,23 @@ class WaitingRoom extends StatelessWidget {
                   height: 48,
                   width: 48,
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Constants.primaryColor500,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(100)),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(0),
+                        primary: Constants.primaryColor500,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(100)),
+                        ),
                       ),
-                    ),
-                    onPressed: () {
-                      print("press");
-                    },
-                    child: SvgPicture.asset("assets/icon/mic.svg",
-                        color: Colors.white),
-                  ),
+                      onPressed: () {
+                        widget.muteCall();
+                        setState(() {
+                          _muted = !_muted;
+                        });
+                      },
+                      child: Icon(
+                        _muted ? Icons.mic_off : Icons.mic,
+                        color: Colors.white,
+                      )),
                 ),
               ],
             ),

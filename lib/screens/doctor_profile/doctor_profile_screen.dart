@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../models/Doctor.dart';
 import '../../constants.dart';
 import '../../utils/helpers.dart';
-import '../../helpers/languages.dart';
 
 class DoctorProfileScreen extends StatelessWidget {
   const DoctorProfileScreen({Key key, @required this.doctor}) : super(key: key);
@@ -74,6 +73,11 @@ class DoctorProfileScreen extends StatelessWidget {
                                     padding: const EdgeInsets.all(26.0),
                                     child: CircularProgressIndicator(
                                       value: downloadProgress.progress,
+                                      valueColor:
+                                          const AlwaysStoppedAnimation<Color>(
+                                              Constants.primaryColor400),
+                                      backgroundColor:
+                                          Constants.primaryColor600,
                                     ),
                                   ),
                                   errorWidget: (context, url, error) =>
@@ -91,11 +95,16 @@ class DoctorProfileScreen extends StatelessWidget {
                       const SizedBox(
                         height: 6,
                       ),
-                      Text(
-                        "Dermatología",
-                        style: boldoHeadingTextStyle.copyWith(
-                            color: Constants.otherColor100),
-                      ),
+                      if (doctor.specializations != null)
+                        for (var specialization in doctor.specializations)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Text(
+                              "${specialization.description}",
+                              style: boldoHeadingTextStyle.copyWith(
+                                  color: Constants.otherColor100),
+                            ),
+                          ),
                     ],
                   ),
                 ),
@@ -109,6 +118,7 @@ class DoctorProfileScreen extends StatelessWidget {
                       ),
                       if (doctor.biography != null)
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
                               "Biografía",
@@ -131,6 +141,7 @@ class DoctorProfileScreen extends StatelessWidget {
                       if (doctor.languages != null &&
                           doctor.languages.isNotEmpty)
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
                               "Idiomas",
@@ -139,7 +150,15 @@ class DoctorProfileScreen extends StatelessWidget {
                             const SizedBox(
                               height: 4,
                             ),
-                            _buildLanguages(doctor.languages),
+                            for (var language in doctor.languages)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 4),
+                                child: Text(
+                                  "- ${language.description}",
+                                  style:
+                                      boldoSubTextStyle.copyWith(fontSize: 16),
+                                ),
+                              )
                           ],
                         ),
                       const SizedBox(
@@ -168,27 +187,6 @@ class DoctorProfileScreen extends StatelessWidget {
             ),
           ),
         ));
-  }
-
-  Widget _buildLanguages(List<String> languages) {
-    List<Widget> list = [];
-    for (String language in languages) {
-      Map<String, String> myValue = allLanguagesList.firstWhere(
-          (element) => element["value"] == language,
-          orElse: () => null);
-      if (myValue != null) {
-        list.add(Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: Text(
-            "- ${myValue["name"]}",
-            style: boldoSubTextStyle.copyWith(fontSize: 16),
-          ),
-        ));
-      }
-    }
-    return Column(
-      children: list,
-    );
   }
 }
 

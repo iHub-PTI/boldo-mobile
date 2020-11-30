@@ -7,7 +7,7 @@ import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/screens/Call/components/call.dart';
-import 'package:boldo/screens/call/components/waiting_room.dart';
+import 'package:boldo/screens/Call/components/waiting_room.dart';
 import 'package:boldo/screens/Call/components/connection_problem_popup.dart';
 import 'package:boldo/utils/peerConnection.dart';
 
@@ -179,6 +179,12 @@ class _VideoCallState extends State<VideoCall> {
     localStream.getVideoTracks()[0].switchCamera();
   }
 
+  void muteCall() {
+    //FIXME: Test if code below mutes/unmutes the camera
+    // final newState = !localStream.getAudioTracks()[0].enabled;
+    // localStream.getAudioTracks()[0].enabled = newState;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -199,7 +205,10 @@ class _VideoCallState extends State<VideoCall> {
               ],
             )
           : WaitingRoom(
-              localRenderer: localRenderer, appointment: widget.appointment),
+              localRenderer: localRenderer,
+              appointment: widget.appointment,
+              muteCall: muteCall,
+            ),
     );
   }
 }

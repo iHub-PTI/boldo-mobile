@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:boldo/screens/call/video_call.dart';
+import 'package:boldo/screens/Call/video_call.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -78,7 +78,7 @@ class _HomeTabState extends State<HomeTab> {
   Future _getProfileData() async {
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
-    if (!isAuthenticated) return;
+    if (!isAuthenticated && !_mounted) return;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     setState(() {
@@ -113,6 +113,7 @@ class _HomeTabState extends State<HomeTab> {
         upcomingWaitingRoomAppointments
             .where((element) => element.id != data["newAppointment"].id)
             .toList();
+    if (!_mounted) return;
     if (!hasAppointment) {
       setState(() {
         upcomingWaitingRoomAppointments = updatedUpcomingAppointments;
@@ -154,6 +155,7 @@ class _HomeTabState extends State<HomeTab> {
       });
       return;
     }
+    if (!_mounted) return;
     setState(() {
       _loading = true;
       _dataFetchError = false;
@@ -221,13 +223,14 @@ class _HomeTabState extends State<HomeTab> {
       });
     } on DioError catch (err) {
       print(err);
+      if (!_mounted) return;
       setState(() {
         _loading = false;
         _dataFetchError = true;
       });
     } catch (err) {
       print(err);
-
+      if (!_mounted) return;
       setState(() {
         _loading = false;
         _dataFetchError = false;
@@ -262,29 +265,42 @@ class _HomeTabState extends State<HomeTab> {
                     return SizedBox(
                       height: 60,
                       width: 60,
-                      child: ClipOval(
-                        clipBehavior: Clip.antiAlias,
-                        child: data == null && profileURL == null
-                            ? SvgPicture.asset(
-                                isAuthenticated
-                                    ? gender == "female"
-                                        ? 'assets/images/femalePatient.svg'
-                                        : 'assets/images/malePatient.svg'
-                                    : 'assets/images/LogoIcon.svg',
-                              )
-                            : CachedNetworkImage(
-                                fit: BoxFit.cover,
-                                imageUrl: data ?? profileURL,
-                                progressIndicatorBuilder:
-                                    (context, url, downloadProgress) => Padding(
-                                  padding: const EdgeInsets.all(26.0),
-                                  child: CircularProgressIndicator(
-                                    value: downloadProgress.progress,
+                      child: Card(
+                        margin: const EdgeInsets.all(0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        elevation: 9,
+                        child: ClipOval(
+                          clipBehavior: Clip.antiAlias,
+                          child: data == null && profileURL == null
+                              ? SvgPicture.asset(
+                                  isAuthenticated
+                                      ? gender == "female"
+                                          ? 'assets/images/femalePatient.svg'
+                                          : 'assets/images/malePatient.svg'
+                                      : 'assets/images/LogoIcon.svg',
+                                )
+                              : CachedNetworkImage(
+                                  fit: BoxFit.cover,
+                                  imageUrl: data ?? profileURL,
+                                  progressIndicatorBuilder:
+                                      (context, url, downloadProgress) =>
+                                          Padding(
+                                    padding: const EdgeInsets.all(26.0),
+                                    child: CircularProgressIndicator(
+                                      value: downloadProgress.progress,
+                                      valueColor:
+                                          const AlwaysStoppedAnimation<Color>(
+                                              Constants.primaryColor400),
+                                      backgroundColor:
+                                          Constants.primaryColor600,
+                                    ),
                                   ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
                                 ),
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
-                              ),
+                        ),
                       ),
                     );
                   },
@@ -321,7 +337,12 @@ class _HomeTabState extends State<HomeTab> {
       body: _dataFetchError
           ? DataFetchErrorWidget(retryCallback: getAppointmentsData)
           : _loading
-              ? const Center(child: CircularProgressIndicator())
+              ? const Center(
+                  child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                  backgroundColor: Constants.primaryColor600,
+                ))
               : !isAuthenticated || !hasAppointments
                   ? const EmptyAppointmentsState(size: "big")
                   : DefaultTabController(

@@ -143,7 +143,12 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
               child: _loading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Constants.primaryColor400),
+                      backgroundColor: Constants.primaryColor600,
+                    ))
                   : Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Column(

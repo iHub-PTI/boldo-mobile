@@ -151,7 +151,12 @@ class _CustomCalendarState extends State<CustomCalendar> {
               if (_calendarLoading == true)
                 Container(
                     height: 300,
-                    child: const Center(child: CircularProgressIndicator())),
+                    child: const Center(
+                        child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Constants.primaryColor400),
+                      backgroundColor: Constants.primaryColor600,
+                    ))),
               if (_calendarLoading == false)
                 for (int i = 0; i < 6; i++)
                   Row(

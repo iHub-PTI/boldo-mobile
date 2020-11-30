@@ -110,7 +110,13 @@ class _BookingScreenState extends State<BookingScreen> {
         const SizedBox(
           height: 20,
         ),
-        if (_loading) const Center(child: CircularProgressIndicator()),
+        if (_loading)
+          const Center(
+              child: CircularProgressIndicator(
+            valueColor:
+                AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+            backgroundColor: Constants.primaryColor600,
+          )),
         if (_errorMessage == "")
           Center(
             child: Text(
@@ -131,7 +137,12 @@ class _BookingScreenState extends State<BookingScreen> {
                 height: 12,
               ),
               if (_loadingCalendar)
-                const Center(child: CircularProgressIndicator()),
+                const Center(
+                    child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                  backgroundColor: Constants.primaryColor600,
+                )),
               if (!_loadingCalendar)
                 Column(
                   children: [

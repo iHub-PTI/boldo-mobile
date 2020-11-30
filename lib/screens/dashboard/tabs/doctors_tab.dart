@@ -24,7 +24,8 @@ class DoctorsTab extends StatefulWidget {
 
 class _DoctorsTabState extends State<DoctorsTab> {
   List<Doctor> doctors = [];
-  bool loading = true;
+  bool _loading = true;
+
   bool _mounted;
 
   @override
@@ -42,8 +43,9 @@ class _DoctorsTabState extends State<DoctorsTab> {
 
   void getDoctors({String text = ""}) async {
     try {
+      if (!_mounted) return;
       setState(() {
-        loading = true;
+        _loading = true;
       });
       List<String> listOfLanguages =
           Provider.of<UtilsProvider>(context, listen: false).getListOfLanguages;
@@ -58,18 +60,24 @@ class _DoctorsTabState extends State<DoctorsTab> {
         'specialties': listOfSpecializations ?? [],
         "text": text,
       });
-
+      if (!_mounted) return;
       if (response.statusCode == 200) {
         List<Doctor> doctorsList =
             List<Doctor>.from(response.data.map((i) => Doctor.fromJson(i)));
         if (!_mounted) return;
-        setState(() {
-          loading = false;
-          doctors = doctorsList;
-        });
+        doctors = doctorsList;
       }
     } catch (e) {
       print(e);
+
+      ///FIXME: SHOW AN ERROR MESSAGE TO THE USER
+
+    } finally {
+      if (_mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
     }
   }
 
@@ -151,8 +159,13 @@ class _DoctorsTabState extends State<DoctorsTab> {
             ),
             const SizedBox(height: 25),
             Expanded(
-              child: loading
-                  ? const Center(child: CircularProgressIndicator())
+              child: _loading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Constants.primaryColor400),
+                      backgroundColor: Constants.primaryColor600,
+                    ))
                   : ListView.builder(
                       itemCount: doctors.length,
                       itemBuilder: (BuildContext context, int index) {
@@ -204,14 +217,12 @@ class _DoctorCard extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 94,
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(6),
                   child: SizedBox(
-                    height: 64,
                     width: 64,
                     child: doctor.photoUrl == null
                         ? SvgPicture.asset(
@@ -225,8 +236,11 @@ class _DoctorCard extends StatelessWidget {
                             progressIndicatorBuilder:
                                 (context, url, downloadProgress) => Padding(
                               padding: const EdgeInsets.all(26.0),
-                              child: CircularProgressIndicator(
+                              child: LinearProgressIndicator(
                                 value: downloadProgress.progress,
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                    Constants.primaryColor400),
+                                backgroundColor: Constants.primaryColor600,
                               ),
                             ),
                             errorWidget: (context, url, error) =>
@@ -237,28 +251,49 @@ class _DoctorCard extends StatelessWidget {
                 const SizedBox(
                   width: 16,
                 ),
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        child: Text(
-                          "${getDoctorPrefix(doctor.gender)} ${doctor.familyName}",
-                          style: boldoHeadingTextStyle,
+                Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 2),
+                          child: Text(
+                            "${getDoctorPrefix(doctor.gender)} ${doctor.familyName}",
+                            maxLines: 1,
+                            softWrap: false,
+                            style: boldoHeadingTextStyle,
+                          ),
                         ),
-                      ),
-                      const Text(
-                        "Dermatología",
-                        style: boldoSubTextStyle,
-                      ),
-                      Text(availabilityText,
-                          style: boldoSubTextStyle.copyWith(
-                              fontSize: 12,
-                              color: isToday
-                                  ? Constants.primaryColor600
-                                  : Constants.secondaryColor500))
-                    ])
+                        if (doctor.specializations != null &&
+                            doctor.specializations.isNotEmpty)
+                          Row(
+                            children: [
+                              for (int i = 0;
+                                  i < doctor.specializations.length;
+                                  i++)
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: i == 0 ? 0 : 3.0),
+                                      child: Text(
+                                        "${doctor.specializations[i].description}${doctor.specializations.length > 1 && i == 0 ? "?" : ""}",
+                                        style: boldoSubTextStyle,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        Text(availabilityText,
+                            style: boldoSubTextStyle.copyWith(
+                                fontSize: 12,
+                                color: isToday
+                                    ? Constants.primaryColor600
+                                    : Constants.secondaryColor500))
+                      ]),
+                )
               ],
             ),
           ),
