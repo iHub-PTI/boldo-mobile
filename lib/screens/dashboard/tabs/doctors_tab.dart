@@ -160,7 +160,12 @@ class _DoctorsTabState extends State<DoctorsTab> {
             const SizedBox(height: 25),
             Expanded(
               child: _loading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Constants.primaryColor400),
+                      backgroundColor: Constants.primaryColor600,
+                    ))
                   : ListView.builder(
                       itemCount: doctors.length,
                       itemBuilder: (BuildContext context, int index) {
@@ -212,14 +217,12 @@ class _DoctorCard extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 94,
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(6),
                   child: SizedBox(
-                    height: 64,
                     width: 64,
                     child: doctor.photoUrl == null
                         ? SvgPicture.asset(
@@ -233,8 +236,11 @@ class _DoctorCard extends StatelessWidget {
                             progressIndicatorBuilder:
                                 (context, url, downloadProgress) => Padding(
                               padding: const EdgeInsets.all(26.0),
-                              child: CircularProgressIndicator(
+                              child: LinearProgressIndicator(
                                 value: downloadProgress.progress,
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                    Constants.primaryColor400),
+                                backgroundColor: Constants.primaryColor600,
                               ),
                             ),
                             errorWidget: (context, url, error) =>
@@ -245,28 +251,49 @@ class _DoctorCard extends StatelessWidget {
                 const SizedBox(
                   width: 16,
                 ),
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        child: Text(
-                          "${getDoctorPrefix(doctor.gender)} ${doctor.familyName}",
-                          style: boldoHeadingTextStyle,
+                Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 2),
+                          child: Text(
+                            "${getDoctorPrefix(doctor.gender)} ${doctor.familyName}",
+                            maxLines: 1,
+                            softWrap: false,
+                            style: boldoHeadingTextStyle,
+                          ),
                         ),
-                      ),
-                      const Text(
-                        "Dermatología",
-                        style: boldoSubTextStyle,
-                      ),
-                      Text(availabilityText,
-                          style: boldoSubTextStyle.copyWith(
-                              fontSize: 12,
-                              color: isToday
-                                  ? Constants.primaryColor600
-                                  : Constants.secondaryColor500))
-                    ])
+                        if (doctor.specializations != null &&
+                            doctor.specializations.isNotEmpty)
+                          Row(
+                            children: [
+                              for (int i = 0;
+                                  i < doctor.specializations.length;
+                                  i++)
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: i == 0 ? 0 : 3.0),
+                                      child: Text(
+                                        "${doctor.specializations[i].description}${doctor.specializations.length > 1 && i == 0 ? "?" : ""}",
+                                        style: boldoSubTextStyle,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          ),
+                        Text(availabilityText,
+                            style: boldoSubTextStyle.copyWith(
+                                fontSize: 12,
+                                color: isToday
+                                    ? Constants.primaryColor600
+                                    : Constants.secondaryColor500))
+                      ]),
+                )
               ],
             ),
           ),

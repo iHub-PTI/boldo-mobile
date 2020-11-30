@@ -201,6 +201,10 @@ class _DoctorProfileWidget extends StatelessWidget {
                                   padding: const EdgeInsets.all(26.0),
                                   child: CircularProgressIndicator(
                                     value: downloadProgress.progress,
+                                    valueColor:
+                                        const AlwaysStoppedAnimation<Color>(
+                                            Constants.primaryColor400),
+                                    backgroundColor: Constants.primaryColor600,
                                   ),
                                 ),
                                 errorWidget: (context, url, error) =>

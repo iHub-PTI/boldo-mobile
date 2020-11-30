@@ -135,7 +135,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const Center(
           child: Padding(
             padding: EdgeInsets.only(top: 48.0),
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+              backgroundColor: Constants.primaryColor600,
+            ),
           ),
         ),
       if (!_dataLoading && !_dataLoaded)

@@ -30,6 +30,9 @@ class CustomFormButton extends StatelessWidget {
                     width: 16,
                     child: CircularProgressIndicator(
                       strokeWidth: 3,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Constants.primaryColor400),
+                      backgroundColor: Constants.primaryColor600,
                     ),
                   ),
                   const SizedBox(

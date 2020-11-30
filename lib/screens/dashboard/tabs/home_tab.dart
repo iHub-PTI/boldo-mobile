@@ -265,29 +265,42 @@ class _HomeTabState extends State<HomeTab> {
                     return SizedBox(
                       height: 60,
                       width: 60,
-                      child: ClipOval(
-                        clipBehavior: Clip.antiAlias,
-                        child: data == null && profileURL == null
-                            ? SvgPicture.asset(
-                                isAuthenticated
-                                    ? gender == "female"
-                                        ? 'assets/images/femalePatient.svg'
-                                        : 'assets/images/malePatient.svg'
-                                    : 'assets/images/LogoIcon.svg',
-                              )
-                            : CachedNetworkImage(
-                                fit: BoxFit.cover,
-                                imageUrl: data ?? profileURL,
-                                progressIndicatorBuilder:
-                                    (context, url, downloadProgress) => Padding(
-                                  padding: const EdgeInsets.all(26.0),
-                                  child: CircularProgressIndicator(
-                                    value: downloadProgress.progress,
+                      child: Card(
+                        margin: const EdgeInsets.all(0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        elevation: 9,
+                        child: ClipOval(
+                          clipBehavior: Clip.antiAlias,
+                          child: data == null && profileURL == null
+                              ? SvgPicture.asset(
+                                  isAuthenticated
+                                      ? gender == "female"
+                                          ? 'assets/images/femalePatient.svg'
+                                          : 'assets/images/malePatient.svg'
+                                      : 'assets/images/LogoIcon.svg',
+                                )
+                              : CachedNetworkImage(
+                                  fit: BoxFit.cover,
+                                  imageUrl: data ?? profileURL,
+                                  progressIndicatorBuilder:
+                                      (context, url, downloadProgress) =>
+                                          Padding(
+                                    padding: const EdgeInsets.all(26.0),
+                                    child: CircularProgressIndicator(
+                                      value: downloadProgress.progress,
+                                      valueColor:
+                                          const AlwaysStoppedAnimation<Color>(
+                                              Constants.primaryColor400),
+                                      backgroundColor:
+                                          Constants.primaryColor600,
+                                    ),
                                   ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
                                 ),
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
-                              ),
+                        ),
                       ),
                     );
                   },
@@ -324,7 +337,12 @@ class _HomeTabState extends State<HomeTab> {
       body: _dataFetchError
           ? DataFetchErrorWidget(retryCallback: getAppointmentsData)
           : _loading
-              ? const Center(child: CircularProgressIndicator())
+              ? const Center(
+                  child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                  backgroundColor: Constants.primaryColor600,
+                ))
               : !isAuthenticated || !hasAppointments
                   ? const EmptyAppointmentsState(size: "big")
                   : DefaultTabController(

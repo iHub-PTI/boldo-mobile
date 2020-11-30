@@ -1,3 +1,4 @@
+import 'package:boldo/constants.dart';
 import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +33,11 @@ class _ProfileImageState extends State<ProfileImage> {
             child: _isLoading
                 ? const Padding(
                     padding: EdgeInsets.all(26.0),
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Constants.primaryColor400),
+                      backgroundColor: Constants.primaryColor600,
+                    ),
                   )
                 : ClipOval(
                     child: Selector<UserProvider, String>(
@@ -54,6 +59,10 @@ class _ProfileImageState extends State<ProfileImage> {
                                 padding: const EdgeInsets.all(26.0),
                                 child: CircularProgressIndicator(
                                   value: downloadProgress.progress,
+                                  valueColor:
+                                      const AlwaysStoppedAnimation<Color>(
+                                          Constants.primaryColor400),
+                                  backgroundColor: Constants.primaryColor600,
                                 ),
                               ),
                               errorWidget: (context, url, error) =>

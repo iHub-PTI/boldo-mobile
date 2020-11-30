@@ -1,84 +1,140 @@
 class Doctor {
   String addressDescription;
+  String biography;
+  String familyName;
+  String gender;
   String birthDate;
   String city;
   String email;
-  String familyName;
-  String gender;
-  String givenName;
-  String id;
   String identifier;
   String job;
-  String neighborhood;
   String phone;
-  String photoUrl;
-  String street;
-  String biography;
+  String givenName;
+  String id;
+  List<Languages> languages;
   String license;
+  String neighborhood;
+  String photoUrl;
+  List<Specializations> specializations;
+  String street;
   String nextAvailability;
-  List<String> languages;
 
   Doctor(
       {this.addressDescription,
+      this.biography,
+      this.familyName,
+      this.gender,
       this.birthDate,
       this.city,
       this.email,
-      this.familyName,
-      this.license,
-      this.gender,
-      this.givenName,
-      this.languages,
-      this.id,
-      this.nextAvailability,
-      this.biography,
       this.identifier,
       this.job,
-      this.neighborhood,
       this.phone,
+      this.givenName,
+      this.id,
+      this.languages,
+      this.license,
+      this.neighborhood,
       this.photoUrl,
-      this.street});
+      this.specializations,
+      this.street,
+      this.nextAvailability});
 
   Doctor.fromJson(Map<String, dynamic> json) {
     addressDescription = json['addressDescription'];
+    biography = json['biography'];
+    familyName = json['familyName'];
+    gender = json['gender'];
     birthDate = json['birthDate'];
     city = json['city'];
-    nextAvailability = json["nextAvailability"];
     email = json['email'];
-    biography = json["biography"];
-    license = json["license"];
-    familyName = json['familyName'];
-    languages = json["languages"].cast<String>();
-    gender = json['gender'];
-    givenName = json['givenName'];
-    id = json['id'];
     identifier = json['identifier'];
     job = json['job'];
-    neighborhood = json['neighborhood'];
     phone = json['phone'];
+    givenName = json['givenName'];
+    id = json['id'];
+    if (json['languages'] != null) {
+      languages = [];
+      json['languages'].forEach((v) {
+        languages.add(Languages.fromJson(v));
+      });
+    }
+    license = json['license'];
+    neighborhood = json['neighborhood'];
     photoUrl = json['photoUrl'];
+    if (json['specializations'] != null) {
+      specializations = [];
+      json['specializations'].forEach((v) {
+        specializations.add(Specializations.fromJson(v));
+      });
+    }
     street = json['street'];
+    nextAvailability = json['nextAvailability'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     data['addressDescription'] = addressDescription;
-    data['birthDate'] = birthDate;
-    data["biography"] = biography;
-    data["license"] = license;
-    data["nextAvailability"] = nextAvailability;
-    data['city'] = city;
-    data["languages"] = languages;
-    data['email'] = email;
+    data['biography'] = biography;
     data['familyName'] = familyName;
     data['gender'] = gender;
-    data['givenName'] = givenName;
-    data['id'] = id;
+    data['birthDate'] = birthDate;
+    data['city'] = city;
+    data['email'] = email;
     data['identifier'] = identifier;
     data['job'] = job;
-    data['neighborhood'] = neighborhood;
     data['phone'] = phone;
+    data['givenName'] = givenName;
+    data['id'] = id;
+    if (languages != null) {
+      data['languages'] = languages.map((v) => v.toJson()).toList();
+    }
+    data['license'] = license;
+    data['neighborhood'] = neighborhood;
     data['photoUrl'] = photoUrl;
+    if (specializations != null) {
+      data['specializations'] = specializations.map((v) => v.toJson()).toList();
+    }
     data['street'] = street;
+    data['nextAvailability'] = nextAvailability;
+    return data;
+  }
+}
+
+class Languages {
+  String description;
+  String id;
+
+  Languages({this.description, this.id});
+
+  Languages.fromJson(Map<String, dynamic> json) {
+    description = json['description'];
+    id = json['id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['description'] = description;
+    data['id'] = id;
+    return data;
+  }
+}
+
+class Specializations {
+  String description;
+  String id;
+
+  Specializations({this.description, this.id});
+
+  Specializations.fromJson(Map<String, dynamic> json) {
+    description = json['description'];
+    id = json['id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['description'] = description;
+    data['id'] = id;
     return data;
   }
 }

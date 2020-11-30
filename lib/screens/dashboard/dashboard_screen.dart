@@ -105,7 +105,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
       if (!isAuthenticated) {
         authenticate();
-        return const Center(child: CircularProgressIndicator());
+        return const Center(
+            child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+          backgroundColor: Constants.primaryColor600,
+        ));
       }
 
       return SettingsTab();

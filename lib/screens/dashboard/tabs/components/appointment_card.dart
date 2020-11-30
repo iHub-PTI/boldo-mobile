@@ -83,13 +83,29 @@ class AppointmentCard extends StatelessWidget {
               const SizedBox(
                 height: 4,
               ),
-              Text(
-                "${appointment.doctor.addressDescription}",
-                style: const TextStyle(
-                  color: Constants.extraColor300,
-                  fontSize: 14,
+              if (appointment.doctor.specializations != null &&
+                  appointment.doctor.specializations.isNotEmpty)
+                Row(
+                  children: [
+                    for (int i = 0;
+                        i < appointment.doctor.specializations.length;
+                        i++)
+                      Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: i == 0 ? 0 : 3.0),
+                            child: Text(
+                              "${appointment.doctor.specializations[i].description}${appointment.doctor.specializations.length > 1 && i == 0 ? "?" : ""}",
+                              style: const TextStyle(
+                                color: Constants.extraColor300,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
                 ),
-              ),
               if (isToday)
                 Column(
                   children: [
