@@ -43,6 +43,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
 
   void getDoctors({String text = ""}) async {
     try {
+      if (!_mounted) return;
       setState(() {
         _loading = true;
       });
@@ -59,7 +60,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
         'specialties': listOfSpecializations ?? [],
         "text": text,
       });
-
+      if (!_mounted) return;
       if (response.statusCode == 200) {
         List<Doctor> doctorsList =
             List<Doctor>.from(response.data.map((i) => Doctor.fromJson(i)));
@@ -72,9 +73,11 @@ class _DoctorsTabState extends State<DoctorsTab> {
       ///FIXME: SHOW AN ERROR MESSAGE TO THE USER
 
     } finally {
-      setState(() {
-        _loading = false;
-      });
+      if (_mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
     }
   }
 

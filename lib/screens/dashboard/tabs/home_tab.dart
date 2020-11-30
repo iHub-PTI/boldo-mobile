@@ -78,7 +78,7 @@ class _HomeTabState extends State<HomeTab> {
   Future _getProfileData() async {
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
-    if (!isAuthenticated) return;
+    if (!isAuthenticated && !_mounted) return;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     setState(() {
@@ -113,6 +113,7 @@ class _HomeTabState extends State<HomeTab> {
         upcomingWaitingRoomAppointments
             .where((element) => element.id != data["newAppointment"].id)
             .toList();
+    if (!_mounted) return;
     if (!hasAppointment) {
       setState(() {
         upcomingWaitingRoomAppointments = updatedUpcomingAppointments;
@@ -154,6 +155,7 @@ class _HomeTabState extends State<HomeTab> {
       });
       return;
     }
+    if (!_mounted) return;
     setState(() {
       _loading = true;
       _dataFetchError = false;
@@ -221,13 +223,14 @@ class _HomeTabState extends State<HomeTab> {
       });
     } on DioError catch (err) {
       print(err);
+      if (!_mounted) return;
       setState(() {
         _loading = false;
         _dataFetchError = true;
       });
     } catch (err) {
       print(err);
-
+      if (!_mounted) return;
       setState(() {
         _loading = false;
         _dataFetchError = false;
