@@ -28,7 +28,9 @@ class HomeTab extends StatefulWidget {
   _HomeTabState createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> {
+class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
+  TabController _tabController;
+
   Isolate _isolate;
   ReceivePort _receivePort;
 
@@ -40,6 +42,8 @@ class _HomeTabState extends State<HomeTab> {
   bool _dataFetchError = false;
   bool _loading = true;
   bool _mounted;
+
+  int _selectedIndex = 0;
 
   String profileURL;
   String gender = "male";
@@ -55,9 +59,17 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   void initState() {
+    _tabController = TabController(length: 2, vsync: this);
     _mounted = true;
     getAppointmentsData();
     _getProfileData();
+    _tabController.addListener(() {
+      if (_tabController.index != _selectedIndex) {
+        setState(() {
+          _selectedIndex = _tabController.index;
+        });
+      }
+    });
     super.initState();
   }
 
@@ -72,6 +84,7 @@ class _HomeTabState extends State<HomeTab> {
       _receivePort.close();
       _receivePort = null;
     }
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -245,6 +258,7 @@ class _HomeTabState extends State<HomeTab> {
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
 
+    final List<String> tabsList = ['Próximas Citas', 'Citas Pasadas'];
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -345,17 +359,16 @@ class _HomeTabState extends State<HomeTab> {
                 ))
               : !isAuthenticated || !hasAppointments
                   ? const EmptyAppointmentsState(size: "big")
-                  : DefaultTabController(
-                      length: 2,
-                      child: SmartRefresher(
-                        enablePullDown: true,
-                        enablePullUp: false,
-                        header: const MaterialClassicHeader(
-                          color: Constants.primaryColor800,
-                        ),
-                        controller: _refreshController,
-                        onRefresh: _onRefresh,
-                        child: CustomScrollView(slivers: <Widget>[
+                  : SmartRefresher(
+                      enablePullDown: true,
+                      enablePullUp: false,
+                      header: const MaterialClassicHeader(
+                        color: Constants.primaryColor800,
+                      ),
+                      controller: _refreshController,
+                      onRefresh: _onRefresh,
+                      child: CustomScrollView(
+                        slivers: [
                           SliverToBoxAdapter(
                             child: Column(
                               children: [
@@ -365,83 +378,51 @@ class _HomeTabState extends State<HomeTab> {
                               ],
                             ),
                           ),
-                          const SliverPadding(
-                            padding: EdgeInsets.only(left: 16, right: 16),
-                            sliver: SliverAppBar(
-                              automaticallyImplyLeading: false,
-                              pinned: true,
-                              flexibleSpace: TabBar(
+                          SliverAppBar(
+                            pinned: true,
+                            flexibleSpace: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 18, right: 18),
+                              child: TabBar(
+                                controller: _tabController,
                                 labelColor: Constants.primaryColor600,
                                 unselectedLabelColor: Constants.extraColor300,
                                 indicatorColor: Constants.primaryColor600,
-                                labelStyle: TextStyle(
+                                labelStyle: const TextStyle(
                                     fontSize: 14, fontWeight: FontWeight.w500),
-                                tabs: [
-                                  Tab(
-                                    text: "Próximas Citas",
-                                  ),
-                                  Tab(
-                                    text: "Citas Pasadas",
-                                  ),
-                                ],
+                                tabs: tabsList
+                                    .map((String name) => Tab(text: name))
+                                    .toList(),
                               ),
-                              elevation: 0,
                             ),
                           ),
-                          SliverFillRemaining(
-                            child: TabBarView(
-                              children: <Widget>[
-                                futureAppointments.length > 0
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 24.0,
-                                          left: 6,
-                                          right: 6,
-                                        ),
-                                        child: ListView(
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          children: [
-                                            for (Appointment appointment
-                                                in futureAppointments)
-                                              AppointmentCard(
-                                                appointment: appointment,
-                                              ),
-                                          ],
-                                        ),
-                                      )
-                                    : const Center(
-                                        child: EmptyAppointmentsState(
-                                            size: "small"),
-                                      ),
-                                pastAppointments.length > 0
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(
-                                          left: 6,
-                                          right: 6,
-                                          top: 24.0,
-                                        ),
-                                        child: ListView.builder(
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          itemCount: pastAppointments.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return AppointmentCard(
-                                              appointment:
-                                                  pastAppointments[index],
-                                            );
-                                          },
-                                        ),
-                                      )
-                                    : const Center(
-                                        child: EmptyAppointmentsState(
-                                            size: "small"),
-                                      )
-                              ],
+                          if ((futureAppointments.length > 0 &&
+                                  _selectedIndex == 0) ||
+                              (pastAppointments.length > 0 &&
+                                  _selectedIndex == 1))
+                            SliverList(
+                              delegate: SliverChildListDelegate(
+                                List<Widget>.generate(
+                                  _selectedIndex == 0
+                                      ? futureAppointments.length
+                                      : pastAppointments.length,
+                                  (int index) => AppointmentCard(
+                                    appointment: _selectedIndex == 0
+                                        ? futureAppointments[index]
+                                        : pastAppointments[index],
+                                  ),
+                                ),
+                              ),
                             ),
-                          )
-                        ]),
+                          if ((futureAppointments.length == 0 &&
+                                  _selectedIndex == 0) ||
+                              (pastAppointments.length == 0 &&
+                                  _selectedIndex == 1))
+                            const SliverFillRemaining(
+                                child: EmptyAppointmentsState(
+                              size: "small",
+                            )),
+                        ],
                       ),
                     ),
     );
