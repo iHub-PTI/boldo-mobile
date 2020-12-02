@@ -59,17 +59,18 @@ class _DoctorsTabState extends State<DoctorsTab> {
               .getListOfSpecializations
               .map((e) => e.id)
               .toList();
-      String queryString =
+      String queryStringLanguages =
           Uri(queryParameters: {'content': listOfLanguages ?? ""}).query;
-      String queryString2 =
+      String queryStringSpecializations =
           Uri(queryParameters: {'content': listOfSpecializations ?? ""}).query;
-      String queryString3 = Uri(queryParameters: {
+      String queryStringOther = Uri(queryParameters: {
         'content': text,
         "offset": offset.toString(),
         "count": "20"
       }).query;
 
-      String finalQueryString = queryString + queryString2 + queryString3;
+      String finalQueryString =
+          queryStringLanguages + queryStringSpecializations + queryStringOther;
       Response response = await dio.get("/doctors?$finalQueryString");
       if (!mounted) return;
       if (response.statusCode == 200) {
