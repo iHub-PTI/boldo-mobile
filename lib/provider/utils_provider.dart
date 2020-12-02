@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class UtilsProvider with ChangeNotifier {
   List<Specialization> _selectedSpecializations = [];
   List<String> _selectedLanguages = [];
-
+  String _filterText = "";
   int _selectedPageIndex = 0;
 
   int get getSelectedPageIndex => _selectedPageIndex;
@@ -13,11 +13,20 @@ class UtilsProvider with ChangeNotifier {
   List<String> get getListOfLanguages => _selectedLanguages;
   bool get getFilterState =>
       _selectedLanguages.isNotEmpty || _selectedSpecializations.isNotEmpty;
+  String get getFilterText => _filterText;
+
+  void setFilterText(String filterText) {
+    _filterText = filterText;
+  }
 
   void setSelectedPageIndex({int pageIndex}) {
     _selectedPageIndex = pageIndex;
 
     notifyListeners();
+  }
+
+  void clearText() {
+    _filterText = "";
   }
 
   void setListOfSpecializations({List<Specialization> selectedFilters}) {

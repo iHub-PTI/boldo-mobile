@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../../constants.dart';
 import '../../booking/booking_screen.dart';
@@ -23,30 +24,34 @@ class DoctorsTab extends StatefulWidget {
 }
 
 class _DoctorsTabState extends State<DoctorsTab> {
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
   List<Doctor> doctors = [];
   bool _loading = true;
 
-  bool _mounted;
-
   @override
   void initState() {
-    _mounted = true;
+    Provider.of<UtilsProvider>(context, listen: false).clearText();
     getDoctors();
     super.initState();
   }
 
   @override
   void dispose() {
-    _mounted = false;
     super.dispose();
   }
 
-  void getDoctors({String text = ""}) async {
+  void getDoctors({int offset = 0}) async {
     try {
-      if (!_mounted) return;
-      setState(() {
-        _loading = true;
-      });
+      if (!mounted) return;
+      if (offset == 0) {
+        setState(() {
+          _loading = true;
+        });
+      }
+      String text =
+          Provider.of<UtilsProvider>(context, listen: false).getFilterText;
       List<String> listOfLanguages =
           Provider.of<UtilsProvider>(context, listen: false).getListOfLanguages;
       List<String> listOfSpecializations =
@@ -54,18 +59,28 @@ class _DoctorsTabState extends State<DoctorsTab> {
               .getListOfSpecializations
               .map((e) => e.id)
               .toList();
+      String queryString =
+          Uri(queryParameters: {'content': listOfLanguages ?? ""}).query;
+      String queryString2 =
+          Uri(queryParameters: {'content': listOfSpecializations ?? ""}).query;
+      String queryString3 = Uri(queryParameters: {
+        'content': text,
+        "offset": offset.toString(),
+        "count": "20"
+      }).query;
 
-      Response response = await dio.get("/doctors", queryParameters: {
-        'languages': listOfLanguages ?? [],
-        'specialties': listOfSpecializations ?? [],
-        "text": text,
-      });
-      if (!_mounted) return;
+      String finalQueryString = queryString + queryString2 + queryString3;
+      Response response = await dio.get("/doctors?$finalQueryString");
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List<Doctor> doctorsList = List<Doctor>.from(
             response.data['items'].map((i) => Doctor.fromJson(i)));
-        if (!_mounted) return;
-        doctors = doctorsList;
+        if (!mounted) return;
+        if (offset == 0) {
+          doctors = doctorsList;
+        } else {
+          doctors = [...doctors, ...doctorsList];
+        }
       }
     } catch (e) {
       print(e);
@@ -73,7 +88,9 @@ class _DoctorsTabState extends State<DoctorsTab> {
       ///FIXME: SHOW AN ERROR MESSAGE TO THE USER
 
     } finally {
-      if (_mounted) {
+      if (mounted) {
+        _refreshController.refreshCompleted();
+        _refreshController.loadComplete();
         setState(() {
           _loading = false;
         });
@@ -154,8 +171,11 @@ class _DoctorsTabState extends State<DoctorsTab> {
             const SizedBox(height: 5),
             Padding(
               padding: const EdgeInsets.only(left: 16, right: 16),
-              child: CustomSearchBar(
-                  changeTextCallback: (text) => getDoctors(text: text)),
+              child: CustomSearchBar(changeTextCallback: (text) {
+                Provider.of<UtilsProvider>(context, listen: false)
+                    .setFilterText(text);
+                getDoctors(offset: 0);
+              }),
             ),
             const SizedBox(height: 25),
             Expanded(
@@ -166,11 +186,25 @@ class _DoctorsTabState extends State<DoctorsTab> {
                           Constants.primaryColor400),
                       backgroundColor: Constants.primaryColor600,
                     ))
-                  : ListView.builder(
-                      itemCount: doctors.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return _DoctorCard(doctor: doctors[index]);
+                  : SmartRefresher(
+                      enablePullDown: true,
+                      enablePullUp: true,
+                      header: const MaterialClassicHeader(
+                        color: Constants.primaryColor800,
+                      ),
+                      controller: _refreshController,
+                      onLoading: () {
+                        getDoctors(offset: doctors.length);
                       },
+                      onRefresh: () {
+                        getDoctors(offset: 0);
+                      },
+                      child: ListView.builder(
+                        itemCount: doctors.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return _DoctorCard(doctor: doctors[index]);
+                        },
+                      ),
                     ),
             )
           ],
