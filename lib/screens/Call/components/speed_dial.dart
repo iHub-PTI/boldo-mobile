@@ -3,8 +3,19 @@ import 'dart:math' as math;
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SpeedDial extends StatefulWidget {
+  final bool initialMicState;
+  final bool initialVideoState;
   final switchCameraCallback;
-  SpeedDial({Key key, this.switchCameraCallback}) : super(key: key);
+  final Function() muteMic;
+  final Function() muteVideo;
+  SpeedDial({
+    Key key,
+    @required this.initialMicState,
+    @required this.switchCameraCallback,
+    @required this.muteMic,
+    @required this.muteVideo,
+    @required this.initialVideoState,
+  }) : super(key: key);
   @override
   State createState() => SpeedDialState();
 }
@@ -12,9 +23,13 @@ class SpeedDial extends StatefulWidget {
 class SpeedDialState extends State<SpeedDial>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
+  bool _mutedAudio = false;
+  bool _mutedVideo = false;
 
   @override
   void initState() {
+    _mutedAudio = !widget.initialMicState;
+    _mutedVideo = !widget.initialVideoState;
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 150),
@@ -41,12 +56,16 @@ class SpeedDialState extends State<SpeedDial>
               elevation: 0,
               heroTag: null,
               backgroundColor: const Color.fromRGBO(0, 0, 0, 0.5),
-              child: SvgPicture.asset(
-                'assets/icon/mic.svg',
-                semanticsLabel: 'Mic Icon',
+              child: Icon(
+                _mutedAudio ? Icons.mic_off : Icons.mic,
                 color: Colors.white,
               ),
-              onPressed: () {},
+              onPressed: () {
+                widget.muteMic();
+                setState(() {
+                  _mutedAudio = !_mutedAudio;
+                });
+              },
             ),
           ),
         ),
@@ -64,12 +83,16 @@ class SpeedDialState extends State<SpeedDial>
               heroTag: null,
               elevation: 0,
               backgroundColor: const Color.fromRGBO(0, 0, 0, 0.5),
-              child: SvgPicture.asset(
-                'assets/icon/videocam.svg',
-                semanticsLabel: 'Camera Icon',
+              child: Icon(
+                _mutedVideo ? Icons.videocam_off : Icons.videocam,
                 color: Colors.white,
               ),
-              onPressed: () {},
+              onPressed: () {
+                widget.muteVideo();
+                setState(() {
+                  _mutedVideo = !_mutedVideo;
+                });
+              },
             ),
           ),
         ),

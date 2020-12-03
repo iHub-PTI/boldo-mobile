@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 import 'package:boldo/models/Appointment.dart';
@@ -9,12 +8,14 @@ import '../../../utils/helpers.dart';
 class WaitingRoom extends StatefulWidget {
   final RTCVideoRenderer localRenderer;
   final Appointment appointment;
-  final Function() muteCall;
+  final Function() muteMic;
+  final Function() muteVideo;
   const WaitingRoom({
     Key key,
     @required this.localRenderer,
     @required this.appointment,
-    @required this.muteCall,
+    @required this.muteMic,
+    @required this.muteVideo,
   }) : super(key: key);
 
   @override
@@ -22,7 +23,8 @@ class WaitingRoom extends StatefulWidget {
 }
 
 class _WaitingRoomState extends State<WaitingRoom> {
-  bool _muted = false;
+  bool _mutedMic = false;
+  bool _mutedVideo = false;
 
   @override
   Widget build(BuildContext context) {
@@ -81,16 +83,22 @@ class _WaitingRoomState extends State<WaitingRoom> {
                   width: 48,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(0),
                       primary: Constants.primaryColor500,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(100)),
                       ),
                     ),
                     onPressed: () {
-                      print("press");
+                      widget.muteVideo();
+                      setState(() {
+                        _mutedVideo = !_mutedVideo;
+                      });
                     },
-                    child: SvgPicture.asset("assets/icon/videocam.svg",
-                        color: Colors.white),
+                    child: Icon(
+                      _mutedVideo ? Icons.videocam_off : Icons.videocam,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 40),
@@ -98,23 +106,24 @@ class _WaitingRoomState extends State<WaitingRoom> {
                   height: 48,
                   width: 48,
                   child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.all(0),
-                        primary: Constants.primaryColor500,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(100)),
-                        ),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(0),
+                      primary: Constants.primaryColor500,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(100)),
                       ),
-                      onPressed: () {
-                        widget.muteCall();
-                        setState(() {
-                          _muted = !_muted;
-                        });
-                      },
-                      child: Icon(
-                        _muted ? Icons.mic_off : Icons.mic,
-                        color: Colors.white,
-                      )),
+                    ),
+                    onPressed: () {
+                      widget.muteMic();
+                      setState(() {
+                        _mutedMic = !_mutedMic;
+                      });
+                    },
+                    child: Icon(
+                      _mutedMic ? Icons.mic_off : Icons.mic,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ],
             ),

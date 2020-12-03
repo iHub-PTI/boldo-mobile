@@ -14,12 +14,20 @@ class Call extends StatelessWidget {
   final Function hangUp;
   final Function switchCamera;
   final Appointment appointment;
+  final bool initialMicState;
+  final bool initialVideoState;
+  final Function() muteMic;
+  final Function() muteVideo;
 
   const Call({
     Key key,
+    @required this.initialMicState,
     @required this.localRenderer,
     @required this.remoteRenderer,
     @required this.hangUp,
+    @required this.muteVideo,
+    @required this.muteMic,
+    @required this.initialVideoState,
     @required this.switchCamera,
     @required this.appointment,
   }) : super(key: key);
@@ -80,7 +88,13 @@ class Call extends StatelessWidget {
                 ),
                 backgroundColor: const Color(0xffF56565),
               ),
-              SpeedDial(switchCameraCallback: switchCamera)
+              SpeedDial(
+                initialVideoState: initialVideoState,
+                muteVideo: muteVideo,
+                initialMicState: initialMicState,
+                switchCameraCallback: switchCamera,
+                muteMic: muteMic,
+              )
             ]),
       ),
       body: OrientationBuilder(

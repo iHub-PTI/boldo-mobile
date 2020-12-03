@@ -179,24 +179,34 @@ class _VideoCallState extends State<VideoCall> {
     localStream.getVideoTracks()[0].switchCamera();
   }
 
-  void muteCall() {
-    //FIXME: Test if code below mutes/unmutes the camera
-    // final newState = !localStream.getAudioTracks()[0].enabled;
-    // localStream.getAudioTracks()[0].enabled = newState;
+  void muteMic() {
+    final newState = !localStream.getAudioTracks()[0].enabled;
+    localStream.getAudioTracks()[0].enabled = newState;
+  }
+
+  void muteVideo() {
+    final newState = !localStream.getVideoTracks()[0].enabled;
+    localStream.getVideoTracks()[0].enabled = newState;
   }
 
   @override
   Widget build(BuildContext context) {
+    print(localStream.getAudioTracks()[0].enabled);
     return Scaffold(
       body: callStatus
           ? Stack(
               children: [
                 Call(
-                    localRenderer: localRenderer,
-                    remoteRenderer: remoteRenderer,
-                    hangUp: hangUp,
-                    switchCamera: switchCamera,
-                    appointment: widget.appointment),
+                  muteVideo: muteVideo,
+                  initialVideoState: localStream.getVideoTracks()[0].enabled,
+                  initialMicState: localStream.getAudioTracks()[0].enabled,
+                  muteMic: muteMic,
+                  localRenderer: localRenderer,
+                  remoteRenderer: remoteRenderer,
+                  hangUp: hangUp,
+                  switchCamera: switchCamera,
+                  appointment: widget.appointment,
+                ),
                 if (isDisconnected)
                   const Align(
                     alignment: Alignment.center,
@@ -207,7 +217,8 @@ class _VideoCallState extends State<VideoCall> {
           : WaitingRoom(
               localRenderer: localRenderer,
               appointment: widget.appointment,
-              muteCall: muteCall,
+              muteMic: muteMic,
+              muteVideo: muteVideo,
             ),
     );
   }
