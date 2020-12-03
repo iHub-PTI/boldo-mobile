@@ -208,8 +208,6 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
                                       selectedSpecializationsList.length
                                   : filteredSpecializationsList.length,
                               itemBuilder: (BuildContext context, int index) {
-                                print(
-                                    "selected item is ${selectedSpecializationsList.length}");
                                 if (_searchController.text == "" &&
                                     selectedSpecializationsList.isNotEmpty) {
                                   if (index == 0) {
@@ -221,7 +219,7 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
                                           padding: EdgeInsets.only(
                                               left: 8.0, bottom: 7, top: 7),
                                           child: Text(
-                                            "Selected specializaions",
+                                            "Selected specializations",
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
@@ -261,7 +259,7 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
                                         padding: EdgeInsets.only(
                                             left: 8.0, bottom: 7, top: 7),
                                         child: Text(
-                                          "Specializaions",
+                                          "Specializations",
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,

@@ -57,21 +57,30 @@ class _DoctorsTabState extends State<DoctorsTab> {
       List<String> listOfSpecializations =
           Provider.of<UtilsProvider>(context, listen: false)
               .getListOfSpecializations
-              .map((e) => e.id)
+              .map((e) => e.description)
               .toList();
+
       String queryStringLanguages =
-          Uri(queryParameters: {'content': listOfLanguages ?? ""}).query;
+          Uri(queryParameters: {'content': listOfLanguages}).query;
       String queryStringSpecializations =
-          Uri(queryParameters: {'content': listOfSpecializations ?? ""}).query;
+          Uri(queryParameters: {'content': listOfSpecializations}).query;
       String queryStringOther = Uri(queryParameters: {
-        'content': text,
+        if (text != "") ...{"content": text},
         "offset": offset.toString(),
         "count": "20"
       }).query;
 
-      String finalQueryString =
-          queryStringLanguages + queryStringSpecializations + queryStringOther;
+      String finalQueryString = queryStringOther;
+      if (queryStringLanguages != "") {
+        finalQueryString = "$finalQueryString&$queryStringLanguages";
+      }
+      if (queryStringSpecializations != "") {
+        finalQueryString = "$finalQueryString&$queryStringSpecializations";
+      }
+
+      print(finalQueryString);
       Response response = await dio.get("/doctors?$finalQueryString");
+
       if (!mounted) return;
       if (response.statusCode == 200) {
         List<Doctor> doctorsList = List<Doctor>.from(
@@ -187,26 +196,31 @@ class _DoctorsTabState extends State<DoctorsTab> {
                           Constants.primaryColor400),
                       backgroundColor: Constants.primaryColor600,
                     ))
-                  : SmartRefresher(
-                      enablePullDown: true,
-                      enablePullUp: true,
-                      header: const MaterialClassicHeader(
-                        color: Constants.primaryColor800,
-                      ),
-                      controller: _refreshController,
-                      onLoading: () {
-                        getDoctors(offset: doctors.length);
-                      },
-                      onRefresh: () {
-                        getDoctors(offset: 0);
-                      },
-                      child: ListView.builder(
-                        itemCount: doctors.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return _DoctorCard(doctor: doctors[index]);
-                        },
-                      ),
-                    ),
+                  : doctors.isEmpty
+                      ? const Center(
+                          child: Text(
+                          "No doctors found",
+                        ))
+                      : SmartRefresher(
+                          enablePullDown: true,
+                          enablePullUp: true,
+                          header: const MaterialClassicHeader(
+                            color: Constants.primaryColor800,
+                          ),
+                          controller: _refreshController,
+                          onLoading: () {
+                            getDoctors(offset: doctors.length);
+                          },
+                          onRefresh: () {
+                            getDoctors(offset: 0);
+                          },
+                          child: ListView.builder(
+                            itemCount: doctors.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return _DoctorCard(doctor: doctors[index]);
+                            },
+                          ),
+                        ),
             )
           ],
         ),
@@ -259,6 +273,7 @@ class _DoctorCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                   child: SizedBox(
                     width: 64,
+                    height: 64,
                     child: doctor.photoUrl == null
                         ? SvgPicture.asset(
                             doctor.gender == "female"
@@ -294,7 +309,7 @@ class _DoctorCard extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 2),
                           child: Text(
-                            "${getDoctorPrefix(doctor.gender)} ${doctor.familyName}",
+                            "${getDoctorPrefix(doctor.gender)}${doctor.familyName}",
                             maxLines: 1,
                             softWrap: false,
                             style: boldoHeadingTextStyle,

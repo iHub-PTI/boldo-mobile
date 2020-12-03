@@ -1,5 +1,7 @@
 String getDoctorPrefix(String gender) {
-  return gender == "male" ? "Dr." : "Dra.";
+  if (gender == "female") return "Dra. ";
+  if (gender == "male") return 'Dr. ';
+  return "";
 }
 
 extension StringExtension on String {

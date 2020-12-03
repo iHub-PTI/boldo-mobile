@@ -73,7 +73,7 @@ class AppointmentCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${getDoctorPrefix(appointment.doctor.gender)} ${appointment.doctor.familyName}",
+                "${getDoctorPrefix(appointment.doctor.gender)}${appointment.doctor.familyName}",
                 style: const TextStyle(
                   color: Constants.extraColor400,
                   fontSize: 14,

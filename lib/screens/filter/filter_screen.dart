@@ -197,17 +197,17 @@ class BuildLanguages extends StatelessWidget {
                     item["name"],
                     style: boldoHeadingTextStyle.copyWith(fontSize: 14),
                   ),
-                  value: data.contains(item["value"]),
+                  value: data.contains(item["name"]),
                   activeColor: Constants.primaryColor500,
 
                   onChanged: (newValue) {
                     if (newValue) {
                       Provider.of<UtilsProvider>(context, listen: false)
-                          .addLanguageValue(item["value"]);
+                          .addLanguageValue(item["name"]);
                     } else {
                       //remove
                       Provider.of<UtilsProvider>(context, listen: false)
-                          .removeLanguageValue(item["value"]);
+                          .removeLanguageValue(item["name"]);
                     }
                   },
                   controlAffinity:

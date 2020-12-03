@@ -219,7 +219,7 @@ class _DoctorProfileWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${getDoctorPrefix(doctor.gender)} ${doctor.givenName} ${doctor.familyName}",
+                          "${getDoctorPrefix(doctor.gender)}${doctor.givenName} ${doctor.familyName}",
                           style: boldoHeadingTextStyle.copyWith(
                               fontWeight: FontWeight.normal),
                         ),

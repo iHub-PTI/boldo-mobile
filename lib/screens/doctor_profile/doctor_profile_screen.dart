@@ -89,7 +89,7 @@ class DoctorProfileScreen extends StatelessWidget {
                         height: 9,
                       ),
                       Text(
-                        "${getDoctorPrefix(doctor.gender)} ${doctor.givenName} ${doctor.familyName}",
+                        "${getDoctorPrefix(doctor.gender)}${doctor.givenName} ${doctor.familyName}",
                         style: boldoHeadingTextStyle,
                       ),
                       const SizedBox(

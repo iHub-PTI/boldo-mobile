@@ -73,7 +73,7 @@ Future<bool> callEndedPopup(
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      "${getDoctorPrefix(appointment.doctor.gender)} ${appointment.doctor.familyName}",
+                      "${getDoctorPrefix(appointment.doctor.gender)}${appointment.doctor.familyName}",
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                           color: Constants.extraColor400,
