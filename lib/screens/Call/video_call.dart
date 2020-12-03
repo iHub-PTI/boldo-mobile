@@ -191,7 +191,6 @@ class _VideoCallState extends State<VideoCall> {
 
   @override
   Widget build(BuildContext context) {
-    print(localStream.getAudioTracks()[0].enabled);
     return Scaffold(
       body: callStatus
           ? Stack(
