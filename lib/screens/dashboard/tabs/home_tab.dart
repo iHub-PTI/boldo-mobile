@@ -379,6 +379,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                             ),
                           ),
                           SliverAppBar(
+                            automaticallyImplyLeading: false,
                             pinned: true,
                             flexibleSpace: Padding(
                               padding:

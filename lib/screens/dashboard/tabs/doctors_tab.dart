@@ -322,17 +322,13 @@ class _DoctorCard extends StatelessWidget {
                               for (int i = 0;
                                   i < doctor.specializations.length;
                                   i++)
-                                Row(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: i == 0 ? 0 : 3.0),
-                                      child: Text(
-                                        "${doctor.specializations[i].description}${doctor.specializations.length > 1 && i == 0 ? "," : ""}",
-                                        style: boldoSubTextStyle,
-                                      ),
-                                    ),
-                                  ],
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(left: i == 0 ? 0 : 3.0),
+                                  child: Text(
+                                    "${doctor.specializations[i].description}${doctor.specializations.length > 1 && i == 0 ? "," : ""}",
+                                    style: boldoSubTextStyle,
+                                  ),
                                 ),
                             ],
                           ),

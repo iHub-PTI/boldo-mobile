@@ -81,11 +81,25 @@ Future<bool> callEndedPopup(
                           fontSize: 16),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      "FIX ME! (SPECIALIZATION GOES HERE)",
-                      textAlign: TextAlign.center,
-                      style: boldoSubTextStyle,
-                    ),
+                    if (appointment.doctor.specializations != null &&
+                        appointment.doctor.specializations.isNotEmpty)
+                      Center(
+                        child: Row(
+                          children: [
+                            for (int i = 0;
+                                i < appointment.doctor.specializations.length;
+                                i++)
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(left: i == 0 ? 0 : 3.0),
+                                child: Text(
+                                  "${appointment.doctor.specializations[i].description}${appointment.doctor.specializations.length > 1 && i == 0 ? "," : ""}",
+                                  style: boldoSubTextStyle,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
                     const SizedBox(height: 24),
                     Align(
                       alignment: Alignment.centerLeft,

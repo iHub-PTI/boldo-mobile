@@ -140,7 +140,7 @@ class _VideoCallState extends State<VideoCall> {
     });
 
     socket.on('end call', (data) {
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) =>
