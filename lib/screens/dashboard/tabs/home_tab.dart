@@ -414,14 +414,21 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                                 ),
                               ),
                             ),
-                          if ((futureAppointments.length == 0 &&
-                                  _selectedIndex == 0) ||
-                              (pastAppointments.length == 0 &&
-                                  _selectedIndex == 1))
+                          if (futureAppointments.length == 0 &&
+                              _selectedIndex == 0)
                             const SliverFillRemaining(
                                 child: EmptyAppointmentsState(
                               size: "small",
                             )),
+                          if (pastAppointments.length == 0 &&
+                              _selectedIndex == 1)
+                            const SliverToBoxAdapter(
+                                child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 36.0),
+                                child: Text("No past appointments"),
+                              ),
+                            ))
                         ],
                       ),
                     ),
