@@ -41,7 +41,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
   bool _dataFetchError = false;
   bool _loading = true;
-  bool _mounted;
 
   int _selectedIndex = 0;
 
@@ -60,7 +59,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
-    _mounted = true;
+
     getAppointmentsData();
     _getProfileData();
     _tabController.addListener(() {
@@ -75,7 +74,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    _mounted = false;
     if (_isolate != null) {
       _isolate.kill(priority: Isolate.immediate);
       _isolate = null;
@@ -91,7 +89,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   Future _getProfileData() async {
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
-    if (!isAuthenticated && !_mounted) return;
+    if (!isAuthenticated && !mounted) return;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     setState(() {
@@ -126,7 +124,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         upcomingWaitingRoomAppointments
             .where((element) => element.id != data["newAppointment"].id)
             .toList();
-    if (!_mounted) return;
+    if (!mounted) return;
     if (!hasAppointment) {
       setState(() {
         upcomingWaitingRoomAppointments = updatedUpcomingAppointments;
@@ -168,7 +166,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       });
       return;
     }
-    if (!_mounted) return;
+    if (!mounted) return;
     setState(() {
       _loading = true;
       _dataFetchError = false;
@@ -179,7 +177,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       List<Appointment> allAppointmets = List<Appointment>.from(
           response.data.map((i) => Appointment.fromJson(i)));
 
-      if (!_mounted) return;
+      if (!mounted) return;
 
       List<Appointment> pastAppointmentsItems = allAppointmets
           .where((element) => element.status == "closed")
@@ -201,7 +199,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                   .add(const Duration(minutes: 15))
                   .isBefore(DateTime.parse(element.start).toLocal()))
           .toList();
-      if (!_mounted) return;
+      if (!mounted) return;
       _receivePort = ReceivePort();
       _isolate = await Isolate.spawn(
         _updateWaitingRoomsList,
@@ -211,7 +209,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         },
       );
       _receivePort.listen(_handleWaitingRoomsListUpdate);
-      if (!_mounted) return;
+      if (!mounted) return;
       setState(() {
         _dataFetchError = false;
         _loading = false;
@@ -236,14 +234,14 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       });
     } on DioError catch (err) {
       print(err);
-      if (!_mounted) return;
+      if (!mounted) return;
       setState(() {
         _loading = false;
         _dataFetchError = true;
       });
     } catch (err) {
       print(err);
-      if (!_mounted) return;
+      if (!mounted) return;
       setState(() {
         _loading = false;
         _dataFetchError = false;
@@ -374,7 +372,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                               children: [
                                 for (Appointment appointment
                                     in waitingRoomAppointments)
-                                  WaitingRoomCard(appointment: appointment),
+                                  WaitingRoomCard(
+                                      appointment: appointment,
+                                      getAppointmentsData: getAppointmentsData),
                               ],
                             ),
                           ),
@@ -439,7 +439,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
 class WaitingRoomCard extends StatelessWidget {
   final Appointment appointment;
-  const WaitingRoomCard({Key key, @required this.appointment})
+  final Function() getAppointmentsData;
+  const WaitingRoomCard(
+      {Key key, @required this.appointment, @required this.getAppointmentsData})
       : super(key: key);
 
   @override
@@ -488,13 +490,17 @@ class WaitingRoomCard extends StatelessWidget {
                   child: SizedBox(
                     height: 52,
                     child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  VideoCall(appointment: appointment),
-                            ));
+                      onPressed: () async {
+                        final updateAppointments = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                VideoCall(appointment: appointment),
+                          ),
+                        );
+                        if (updateAppointments != null && updateAppointments) {
+                          getAppointmentsData();
+                        }
                       },
                       child: Text(
                         'Ingresar',

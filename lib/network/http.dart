@@ -35,7 +35,7 @@ void initDio({@required GlobalKey<NavigatorState> navKey}) {
           try {
             await storage.deleteAll();
             accessToken = null;
-            navKey.currentState.push(
+            navKey.currentState.pushReplacement(
               MaterialPageRoute(
                 builder: (context) => DashboardScreen(setLoggedOut: true),
               ),
@@ -80,7 +80,7 @@ void initDio({@required GlobalKey<NavigatorState> navKey}) {
             dio.interceptors.errorLock.unlock();
             await storage.deleteAll();
             accessToken = null;
-            navKey.currentState.push(
+            navKey.currentState.pushReplacement(
               MaterialPageRoute(
                 builder: (context) => DashboardScreen(setLoggedOut: true),
               ),

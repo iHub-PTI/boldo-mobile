@@ -41,10 +41,7 @@ void main() async {
   const storage = FlutterSecureStorage();
   String value = await storage.read(key: "access_token");
 
-  runApp(MyApp(
-    onboardingCompleted: onboardingCompleted,
-    session: value,
-  ));
+  runApp(MyApp(onboardingCompleted: onboardingCompleted, session: value));
 }
 
 class MyApp extends StatefulWidget {

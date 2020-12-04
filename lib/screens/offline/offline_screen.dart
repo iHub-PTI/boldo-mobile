@@ -55,12 +55,8 @@ class OfflineScreen extends StatelessWidget {
                       ConnectionStatusSingleton.getInstance();
                   bool hasInternet = await connectionStatus.checkConnection();
                   if (hasInternet) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DashboardScreen(),
-                      ),
-                    );
+                    Navigator.of(context).pop();
+
                     return;
                   }
                 },

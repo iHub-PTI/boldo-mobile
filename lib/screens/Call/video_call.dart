@@ -140,13 +140,7 @@ class _VideoCallState extends State<VideoCall> {
     });
 
     socket.on('end call', (data) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) =>
-              DashboardScreen(appointmentPopupData: widget.appointment),
-        ),
-      );
+      Navigator.of(context).pop(true);
     });
 
     // This is a rerender for the camera
