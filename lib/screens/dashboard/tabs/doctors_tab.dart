@@ -115,13 +115,16 @@ class _DoctorsTabState extends State<DoctorsTab> {
         backgroundColor: Colors.white,
         actions: [
           GestureDetector(
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              final updateDoctors = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const FilterScreen(),
                 ),
               );
+              if (updateDoctors != null && updateDoctors) {
+                getDoctors();
+              }
             },
             child: Stack(
               children: [

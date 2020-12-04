@@ -140,12 +140,7 @@ class FilterScreen extends StatelessWidget {
                       primary: Constants.primaryColor500,
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DashboardScreen(),
-                        ),
-                      );
+                      Navigator.of(context).pop(true);
                     },
                     child: const Text("Guardar"),
                   ),
