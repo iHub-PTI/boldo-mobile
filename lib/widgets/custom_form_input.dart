@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 
 import '../provider/user_provider.dart';
 import '../constants.dart';
-import '../size_config.dart';
 
 class CustomFormInput extends StatefulWidget {
   final int maxLines;
@@ -73,10 +72,16 @@ class _CustomFormInputState extends State<CustomFormInput> {
 
   @override
   Widget build(BuildContext context) {
+    dynamic _mediaQueryData = MediaQuery.of(context);
+    double _safeAreaHorizontal =
+        _mediaQueryData.padding.left + _mediaQueryData.padding.right;
+    double screenWidth = _mediaQueryData.size.width;
+    double safeBlockHorizontal = (screenWidth - _safeAreaHorizontal) / 100;
+
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.only(bottom: SizeConfig.safeBlockHorizontal * 1),
+          padding: EdgeInsets.only(bottom: safeBlockHorizontal * 1),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -102,10 +107,8 @@ class _CustomFormInputState extends State<CustomFormInput> {
         ),
         ConstrainedBox(
           constraints: BoxConstraints(
-              minHeight: SizeConfig.safeBlockHorizontal * 11,
-              maxHeight: widget.maxLines == 1
-                  ? SizeConfig.safeBlockHorizontal * 20
-                  : 999),
+              minHeight: safeBlockHorizontal * 11,
+              maxHeight: widget.maxLines == 1 ? safeBlockHorizontal * 20 : 999),
           child: GestureDetector(
             onTap: () async {
               if (!widget.isDateTime) return;
@@ -140,7 +143,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
                   style: TextStyle(
                       height: 1,
                       color: Constants.extraColor300,
-                      fontSize: SizeConfig.safeBlockHorizontal * 4.40),
+                      fontSize: safeBlockHorizontal * 4.40),
                   decoration: InputDecoration(
                     isCollapsed: true,
                     prefixIcon: widget.isPhoneNumber

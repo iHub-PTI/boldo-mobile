@@ -5,7 +5,6 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/screens/Call/components/speed_dial.dart';
-import 'package:boldo/size_config.dart';
 import '../../../utils/helpers.dart';
 
 class Call extends StatelessWidget {
@@ -159,15 +158,26 @@ class _CustomPositionedCameraState extends State<CustomPositionedCamera> {
           double valY = drag.offset.dy;
           double valX = drag.offset.dx;
 
-          if (drag.offset.dy < SizeConfig.safeBlockVertical * 14) {
-            valY = SizeConfig.safeBlockVertical * 14;
-          } else if (drag.offset.dy > SizeConfig.safeBlockVertical * 66) {
-            valY = SizeConfig.safeBlockVertical * 66;
+          dynamic _mediaQueryData = MediaQuery.of(context);
+          double _safeAreaHorizontal =
+              _mediaQueryData.padding.left + _mediaQueryData.padding.right;
+          double screenWidth = _mediaQueryData.size.width;
+          double screenHeight = _mediaQueryData.size.height;
+          double _safeAreaVertical =
+              _mediaQueryData.padding.top + _mediaQueryData.padding.bottom;
+          double safeBlockHorizontal =
+              (screenWidth - _safeAreaHorizontal) / 100;
+          double safeBlockVertical = (screenHeight - _safeAreaVertical) / 100;
+
+          if (drag.offset.dy < safeBlockVertical * 14) {
+            valY = safeBlockVertical * 14;
+          } else if (drag.offset.dy > safeBlockVertical * 66) {
+            valY = safeBlockVertical * 66;
           }
-          if (drag.offset.dx < SizeConfig.safeBlockHorizontal * 4) {
-            valX = SizeConfig.safeBlockHorizontal * 4;
-          } else if (drag.offset.dx > SizeConfig.safeBlockHorizontal * 65) {
-            valX = SizeConfig.safeBlockHorizontal * 65;
+          if (drag.offset.dx < safeBlockHorizontal * 4) {
+            valX = safeBlockHorizontal * 4;
+          } else if (drag.offset.dx > safeBlockHorizontal * 65) {
+            valX = safeBlockHorizontal * 65;
           }
 
           setState(() {

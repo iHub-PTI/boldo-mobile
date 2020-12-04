@@ -18,7 +18,6 @@ import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/screens/hero/hero_screen.dart';
 
 import 'package:boldo/constants.dart';
-import 'package:boldo/size_config.dart';
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
@@ -95,24 +94,11 @@ class FullApp extends StatelessWidget {
           boldoTheme.textTheme,
         ),
       ),
-      home: LandingScreen(onboardingCompleted: onboardingCompleted),
+      initialRoute: onboardingCompleted ? '/home' : "/onboarding",
+      routes: {
+        '/onboarding': (context) => HeroScreen(),
+        '/home': (context) => DashboardScreen(),
+      },
     );
-  }
-}
-
-class LandingScreen extends StatefulWidget {
-  const LandingScreen({Key key, @required this.onboardingCompleted})
-      : super(key: key);
-  final bool onboardingCompleted;
-
-  @override
-  _LandingScreenState createState() => _LandingScreenState();
-}
-
-class _LandingScreenState extends State<LandingScreen> {
-  @override
-  Widget build(BuildContext context) {
-    SizeConfig().init(context);
-    return widget.onboardingCompleted ? DashboardScreen() : HeroScreen();
   }
 }

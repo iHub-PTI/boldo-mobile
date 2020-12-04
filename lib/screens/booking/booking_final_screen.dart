@@ -68,12 +68,10 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                         onPressed: () {
                           Provider.of<UtilsProvider>(context, listen: false)
                               .setSelectedPageIndex(pageIndex: 0);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DashboardScreen()),
-                          );
+                          Navigator.of(context)
+                              .popUntil(ModalRoute.withName("/home"));
                         },
+
                         child: Text(
                           'Ir a Inicio',
                           style: boldoHeadingTextStyle.copyWith(fontSize: 14),
