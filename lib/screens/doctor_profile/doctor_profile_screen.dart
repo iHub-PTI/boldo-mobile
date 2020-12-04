@@ -166,6 +166,7 @@ class DoctorProfileScreen extends StatelessWidget {
                       ),
                       if (doctor.license != null && doctor.license != "")
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
                               "Registro Profesional",

@@ -1,5 +1,4 @@
 import 'package:boldo/constants.dart';
-import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../network/connection_status.dart';

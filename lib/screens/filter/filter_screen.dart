@@ -1,6 +1,5 @@
 import 'package:boldo/models/Specialization.dart';
 import 'package:boldo/provider/utils_provider.dart';
-import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/screens/filter/splecialities_filter_screen.dart';
 import 'package:boldo/widgets/custom_form_input.dart';
 import 'package:boldo/widgets/wrapper.dart';

@@ -5,7 +5,6 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 import 'package:boldo/models/Appointment.dart';
-import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/screens/Call/components/call.dart';
 import 'package:boldo/screens/Call/components/waiting_room.dart';
 import 'package:boldo/screens/Call/components/connection_problem_popup.dart';
