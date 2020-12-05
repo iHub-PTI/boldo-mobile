@@ -37,7 +37,7 @@ class EmptyAppointmentsState extends StatelessWidget {
           ),
           Container(
             child: const Text(
-              "Consulta la lista de doctores y \n programá tu primera cita",
+              "Consulta la lista de doctores y \n programa tu primera cita",
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: Constants.extraColor300,

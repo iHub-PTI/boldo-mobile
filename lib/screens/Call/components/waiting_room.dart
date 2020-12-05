@@ -30,7 +30,7 @@ class _WaitingRoomState extends State<WaitingRoom> {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        width: 200,
+        width: 300,
         margin: const EdgeInsets.symmetric(
           vertical: 23,
           horizontal: 50,

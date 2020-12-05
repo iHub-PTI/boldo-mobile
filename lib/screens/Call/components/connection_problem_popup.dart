@@ -39,7 +39,7 @@ class ConnectionProblemPopup extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               const Text(
-                "El doctor intentará llamarte nuevamente.",
+                "Estamos tratando de reconectarte.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Constants.extraColor300,

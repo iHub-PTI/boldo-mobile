@@ -7,7 +7,7 @@ class CustomFormButton extends StatelessWidget {
   final String text;
   final void Function() actionCallback;
   const CustomFormButton(
-      {Key key, this.text = "Guardar", this.loading, this.actionCallback})
+      {Key key, this.text = "Confirmar", this.loading, this.actionCallback})
       : super(key: key);
 
   @override
@@ -35,12 +35,10 @@ class CustomFormButton extends StatelessWidget {
                       backgroundColor: Constants.primaryColor600,
                     ),
                   ),
-                  const SizedBox(
-                    width: 12,
-                  ),
+                  const SizedBox(width: 12),
                 ],
               ),
-            const Text("Guardar"),
+            const Text("Confirmar"),
           ],
         ),
       ),

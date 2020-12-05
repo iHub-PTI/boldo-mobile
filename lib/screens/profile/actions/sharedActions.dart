@@ -31,12 +31,16 @@ Future<Map<String, String>> updateProfile(
     await prefs.setString("profile_url", userProvider.getPhotoUrl);
     await prefs.setString("gender", userProvider.getGender);
 
-    return {"successMessage": "Profile updated successfully."};
+    return {"successMessage": "Perfil actualizado con éxito."};
   } on DioError catch (err) {
     print(err);
-    return {"errorMessage": "Something went wrong. Please try again later."};
+    return {
+      "errorMessage": "Algo salió mal. Por favor, inténtalo de nuevo más tarde."
+    };
   } catch (err) {
     print(err);
-    return {"errorMessage": "Something went wrong. Please try again later."};
+    return {
+      "errorMessage": "Algo salió mal. Por favor, inténtalo de nuevo más tarde."
+    };
   }
 }
