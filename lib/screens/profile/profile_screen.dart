@@ -114,9 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
     return CustomWrapper(children: [
-      const SizedBox(
-        height: 24,
-      ),
+      const SizedBox(height: 24),
       TextButton.icon(
         onPressed: () {
           Navigator.pop(context);
@@ -145,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!_dataLoading && !_dataLoaded)
         const Center(
           child: Text(
-            "Something went wrong. Please try again later.",
+            "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
             style: TextStyle(
               fontSize: 14,
               color: Constants.otherColor100,
@@ -155,13 +153,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!_dataLoading && _dataLoaded)
         Column(
           children: [
-            const SizedBox(
-              height: 24,
-            ),
+            const SizedBox(height: 24),
             const Center(child: ProfileImage()),
-            const SizedBox(
-              height: 24,
-            ),
+            const SizedBox(height: 24),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Form(
@@ -224,13 +218,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       builder: (_, data, __) {
                         String selectedvalue = data ?? "unknown";
                         List<Map<String, String>> itemsList = [
-                          {"title": "Male", "value": 'male'},
-                          {"title": "Female", "value": 'female'},
-                          {"title": "Other", "value": 'other'}
+                          {"title": "Masculino", "value": 'male'},
+                          {"title": "Femenino", "value": 'female'},
+                          {"title": "Otro", "value": 'other'}
                         ];
                         if (selectedvalue == "unknown") {
                           itemsList.add({
-                            "title": "Select your gender",
+                            "title": "Selecciona tu género",
                             "value": 'unknown'
                           });
                         }
@@ -326,9 +320,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             SvgPicture.asset(
                               'assets/icon/marker.svg',
                             ),
-                            const SizedBox(
-                              width: 10,
-                            ),
+                            const SizedBox(width: 10),
                             const Text('Dirección', style: boldoSubTextStyle)
                           ],
                         ),
@@ -352,18 +344,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             SvgPicture.asset(
                               'assets/icon/key.svg',
                             ),
-                            const SizedBox(
-                              width: 10,
-                            ),
+                            const SizedBox(width: 10),
                             const Text('Contraseña', style: boldoSubTextStyle)
                           ],
                         ),
                       ),
                       trailing: const Icon(Icons.chevron_right),
                     ),
-                    const SizedBox(
-                      height: 8,
-                    ),
+                    const SizedBox(height: 8),
                     SizedBox(
                       height: 18,
                       child: Column(
@@ -387,9 +375,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(
-                      height: 8,
-                    ),
+                    const SizedBox(height: 8),
                     CustomFormButton(
                       loading: loading,
                       text: "Guardar",

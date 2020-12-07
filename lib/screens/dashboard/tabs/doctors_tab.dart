@@ -202,7 +202,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
                   : doctors.isEmpty
                       ? const Center(
                           child: Text(
-                          "No doctors found",
+                          "No se encontraron doctores",
                         ))
                       : SmartRefresher(
                           enablePullDown: true,
@@ -242,7 +242,7 @@ class _DoctorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String availabilityText = "No availability in the next 30 days";
+    String availabilityText = "Sin disponibilidad en los próximos 30 días";
     bool isToday = false;
     if (doctor.nextAvailability != null) {
       DateTime parsedAvailability =

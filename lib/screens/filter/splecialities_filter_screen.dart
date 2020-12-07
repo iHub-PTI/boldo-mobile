@@ -178,7 +178,7 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
                                           const Padding(
                                             padding:
                                                 EdgeInsets.only(right: 16.0),
-                                            child: Text("Done"),
+                                            child: Text("Listo"),
                                           ),
                                         ],
                                       ),
@@ -194,7 +194,7 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
                                     ),
                               contentPadding:
                                   const EdgeInsets.only(top: 20, bottom: 20),
-                              hintText: "Search Specialities",
+                              hintText: "Buscar Especialidades",
                               prefixIcon: const Icon(
                                 Icons.search,
                                 color: Constants.extraColor300,
@@ -219,7 +219,7 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
                                           padding: EdgeInsets.only(
                                               left: 8.0, bottom: 7, top: 7),
                                           child: Text(
-                                            "Selected specializations",
+                                            "Especialidades Seleccionadas",
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
@@ -259,7 +259,7 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
                                         padding: EdgeInsets.only(
                                             left: 8.0, bottom: 7, top: 7),
                                         child: Text(
-                                          "Specializations",
+                                          "Especialidades",
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,

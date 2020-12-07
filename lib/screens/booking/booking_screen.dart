@@ -95,14 +95,16 @@ class _BookingScreenState extends State<BookingScreen> {
     } on DioError catch (err) {
       print(err);
       setState(() {
-        _errorMessage = "Something went wrong, please try again later.";
+        _errorMessage =
+            "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         _loading = false;
         _loadingCalendar = false;
       });
     } catch (err) {
       print(err);
       setState(() {
-        _errorMessage = "Something went wrong, please try again later.";
+        _errorMessage =
+            "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         _loading = false;
         _loadingCalendar = false;
       });
@@ -113,9 +115,7 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget build(BuildContext context) {
     return CustomWrapper(
       children: [
-        const SizedBox(
-          height: 20,
-        ),
+        const SizedBox(height: 20),
         TextButton.icon(
           onPressed: () {
             Navigator.pop(context);
@@ -129,9 +129,6 @@ class _BookingScreenState extends State<BookingScreen> {
             'Reservar',
             style: boldoHeadingTextStyle.copyWith(fontSize: 20),
           ),
-        ),
-        const SizedBox(
-          height: 20,
         ),
         if (_loading)
           const Center(
@@ -155,6 +152,7 @@ class _BookingScreenState extends State<BookingScreen> {
             children: [
               if (nextAvailability != null)
                 _BookDoctorCard(
+<<<<<<< HEAD
                   doctor: widget.doctor,
                   nextAvailability: nextAvailability,
                   handleBookingHour: (date) =>
@@ -163,6 +161,10 @@ class _BookingScreenState extends State<BookingScreen> {
               const SizedBox(
                 height: 12,
               ),
+=======
+                    doctor: widget.doctor, nextAvailability: nextAvailability),
+              const SizedBox(height: 12),
+>>>>>>> 81c24728311eac2e99c12d7bc9fd46e70c60c53b
               if (_loadingCalendar)
                 const Center(
                     child: CircularProgressIndicator(
@@ -210,9 +212,9 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                     if (_availabilitiesForDay.isEmpty)
                       Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
+                        padding: const EdgeInsets.only(top: 20.0),
                         child: Text(
-                          "The doctor is not availible in this day.",
+                          "No hay disponibilidad en esta fecha",
                           style: boldoHeadingTextStyle.copyWith(fontSize: 13),
                         ),
                       ),
@@ -220,9 +222,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         width: double.infinity,
-                        constraints: const BoxConstraints(
-                          maxWidth: 350,
-                        ),
+                        constraints: const BoxConstraints(maxWidth: 350),
                         child: Wrap(
                           alignment: WrapAlignment.center,
                           spacing: 20,
@@ -315,14 +315,10 @@ class _BookCalendar extends StatelessWidget {
           'Más fechas',
           style: boldoHeadingTextStyle,
         ),
-        const SizedBox(
-          height: 20,
-        ),
+        const SizedBox(height: 20),
         CustomCalendar(
             selectedDate: selectedDate, changeDateCallback: changeDateCallback),
-        const SizedBox(
-          height: 25,
-        ),
+        const SizedBox(height: 25),
       ],
     );
   }

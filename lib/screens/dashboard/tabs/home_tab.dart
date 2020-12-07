@@ -269,9 +269,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(
-                  width: 10,
-                ),
+                const SizedBox(width: 10),
                 Selector<UserProvider, String>(
                   builder: (_, data, __) {
                     return SizedBox(
@@ -319,9 +317,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                   selector: (buildContext, userProvider) =>
                       userProvider.getPhotoUrl,
                 ),
-                const SizedBox(
-                  width: 10,
-                ),
+                const SizedBox(width: 10),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,9 +327,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                       style: boldoHeadingTextStyle.copyWith(
                           fontSize: 24, color: Constants.primaryColor500),
                     ),
-                    const SizedBox(
-                      height: 4,
-                    ),
+                    const SizedBox(height: 4),
                     Text(
                       DateFormat('EEEE, dd MMMM')
                           .format(DateTime.now())
@@ -427,7 +421,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                                 child: Center(
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 36.0),
-                                child: Text("No past appointments"),
+                                child: Text("No hay citas pasadas"),
                               ),
                             ))
                         ],
@@ -466,9 +460,7 @@ class WaitingRoomCard extends StatelessWidget {
                     "Sala de espera",
                     style: boldoHeadingTextStyle,
                   ),
-                  const SizedBox(
-                    height: 3,
-                  ),
+                  const SizedBox(height: 3),
                   Text(
                       "La sala de espera de tu consulta con ${getDoctorPrefix(appointment.doctor.gender)}${appointment.doctor.familyName} ya se encuentra habilitada. ",
                       style: boldoSubTextStyle.copyWith(
@@ -533,18 +525,16 @@ class DataFetchErrorWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text(
-            "An error occured",
+            "Ocurrió un error",
             style: TextStyle(
                 color: Constants.otherColor100,
                 fontSize: 18,
                 fontWeight: FontWeight.w500),
           ),
-          const SizedBox(
-            height: 17,
-          ),
+          const SizedBox(height: 17),
           Container(
             child: const Text(
-              "Somethign went wrong while fetching your data",
+              "Algo salió mal mientras cargaba tus datos",
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: Constants.extraColor300,
@@ -552,14 +542,12 @@ class DataFetchErrorWidget extends StatelessWidget {
                   fontSize: 14),
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           ElevatedButton(
             onPressed: retryCallback,
             child: const Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Text("Retry"),
+              child: Text("Reintentar"),
             ),
           )
         ],

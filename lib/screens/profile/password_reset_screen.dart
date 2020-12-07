@@ -44,7 +44,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
       String baseUrlKeyCloack = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
           defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
       dio.options.baseUrl = baseUrlKeyCloack;
-      Response response = await dio.post(
+      await dio.post(
         "/account/credentials/password",
         data: {
           "currentPassword": _currentPassword,
@@ -52,11 +52,9 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
           "confirmation": _confirmation
         },
       );
-      print("response below");
-      print(response);
 
       setState(() {
-        _successMessage = "The password has been updated!";
+        _successMessage = "¡La contraseña ha sido actualizada!";
         loading = false;
       });
     } on DioError catch (err) {
@@ -64,14 +62,15 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
 
       setState(() {
         _errorMessage = err.response.statusCode == 400
-            ? "Incorrect password"
-            : "Something went wrong. Please try again later.";
+            ? "Contraseña incorrecta"
+            : "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         loading = false;
       });
     } catch (err) {
       print(err);
       setState(() {
-        _errorMessage = "Something went wrong. Please try again later.";
+        _errorMessage =
+            "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         loading = false;
       });
     }
@@ -84,9 +83,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
   Widget build(BuildContext context) {
     return CustomWrapper(
       children: [
-        const SizedBox(
-          height: 20,
-        ),
+        const SizedBox(height: 20),
         TextButton.icon(
           onPressed: () {
             Navigator.pop(context);
@@ -101,9 +98,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
             style: boldoHeadingTextStyle.copyWith(fontSize: 20),
           ),
         ),
-        const SizedBox(
-          height: 20,
-        ),
+        const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Form(
@@ -123,9 +118,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                     });
                   },
                 ),
-                const SizedBox(
-                  height: 48,
-                ),
+                const SizedBox(height: 48),
                 CustomFormInput(
                   label: "Contraseña nueva",
                   customSVGIcon: "assets/icon/eyeoff.svg",
@@ -138,9 +131,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                     });
                   },
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 CustomFormInput(
                   label: "Confirmar contraseña nueva",
                   customSVGIcon: "assets/icon/eyeoff.svg",
@@ -153,9 +144,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                     });
                   },
                 ),
-                const SizedBox(
-                  height: 26,
-                ),
+                const SizedBox(height: 26),
                 SizedBox(
                   height: 18,
                   child: Column(
@@ -179,17 +168,13 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 8,
-                ),
+                const SizedBox(height: 8),
                 CustomFormButton(
                   loading: loading,
                   text: "Guardar",
                   actionCallback: _updatePassword,
                 ),
-                const SizedBox(
-                  height: 16,
-                ),
+                const SizedBox(height: 16),
               ],
             ),
           ),
