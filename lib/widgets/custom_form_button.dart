@@ -38,11 +38,7 @@ class CustomFormButton extends StatelessWidget {
                   const SizedBox(width: 12),
                 ],
               ),
-<<<<<<< HEAD
             Text(text),
-=======
-            const Text("Confirmar"),
->>>>>>> 81c24728311eac2e99c12d7bc9fd46e70c60c53b
           ],
         ),
       ),

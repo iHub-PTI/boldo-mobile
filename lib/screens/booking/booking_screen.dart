@@ -152,7 +152,6 @@ class _BookingScreenState extends State<BookingScreen> {
             children: [
               if (nextAvailability != null)
                 _BookDoctorCard(
-<<<<<<< HEAD
                   doctor: widget.doctor,
                   nextAvailability: nextAvailability,
                   handleBookingHour: (date) =>
@@ -161,10 +160,6 @@ class _BookingScreenState extends State<BookingScreen> {
               const SizedBox(
                 height: 12,
               ),
-=======
-                    doctor: widget.doctor, nextAvailability: nextAvailability),
-              const SizedBox(height: 12),
->>>>>>> 81c24728311eac2e99c12d7bc9fd46e70c60c53b
               if (_loadingCalendar)
                 const Center(
                     child: CircularProgressIndicator(

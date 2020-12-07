@@ -227,11 +227,24 @@ class _DoctorProfileWidget extends StatelessWidget {
                         const SizedBox(
                           height: 5,
                         ),
-                        Text(
-                          "Dermatología",
-                          style: boldoSubTextStyle.copyWith(
-                              color: Constants.otherColor100),
-                        ),
+                        if (doctor.specializations != null &&
+                            doctor.specializations.isNotEmpty)
+                          Row(
+                            children: [
+                              for (int i = 0;
+                                  i < doctor.specializations.length;
+                                  i++)
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(left: i == 0 ? 0 : 3.0),
+                                  child: Text(
+                                    "${doctor.specializations[i].description}${doctor.specializations.length > 1 && i == 0 ? "," : ""}",
+                                    style: boldoSubTextStyle.copyWith(
+                                        color: Constants.otherColor100),
+                                  ),
+                                ),
+                            ],
+                          ),
                       ],
                     )
                   ],
