@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:isolate';
+import 'package:boldo/screens/Call/components/call_ended_popup.dart';
 import 'package:intl/intl.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state.dart';
@@ -490,8 +491,13 @@ class WaitingRoomCard extends StatelessWidget {
                                 VideoCall(appointment: appointment),
                           ),
                         );
-                        if (updateAppointments != null && updateAppointments) {
+
+                        if (updateAppointments != null &&
+                            updateAppointments["appointment"] != null) {
                           getAppointmentsData();
+                          await callEndedPopup(
+                              context: context,
+                              appointment: updateAppointments["appointment"]);
                         }
                       },
                       child: Text(

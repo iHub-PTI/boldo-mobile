@@ -139,7 +139,7 @@ class _VideoCallState extends State<VideoCall> {
     });
 
     socket.on('end call', (data) {
-      Navigator.of(context).pop(true);
+      Navigator.of(context).pop({"appointment": widget.appointment});
     });
 
     // This is a rerender for the camera
