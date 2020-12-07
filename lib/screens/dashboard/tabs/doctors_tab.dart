@@ -207,6 +207,35 @@ class _DoctorsTabState extends State<DoctorsTab> {
                       : SmartRefresher(
                           enablePullDown: true,
                           enablePullUp: true,
+                          footer: CustomFooter(
+                            builder: (BuildContext context, LoadStatus mode) {
+                              Widget body = Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.arrow_upward,
+                                    color: Constants.extraColor300,
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  const Text(
+                                    "Sube para cargar más",
+                                    style: TextStyle(
+                                      color: Constants.extraColor300,
+                                    ),
+                                  )
+                                ],
+                              );
+                              if (mode == LoadStatus.loading) {
+                                body = const CircularProgressIndicator();
+                              }
+                              return Container(
+                                height: 55.0,
+                                child: Center(child: body),
+                              );
+                            },
+                          ),
                           header: const MaterialClassicHeader(
                             color: Constants.primaryColor800,
                           ),
