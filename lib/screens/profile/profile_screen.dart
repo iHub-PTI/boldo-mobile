@@ -34,8 +34,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool loading = false;
   bool _dataLoaded = false;
   bool _dataLoading = true;
-  String errorMessage;
-  String successMessage;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -64,6 +62,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         phone: response.data["phone"],
         notify: true,
       );
+      Provider.of<UserProvider>(context, listen: false)
+          .clearProfileFormMessages();
 
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("profile_url", response.data["photoUrl"]);
@@ -96,23 +96,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     _formKey.currentState.save();
+
+    Provider.of<UserProvider>(context, listen: false)
+        .clearProfileFormMessages();
     setState(() {
-      errorMessage = null;
-      successMessage = null;
       loading = true;
     });
     Map<String, String> updateResponse = await updateProfile(context: context);
+    Provider.of<UserProvider>(context, listen: false).updateProfileEditMessages(
+        updateResponse["successMessage"], updateResponse["errorMessage"]);
+
     setState(() {
-      errorMessage = updateResponse["errorMessage"];
-      successMessage = updateResponse["successMessage"];
       loading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    UserProvider userProvider =
-        Provider.of<UserProvider>(context, listen: false);
+    UserProvider userProvider = Provider.of<UserProvider>(context);
     return CustomWrapper(children: [
       const SizedBox(
         height: 24,
@@ -173,6 +174,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           initialValue: data ?? "",
                           label: "Nombre",
                           validator: valdiateFirstName,
+                          onChanged: (String val) => userProvider.setUserData(
+                            givenName: val,
+                          ),
                           changeValueCallback: (String val) {
                             userProvider.setUserData(givenName: val);
                           },
@@ -189,6 +193,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           initialValue: data ?? "",
                           label: "Apellido",
                           validator: valdiateLasttName,
+                          onChanged: (String val) => userProvider.setUserData(
+                            familyName: val,
+                          ),
                           changeValueCallback: (String val) {
                             userProvider.setUserData(familyName: val);
                           },
@@ -206,6 +213,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           initialValue: data ?? "",
                           secondaryLabel: "Opcional",
                           label: "Ocupación",
+                          onChanged: (String val) =>
+                              userProvider.setUserData(job: val),
                           changeValueCallback: (String val) {
                             userProvider.setUserData(job: val);
                           },
@@ -253,6 +262,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               .format(DateTime.parse(data ?? "1980-01-01")),
                           validator: null,
                           isDateTime: true,
+                          onChanged: (String val) {
+                            var inputFormat = DateFormat("dd.MM.yyyy");
+                            var date1 = inputFormat.parse(val);
+
+                            var outputFormat = DateFormat("yyyy-MM-dd");
+
+                            userProvider.setUserData(
+                              birthDate: outputFormat.format(date1),
+                            );
+                          },
                           changeValueCallback: (String val) {
                             var inputFormat = DateFormat("dd.MM.yyyy");
                             var date1 = inputFormat.parse(val);
@@ -276,6 +295,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           initialValue: data,
                           label: "Correo electrónico",
                           validator: validateEmail,
+                          onChanged: (String val) =>
+                              userProvider.setUserData(email: val),
                           changeValueCallback: (String val) {
                             userProvider.setUserData(email: val);
                           },
@@ -295,6 +316,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           secondaryLabel: "Opcional",
                           label: "Número de teléfono",
                           inputFormatters: [ValidatorInputFormatter()],
+                          onChanged: (String val) =>
+                              userProvider.setUserData(email: val),
                           changeValueCallback: (String val) {
                             userProvider.setUserData(phone: val);
                           },
@@ -361,20 +384,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 8,
                     ),
                     SizedBox(
-                      height: 18,
                       child: Column(
                         children: [
-                          if (errorMessage != null)
+                          if (userProvider.profileEditErrorMessage != null)
                             Text(
-                              errorMessage,
+                              userProvider.profileEditErrorMessage,
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Constants.otherColor100,
                               ),
                             ),
-                          if (successMessage != null)
+                          if (userProvider.profileEditSuccessMessage != null)
                             Text(
-                              successMessage,
+                              userProvider.profileEditSuccessMessage,
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Constants.primaryColor600,

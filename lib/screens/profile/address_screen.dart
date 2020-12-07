@@ -19,8 +19,7 @@ class _AddressScreenState extends State<AddressScreen> {
   bool _validate = false;
   bool loading = false;
   String street, neighborhood, city, addressDescription;
-  String errorMessage;
-  String successMessage;
+
   final _formKey = GlobalKey<FormState>();
 
   Future<void> _updateLocation() async {
@@ -32,23 +31,23 @@ class _AddressScreenState extends State<AddressScreen> {
     }
 
     _formKey.currentState.save();
+
+    Provider.of<UserProvider>(context, listen: false)
+        .clearProfileFormMessages();
     setState(() {
-      errorMessage = null;
-      successMessage = null;
       loading = true;
     });
     Map<String, String> updateResponse = await updateProfile(context: context);
+    Provider.of<UserProvider>(context, listen: false).updateProfileEditMessages(
+        updateResponse["successMessage"], updateResponse["errorMessage"]);
     setState(() {
-      errorMessage = updateResponse["errorMessage"];
-      successMessage = updateResponse["successMessage"];
       loading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    UserProvider userProvider =
-        Provider.of<UserProvider>(context, listen: false);
+    UserProvider userProvider = Provider.of<UserProvider>(context);
     return CustomWrapper(
       children: [
         const SizedBox(height: 20),
@@ -81,6 +80,8 @@ class _AddressScreenState extends State<AddressScreen> {
                       initialValue: data ?? "",
                       label: "Calle",
                       secondaryLabel: "Opcional",
+                      onChanged: (String val) =>
+                          userProvider.setUserData(street: val),
                       changeValueCallback: (String val) {
                         userProvider.setUserData(street: val);
                       },
@@ -96,6 +97,8 @@ class _AddressScreenState extends State<AddressScreen> {
                       initialValue: data ?? "",
                       label: "Barrio",
                       secondaryLabel: "Opcional",
+                      onChanged: (String val) =>
+                          userProvider.setUserData(neighborhood: val),
                       changeValueCallback: (String val) {
                         userProvider.setUserData(neighborhood: val);
                       },
@@ -111,6 +114,8 @@ class _AddressScreenState extends State<AddressScreen> {
                       initialValue: data ?? "",
                       label: "Ciudad",
                       secondaryLabel: "Opcional",
+                      onChanged: (String val) =>
+                          userProvider.setUserData(city: val),
                       changeValueCallback: (String val) {
                         userProvider.setUserData(city: val);
                       },
@@ -127,6 +132,8 @@ class _AddressScreenState extends State<AddressScreen> {
                       maxLines: 6,
                       label: "Referencia",
                       secondaryLabel: "Opcional",
+                      onChanged: (String val) =>
+                          userProvider.setUserData(addressDescription: val),
                       changeValueCallback: (String val) {
                         userProvider.setUserData(addressDescription: val);
                       },
@@ -137,20 +144,19 @@ class _AddressScreenState extends State<AddressScreen> {
                 ),
                 const SizedBox(height: 26),
                 SizedBox(
-                  height: 18,
                   child: Column(
                     children: [
-                      if (errorMessage != null)
+                      if (userProvider.profileEditErrorMessage != null)
                         Text(
-                          errorMessage,
+                          userProvider.profileEditErrorMessage,
                           style: const TextStyle(
                             fontSize: 14,
                             color: Constants.otherColor100,
                           ),
                         ),
-                      if (successMessage != null)
+                      if (userProvider.profileEditSuccessMessage != null)
                         Text(
-                          successMessage,
+                          userProvider.profileEditSuccessMessage,
                           style: const TextStyle(
                             fontSize: 14,
                             color: Constants.primaryColor600,
