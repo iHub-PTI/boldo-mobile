@@ -43,7 +43,7 @@ void initDio({@required GlobalKey<NavigatorState> navKey}) {
           } catch (e) {
             print(e);
           }
-        } else if (error.response?.statusCode == 401) {
+        } else if (error.response?.statusCode == 401 && accessToken != null) {
           RequestOptions options = error.response.request;
           if ("bearer $accessToken" != options.headers["authorization"]) {
             options.headers["authorization"] = "bearer $accessToken";
@@ -80,6 +80,7 @@ void initDio({@required GlobalKey<NavigatorState> navKey}) {
             dio.interceptors.errorLock.unlock();
             await storage.deleteAll();
             accessToken = null;
+
             navKey.currentState.pushReplacement(
               MaterialPageRoute(
                 builder: (context) => DashboardScreen(setLoggedOut: true),

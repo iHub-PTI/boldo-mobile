@@ -1,4 +1,3 @@
-import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/custom_search.dart';
 import 'package:boldo/screens/filter/filter_screen.dart';
@@ -386,14 +385,6 @@ class _DoctorCard extends StatelessWidget {
                     height: 52,
                     child: TextButton(
                       onPressed: () {
-                        bool isAuthenticated =
-                            Provider.of<AuthProvider>(context, listen: false)
-                                .getAuthenticated;
-                        if (!isAuthenticated) {
-                          Provider.of<UtilsProvider>(context, listen: false)
-                              .setSelectedPageIndex(pageIndex: 2);
-                          return;
-                        }
                         Navigator.push(
                           context,
                           MaterialPageRoute(

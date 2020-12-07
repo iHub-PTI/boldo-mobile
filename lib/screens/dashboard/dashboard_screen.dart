@@ -51,48 +51,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       });
   }
 
-  Future<void> authenticate() async {
-    String keycloakRealmAddress = String.fromEnvironment(
-        'KEYCLOAK_REALM_ADDRESS',
-        defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
-
-    FlutterAppAuth appAuth = FlutterAppAuth();
-
-    const storage = FlutterSecureStorage();
-    try {
-      final AuthorizationTokenResponse result =
-          await appAuth.authorizeAndExchangeCode(
-        AuthorizationTokenRequest(
-          'boldo-patient',
-          'com.penguin.boldo:/login',
-          discoveryUrl:
-              '$keycloakRealmAddress/.well-known/openid-configuration',
-          scopes: ['openid', 'offline_access'],
-          allowInsecureConnections: true,
-        ),
-      );
-
-      await storage.write(key: "access_token", value: result.accessToken);
-      await storage.write(key: "refresh_token", value: result.refreshToken);
-
-      Provider.of<AuthProvider>(context, listen: false)
-          .setAuthenticated(isAuthenticated: true);
-      Response response = await dio.get("/profile/patient");
-      if (response.data["photoUrl"] != null) {
-        //
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString("profile_url", response.data["photoUrl"]);
-        await prefs.setString("gender", response.data["gender"]);
-      }
-    } catch (err) {
-      // final snackBar = SnackBar(content: Text('Authenticaton Failed!'));
-      // Scaffold.of(context).showSnackBar(snackBar);
-      logger.e(err);
-    }
-    Provider.of<UtilsProvider>(context, listen: false)
-        .setSelectedPageIndex(pageIndex: 0);
-  }
-
   Widget getPage(int index) {
     if (index == 0) {
       return HomeTab();
@@ -104,7 +62,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       bool isAuthenticated =
           Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
       if (!isAuthenticated) {
-        authenticate();
+        authenticateUser(context: context);
+
         return const Center(
             child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
@@ -180,4 +139,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
           },
         ));
   }
+}
+
+Future<void> authenticateUser(
+    {@required BuildContext context, bool switchPage = true}) async {
+  String keycloakRealmAddress = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
+      defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
+
+  FlutterAppAuth appAuth = FlutterAppAuth();
+
+  const storage = FlutterSecureStorage();
+  try {
+    final AuthorizationTokenResponse result =
+        await appAuth.authorizeAndExchangeCode(
+      AuthorizationTokenRequest(
+        'boldo-patient',
+        'com.penguin.boldo:/login',
+        discoveryUrl: '$keycloakRealmAddress/.well-known/openid-configuration',
+        scopes: ['openid', 'offline_access'],
+        allowInsecureConnections: true,
+      ),
+    );
+
+    await storage.write(key: "access_token", value: result.accessToken);
+    await storage.write(key: "refresh_token", value: result.refreshToken);
+
+    Provider.of<AuthProvider>(context, listen: false)
+        .setAuthenticated(isAuthenticated: true);
+    Response response = await dio.get("/profile/patient");
+    if (response.data["photoUrl"] != null) {
+      //
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("profile_url", response.data["photoUrl"]);
+      await prefs.setString("gender", response.data["gender"]);
+    }
+  } catch (err) {
+    // final snackBar = SnackBar(content: Text('Authenticaton Failed!'));
+    // Scaffold.of(context).showSnackBar(snackBar);
+    print(err);
+  }
+  if (switchPage)
+    Provider.of<UtilsProvider>(context, listen: false)
+        .setSelectedPageIndex(pageIndex: 0);
 }

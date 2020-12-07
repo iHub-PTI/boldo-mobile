@@ -2,7 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
+import 'package:boldo/provider/auth_provider.dart';
+import 'package:boldo/widgets/register_popup.dart';
 import '../../network/http.dart';
 import '../../widgets/calendar/calendar.dart';
 import '../../widgets/wrapper.dart';
@@ -33,6 +36,26 @@ class _BookingScreenState extends State<BookingScreen> {
   void initState() {
     super.initState();
     fetchData(DateTime.now());
+  }
+
+  Future<void> handleBookingHour({DateTime bookingHour}) async {
+    bool isAuthenticated =
+        Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
+    if (!isAuthenticated) {
+      await notLoggedInPop(context: context);
+
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BookingConfirmScreen(
+          bookingDate: bookingHour ?? _selectedBookingHour,
+          doctor: widget.doctor,
+        ),
+      ),
+    );
   }
 
   List<DateTime> findAvailabilitesForDay(
@@ -132,7 +155,11 @@ class _BookingScreenState extends State<BookingScreen> {
             children: [
               if (nextAvailability != null)
                 _BookDoctorCard(
-                    doctor: widget.doctor, nextAvailability: nextAvailability),
+                  doctor: widget.doctor,
+                  nextAvailability: nextAvailability,
+                  handleBookingHour: (date) =>
+                      handleBookingHour(bookingHour: date),
+                ),
               const SizedBox(
                 height: 12,
               ),
@@ -258,17 +285,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           primary: Constants.primaryColor500,
                         ),
                         onPressed: _selectedBookingHour != null
-                            ? () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => BookingConfirmScreen(
-                                      bookingDate: _selectedBookingHour,
-                                      doctor: widget.doctor,
-                                    ),
-                                  ),
-                                );
-                              }
+                            ? handleBookingHour
                             : null,
                         child: const Text("Aceptar"),
                       ),
@@ -313,9 +330,12 @@ class _BookCalendar extends StatelessWidget {
 
 class _BookDoctorCard extends StatelessWidget {
   const _BookDoctorCard(
-      {Key key, @required this.doctor, @required this.nextAvailability})
+      {Key key,
+      @required this.doctor,
+      @required this.nextAvailability,
+      @required this.handleBookingHour})
       : super(key: key);
-
+  final Function(DateTime) handleBookingHour;
   final String nextAvailability;
   final Doctor doctor;
 
@@ -407,15 +427,7 @@ class _BookDoctorCard extends StatelessWidget {
             ),
             child: TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BookingConfirmScreen(
-                      bookingDate: parsedAvailability,
-                      doctor: doctor,
-                    ),
-                  ),
-                );
+                handleBookingHour(parsedAvailability);
               },
               child: Text(
                 'Reservar ahora',

@@ -1,10 +1,11 @@
-import 'package:boldo/models/Doctor.dart';
-import 'package:boldo/widgets/custom_form_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
+
+import 'package:boldo/models/Doctor.dart';
+import 'package:boldo/widgets/custom_form_button.dart';
 import '../../network/http.dart';
 import '../../widgets/wrapper.dart';
 import '../../constants.dart';

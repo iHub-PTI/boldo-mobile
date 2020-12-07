@@ -40,7 +40,7 @@ class CustomFormButton extends StatelessWidget {
                   ),
                 ],
               ),
-            const Text("Guardar"),
+            Text(text),
           ],
         ),
       ),
