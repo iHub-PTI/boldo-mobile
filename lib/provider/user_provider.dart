@@ -15,6 +15,9 @@ class UserProvider with ChangeNotifier {
       _addressDescription,
       _photoUrl;
 
+  String _profileEditSuccessMessage;
+  String _profileEditErrorMessage;
+
   String get getGivenName => _givenName;
   String get getFamilyName => _familyName;
   String get getBirthDate => _birthDate;
@@ -27,6 +30,21 @@ class UserProvider with ChangeNotifier {
   String get getCity => _city;
   String get getAddressDescription => _addressDescription;
   String get getPhotoUrl => _photoUrl;
+
+  String get profileEditSuccessMessage => _profileEditSuccessMessage;
+  String get profileEditErrorMessage => _profileEditErrorMessage;
+
+  void clearProfileFormMessages() {
+    _profileEditErrorMessage = null;
+    _profileEditSuccessMessage = null;
+  }
+
+  void updateProfileEditMessages(String successMessage, String errorMessage) {
+    _profileEditSuccessMessage = successMessage;
+    _profileEditErrorMessage = errorMessage;
+    notifyListeners();
+  }
+
   void clearProvider() {
     _givenName = null;
     _familyName = null;
