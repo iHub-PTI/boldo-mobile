@@ -20,7 +20,8 @@ class AppointmentCard extends StatelessWidget {
         .toLocal()
         .difference(DateTime.now())
         .inDays;
-    bool isToday = daysDifference == 0 && appointment.status != "closed";
+    bool isToday = daysDifference == 0 &&
+        !["closed", "locked"].contains(appointment.status);
 
     return Card(
       elevation: 1.4,

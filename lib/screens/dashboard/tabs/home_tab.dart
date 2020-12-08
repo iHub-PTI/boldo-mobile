@@ -181,10 +181,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       if (!mounted) return;
 
       List<Appointment> pastAppointmentsItems = allAppointmets
-          .where((element) => element.status == "closed")
+          .where((element) => ["closed", "locked"].contains(element.status))
           .toList();
       List<Appointment> upcomingAppointmentsItems = allAppointmets
-          .where((element) => element.status != "closed")
+          .where((element) => !["closed", "locked"].contains(element.status))
           .toList();
 
       pastAppointmentsItems.sort(
@@ -494,10 +494,10 @@ class WaitingRoomCard extends StatelessWidget {
 
                         if (updateAppointments != null &&
                             updateAppointments["appointment"] != null) {
-                          getAppointmentsData();
                           await callEndedPopup(
                               context: context,
                               appointment: updateAppointments["appointment"]);
+                          getAppointmentsData();
                         }
                       },
                       child: Text(
