@@ -25,7 +25,7 @@ void initDio({@required GlobalKey<NavigatorState> navKey}) {
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (RequestOptions options) async {
-        accessToken ??= await storage.read(key: "access_token");
+        accessToken = await storage.read(key: "access_token");
         options.headers["authorization"] = "bearer $accessToken";
 
         return options;
@@ -35,15 +35,22 @@ void initDio({@required GlobalKey<NavigatorState> navKey}) {
           try {
             await storage.deleteAll();
             accessToken = null;
-            navKey.currentState.pushReplacement(
+
+            navKey.currentState.pushAndRemoveUntil(
               MaterialPageRoute(
                 builder: (context) => DashboardScreen(setLoggedOut: true),
               ),
+              (route) => false,
             );
           } catch (e) {
             print(e);
           }
-        } else if (error.response?.statusCode == 401 && accessToken != null) {
+        } else if (error.response?.statusCode == 401) {
+          if (accessToken == null) {
+            await storage.deleteAll();
+
+            return error;
+          }
           RequestOptions options = error.response.request;
           if ("bearer $accessToken" != options.headers["authorization"]) {
             options.headers["authorization"] = "bearer $accessToken";
@@ -81,10 +88,11 @@ void initDio({@required GlobalKey<NavigatorState> navKey}) {
             await storage.deleteAll();
             accessToken = null;
 
-            navKey.currentState.pushReplacement(
+            navKey.currentState.pushAndRemoveUntil(
               MaterialPageRoute(
                 builder: (context) => DashboardScreen(setLoggedOut: true),
               ),
+              (route) => false,
             );
             return error;
           }
