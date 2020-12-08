@@ -111,7 +111,7 @@ class AppointmentCard extends StatelessWidget {
                   children: [
                     const SizedBox(height: 4),
                     Text(
-                      "¡Hoy! - ${DateFormat('HH:MM').format(DateTime.parse(appointment.start).toLocal())}",
+                      "¡Hoy! - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
                       style: const TextStyle(
                         color: Constants.primaryColor600,
                         fontSize: 12,
@@ -124,7 +124,7 @@ class AppointmentCard extends StatelessWidget {
                   children: [
                     const SizedBox(height: 4),
                     Text(
-                      "En $daysDifference días",
+                      "En $daysDifference días - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
                       style: const TextStyle(
                         color: Constants.otherColor200,
                         fontSize: 12,
