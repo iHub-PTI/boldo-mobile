@@ -238,63 +238,73 @@ class _BookingScreenState extends State<BookingScreen> {
                             });
                           }),
                     ),
-                    Center(
-                      child: Text(
-                        DateFormat('dd MMMM yyyy').format(selectedDate),
-                        style: boldoHeadingTextStyle.copyWith(
-                            fontWeight: FontWeight.normal, fontSize: 14),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    if (_availabilitiesForDay.isEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
-                        child: Text(
-                          "No hay disponibilidad en esta fecha",
-                          style: boldoHeadingTextStyle.copyWith(fontSize: 13),
+                    if (!notAvailibleThisMonth)
+                      Column(children: [
+                        Center(
+                          child: Text(
+                            DateFormat('dd MMMM yyyy').format(selectedDate),
+                            style: boldoHeadingTextStyle.copyWith(
+                                fontWeight: FontWeight.normal, fontSize: 14),
+                          ),
                         ),
-                      ),
-                    Center(
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        width: double.infinity,
-                        constraints: const BoxConstraints(maxWidth: 350),
-                        child: Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: 20,
-                          runSpacing: 27,
-                          children: [
-                            ..._availabilitiesForDay
-                                .map((e) => GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedBookingHour =
-                                              _selectedBookingHour == e
-                                                  ? null
-                                                  : e;
-                                        });
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            color: _selectedBookingHour == e
-                                                ? Constants.primaryColor400
-                                                : Constants.tertiaryColor100,
-                                            borderRadius:
-                                                BorderRadius.circular(9),
-                                            border: Border.all(
-                                                color: _selectedBookingHour == e
-                                                    ? Constants.primaryColor600
-                                                    : Constants.extraColor200)),
-                                        width: 60,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            DateFormat('HH:mm').format(e),
-                                            textAlign: TextAlign.center,
-                                            style:
-                                                boldoHeadingTextStyle.copyWith(
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        if (_availabilitiesForDay.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: Text(
+                              "No hay disponibilidad en esta fecha",
+                              style:
+                                  boldoHeadingTextStyle.copyWith(fontSize: 13),
+                            ),
+                          ),
+                        Center(
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            width: double.infinity,
+                            constraints: const BoxConstraints(maxWidth: 350),
+                            child: Wrap(
+                              alignment: WrapAlignment.center,
+                              spacing: 20,
+                              runSpacing: 27,
+                              children: [
+                                ..._availabilitiesForDay
+                                    .map((e) => GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _selectedBookingHour =
+                                                  _selectedBookingHour == e
+                                                      ? null
+                                                      : e;
+                                            });
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                color:
+                                                    _selectedBookingHour == e
+                                                        ? Constants
+                                                            .primaryColor400
+                                                        : Constants
+                                                            .tertiaryColor100,
+                                                borderRadius:
+                                                    BorderRadius.circular(9),
+                                                border: Border.all(
+                                                    color:
+                                                        _selectedBookingHour ==
+                                                                e
+                                                            ? Constants
+                                                                .primaryColor600
+                                                            : Constants
+                                                                .extraColor200)),
+                                            width: 60,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                DateFormat('HH:mm').format(e),
+                                                textAlign: TextAlign.center,
+                                                style: boldoHeadingTextStyle.copyWith(
                                                     fontSize: 14,
                                                     color:
                                                         _selectedBookingHour ==
@@ -302,32 +312,33 @@ class _BookingScreenState extends State<BookingScreen> {
                                                             ? Colors.white
                                                             : Constants
                                                                 .extraColor400),
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    ))
-                                .toList()
-                          ],
+                                        ))
+                                    .toList()
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.only(left: 16, right: 16),
-                      margin: const EdgeInsets.only(bottom: 16),
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Constants.primaryColor500,
+                        const SizedBox(
+                          height: 40,
                         ),
-                        onPressed: _selectedBookingHour != null
-                            ? handleBookingHour
-                            : null,
-                        child: const Text("Aceptar"),
-                      ),
-                    )
+                        Container(
+                          padding: const EdgeInsets.only(left: 16, right: 16),
+                          margin: const EdgeInsets.only(bottom: 16),
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Constants.primaryColor500,
+                            ),
+                            onPressed: _selectedBookingHour != null
+                                ? handleBookingHour
+                                : null,
+                            child: const Text("Aceptar"),
+                          ),
+                        )
+                      ]),
                   ],
                 ),
             ],
