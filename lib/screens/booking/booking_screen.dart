@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import 'package:boldo/models/CalendarItem.dart';
+import 'package:boldo/widgets/calendar/utils/month_builder.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/widgets/register_popup.dart';
 import '../../network/http.dart';
@@ -24,13 +26,15 @@ class BookingScreen extends StatefulWidget {
 class _BookingScreenState extends State<BookingScreen> {
   bool _loading = true;
   bool _loadingCalendar = false;
+  bool notAvailibleThisMonth = false;
   String nextAvailability;
   DateTime _selectedBookingHour;
-  List<String> _availabilities = [];
+  List<DateTime> _availabilities = [];
 
+  List<List<CalendarItem>> chunkArrays = [];
   List<DateTime> _availabilitiesForDay = [];
   String _errorMessage = "";
-  DateTime _selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -59,17 +63,27 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   List<DateTime> findAvailabilitesForDay(
-      List<String> allAvailabilites, DateTime day) {
+      List<DateTime> allAvailabilites, DateTime day) {
+    List<DateTime> availabilitiesForDay = [];
+    for (DateTime availability in allAvailabilites) {
+      //we do this because we need to have a dateTime object with 00:00:00 HH:MM:SS for comparison
+      DateTime dateWithOutHours =
+          DateTime(availability.year, availability.month, availability.day);
+
+      if (dateWithOutHours == DateTime(day.year, day.month, day.day)) {
+        availabilitiesForDay.add(availability);
+      }
+    }
+    availabilitiesForDay.sort((a, b) => a.compareTo(b));
+    return availabilitiesForDay;
+  }
+
+  List<DateTime> convertToDateTime(List<String> allAvailabilites) {
     List<DateTime> availabilitiesForDay = [];
     for (String availability in allAvailabilites) {
       DateTime parsedAvailability = DateTime.parse(availability).toLocal();
-      //we do this because we need to have a dateTime object with 00:00:00 HH:MM:SS for comparison
-      DateTime dateWithOutHours = DateTime(parsedAvailability.year,
-          parsedAvailability.month, parsedAvailability.day);
 
-      if (dateWithOutHours == DateTime(day.year, day.month, day.day)) {
-        availabilitiesForDay.add(DateTime.parse(availability).toLocal());
-      }
+      availabilitiesForDay.add(parsedAvailability);
     }
     availabilitiesForDay.sort((a, b) => a.compareTo(b));
     return availabilitiesForDay;
@@ -82,13 +96,38 @@ class _BookingScreenState extends State<BookingScreen> {
         'start': date.toUtc().toIso8601String(),
         'end': DateTime(date.year, date.month + 1, 1).toUtc().toIso8601String(),
       });
+
       List<String> allAvailabilities =
           response.data["availabilities"].cast<String>();
+      List<DateTime> allAvailabilitesDateTime =
+          convertToDateTime(allAvailabilities);
+
+      List<List<CalendarItem>> _chunkArrays = monthBuilder(
+          buildDate: date, allAvailabilities: allAvailabilitesDateTime);
+
+      bool noAvailibilityThisMonth = true;
+      DateTime firstDay = date;
+      for (List<CalendarItem> chunkArray in _chunkArrays) {
+        CalendarItem notEmptyCalendarItem = chunkArray.firstWhere(
+            (element) =>
+                element.isEmpty == false && element.isDisabled == false,
+            orElse: () => null);
+        if (notEmptyCalendarItem != null) {
+          noAvailibilityThisMonth = false;
+          firstDay = notEmptyCalendarItem.itemDate;
+          break;
+        }
+      }
+
       setState(() {
-        _availabilitiesForDay =
-            findAvailabilitesForDay(allAvailabilities, date);
-        _availabilities = allAvailabilities;
+        chunkArrays = _chunkArrays;
+        notAvailibleThisMonth = noAvailibilityThisMonth;
+        _availabilitiesForDay = noAvailibilityThisMonth
+            ? []
+            : findAvailabilitesForDay(allAvailabilitesDateTime, firstDay);
+        _availabilities = allAvailabilitesDateTime;
         nextAvailability = response.data["nextAvailability"];
+        selectedDate = firstDay;
         _loading = false;
         _loadingCalendar = false;
       });
@@ -173,31 +212,35 @@ class _BookingScreenState extends State<BookingScreen> {
                     Padding(
                       padding: const EdgeInsets.only(left: 16, right: 16),
                       child: _BookCalendar(
-                          selectedDate: _selectedDate,
-                          changeDateCallback: (DateTime newDate) {
+                          chunkArrays: chunkArrays,
+                          notAvailibleThisMonth: notAvailibleThisMonth,
+                          selectedDate: selectedDate,
+                          changeDateCallback: (DateTime newDate) async {
                             if (DateTime(newDate.year, newDate.month) !=
                                 DateTime(
-                                    _selectedDate.year, _selectedDate.month)) {
+                                    selectedDate.year, selectedDate.month)) {
                               setState(() {
                                 _selectedBookingHour = null;
                                 _loadingCalendar = true;
-                                _selectedDate = newDate;
+                                selectedDate = newDate;
                               });
-                              fetchData(newDate);
+
+                              await fetchData(newDate);
 
                               return;
                             }
+
                             setState(() {
                               _selectedBookingHour = null;
                               _availabilitiesForDay = findAvailabilitesForDay(
                                   _availabilities, newDate);
-                              _selectedDate = newDate;
+                              selectedDate = newDate;
                             });
                           }),
                     ),
                     Center(
                       child: Text(
-                        DateFormat('dd MMMM yyyy').format(_selectedDate),
+                        DateFormat('dd MMMM yyyy').format(selectedDate),
                         style: boldoHeadingTextStyle.copyWith(
                             fontWeight: FontWeight.normal, fontSize: 14),
                       ),
@@ -295,11 +338,18 @@ class _BookingScreenState extends State<BookingScreen> {
 }
 
 class _BookCalendar extends StatelessWidget {
+  final List<List<CalendarItem>> chunkArrays;
+  final bool notAvailibleThisMonth;
   final DateTime selectedDate;
   final Function(DateTime changeDateCallback) changeDateCallback;
-  const _BookCalendar(
-      {Key key, @required this.selectedDate, @required this.changeDateCallback})
-      : super(key: key);
+
+  const _BookCalendar({
+    Key key,
+    @required this.chunkArrays,
+    @required this.notAvailibleThisMonth,
+    @required this.selectedDate,
+    @required this.changeDateCallback,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -312,7 +362,11 @@ class _BookCalendar extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         CustomCalendar(
-            selectedDate: selectedDate, changeDateCallback: changeDateCallback),
+          calendarItems: chunkArrays,
+          notAvailibleThisMonth: notAvailibleThisMonth,
+          selectedDate: selectedDate,
+          changeDateCallback: changeDateCallback,
+        ),
         const SizedBox(height: 25),
       ],
     );

@@ -2,16 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/CalendarItem.dart';
-import 'utils/month_builder.dart';
 import '../../constants.dart';
 
 class CustomCalendar extends StatefulWidget {
+  final List<List<CalendarItem>> calendarItems;
+  final bool notAvailibleThisMonth;
   final DateTime selectedDate;
   final Function(DateTime changeDateCallback) changeDateCallback;
 
-  CustomCalendar(
-      {Key key, @required this.selectedDate, @required this.changeDateCallback})
-      : super(key: key);
+  CustomCalendar({
+    Key key,
+    @required this.notAvailibleThisMonth,
+    @required this.calendarItems,
+    @required this.selectedDate,
+    @required this.changeDateCallback,
+  }) : super(key: key);
 
   @override
   _CustomCalendarState createState() => _CustomCalendarState();
@@ -20,44 +25,24 @@ class CustomCalendar extends StatefulWidget {
 final List<String> listOfDays = ["D", "L", "M", "M", "J", "V", "S"];
 
 class _CustomCalendarState extends State<CustomCalendar> {
-  List<List<CalendarItem>> calendarItems;
-  bool _calendarLoading = true;
+  bool _calendarLoading = false;
   DateTime selectedMonth;
-
   @override
   void initState() {
-    getCalendarItems(selectedDate: widget.selectedDate);
+    selectedMonth = widget.selectedDate;
     super.initState();
   }
 
-  void getCalendarItems({DateTime selectedDate}) async {
+  void getCalendarItems(
+      {@required DateTime selectedDate, bool initialLoad = false}) async {
     setState(() {
       _calendarLoading = true;
       selectedMonth = selectedDate;
     });
 
-    var chunkArrays = monthBuilder(buildDate: selectedDate);
-    DateTime now = DateTime(DateTime.now().year, DateTime.now().month);
-    int daysDirrenrence = selectedDate.difference(widget.selectedDate).inDays;
+    await widget.changeDateCallback(selectedDate);
 
-    if (now ==
-            DateTime(
-              selectedMonth.year,
-              selectedMonth.month,
-            ) &&
-        daysDirrenrence != 0) {
-      widget.changeDateCallback(DateTime.now());
-      print("month change1");
-      //if same month then find a day we can select. otherwise sleect the first day of the mont.
-    } else if (daysDirrenrence != 0) {
-      print("month change2");
-      widget.changeDateCallback(selectedDate);
-    }
-
-    setState(() {
-      _calendarLoading = false;
-      calendarItems = chunkArrays;
-    });
+    _calendarLoading = false;
   }
 
   @override
@@ -92,7 +77,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                 width: 20,
               ),
               Text(
-                DateFormat('MMMM').format(selectedMonth),
+                DateFormat('MMMM').format(selectedMonth ?? widget.selectedDate),
                 style: boldoHeadingTextStyle.copyWith(
                     fontWeight: FontWeight.normal),
               ),
@@ -157,13 +142,18 @@ class _CustomCalendarState extends State<CustomCalendar> {
                           Constants.primaryColor400),
                       backgroundColor: Constants.primaryColor600,
                     ))),
-              if (_calendarLoading == false)
+              if (widget.notAvailibleThisMonth)
+                const Padding(
+                  padding: EdgeInsets.only(top: 8.0),
+                  child: Text("The doctor is not availible this month"),
+                ),
+              if (_calendarLoading == false && !widget.notAvailibleThisMonth)
                 for (int i = 0; i < 6; i++)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      ...calendarItems[i]
+                      ...widget.calendarItems[i]
                           .map((calendarItem) => CalendarDay(
                                 calendarItem: calendarItem,
                                 selectedItem: widget.selectedDate,
@@ -196,6 +186,7 @@ class CalendarDay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool itemEmpty = calendarItem.isEmpty;
+    final bool itemDisabled = calendarItem.isDisabled;
     final DateTime now = DateTime.now();
 
     return GestureDetector(
@@ -203,7 +194,7 @@ class CalendarDay extends StatelessWidget {
         bool pastDay = calendarItem.itemDate
             .isAfter(DateTime(now.year, now.month, now.day - 1));
 
-        if (itemEmpty || !pastDay) {
+        if (itemEmpty || !pastDay || itemDisabled) {
           return;
         }
 
@@ -221,20 +212,22 @@ class CalendarDay extends StatelessWidget {
               : Text(
                   calendarItem.itemDate.day.toString(),
                   style: TextStyle(
-                    color: calendarItem.itemDate ==
-                            DateTime(selectedItem.year, selectedItem.month,
-                                selectedItem.day)
-                        ? Colors.white
-                        : calendarItem.itemDate
-                                    .difference(
-                                        DateTime(now.year, now.month, now.day))
-                                    .inDays ==
-                                0
-                            ? Constants.otherColor100
-                            : !calendarItem.itemDate.isAfter(
-                                    DateTime(now.year, now.month, now.day - 1))
-                                ? Constants.extraColor200
-                                : Constants.extraColor400,
+                    color: itemDisabled
+                        ? Constants.extraColor200
+                        : calendarItem.itemDate ==
+                                DateTime(selectedItem.year, selectedItem.month,
+                                    selectedItem.day)
+                            ? Colors.white
+                            : calendarItem.itemDate
+                                        .difference(DateTime(
+                                            now.year, now.month, now.day))
+                                        .inDays ==
+                                    0
+                                ? Constants.otherColor100
+                                : !calendarItem.itemDate.isAfter(DateTime(
+                                        now.year, now.month, now.day - 1))
+                                    ? Constants.extraColor200
+                                    : Constants.extraColor400,
                     fontSize: 17,
                   ),
                 ),
