@@ -21,7 +21,7 @@ class CustomFormInput extends StatefulWidget {
   final String Function(String) validator;
   final Function(String) changeValueCallback;
   final bool obscureText;
-  final onChanged;
+  final Function(String) onChanged;
   final List<TextInputFormatter> inputFormatters;
   CustomFormInput(
       {Key key,
@@ -199,9 +199,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
                   //keyboardType: TextInputType.emailAddress,
                   validator: widget.validator,
                   onChanged: widget.onChanged,
-                  onSaved: (String val) {
-                    widget.changeValueCallback(val);
-                  },
+                  onSaved: widget.changeValueCallback,
                 ),
               ),
             ),
