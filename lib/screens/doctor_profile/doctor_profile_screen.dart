@@ -50,6 +50,7 @@ class DoctorProfileScreen extends StatelessWidget {
                 Align(
                   alignment: Alignment.center,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Card(
                         elevation: 4.0,
@@ -96,15 +97,23 @@ class DoctorProfileScreen extends StatelessWidget {
                         height: 6,
                       ),
                       if (doctor.specializations != null)
-                        for (var specialization in doctor.specializations)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 4),
-                            child: Text(
-                              "${specialization.description}",
-                              style: boldoHeadingTextStyle.copyWith(
-                                  color: Constants.otherColor100),
-                            ),
-                          ),
+                        Align(
+                            alignment: Alignment.center,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                for (var specialization
+                                    in doctor.specializations)
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 4),
+                                    child: Text(
+                                      "${specialization.description}",
+                                      style: boldoHeadingTextStyle.copyWith(
+                                          color: Constants.otherColor100),
+                                    ),
+                                  ),
+                              ],
+                            ))
                     ],
                   ),
                 ),
