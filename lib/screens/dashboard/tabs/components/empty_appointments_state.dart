@@ -9,8 +9,10 @@ import 'package:boldo/constants.dart';
 import 'package:flutter/foundation.dart';
 
 class EmptyAppointmentsState extends StatelessWidget {
+  final String text;
   final String size;
-  const EmptyAppointmentsState({Key key, @required this.size})
+  const EmptyAppointmentsState(
+      {Key key, @required this.size, @required this.text})
       : super(key: key);
 
   @override
@@ -25,9 +27,9 @@ class EmptyAppointmentsState extends StatelessWidget {
             SvgPicture.asset(
               'assets/images/calendar.svg',
             ),
-          const Text(
-            "Agrega tu primera cita",
-            style: TextStyle(
+          Text(
+            text,
+            style: const TextStyle(
                 color: Constants.extraColor400,
                 fontSize: 18,
                 fontWeight: FontWeight.w500),

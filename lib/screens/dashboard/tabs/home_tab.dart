@@ -231,6 +231,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
           },
         ).toList();
         pastAppointments = pastAppointmentsItems;
+
         futureAppointments = upcomingAppointmentsItems;
       });
     } on DioError catch (err) {
@@ -351,7 +352,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                   backgroundColor: Constants.primaryColor600,
                 ))
               : !isAuthenticated || !hasAppointments
-                  ? const EmptyAppointmentsState(size: "big")
+                  ? const EmptyAppointmentsState(
+                      size: "big", text: "Agrega tu primera cita")
                   : SmartRefresher(
                       enablePullDown: true,
                       enablePullUp: false,
@@ -414,6 +416,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                               _selectedIndex == 0)
                             const SliverFillRemaining(
                                 child: EmptyAppointmentsState(
+                              text: "Agrega tu próxima cita",
                               size: "small",
                             )),
                           if (pastAppointments.length == 0 &&
