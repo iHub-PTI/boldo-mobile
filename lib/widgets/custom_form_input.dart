@@ -27,7 +27,7 @@ class CustomFormInput extends StatefulWidget {
       {Key key,
       @required this.label,
       this.validator,
-      @required this.changeValueCallback,
+      this.changeValueCallback,
       this.isDateTime = false,
       this.inputFormatters = const [],
       this.maxLines = 1,

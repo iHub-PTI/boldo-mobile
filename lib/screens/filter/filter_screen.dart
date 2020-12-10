@@ -60,7 +60,6 @@ class FilterScreen extends StatelessWidget {
                       ignoring: true,
                       child: CustomFormInput(
                         label: "Especialidad",
-                        changeValueCallback: null,
                         customSVGIcon: 'assets/icon/selector.svg',
                       ),
                     ),

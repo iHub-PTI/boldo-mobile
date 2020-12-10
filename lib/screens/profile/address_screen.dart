@@ -82,9 +82,6 @@ class _AddressScreenState extends State<AddressScreen> {
                       secondaryLabel: "Opcional",
                       onChanged: (String val) =>
                           userProvider.setUserData(street: val),
-                      changeValueCallback: (String val) {
-                        userProvider.setUserData(street: val);
-                      },
                     );
                   },
                   selector: (buildContext, userProvider) =>
@@ -99,9 +96,6 @@ class _AddressScreenState extends State<AddressScreen> {
                       secondaryLabel: "Opcional",
                       onChanged: (String val) =>
                           userProvider.setUserData(neighborhood: val),
-                      changeValueCallback: (String val) {
-                        userProvider.setUserData(neighborhood: val);
-                      },
                     );
                   },
                   selector: (buildContext, userProvider) =>
@@ -116,9 +110,6 @@ class _AddressScreenState extends State<AddressScreen> {
                       secondaryLabel: "Opcional",
                       onChanged: (String val) =>
                           userProvider.setUserData(city: val),
-                      changeValueCallback: (String val) {
-                        userProvider.setUserData(city: val);
-                      },
                     );
                   },
                   selector: (buildContext, userProvider) =>
@@ -134,9 +125,6 @@ class _AddressScreenState extends State<AddressScreen> {
                       secondaryLabel: "Opcional",
                       onChanged: (String val) =>
                           userProvider.setUserData(addressDescription: val),
-                      changeValueCallback: (String val) {
-                        userProvider.setUserData(addressDescription: val);
-                      },
                     );
                   },
                   selector: (buildContext, userProvider) =>

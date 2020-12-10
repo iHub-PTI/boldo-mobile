@@ -21,7 +21,6 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
     return CustomFormInput(
       label: "",
       initialValue: "",
-      changeValueCallback: null,
       onChanged: (String val) {
         if (_debounce?.isActive ?? false) _debounce.cancel();
         _debounce = Timer(const Duration(milliseconds: 500), () {

@@ -175,9 +175,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onChanged: (String val) => userProvider.setUserData(
                             givenName: val,
                           ),
-                          changeValueCallback: (String val) {
-                            userProvider.setUserData(givenName: val);
-                          },
                         );
                       },
                       selector: (buildContext, userProvider) =>
@@ -194,9 +191,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onChanged: (String val) => userProvider.setUserData(
                             familyName: val,
                           ),
-                          changeValueCallback: (String val) {
-                            userProvider.setUserData(familyName: val);
-                          },
                         );
                       },
                       selector: (buildContext, userProvider) =>
@@ -213,9 +207,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           label: "Ocupación",
                           onChanged: (String val) =>
                               userProvider.setUserData(job: val),
-                          changeValueCallback: (String val) {
-                            userProvider.setUserData(job: val);
-                          },
                         );
                       },
                       selector: (buildContext, userProvider) =>
@@ -270,16 +261,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               birthDate: outputFormat.format(date1),
                             );
                           },
-                          changeValueCallback: (String val) {
-                            var inputFormat = DateFormat("dd.MM.yyyy");
-                            var date1 = inputFormat.parse(val);
-
-                            var outputFormat = DateFormat("yyyy-MM-dd");
-
-                            userProvider.setUserData(
-                              birthDate: outputFormat.format(date1),
-                            );
-                          },
                         );
                       },
                       selector: (buildContext, userProvider) =>
@@ -295,9 +276,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           validator: validateEmail,
                           onChanged: (String val) =>
                               userProvider.setUserData(email: val),
-                          changeValueCallback: (String val) {
-                            userProvider.setUserData(email: val);
-                          },
                         );
                       },
                       selector: (buildContext, userProvider) =>
@@ -316,9 +294,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           inputFormatters: [ValidatorInputFormatter()],
                           onChanged: (String val) =>
                               userProvider.setUserData(email: val),
-                          changeValueCallback: (String val) {
-                            userProvider.setUserData(phone: val);
-                          },
                         );
                       },
                       selector: (buildContext, userProvider) =>
