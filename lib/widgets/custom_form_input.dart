@@ -120,11 +120,9 @@ class _CustomFormInputState extends State<CustomFormInput> {
                   locale: LocaleType.es,
                   currentTime: DateTime.parse(birthDate ?? "1980-01-01"),
                   showTitleActions: true, onConfirm: (DateTime dt) {
-                // String newTime = DateFormat('yyyy-MM-dd').format(dt);
-
                 _textEditingController.text =
                     DateFormat('dd.MM.yyyy').format(dt).toString();
-                // widget.changeValueCallback(newTime);
+                widget.onChanged(dt.toString());
               });
             },
             child: Container(

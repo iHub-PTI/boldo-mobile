@@ -252,13 +252,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           validator: null,
                           isDateTime: true,
                           onChanged: (String val) {
-                            var inputFormat = DateFormat("dd.MM.yyyy");
-                            var date1 = inputFormat.parse(val);
-
-                            var outputFormat = DateFormat("yyyy-MM-dd");
+                            var inputFormat = DateFormat("yyyy-MM-dd");
+                            var date1 = inputFormat.format(DateTime.parse(val));
 
                             userProvider.setUserData(
-                              birthDate: outputFormat.format(date1),
+                              birthDate: date1,
                             );
                           },
                         );
@@ -293,7 +291,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           label: "Número de teléfono",
                           inputFormatters: [ValidatorInputFormatter()],
                           onChanged: (String val) =>
-                              userProvider.setUserData(email: val),
+                              userProvider.setUserData(phone: val),
                         );
                       },
                       selector: (buildContext, userProvider) =>

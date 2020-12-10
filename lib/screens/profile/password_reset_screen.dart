@@ -44,6 +44,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
       String baseUrlKeyCloack = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
           defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
       dio.options.baseUrl = baseUrlKeyCloack;
+
       await dio.post(
         "/account/credentials/password",
         data: {

@@ -12,6 +12,7 @@ Future<Map<String, String>> updateProfile(
   try {
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
+
     await dio.post("/profile/patient", data: {
       "givenName": userProvider.getGivenName,
       "familyName": userProvider.getFamilyName,
