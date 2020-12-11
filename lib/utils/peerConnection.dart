@@ -20,12 +20,16 @@ class PeerConnection {
   MediaStream localStream;
   io.Socket socket;
   String room;
+  String token;
 
   Function(MediaStream) onRemoteStream;
   Function(CallState) onStateChange;
 
   PeerConnection(
-      {this.localStream, @required this.room, @required this.socket});
+      {this.localStream,
+      @required this.token,
+      @required this.room,
+      @required this.socket});
 
   Future<void> init() async {
     peerConnection = await createPeerConnection(
@@ -64,7 +68,8 @@ class PeerConnection {
         'sdpMid': candidate.sdpMid,
         'candidate': candidate.candidate,
       };
-      socket.emit('ice candidate', {'room': room, 'ice': iceCandidate});
+      socket.emit(
+          'ice candidate', {'room': room, 'ice': iceCandidate, "token": token});
     }
 
     // Handle incoming candidates
@@ -137,7 +142,8 @@ class PeerConnection {
 
     socket.emit('sdp offer', {
       'room': room,
-      'sdp': {'sdp': s.sdp, 'type': s.type}
+      'sdp': {'sdp': s.sdp, 'type': s.type},
+      "token": token
     });
   }
 

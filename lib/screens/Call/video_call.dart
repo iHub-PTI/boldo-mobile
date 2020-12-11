@@ -21,7 +21,7 @@ class VideoCall extends StatefulWidget {
 }
 
 class _VideoCallState extends State<VideoCall> {
-  String _token;
+  String token;
   bool _loading = true;
 
   bool callStatus = false;
@@ -56,7 +56,7 @@ class _VideoCallState extends State<VideoCall> {
         Navigator.of(context).pop({"tokenError": true});
         return;
       }
-      _token = response.data["token"];
+      token = response.data["token"];
 
       // Manual connection required here. Otherwise socket will not reconnect.
       socket = io.io(socketsAddress, <String, dynamic>{
@@ -66,12 +66,12 @@ class _VideoCallState extends State<VideoCall> {
       socket.connect();
 
       socket.emit(
-          'patient ready', {"room": widget.appointment.id, "token": _token});
+          'patient ready', {"room": widget.appointment.id, "token": token});
 
       socket.on('find patient', (data) {
         if (callStatus) return;
         socket.emit(
-            'patient ready', {"room": widget.appointment.id, "token": _token});
+            'patient ready', {"room": widget.appointment.id, "token": token});
       });
 
       initCall();
@@ -113,7 +113,7 @@ class _VideoCallState extends State<VideoCall> {
               callStatus = true;
             });
             socket.emit('patient in call',
-                {"room": widget.appointment.id, "token": _token});
+                {"room": widget.appointment.id, "token": token});
             break;
           }
         case CallState.CallDisconnected:
@@ -130,9 +130,9 @@ class _VideoCallState extends State<VideoCall> {
               callStatus = false;
             });
             socket.emit('patient ready',
-                {"room": widget.appointment.id, "token": _token});
+                {"room": widget.appointment.id, "token": token});
             socket.emit(
-                'ready!', {"room": widget.appointment.id, "token": _token});
+                'ready!', {"room": widget.appointment.id, "token": token});
             break;
           }
         default:
@@ -153,10 +153,10 @@ class _VideoCallState extends State<VideoCall> {
 
       //initialize the peer connection
       peerConnection = PeerConnection(
-        localStream: localStream,
-        room: widget.appointment.id,
-        socket: socket,
-      );
+          localStream: localStream,
+          room: widget.appointment.id,
+          socket: socket,
+          token: token);
 
       peerConnection.onRemoteStream = onRemoteStream;
       peerConnection.onStateChange = onStateChange;
@@ -167,10 +167,10 @@ class _VideoCallState extends State<VideoCall> {
     });
 
     // Inform Doctor that we are ready.
-    socket.emit('ready!', {"room": widget.appointment.id, "token": _token});
+    socket.emit('ready!', {"room": widget.appointment.id, "token": token});
     socket.on('ready?', (message) {
       print('ready!');
-      socket.emit('ready!', {"room": widget.appointment.id, "token": _token});
+      socket.emit('ready!', {"room": widget.appointment.id, "token": token});
     });
 
     socket.on('end call', (data) {
@@ -198,7 +198,7 @@ class _VideoCallState extends State<VideoCall> {
   }
 
   void hangUp() {
-    socket.emit('end call', {"room": widget.appointment.id, "token": _token});
+    socket.emit('end call', {"room": widget.appointment.id, "token": token});
     Navigator.of(context).pop();
   }
 
