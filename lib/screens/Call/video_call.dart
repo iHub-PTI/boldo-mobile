@@ -58,10 +58,16 @@ class _VideoCallState extends State<VideoCall> {
   Future<void> initCall() async {
     // FIXME: This will throw an error if permission is denied
     // Catch the error and show a smooth UI
-    localStream = await navigator.mediaDevices.getUserMedia({
-      'audio': true,
-      'video': {'facingMode': 'user'}
-    });
+    try {
+      localStream = await navigator.mediaDevices.getUserMedia({
+        'audio': true,
+        'video': {'facingMode': 'user'}
+      });
+    } catch (e) {
+      print(e);
+      Navigator.of(context)
+          .pop({"error": "You have to give access to your camera."});
+    }
 
     // initialize the video renderers
     await localRenderer.initialize();

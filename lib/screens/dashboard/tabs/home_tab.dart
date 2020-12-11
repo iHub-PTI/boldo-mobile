@@ -278,7 +278,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         toolbarHeight: 110,
         flexibleSpace: Center(
           child: Container(
-            margin: const EdgeInsets.only(top: 30),
+            margin: const EdgeInsets.only(top: 30, left: 6),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -506,12 +506,17 @@ class WaitingRoomCard extends StatelessWidget {
                           ),
                         );
 
-                        if (updateAppointments != null &&
-                            updateAppointments["appointment"] != null) {
-                          await callEndedPopup(
-                              context: context,
-                              appointment: updateAppointments["appointment"]);
-                          getAppointmentsData();
+                        if (updateAppointments != null) {
+                          if (updateAppointments["error"] != null) {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                                content: Text(updateAppointments["error"])));
+                          }
+                          if (updateAppointments["appointment"] != null) {
+                            await callEndedPopup(
+                                context: context,
+                                appointment: updateAppointments["appointment"]);
+                            getAppointmentsData();
+                          }
                         }
                       },
                       child: Text(
