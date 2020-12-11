@@ -1,5 +1,6 @@
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -11,12 +12,13 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:logger/logger.dart';
 
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:boldo/network/connection_status.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/screens/hero/hero_screen.dart';
-
+import 'package:flutter/widgets.dart';
 import 'package:boldo/constants.dart';
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
@@ -41,6 +43,16 @@ void main() async {
   const storage = FlutterSecureStorage();
   String value = await storage.read(key: "access_token");
 
+  if (kReleaseMode) {
+    String sentryDSN = String.fromEnvironment('SENTRY_DSN',
+        defaultValue: DotEnv().env['SENTRY_DSN']);
+    await SentryFlutter.init(
+      (options) {
+        options.environment = "production";
+        options.dsn = sentryDSN;
+      },
+    );
+  }
   runApp(MyApp(onboardingCompleted: onboardingCompleted, session: value));
 }
 

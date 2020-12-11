@@ -15,6 +15,7 @@ import 'package:boldo/screens/Call/video_call.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../utils/helpers.dart';
@@ -234,20 +235,30 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
         futureAppointments = upcomingAppointmentsItems;
       });
-    } on DioError catch (err) {
-      print(err);
+    } on DioError catch (exception, stackTrace) {
+      print(exception);
+
       if (!mounted) return;
       setState(() {
         _loading = false;
         _dataFetchError = true;
       });
-    } catch (err) {
-      print(err);
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+    } catch (exception, stackTrace) {
+      print(exception);
+
       if (!mounted) return;
       setState(() {
         _loading = false;
         _dataFetchError = false;
       });
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
     }
   }
 

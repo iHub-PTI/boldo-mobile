@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../constants.dart';
 import '../../booking/booking_screen.dart';
@@ -78,7 +79,6 @@ class _DoctorsTabState extends State<DoctorsTab> {
         finalQueryString = "$finalQueryString&$queryStringSpecializations";
       }
 
-      print(finalQueryString);
       Response response = await dio.get("/doctors?$finalQueryString");
 
       if (!mounted) return;
@@ -92,8 +92,18 @@ class _DoctorsTabState extends State<DoctorsTab> {
           doctors = [...doctors, ...doctorsList];
         }
       }
-    } catch (e) {
-      print(e);
+    } on DioError catch (exception, stackTrace) {
+      print(exception);
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+    } catch (exception, stackTrace) {
+      print(exception);
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
 
       ///FIXME: SHOW AN ERROR MESSAGE TO THE USER
 

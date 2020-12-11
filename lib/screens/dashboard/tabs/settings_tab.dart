@@ -11,6 +11,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../widgets/wrapper.dart';
 import '../../../provider/auth_provider.dart';
 import '../../../constants.dart';
@@ -185,10 +186,19 @@ class _SettingsTabState extends State<SettingsTab> {
                     await storage.deleteAll();
                     Provider.of<UtilsProvider>(context, listen: false)
                         .setSelectedPageIndex(pageIndex: 0);
-                  } on DioError catch (err) {
-                    print(err);
-                  } catch (err) {
-                    print(err);
+                  } on DioError catch (exception, stackTrace) {
+                    print(exception);
+
+                    await Sentry.captureException(
+                      exception,
+                      stackTrace: stackTrace,
+                    );
+                  } catch (exception, stackTrace) {
+                    print(exception);
+                    await Sentry.captureException(
+                      exception,
+                      stackTrace: stackTrace,
+                    );
                   }
                 },
                 leading: SizedBox(

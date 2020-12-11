@@ -8,6 +8,7 @@ import 'package:boldo/models/CalendarItem.dart';
 import 'package:boldo/widgets/calendar/utils/month_builder.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/widgets/register_popup.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../network/http.dart';
 import '../../widgets/calendar/calendar.dart';
 import '../../widgets/wrapper.dart';
@@ -131,22 +132,30 @@ class _BookingScreenState extends State<BookingScreen> {
         _loading = false;
         _loadingCalendar = false;
       });
-    } on DioError catch (err) {
-      print(err);
+    } on DioError catch (exception, stackTrace) {
+      print(exception);
       setState(() {
         _errorMessage =
             "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         _loading = false;
         _loadingCalendar = false;
       });
-    } catch (err) {
-      print(err);
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+    } catch (exception, stackTrace) {
+      print(exception);
       setState(() {
         _errorMessage =
             "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         _loading = false;
         _loadingCalendar = false;
       });
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
     }
   }
 

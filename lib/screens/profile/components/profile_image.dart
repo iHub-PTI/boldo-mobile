@@ -9,6 +9,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../provider/user_provider.dart';
 import '../../../network/http.dart';
 
@@ -141,11 +142,15 @@ class _ProfileImageState extends State<ProfileImage> {
                       setState(() {
                         _isLoading = false;
                       });
-                    } catch (err) {
+                    } catch (exception, stackTrace) {
                       setState(() {
                         _isLoading = false;
                       });
-                      print(err);
+                      print(exception);
+                      await Sentry.captureException(
+                        exception,
+                        stackTrace: stackTrace,
+                      );
                     }
                   }
                 }

@@ -4,6 +4,7 @@ import 'package:boldo/provider/utils_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../network/http.dart';
 
@@ -69,10 +70,18 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
         filteredSpecializationsList = filteredSpecializaions;
         _loading = false;
       });
-    } on DioError catch (err) {
-      print(err);
-    } catch (err) {
-      print(err);
+    } on DioError catch (exception, stackTrace) {
+      print(exception);
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+    } catch (exception, stackTrace) {
+      print(exception);
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
     }
   }
 

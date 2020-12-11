@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../widgets/wrapper.dart';
 
@@ -58,22 +59,30 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
         _successMessage = "¡La contraseña ha sido actualizada!";
         loading = false;
       });
-    } on DioError catch (err) {
-      print(err);
+    } on DioError catch (exception, stackTrace) {
+      print(exception);
 
       setState(() {
-        _errorMessage = err.response.statusCode == 400
+        _errorMessage = exception.response.statusCode == 400
             ? "Contraseña incorrecta"
             : "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         loading = false;
       });
-    } catch (err) {
-      print(err);
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+    } catch (exception, stackTrace) {
+      print(exception);
       setState(() {
         _errorMessage =
             "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         loading = false;
       });
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
     }
     String baseUrlServer = String.fromEnvironment('SERVER_ADDRESS',
         defaultValue: DotEnv().env['SERVER_ADDRESS']);
