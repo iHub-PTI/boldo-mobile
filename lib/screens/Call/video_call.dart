@@ -2,8 +2,10 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:dio/dio.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
+import '../../network/http.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/screens/Call/components/call.dart';
 import 'package:boldo/screens/Call/components/waiting_room.dart';
@@ -19,6 +21,9 @@ class VideoCall extends StatefulWidget {
 }
 
 class _VideoCallState extends State<VideoCall> {
+  String _token;
+  bool _loading = true;
+
   bool callStatus = false;
   bool isDisconnected = false;
 
@@ -37,22 +42,49 @@ class _VideoCallState extends State<VideoCall> {
   @override
   void initState() {
     super.initState();
+    _getCallToken();
+  }
 
-    // Manual connection required here. Otherwise socket will not reconnect.
-    socket = io.io(socketsAddress, <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': false
-    });
-    socket.connect();
+  Future _getCallToken() async {
+    try {
+      Response response = await dio
+          .get("/profile/patient/appointments/${widget.appointment.id}");
 
-    socket.emit('patient ready', widget.appointment.id);
+      if (response.data["token"] == null ||
+          response.data["token"] == "" ||
+          response.data["token"].length < 1) {
+        Navigator.of(context).pop({"tokenError": true});
+        return;
+      }
+      _token = response.data["token"];
 
-    socket.on('find patient', (data) {
-      if (callStatus) return;
-      socket.emit('patient ready', widget.appointment.id);
-    });
+      // Manual connection required here. Otherwise socket will not reconnect.
+      socket = io.io(socketsAddress, <String, dynamic>{
+        'transports': ['websocket'],
+        'autoConnect': false
+      });
+      socket.connect();
 
-    initCall();
+      socket.emit(
+          'patient ready', {"room": widget.appointment.id, "token": _token});
+
+      socket.on('find patient', (data) {
+        if (callStatus) return;
+        socket.emit(
+            'patient ready', {"room": widget.appointment.id, "token": _token});
+      });
+
+      initCall();
+      setState(() {
+        _loading = false;
+      });
+    } on DioError catch (err) {
+      print(err);
+      Navigator.of(context).pop({"tokenError": true});
+    } catch (err) {
+      print(err);
+      Navigator.of(context).pop({"tokenError": true});
+    }
   }
 
   Future<void> initCall() async {
@@ -80,7 +112,8 @@ class _VideoCallState extends State<VideoCall> {
               isDisconnected = false;
               callStatus = true;
             });
-            socket.emit('patient in call', widget.appointment.id);
+            socket.emit('patient in call',
+                {"room": widget.appointment.id, "token": _token});
             break;
           }
         case CallState.CallDisconnected:
@@ -96,8 +129,10 @@ class _VideoCallState extends State<VideoCall> {
             setState(() {
               callStatus = false;
             });
-            socket.emit('patient ready', widget.appointment.id);
-            socket.emit('ready!', widget.appointment.id);
+            socket.emit('patient ready',
+                {"room": widget.appointment.id, "token": _token});
+            socket.emit(
+                'ready!', {"room": widget.appointment.id, "token": _token});
             break;
           }
         default:
@@ -132,10 +167,10 @@ class _VideoCallState extends State<VideoCall> {
     });
 
     // Inform Doctor that we are ready.
-    socket.emit('ready!', widget.appointment.id);
+    socket.emit('ready!', {"room": widget.appointment.id, "token": _token});
     socket.on('ready?', (message) {
       print('ready!');
-      socket.emit('ready!', widget.appointment.id);
+      socket.emit('ready!', {"room": widget.appointment.id, "token": _token});
     });
 
     socket.on('end call', (data) {
@@ -163,7 +198,7 @@ class _VideoCallState extends State<VideoCall> {
   }
 
   void hangUp() {
-    socket.emit('end call', widget.appointment.id);
+    socket.emit('end call', {"room": widget.appointment.id, "token": _token});
     Navigator.of(context).pop();
   }
 
@@ -185,33 +220,36 @@ class _VideoCallState extends State<VideoCall> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: callStatus
-          ? Stack(
-              children: [
-                Call(
-                  muteVideo: muteVideo,
-                  initialVideoState: localStream.getVideoTracks()[0].enabled,
-                  initialMicState: localStream.getAudioTracks()[0].enabled,
-                  muteMic: muteMic,
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : callStatus
+              ? Stack(
+                  children: [
+                    Call(
+                      muteVideo: muteVideo,
+                      initialVideoState:
+                          localStream.getVideoTracks()[0].enabled,
+                      initialMicState: localStream.getAudioTracks()[0].enabled,
+                      muteMic: muteMic,
+                      localRenderer: localRenderer,
+                      remoteRenderer: remoteRenderer,
+                      hangUp: hangUp,
+                      switchCamera: switchCamera,
+                      appointment: widget.appointment,
+                    ),
+                    if (isDisconnected)
+                      const Align(
+                        alignment: Alignment.center,
+                        child: ConnectionProblemPopup(),
+                      )
+                  ],
+                )
+              : WaitingRoom(
                   localRenderer: localRenderer,
-                  remoteRenderer: remoteRenderer,
-                  hangUp: hangUp,
-                  switchCamera: switchCamera,
                   appointment: widget.appointment,
+                  muteMic: muteMic,
+                  muteVideo: muteVideo,
                 ),
-                if (isDisconnected)
-                  const Align(
-                    alignment: Alignment.center,
-                    child: ConnectionProblemPopup(),
-                  )
-              ],
-            )
-          : WaitingRoom(
-              localRenderer: localRenderer,
-              appointment: widget.appointment,
-              muteMic: muteMic,
-              muteVideo: muteVideo,
-            ),
     );
   }
 }

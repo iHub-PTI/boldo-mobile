@@ -8,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -175,8 +176,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     try {
       Response response = await dio.get("/profile/patient/appointments");
 
+      Logger logger = Logger();
+      logger.i(response.data);
       List<Appointment> allAppointmets = List<Appointment>.from(
-          response.data.map((i) => Appointment.fromJson(i)));
+          response.data["appointments"].map((i) => Appointment.fromJson(i)));
 
       if (!mounted) return;
 
@@ -495,12 +498,20 @@ class WaitingRoomCard extends StatelessWidget {
                           ),
                         );
 
-                        if (updateAppointments != null &&
-                            updateAppointments["appointment"] != null) {
-                          await callEndedPopup(
-                              context: context,
-                              appointment: updateAppointments["appointment"]);
-                          getAppointmentsData();
+                        if (updateAppointments != null) {
+                          if (updateAppointments["appointment"] != null) {
+                            await callEndedPopup(
+                                context: context,
+                                appointment: updateAppointments["appointment"]);
+                            getAppointmentsData();
+                          } else if (updateAppointments["tokenError"] != null) {
+                            //reload data
+                            getAppointmentsData();
+                            // show scnackbar
+                            Scaffold.of(context).showSnackBar(const SnackBar(
+                                content: Text(
+                                    'Something went wrong! Please try again later.')));
+                          }
                         }
                       },
                       child: Text(
