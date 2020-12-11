@@ -64,7 +64,8 @@ class PeerConnection {
         'sdpMid': candidate.sdpMid,
         'candidate': candidate.candidate,
       };
-      socket.emit('ice candidate', {'room': room, 'ice': iceCandidate});
+      socket.emit('ice candidate',
+          {'room': room, 'ice': iceCandidate, 'token': 'superPenguinMagic'});
     }
 
     // Handle incoming candidates
@@ -137,7 +138,8 @@ class PeerConnection {
 
     socket.emit('sdp offer', {
       'room': room,
-      'sdp': {'sdp': s.sdp, 'type': s.type}
+      'sdp': {'sdp': s.sdp, 'type': s.type},
+      'token': 'superPenguinMagic'
     });
   }
 

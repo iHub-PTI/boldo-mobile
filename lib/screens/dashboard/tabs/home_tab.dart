@@ -176,7 +176,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       Response response = await dio.get("/profile/patient/appointments");
 
       List<Appointment> allAppointmets = List<Appointment>.from(
-          response.data.map((i) => Appointment.fromJson(i)));
+          response.data["appointments"].map((i) => Appointment.fromJson(i)));
 
       if (!mounted) return;
 

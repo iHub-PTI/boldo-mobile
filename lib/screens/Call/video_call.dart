@@ -45,11 +45,13 @@ class _VideoCallState extends State<VideoCall> {
     });
     socket.connect();
 
-    socket.emit('patient ready', widget.appointment.id);
+    socket.emit('patient ready',
+        {'room': widget.appointment.id, 'token': 'superPenguinMagic'});
 
     socket.on('find patient', (data) {
       if (callStatus) return;
-      socket.emit('patient ready', widget.appointment.id);
+      socket.emit('patient ready',
+          {'room': widget.appointment.id, 'token': 'superPenguinMagic'});
     });
 
     initCall();
@@ -80,7 +82,8 @@ class _VideoCallState extends State<VideoCall> {
               isDisconnected = false;
               callStatus = true;
             });
-            socket.emit('patient in call', widget.appointment.id);
+            socket.emit('patient in call',
+                {'room': widget.appointment.id, 'token': 'superPenguinMagic'});
             break;
           }
         case CallState.CallDisconnected:
@@ -96,8 +99,10 @@ class _VideoCallState extends State<VideoCall> {
             setState(() {
               callStatus = false;
             });
-            socket.emit('patient ready', widget.appointment.id);
-            socket.emit('ready!', widget.appointment.id);
+            socket.emit('patient ready',
+                {'room': widget.appointment.id, 'token': 'superPenguinMagic'});
+            socket.emit('ready!',
+                {'room': widget.appointment.id, 'token': 'superPenguinMagic'});
             break;
           }
         default:
@@ -132,10 +137,12 @@ class _VideoCallState extends State<VideoCall> {
     });
 
     // Inform Doctor that we are ready.
-    socket.emit('ready!', widget.appointment.id);
+    socket.emit('ready!',
+        {'room': widget.appointment.id, 'token': 'superPenguinMagic'});
     socket.on('ready?', (message) {
       print('ready!');
-      socket.emit('ready!', widget.appointment.id);
+      socket.emit('ready!',
+          {'room': widget.appointment.id, 'token': 'superPenguinMagic'});
     });
 
     socket.on('end call', (data) {
@@ -163,7 +170,8 @@ class _VideoCallState extends State<VideoCall> {
   }
 
   void hangUp() {
-    socket.emit('end call', widget.appointment.id);
+    socket.emit('end call',
+        {'room': widget.appointment.id, 'token': 'superPenguinMagic'});
     Navigator.of(context).pop();
   }
 
