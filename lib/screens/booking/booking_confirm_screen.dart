@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/widgets/custom_form_button.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../network/http.dart';
 import '../../widgets/wrapper.dart';
 import '../../constants.dart';
@@ -96,18 +97,26 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                   context,
                   MaterialPageRoute(builder: (context) => BookingFinalScreen()),
                 );
-              } on DioError catch (err) {
-                print(err);
+              } on DioError catch (exception, stackTrace) {
+                print(exception);
                 setState(() {
                   _loading = false;
                   _error = "Somethig went wrong, please try again later.";
                 });
-              } catch (err) {
-                print(err);
+                await Sentry.captureException(
+                  exception,
+                  stackTrace: stackTrace,
+                );
+              } catch (exception, stackTrace) {
+                print(exception);
                 setState(() {
                   _loading = false;
                   _error = "Somethig went wrong, please try again later.";
                 });
+                await Sentry.captureException(
+                  exception,
+                  stackTrace: stackTrace,
+                );
               }
             },
           ),

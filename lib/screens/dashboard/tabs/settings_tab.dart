@@ -1,8 +1,5 @@
 import 'dart:convert';
 
-import 'package:boldo/provider/user_provider.dart';
-import 'package:boldo/provider/utils_provider.dart';
-import 'package:boldo/screens/profile/profile_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -11,6 +8,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:boldo/provider/user_provider.dart';
+import 'package:boldo/provider/utils_provider.dart';
+import 'package:boldo/screens/profile/profile_screen.dart';
 import '../../../widgets/wrapper.dart';
 import '../../../provider/auth_provider.dart';
 import '../../../constants.dart';
@@ -162,6 +165,8 @@ class _SettingsTabState extends State<SettingsTab> {
                         defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
 
                     const storage = FlutterSecureStorage();
+                    final SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
                     String refreshToken =
                         await storage.read(key: "refresh_token");
                     Map<String, dynamic> body = {
@@ -183,12 +188,23 @@ class _SettingsTabState extends State<SettingsTab> {
                         .clearProvider();
 
                     await storage.deleteAll();
+                    await prefs.clear();
+
                     Provider.of<UtilsProvider>(context, listen: false)
                         .setSelectedPageIndex(pageIndex: 0);
-                  } on DioError catch (err) {
-                    print(err);
-                  } catch (err) {
-                    print(err);
+                  } on DioError catch (exception, stackTrace) {
+                    print(exception);
+
+                    await Sentry.captureException(
+                      exception,
+                      stackTrace: stackTrace,
+                    );
+                  } catch (exception, stackTrace) {
+                    print(exception);
+                    await Sentry.captureException(
+                      exception,
+                      stackTrace: stackTrace,
+                    );
                   }
                 },
                 leading: SizedBox(

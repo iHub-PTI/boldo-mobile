@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './address_screen.dart';
 import './password_reset_screen.dart';
@@ -72,18 +73,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _dataLoading = false;
         _dataLoaded = true;
       });
-    } on DioError catch (err) {
-      print(err);
+    } on DioError catch (exception, stackTrace) {
+      print(exception);
       setState(() {
         _dataLoading = false;
         _dataLoaded = false;
       });
-    } catch (err) {
-      print(err);
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+    } catch (exception, stackTrace) {
+      print(exception);
       setState(() {
         _dataLoading = false;
         _dataLoaded = false;
       });
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
     }
   }
 

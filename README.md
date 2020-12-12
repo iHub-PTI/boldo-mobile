@@ -44,7 +44,8 @@ Note: You can check the availability of connected devices by running `flutter do
  flutter build apk --split-per-abi \
  --dart-define=SOCKETS_ADDRESS=https://sockets.boldo.penguin.software \
  --dart-define=SERVER_ADDRESS=https://api.boldo.penguin.software \
- --dart-define=KEYCLOAK_REALM_ADDRESS=https://sso-test.pti.org.py/auth/realms/iHub
+ --dart-define=KEYCLOAK_REALM_ADDRESS=https://sso-test.pti.org.py/auth/realms/iHub \
+ --dart-define=SENTRY_DSN=ASK DEVELOPERS FOR KEY
 ```
 
 ## Known issues

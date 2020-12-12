@@ -16,6 +16,7 @@ import 'package:boldo/screens/Call/video_call.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../utils/helpers.dart';
@@ -237,20 +238,30 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
         futureAppointments = upcomingAppointmentsItems;
       });
-    } on DioError catch (err) {
-      print(err);
+    } on DioError catch (exception, stackTrace) {
+      print(exception);
+
       if (!mounted) return;
       setState(() {
         _loading = false;
         _dataFetchError = true;
       });
-    } catch (err) {
-      print(err);
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+    } catch (exception, stackTrace) {
+      print(exception);
+
       if (!mounted) return;
       setState(() {
         _loading = false;
         _dataFetchError = false;
       });
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -270,7 +281,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         toolbarHeight: 110,
         flexibleSpace: Center(
           child: Container(
-            margin: const EdgeInsets.only(top: 30),
+            margin: const EdgeInsets.only(top: 30, left: 6),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -499,6 +510,10 @@ class WaitingRoomCard extends StatelessWidget {
                         );
 
                         if (updateAppointments != null) {
+                          if (updateAppointments["error"] != null) {
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                                content: Text(updateAppointments["error"])));
+                          }
                           if (updateAppointments["appointment"] != null) {
                             await callEndedPopup(
                                 context: context,

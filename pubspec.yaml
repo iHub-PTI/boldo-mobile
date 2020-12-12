@@ -25,6 +25,7 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.12.2
+  sentry_flutter: ^4.0.0
   socket_io_client: ^0.9.11
   flutter_webrtc: ^0.5.7
   shared_preferences: ^0.5.12+2
