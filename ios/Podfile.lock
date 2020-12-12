@@ -59,12 +59,20 @@ PODS:
     - Flutter
     - TOCropViewController (~> 2.5.4)
   - Libyuv (1703)
+  - package_info (0.0.1):
+    - Flutter
   - path_provider (0.0.1):
     - Flutter
   - Reachability (3.2)
   - SDWebImage (5.10.0):
     - SDWebImage/Core (= 5.10.0)
   - SDWebImage/Core (5.10.0)
+  - Sentry (6.0.11):
+    - Sentry/Core (= 6.0.11)
+  - Sentry/Core (6.0.11)
+  - sentry_flutter (0.0.1):
+    - Flutter
+    - Sentry (~> 6.0.10)
   - shared_preferences (0.0.1):
     - Flutter
   - sqflite (0.0.2):
@@ -81,7 +89,9 @@ DEPENDENCIES:
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - flutter_webrtc (from `.symlinks/plugins/flutter_webrtc/ios`)
   - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
+  - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
 
@@ -95,6 +105,7 @@ SPEC REPOS:
     - Libyuv
     - Reachability
     - SDWebImage
+    - Sentry
     - SwiftyGif
     - TOCropViewController
 
@@ -113,8 +124,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_webrtc/ios"
   image_cropper:
     :path: ".symlinks/plugins/image_cropper/ios"
+  package_info:
+    :path: ".symlinks/plugins/package_info/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
+  sentry_flutter:
+    :path: ".symlinks/plugins/sentry_flutter/ios"
   shared_preferences:
     :path: ".symlinks/plugins/shared_preferences/ios"
   sqflite:
@@ -134,9 +149,12 @@ SPEC CHECKSUMS:
   GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
   image_cropper: c8f9b4157933c7bb965a66d1c5e6c8fd408c6eb4
   Libyuv: 5f79ced0ee66e60a612ca97de1e6ccacd187a437
+  package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   SDWebImage: 9169792e9eec3e45bba2a0c02f74bf8bd922d1ee
+  Sentry: 9545ecf8d809854a7e1edc0f7348e8ead7339ab7
+  sentry_flutter: e57e33f56d5791e4effa48e85e44505367686b27
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
   SwiftyGif: e466e86c660d343357ab944a819a101c4127cb40

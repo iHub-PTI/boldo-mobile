@@ -57,7 +57,7 @@ The webRTC and chatty libraries causes a lot of unnecessary comments. To disable
 To allow as many people as possible access to health services, this applications aims to run also on old devices. Currently we support the following minmal platform versions:
 
 - iOS: 10
-- Android: 4.4 (KitKat)
+- Android: 5.0 (Lollipop)
 
 ## Contributing
 
