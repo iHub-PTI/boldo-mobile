@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:logger/logger.dart';
 
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:boldo/network/connection_status.dart';
@@ -68,8 +67,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Logger logger = Logger();
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
