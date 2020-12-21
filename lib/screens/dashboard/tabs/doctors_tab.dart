@@ -191,7 +191,6 @@ class _DoctorsTabState extends State<DoctorsTab> {
               child: Text("Médicos",
                   style: boldoHeadingTextStyle.copyWith(fontSize: 20)),
             ),
-            const SizedBox(height: 5),
             Padding(
               padding: const EdgeInsets.only(left: 16, right: 16),
               child: CustomSearchBar(changeTextCallback: (text) {
@@ -200,7 +199,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
                 getDoctors(offset: 0);
               }),
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 20),
             Expanded(
               child: _loading
                   ? const Center(
