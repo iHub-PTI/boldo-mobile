@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -162,15 +163,17 @@ Future<void> authenticateUser(
       await prefs.setString("profile_url", response.data["photoUrl"]);
       await prefs.setString("gender", response.data["gender"]);
     }
-  } catch (exception, stackTrace) {
+  } on PlatformException catch (err, s) {
+    if (!err.message.contains('User cancelled flow')) {
+      print(err);
+      await Sentry.captureException(err, stackTrace: s);
+    }
+  } catch (err, s) {
     // final snackBar = SnackBar(content: Text('Authenticaton Failed!'));
     // Scaffold.of(context).showSnackBar(snackBar);
 
-    print(exception);
-    await Sentry.captureException(
-      exception,
-      stackTrace: stackTrace,
-    );
+    print(err);
+    await Sentry.captureException(err, stackTrace: s);
   }
   if (switchPage)
     Provider.of<UtilsProvider>(context, listen: false)
