@@ -106,6 +106,7 @@ class HeroScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
+                      settings: const RouteSettings(name: "/home"),
                       builder: (context) => DashboardScreen(),
                     ),
                   );
@@ -126,6 +127,7 @@ class HeroScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
+                    settings: const RouteSettings(name: "/home"),
                     builder: (context) => DashboardScreen(),
                   ),
                 );
