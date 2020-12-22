@@ -190,9 +190,11 @@ class _VideoCallState extends State<VideoCall> {
   @override
   void dispose() {
     //cleanup the socket
-    socket.clearListeners();
-    socket.dispose();
-    socket = null;
+    if (socket != null) {
+      socket.clearListeners();
+      socket.dispose();
+      socket = null;
+    }
 
     // cleanup the video renderers
     localRenderer.dispose();
