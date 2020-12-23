@@ -4,6 +4,16 @@ import 'package:socket_io_client/socket_io_client.dart' as io;
 
 Map<String, dynamic> _iceServers = {
   'iceServers': [
+    {
+      'urls': "turn:coturn.pti.org.py:3478",
+      'username': "coturn",
+      'credential': "VHJ1cGVyMjB4MjB4Lgo"
+    },
+    {
+      'urls': "stun:coturn.pti.org.py:3478",
+      'username': "coturn",
+      'credential': "VHJ1cGVyMjB4MjB4Lgo"
+    },
     {'url': 'stun:stun.l.google.com:19302'},
   ]
 };
