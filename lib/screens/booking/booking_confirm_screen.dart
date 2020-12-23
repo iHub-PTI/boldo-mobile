@@ -76,8 +76,9 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
         const SizedBox(
           height: 10,
         ),
-        Padding(
+        Container(
           padding: const EdgeInsets.only(left: 16, right: 16),
+          margin: const EdgeInsets.only(bottom: 16),
           child: CustomFormButton(
             text: "Confirmar",
             loading: _loading,
