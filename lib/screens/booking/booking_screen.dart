@@ -205,9 +205,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   handleBookingHour: (date) =>
                       handleBookingHour(bookingHour: date),
                 ),
-              const SizedBox(
-                height: 12,
-              ),
+              const SizedBox(height: 12),
               if (_loadingCalendar)
                 const Center(
                     child: CircularProgressIndicator(
@@ -256,9 +254,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                 fontWeight: FontWeight.normal, fontSize: 14),
                           ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                         if (_availabilitiesForDay.isEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 20.0),
@@ -330,9 +326,7 @@ class _BookingScreenState extends State<BookingScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 40,
-                        ),
+                        const SizedBox(height: 40),
                         Container(
                           padding: const EdgeInsets.only(left: 16, right: 16),
                           margin: const EdgeInsets.only(bottom: 16),
