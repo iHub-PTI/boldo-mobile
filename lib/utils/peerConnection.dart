@@ -13,8 +13,7 @@ Map<String, dynamic> _iceServers = {
       'urls': "stun:coturn.pti.org.py:3478",
       'username': "coturn",
       'credential': "VHJ1cGVyMjB4MjB4Lgo"
-    },
-    {'url': 'stun:stun.l.google.com:19302'},
+    }
   ]
 };
 
