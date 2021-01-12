@@ -70,70 +70,77 @@ class AppointmentCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "${getDoctorPrefix(appointment.doctor.gender)}${appointment.doctor.familyName}",
-                style: const TextStyle(
-                  color: Constants.extraColor400,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              if (appointment.doctor.specializations != null &&
-                  appointment.doctor.specializations.isNotEmpty)
-                Row(
-                  children: [
-                    for (int i = 0;
-                        i < appointment.doctor.specializations.length;
-                        i++)
-                      Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: i == 0 ? 0 : 3.0),
-                            child: Text(
-                              "${appointment.doctor.specializations[i].description}${appointment.doctor.specializations.length > 1 && i == 0 ? "," : ""}",
-                              style: const TextStyle(
-                                color: Constants.extraColor300,
-                                fontSize: 14,
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.7,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${getDoctorPrefix(appointment.doctor.gender)}${appointment.doctor.familyName}",
+                    style: const TextStyle(
+                      color: Constants.extraColor400,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  if (appointment.doctor.specializations != null &&
+                      appointment.doctor.specializations.isNotEmpty)
+                    Row(
+                      children: [
+                        for (int i = 0;
+                            i < appointment.doctor.specializations.length;
+                            i++)
+                          Row(
+                            children: [
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(left: i == 0 ? 0 : 3.0),
+                                child: Text(
+                                  "${appointment.doctor.specializations[i].description}${appointment.doctor.specializations.length > 1 && i == 0 ? "," : ""}",
+                                  style: const TextStyle(
+                                    color: Constants.extraColor300,
+                                    fontSize: 14,
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                  ],
-                ),
-              if (isToday)
-                Column(
-                  children: [
-                    const SizedBox(height: 4),
-                    Text(
-                      "¡Hoy! - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
-                      style: const TextStyle(
-                        color: Constants.primaryColor600,
-                        fontSize: 12,
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              if (daysDifference > 0)
-                Column(
-                  children: [
-                    const SizedBox(height: 4),
-                    Text(
-                      "En $daysDifference días - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
-                      style: const TextStyle(
-                        color: Constants.otherColor200,
-                        fontSize: 12,
-                      ),
+                  if (isToday)
+                    Column(
+                      children: [
+                        const SizedBox(height: 4),
+                        Text(
+                          "¡Hoy! - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
+                          style: const TextStyle(
+                            color: Constants.primaryColor600,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-            ],
+                  if (daysDifference > 0)
+                    Column(
+                      children: [
+                        const SizedBox(height: 4),
+                        Text(
+                          "En $daysDifference días - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
+                          style: const TextStyle(
+                            color: Constants.otherColor200,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
           )
         ],
       ),

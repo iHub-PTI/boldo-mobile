@@ -18,7 +18,8 @@ void initDio({@required GlobalKey<NavigatorState> navKey}) {
   dio.options.baseUrl = baseUrl;
   dio.options.headers['content-Type'] = 'application/json';
   dio.options.headers['accept'] = 'application/json';
-
+  dio.options.connectTimeout = 5000; //5s
+  dio.options.receiveTimeout = 3000;
   String accessToken;
   FlutterAppAuth appAuth = FlutterAppAuth();
   //setup interceptors
