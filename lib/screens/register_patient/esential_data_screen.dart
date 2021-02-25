@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../constants.dart';
+import 'email_password_screen.dart';
 
 class EsentialDataScreen extends StatefulWidget {
   EsentialDataScreen({Key key}) : super(key: key);
@@ -159,7 +160,15 @@ class _EsentialDataScreenState extends State<EsentialDataScreen> {
               child: SizedBox(
                 width: 350,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        settings: const RouteSettings(name: "/register_email"),
+                        builder: (context) => EmailPasswordScreen(),
+                      ),
+                    );
+                  },
                   child: const Text("Siguiente"),
                 ),
               ),

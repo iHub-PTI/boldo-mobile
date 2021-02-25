@@ -69,7 +69,7 @@ class HeroScreen extends StatelessWidget {
             ),
             const TopBannerPresentation(),
             const SizedBox(
-              height: 30,
+              height: 20,
             ),
             SizedBox(
               width: safeBlockHorizontal * 70,
@@ -103,7 +103,6 @@ class HeroScreen extends StatelessWidget {
                 return _buildPageViewIndicator(context, index);
               },
             ),
-            const Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -255,6 +254,7 @@ class HeroScreen extends StatelessWidget {
     }
     return SizedBox(
       width: 300,
+      height: 70,
       child: Text(
         title,
         style: boldoSubTextStyle,
