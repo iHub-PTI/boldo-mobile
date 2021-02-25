@@ -1,5 +1,6 @@
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
+import 'package:boldo/utils/top_banner_presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,7 +34,14 @@ class HeroScreen extends StatelessWidget {
       boxFit: BoxFit.cover,
       alignment: Alignment.bottomCenter,
       index: 2,
-    )
+    ),
+    CarouselSlide(
+      key: UniqueKey(),
+      image: 'assets/images/hero3.svg',
+      boxFit: BoxFit.cover,
+      alignment: Alignment.bottomCenter,
+      index: 3,
+    ),
   ];
 
   final pageIndexNotifier = ValueNotifier<int>(0);
@@ -43,44 +51,50 @@ class HeroScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     dynamic _mediaQueryData = MediaQuery.of(context);
     double screenWidth = _mediaQueryData.size.width;
+    double screenheight = _mediaQueryData.size.height;
 
     double _safeAreaHorizontal =
         _mediaQueryData.padding.left + _mediaQueryData.padding.right;
 
     double safeBlockHorizontal = (screenWidth - _safeAreaHorizontal) / 100;
-
+    double safeCardHeight = screenheight * 0.3;
+    double defaultTopPadding = screenheight * 0.1;
     return Scaffold(
-      body: SafeArea(
+      body: Center(
         child: Column(
           children: [
-            const Spacer(),
-            Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: safeBlockHorizontal * 70,
-                child: AspectRatio(
-                  aspectRatio: 5.0 / 6.7,
-                  child: Card(
-                    margin: EdgeInsets.zero,
-                    clipBehavior: Clip.antiAlias,
-                    elevation: 6,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: PageView.builder(
-                      itemCount: 3,
-                      controller: pageController,
-                      onPageChanged: (i) => pageIndexNotifier.value = i,
-                      itemBuilder: (context, int currentIdx) {
-                        return items[currentIdx];
-                      },
-                    ),
+            SizedBox(
+              height: defaultTopPadding,
+            ),
+            const TopBannerPresentation(),
+            const SizedBox(
+              height: 30,
+            ),
+            SizedBox(
+              width: safeBlockHorizontal * 70,
+              height: safeCardHeight,
+              child: AspectRatio(
+                aspectRatio: 5.0 / 6.7,
+                child: Card(
+                  margin: EdgeInsets.zero,
+                  clipBehavior: Clip.antiAlias,
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: PageView.builder(
+                    itemCount: 4,
+                    controller: pageController,
+                    onPageChanged: (i) => pageIndexNotifier.value = i,
+                    itemBuilder: (context, int currentIdx) {
+                      return items[currentIdx];
+                    },
                   ),
                 ),
               ),
             ),
             const SizedBox(
-              height: 15,
+              height: 30,
             ),
             ValueListenableBuilder(
               valueListenable: pageIndexNotifier,
@@ -89,29 +103,55 @@ class HeroScreen extends StatelessWidget {
               },
             ),
             const Spacer(),
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: Constants.primaryColor500,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Constants.primaryColor500,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  onPressed: () async {
+                    final SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.setBool("onboardingCompleted", true);
+
+                    Provider.of<UtilsProvider>(context, listen: false)
+                        .setSelectedPageIndex(pageIndex: 2);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        settings: const RouteSettings(name: "/home"),
+                        builder: (context) => DashboardScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text("Iniciar Sesión"),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Constants.extraColor100,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  onPressed: () async {
+                    final SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.setBool("onboardingCompleted", true);
+                  },
+                  child: const Text(
+                    "Registrarse",
+                    style: TextStyle(color: Colors.black54),
                   ),
                 ),
-                onPressed: () async {
-                  final SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  prefs.setBool("onboardingCompleted", true);
-
-                  Provider.of<UtilsProvider>(context, listen: false)
-                      .setSelectedPageIndex(pageIndex: 2);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: const RouteSettings(name: "/home"),
-                      builder: (context) => DashboardScreen(),
-                    ),
-                  );
-                },
-                child: const Text("Iniciar Sesión")),
+              ],
+            ),
             const Spacer(),
             const Text(
               "¿Quieres dar un vistazo?",
@@ -150,7 +190,7 @@ class HeroScreen extends StatelessWidget {
       children: [
         PageViewIndicator(
           pageIndexNotifier: pageIndexNotifier,
-          length: 3,
+          length: 4,
           normalBuilder: (animationController, index) => Circle(
             size: 10,
             color: index < indexPageView
@@ -181,19 +221,37 @@ class HeroScreen extends StatelessWidget {
         const SizedBox(
           height: 20,
         ),
-        SizedBox(
-          width: 220,
-          child: Text(
-            indexPageView == 0
-                ? "Acceso a médicos de confianza de forma instantánea"
-                : indexPageView == 1
-                    ? "Reserva una consulta en línea con un médico"
-                    : "Fácil acceso a tus citas pasadas y futuras",
-            style: boldoSubTextStyle,
-            textAlign: TextAlign.center,
-          ),
-        ),
+        descriptionHero(indexPageView),
       ],
+    );
+  }
+
+  SizedBox descriptionHero(int indexPageView) {
+    String title = "";
+    switch (indexPageView) {
+      case 0:
+        title = "¡Tu historial clínico centralizado en tus manos!";
+        break;
+      case 1:
+        title = "¡Consultas médicas desde la comodidad de tu hogar!";
+        break;
+      case 2:
+        title =
+            "¡Todas tus recetas médicas y las de tu familia en un solo lugar!";
+        break;
+      case 3:
+        title =
+            "¡Durante las consultas médicas podrás proveer al médico con información en tiempo real!";
+        break;
+      default:
+    }
+    return SizedBox(
+      width: 300,
+      child: Text(
+        title,
+        style: boldoSubTextStyle,
+        textAlign: TextAlign.center,
+      ),
     );
   }
 }
