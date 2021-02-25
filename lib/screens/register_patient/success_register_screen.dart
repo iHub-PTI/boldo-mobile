@@ -41,7 +41,7 @@ class _SuccessRegisterScreenState extends State<SuccessRegisterScreen> {
                 ),
                 Text(
                   "¡Bienvenido a Boldo!",
-                  style: boldoHeadingTextStyle.copyWith(fontSize: 15),
+                  style: boldoHeadingTextStyle.copyWith(fontSize: 18),
                 ),
                 const SizedBox(
                   height: 20,

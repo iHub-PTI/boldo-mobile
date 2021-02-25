@@ -1,3 +1,4 @@
+import 'package:boldo/screens/dashboard/tabs/home_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';
@@ -12,7 +13,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/provider/utils_provider.dart';
 
-import 'package:boldo/screens/dashboard/tabs/home_tab.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/dashboard/tabs/settings_tab.dart';
 import 'package:boldo/provider/auth_provider.dart';

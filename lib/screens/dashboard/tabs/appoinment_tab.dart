@@ -1,11 +1,6 @@
 import 'dart:async';
 import 'dart:isolate';
-import 'package:boldo/constants.dart';
-import 'package:boldo/network/http.dart';
-import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/screens/Call/components/call_ended_popup.dart';
-import 'package:boldo/screens/dashboard/tabs/appoinment_tab.dart';
-import 'package:boldo/utils/helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state.dart';
@@ -23,14 +18,20 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeTab extends StatefulWidget {
-  HomeTab({Key key}) : super(key: key);
+import '../../../utils/helpers.dart';
+import '../../../network/http.dart';
+import '../../../constants.dart';
+import '../../../provider/auth_provider.dart';
+
+class AppoinmentTab extends StatefulWidget {
+  AppoinmentTab({Key key}) : super(key: key);
 
   @override
-  _HomeTabState createState() => _HomeTabState();
+  _AppoinmentTabState createState() => _AppoinmentTabState();
 }
 
-class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
+class _AppoinmentTabState extends State<AppoinmentTab>
+    with SingleTickerProviderStateMixin {
   TabController _tabController;
 
   Isolate _isolate;
@@ -269,294 +270,180 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
 
+    final List<String> tabsList = ['Próximas Citas', 'Citas Pasadas'];
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.white,
-          leadingWidth: double.infinity,
-          toolbarHeight: 110,
-          flexibleSpace: Center(
-            child: Container(
-              margin: const EdgeInsets.only(top: 30, left: 6),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(width: 10),
-                  Selector<UserProvider, String>(
-                    builder: (_, data, __) {
-                      return SizedBox(
-                        height: 60,
-                        width: 60,
-                        child: Card(
-                          margin: const EdgeInsets.all(0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          elevation: 9,
-                          child: ClipOval(
-                            clipBehavior: Clip.antiAlias,
-                            child: data == null && profileURL == null
-                                ? SvgPicture.asset(
-                                    isAuthenticated
-                                        ? gender == "female"
-                                            ? 'assets/images/femalePatient.svg'
-                                            : 'assets/images/malePatient.svg'
-                                        : 'assets/images/LogoIcon.svg',
-                                  )
-                                : CachedNetworkImage(
-                                    fit: BoxFit.cover,
-                                    imageUrl: data ?? profileURL,
-                                    progressIndicatorBuilder:
-                                        (context, url, downloadProgress) =>
-                                            Padding(
-                                      padding: const EdgeInsets.all(26.0),
-                                      child: CircularProgressIndicator(
-                                        value: downloadProgress.progress,
-                                        valueColor:
-                                            const AlwaysStoppedAnimation<Color>(
-                                                Constants.primaryColor400),
-                                        backgroundColor:
-                                            Constants.primaryColor600,
-                                      ),
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error),
-                                  ),
-                          ),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
+        leadingWidth: double.infinity,
+        toolbarHeight: 110,
+        flexibleSpace: Center(
+          child: Container(
+            margin: const EdgeInsets.only(top: 30, left: 6),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(width: 10),
+                Selector<UserProvider, String>(
+                  builder: (_, data, __) {
+                    return SizedBox(
+                      height: 60,
+                      width: 60,
+                      child: Card(
+                        margin: const EdgeInsets.all(0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(999),
                         ),
-                      );
-                    },
-                    selector: (buildContext, userProvider) =>
-                        userProvider.getPhotoUrl,
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Hola!",
-                        style: boldoHeadingTextStyle.copyWith(
-                            fontSize: 24, color: Constants.primaryColor500),
+                        elevation: 9,
+                        child: ClipOval(
+                          clipBehavior: Clip.antiAlias,
+                          child: data == null && profileURL == null
+                              ? SvgPicture.asset(
+                                  isAuthenticated
+                                      ? gender == "female"
+                                          ? 'assets/images/femalePatient.svg'
+                                          : 'assets/images/malePatient.svg'
+                                      : 'assets/images/LogoIcon.svg',
+                                )
+                              : CachedNetworkImage(
+                                  fit: BoxFit.cover,
+                                  imageUrl: data ?? profileURL,
+                                  progressIndicatorBuilder:
+                                      (context, url, downloadProgress) =>
+                                          Padding(
+                                    padding: const EdgeInsets.all(26.0),
+                                    child: CircularProgressIndicator(
+                                      value: downloadProgress.progress,
+                                      valueColor:
+                                          const AlwaysStoppedAnimation<Color>(
+                                              Constants.primaryColor400),
+                                      backgroundColor:
+                                          Constants.primaryColor600,
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                ),
+                        ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        DateFormat('EEEE, dd MMMM')
-                            .format(DateTime.now())
-                            .capitalize(),
-                      ),
-                    ],
-                  )
-                ],
-              ),
+                    );
+                  },
+                  selector: (buildContext, userProvider) =>
+                      userProvider.getPhotoUrl,
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "¡Bienvenido!",
+                      style: boldoHeadingTextStyle.copyWith(
+                          fontSize: 24, color: Constants.primaryColor500),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      DateFormat('EEEE, dd MMMM')
+                          .format(DateTime.now())
+                          .capitalize(),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
         ),
-        body: ListView(
-          padding: const EdgeInsets.all(8),
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Center(
-                child: Text(
-                  'Estamos para ayudarlo, ¿Qué deseas hacer?',
-                  style: boldoSubTextStyle.copyWith(fontSize: 17),
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    settings: const RouteSettings(name: "/appoinment"),
-                    builder: (context) => AppoinmentTab(),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Card(
-                    elevation: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Quiero agendar una consulta',
-                            style: boldoHeadingTextStyle.copyWith(fontSize: 15),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Row(
+      ),
+      body: _dataFetchError
+          ? DataFetchErrorWidget(retryCallback: getAppointmentsData)
+          : _loading
+              ? const Center(
+                  child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                  backgroundColor: Constants.primaryColor600,
+                ))
+              : !isAuthenticated || !hasAppointments
+                  ? const EmptyAppointmentsState(
+                      size: "big", text: "Agrega tu primera cita")
+                  : SmartRefresher(
+                      enablePullDown: true,
+                      enablePullUp: false,
+                      header: const MaterialClassicHeader(
+                        color: Constants.primaryColor800,
+                      ),
+                      controller: _refreshController,
+                      onRefresh: _onRefresh,
+                      child: CustomScrollView(
+                        slivers: [
+                          SliverToBoxAdapter(
+                            child: Column(
                               children: [
-                                Text(
-                                  'Consulta médica de manera remota',
-                                  style:
-                                      boldoSubTextStyle.copyWith(fontSize: 13),
-                                ),
-                                const Spacer(),
-                                const Padding(
-                                  padding: EdgeInsets.only(right: 8.0),
-                                  child: Icon(
-                                    Icons.phone_callback_outlined,
-                                    color: Constants.primaryColor500,
-                                  ),
-                                ),
+                                for (Appointment appointment
+                                    in waitingRoomAppointments)
+                                  WaitingRoomCard(
+                                      appointment: appointment,
+                                      getAppointmentsData: getAppointmentsData),
                               ],
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              'Sin consultas agendadas',
-                              style: boldoSubTextStyle.copyWith(
-                                  fontSize: 13,
-                                  color: Constants.primaryColor500),
+                          SliverAppBar(
+                            automaticallyImplyLeading: false,
+                            pinned: true,
+                            flexibleSpace: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 18, right: 18),
+                              child: TabBar(
+                                controller: _tabController,
+                                labelColor: Constants.primaryColor600,
+                                unselectedLabelColor: Constants.extraColor300,
+                                indicatorColor: Constants.primaryColor600,
+                                labelStyle: const TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.w500),
+                                tabs: tabsList
+                                    .map((String name) => Tab(text: name))
+                                    .toList(),
+                              ),
                             ),
                           ),
-                        ],
-                      ),
-                    )),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Card(
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Quiero ver mis recestas médicas',
-                          style: boldoHeadingTextStyle.copyWith(fontSize: 15),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Lista de recetas asignadas al paciente',
-                                style: boldoSubTextStyle.copyWith(fontSize: 13),
-                              ),
-                              const Spacer(),
-                              const Padding(
-                                padding: EdgeInsets.only(right: 8.0),
-                                child: Icon(Icons.description_outlined,
-                                    color: Constants.secondaryColor500),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            'Notificación mas reciente',
-                            style: boldoSubTextStyle.copyWith(
-                                fontSize: 13,
-                                color: Constants.secondaryColor500),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Card(
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Quiero explorar registros clinicos',
-                          style: boldoHeadingTextStyle.copyWith(fontSize: 15),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Conjunto de datos clínicos del paciente',
-                                style: boldoSubTextStyle.copyWith(fontSize: 13),
-                              ),
-                              const Spacer(),
-                              const Padding(
-                                padding: EdgeInsets.only(right: 8.0),
-                                child: Icon(
-                                  Icons.assignment,
-                                  color: Constants.primaryColor500,
+                          if ((futureAppointments.length > 0 &&
+                                  _selectedIndex == 0) ||
+                              (pastAppointments.length > 0 &&
+                                  _selectedIndex == 1))
+                            SliverList(
+                              delegate: SliverChildListDelegate(
+                                List<Widget>.generate(
+                                  _selectedIndex == 0
+                                      ? futureAppointments.length
+                                      : pastAppointments.length,
+                                  (int index) => AppointmentCard(
+                                    appointment: _selectedIndex == 0
+                                        ? futureAppointments[index]
+                                        : pastAppointments[index],
+                                  ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            'Resultados actualizados hace 2 dias',
-                            style: boldoSubTextStyle.copyWith(
-                                fontSize: 13, color: Constants.primaryColor500),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Card(
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Quiero ver mis mediciones médicas',
-                          style: boldoHeadingTextStyle.copyWith(fontSize: 15),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Conjunto de dispositivos disponibles',
-                                style: boldoSubTextStyle.copyWith(fontSize: 13),
+                            ),
+                          if (futureAppointments.length == 0 &&
+                              _selectedIndex == 0)
+                            const SliverFillRemaining(
+                                child: EmptyAppointmentsState(
+                              text: "Agrega tu próxima cita",
+                              size: "small",
+                            )),
+                          if (pastAppointments.length == 0 &&
+                              _selectedIndex == 1)
+                            const SliverToBoxAdapter(
+                                child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 36.0),
+                                child: Text("No hay citas pasadas"),
                               ),
-                              const Spacer(),
-                              const Padding(
-                                padding: EdgeInsets.only(right: 8.0),
-                                child: Icon(Icons.memory,
-                                    color: Constants.secondaryColor500),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            '1 dispositivo pendiente de devolución',
-                            style: boldoSubTextStyle.copyWith(
-                                fontSize: 13,
-                                color: Constants.secondaryColor500),
-                          ),
-                        ),
-                      ],
+                            ))
+                        ],
+                      ),
                     ),
-                  )),
-            ),
-          ],
-        ));
+    );
   }
 }
 

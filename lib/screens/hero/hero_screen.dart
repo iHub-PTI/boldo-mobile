@@ -237,10 +237,11 @@ class HeroScreen extends StatelessWidget {
     String title = "";
     switch (indexPageView) {
       case 0:
-        title = "¡Tu historial clínico centralizado en tus manos!";
+        title = "¡Consultas médicas desde la comodidad de tu hogar!";
         break;
       case 1:
-        title = "¡Consultas médicas desde la comodidad de tu hogar!";
+        title = "¡Tu historial clínico centralizado en tus manos!";
+
         break;
       case 2:
         title =
