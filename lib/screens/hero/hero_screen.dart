@@ -1,5 +1,6 @@
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
+import 'package:boldo/screens/register_patient/esential_data_screen.dart';
 import 'package:boldo/utils/top_banner_presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -114,9 +115,9 @@ class HeroScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () async {
-                    final SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    prefs.setBool("onboardingCompleted", true);
+                    // final SharedPreferences prefs =
+                    //     await SharedPreferences.getInstance();
+                    // prefs.setBool("onboardingCompleted", true);
 
                     Provider.of<UtilsProvider>(context, listen: false)
                         .setSelectedPageIndex(pageIndex: 2);
@@ -141,9 +142,16 @@ class HeroScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () async {
-                    final SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    prefs.setBool("onboardingCompleted", true);
+                    // final SharedPreferences prefs =
+                    //     await SharedPreferences.getInstance();
+                    // prefs.setBool("onboardingCompleted", true);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        settings: const RouteSettings(name: "/register"),
+                        builder: (context) => EsentialDataScreen(),
+                      ),
+                    );
                   },
                   child: const Text(
                     "Registrarse",
@@ -160,9 +168,9 @@ class HeroScreen extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                final SharedPreferences prefs =
-                    await SharedPreferences.getInstance();
-                prefs.setBool("onboardingCompleted", true);
+                // final SharedPreferences prefs =
+                //     await SharedPreferences.getInstance();
+                // prefs.setBool("onboardingCompleted", true);
 
                 Navigator.push(
                   context,
