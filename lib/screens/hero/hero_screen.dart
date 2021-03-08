@@ -1,5 +1,6 @@
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
+import 'package:boldo/screens/register_patient/credit_card_screen.dart';
 import 'package:boldo/screens/register_patient/esential_data_screen.dart';
 import 'package:boldo/screens/register_patient/family_members_screen.dart';
 import 'package:boldo/utils/top_banner_presentation.dart';
@@ -149,7 +150,7 @@ class HeroScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         settings: const RouteSettings(name: "/register"),
-                        builder: (context) => FamilyMemberScreen(),
+                        builder: (context) => CreditCardScreen(),
                       ),
                     );
                   },
