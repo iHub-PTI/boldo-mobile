@@ -1,6 +1,7 @@
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/screens/register_patient/esential_data_screen.dart';
+import 'package:boldo/screens/register_patient/family_members_screen.dart';
 import 'package:boldo/utils/top_banner_presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -148,7 +149,7 @@ class HeroScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         settings: const RouteSettings(name: "/register"),
-                        builder: (context) => EsentialDataScreen(),
+                        builder: (context) => FamilyMemberScreen(),
                       ),
                     );
                   },
@@ -159,33 +160,33 @@ class HeroScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const Spacer(),
-            const Text(
-              "¿Quieres dar un vistazo?",
-              style: boldoSubTextStyle,
-              textAlign: TextAlign.center,
-            ),
-            TextButton(
-              onPressed: () async {
-                // final SharedPreferences prefs =
-                //     await SharedPreferences.getInstance();
-                // prefs.setBool("onboardingCompleted", true);
+            // const Spacer(),
+            // const Text(
+            //   "¿Quieres dar un vistazo?",
+            //   style: boldoSubTextStyle,
+            //   textAlign: TextAlign.center,
+            // ),
+            // TextButton(
+            //   onPressed: () async {
+            //     // final SharedPreferences prefs =
+            //     //     await SharedPreferences.getInstance();
+            //     // prefs.setBool("onboardingCompleted", true);
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    settings: const RouteSettings(name: "/home"),
-                    builder: (context) => DashboardScreen(),
-                  ),
-                );
-              },
-              child: Text(
-                'Explora Boldo',
-                style: boldoSubTextStyle.copyWith(
-                    color: Constants.secondaryColor500),
-              ),
-            ),
-            const Spacer(),
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         settings: const RouteSettings(name: "/home"),
+            //         builder: (context) => DashboardScreen(),
+            //       ),
+            //     );
+            //   },
+            //   child: Text(
+            //     'Explora Boldo',
+            //     style: boldoSubTextStyle.copyWith(
+            //         color: Constants.secondaryColor500),
+            //   ),
+            // ),
+            // const Spacer(),
           ],
         ),
       ),
