@@ -1,3 +1,4 @@
+import 'package:boldo/models/Patient.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -14,6 +15,10 @@ class EsentialDataScreen extends StatefulWidget {
 class _EsentialDataScreenState extends State<EsentialDataScreen> {
   bool _manSelected = true;
   bool _girlSelected = false;
+  var _ciController = TextEditingController();
+  var _nameController = TextEditingController();
+  var _lastNameController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,158 +34,201 @@ class _EsentialDataScreenState extends State<EsentialDataScreen> {
       body: Container(
         padding: const EdgeInsets.all(17.0),
         width: MediaQuery.of(context).size.width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.black,
-                      size: 17,
-                    ),
-                  ),
-                  Text("Crear Cuenta",
-                      style: boldoHeadingTextStyle.copyWith(fontSize: 20)),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Text("Cédula de identidad",
-                style: boldoHeadingTextStyle.copyWith(fontSize: 15)),
-            const SizedBox(
-              height: 10,
-            ),
-            const TextField(),
-            const SizedBox(
-              height: 20,
-            ),
-            Text("Nombre", style: boldoHeadingTextStyle.copyWith(fontSize: 15)),
-            const SizedBox(
-              height: 10,
-            ),
-            const TextField(),
-            const SizedBox(
-              height: 20,
-            ),
-            Text("Apellido",
-                style: boldoHeadingTextStyle.copyWith(fontSize: 15)),
-            const SizedBox(
-              height: 10,
-            ),
-            const TextField(),
-            const SizedBox(
-              height: 20,
-            ),
-            Text("Sexo", style: boldoHeadingTextStyle.copyWith(fontSize: 15)),
-            const SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0),
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        _manSelected = !_manSelected;
-                        if (_manSelected == true) _girlSelected = false;
-                      });
-                    },
-                    child: Container(
-                      height: 20,
-                      width: 20,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                          border: _manSelected
-                              ? Border.all(
-                                  width: 4, color: Constants.primaryColor500)
-                              : Border.all(width: 1, color: Colors.grey)),
-                      child: Padding(
-                          padding: const EdgeInsets.all(3.0),
-                          child: Container()),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Text("Masculino",
-                      style: boldoHeadingTextStyle.copyWith(fontSize: 15))
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0),
-              child: Row(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        _girlSelected = !_girlSelected;
-                        if (_girlSelected == true) _manSelected = false;
-                      });
-                    },
-                    child: Container(
-                        height: 20,
-                        width: 20,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                            border: _girlSelected
-                                ? Border.all(
-                                    width: 4, color: Constants.primaryColor500)
-                                : Border.all(width: 1, color: Colors.grey)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(3.0),
-                          child: Container(),
-                        )),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Text("Femenino",
-                      style: boldoHeadingTextStyle.copyWith(fontSize: 15)),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            Center(
-              child: SizedBox(
-                width: 350,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        settings: const RouteSettings(name: "/register_email"),
-                        builder: (context) => EmailPasswordScreen(),
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: const Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.black,
+                          size: 17,
+                        ),
                       ),
-                    );
-                  },
-                  child: const Text("Siguiente"),
+                      Text("Crear Cuenta",
+                          style: boldoHeadingTextStyle.copyWith(fontSize: 20)),
+                    ],
+                  ),
                 ),
-              ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text("Cédula de identidad",
+                    style: boldoHeadingTextStyle.copyWith(fontSize: 15)),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: _ciController,
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Ingrese su número de Cedula';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text("Nombre",
+                    style: boldoHeadingTextStyle.copyWith(fontSize: 15)),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: _nameController,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Ingrese su Nombre';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text("Apellido",
+                    style: boldoHeadingTextStyle.copyWith(fontSize: 15)),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: _lastNameController,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Ingrese su Apellido';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text("Sexo",
+                    style: boldoHeadingTextStyle.copyWith(fontSize: 15)),
+                const SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            _manSelected = !_manSelected;
+                            if (_manSelected == true) _girlSelected = false;
+                          });
+                        },
+                        child: Container(
+                          height: 20,
+                          width: 20,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                              border: _manSelected
+                                  ? Border.all(
+                                      width: 4,
+                                      color: Constants.primaryColor500)
+                                  : Border.all(width: 1, color: Colors.grey)),
+                          child: Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: Container()),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text("Masculino",
+                          style: boldoHeadingTextStyle.copyWith(fontSize: 15))
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            _girlSelected = !_girlSelected;
+                            if (_girlSelected == true) _manSelected = false;
+                          });
+                        },
+                        child: Container(
+                            height: 20,
+                            width: 20,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                                border: _girlSelected
+                                    ? Border.all(
+                                        width: 4,
+                                        color: Constants.primaryColor500)
+                                    : Border.all(width: 1, color: Colors.grey)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: Container(),
+                            )),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text("Femenino",
+                          style: boldoHeadingTextStyle.copyWith(fontSize: 15)),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                Center(
+                  child: SizedBox(
+                    width: 350,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState.validate()) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings:
+                                  const RouteSettings(name: "/register_email"),
+                              builder: (context) => EmailPasswordScreen(
+                                patient: Patient(
+                                    username: _ciController.text,
+                                    firstName: _nameController.text,
+                                    lastName: _lastNameController.text,
+                                    gender: _manSelected == true ? 'M' : 'F'),
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      child: const Text("Siguiente"),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                Center(
+                  child: Text("Paso 1 de 2",
+                      style: boldoSubTextStyle.copyWith(fontSize: 15)),
+                ),
+              ],
             ),
-            const SizedBox(
-              height: 40,
-            ),
-            Center(
-              child: Text("Paso 1 de 2",
-                  style: boldoSubTextStyle.copyWith(fontSize: 15)),
-            ),
-          ],
+          ),
         ),
       ),
     );

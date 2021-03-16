@@ -8,7 +8,6 @@ import 'package:boldo/screens/dashboard/tabs/appoinment_tab.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:boldo/provider/user_provider.dart';
-import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,7 +16,6 @@ import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:boldo/screens/Call/video_call.dart';
-import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';

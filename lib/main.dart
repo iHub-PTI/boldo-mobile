@@ -39,6 +39,7 @@ void main() async {
   bool onboardingCompleted = prefs.getBool("onboardingCompleted") ?? false;
 
   initDio(navKey: navKey);
+  initDioAccesKeycloack(navKey: navKey);
 
   const storage = FlutterSecureStorage();
   String session = await storage.read(key: "access_token");

@@ -122,14 +122,14 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                       width: 150,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              settings:
-                                  const RouteSettings(name: "/register_email"),
-                              builder: (context) => EmailPasswordScreen(),
-                            ),
-                          );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     settings:
+                          //         const RouteSettings(name: "/register_email"),
+                          //     builder: (context) => EmailPasswordScreen(),
+                          //   ),
+                          // );
                         },
                         child: const Text("Registrar"),
                       ),
@@ -146,14 +146,14 @@ class _CreditCardScreenState extends State<CreditCardScreen> {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              settings:
-                                  const RouteSettings(name: "/register_email"),
-                              builder: (context) => EmailPasswordScreen(),
-                            ),
-                          );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     settings:
+                          //         const RouteSettings(name: "/register_email"),
+                          //     builder: (context) => EmailPasswordScreen(),
+                          //   ),
+                          // );
                         },
                         child: Text(
                           "Cancelar",

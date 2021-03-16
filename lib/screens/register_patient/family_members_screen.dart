@@ -184,14 +184,14 @@ class _FamilyMemberScreenState extends State<FamilyMemberScreen> {
                     width: 150,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            settings:
-                                const RouteSettings(name: "/register_email"),
-                            builder: (context) => EmailPasswordScreen(),
-                          ),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     settings:
+                        //         const RouteSettings(name: "/register_email"),
+                        //     builder: (context) => EmailPasswordScreen(),
+                        //   ),
+                        // );
                       },
                       child: const Text("Registrar"),
                     ),
@@ -208,14 +208,14 @@ class _FamilyMemberScreenState extends State<FamilyMemberScreen> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            settings:
-                                const RouteSettings(name: "/register_email"),
-                            builder: (context) => EmailPasswordScreen(),
-                          ),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     settings:
+                        //         const RouteSettings(name: "/register_email"),
+                        //     builder: (context) => EmailPasswordScreen(),
+                        //   ),
+                        // );
                       },
                       child: Text(
                         "Cancelar",
