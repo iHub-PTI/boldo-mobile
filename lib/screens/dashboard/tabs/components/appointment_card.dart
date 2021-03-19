@@ -1,12 +1,13 @@
+import 'package:boldo/network/http.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'package:dio/dio.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
 
-class AppointmentCard extends StatelessWidget {
+class AppointmentCard extends StatefulWidget {
   final Appointment appointment;
 
   const AppointmentCard({
@@ -15,13 +16,18 @@ class AppointmentCard extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _AppointmentCardState createState() => _AppointmentCardState();
+}
+
+class _AppointmentCardState extends State<AppointmentCard> {
+  @override
   Widget build(BuildContext context) {
-    int daysDifference = DateTime.parse(appointment.start)
+    int daysDifference = DateTime.parse(widget.appointment.start)
         .toLocal()
         .difference(DateTime.now())
         .inDays;
     bool isToday = daysDifference == 0 &&
-        !["closed", "locked"].contains(appointment.status);
+        !["closed", "locked"].contains(widget.appointment.status);
 
     return Card(
       elevation: 1.4,
@@ -47,8 +53,8 @@ class AppointmentCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  DateFormat('MMM')
-                      .format(DateTime.parse(appointment.start).toLocal()),
+                  DateFormat('MMM').format(
+                      DateTime.parse(widget.appointment.start).toLocal()),
                   style: TextStyle(
                     color: isToday
                         ? Constants.extraColor100
@@ -57,8 +63,8 @@ class AppointmentCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  DateFormat('dd')
-                      .format(DateTime.parse(appointment.start).toLocal()),
+                  DateFormat('dd').format(
+                      DateTime.parse(widget.appointment.start).toLocal()),
                   style: TextStyle(
                     color: isToday
                         ? Constants.extraColor100
@@ -77,23 +83,28 @@ class AppointmentCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "${getDoctorPrefix(appointment.doctor.gender)}${appointment.doctor.familyName}",
-                    style: const TextStyle(
-                      color: Constants.extraColor400,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                  Positioned(
+                    left: 0.0,
+                    child: Text(
+                      "${getDoctorPrefix(widget.appointment.doctor.gender)}${widget.appointment.doctor.familyName}",
+                      style: const TextStyle(
+                        color: Constants.extraColor400,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   const SizedBox(
                     height: 4,
                   ),
-                  if (appointment.doctor.specializations != null &&
-                      appointment.doctor.specializations.isNotEmpty)
+                  if (widget.appointment.doctor.specializations != null &&
+                      widget.appointment.doctor.specializations.isNotEmpty)
                     Row(
                       children: [
                         for (int i = 0;
-                            i < appointment.doctor.specializations.length;
+                            i <
+                                widget
+                                    .appointment.doctor.specializations.length;
                             i++)
                           Row(
                             children: [
@@ -101,7 +112,7 @@ class AppointmentCard extends StatelessWidget {
                                 padding:
                                     EdgeInsets.only(left: i == 0 ? 0 : 3.0),
                                 child: Text(
-                                  "${appointment.doctor.specializations[i].description}${appointment.doctor.specializations.length > 1 && i == 0 ? "," : ""}",
+                                  "${widget.appointment.doctor.specializations[i].description}${widget.appointment.doctor.specializations.length > 1 && i == 0 ? "," : ""}",
                                   style: const TextStyle(
                                     color: Constants.extraColor300,
                                     fontSize: 14,
@@ -117,7 +128,7 @@ class AppointmentCard extends StatelessWidget {
                       children: [
                         const SizedBox(height: 4),
                         Text(
-                          "¡Hoy! - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
+                          "¡Hoy! - ${DateFormat('HH:mm').format(DateTime.parse(widget.appointment.start).toLocal())}",
                           style: const TextStyle(
                             color: Constants.primaryColor600,
                             fontSize: 12,
@@ -130,7 +141,7 @@ class AppointmentCard extends StatelessWidget {
                       children: [
                         const SizedBox(height: 4),
                         Text(
-                          "En $daysDifference días - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
+                          "En $daysDifference días - ${DateFormat('HH:mm').format(DateTime.parse(widget.appointment.start).toLocal())}",
                           style: const TextStyle(
                             color: Constants.otherColor200,
                             fontSize: 12,
@@ -138,6 +149,13 @@ class AppointmentCard extends StatelessWidget {
                         ),
                       ],
                     ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  showAppoinmentStatus(),
+                  const SizedBox(
+                    height: 10,
+                  ),
                 ],
               ),
             ),
@@ -145,5 +163,46 @@ class AppointmentCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget showAppoinmentStatus() {
+    if (widget.appointment.status == "locked" ||
+        widget.appointment.status == "closed") {
+      return Container();
+    } else if (widget.appointment.reason == null &&
+        widget.appointment.status == "upcoming") {
+      return Container(
+        width: 99,
+        height: 30,
+        child: FlatButton(
+          onPressed: () async {
+            try {
+              final response = await dioKeyCloack.post(
+                "/profile/patient/appointments/cancel/${widget.appointment.id}",
+              );
+              print(response);
+              if (response.data["reason"] != null)
+                widget.appointment.reason = "Cancelled";
+              setState(() {});
+            } on DioError catch (ex) {
+              print(ex);
+            }
+          },
+          color: const Color.fromRGBO(246, 174, 15, 1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: const Text(
+            'Cancelar Cita',
+            style: TextStyle(color: Colors.white, fontSize: 10),
+          ),
+        ),
+      );
+    } else
+      return Container(
+        child: Text('Cita Cancelada',
+            style:
+                TextStyle(color: Colors.red[300], fontWeight: FontWeight.bold)),
+      );
   }
 }

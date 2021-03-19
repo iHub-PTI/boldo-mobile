@@ -2,14 +2,12 @@ import 'dart:convert';
 
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/provider/auth_provider.dart';
-import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/register_patient/success_register_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../network/http.dart';
 import '../../constants.dart';
 
@@ -187,7 +185,7 @@ class _EmailPasswordScreenState extends State<EmailPasswordScreen> {
                                 password: _passwordController.text,
                                 phone: _phoneController.text);
                             Response response = await dioKeyCloack.post(
-                                "/create",
+                                "/keycloack/create",
                                 data: json.encode(_patient.toJson()));
                             print(response);
                             await storage.write(

@@ -7,6 +7,7 @@ class Appointment {
   String start;
   String end;
   String description;
+  String reason;
   Doctor doctor;
 
   Appointment({
@@ -14,6 +15,7 @@ class Appointment {
     @required this.start,
     @required this.end,
     this.description,
+    this.reason,
     @required this.doctor,
     @required this.status,
   });
@@ -24,6 +26,7 @@ class Appointment {
     end = json['end'];
     description = json['description'];
     status = json["status"];
+    reason = json["reason"];
     doctor = json['doctor'] != null ? Doctor.fromJson(json['doctor']) : null;
   }
 
@@ -34,6 +37,7 @@ class Appointment {
     data['end'] = end;
     data["status"] = status;
     data['description'] = description;
+    data['reason'] = reason;
     if (doctor != null) {
       data['doctor'] = doctor.toJson();
     }

@@ -1,5 +1,6 @@
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
+import 'package:boldo/screens/login/login.dart';
 import 'package:boldo/screens/register_patient/credit_card_screen.dart';
 import 'package:boldo/screens/register_patient/esential_data_screen.dart';
 import 'package:boldo/screens/register_patient/family_members_screen.dart';
@@ -116,17 +117,18 @@ class HeroScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () async {
-                    // final SharedPreferences prefs =
-                    //     await SharedPreferences.getInstance();
-                    // prefs.setBool("onboardingCompleted", true);
+                    // authenticateUser(context: context, switchPage: true);
+                    final SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.setBool("onboardingCompleted", true);
 
                     Provider.of<UtilsProvider>(context, listen: false)
                         .setSelectedPageIndex(pageIndex: 2);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        settings: const RouteSettings(name: "/home"),
-                        builder: (context) => DashboardScreen(),
+                        settings: const RouteSettings(name: "/login"),
+                        builder: (context) => Login(),
                       ),
                     );
                   },

@@ -130,10 +130,10 @@ void initDioAccesKeycloack({@required GlobalKey<NavigatorState> navKey}) {
   dioKeyCloack.interceptors.add(
     InterceptorsWrapper(
       onRequest: (RequestOptions options) async {
-        // accessToken = await storage.read(key: "access_token");
-        // options.headers["authorization"] = "bearer $accessToken";
+        accessToken = await storage.read(key: "access_token");
+        options.headers["authorization"] = "bearer $accessToken";
 
-        // return options;
+        return options;
       },
       onError: (DioError error) async {
         if (error.response?.statusCode == 403) {
