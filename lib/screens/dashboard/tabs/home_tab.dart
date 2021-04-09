@@ -431,7 +431,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Quiero ver mis recestas médicas',
+                          'Quiero ver mis recetas médicas',
                           style: boldoHeadingTextStyle.copyWith(fontSize: 15),
                         ),
                         Padding(

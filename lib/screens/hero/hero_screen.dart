@@ -65,132 +65,134 @@ class HeroScreen extends StatelessWidget {
     double defaultTopPadding = screenheight * 0.1;
     return Scaffold(
       body: Center(
-        child: Column(
-          children: [
-            SizedBox(
-              height: defaultTopPadding,
-            ),
-            const TopBannerPresentation(),
-            const SizedBox(
-              height: 20,
-            ),
-            SizedBox(
-              width: safeBlockHorizontal * 70,
-              height: safeCardHeight,
-              child: AspectRatio(
-                aspectRatio: 5.0 / 6.7,
-                child: Card(
-                  margin: EdgeInsets.zero,
-                  clipBehavior: Clip.antiAlias,
-                  elevation: 6,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: PageView.builder(
-                    itemCount: 4,
-                    controller: pageController,
-                    onPageChanged: (i) => pageIndexNotifier.value = i,
-                    itemBuilder: (context, int currentIdx) {
-                      return items[currentIdx];
-                    },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: defaultTopPadding,
+              ),
+              const TopBannerPresentation(),
+              const SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                width: safeBlockHorizontal * 70,
+                height: safeCardHeight,
+                child: AspectRatio(
+                  aspectRatio: 5.0 / 6.7,
+                  child: Card(
+                    margin: EdgeInsets.zero,
+                    clipBehavior: Clip.antiAlias,
+                    elevation: 6,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: PageView.builder(
+                      itemCount: 4,
+                      controller: pageController,
+                      onPageChanged: (i) => pageIndexNotifier.value = i,
+                      itemBuilder: (context, int currentIdx) {
+                        return items[currentIdx];
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            ValueListenableBuilder(
-              valueListenable: pageIndexNotifier,
-              builder: (context, index, child) {
-                return _buildPageViewIndicator(context, index);
-              },
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Constants.primaryColor500,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
+              const SizedBox(
+                height: 30,
+              ),
+              ValueListenableBuilder(
+                valueListenable: pageIndexNotifier,
+                builder: (context, index, child) {
+                  return _buildPageViewIndicator(context, index);
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Constants.primaryColor500,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                    onPressed: () async {
+                      // authenticateUser(context: context, switchPage: true);
+                      final SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      prefs.setBool("onboardingCompleted", true);
+
+                      Provider.of<UtilsProvider>(context, listen: false)
+                          .setSelectedPageIndex(pageIndex: 2);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          settings: const RouteSettings(name: "/login"),
+                          builder: (context) => Login(),
+                        ),
+                      );
+                    },
+                    child: const Text("Iniciar Sesión"),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Constants.extraColor100,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                    onPressed: () async {
+                      // final SharedPreferences prefs =
+                      //     await SharedPreferences.getInstance();
+                      // prefs.setBool("onboardingCompleted", true);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          settings: const RouteSettings(name: "/register"),
+                          builder: (context) => EsentialDataScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      "Registrarse",
+                      style: TextStyle(color: Colors.black54),
                     ),
                   ),
-                  onPressed: () async {
-                    // authenticateUser(context: context, switchPage: true);
-                    final SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    prefs.setBool("onboardingCompleted", true);
+                ],
+              ),
+              // const Spacer(),
+              const Text(
+                "¿Quieres dar un vistazo?",
+                style: boldoSubTextStyle,
+                textAlign: TextAlign.center,
+              ),
+              TextButton(
+                onPressed: () async {
+                  // final SharedPreferences prefs =
+                  //     await SharedPreferences.getInstance();
+                  // prefs.setBool("onboardingCompleted", true);
 
-                    Provider.of<UtilsProvider>(context, listen: false)
-                        .setSelectedPageIndex(pageIndex: 2);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        settings: const RouteSettings(name: "/login"),
-                        builder: (context) => Login(),
-                      ),
-                    );
-                  },
-                  child: const Text("Iniciar Sesión"),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Constants.extraColor100,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      settings: const RouteSettings(name: "/home"),
+                      builder: (context) => DashboardScreen(),
                     ),
-                  ),
-                  onPressed: () async {
-                    // final SharedPreferences prefs =
-                    //     await SharedPreferences.getInstance();
-                    // prefs.setBool("onboardingCompleted", true);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        settings: const RouteSettings(name: "/register"),
-                        builder: (context) => EsentialDataScreen(),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    "Registrarse",
-                    style: TextStyle(color: Colors.black54),
-                  ),
+                  );
+                },
+                child: Text(
+                  'Explora Boldo',
+                  style: boldoSubTextStyle.copyWith(
+                      color: Constants.secondaryColor500),
                 ),
-              ],
-            ),
-            // const Spacer(),
-            // const Text(
-            //   "¿Quieres dar un vistazo?",
-            //   style: boldoSubTextStyle,
-            //   textAlign: TextAlign.center,
-            // ),
-            // TextButton(
-            //   onPressed: () async {
-            //     // final SharedPreferences prefs =
-            //     //     await SharedPreferences.getInstance();
-            //     // prefs.setBool("onboardingCompleted", true);
-
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         settings: const RouteSettings(name: "/home"),
-            //         builder: (context) => DashboardScreen(),
-            //       ),
-            //     );
-            //   },
-            //   child: Text(
-            //     'Explora Boldo',
-            //     style: boldoSubTextStyle.copyWith(
-            //         color: Constants.secondaryColor500),
-            //   ),
-            // ),
-            // const Spacer(),
-          ],
+              ),
+              // const Spacer(),
+            ],
+          ),
         ),
       ),
     );

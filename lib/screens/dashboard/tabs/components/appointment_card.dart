@@ -1,4 +1,5 @@
 import 'package:boldo/network/http.dart';
+import 'package:boldo/screens/Call/components/connection_problem_popup.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
       child: Row(
         children: [
           Container(
-            height: 96,
+            height: 105,
             width: 64,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
@@ -83,15 +84,12 @@ class _AppointmentCardState extends State<AppointmentCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Positioned(
-                    left: 0.0,
-                    child: Text(
-                      "${getDoctorPrefix(widget.appointment.doctor.gender)}${widget.appointment.doctor.familyName}",
-                      style: const TextStyle(
-                        color: Constants.extraColor400,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  Text(
+                    "${getDoctorPrefix(widget.appointment.doctor.gender)}${widget.appointment.doctor.familyName}",
+                    style: const TextStyle(
+                      color: Constants.extraColor400,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(
@@ -154,7 +152,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                   ),
                   showAppoinmentStatus(),
                   const SizedBox(
-                    height: 10,
+                    height: 5,
                   ),
                 ],
               ),
@@ -176,25 +174,28 @@ class _AppointmentCardState extends State<AppointmentCard> {
         height: 30,
         child: FlatButton(
           onPressed: () async {
-            try {
-              final response = await dioKeyCloack.post(
-                "/profile/patient/appointments/cancel/${widget.appointment.id}",
-              );
-              print(response);
-              if (response.data["reason"] != null)
-                widget.appointment.reason = "Cancelled";
-              setState(() {});
-            } on DioError catch (ex) {
-              print(ex);
+            final response = await alertForCancelAppointment(context: context);
+            if (response == true) {
+              try {
+                final response = await dioKeyCloack.post(
+                  "/profile/patient/appointments/cancel/${widget.appointment.id}",
+                );
+                print(response);
+                if (response.data["reason"] != null)
+                  widget.appointment.reason = "Cancelled";
+                setState(() {});
+              } on DioError catch (ex) {
+                print(ex);
+              }
             }
           },
-          color: const Color.fromRGBO(246, 174, 15, 1),
+          color: Constants.primaryColor500,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
           child: const Text(
             'Cancelar Cita',
-            style: TextStyle(color: Colors.white, fontSize: 10),
+            style: TextStyle(color: Constants.extraColor100, fontSize: 10),
           ),
         ),
       );
@@ -204,5 +205,82 @@ class _AppointmentCardState extends State<AppointmentCard> {
             style:
                 TextStyle(color: Colors.red[300], fontWeight: FontWeight.bold)),
       );
+  }
+
+  Future<bool> alertForCancelAppointment(
+      {@required BuildContext context}) async {
+    return showDialog<bool>(
+        useRootNavigator: false,
+        context: context,
+        builder: (
+          BuildContext context,
+        ) {
+          return StatefulBuilder(builder: (context, StateSetter setState) {
+            return WillPopScope(
+              onWillPop: () async {
+                return false;
+              },
+              child: Center(
+                child: Card(
+                  elevation: 11,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Container(
+                    width: 256,
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "¡Cancelar Cita!",
+                          style: TextStyle(
+                              color: Constants.extraColor400,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          "¿Seguro que quieres cancelar tu cita?",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Constants.extraColor300,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              },
+                              child: const Text(
+                                "Cancelar",
+                                style: TextStyle(
+                                  color: Constants.primaryColor600,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            ElevatedButton(
+                              onPressed: () async {
+                                Navigator.of(context).pop(true);
+                                return true;
+                              },
+                              child: const Text("Continuar"),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          });
+        });
   }
 }

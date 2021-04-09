@@ -219,14 +219,15 @@ class _AppoinmentTabState extends State<AppoinmentTab>
         upcomingWaitingRoomAppointments = upcomingWaitingRoomAppointmetsList;
         waitingRoomAppointments = allAppointmets.where(
           (element) {
-            if (element.status == "open") {
+            if (element.status == "open" && element.reason.isEmpty) {
               return true;
             }
 
             if (element.status == "upcoming" &&
                 DateTime.now()
                     .add(const Duration(minutes: 15))
-                    .isAfter(DateTime.parse(element.start).toLocal())) {
+                    .isAfter(DateTime.parse(element.start).toLocal()) &&
+                element.reason.isEmpty) {
               return true;
             }
             return false;
