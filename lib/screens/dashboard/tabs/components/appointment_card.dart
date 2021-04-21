@@ -19,6 +19,9 @@ class AppointmentCard extends StatefulWidget {
   _AppointmentCardState createState() => _AppointmentCardState();
 }
 
+//FIXME: All the cancel appointment flow is control by appointment.reason != null.
+//when user cancel, the appointment history come with a reason why this was cancelled
+//I dont sure if the smooth way to do, but for now was the only params that I can use to managment this.
 class _AppointmentCardState extends State<AppointmentCard> {
   @override
   Widget build(BuildContext context) {
@@ -176,10 +179,11 @@ class _AppointmentCardState extends State<AppointmentCard> {
             final response = await alertForCancelAppointment(context: context);
             if (response == true) {
               try {
-                final response = await dioKeyCloack.post(
+                //Fixme: The cancel Appointment only will work with VPN ative
+                final response = await dioHealthCore.post(
                   "/profile/patient/appointments/cancel/${widget.appointment.id}",
                 );
-                print(response);
+
                 if (response.data["reason"] != null)
                   widget.appointment.reason = "Cancelled";
                 setState(() {});

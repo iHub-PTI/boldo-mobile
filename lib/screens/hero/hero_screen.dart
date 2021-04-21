@@ -1,4 +1,3 @@
-import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:boldo/utils/top_banner_presentation.dart';
 import 'package:flutter/material.dart';

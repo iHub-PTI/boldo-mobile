@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../constants.dart';
-import 'email_password_screen.dart';
 
 class CreditCardScreen extends StatefulWidget {
   CreditCardScreen({Key key}) : super(key: key);
@@ -12,8 +11,8 @@ class CreditCardScreen extends StatefulWidget {
 }
 
 class _CreditCardScreenState extends State<CreditCardScreen> {
-  bool _manSelected = true;
-  bool _girlSelected = false;
+  // bool _manSelected = true;
+  // bool _girlSelected = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(

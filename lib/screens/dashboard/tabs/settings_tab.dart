@@ -11,7 +11,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:boldo/provider/user_provider.dart';
-import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
 import '../../../widgets/wrapper.dart';
 import '../../../provider/auth_provider.dart';

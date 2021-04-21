@@ -91,7 +91,9 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   Future fetchData(DateTime date) async {
-    // TODO: Cancel appointment need appear here again
+    // Fixme: When appoinment is cancelled, the user need to have the capatibilty to create a new one
+    // in the same hour where was cancelled.. that's no possible now, because this endpoint don't bring
+    // again the hour for make a new appoinment.
     try {
       Response response = await dio
           .get("/doctors/${widget.doctor.id}/availability", queryParameters: {

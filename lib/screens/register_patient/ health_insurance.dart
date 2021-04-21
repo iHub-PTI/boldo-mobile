@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../constants.dart';
-import 'email_password_screen.dart';
 
 class HealthInsurance extends StatefulWidget {
   HealthInsurance({Key key}) : super(key: key);

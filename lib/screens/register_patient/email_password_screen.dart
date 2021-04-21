@@ -184,7 +184,7 @@ class _EmailPasswordScreenState extends State<EmailPasswordScreen> {
                                 email: _emailController.text,
                                 password: _passwordController.text,
                                 phone: _phoneController.text);
-                            Response response = await dioKeyCloack.post(
+                            Response response = await dioHealthCore.post(
                                 "/keycloack/create",
                                 data: json.encode(_patient.toJson()));
                             print(response);

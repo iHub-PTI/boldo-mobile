@@ -9,7 +9,7 @@ import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/offline/offline_screen.dart';
 
 var dio = Dio();
-var dioKeyCloack = Dio();
+var dioHealthCore = Dio();
 void initDio({@required GlobalKey<NavigatorState> navKey}) {
   const storage = FlutterSecureStorage();
   String baseUrl = String.fromEnvironment('SERVER_ADDRESS',
@@ -18,8 +18,8 @@ void initDio({@required GlobalKey<NavigatorState> navKey}) {
   dio.options.baseUrl = baseUrl;
   dio.options.headers['content-Type'] = 'application/json';
   dio.options.headers['accept'] = 'application/json';
-  dio.options.connectTimeout = 5000; //5s
-  dio.options.receiveTimeout = 3000;
+  // dio.options.connectTimeout = 5000; //5s
+  // dio.options.receiveTimeout = 3000;
   String accessToken;
   FlutterAppAuth appAuth = FlutterAppAuth();
   //setup interceptors
@@ -116,18 +116,18 @@ void initDio({@required GlobalKey<NavigatorState> navKey}) {
 
 void initDioAccesKeycloack({@required GlobalKey<NavigatorState> navKey}) {
   const storage = FlutterSecureStorage();
-  String baseUrl = String.fromEnvironment('KEYCLOAK_PTI_API',
-      defaultValue: DotEnv().env['KEYCLOAK_PTI_API']);
+  String baseUrl = String.fromEnvironment('HEALTH_PTI_API',
+      defaultValue: DotEnv().env['HEALTH_PTI_API']);
 
-  dioKeyCloack.options.baseUrl = baseUrl;
-  dioKeyCloack.options.headers['content-Type'] = 'application/json';
-  dioKeyCloack.options.headers['accept'] = 'application/json';
-  dioKeyCloack.options.connectTimeout = 5000; //5s
-  dioKeyCloack.options.receiveTimeout = 3000;
+  dioHealthCore.options.baseUrl = baseUrl;
+  dioHealthCore.options.headers['content-Type'] = 'application/json';
+  dioHealthCore.options.headers['accept'] = 'application/json';
+  // dioHealthCore.options.connectTimeout = 5000; //5s
+  // dioHealthCore.options.receiveTimeout = 3000;
   String accessToken;
   FlutterAppAuth appAuth = FlutterAppAuth();
   //setup interceptors
-  dioKeyCloack.interceptors.add(
+  dioHealthCore.interceptors.add(
     InterceptorsWrapper(
       onRequest: (RequestOptions options) async {
         accessToken = await storage.read(key: "access_token");
@@ -159,11 +159,11 @@ void initDioAccesKeycloack({@required GlobalKey<NavigatorState> navKey}) {
           RequestOptions options = error.response.request;
           if ("bearer $accessToken" != options.headers["authorization"]) {
             options.headers["authorization"] = "bearer $accessToken";
-            return dioKeyCloack.request(options.path, options: options);
+            return dioHealthCore.request(options.path, options: options);
           }
-          dioKeyCloack.lock();
-          dioKeyCloack.interceptors.responseLock.lock();
-          dioKeyCloack.interceptors.errorLock.lock();
+          dioHealthCore.lock();
+          dioHealthCore.interceptors.responseLock.lock();
+          dioHealthCore.interceptors.errorLock.lock();
 
           String keycloakRealmAddress = String.fromEnvironment(
               'KEYCLOAK_REALM_ADDRESS',
@@ -181,15 +181,15 @@ void initDioAccesKeycloack({@required GlobalKey<NavigatorState> navKey}) {
             await storage.write(
                 key: "refresh_token", value: result.refreshToken);
             accessToken = result.accessToken;
-            dioKeyCloack.unlock();
-            dioKeyCloack.interceptors.responseLock.unlock();
-            dioKeyCloack.interceptors.errorLock.unlock();
+            dioHealthCore.unlock();
+            dioHealthCore.interceptors.responseLock.unlock();
+            dioHealthCore.interceptors.errorLock.unlock();
             //retry request
-            return dioKeyCloack.request(options.path, options: options);
+            return dioHealthCore.request(options.path, options: options);
           } catch (e) {
-            dioKeyCloack.unlock();
-            dioKeyCloack.interceptors.responseLock.unlock();
-            dioKeyCloack.interceptors.errorLock.unlock();
+            dioHealthCore.unlock();
+            dioHealthCore.interceptors.responseLock.unlock();
+            dioHealthCore.interceptors.errorLock.unlock();
             await storage.deleteAll();
             accessToken = null;
 
