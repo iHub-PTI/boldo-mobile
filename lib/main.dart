@@ -35,6 +35,10 @@ void main() async {
 
   ConnectionStatusSingleton.getInstance().initialize();
 
+  // FIXME: Meanwhile internal login is no successfull implemented and user can't go to dashboard
+  //without an active login,  I use the onBoarding screen to allow user login the app throught webview
+  //another option is automatic redirect to webview if users has no an acitve account, instead show twice the onBoarding..
+
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   bool onboardingCompleted = prefs.getBool("onboardingCompleted") ?? false;
 

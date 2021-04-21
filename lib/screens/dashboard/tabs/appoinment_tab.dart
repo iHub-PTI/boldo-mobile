@@ -200,7 +200,8 @@ class _AppoinmentTabState extends State<AppoinmentTab>
               element.status == "upcoming" &&
               DateTime.now()
                   .add(const Duration(minutes: 15))
-                  .isBefore(DateTime.parse(element.start).toLocal()))
+                  .isBefore(DateTime.parse(element.start).toLocal()) &&
+              element.reason == null)
           .toList();
       if (!mounted) return;
       _receivePort = ReceivePort();
@@ -219,7 +220,7 @@ class _AppoinmentTabState extends State<AppoinmentTab>
         upcomingWaitingRoomAppointments = upcomingWaitingRoomAppointmetsList;
         waitingRoomAppointments = allAppointmets.where(
           (element) {
-            if (element.status == "open" && element.reason.isEmpty) {
+            if (element.status == "open" && element.reason == null) {
               return true;
             }
 
@@ -227,7 +228,7 @@ class _AppoinmentTabState extends State<AppoinmentTab>
                 DateTime.now()
                     .add(const Duration(minutes: 15))
                     .isAfter(DateTime.parse(element.start).toLocal()) &&
-                element.reason.isEmpty) {
+                element.reason == null) {
               return true;
             }
             return false;

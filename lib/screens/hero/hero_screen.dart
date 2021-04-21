@@ -1,19 +1,11 @@
-import 'package:boldo/provider/utils_provider.dart';
-import 'package:boldo/screens/dashboard/dashboard_screen.dart';
-import 'package:boldo/screens/login/login.dart';
-import 'package:boldo/screens/register_patient/credit_card_screen.dart';
-import 'package:boldo/screens/register_patient/esential_data_screen.dart';
-import 'package:boldo/screens/register_patient/family_members_screen.dart';
+import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:boldo/utils/top_banner_presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:page_view_indicator/page_view_indicator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../dashboard/dashboard_screen.dart';
 import '../../constants.dart';
 
 class HeroScreen extends StatelessWidget {
@@ -62,19 +54,15 @@ class HeroScreen extends StatelessWidget {
 
     double safeBlockHorizontal = (screenWidth - _safeAreaHorizontal) / 100;
     double safeCardHeight = screenheight * 0.3;
-    double defaultTopPadding = screenheight * 0.1;
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(
-                height: defaultTopPadding,
+              const SizedBox(
+                height: 30,
               ),
               const TopBannerPresentation(),
-              const SizedBox(
-                height: 20,
-              ),
               SizedBox(
                 width: safeBlockHorizontal * 70,
                 height: safeCardHeight,
@@ -99,7 +87,7 @@ class HeroScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(
-                height: 30,
+                height: 10,
               ),
               ValueListenableBuilder(
                 valueListenable: pageIndexNotifier,
@@ -118,20 +106,24 @@ class HeroScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed: () async {
-                      // authenticateUser(context: context, switchPage: true);
-                      final SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      prefs.setBool("onboardingCompleted", true);
+                      _openWebView(context);
+                      // final result = await authenticateUser(
+                      //     context: context, switchPage: true);
+                      // if (result) {}
 
-                      Provider.of<UtilsProvider>(context, listen: false)
-                          .setSelectedPageIndex(pageIndex: 2);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          settings: const RouteSettings(name: "/login"),
-                          builder: (context) => Login(),
-                        ),
-                      );
+                      // final SharedPreferences prefs =
+                      //     await SharedPreferences.getInstance();
+                      // prefs.setBool("onboardingCompleted", true);
+
+                      // Provider.of<UtilsProvider>(context, listen: false)
+                      //     .setSelectedPageIndex(pageIndex: 2);
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     settings: const RouteSettings(name: "/login"),
+                      //     builder: (context) => Login(),
+                      //   ),
+                      // );
                     },
                     child: const Text("Iniciar Sesión"),
                   ),
@@ -146,16 +138,17 @@ class HeroScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed: () async {
+                      _openWebView(context);
                       // final SharedPreferences prefs =
                       //     await SharedPreferences.getInstance();
                       // prefs.setBool("onboardingCompleted", true);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          settings: const RouteSettings(name: "/register"),
-                          builder: (context) => EsentialDataScreen(),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     settings: const RouteSettings(name: "/register"),
+                      //     builder: (context) => EsentialDataScreen(),
+                      //   ),
+                      // );
                     },
                     child: const Text(
                       "Registrarse",
@@ -164,33 +157,33 @@ class HeroScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              // const Spacer(),
-              const Text(
-                "¿Quieres dar un vistazo?",
-                style: boldoSubTextStyle,
-                textAlign: TextAlign.center,
-              ),
-              TextButton(
-                onPressed: () async {
-                  // final SharedPreferences prefs =
-                  //     await SharedPreferences.getInstance();
-                  // prefs.setBool("onboardingCompleted", true);
+              // // const Spacer(),
+              // const Text(
+              //   "¿Quieres dar un vistazo?",
+              //   style: boldoSubTextStyle,
+              //   textAlign: TextAlign.center,
+              // ),
+              // TextButton(
+              //   onPressed: () async {
+              //     // final SharedPreferences prefs =
+              //     //     await SharedPreferences.getInstance();
+              //     // prefs.setBool("onboardingCompleted", true);
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: const RouteSettings(name: "/home"),
-                      builder: (context) => DashboardScreen(),
-                    ),
-                  );
-                },
-                child: Text(
-                  'Explora Boldo',
-                  style: boldoSubTextStyle.copyWith(
-                      color: Constants.secondaryColor500),
-                ),
-              ),
-              // const Spacer(),
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         settings: const RouteSettings(name: "/home"),
+              //         builder: (context) => DashboardScreen(),
+              //       ),
+              //     );
+              //   },
+              //   child: Text(
+              //     'Explora Boldo',
+              //     style: boldoSubTextStyle.copyWith(
+              //         color: Constants.secondaryColor500),
+              //   ),
+              // ),
+              // // // const Spacer(),
             ],
           ),
         ),
@@ -261,12 +254,21 @@ class HeroScreen extends StatelessWidget {
     }
     return SizedBox(
       width: 300,
-      height: 70,
+      height: 60,
       child: Text(
         title,
         style: boldoSubTextStyle,
         textAlign: TextAlign.center,
       ),
+    );
+  }
+
+  void _openWebView(context) {
+    //Fixme: all these adapter is for open webview, this function it's called in login and register button... The news figma's screen was designed
+    // thinking in login and register locally (not webview) so meanwhile both open the webview to get the right user access_token
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginWebViewHelper()),
     );
   }
 }

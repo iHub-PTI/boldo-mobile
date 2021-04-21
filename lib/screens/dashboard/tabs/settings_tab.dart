@@ -185,11 +185,15 @@ class _SettingsTabState extends State<SettingsTab> {
                     Provider.of<UserProvider>(context, listen: false)
                         .clearProvider();
 
+                    //Fixme: Read comment in main to understand this line
+                    await prefs.setBool("onboardingCompleted", false);
+                    //End
                     await storage.deleteAll();
                     await prefs.clear();
 
-                    Provider.of<UtilsProvider>(context, listen: false)
-                        .setSelectedPageIndex(pageIndex: 0);
+                    // Provider.of<UtilsProvider>(context, listen: false)
+                    //     .setSelectedPageIndex(pageIndex: 0);
+                    Navigator.pushNamed(context, '/onboarding');
                   } on DioError catch (exception, stackTrace) {
                     print(exception);
 
