@@ -1,3 +1,4 @@
+import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:boldo/utils/top_banner_presentation.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +54,7 @@ class HeroScreen extends StatelessWidget {
         _mediaQueryData.padding.left + _mediaQueryData.padding.right;
 
     double safeBlockHorizontal = (screenWidth - _safeAreaHorizontal) / 100;
-    double safeCardHeight = screenheight * 0.3;
+    double safeCardHeight = screenheight * 0.4;
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -163,26 +164,26 @@ class HeroScreen extends StatelessWidget {
               //   style: boldoSubTextStyle,
               //   textAlign: TextAlign.center,
               // ),
-              // TextButton(
-              //   onPressed: () async {
-              //     // final SharedPreferences prefs =
-              //     //     await SharedPreferences.getInstance();
-              //     // prefs.setBool("onboardingCompleted", true);
+              TextButton(
+                onPressed: () async {
+                  // final SharedPreferences prefs =
+                  //     await SharedPreferences.getInstance();
+                  // prefs.setBool("onboardingCompleted", true);
 
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //         settings: const RouteSettings(name: "/home"),
-              //         builder: (context) => DashboardScreen(),
-              //       ),
-              //     );
-              //   },
-              //   child: Text(
-              //     'Explora Boldo',
-              //     style: boldoSubTextStyle.copyWith(
-              //         color: Constants.secondaryColor500),
-              //   ),
-              // ),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      settings: const RouteSettings(name: "/home"),
+                      builder: (context) => DashboardScreen(),
+                    ),
+                  );
+                },
+                child: Text(
+                  'Explora Boldo',
+                  style: boldoSubTextStyle.copyWith(
+                      color: Constants.secondaryColor500),
+                ),
+              ),
               // // // const Spacer(),
             ],
           ),

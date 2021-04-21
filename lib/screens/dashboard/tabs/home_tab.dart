@@ -362,6 +362,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 ),
               ),
             ),
+            const SizedBox(height: 20),
+            //Appoinment
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -372,61 +374,72 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                   ),
                 );
               },
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Card(
-                    elevation: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Quiero agendar una consulta',
-                            style: boldoHeadingTextStyle.copyWith(fontSize: 15),
+              child: Card(
+                elevation: 1.4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                margin: const EdgeInsets.only(bottom: 24, left: 10, right: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const SizedBox(width: 10),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Quiero agendar una consulta',
+                          style: boldoHeadingTextStyle.copyWith(fontSize: 15),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Consulta médica de manera remota',
+                          style: boldoSubTextStyle.copyWith(fontSize: 13),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Próxima consulta en 3 dias',
+                          style: boldoSubTextStyle.copyWith(
+                              fontSize: 13, color: Constants.primaryColor500),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    Container(
+                      height: 105,
+                      width: 70,
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(6),
+                            bottomLeft: Radius.circular(6),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Consulta médica de manera remota',
-                                  style:
-                                      boldoSubTextStyle.copyWith(fontSize: 13),
-                                ),
-                                const Spacer(),
-                                const Padding(
-                                  padding: EdgeInsets.only(right: 8.0),
-                                  child: Icon(
-                                    Icons.phone_callback_outlined,
-                                    color: Constants.primaryColor500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              'Sin consultas agendadas',
-                              style: boldoSubTextStyle.copyWith(
-                                  fontSize: 13,
-                                  color: Constants.primaryColor500),
-                            ),
-                          ),
-                        ],
+                          color: Constants.primaryColor50),
+                      child: const Icon(
+                        Icons.phone_callback_outlined,
+                        color: Constants.primaryColor500,
                       ),
-                    )),
+                    ),
+                  ],
+                ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
+            //END
+
+            // Prescriptions
+            GestureDetector(
+              onTap: () {},
               child: Card(
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
+                elevation: 1.4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                margin: const EdgeInsets.only(bottom: 24, left: 10, right: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const SizedBox(width: 10),
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -434,88 +447,107 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                           'Quiero ver mis recetas médicas',
                           style: boldoHeadingTextStyle.copyWith(fontSize: 15),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Lista de recetas asignadas al paciente',
-                                style: boldoSubTextStyle.copyWith(fontSize: 13),
-                              ),
-                              const Spacer(),
-                              const Padding(
-                                padding: EdgeInsets.only(right: 8.0),
-                                child: Icon(Icons.description_outlined,
-                                    color: Constants.secondaryColor500),
-                              ),
-                            ],
-                          ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Lista de recetas asignadas al paciente',
+                          style: boldoSubTextStyle.copyWith(fontSize: 13),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            'Notificación mas reciente',
-                            style: boldoSubTextStyle.copyWith(
-                                fontSize: 13,
-                                color: Constants.secondaryColor500),
-                          ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Notificación mas reciente',
+                          style: boldoSubTextStyle.copyWith(
+                              fontSize: 13, color: Constants.secondaryColor500),
                         ),
                       ],
                     ),
-                  )),
+                    const Spacer(),
+                    Container(
+                      height: 105,
+                      width: 70,
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(6),
+                            bottomLeft: Radius.circular(6),
+                          ),
+                          color: Constants.secondaryColor50),
+                      child: const Icon(Icons.description_outlined,
+                          color: Constants.secondaryColor500),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
+            //End
+
+            //Clinical record
+            GestureDetector(
+              onTap: () {},
               child: Card(
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
+                elevation: 1.4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                margin: const EdgeInsets.only(bottom: 24, left: 10, right: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const SizedBox(width: 10),
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Quiero explorar registros clinicos',
+                          'Quiero explorar registros clínicos',
                           style: boldoHeadingTextStyle.copyWith(fontSize: 15),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Conjunto de datos clínicos del paciente',
-                                style: boldoSubTextStyle.copyWith(fontSize: 13),
-                              ),
-                              const Spacer(),
-                              const Padding(
-                                padding: EdgeInsets.only(right: 8.0),
-                                child: Icon(
-                                  Icons.assignment,
-                                  color: Constants.primaryColor500,
-                                ),
-                              ),
-                            ],
-                          ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Conjunto de datos clínicos del paciente',
+                          style: boldoSubTextStyle.copyWith(fontSize: 13),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            'Resultados actualizados hace 2 dias',
-                            style: boldoSubTextStyle.copyWith(
-                                fontSize: 13, color: Constants.primaryColor500),
-                          ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Resultados actualizados hace 2 días',
+                          style: boldoSubTextStyle.copyWith(
+                              fontSize: 13, color: Constants.primaryColor500),
                         ),
                       ],
                     ),
-                  )),
+                    const Spacer(),
+                    Container(
+                      height: 105,
+                      width: 70,
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(6),
+                            bottomLeft: Radius.circular(6),
+                          ),
+                          color: Constants.primaryColor50),
+                      child: const Icon(
+                        Icons.assignment,
+                        color: Constants.primaryColor500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
+            //END
+
+            // Medical Measurements
+            GestureDetector(
+              onTap: () {},
               child: Card(
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
+                elevation: 1.4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                margin: const EdgeInsets.only(bottom: 24, left: 10, right: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const SizedBox(width: 10),
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -523,36 +555,37 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                           'Quiero ver mis mediciones médicas',
                           style: boldoHeadingTextStyle.copyWith(fontSize: 15),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Conjunto de dispositivos disponibles',
-                                style: boldoSubTextStyle.copyWith(fontSize: 13),
-                              ),
-                              const Spacer(),
-                              const Padding(
-                                padding: EdgeInsets.only(right: 8.0),
-                                child: Icon(Icons.memory,
-                                    color: Constants.secondaryColor500),
-                              ),
-                            ],
-                          ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Conjunto de dispositivos disponibles',
+                          style: boldoSubTextStyle.copyWith(fontSize: 13),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            '1 dispositivo pendiente de devolución',
-                            style: boldoSubTextStyle.copyWith(
-                                fontSize: 13,
-                                color: Constants.secondaryColor500),
-                          ),
+                        const SizedBox(height: 10),
+                        Text(
+                          '1 dispositivo pendiente de devolución',
+                          style: boldoSubTextStyle.copyWith(
+                              fontSize: 13, color: Constants.secondaryColor500),
                         ),
                       ],
                     ),
-                  )),
+                    const Spacer(),
+                    Container(
+                      height: 105,
+                      width: 70,
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(6),
+                            bottomLeft: Radius.circular(6),
+                          ),
+                          color: Constants.secondaryColor50),
+                      child: const Icon(Icons.memory,
+                          color: Constants.secondaryColor500),
+                    ),
+                  ],
+                ),
+              ),
             ),
+            //End
           ],
         ));
   }

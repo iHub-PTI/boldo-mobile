@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class Constants {
   // primary color palette
+  static const Color primaryColor50 = Color(0xffF3FAF7);
   static const Color primaryColor100 = Color(0xffD4F2F3);
   static const Color primaryColor200 = Color(0xffA9E5E7);
   static const Color primaryColor300 = Color(0xff7DD8DA);
@@ -13,6 +14,7 @@ class Constants {
   static const Color primaryColor900 = Color(0xff082627);
 
   // secondary secondary palette
+  static const Color secondaryColor50 = Color(0xffFFFBF6);
   static const Color secondaryColor100 = Color(0xffFCE9E4);
   static const Color secondaryColor200 = Color(0xffF9D2C9);
   static const Color secondaryColor300 = Color(0xffFCBEAF);
