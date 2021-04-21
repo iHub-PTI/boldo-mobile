@@ -164,26 +164,26 @@ class HeroScreen extends StatelessWidget {
               //   style: boldoSubTextStyle,
               //   textAlign: TextAlign.center,
               // ),
-              TextButton(
-                onPressed: () async {
-                  // final SharedPreferences prefs =
-                  //     await SharedPreferences.getInstance();
-                  // prefs.setBool("onboardingCompleted", true);
+              // TextButton(
+              //   onPressed: () async {
+              //     // final SharedPreferences prefs =
+              //     //     await SharedPreferences.getInstance();
+              //     // prefs.setBool("onboardingCompleted", true);
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: const RouteSettings(name: "/home"),
-                      builder: (context) => DashboardScreen(),
-                    ),
-                  );
-                },
-                child: Text(
-                  'Explora Boldo',
-                  style: boldoSubTextStyle.copyWith(
-                      color: Constants.secondaryColor500),
-                ),
-              ),
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         settings: const RouteSettings(name: "/home"),
+              //         builder: (context) => DashboardScreen(),
+              //       ),
+              //     );
+              //   },
+              //   child: Text(
+              //     'Explora Boldo',
+              //     style: boldoSubTextStyle.copyWith(
+              //         color: Constants.secondaryColor500),
+              //   ),
+              // ),
               // // // const Spacer(),
             ],
           ),

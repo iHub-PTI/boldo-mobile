@@ -35,6 +35,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+    Provider.of<UtilsProvider>(context, listen: false)
+        .setSelectedPageIndex(pageIndex: 0);
     if (widget.setLoggedOut) {
       Future.microtask(() => Provider.of<AuthProvider>(context, listen: false)
           .setAuthenticated(isAuthenticated: false));

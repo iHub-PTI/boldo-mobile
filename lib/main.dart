@@ -1,3 +1,4 @@
+import 'package:boldo/screens/appointment/appointment_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -113,6 +114,7 @@ class FullApp extends StatelessWidget {
       routes: {
         '/onboarding': (context) => HeroScreen(),
         '/home': (context) => DashboardScreen(),
+        '/appointment': (context) => AppointmentScreen(),
       },
     );
   }

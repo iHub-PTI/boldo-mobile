@@ -18,19 +18,19 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../utils/helpers.dart';
-import '../../../network/http.dart';
-import '../../../constants.dart';
-import '../../../provider/auth_provider.dart';
+import '../../utils/helpers.dart';
+import '../../network/http.dart';
+import '../../constants.dart';
+import '../../provider/auth_provider.dart';
 
-class AppoinmentTab extends StatefulWidget {
-  AppoinmentTab({Key key}) : super(key: key);
+class AppointmentScreen extends StatefulWidget {
+  AppointmentScreen({Key key}) : super(key: key);
 
   @override
-  _AppoinmentTabState createState() => _AppoinmentTabState();
+  _AppointmentScreenState createState() => _AppointmentScreenState();
 }
 
-class _AppoinmentTabState extends State<AppoinmentTab>
+class _AppointmentScreenState extends State<AppointmentScreen>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
 
@@ -49,6 +49,7 @@ class _AppoinmentTabState extends State<AppoinmentTab>
 
   String profileURL;
   String gender = "male";
+  String name;
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
@@ -98,6 +99,7 @@ class _AppoinmentTabState extends State<AppoinmentTab>
     setState(() {
       profileURL = prefs.getString("profile_url");
       gender = prefs.getString("gender");
+      name = prefs.getString("name");
     });
   }
 
@@ -278,81 +280,105 @@ class _AppoinmentTabState extends State<AppoinmentTab>
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         leadingWidth: double.infinity,
-        toolbarHeight: 110,
+        toolbarHeight: 140,
         flexibleSpace: Center(
-          child: Container(
-            margin: const EdgeInsets.only(top: 30, left: 6),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(width: 10),
-                Selector<UserProvider, String>(
-                  builder: (_, data, __) {
-                    return SizedBox(
-                      height: 60,
-                      width: 60,
-                      child: Card(
-                        margin: const EdgeInsets.all(0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        elevation: 9,
-                        child: ClipOval(
-                          clipBehavior: Clip.antiAlias,
-                          child: data == null && profileURL == null
-                              ? SvgPicture.asset(
-                                  isAuthenticated
-                                      ? gender == "female"
-                                          ? 'assets/images/femalePatient.svg'
-                                          : 'assets/images/malePatient.svg'
-                                      : 'assets/images/LogoIcon.svg',
-                                )
-                              : CachedNetworkImage(
-                                  fit: BoxFit.cover,
-                                  imageUrl: data ?? profileURL,
-                                  progressIndicatorBuilder:
-                                      (context, url, downloadProgress) =>
-                                          Padding(
-                                    padding: const EdgeInsets.all(26.0),
-                                    child: CircularProgressIndicator(
-                                      value: downloadProgress.progress,
-                                      valueColor:
-                                          const AlwaysStoppedAnimation<Color>(
-                                              Constants.primaryColor400),
-                                      backgroundColor:
-                                          Constants.primaryColor600,
-                                    ),
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
-                                ),
-                        ),
-                      ),
-                    );
-                  },
-                  selector: (buildContext, userProvider) =>
-                      userProvider.getPhotoUrl,
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 30, left: 6),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      "¡Bienvenido!",
-                      style: boldoHeadingTextStyle.copyWith(
-                          fontSize: 24, color: Constants.primaryColor500),
+                    const SizedBox(width: 10),
+                    Selector<UserProvider, String>(
+                      builder: (_, data, __) {
+                        return SizedBox(
+                          height: 60,
+                          width: 60,
+                          child: Card(
+                            margin: const EdgeInsets.all(0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            elevation: 9,
+                            child: ClipOval(
+                              clipBehavior: Clip.antiAlias,
+                              child: data == null && profileURL == null
+                                  ? SvgPicture.asset(
+                                      isAuthenticated
+                                          ? gender == "female"
+                                              ? 'assets/images/femalePatient.svg'
+                                              : 'assets/images/malePatient.svg'
+                                          : 'assets/images/LogoIcon.svg',
+                                    )
+                                  : CachedNetworkImage(
+                                      fit: BoxFit.cover,
+                                      imageUrl: data ?? profileURL,
+                                      progressIndicatorBuilder:
+                                          (context, url, downloadProgress) =>
+                                              Padding(
+                                        padding: const EdgeInsets.all(26.0),
+                                        child: CircularProgressIndicator(
+                                          value: downloadProgress.progress,
+                                          valueColor:
+                                              const AlwaysStoppedAnimation<
+                                                      Color>(
+                                                  Constants.primaryColor400),
+                                          backgroundColor:
+                                              Constants.primaryColor600,
+                                        ),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    ),
+                            ),
+                          ),
+                        );
+                      },
+                      selector: (buildContext, userProvider) =>
+                          userProvider.getPhotoUrl,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      DateFormat('EEEE, dd MMMM')
-                          .format(DateTime.now())
-                          .capitalize(),
-                    ),
+                    const SizedBox(width: 10),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${name != null ? name.toLowerCase().substring(0, name.indexOf(' ')) : ''}",
+                          style: boldoHeadingTextStyle.copyWith(
+                              fontSize: 24, color: Constants.primaryColor500),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          DateFormat('EEEE, dd MMMM')
+                              .format(DateTime.now())
+                              .capitalize(),
+                        ),
+                      ],
+                    )
                   ],
-                )
-              ],
-            ),
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(
+                  Icons.chevron_left_rounded,
+                  size: 20,
+                  color: Constants.extraColor400,
+                ),
+                label: Text(
+                  'Volver',
+                  style: boldoHeadingTextStyle.copyWith(fontSize: 15),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -383,9 +409,12 @@ class _AppoinmentTabState extends State<AppoinmentTab>
                               children: [
                                 for (Appointment appointment
                                     in waitingRoomAppointments)
-                                  WaitingRoomCard(
-                                      appointment: appointment,
-                                      getAppointmentsData: getAppointmentsData),
+                                  appointment.reason == null
+                                      ? WaitingRoomCard(
+                                          appointment: appointment,
+                                          getAppointmentsData:
+                                              getAppointmentsData)
+                                      : Container(),
                               ],
                             ),
                           ),

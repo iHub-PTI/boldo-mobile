@@ -239,7 +239,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                               fontSize: 16,
                               fontWeight: FontWeight.w500),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 10),
                         const Text(
                           "¿Seguro que quieres cancelar tu cita?",
                           textAlign: TextAlign.center,
@@ -248,7 +248,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                               fontSize: 14,
                               fontWeight: FontWeight.w400),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

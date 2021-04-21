@@ -3,8 +3,9 @@ import 'dart:isolate';
 import 'package:boldo/constants.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/provider/auth_provider.dart';
+import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/Call/components/call_ended_popup.dart';
-import 'package:boldo/screens/dashboard/tabs/appoinment_tab.dart';
+import 'package:boldo/screens/appointment/appointment_screen.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:boldo/provider/user_provider.dart';
@@ -45,6 +46,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
 
   String profileURL;
+  String name;
   String gender = "male";
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -95,6 +97,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     setState(() {
       profileURL = prefs.getString("profile_url");
       gender = prefs.getString("gender");
+      name = prefs.getString("name");
     });
   }
 
@@ -333,7 +336,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Hola!",
+                        "Hola ${name != null ? name.toLowerCase().substring(0, name.indexOf(' ')) : ''}!",
                         style: boldoHeadingTextStyle.copyWith(
                             fontSize: 24, color: Constants.primaryColor500),
                       ),
@@ -365,14 +368,13 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             const SizedBox(height: 20),
             //Appoinment
             GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    settings: const RouteSettings(name: "/appoinment"),
-                    builder: (context) => AppoinmentTab(),
-                  ),
-                );
+              onTap: () async {
+                final _result =
+                    await Navigator.pushNamed(context, '/appointment');
+                if (_result == true) {
+                  Provider.of<UtilsProvider>(context, listen: false)
+                      .setSelectedPageIndex(pageIndex: 1);
+                }
               },
               child: Card(
                 elevation: 1.4,

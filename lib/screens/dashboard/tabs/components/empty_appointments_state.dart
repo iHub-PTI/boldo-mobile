@@ -52,8 +52,7 @@ class EmptyAppointmentsState extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              Provider.of<UtilsProvider>(context, listen: false)
-                  .setSelectedPageIndex(pageIndex: 1);
+              Navigator.pop(context, true);
             },
             child: const Text("Agregar Cita"),
           )
