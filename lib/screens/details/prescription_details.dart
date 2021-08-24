@@ -1,5 +1,4 @@
 import 'package:boldo/models/Appointment.dart';
-import 'package:boldo/models/Prescription.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';

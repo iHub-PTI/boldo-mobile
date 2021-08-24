@@ -146,7 +146,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
     try {
       Response responseAppointments = await dio.get(
-          "/profile/patient/appointments?start=${dateOffset.toUtc().toIso8601String()}");
+          "/profile/patient/appointments?start=${dateOffset.toUtc().toIso8601String().substring(0, 23)}Z");
       Response responsePrescriptions =
           await dio.get("/profile/patient/prescriptions");
 
