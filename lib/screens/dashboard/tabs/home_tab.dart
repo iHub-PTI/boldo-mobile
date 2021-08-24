@@ -359,6 +359,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                                   index: i,
                                   appointment: allAppointmentsState[i],
                                   firstAppointmentPast: firstPastAppointment,
+                                  waitingRoomAppointments:
+                                      waitingRoomAppointments,
                                 ),
                             ]),
                           ),
@@ -373,13 +375,20 @@ class _ListRenderer extends StatelessWidget {
   final int index;
   final Appointment appointment;
   final Appointment firstAppointmentPast;
+  final List<Appointment> waitingRoomAppointments;
 
   const _ListRenderer(
-      {Key key, this.index, this.appointment, this.firstAppointmentPast})
+      {Key key,
+      this.index,
+      this.appointment,
+      this.firstAppointmentPast,
+      @required this.waitingRoomAppointments})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    bool isInWaitingRoom =
+        waitingRoomAppointments.any((element) => element.id == appointment.id);
     if (index == 0 && !["closed", "locked"].contains(appointment.status))
       return Column(children: [
         Align(
@@ -406,7 +415,8 @@ class _ListRenderer extends StatelessWidget {
           color: const Color(0xffE5E7EB),
           height: 1,
         ),
-        AppointmentCard(appointment: appointment),
+        AppointmentCard(
+            appointment: appointment, isInWaitingRoom: isInWaitingRoom),
       ]);
     if (firstAppointmentPast != null &&
         firstAppointmentPast.id == appointment.id) {
@@ -435,9 +445,11 @@ class _ListRenderer extends StatelessWidget {
           color: const Color(0xffE5E7EB),
           height: 1,
         ),
-        AppointmentCard(appointment: appointment),
+        AppointmentCard(
+            appointment: appointment, isInWaitingRoom: isInWaitingRoom),
       ]);
     }
-    return AppointmentCard(appointment: appointment);
+    return AppointmentCard(
+        appointment: appointment, isInWaitingRoom: isInWaitingRoom);
   }
 }
