@@ -16,7 +16,7 @@ The mobile app is specifically for patients.
 3. Create a `.env` file in the project's root folder and add these contents:
 
    ```
-   # ####################### Online #######################
+   # ####################### Online #######################п
     SOCKETS_ADDRESS = https://sockets.boldo.penguin.software
     SERVER_ADDRESS = https://api.boldo.penguin.software
     KEYCLOAK_REALM_ADDRESS = https://sso-test.pti.org.py/auth/realms/iHub

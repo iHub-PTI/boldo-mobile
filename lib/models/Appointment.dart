@@ -1,3 +1,4 @@
+import 'package:boldo/models/Prescription.dart';
 import 'package:flutter/cupertino.dart';
 import './Doctor.dart';
 
@@ -8,6 +9,7 @@ class Appointment {
   String end;
   String description;
   Doctor doctor;
+  List<Prescription> prescriptions;
 
   Appointment({
     @required this.id,
@@ -16,6 +18,7 @@ class Appointment {
     this.description,
     @required this.doctor,
     @required this.status,
+    this.prescriptions,
   });
 
   Appointment.fromJson(Map<String, dynamic> json) {
