@@ -11,7 +11,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:boldo/provider/user_provider.dart';
-import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
 import '../../../widgets/wrapper.dart';
 import '../../../provider/auth_provider.dart';
@@ -184,12 +183,13 @@ class _SettingsTabState extends State<SettingsTab> {
                         .setAuthenticated(isAuthenticated: false);
                     Provider.of<UserProvider>(context, listen: false)
                         .clearProvider();
-
+                    await prefs.setBool("onboardingCompleted", false);
                     await storage.deleteAll();
                     await prefs.clear();
 
-                    Provider.of<UtilsProvider>(context, listen: false)
-                        .setSelectedPageIndex(pageIndex: 0);
+                    // Provider.of<UtilsProvider>(context, listen: false)
+                    //     .setSelectedPageIndex(pageIndex: 0);
+                     Navigator.pushNamed(context, '/onboarding');
                   } on DioError catch (exception, stackTrace) {
                     print(exception);
 
