@@ -230,7 +230,7 @@ class AppointmentCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        "Prescription",
+                        "Receta",
                         style: TextStyle(
                           color: Constants.extraColor400,
                           fontSize: 14,

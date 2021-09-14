@@ -41,7 +41,7 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                     color: Constants.extraColor400,
                   ),
                   label: Text(
-                    'Prescription Details',
+                    'Detalles de la receta',
                     style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                   ),
                 ),
@@ -55,16 +55,16 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Current Date",
-                          style: boldoHeadingTextStyle,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}",
-                          style: boldoSubTextStyle.copyWith(fontSize: 16),
-                        ),
-                        const SizedBox(height: 24),
+                        // const Text(
+                        //   "Fecha Actual",
+                        //   style: boldoHeadingTextStyle,
+                        // ),
+                        // const SizedBox(height: 4),
+                        // Text(
+                        //   "${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}",
+                        //   style: boldoSubTextStyle.copyWith(fontSize: 16),
+                        // ),
+                        // const SizedBox(height: 24),
                         const Text(
                           "Doctor",
                           style: boldoHeadingTextStyle,
@@ -75,7 +75,7 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                             style: boldoSubTextStyle.copyWith(fontSize: 16)),
                         const SizedBox(height: 24),
                         const Text(
-                          "Date",
+                          "Fecha de la consulta",
                           style: boldoHeadingTextStyle,
                         ),
                         const SizedBox(height: 4),
@@ -95,7 +95,7 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 24),
                         const Text(
-                          "Indicationes",
+                          "Indicaciones",
                           style: boldoHeadingTextStyle,
                         ),
                         const SizedBox(height: 4),
@@ -113,7 +113,7 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                                 Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    "Medication ${i + 1}",
+                                    "Medicamento ${i + 1}",
                                     style: boldoSubTextStyle.copyWith(
                                       fontSize: 14,
                                       color: const Color(0xff6B7280),
@@ -133,7 +133,7 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 12),
                                 const Text(
-                                  "Name",
+                                  "Nombre",
                                   style: boldoHeadingTextStyle,
                                 ),
                                 const SizedBox(height: 4),
@@ -150,7 +150,7 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                                       children: [
                                         const SizedBox(height: 24),
                                         const Text(
-                                          "Instructions",
+                                          "Instrucciones",
                                           style: boldoHeadingTextStyle,
                                         ),
                                         const SizedBox(height: 4),
