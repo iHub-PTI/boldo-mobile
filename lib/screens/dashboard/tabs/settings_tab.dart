@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -74,7 +75,14 @@ class _SettingsTabState extends State<SettingsTab> {
                 trailing: const Icon(Icons.chevron_right),
               ),
               ListTile(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const TermsOfServices(),
+                    ),
+                  );
+                },
                 leading: SizedBox(
                   height: double.infinity,
                   child: Row(
@@ -93,26 +101,26 @@ class _SettingsTabState extends State<SettingsTab> {
                 ),
                 trailing: const Icon(Icons.chevron_right),
               ),
-              ListTile(
-                onTap: () {},
-                leading: SizedBox(
-                  height: double.infinity,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/icon/privacyPolicy.svg',
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      const Text('Política de privacidad',
-                          style: boldoSubTextStyle)
-                    ],
-                  ),
-                ),
-                trailing: const Icon(Icons.chevron_right),
-              ),
+              // ListTile(
+              //   onTap: () {},
+              //   leading: SizedBox(
+              //     height: double.infinity,
+              //     child: Row(
+              //       mainAxisSize: MainAxisSize.min,
+              //       children: [
+              //         SvgPicture.asset(
+              //           'assets/icon/privacyPolicy.svg',
+              //         ),
+              //         const SizedBox(
+              //           width: 10,
+              //         ),
+              //         const Text('Política de privacidad',
+              //             style: boldoSubTextStyle)
+              //       ],
+              //     ),
+              //   ),
+              //   trailing: const Icon(Icons.chevron_right),
+              // ),
               ListTile(
                 onTap: () {},
                 leading: SizedBox(
@@ -126,7 +134,7 @@ class _SettingsTabState extends State<SettingsTab> {
                       const SizedBox(
                         width: 10,
                       ),
-                      const Text('Acerca de nosotros', style: boldoSubTextStyle)
+                      const Text('Acerca de Boldo', style: boldoSubTextStyle)
                     ],
                   ),
                 ),
