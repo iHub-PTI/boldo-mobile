@@ -21,10 +21,15 @@ class AppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final actualDay = DateTime.now();
+    final appointmentDay = DateTime.parse(appointment.start);
     int daysDifference = DateTime.parse(appointment.start)
         .toLocal()
-        .difference(DateTime.now())
+        .difference(actualDay)
         .inDays;
+    if (actualDay.month == appointmentDay.month) {
+      daysDifference = appointmentDay.day - actualDay.day;
+    }
     bool isToday = daysDifference == 0 &&
         !["closed", "locked"].contains(appointment.status);
 
@@ -155,7 +160,7 @@ class AppointmentCard extends StatelessWidget {
                         children: [
                           const SizedBox(height: 4),
                           Text(
-                            "En $daysDifference días - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
+                            "En $daysDifference ${daysDifference > 1 ? 'días':'dia'}  - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
                             style: const TextStyle(
                               color: Constants.otherColor200,
                               fontSize: 12,
@@ -271,7 +276,7 @@ class AppointmentCard extends StatelessWidget {
                           children: [
                             const SizedBox(height: 4),
                             Text(
-                              "En $daysDifference días - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
+                              "En $daysDifference ${daysDifference > 1 ? 'días':'dia'} - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
                               style: const TextStyle(
                                 color: Constants.otherColor200,
                                 fontSize: 12,
