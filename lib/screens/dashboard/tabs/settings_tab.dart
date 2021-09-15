@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:boldo/screens/about/about_screen.dart';
 import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -122,7 +123,14 @@ class _SettingsTabState extends State<SettingsTab> {
               //   trailing: const Icon(Icons.chevron_right),
               // ),
               ListTile(
-                onTap: () {},
+                onTap: () {
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const About(),
+                    ),
+                  );
+                },
                 leading: SizedBox(
                   height: double.infinity,
                   child: Row(
