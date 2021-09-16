@@ -283,11 +283,17 @@ class _DoctorCard extends StatelessWidget {
     String availabilityText = "Sin disponibilidad en los próximos 30 días";
     bool isToday = false;
     if (doctor.nextAvailability != null) {
-      DateTime parsedAvailability =
-          DateTime.parse(doctor.nextAvailability).toLocal();
-      int daysDifference = parsedAvailability.difference(DateTime.now()).inDays;
+     
+    final actualDay = DateTime.now();
+    final parsedAvailability = DateTime.parse(doctor.nextAvailability).toLocal();
+    int daysDifference = parsedAvailability.difference(actualDay).inDays;
 
-      isToday = daysDifference == 0;
+    if (actualDay.month == parsedAvailability.month) {
+      daysDifference = parsedAvailability.day - actualDay.day;
+    }
+    if(daysDifference == 0){
+      isToday = true;
+    }
 
       if (isToday) {
         availabilityText = "Disponible Hoy!";

@@ -309,7 +309,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Showing data until ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
+                                "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
                                 style: const TextStyle(
                                   color: Constants.primaryColor800,
                                 ),

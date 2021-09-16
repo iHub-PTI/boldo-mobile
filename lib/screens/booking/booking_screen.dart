@@ -403,11 +403,17 @@ class _BookDoctorCard extends StatelessWidget {
     String availabilityText = "";
     bool isToday = false;
 
-    DateTime parsedAvailability = DateTime.parse(nextAvailability).toLocal();
-    int daysDifference = parsedAvailability.difference(DateTime.now()).inDays;
+    final actualDay = DateTime.now();
+    final parsedAvailability = DateTime.parse(nextAvailability).toLocal();
+    int daysDifference = parsedAvailability.difference(actualDay).inDays;
 
-    isToday = daysDifference == 0;
-
+    if (actualDay.month == parsedAvailability.month) {
+      daysDifference = parsedAvailability.day - actualDay.day;
+    }
+    if(daysDifference == 0){
+      isToday = true;
+    }
+    
     if (isToday) {
       availabilityText = "Disponible Hoy!";
     } else if (daysDifference > 0) {
