@@ -85,7 +85,7 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 24),
                         const Text(
-                          "Diagnostico",
+                          "Diagnóstico",
                           style: boldoHeadingTextStyle,
                         ),
                         const SizedBox(height: 4),
@@ -112,11 +112,12 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                               children: [
                                 Align(
                                   alignment: Alignment.centerLeft,
-                                  child: Text(
+                                  child: 
+                                    Text(
                                     "Medicamento ${i + 1}",
-                                    style: boldoSubTextStyle.copyWith(
+                                    style: boldoHeadingTextStyle.copyWith(
                                       fontSize: 14,
-                                      color: const Color(0xff6B7280),
+                            
                                     ),
                                   ),
                                 ),

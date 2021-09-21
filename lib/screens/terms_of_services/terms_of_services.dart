@@ -155,33 +155,33 @@ class _TermsOfServicesState extends State<TermsOfServices> {
           ),
         ),
       ),
-      Card(
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Checkbox(
-                  activeColor: const Color.fromRGBO(101, 207, 211, 1),
-                  value: value,
-                  onChanged: (bool value) {
-                    setState(() {
-                      this.value = value;
-                    });
-                  },
-                ), //SizedBox
-                const Expanded(
-                  child: Text('Acepto los términos del servicio',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                ),
-              ],
-            ),
-            confirmButton()
-          ],
-        ),
-      )
+      // Card(
+      //   child: Column(
+      //     children: [
+      //       Row(
+      //         mainAxisAlignment: MainAxisAlignment.center,
+      //         crossAxisAlignment: CrossAxisAlignment.center,
+      //         children: <Widget>[
+      //           Checkbox(
+      //             activeColor: const Color.fromRGBO(101, 207, 211, 1),
+      //             value: value,
+      //             onChanged: (bool value) {
+      //               setState(() {
+      //                 this.value = value;
+      //               });
+      //             },
+      //           ), //SizedBox
+      //           const Expanded(
+      //             child: Text('Acepto los términos del servicio',
+      //                 style:
+      //                     TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+      //           ),
+      //         ],
+      //       ),
+      //       confirmButton()
+      //     ],
+      //   ),
+      // )
     ]);
   }
 }

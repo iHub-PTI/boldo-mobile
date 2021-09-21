@@ -245,7 +245,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
                   child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                          "Waiting room will open: ${DateFormat('HH:mm, dd MMMM yyyy').format(DateTime.parse(appointment.start).toLocal()).capitalize()}")),
+                          "La sala de espera se abrirá a las: ${DateFormat('HH:mm, dd MMMM yyyy').format(DateTime.parse(appointment.start).toLocal()).capitalize()}")),
                 ),
               const SizedBox(height: 64),
             ],

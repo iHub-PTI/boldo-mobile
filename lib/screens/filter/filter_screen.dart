@@ -140,7 +140,7 @@ class FilterScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop(true);
                     },
-                    child: const Text("Guardar"),
+                    child: const Text("Buscar"),
                   ),
                 ),
                 const SizedBox(height: 15),

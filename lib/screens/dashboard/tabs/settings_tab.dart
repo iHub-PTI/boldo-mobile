@@ -209,8 +209,6 @@ class _SettingsTabState extends State<SettingsTab> {
                     await storage.deleteAll();
                     await prefs.clear();
 
-                    // Provider.of<UtilsProvider>(context, listen: false)
-                    //     .setSelectedPageIndex(pageIndex: 0);
                      Navigator.pushNamed(context, '/onboarding');
                   } on DioError catch (exception, stackTrace) {
                     print(exception);

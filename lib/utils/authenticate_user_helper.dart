@@ -1,5 +1,6 @@
 import 'package:boldo/network/http.dart';
 import 'package:boldo/provider/auth_provider.dart';
+import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -79,7 +80,8 @@ Future<bool> _authenticateUser({@required BuildContext context}) async {
       await prefs.setString("gender", response.data["gender"]);
       await prefs.setString("name", response.data["givenName"]);
     }
-
+  Provider.of<UtilsProvider>(context, listen: false)
+                        .setSelectedPageIndex(pageIndex: 0);
     Navigator.push(
       context,
       MaterialPageRoute(
