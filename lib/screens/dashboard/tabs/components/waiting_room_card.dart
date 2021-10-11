@@ -81,7 +81,7 @@ class WaitingRoomCard extends StatelessWidget {
                             // show scnackbar
                             Scaffold.of(context).showSnackBar(const SnackBar(
                                 content: Text(
-                                    'Something went wrong! Please try again later.')));
+                                    'Algo salió mal, por favor intente de nuevo más tarde')));
                           }
                         }
                       },

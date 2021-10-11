@@ -39,10 +39,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-  DateTime dateOffset = DateTime.now().subtract(const Duration(days: 365));
+  DateTime dateOffset = DateTime.now().subtract(const Duration(days: 30));
   void _onRefresh() async {
     setState(() {
-      dateOffset = DateTime.now().subtract(const Duration(days: 365));
+      dateOffset = DateTime.now().subtract(const Duration(days: 30));
     });
     // monitor network fetch
     await getAppointmentsData(loadMore: false);
@@ -296,7 +296,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                       controller: _refreshController,
                       onLoading: () {
                         dateOffset =
-                            dateOffset.subtract(const Duration(days: 365));
+                            dateOffset.subtract(const Duration(days: 30));
                         setState(() {});
                         getAppointmentsData(loadMore: true);
                       },
@@ -321,7 +321,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Text(
-                                  "Loading more data ...",
+                                  "cargando datos ...",
                                   style: TextStyle(
                                     color: Constants.primaryColor800,
                                   ),

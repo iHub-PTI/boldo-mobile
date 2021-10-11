@@ -72,6 +72,7 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                             "${getDoctorPrefix(appointment.doctor.gender)}${appointment.doctor.familyName}",
+                            overflow: TextOverflow.ellipsis,
                             style: boldoSubTextStyle.copyWith(fontSize: 16)),
                         const SizedBox(height: 24),
                         const Text(
@@ -90,7 +91,7 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          appointment.prescriptions[0].encounter.diagnosis,
+                          appointment.prescriptions[0].encounter.diagnosis??'',
                           style: boldoSubTextStyle.copyWith(fontSize: 16),
                         ),
                         const SizedBox(height: 24),
@@ -100,7 +101,7 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          appointment.prescriptions[0].encounter.instructions,
+                          appointment.prescriptions[0].encounter.instructions??'',
                           style: boldoSubTextStyle.copyWith(fontSize: 16),
                         ),
                         const SizedBox(height: 26),

@@ -100,7 +100,11 @@ class _VideoCallState extends State<VideoCall> {
       Navigator.of(context)
           .pop({"error": "You have to give access to your camera."});
     }
-
+    if (localStream.getAudioTracks() != null) {
+      localStream.getAudioTracks().forEach((track) {
+        track.enableSpeakerphone(true);
+      });
+    }
     // initialize the video renderers
     await localRenderer.initialize();
     await remoteRenderer.initialize();

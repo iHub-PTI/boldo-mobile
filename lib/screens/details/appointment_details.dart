@@ -120,23 +120,29 @@ class AppointmentDetailsScreen extends StatelessWidget {
                                           null &&
                                       appointment
                                           .doctor.specializations.isNotEmpty)
-                                    Row(
-                                      children: [
-                                        for (int i = 0;
-                                            i <
-                                                appointment.doctor
-                                                    .specializations.length;
-                                            i++)
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                left: i == 0 ? 0 : 3.0),
-                                            child: Text(
-                                              "${appointment.doctor.specializations[i].description}${appointment.doctor.specializations.length > 1 && i == 0 ? "," : ""}",
-                                              style: boldoSubTextStyle,
-                                            ),
-                                          ),
-                                      ],
-                                    ),
+                                    Container(
+                                      width: 200,
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: [
+                                            for (int i = 0;
+                                                i <
+                                                    appointment.doctor
+                                                        .specializations.length;
+                                                i++)
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: i == 0 ? 0 : 3.0),
+                                                child: Text(
+                                                  "${appointment.doctor.specializations[i].description}${appointment.doctor.specializations.length > 1 && i == 0 ? "," : ""}",
+                                                  style: boldoSubTextStyle,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
                                 ]),
                           )
                         ],

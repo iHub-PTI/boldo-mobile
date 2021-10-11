@@ -120,27 +120,34 @@ class AppointmentCard extends StatelessWidget {
                     ),
                     if (appointment.doctor.specializations != null &&
                         appointment.doctor.specializations.isNotEmpty)
-                      Row(
-                        children: [
-                          for (int i = 0;
-                              i < appointment.doctor.specializations.length;
-                              i++)
-                            Row(
-                              children: [
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(left: i == 0 ? 0 : 3.0),
-                                  child: Text(
-                                    "${appointment.doctor.specializations[i].description}${appointment.doctor.specializations.length > 1 && i == 0 ? "," : ""}",
-                                    style: const TextStyle(
-                                      color: Constants.extraColor300,
-                                      fontSize: 14,
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              for (int i = 0;
+                                  i < appointment.doctor.specializations.length;
+                                  i++)
+                                Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: i == 0 ? 0 : 3.0),
+                                      child: Text(
+                                        "${appointment.doctor.specializations[i].description}${appointment.doctor.specializations.length > 1 && i == 0 ? "," : ""}",
+                                        
+                                        style: const TextStyle(
+                                          color: Constants.extraColor300,
+                                          fontSize: 14,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                        ],
+                            ],
+                          ),
+                        ),
                       ),
                     if (isToday)
                       Column(
@@ -160,7 +167,7 @@ class AppointmentCard extends StatelessWidget {
                         children: [
                           const SizedBox(height: 4),
                           Text(
-                            "En $daysDifference ${daysDifference > 1 ? 'días':'dia'}  - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
+                            "En $daysDifference ${daysDifference > 1 ? 'días' : 'dia'}  - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
                             style: const TextStyle(
                               color: Constants.otherColor200,
                               fontSize: 12,
@@ -276,7 +283,7 @@ class AppointmentCard extends StatelessWidget {
                           children: [
                             const SizedBox(height: 4),
                             Text(
-                              "En $daysDifference ${daysDifference > 1 ? 'días':'dia'} - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
+                              "En $daysDifference ${daysDifference > 1 ? 'días' : 'dia'} - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
                               style: const TextStyle(
                                 color: Constants.otherColor200,
                                 fontSize: 12,
