@@ -51,6 +51,11 @@ class Constants {
   // others color palette
   static const Color otherColor100 = Color(0xffDF6D51);
   static const Color otherColor200 = Color(0xffEE983F);
+
+  //Accordion background color
+  static const Color accordionbg = Color(0xfff3FAF7);
+  static const Color dividerAccordion = Color(0x40F08F77);
+
 }
 
 // Text Style

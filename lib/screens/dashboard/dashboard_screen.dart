@@ -1,3 +1,4 @@
+import 'package:boldo/screens/medical_records/medical_records_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';
@@ -49,6 +50,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return DoctorsTab();
     }
     if (index == 2) {
+      return MedicalRecordScreen();
+    }
+    if (index == 3) {
       bool isAuthenticated =
           Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
       if (!isAuthenticated) {
@@ -104,6 +108,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               : Constants.extraColor200,
                         ),
                         label: 'Médicos',
+                      ),
+                    const   BottomNavigationBarItem(
+                        icon: Icon(Icons.table_rows,color: Colors.grey,),
+                        label: 'Mis Fichas',
                       ),
                       BottomNavigationBarItem(
                         icon: SvgPicture.asset(
