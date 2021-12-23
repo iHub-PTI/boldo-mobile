@@ -49,10 +49,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (index == 1) {
       return DoctorsTab();
     }
+    // if (index == 2) {
+    //   return MedicalRecordScreen();
+    // }
     if (index == 2) {
-      return MedicalRecordScreen();
-    }
-    if (index == 3) {
       bool isAuthenticated =
           Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
       if (!isAuthenticated) {
@@ -109,10 +109,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                         label: 'Médicos',
                       ),
-                    const   BottomNavigationBarItem(
-                        icon: Icon(Icons.table_rows,color: Colors.grey,),
-                        label: 'Mis Fichas',
-                      ),
+                    // const   BottomNavigationBarItem(
+                    //     icon: Icon(Icons.table_rows,color: Colors.grey,),
+                    //     label: 'Mis Fichas',
+                    //   ),
                       BottomNavigationBarItem(
                         icon: SvgPicture.asset(
                           !isAuthenticated

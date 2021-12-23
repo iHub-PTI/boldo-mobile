@@ -1,6 +1,7 @@
 import 'package:boldo/network/http.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
+import 'package:boldo/screens/pre_register_notify/pre_register_screen.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -104,17 +105,30 @@ class HeroScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () async {
-                      _openWebView(context);
+                  final SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  bool onboardingCompleted =
+                       prefs.getBool("preRegisterNotify") ?? false;
+                  if (onboardingCompleted == true) {
+                    _openWebView(context);
+                  } else {
+                    //show pre register
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const PreRegisterScreen()),
+                    );
+                  }
                 },
                 child: const Text("Iniciar Sesión")),
-
             const Spacer(),
           ],
         ),
       ),
     );
   }
- void _openWebView(context) {
+
+  void _openWebView(context) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const LoginWebViewHelper()),
@@ -193,6 +207,7 @@ class CarouselSlide extends StatelessWidget {
     return SvgPicture.asset(image, fit: boxFit, alignment: alignment);
   }
 }
+
 Future<void> authenticateUser(
     {@required BuildContext context, bool switchPage = true}) async {
   String keycloakRealmAddress = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',

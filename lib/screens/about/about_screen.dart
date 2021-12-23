@@ -71,7 +71,7 @@ class _AboutState extends State<About> {
                 fontFamily: 'PT Serif',
                 fontSize: 20,
                 letterSpacing:
-                    0 /*percentages not used in flutter. defaulting to zero*/,
+                    0,
                 fontWeight: FontWeight.normal,
                 height: 1.5 /*PERCENT not supported*/
                 ),
