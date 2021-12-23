@@ -9,7 +9,7 @@ import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/offline/offline_screen.dart';
 
 var dio = Dio();
-
+var dioHealthCore = Dio();
 void initDio({@required GlobalKey<NavigatorState> navKey}) {
   const storage = FlutterSecureStorage();
   String baseUrl = String.fromEnvironment('SERVER_ADDRESS',
@@ -107,6 +107,113 @@ void initDio({@required GlobalKey<NavigatorState> navKey}) {
             ),
           );
         }
+        return error;
+      },
+    ),
+  );
+}
+
+void initDioSecondaryAccess({@required GlobalKey<NavigatorState> navKey}) {
+  const storage = FlutterSecureStorage();
+  String baseUrl = String.fromEnvironment('HEALTH_PTI_API',
+      defaultValue: DotEnv().env['HEALTH_PTI_API']);
+
+  dioHealthCore.options.baseUrl = baseUrl;
+  dioHealthCore.options.headers['content-Type'] = 'application/json';
+  dioHealthCore.options.headers['accept'] = 'application/json';
+  // dioHealthCore.options.connectTimeout = 5000; //5s
+  // dioHealthCore.options.receiveTimeout = 3000;
+  String accessToken;
+  FlutterAppAuth appAuth = FlutterAppAuth();
+  //setup interceptors
+  dioHealthCore.interceptors.add(
+    InterceptorsWrapper(
+      onRequest: (RequestOptions options) async {
+        accessToken = await storage.read(key: "access_token");
+        options.headers["authorization"] = "bearer $accessToken";
+
+        return options;
+      },
+      onError: (DioError error) async {
+        if (error.response?.statusCode == 403) {
+          try {
+            await storage.deleteAll();
+            accessToken = null;
+
+            navKey.currentState.pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => DashboardScreen(setLoggedOut: true),
+              ),
+              (route) => false,
+            );
+          } catch (e) {
+            print(e);
+          }
+        } else if (error.response?.statusCode == 401) {
+          if (accessToken == null) {
+            await storage.deleteAll();
+
+            return error;
+          }
+          RequestOptions options = error.response.request;
+          if ("bearer $accessToken" != options.headers["authorization"]) {
+            options.headers["authorization"] = "bearer $accessToken";
+            return dioHealthCore.request(options.path, options: options);
+          }
+          dioHealthCore.lock();
+          dioHealthCore.interceptors.responseLock.lock();
+          dioHealthCore.interceptors.errorLock.lock();
+
+          String keycloakRealmAddress = String.fromEnvironment(
+              'KEYCLOAK_REALM_ADDRESS',
+              defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
+          final String refreshToken = await storage.read(key: "refresh_token");
+
+          try {
+            final TokenResponse result = await appAuth.token(TokenRequest(
+                'boldo-patient', 'com.penguin.boldo:/login',
+                discoveryUrl:
+                    '$keycloakRealmAddress/.well-known/openid-configuration',
+                refreshToken: refreshToken,
+                scopes: ['openid', 'offline_access']));
+            await storage.write(key: "access_token", value: result.accessToken);
+            await storage.write(
+                key: "refresh_token", value: result.refreshToken);
+            accessToken = result.accessToken;
+            dioHealthCore.unlock();
+            dioHealthCore.interceptors.responseLock.unlock();
+            dioHealthCore.interceptors.errorLock.unlock();
+            //retry request
+            return dioHealthCore.request(options.path, options: options);
+          } catch (e) {
+            dioHealthCore.unlock();
+            dioHealthCore.interceptors.responseLock.unlock();
+            dioHealthCore.interceptors.errorLock.unlock();
+            await storage.deleteAll();
+            accessToken = null;
+
+            navKey.currentState.pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => DashboardScreen(setLoggedOut: true),
+              ),
+              (route) => false,
+            );
+            return error;
+          }
+        } else {
+          ConnectionStatusSingleton connectionStatus =
+              ConnectionStatusSingleton.getInstance();
+          bool hasInternet = await connectionStatus.checkConnection();
+          if (!hasInternet) {
+            navKey.currentState.push(
+              MaterialPageRoute(
+                builder: (context) => const OfflineScreen(),
+              ),
+            );
+          }
+          return error;
+        }
+
         return error;
       },
     ),
