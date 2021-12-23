@@ -43,20 +43,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget getPage(int index) {
-    if (index == 0) {
-      return HomeTab();
-    }
-    if (index == 1) {
-      return DoctorsTab();
-    }
-    // if (index == 2) {
-    //   return MedicalRecordScreen();
-    // }
-    if (index == 2) {
-      bool isAuthenticated =
-          Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
-      if (!isAuthenticated) {
-        authenticateUser(context: context);
+
+     bool isAuthenticated =
+            Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
+        if (!isAuthenticated) {
+          authenticateUser(context: context);
 
         return const Center(
             child: CircularProgressIndicator(
@@ -65,7 +56,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ));
       }
 
-      return SettingsTab();
+      if (index == 0) {
+        return HomeTab();
+      }
+      if (index == 1) {
+        return DoctorsTab();
+      }
+      if (index == 2) {
+        return MedicalRecordScreen();
+      }
+      if (index == 3) {
+        return SettingsTab();
     }
     return HomeTab();
   }
@@ -109,17 +110,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                         label: 'Médicos',
                       ),
-                    // const   BottomNavigationBarItem(
-                    //     icon: Icon(Icons.table_rows,color: Colors.grey,),
-                    //     label: 'Mis Fichas',
-                    //   ),
+                       BottomNavigationBarItem(
+                        icon: SvgPicture.asset(
+                          'assets/icon/file.svg',
+                          semanticsLabel: 'Doctor Icon',
+                          color: _selectedPageIndex == 2
+                              ? Constants.secondaryColor500
+                              : Constants.extraColor200,
+                        ),
+                        label: 'Mis Fichas',
+                      ),
                       BottomNavigationBarItem(
                         icon: SvgPicture.asset(
                           !isAuthenticated
                               ? 'assets/icon/profileIcon.svg'
                               : 'assets/icon/settingsIcon.svg',
                           semanticsLabel: 'Doctor Icon',
-                          color: _selectedPageIndex == 2
+                          color: _selectedPageIndex == 3
                               ? Constants.secondaryColor500
                               : Constants.extraColor200,
                         ),
