@@ -1,10 +1,10 @@
-import 'package:boldo/models/Soep.dart';
+import 'package:boldo/models/medicalRecord.dart';
 import 'package:boldo/network/http.dart';
-import 'package:boldo/utils/soep_accordion.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:intl/intl.dart';
 
 import '../../constants.dart';
 
@@ -18,6 +18,7 @@ class MedicalRecordScreen extends StatefulWidget {
 class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
   bool _dataLoaded = false;
   bool _dataLoading = true;
+  List<MedicalRecord> allMedicalData;
   @override
   void initState() {
     super.initState();
@@ -27,9 +28,9 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
   Future<void> _fetchProfileData() async {
     try {
       Response response = await dioHealthCore.get(
-        "/profile/patient/encounters?includePrescriptions=false&includeSoep=true",
-      );
-      print(response.data);
+          "/profile/patient/relatedEncounters?includePrescriptions=false&includeSoep=false&lastOnly=true");
+      allMedicalData = List<MedicalRecord>.from(
+          response.data.map((i) => MedicalRecord.fromJson(i[0])));
 
       setState(() {
         _dataLoading = false;
@@ -71,72 +72,117 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
         ),
       ),
       body: _dataLoading == true
-          ? const Loading(title: 'Ficha Médica',)
-          : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+          ? const Loading(
+              title: 'Ficha Médica',
+            )
+          : Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom:10.0),
+                    child: Text(
                       'Ficha Médica',
                       textAlign: TextAlign.start,
                       style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                     ),
-                    if (!_dataLoading && !_dataLoaded)
-                      const Padding(
-                        padding: EdgeInsets.only(top: 40.0),
-                        child: Center(
-                          child: Text(
-                            "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Constants.otherColor100,
-                            ),
+                  ),
+                  if (!_dataLoading && !_dataLoaded)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 40.0),
+                      child: Center(
+                        child: Text(
+                          "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Constants.otherColor100,
                           ),
                         ),
                       ),
-                    if (!_dataLoading && _dataLoaded)
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(top: 15.0),
-                            child: Text("Motivo principal",
-                                style: boldoSubTextStyle),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              "Dolor de cabeza prolongado",
-                              style: boldoHeadingTextStyle.copyWith(
-                                  fontSize: 20,
-                                  color: Constants.primaryColor500),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          SoepAccordion('Subjetivo', soepFakeDate),
-                          const Divider(
-                            color: Constants.dividerAccordion,
-                            thickness: 1,
-                          ),
-                          SoepAccordion('Objetivo', soepFakeDate),
-                          const Divider(
-                              color: Constants.dividerAccordion, thickness: 1),
-                          SoepAccordion('Evaluación', soepFakeDate),
-                          const Divider(
-                              color: Constants.dividerAccordion, thickness: 1),
-                          SoepAccordion('Plan', soepFakeDate),
-                          const Divider(
-                              color: Constants.dividerAccordion, thickness: 1),
-                        ],
+                    ),
+                  if (!_dataLoading && _dataLoaded)
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height - 250,
+                      child: ListView.separated(
+                        itemCount: allMedicalData.length,
+                        shrinkWrap: true,
+                        separatorBuilder: (context, index) => const Divider(
+                          color: Colors.transparent,
+                        ),
+                        itemBuilder: (context, index) {
+                          return Row(
+                            children: [
+                              Container(
+                                height: 96,
+                                width: 64,
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(6),
+                                    bottomLeft: Radius.circular(6),
+                                  ),
+                                  color: Color(0xffFFFBF6),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset('assets/icon/file.svg',
+                                        fit: BoxFit.cover),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      DateFormat('MMM').format(
+                                          DateTime.parse(allMedicalData[index].startTimeDate).toLocal()),
+                                      style: const TextStyle(
+                                        color: Color(0xffDF6D51),
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                     Text(
+                                       DateFormat('dd').format(
+                                           DateTime.parse(allMedicalData[index].startTimeDate).toLocal()),
+                                       style: const TextStyle(
+                                        color: Color(0xffDF6D51),
+                                         fontSize: 16,
+                                       ),
+                                     ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    allMedicalData[index].mainReason??'',
+                                    style: const TextStyle(
+                                      color: Constants.extraColor400,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 4,
+                                  ),
+                                  Container(
+                                    width: 200,
+                                    child: Text(
+                                       allMedicalData[index].diagnosis??'',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        color: Constants.extraColor300,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
                       ),
-                  ],
-                ),
+                    )
+                ],
               ),
             ),
     );

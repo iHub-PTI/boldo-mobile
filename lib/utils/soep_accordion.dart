@@ -82,19 +82,19 @@ class SoepList extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(soep[index].title,
+                    Text(soep[index].evaluation,
                         style: boldoHeadingTextStyle.copyWith(
                             fontSize: 14, color: Constants.secondaryColor500)),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4.0),
-                      child: Text(soep[index].date,
-                          style: boldoHeadingTextStyle.copyWith(
-                              fontSize: 20, fontWeight: FontWeight.w500)),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(top: 4.0),
+                    //   child: Text(soep[index].objetive,
+                    //       style: boldoHeadingTextStyle.copyWith(
+                    //           fontSize: 20, fontWeight: FontWeight.w500)),
+                    // ),
                     Padding(
                       padding: const EdgeInsets.only(top: 15.0),
                       child: Text(
-                        soep[index].description,
+                        soep[index].plan,
                         style: TextStyle(fontWeight: FontWeight.w400,fontSize: 15),
                       ),
                     ),
