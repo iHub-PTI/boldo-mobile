@@ -1,5 +1,6 @@
 import 'package:boldo/models/medicalRecord.dart';
 import 'package:boldo/network/http.dart';
+import 'package:boldo/screens/medical_records/medical_records_details.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -82,7 +83,7 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom:10.0),
+                    padding: const EdgeInsets.only(bottom: 10.0),
                     child: Text(
                       'Ficha Médica',
                       textAlign: TextAlign.start,
@@ -112,72 +113,86 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
                           color: Colors.transparent,
                         ),
                         itemBuilder: (context, index) {
-                          return Row(
-                            children: [
-                              Container(
-                                height: 96,
-                                width: 64,
-                                decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(6),
-                                    bottomLeft: Radius.circular(6),
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MedicalRecordsDetails(
+                                        encounterId: allMedicalData[index].id)),
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 96,
+                                  width: 64,
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(6),
+                                      bottomLeft: Radius.circular(6),
+                                    ),
+                                    color: Color(0xffFFFBF6),
                                   ),
-                                  color: Color(0xffFFFBF6),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset('assets/icon/file.svg',
+                                          fit: BoxFit.cover),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        DateFormat('MMM').format(DateTime.parse(
+                                                allMedicalData[index]
+                                                    .startTimeDate)
+                                            .toLocal()),
+                                        style: const TextStyle(
+                                          color: Color(0xffDF6D51),
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      Text(
+                                        DateFormat('dd').format(DateTime.parse(
+                                                allMedicalData[index]
+                                                    .startTimeDate)
+                                            .toLocal()),
+                                        style: const TextStyle(
+                                          color: Color(0xffDF6D51),
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                const SizedBox(width: 10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SvgPicture.asset('assets/icon/file.svg',
-                                        fit: BoxFit.cover),
-                                    const SizedBox(height: 6),
                                     Text(
-                                      DateFormat('MMM').format(
-                                          DateTime.parse(allMedicalData[index].startTimeDate).toLocal()),
+                                      allMedicalData[index].mainReason ?? '',
                                       style: const TextStyle(
-                                        color: Color(0xffDF6D51),
-                                        fontSize: 18,
+                                        color: Constants.extraColor400,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                     Text(
-                                       DateFormat('dd').format(
-                                           DateTime.parse(allMedicalData[index].startTimeDate).toLocal()),
-                                       style: const TextStyle(
-                                        color: Color(0xffDF6D51),
-                                         fontSize: 16,
-                                       ),
-                                     ),
+                                    const SizedBox(
+                                      height: 4,
+                                    ),
+                                    Container(
+                                      width: 200,
+                                      child: Text(
+                                        allMedicalData[index].diagnosis ?? '',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          color: Constants.extraColor300,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
-                              ),
-                              const SizedBox(width: 10),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    allMedicalData[index].mainReason??'',
-                                    style: const TextStyle(
-                                      color: Constants.extraColor400,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 4,
-                                  ),
-                                  Container(
-                                    width: 200,
-                                    child: Text(
-                                       allMedicalData[index].diagnosis??'',
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        color: Constants.extraColor300,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                              ],
+                            ),
                           );
                         },
                       ),
