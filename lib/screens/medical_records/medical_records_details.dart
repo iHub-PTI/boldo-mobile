@@ -30,7 +30,7 @@ class _MedicalRecordDetailState extends State<MedicalRecordsDetails> {
   Future<void> _fetchProfileData() async {
     try {
       Response response = await dioHealthCore.get(
-          "profile/patient/relatedEncounters/${widget.encounterId}?includePrescriptions=false&includeSoep=true");
+          "profile/patient/relatedEncounters/${widget.encounterId}?includePrescriptions=true&includeSoep=true");
    
       allMedicalData = List<MedicalRecord>.from(
           response.data["items"].map((i) => MedicalRecord.fromJson(i)));
