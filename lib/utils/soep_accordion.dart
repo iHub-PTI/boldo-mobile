@@ -1,6 +1,8 @@
 import 'package:boldo/models/Soep.dart';
-import 'package:boldo/models/medicalRecord.dart';
+import 'package:boldo/models/MedicalRecord.dart';
+import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
 import '../constants.dart';
@@ -124,9 +126,31 @@ class SoepList extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('${index == 0 ? 'Primera Consulta' : 'Seguimiento'}',
-                        style: boldoHeadingTextStyle.copyWith(
-                            fontSize: 14, color: Constants.secondaryColor500)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text(
+                            '${index == 0 ? 'Primera Consulta' : 'Seguimiento'}',
+                            style: boldoHeadingTextStyle.copyWith(
+                                fontSize: 14,
+                                color: Constants.secondaryColor500)),
+                        const Spacer(),
+                        medicalRecord[index].prescription.isNotEmpty
+                            ? GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                         PrescriptionRecordScreen(medicalRecord:  medicalRecord[index])),
+                                  );
+                                },
+                                child: SvgPicture.asset('assets/icon/pill.svg',
+                                    fit: BoxFit.cover),
+                              )
+                            : Container(),
+                      ],
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(top: 4.0),
                       child: Text(

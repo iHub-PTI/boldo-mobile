@@ -1,4 +1,4 @@
-import 'package:boldo/models/medicalRecord.dart';
+import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/utils/soep_accordion.dart';
 import 'package:dio/dio.dart';

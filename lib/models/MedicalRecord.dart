@@ -14,10 +14,12 @@ class MedicalRecord {
   String startTimeDate;
   String status;
   List<PrescriptionMedicalRecord> prescription;
+  
   MedicalRecord({
     this.appointmentId,
     this.diagnosis,
     this.instructions,
+    this.prescription
   });
 
   MedicalRecord.fromJson(Map<String, dynamic> json) {
