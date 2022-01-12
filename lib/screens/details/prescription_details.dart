@@ -6,7 +6,7 @@ import '../../constants.dart';
 import '../../utils/helpers.dart';
 
 class PrescriptionDetailsScreen extends StatelessWidget {
-  const PrescriptionDetailsScreen({Key key, @required this.appointment})
+  const PrescriptionDetailsScreen({Key? key, required this.appointment})
       : super(key: key);
   final Appointment appointment;
 
@@ -179,8 +179,8 @@ class PrescriptionDetailsScreen extends StatelessWidget {
 class Background extends StatelessWidget {
   final Widget child;
   const Background({
-    Key key,
-    @required this.child,
+    Key? key,
+    required this.child,
   }) : super(key: key);
 
   @override

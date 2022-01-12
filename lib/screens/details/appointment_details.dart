@@ -10,7 +10,7 @@ import '../../utils/helpers.dart';
 
 class AppointmentDetailsScreen extends StatelessWidget {
   const AppointmentDetailsScreen(
-      {Key key, @required this.isInWaitingRoom, @required this.appointment})
+      {Key? key, required this.isInWaitingRoom, required this.appointment})
       : super(key: key);
   final Appointment appointment;
   final bool isInWaitingRoom;
@@ -263,8 +263,8 @@ class AppointmentDetailsScreen extends StatelessWidget {
 class Background extends StatelessWidget {
   final Widget child;
   const Background({
-    Key key,
-    @required this.child,
+    Key? key,
+    required this.child,
   }) : super(key: key);
 
   @override

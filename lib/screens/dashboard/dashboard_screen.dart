@@ -22,7 +22,7 @@ import 'package:boldo/constants.dart';
 class DashboardScreen extends StatefulWidget {
   final bool setLoggedOut;
 
-  DashboardScreen({Key key, this.setLoggedOut = false}) : super(key: key);
+  DashboardScreen({Key? key, this.setLoggedOut = false}) : super(key: key);
 
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
@@ -147,15 +147,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
 }
 
 Future<void> authenticateUser(
-    {@required BuildContext context, bool switchPage = true}) async {
+    {required BuildContext context, bool switchPage = true}) async {
   String keycloakRealmAddress = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
-      defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
+      defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']!);
 
   FlutterAppAuth appAuth = FlutterAppAuth();
 
   const storage = FlutterSecureStorage();
   try {
-    final AuthorizationTokenResponse result =
+    final AuthorizationTokenResponse? result =
         await appAuth.authorizeAndExchangeCode(
       AuthorizationTokenRequest(
         'boldo-patient',
@@ -166,8 +166,8 @@ Future<void> authenticateUser(
       ),
     );
 
-    await storage.write(key: "access_token", value: result.accessToken);
-    await storage.write(key: "refresh_token", value: result.refreshToken);
+    await storage.write(key: "access_token", value: result!.accessToken);
+    await storage.write(key: "refresh_token", value: result!.refreshToken);
 
     Provider.of<AuthProvider>(context, listen: false)
         .setAuthenticated(isAuthenticated: true);
@@ -179,7 +179,7 @@ Future<void> authenticateUser(
       await prefs.setString("gender", response.data["gender"]);
     }
   } on PlatformException catch (err, s) {
-    if (!err.message.contains('User cancelled flow')) {
+    if (!err.message!.contains('User cancelled flow')) {
       print(err);
       await Sentry.captureException(err, stackTrace: s);
     }

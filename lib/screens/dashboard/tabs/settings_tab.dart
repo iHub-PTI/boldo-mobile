@@ -20,7 +20,7 @@ import '../../../provider/auth_provider.dart';
 import '../../../constants.dart';
 
 class SettingsTab extends StatefulWidget {
-  SettingsTab({Key key}) : super(key: key);
+  SettingsTab({Key? key}) : super(key: key);
 
   @override
   _SettingsTabState createState() => _SettingsTabState();
@@ -181,12 +181,12 @@ class _SettingsTabState extends State<SettingsTab> {
                   try {
                     String baseUrlKeyCloack = String.fromEnvironment(
                         'KEYCLOAK_REALM_ADDRESS',
-                        defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
+                        defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']!);
 
                     const storage = FlutterSecureStorage();
                     final SharedPreferences prefs =
                         await SharedPreferences.getInstance();
-                    String refreshToken =
+                    String? refreshToken =
                         await storage.read(key: "refresh_token");
                     Map<String, dynamic> body = {
                       "refresh_token": refreshToken,
@@ -194,7 +194,8 @@ class _SettingsTabState extends State<SettingsTab> {
                     };
 
                     await http.post(
-                        "$baseUrlKeyCloack/protocol/openid-connect/logout",
+                      
+                        Uri(host: "$baseUrlKeyCloack/protocol/openid-connect/logout"),
                         body: body,
                         headers: {
                           "Content-Type": "application/x-www-form-urlencoded"
