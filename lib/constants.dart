@@ -56,6 +56,13 @@ class Constants {
   static const Color accordionbg = Color(0xfff3FAF7);
   static const Color dividerAccordion = Color(0x40F08F77);
 
+ 
+  // SOEP final string
+  static const String objective = "Objetivo";
+  static const String subjective = "Subjetivo";
+  static const String evaluation = "Evaluación";
+  static const String plan = "Plan";
+  
 }
 
 // Text Style
