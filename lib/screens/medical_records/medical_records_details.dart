@@ -183,7 +183,7 @@ class _MedicalRecordDetailState extends State<MedicalRecordsDetails> {
 class Loading extends StatelessWidget {
   final String title;
   const Loading({
-    this.title,
+    required this.title,
   });
 
   @override

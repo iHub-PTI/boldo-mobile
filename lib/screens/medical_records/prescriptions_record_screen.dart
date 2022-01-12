@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class PrescriptionRecordScreen extends StatelessWidget {
   final MedicalRecord medicalRecord;
-  const PrescriptionRecordScreen({@required this.medicalRecord}) : super();
+  const PrescriptionRecordScreen({required this.medicalRecord}) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -146,8 +146,8 @@ class PrescriptionRecordScreen extends StatelessWidget {
 class Background extends StatelessWidget {
   final Widget child;
   const Background({
-    Key key,
-    @required this.child,
+    Key? key,
+    required this.child,
   }) : super(key: key);
 
   @override

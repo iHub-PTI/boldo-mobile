@@ -19,7 +19,7 @@ class MedicalRecordScreen extends StatefulWidget {
 class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
   bool _dataLoaded = false;
   bool _dataLoading = true;
-  List<MedicalRecord> allMedicalData;
+  late List<MedicalRecord> allMedicalData;
   @override
   void initState() {
     super.initState();
@@ -207,7 +207,7 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
 class Loading extends StatelessWidget {
   final String title;
   const Loading({
-    this.title,
+    required this.title,
   });
 
   @override

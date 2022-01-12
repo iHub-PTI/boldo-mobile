@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/svg.dart';
 
 class PreRegisterSuccess extends StatefulWidget {
-  const PreRegisterSuccess({Key key}) : super(key: key);
+  const PreRegisterSuccess({Key? key}) : super(key: key);
 
   @override
   _PreRegisterSuccessState createState() => _PreRegisterSuccessState();
