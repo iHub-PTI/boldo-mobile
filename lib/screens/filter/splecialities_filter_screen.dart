@@ -9,7 +9,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../network/http.dart';
 
 class SpecialitiesFilterScreen extends StatefulWidget {
-  const SpecialitiesFilterScreen({Key key}) : super(key: key);
+  const SpecialitiesFilterScreen({Key? key}) : super(key: key);
 
   @override
   _SpecialitiesFilterScreenState createState() =>
@@ -106,7 +106,7 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
     }
   }
 
-  void onRemoveSelected({@required Specialization specialization}) {
+  void onRemoveSelected({required Specialization specialization}) {
     _searchController.text = "";
     setState(() {
       selectedSpecializationsList = selectedSpecializationsList
@@ -120,7 +120,7 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
     });
   }
 
-  void onTapFiltered({@required String specializationId}) {
+  void onTapFiltered({required String specializationId}) {
     _searchController.text = "";
     setState(() {
       selectedSpecializationsList = [
@@ -237,9 +237,15 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
                                         ),
                                         SpecialziationWidget(
                                           isSelected: true,
-                                          onRemoveCallback: onRemoveSelected,
+                                          onRemoveCallback: (specialization) {
+                                            onRemoveSelected(
+                                                specialization: specialization);
+                                          },
                                           index: index,
-                                          onTapCallback: onTapFiltered,
+                                          onTapCallback: (string) {
+                                            onTapFiltered(
+                                                specializationId: string);
+                                          },
                                           specializations:
                                               selectedSpecializationsList,
                                         )
@@ -249,9 +255,14 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
                                       selectedSpecializationsList.length) {
                                     return SpecialziationWidget(
                                       isSelected: true,
-                                      onRemoveCallback: onRemoveSelected,
+                                      onRemoveCallback: (specialization) {
+                                        onRemoveSelected(
+                                            specialization: specialization);
+                                      },
                                       index: index,
-                                      onTapCallback: onTapFiltered,
+                                      onTapCallback: (string) {
+                                        onTapFiltered(specializationId: string);
+                                      },
                                       specializations:
                                           selectedSpecializationsList,
                                     );
@@ -279,7 +290,10 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
                                         isSelected: false,
                                         hideLine: true,
                                         index: index,
-                                        onTapCallback: onTapFiltered,
+                                        onTapCallback: (string) {
+                                          onTapFiltered(
+                                              specializationId: string);
+                                        },
                                         specializations:
                                             filteredSpecializationsList,
                                       ),
@@ -290,7 +304,9 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
                                   return SpecialziationWidget(
                                     isSelected: false,
                                     index: index,
-                                    onTapCallback: onTapFiltered,
+                                    onTapCallback: (string) {
+                                      onTapFiltered(specializationId: string);
+                                    },
                                     specializations:
                                         filteredSpecializationsList,
                                   );
@@ -315,17 +331,17 @@ class SpecialziationWidget extends StatelessWidget {
   final bool hideLine;
   final int index;
   final List<Specialization> specializations;
-  final void Function({String specializationId}) onTapCallback;
-  final void Function({Specialization specialization}) onRemoveCallback;
+  final void Function(String specializationId)? onTapCallback;
+  final void Function(Specialization)? onRemoveCallback;
 
   const SpecialziationWidget({
-    Key key,
-    @required this.specializations,
+    Key? key,
+    required this.specializations,
     this.onTapCallback,
     this.hideLine = false,
     this.onRemoveCallback,
-    @required this.isSelected,
-    @required this.index,
+    required this.isSelected,
+    required this.index,
   }) : super(key: key);
 
   @override
@@ -334,7 +350,7 @@ class SpecialziationWidget extends StatelessWidget {
       onTap: () {
         if (isSelected) return;
 
-        onTapCallback(specializationId: specializations[index].id);
+        onTapCallback!(specializations[index].id);
       },
       child: Container(
         color: Colors.transparent,
@@ -362,8 +378,7 @@ class SpecialziationWidget extends StatelessWidget {
                       ),
                       onPressed: () {
                         if (!isSelected) return;
-                        onRemoveCallback(
-                            specialization: specializations[index]);
+                        onRemoveCallback!(specializations[index]);
                       },
                     ),
                   )
