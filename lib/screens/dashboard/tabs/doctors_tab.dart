@@ -18,7 +18,7 @@ import '../../../network/http.dart';
 import '../../../utils/helpers.dart';
 
 class DoctorsTab extends StatefulWidget {
-  DoctorsTab({Key key}) : super(key: key);
+  DoctorsTab({Key? key}) : super(key: key);
 
   @override
   _DoctorsTabState createState() => _DoctorsTabState();
@@ -217,7 +217,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
                           enablePullDown: true,
                           enablePullUp: true,
                           footer: CustomFooter(
-                            builder: (BuildContext context, LoadStatus mode) {
+                            builder: (BuildContext context, LoadStatus? mode) {
                               Widget body = Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -272,8 +272,8 @@ class _DoctorsTabState extends State<DoctorsTab> {
 
 class _DoctorCard extends StatelessWidget {
   const _DoctorCard({
-    Key key,
-    @required this.doctor,
+    Key? key,
+    required this.doctor,
   }) : super(key: key);
 
   final Doctor doctor;

@@ -19,15 +19,15 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:boldo/network/http.dart';
 
 class HomeTab extends StatefulWidget {
-  HomeTab({Key key}) : super(key: key);
+  HomeTab({Key? key}) : super(key: key);
 
   @override
   _HomeTabState createState() => _HomeTabState();
 }
 
 class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
-  Isolate _isolate;
-  ReceivePort _receivePort;
+  Isolate? _isolate;
+  ReceivePort? _receivePort;
 
   List<Appointment> allAppointmentsState = [];
 
@@ -58,11 +58,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     if (_isolate != null) {
-      _isolate.kill(priority: Isolate.immediate);
+      _isolate!.kill(priority: Isolate.immediate);
       _isolate = null;
     }
     if (_receivePort != null) {
-      _receivePort.close();
+      _receivePort!.close();
       _receivePort = null;
     }
 
@@ -84,9 +84,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   }
 
   void _handleWaitingRoomsListUpdate(dynamic data) async {
-    _isolate.kill(priority: Isolate.immediate);
+    _isolate!.kill(priority: Isolate.immediate);
     _isolate = null;
-    _receivePort.close();
+    _receivePort!.close();
     _receivePort = null;
     //if appointment doesnt exist in the list of appointments then update the state
     bool hasAppointment = waitingRoomAppointments
@@ -111,11 +111,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     _isolate = await Isolate.spawn(
       _updateWaitingRoomsList,
       {
-        'port': _receivePort.sendPort,
+        'port': _receivePort!.sendPort,
         'upcomingWaitingRoomAppointments': updatedUpcomingAppointments,
       },
     );
-    _receivePort.listen(_handleWaitingRoomsListUpdate);
+    _receivePort!.listen(_handleWaitingRoomsListUpdate);
   }
 
   Future<void> getAppointmentsData({bool loadMore = false}) async {
@@ -123,11 +123,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
     if (!loadMore) {
       if (_isolate != null) {
-        _isolate.kill(priority: Isolate.immediate);
+        _isolate!.kill(priority: Isolate.immediate);
         _isolate = null;
       }
       if (_receivePort != null) {
-        _receivePort.close();
+        _receivePort!.close();
         _receivePort = null;
       }
       if (!isAuthenticated) {
@@ -200,12 +200,12 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         _isolate = await Isolate.spawn(
           _updateWaitingRoomsList,
           {
-            'port': _receivePort.sendPort,
+            'port': _receivePort!.sendPort,
             'upcomingWaitingRoomAppointments':
                 upcomingWaitingRoomAppointmetsList,
           },
         );
-        _receivePort.listen(_handleWaitingRoomsListUpdate);
+        _receivePort!.listen(_handleWaitingRoomsListUpdate);
       }
 
       if (!mounted) return;
@@ -271,7 +271,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
     Appointment firstPastAppointment = allAppointmentsState.firstWhere(
         (element) => ["closed", "locked"].contains(element.status),
-        orElse: () => null);
+        // ignore: null_check_always_fails
+        orElse: () => null!);
 
     return Scaffold(
       appBar: const HomeTabAppBar(),
@@ -303,8 +304,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                       onRefresh: _onRefresh,
                       footer: CustomFooter(
                         height: 140,
-                        builder: (BuildContext context, LoadStatus mode) {
-                          print(mode);
+                        builder: (BuildContext context, LoadStatus? mode) {
                           Widget body = Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -316,7 +316,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                               )
                             ],
                           );
-                          if (mode == LoadStatus.loading) {
+
+                          if (mode! == LoadStatus.loading) {
                             body = Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -372,13 +373,13 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 }
 
 class _ListRenderer extends StatelessWidget {
-  final int index;
-  final Appointment appointment;
-  final Appointment firstAppointmentPast;
-  final List<Appointment> waitingRoomAppointments;
+  final int? index;
+  final Appointment? appointment;
+  final Appointment? firstAppointmentPast;
+  final List<Appointment>? waitingRoomAppointments;
 
   const _ListRenderer(
-      {Key key,
+      {Key? key,
       this.index,
       this.appointment,
       this.firstAppointmentPast,
@@ -387,9 +388,9 @@ class _ListRenderer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isInWaitingRoom =
-        waitingRoomAppointments.any((element) => element.id == appointment.id);
-    if (index == 0 && !["closed", "locked"].contains(appointment.status))
+    bool isInWaitingRoom = waitingRoomAppointments!
+        .any((element) => element.id == appointment!.id);
+    if (index == 0 && !["closed", "locked"].contains(appointment!.status))
       return Column(children: [
         Align(
           alignment: Alignment.centerLeft,
@@ -416,10 +417,10 @@ class _ListRenderer extends StatelessWidget {
           height: 1,
         ),
         AppointmentCard(
-            appointment: appointment, isInWaitingRoom: isInWaitingRoom),
+            appointment: appointment!, isInWaitingRoom: isInWaitingRoom),
       ]);
     if (firstAppointmentPast != null &&
-        firstAppointmentPast.id == appointment.id) {
+        firstAppointmentPast!.id == appointment!.id) {
       return Column(children: [
         Align(
           alignment: Alignment.centerLeft,
@@ -446,10 +447,10 @@ class _ListRenderer extends StatelessWidget {
           height: 1,
         ),
         AppointmentCard(
-            appointment: appointment, isInWaitingRoom: isInWaitingRoom),
+            appointment: appointment!, isInWaitingRoom: isInWaitingRoom),
       ]);
     }
     return AppointmentCard(
-        appointment: appointment, isInWaitingRoom: isInWaitingRoom);
+        appointment: appointment!, isInWaitingRoom: isInWaitingRoom);
   }
 }

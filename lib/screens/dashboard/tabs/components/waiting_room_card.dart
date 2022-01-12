@@ -9,7 +9,7 @@ class WaitingRoomCard extends StatelessWidget {
   final Appointment appointment;
   final Function() getAppointmentsData;
   const WaitingRoomCard(
-      {Key key, @required this.appointment, @required this.getAppointmentsData})
+      {Key? key, required this.appointment, required this.getAppointmentsData})
       : super(key: key);
 
   @override

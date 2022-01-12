@@ -12,7 +12,7 @@ class EmptyAppointmentsState extends StatelessWidget {
   final String text;
   final String size;
   const EmptyAppointmentsState(
-      {Key key, @required this.size, @required this.text})
+      {Key? key, required this.size, required this.text})
       : super(key: key);
 
   @override

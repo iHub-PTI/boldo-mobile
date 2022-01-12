@@ -14,9 +14,9 @@ class AppointmentCard extends StatelessWidget {
   final bool isInWaitingRoom;
 
   const AppointmentCard({
-    Key key,
-    @required this.appointment,
-    @required this.isInWaitingRoom,
+    Key? key,
+    required this.appointment,
+    required this.isInWaitingRoom,
   }) : super(key: key);
 
   @override
