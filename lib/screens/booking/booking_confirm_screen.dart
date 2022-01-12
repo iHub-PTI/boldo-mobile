@@ -17,7 +17,7 @@ class BookingConfirmScreen extends StatefulWidget {
   final Doctor doctor;
   final DateTime bookingDate;
   BookingConfirmScreen(
-      {Key key, @required this.bookingDate, @required this.doctor})
+      {Key? key, required this.bookingDate, required this.doctor})
       : super(key: key);
 
   @override
@@ -129,7 +129,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
 
 class _DoctorBookingInfoWidget extends StatelessWidget {
   final DateTime bookingDate;
-  const _DoctorBookingInfoWidget({Key key, @required this.bookingDate})
+  const _DoctorBookingInfoWidget({Key? key, required this.bookingDate})
       : super(key: key);
 
   @override
@@ -169,7 +169,7 @@ class _DoctorBookingInfoWidget extends StatelessWidget {
 
 class _DoctorProfileWidget extends StatelessWidget {
   final Doctor doctor;
-  const _DoctorProfileWidget({Key key, @required this.doctor})
+  const _DoctorProfileWidget({Key? key, required this.doctor})
       : super(key: key);
 
   @override
