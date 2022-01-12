@@ -71,11 +71,11 @@ class _ProfileImageState extends State<ProfileImage> {
                             );
                           },
                           selector: (buildContext, userProvider) =>
-                              userProvider.getPhotoUrl,
+                              userProvider.getPhotoUrl??'',
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getGender,
+                          userProvider.getGender??'',
                     ),
                   ),
             elevation: 4.0,

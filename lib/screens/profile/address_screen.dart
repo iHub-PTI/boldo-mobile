@@ -85,7 +85,7 @@ class _AddressScreenState extends State<AddressScreen> {
                     );
                   },
                   selector: (buildContext, userProvider) =>
-                      userProvider.getStreet,
+                      userProvider.getStreet??'',
                 ),
                 const SizedBox(height: 20),
                 Selector<UserProvider, String>(
@@ -99,7 +99,7 @@ class _AddressScreenState extends State<AddressScreen> {
                     );
                   },
                   selector: (buildContext, userProvider) =>
-                      userProvider.getNeighborhood,
+                      userProvider.getNeighborhood??'',
                 ),
                 const SizedBox(height: 20),
                 Selector<UserProvider, String>(
@@ -113,7 +113,7 @@ class _AddressScreenState extends State<AddressScreen> {
                     );
                   },
                   selector: (buildContext, userProvider) =>
-                      userProvider.getCity,
+                      userProvider.getCity??'',
                 ),
                 const SizedBox(height: 20),
                 Selector<UserProvider, String>(
@@ -128,7 +128,7 @@ class _AddressScreenState extends State<AddressScreen> {
                     );
                   },
                   selector: (buildContext, userProvider) =>
-                      userProvider.getAddressDescription,
+                      userProvider.getAddressDescription??'',
                 ),
                 const SizedBox(height: 26),
                 SizedBox(
@@ -136,7 +136,7 @@ class _AddressScreenState extends State<AddressScreen> {
                     children: [
                       if (userProvider.profileEditErrorMessage != null)
                         Text(
-                          userProvider.profileEditErrorMessage,
+                          userProvider.profileEditErrorMessage??'',
                           style: const TextStyle(
                             fontSize: 14,
                             color: Constants.otherColor100,
@@ -144,7 +144,7 @@ class _AddressScreenState extends State<AddressScreen> {
                         ),
                       if (userProvider.profileEditSuccessMessage != null)
                         Text(
-                          userProvider.profileEditSuccessMessage,
+                          userProvider.profileEditSuccessMessage??'',
                           style: const TextStyle(
                             fontSize: 14,
                             color: Constants.primaryColor600,

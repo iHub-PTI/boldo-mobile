@@ -187,7 +187,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getGivenName,
+                          userProvider.getGivenName ?? '',
                     ),
 
                     const SizedBox(height: 20),
@@ -203,7 +203,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getFamilyName,
+                          userProvider.getFamilyName?? '',
                     ),
 
                     //CustomDropdown(),
@@ -219,7 +219,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getJob,
+                          userProvider.getJob??'',
                     ),
 
                     const SizedBox(height: 20),
@@ -247,7 +247,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getGender,
+                          userProvider.getGender??'',
                     ),
 
                     const SizedBox(height: 20),
@@ -271,7 +271,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getBirthDate,
+                          userProvider.getBirthDate??'',
                     ),
 
                     const SizedBox(height: 20),
@@ -286,7 +286,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getEmail,
+                          userProvider.getEmail??'',
                     ),
 
                     const SizedBox(height: 20),
@@ -304,7 +304,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getPhone,
+                          userProvider.getPhone??'',
                     ),
 
                     const SizedBox(height: 20),
@@ -362,7 +362,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           if (userProvider.profileEditErrorMessage != null)
                             Text(
-                              userProvider.profileEditErrorMessage,
+                              userProvider.profileEditErrorMessage!,
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Constants.otherColor100,
@@ -370,7 +370,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           if (userProvider.profileEditSuccessMessage != null)
                             Text(
-                              userProvider.profileEditSuccessMessage,
+                              userProvider.profileEditSuccessMessage!,
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Constants.primaryColor600,

@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeTabAppBar extends StatefulWidget implements PreferredSizeWidget {
   const HomeTabAppBar({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -22,8 +22,8 @@ class HomeTabAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _HomeTabAppBarState extends State<HomeTabAppBar> {
-  String gender;
-  String profileURL;
+  String? gender;
+  String? profileURL;
 
   @override
   void initState() {
@@ -82,7 +82,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                               )
                             : CachedNetworkImage(
                                 fit: BoxFit.cover,
-                                imageUrl: data ?? profileURL,
+                                imageUrl: data,
                                 progressIndicatorBuilder:
                                     (context, url, downloadProgress) => Padding(
                                   padding: const EdgeInsets.all(26.0),
@@ -102,7 +102,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                   );
                 },
                 selector: (buildContext, userProvider) =>
-                    userProvider.getPhotoUrl,
+                    userProvider.getPhotoUrl??'',
               ),
               const SizedBox(width: 10),
               Column(

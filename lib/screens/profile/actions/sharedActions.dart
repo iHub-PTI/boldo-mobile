@@ -30,8 +30,8 @@ Future<Map<String, String>> updateProfile(
     });
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("profile_url", userProvider.getPhotoUrl);
-    await prefs.setString("gender", userProvider.getGender);
+    await prefs.setString("profile_url", userProvider.getPhotoUrl??'');
+    await prefs.setString("gender", userProvider.getGender??'');
 
     return {"successMessage": "Perfil actualizado con éxito."};
   } on DioError catch (exception, stackTrace) {
