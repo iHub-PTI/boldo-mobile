@@ -15,20 +15,21 @@ String validatePassword(String password) {
   //   return 'The password must have at least one lowercase character';
   // if (!hasDigit.hasMatch(password))
   //   return 'The password must have at least one number';
-
-  return null;
+   // ignore: null_check_always_fails
+  return null!;
 }
 
 String validateEmail(String email) {
   Pattern pattern =
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-  RegExp regex = RegExp(pattern);
+  RegExp regex = RegExp(pattern.toString());
   if (email.isEmpty) {
     return 'The email is required';
   } else if (!regex.hasMatch(email)) {
     return 'Enter a valid email address';
   } else {
-    return null;
+    // ignore: null_check_always_fails
+    return null!;
   }
 }
 
@@ -38,7 +39,8 @@ String valdiateFirstName(String value) {
   else if (value.length > 30)
     return "The First Name is too long";
   else
-    return null;
+     // ignore: null_check_always_fails
+    return null!;
 }
 
 String valdiateLasttName(String value) {
@@ -47,10 +49,11 @@ String valdiateLasttName(String value) {
   else if (value.length > 30)
     return "The Last Name is too long";
   else
-    return null;
+     // ignore: null_check_always_fails
+    return null!;
 }
 
-String validatePasswordConfirmation(String pass2, String pass1) {
+String? validatePasswordConfirmation(String pass2, String pass1) {
   return (pass2 == pass1) ? null : "The two passwords must match";
 }
 

@@ -11,7 +11,7 @@ class SoepAccordion extends StatefulWidget {
   final String title;
   final List<MedicalRecord> medicalRecord;
 
-  SoepAccordion({this.title, this.medicalRecord});
+  SoepAccordion({required this.title, required this.medicalRecord});
   @override
   _SoepAccordionState createState() => _SoepAccordionState();
 }

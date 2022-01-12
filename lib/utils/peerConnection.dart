@@ -24,21 +24,21 @@ enum CallState {
 }
 
 class PeerConnection {
-  RTCPeerConnection peerConnection;
+  late RTCPeerConnection peerConnection;
 
   MediaStream localStream;
   io.Socket socket;
   String room;
   String token;
 
-  Function(MediaStream) onRemoteStream;
-  Function(CallState) onStateChange;
+  late Function(MediaStream) onRemoteStream;
+  late Function(CallState) onStateChange;
 
   PeerConnection(
-      {this.localStream,
-      @required this.token,
-      @required this.room,
-      @required this.socket});
+      {required this.localStream,
+      required this.token,
+      required this.room,
+      required this.socket});
 
   Future<void> init() async {
     peerConnection = await createPeerConnection(
@@ -166,6 +166,6 @@ class PeerConnection {
     peerConnection.onIceCandidate = null;
     peerConnection.onIceConnectionState = null;
 
-    peerConnection = null;
+    peerConnection = null!;
   }
 }

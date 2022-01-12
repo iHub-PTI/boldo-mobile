@@ -17,7 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart';
 
 class LoginWebViewHelper extends StatefulWidget {
-  const LoginWebViewHelper({Key key}) : super(key: key);
+  const LoginWebViewHelper({Key? key}) : super(key: key);
 
   @override
   _LoginWebViewHelperState createState() => _LoginWebViewHelperState();
@@ -74,15 +74,15 @@ class _LoginWebViewHelperState extends State<LoginWebViewHelper> {
   }
 }
 
-Future<int> _authenticateUser({@required BuildContext context}) async {
+Future<int> _authenticateUser({required BuildContext context}) async {
   String keycloakRealmAddress = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
-      defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
+      defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']!);
 
   FlutterAppAuth appAuth = FlutterAppAuth();
 
   const storage = FlutterSecureStorage();
   try {
-    final AuthorizationTokenResponse result =
+    final AuthorizationTokenResponse? result =
         await appAuth.authorizeAndExchangeCode(
       AuthorizationTokenRequest(
         'boldo-patient',
@@ -93,7 +93,7 @@ Future<int> _authenticateUser({@required BuildContext context}) async {
       ),
     );
 
-    await storage.write(key: "access_token", value: result.accessToken);
+    await storage.write(key: "access_token", value: result!.accessToken);
     await storage.write(key: "refresh_token", value: result.refreshToken);
 
     Provider.of<AuthProvider>(context, listen: false)
@@ -110,10 +110,10 @@ Future<int> _authenticateUser({@required BuildContext context}) async {
 
     return 2;
   } on PlatformException catch (err, s) {
-    if (err.message.contains('User disabled')) {
+    if (err.message!.contains('User disabled')) {
       return 1;
     }
-    if (!err.message.contains('User cancelled flow')) {
+    if (!err.message!.contains('User cancelled flow')) {
       print(err);
       await Sentry.captureException(err, stackTrace: s);
     }
