@@ -19,7 +19,7 @@ class UtilsProvider with ChangeNotifier {
     _filterText = filterText;
   }
 
-  void setSelectedPageIndex({int pageIndex}) {
+  void setSelectedPageIndex({required int pageIndex}) {
     _selectedPageIndex = pageIndex;
 
     notifyListeners();
@@ -29,13 +29,13 @@ class UtilsProvider with ChangeNotifier {
     _filterText = "";
   }
 
-  void setListOfSpecializations({List<Specialization> selectedFilters}) {
+  void setListOfSpecializations({required List<Specialization> selectedFilters}) {
     _selectedSpecializations = selectedFilters;
 
     notifyListeners();
   }
 
-  void removeSpecialization({String specializationId}) {
+  void removeSpecialization({required String specializationId}) {
     _selectedSpecializations = _selectedSpecializations
         .where((element) => element.id != specializationId)
         .toList();

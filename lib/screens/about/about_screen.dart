@@ -8,7 +8,7 @@ import '../../widgets/wrapper.dart';
 import '../../constants.dart';
 
 class About extends StatefulWidget {
-  const About({Key key}) : super(key: key);
+  const About({Key? key}) : super(key: key);
 
   @override
   _AboutState createState() => _AboutState();

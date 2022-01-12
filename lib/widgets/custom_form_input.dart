@@ -112,7 +112,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
           child: GestureDetector(
             onTap: () async {
               if (!widget.isDateTime) return;
-              String birthDate =
+              String? birthDate =
                   Provider.of<UserProvider>(context, listen: false)
                       .getBirthDate;
 
