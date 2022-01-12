@@ -11,11 +11,11 @@ class WaitingRoom extends StatefulWidget {
   final Function() muteMic;
   final Function() muteVideo;
   const WaitingRoom({
-    Key key,
-    @required this.localRenderer,
-    @required this.appointment,
-    @required this.muteMic,
-    @required this.muteVideo,
+    Key? key,
+    required this.localRenderer,
+    required this.appointment,
+    required this.muteMic,
+    required this.muteVideo,
   }) : super(key: key);
 
   @override

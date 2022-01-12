@@ -7,8 +7,8 @@ import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-Future<bool> callEndedPopup(
-    {@required BuildContext context, @required Appointment appointment}) async {
+Future<bool?> callEndedPopup(
+    {required BuildContext context, required Appointment appointment}) async {
   return showDialog<bool>(
       useRootNavigator: false,
       context: context,

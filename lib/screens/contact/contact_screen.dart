@@ -8,7 +8,7 @@ import '../../widgets/wrapper.dart';
 import '../../constants.dart';
 
 class Contact extends StatefulWidget {
-  const Contact({Key key}) : super(key: key);
+  const Contact({Key? key}) : super(key: key);
 
   @override
   _ContactState createState() => _ContactState();

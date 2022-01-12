@@ -19,16 +19,16 @@ class Call extends StatelessWidget {
   final Function() muteVideo;
 
   const Call({
-    Key key,
-    @required this.initialMicState,
-    @required this.localRenderer,
-    @required this.remoteRenderer,
-    @required this.hangUp,
-    @required this.muteVideo,
-    @required this.muteMic,
-    @required this.initialVideoState,
-    @required this.switchCamera,
-    @required this.appointment,
+    Key? key,
+    required this.initialMicState,
+    required this.localRenderer,
+    required this.remoteRenderer,
+    required this.hangUp,
+    required this.muteVideo,
+    required this.muteMic,
+    required this.initialVideoState,
+    required this.switchCamera,
+    required this.appointment,
   }) : super(key: key);
 
   @override
@@ -77,7 +77,7 @@ class Call extends StatelessWidget {
               ),
               FloatingActionButton(
                 heroTag: null,
-                onPressed: hangUp,
+                onPressed: () => hangUp,
                 tooltip: 'Hangup',
                 elevation: 0,
                 child: SvgPicture.asset(
@@ -126,9 +126,9 @@ class CustomPositionedCamera extends StatefulWidget {
   final Orientation orientation;
 
   const CustomPositionedCamera({
-    Key key,
-    @required this.localRenderer,
-    @required this.orientation,
+    Key? key,
+    required this.localRenderer,
+    required this.orientation,
   }) : super(key: key);
 
   @override

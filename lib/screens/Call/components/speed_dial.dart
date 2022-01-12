@@ -9,12 +9,12 @@ class SpeedDial extends StatefulWidget {
   final Function() muteMic;
   final Function() muteVideo;
   SpeedDial({
-    Key key,
-    @required this.initialMicState,
-    @required this.switchCameraCallback,
-    @required this.muteMic,
-    @required this.muteVideo,
-    @required this.initialVideoState,
+    Key? key,
+    required this.initialMicState,
+    required this.switchCameraCallback,
+    required this.muteMic,
+    required this.muteVideo,
+    required this.initialVideoState,
   }) : super(key: key);
   @override
   State createState() => SpeedDialState();
@@ -22,7 +22,7 @@ class SpeedDial extends StatefulWidget {
 
 class SpeedDialState extends State<SpeedDial>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
+  AnimationController? _controller;
   bool _mutedAudio = false;
   bool _mutedVideo = false;
 
@@ -48,7 +48,7 @@ class SpeedDialState extends State<SpeedDial>
           alignment: FractionalOffset.topCenter,
           child: ScaleTransition(
             scale: CurvedAnimation(
-              parent: _controller,
+              parent: _controller!,
               curve:
                   const Interval(0.0, 1.0 - 0 / 3 / 2.0, curve: Curves.easeOut),
             ),
@@ -75,7 +75,7 @@ class SpeedDialState extends State<SpeedDial>
           alignment: FractionalOffset.topCenter,
           child: ScaleTransition(
             scale: CurvedAnimation(
-              parent: _controller,
+              parent: _controller!,
               curve:
                   const Interval(0.0, 1.0 - 1 / 3 / 2.0, curve: Curves.easeOut),
             ),
@@ -102,7 +102,7 @@ class SpeedDialState extends State<SpeedDial>
           alignment: FractionalOffset.topCenter,
           child: ScaleTransition(
             scale: CurvedAnimation(
-              parent: _controller,
+              parent: _controller!,
               curve:
                   const Interval(0.0, 1.0 - 2 / 3 / 2.0, curve: Curves.easeOut),
             ),
@@ -124,11 +124,11 @@ class SpeedDialState extends State<SpeedDial>
             heroTag: null,
             backgroundColor: const Color.fromRGBO(0, 0, 0, 0.5),
             child: AnimatedBuilder(
-              animation: _controller,
-              builder: (BuildContext context, Widget child) {
+              animation: _controller!,
+              builder: (BuildContext context, Widget? child) {
                 return Transform(
                   transform:
-                      Matrix4.rotationZ(_controller.value * 0.5 * math.pi),
+                      Matrix4.rotationZ(_controller!.value * 0.5 * math.pi),
                   alignment: FractionalOffset.center,
                   child: RotatedBox(
                     quarterTurns: 1,
@@ -142,10 +142,10 @@ class SpeedDialState extends State<SpeedDial>
               },
             ),
             onPressed: () {
-              if (_controller.isDismissed) {
-                _controller.forward();
+              if (_controller!.isDismissed) {
+                _controller!.forward();
               } else {
-                _controller.reverse();
+                _controller!.reverse();
               }
             },
           ),
