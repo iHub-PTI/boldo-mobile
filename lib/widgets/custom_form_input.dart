@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
@@ -24,19 +24,19 @@ class CustomFormInput extends StatefulWidget {
   final Function(String) onChanged;
   final List<TextInputFormatter> inputFormatters;
   CustomFormInput(
-      {Key key,
-      @required this.label,
-      this.validator,
-      this.changeValueCallback,
+      {Key? key,
+      required this.label,
+      required this.validator,
+      required this.changeValueCallback,
       this.isDateTime = false,
       this.inputFormatters = const [],
       this.maxLines = 1,
-      this.customSVGIcon,
+      required this.customSVGIcon,
       this.isPhoneNumber = false,
-      this.customIcon,
-      this.initialValue,
-      this.secondaryLabel,
-      this.onChanged,
+      required this.customIcon,
+      required this.initialValue,
+      required this.secondaryLabel,
+      required this.onChanged,
       this.obscureText = false})
       : super(key: key);
 
@@ -195,9 +195,15 @@ class _CustomFormInputState extends State<CustomFormInput> {
                         left: 15, right: 15, top: 18, bottom: 15),
                   ),
                   //keyboardType: TextInputType.emailAddress,
-                  validator: widget.validator,
+                  // validator: widget.validator,
+                  validator: (string) {
+                    widget.validator(string!);
+                  },
                   onChanged: widget.onChanged,
-                  onSaved: widget.changeValueCallback,
+                   onSaved: (string) {
+                    widget.changeValueCallback(string!);
+                  },
+                  // onSaved: widget.changeValueCallback,
                 ),
               ),
             ),

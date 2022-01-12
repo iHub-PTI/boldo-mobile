@@ -11,11 +11,11 @@ class CustomCalendar extends StatefulWidget {
   final Function(DateTime changeDateCallback) changeDateCallback;
 
   CustomCalendar({
-    Key key,
-    @required this.notAvailibleThisMonth,
-    @required this.calendarItems,
-    @required this.selectedDate,
-    @required this.changeDateCallback,
+    Key? key,
+    required this.notAvailibleThisMonth,
+    required this.calendarItems,
+    required this.selectedDate,
+    required this.changeDateCallback,
   }) : super(key: key);
 
   @override
@@ -26,7 +26,7 @@ final List<String> listOfDays = ["D", "L", "M", "M", "J", "V", "S"];
 
 class _CustomCalendarState extends State<CustomCalendar> {
   bool _calendarLoading = false;
-  DateTime selectedMonth;
+  late DateTime selectedMonth;
   @override
   void initState() {
     selectedMonth = widget.selectedDate;
@@ -34,7 +34,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
   }
 
   void getCalendarItems(
-      {@required DateTime selectedDate, bool initialLoad = false}) async {
+      {required DateTime selectedDate, bool initialLoad = false}) async {
     setState(() {
       _calendarLoading = true;
       selectedMonth = selectedDate;
@@ -173,10 +173,10 @@ class _CustomCalendarState extends State<CustomCalendar> {
 
 class CalendarDay extends StatelessWidget {
   const CalendarDay({
-    Key key,
-    this.calendarItem,
+    Key? key,
+    required this.calendarItem,
     this.getItemsForDayCallback,
-    this.selectedItem,
+    required this.selectedItem,
   }) : super(key: key);
 
   final CalendarItem calendarItem;

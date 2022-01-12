@@ -7,7 +7,7 @@ class CustomFormButton extends StatelessWidget {
   final String text;
   final void Function() actionCallback;
   const CustomFormButton(
-      {Key key, this.text = "Confirmar", this.loading, this.actionCallback})
+      {Key? key, this.text = "Confirmar", required this.loading, required this.actionCallback})
       : super(key: key);
 
   @override
