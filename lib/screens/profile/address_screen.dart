@@ -9,7 +9,7 @@ import '../../provider/user_provider.dart';
 import '../../constants.dart';
 
 class AddressScreen extends StatefulWidget {
-  AddressScreen({Key key}) : super(key: key);
+  AddressScreen({Key? key}) : super(key: key);
 
   @override
   _AddressScreenState createState() => _AddressScreenState();
@@ -18,19 +18,19 @@ class AddressScreen extends StatefulWidget {
 class _AddressScreenState extends State<AddressScreen> {
   bool _validate = false;
   bool loading = false;
-  String street, neighborhood, city, addressDescription;
+  late String street, neighborhood, city, addressDescription;
 
   final _formKey = GlobalKey<FormState>();
 
   Future<void> _updateLocation() async {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       setState(() {
         _validate = true;
       });
       return;
     }
 
-    _formKey.currentState.save();
+    _formKey.currentState!.save();
 
     Provider.of<UserProvider>(context, listen: false)
         .clearProfileFormMessages();
@@ -39,7 +39,7 @@ class _AddressScreenState extends State<AddressScreen> {
     });
     Map<String, String> updateResponse = await updateProfile(context: context);
     Provider.of<UserProvider>(context, listen: false).updateProfileEditMessages(
-        updateResponse["successMessage"], updateResponse["errorMessage"]);
+        updateResponse["successMessage"]!, updateResponse["errorMessage"]!);
     setState(() {
       loading = false;
     });

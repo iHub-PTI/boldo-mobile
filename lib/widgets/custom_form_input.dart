@@ -13,30 +13,30 @@ class CustomFormInput extends StatefulWidget {
   final int maxLines;
   final bool isPhoneNumber;
   final String label;
-  final Icon customIcon;
-  final String secondaryLabel;
-  final String initialValue;
-  final String customSVGIcon;
+  final Icon? customIcon;
+  final String? secondaryLabel;
+  final String? initialValue;
+  final String? customSVGIcon;
   final bool isDateTime;
-  final String Function(String) validator;
-  final Function(String) changeValueCallback;
+  final String Function(String)? validator;
+  final Function(String)? changeValueCallback;
   final bool obscureText;
-  final Function(String) onChanged;
+  final Function(String)? onChanged;
   final List<TextInputFormatter> inputFormatters;
   CustomFormInput(
       {Key? key,
       required this.label,
-      required this.validator,
-      required this.changeValueCallback,
+       this.validator,
+       this.changeValueCallback,
       this.isDateTime = false,
       this.inputFormatters = const [],
       this.maxLines = 1,
-      required this.customSVGIcon,
+       this.customSVGIcon,
       this.isPhoneNumber = false,
-      required this.customIcon,
-      required this.initialValue,
-      required this.secondaryLabel,
-      required this.onChanged,
+       this.customIcon,
+       this.initialValue,
+       this.secondaryLabel,
+       this.onChanged,
       this.obscureText = false})
       : super(key: key);
 
@@ -53,7 +53,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
   void initState() {
     _textFocus.addListener(onChangeFocus);
     if (widget.initialValue != null)
-      _textEditingController.text = widget.initialValue;
+      _textEditingController.text = widget.initialValue!;
     super.initState();
   }
 
@@ -95,7 +95,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
               ),
               if (widget.secondaryLabel != null)
                 Text(
-                  widget.secondaryLabel,
+                  widget.secondaryLabel!,
                   style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 13,
@@ -122,7 +122,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
                   showTitleActions: true, onConfirm: (DateTime dt) {
                 _textEditingController.text =
                     DateFormat('dd.MM.yyyy').format(dt).toString();
-                widget.onChanged(dt.toString());
+                widget.onChanged!(dt.toString());
               });
             },
             child: Container(
@@ -186,7 +186,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
                             ? Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: SvgPicture.asset(
-                                  widget.customSVGIcon,
+                                  widget.customSVGIcon!,
                                   color: Constants.extraColor300,
                                 ),
                               )
@@ -197,11 +197,11 @@ class _CustomFormInputState extends State<CustomFormInput> {
                   //keyboardType: TextInputType.emailAddress,
                   // validator: widget.validator,
                   validator: (string) {
-                    widget.validator(string!);
+                    widget.validator!(string!);
                   },
                   onChanged: widget.onChanged,
                    onSaved: (string) {
-                    widget.changeValueCallback(string!);
+                    widget.changeValueCallback!(string!);
                   },
                   // onSaved: widget.changeValueCallback,
                 ),

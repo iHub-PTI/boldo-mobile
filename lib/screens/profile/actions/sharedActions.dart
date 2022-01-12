@@ -9,7 +9,7 @@ import '../../../provider/user_provider.dart';
 import '../../../network/http.dart';
 
 Future<Map<String, String>> updateProfile(
-    {@required BuildContext context}) async {
+    {required BuildContext context}) async {
   try {
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);

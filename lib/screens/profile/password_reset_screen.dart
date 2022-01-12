@@ -12,7 +12,7 @@ import '../../network/http.dart';
 import '../../utils/form_utils.dart';
 
 class PasswordResetScreen extends StatefulWidget {
-  PasswordResetScreen({Key key}) : super(key: key);
+  PasswordResetScreen({Key? key}) : super(key: key);
 
   @override
   _PasswordResetScreenState createState() => _PasswordResetScreenState();
@@ -21,29 +21,30 @@ class PasswordResetScreen extends StatefulWidget {
 class _PasswordResetScreenState extends State<PasswordResetScreen> {
   bool _validate = false;
   bool loading = false;
-  String _currentPassword, _newPassword, _confirmation;
-  String _errorMessage;
-  String _successMessage;
+  late String _currentPassword, _newPassword, _confirmation;
+  late String _errorMessage;
+  late String _successMessage;
   final _formKey = GlobalKey<FormState>();
 
   Future<void> _updatePassword() async {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       setState(() {
         _validate = true;
       });
       return;
     }
 
-    _formKey.currentState.save();
+    _formKey.currentState!.save();
     setState(() {
-      _errorMessage = null;
-      _successMessage = null;
+      _errorMessage = null!;
+      // ignore: dead_code
+      _successMessage = null!;
       loading = true;
     });
 
     try {
       String baseUrlKeyCloack = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
-          defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
+          defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']!);
       dio.options.baseUrl = baseUrlKeyCloack;
 
       await dio.post(
@@ -63,7 +64,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
       print(exception);
 
       setState(() {
-        _errorMessage = exception.response.statusCode == 400
+        _errorMessage = exception.response!.statusCode == 400
             ? "Contraseña incorrecta"
             : "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         loading = false;
@@ -85,7 +86,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
       );
     }
     String baseUrlServer = String.fromEnvironment('SERVER_ADDRESS',
-        defaultValue: DotEnv().env['SERVER_ADDRESS']);
+        defaultValue: DotEnv().env['SERVER_ADDRESS']!);
     dio.options.baseUrl = baseUrlServer;
   }
 
@@ -146,7 +147,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                   label: "Confirmar contraseña nueva",
                   customSVGIcon: "assets/icon/eyeoff.svg",
                   validator: (pass2) =>
-                      validatePasswordConfirmation(pass2, _newPassword),
+                      validatePasswordConfirmation(pass2, _newPassword)!,
                   obscureText: true,
                   changeValueCallback: (String val) {
                     setState(() {

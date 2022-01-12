@@ -24,7 +24,7 @@ import '../../network/http.dart';
 import '../../constants.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key key}) : super(key: key);
+  const ProfileScreen({Key? key}) : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -97,14 +97,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _updateProfile() async {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       setState(() {
         _validate = true;
       });
       return;
     }
 
-    _formKey.currentState.save();
+    _formKey.currentState!.save();
 
     Provider.of<UserProvider>(context, listen: false)
         .clearProfileFormMessages();
@@ -113,7 +113,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
     Map<String, String> updateResponse = await updateProfile(context: context);
     Provider.of<UserProvider>(context, listen: false).updateProfileEditMessages(
-        updateResponse["successMessage"], updateResponse["errorMessage"]);
+        updateResponse["successMessage"]!, updateResponse["errorMessage"]!);
 
     setState(() {
       loading = false;

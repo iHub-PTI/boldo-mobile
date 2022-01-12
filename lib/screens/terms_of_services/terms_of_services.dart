@@ -7,7 +7,7 @@ import '../../widgets/wrapper.dart';
 import '../../constants.dart';
 
 class TermsOfServices extends StatefulWidget {
-  const TermsOfServices({Key key}) : super(key: key);
+  const TermsOfServices({Key? key}) : super(key: key);
 
   @override
   _TermsOfServicesState createState() => _TermsOfServicesState();
