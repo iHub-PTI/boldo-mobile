@@ -2,18 +2,18 @@ import 'package:boldo/models/PresciptionMedicalRecord.dart';
 import 'package:boldo/models/Soep.dart';
 
 class MedicalRecord {
-  String id;
-  String appointmentId;
-  String doctorId;
-  String instructions;
-  String diagnosis;
-  String mainReason;
-  String partOfEncounterId;
-  String patientId;
-  Soep soep;
-  String startTimeDate;
-  String status;
-  List<PrescriptionMedicalRecord> prescription;
+  String? id;
+  String? appointmentId;
+  String? doctorId;
+  String? instructions;
+  String? diagnosis;
+  String? mainReason;
+  String? partOfEncounterId;
+  String? patientId;
+  Soep? soep;
+  String? startTimeDate;
+  String? status;
+  List<PrescriptionMedicalRecord>? prescription;
   
   MedicalRecord({
     this.appointmentId,

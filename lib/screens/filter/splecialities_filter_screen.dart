@@ -59,7 +59,7 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
       List<Specialization> selectedSpecializations =
           Provider.of<UtilsProvider>(context, listen: false)
               .getListOfSpecializations;
-      List<String> listOfSpecializationIds =
+      List<String?> listOfSpecializationIds =
           selectedSpecializations.map((e) => e.id).toList();
       List<Specialization> filteredSpecializaions = specializationsListModel
           .where((element) => !listOfSpecializationIds.contains(element.id))
@@ -89,7 +89,7 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
     if (searchValue != _searchController.text) {
       List<Specialization> newFilteredItems =
           specializationsList.where((element) {
-        if (element.description
+        if (element.description!
                 .toLowerCase()
                 .contains(_searchController.text.toLowerCase().trim()) &&
             !selectedSpecializationsList.any((el) => el.id == element.id)) {
@@ -350,7 +350,7 @@ class SpecialziationWidget extends StatelessWidget {
       onTap: () {
         if (isSelected) return;
 
-        onTapCallback!(specializations[index].id);
+        onTapCallback!(specializations[index].id!);
       },
       child: Container(
         color: Colors.transparent,

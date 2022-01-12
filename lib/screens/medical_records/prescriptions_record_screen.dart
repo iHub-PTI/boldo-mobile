@@ -74,7 +74,7 @@ class PrescriptionRecordScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 26),
                         for (int i = 0;
-                            i < medicalRecord.prescription.length;
+                            i < medicalRecord.prescription!.length;
                             i++)
                           Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,12 +106,12 @@ class PrescriptionRecordScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  medicalRecord.prescription[i].medicationName,
+                                  medicalRecord.prescription![i].medicationName!,
                                   style:
                                       boldoSubTextStyle.copyWith(fontSize: 16),
                                 ),
                                 if (medicalRecord
-                                        .prescription[i].instructions !=
+                                        .prescription![i].instructions !=
                                     null)
                                   Column(
                                       crossAxisAlignment:
@@ -125,7 +125,7 @@ class PrescriptionRecordScreen extends StatelessWidget {
                                         const SizedBox(height: 4),
                                         Text(
                                           medicalRecord
-                                              .prescription[i].instructions,
+                                              .prescription![i].instructions??'',
                                           style: boldoSubTextStyle.copyWith(
                                               fontSize: 16),
                                         ),

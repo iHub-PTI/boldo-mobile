@@ -110,7 +110,7 @@ class FilterScreen extends StatelessWidget {
                                                   listen: false)
                                               .removeSpecialization(
                                                   specializationId:
-                                                      specialization.id);
+                                                      specialization.id!);
                                         },
                                         child: const Icon(
                                           Icons.close,

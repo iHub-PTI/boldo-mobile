@@ -55,10 +55,10 @@ class _DoctorsTabState extends State<DoctorsTab> {
           Provider.of<UtilsProvider>(context, listen: false).getFilterText;
       List<String> listOfLanguages =
           Provider.of<UtilsProvider>(context, listen: false).getListOfLanguages;
-      List<String> listOfSpecializations =
-          Provider.of<UtilsProvider>(context, listen: false)
+      List<String>? listOfSpecializations =
+          Provider.of<UtilsProvider?>(context, listen: false)!
               .getListOfSpecializations
-              .map((e) => e.description)
+              .map((e) => e.description!)
               .toList();
 
       String queryStringLanguages =
@@ -285,7 +285,7 @@ class _DoctorCard extends StatelessWidget {
     if (doctor.nextAvailability != null) {
      
     final actualDay = DateTime.now();
-    final parsedAvailability = DateTime.parse(doctor.nextAvailability).toLocal();
+    final parsedAvailability = DateTime.parse(doctor.nextAvailability!).toLocal();
     int daysDifference = parsedAvailability.difference(actualDay).inDays;
 
     if (actualDay.month == parsedAvailability.month) {
@@ -329,7 +329,7 @@ class _DoctorCard extends StatelessWidget {
                             fit: BoxFit.cover)
                         : CachedNetworkImage(
                             fit: BoxFit.cover,
-                            imageUrl: doctor.photoUrl,
+                            imageUrl: doctor.photoUrl??'',
                             progressIndicatorBuilder:
                                 (context, url, downloadProgress) => Padding(
                               padding: const EdgeInsets.all(26.0),
@@ -356,24 +356,24 @@ class _DoctorCard extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 2),
                           child: Text(
-                            "${getDoctorPrefix(doctor.gender)}${doctor.familyName}",
+                            "${getDoctorPrefix(doctor.gender!)}${doctor.familyName}",
                             maxLines: 1,
                             softWrap: false,
                             style: boldoHeadingTextStyle,
                           ),
                         ),
                         if (doctor.specializations != null &&
-                            doctor.specializations.isNotEmpty)
+                            doctor.specializations!.isNotEmpty)
                           Row(
                             children: [
                               for (int i = 0;
-                                  i < doctor.specializations.length;
+                                  i < doctor.specializations!.length;
                                   i++)
                                 Padding(
                                   padding:
                                       EdgeInsets.only(left: i == 0 ? 0 : 3.0),
                                   child: Text(
-                                    "${doctor.specializations[i].description}${doctor.specializations.length > 1 && i == 0 ? "," : ""}",
+                                    "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
                                     style: boldoSubTextStyle,
                                   ),
                                 ),

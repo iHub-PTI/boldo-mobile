@@ -135,7 +135,7 @@ class SoepList extends StatelessWidget {
                                 fontSize: 14,
                                 color: Constants.secondaryColor500)),
                         const Spacer(),
-                        medicalRecord[index].prescription.isNotEmpty
+                        medicalRecord[index].prescription!.isNotEmpty
                             ? GestureDetector(
                                 onTap: () {
                                   Navigator.push(
@@ -156,12 +156,12 @@ class SoepList extends StatelessWidget {
                       child: Text(
                           //HH:mm  dd/MM/yy
                           DateFormat('dd/MM/yy').format(
-                              DateTime.parse(medicalRecord[index].startTimeDate)
+                              DateTime.parse(medicalRecord[index].startTimeDate!)
                                   .toLocal()),
                           style: boldoHeadingTextStyle.copyWith(
                               fontSize: 20, fontWeight: FontWeight.w500)),
                     ),
-                    soepDescription(medicalRecord[index].soep)
+                    soepDescription(medicalRecord[index].soep!)
                   ],
                 ),
               ),

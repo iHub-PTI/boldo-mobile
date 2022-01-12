@@ -22,8 +22,8 @@ class AppointmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final actualDay = DateTime.now();
-    final appointmentDay = DateTime.parse(appointment.start);
-    int daysDifference = DateTime.parse(appointment.start)
+    final appointmentDay = DateTime.parse(appointment.start!);
+    int daysDifference = DateTime.parse(appointment.start!)
         .toLocal()
         .difference(actualDay)
         .inDays;
@@ -35,9 +35,9 @@ class AppointmentCard extends StatelessWidget {
 
     String textItem = '';
     if (appointment.prescriptions != null) {
-      for (int i = 0; i < appointment.prescriptions.length; i++) {
+      for (int i = 0; i < appointment.prescriptions!.length; i++) {
         textItem = textItem +
-            "${appointment.prescriptions[i].medicationName}${appointment.prescriptions.length > 1 && i == 0 ? "," : ""}";
+            "${appointment.prescriptions![i].medicationName}${appointment.prescriptions!.length > 1 && i == 0 ? "," : ""}";
       }
     }
 
@@ -82,7 +82,7 @@ class AppointmentCard extends StatelessWidget {
                       const SizedBox(height: 6),
                       Text(
                         DateFormat('MMM').format(
-                            DateTime.parse(appointment.start).toLocal()),
+                            DateTime.parse(appointment.start!).toLocal()),
                         style: TextStyle(
                           color: isToday
                               ? Constants.extraColor100
@@ -92,7 +92,7 @@ class AppointmentCard extends StatelessWidget {
                       ),
                       Text(
                         DateFormat('dd').format(
-                            DateTime.parse(appointment.start).toLocal()),
+                            DateTime.parse(appointment.start!).toLocal()),
                         style: TextStyle(
                           color: isToday
                               ? Constants.extraColor100
@@ -108,7 +108,7 @@ class AppointmentCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "${getDoctorPrefix(appointment.doctor.gender)}${appointment.doctor.familyName}",
+                      "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName}",
                       style: const TextStyle(
                         color: Constants.extraColor400,
                         fontSize: 14,
@@ -118,8 +118,8 @@ class AppointmentCard extends StatelessWidget {
                     const SizedBox(
                       height: 4,
                     ),
-                    if (appointment.doctor.specializations != null &&
-                        appointment.doctor.specializations.isNotEmpty)
+                    if (appointment.doctor!.specializations != null &&
+                        appointment.doctor!.specializations!.isNotEmpty)
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.6,
                         child: SingleChildScrollView(
@@ -127,7 +127,7 @@ class AppointmentCard extends StatelessWidget {
                           child: Row(
                             children: [
                               for (int i = 0;
-                                  i < appointment.doctor.specializations.length;
+                                  i < appointment.doctor!.specializations!.length;
                                   i++)
                                 Row(
                                   children: [
@@ -135,7 +135,7 @@ class AppointmentCard extends StatelessWidget {
                                       padding: EdgeInsets.only(
                                           left: i == 0 ? 0 : 3.0),
                                       child: Text(
-                                        "${appointment.doctor.specializations[i].description}${appointment.doctor.specializations.length > 1 && i == 0 ? "," : ""}",
+                                        "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length > 1 && i == 0 ? "," : ""}",
                                         
                                         style: const TextStyle(
                                           color: Constants.extraColor300,
@@ -154,7 +154,7 @@ class AppointmentCard extends StatelessWidget {
                         children: [
                           const SizedBox(height: 4),
                           Text(
-                            "¡Hoy! - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
+                            "¡Hoy! - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start!).toLocal())}",
                             style: const TextStyle(
                               color: Constants.primaryColor600,
                               fontSize: 12,
@@ -167,7 +167,7 @@ class AppointmentCard extends StatelessWidget {
                         children: [
                           const SizedBox(height: 4),
                           Text(
-                            "En $daysDifference ${daysDifference > 1 ? 'días' : 'dia'}  - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
+                            "En $daysDifference ${daysDifference > 1 ? 'días' : 'dia'}  - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start!).toLocal())}",
                             style: const TextStyle(
                               color: Constants.otherColor200,
                               fontSize: 12,
@@ -182,7 +182,7 @@ class AppointmentCard extends StatelessWidget {
           ),
         ),
         if (appointment.prescriptions != null &&
-            appointment.prescriptions.isNotEmpty)
+            appointment.prescriptions!.isNotEmpty)
           Card(
             elevation: 1.4,
             shape: RoundedRectangleBorder(
@@ -220,7 +220,7 @@ class AppointmentCard extends StatelessWidget {
                         const SizedBox(height: 6),
                         Text(
                           DateFormat('MMM').format(
-                              DateTime.parse(appointment.start).toLocal()),
+                              DateTime.parse(appointment.start!).toLocal()),
                           style: const TextStyle(
                             color: Color(0xffDF6D51),
                             fontSize: 18,
@@ -228,7 +228,7 @@ class AppointmentCard extends StatelessWidget {
                         ),
                         Text(
                           DateFormat('dd').format(
-                              DateTime.parse(appointment.start).toLocal()),
+                              DateTime.parse(appointment.start!).toLocal()),
                           style: const TextStyle(
                             color: Color(0xffDF6D51),
                             fontSize: 16,
@@ -253,7 +253,7 @@ class AppointmentCard extends StatelessWidget {
                         height: 4,
                       ),
                       if (appointment.prescriptions != null &&
-                          appointment.prescriptions.isNotEmpty)
+                          appointment.prescriptions!.isNotEmpty)
                         Container(
                           width: 200,
                           child: Text(
@@ -270,7 +270,7 @@ class AppointmentCard extends StatelessWidget {
                           children: [
                             const SizedBox(height: 4),
                             Text(
-                              "¡Hoy! - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
+                              "¡Hoy! - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start!).toLocal())}",
                               style: const TextStyle(
                                 color: Constants.primaryColor600,
                                 fontSize: 12,
@@ -283,7 +283,7 @@ class AppointmentCard extends StatelessWidget {
                           children: [
                             const SizedBox(height: 4),
                             Text(
-                              "En $daysDifference ${daysDifference > 1 ? 'días' : 'dia'} - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())}",
+                              "En $daysDifference ${daysDifference > 1 ? 'días' : 'dia'} - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start!).toLocal())}",
                               style: const TextStyle(
                                 color: Constants.otherColor200,
                                 fontSize: 12,

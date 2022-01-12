@@ -185,13 +185,13 @@ class CalendarDay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool itemEmpty = calendarItem.isEmpty;
-    final bool itemDisabled = calendarItem.isDisabled;
+    final bool itemEmpty = calendarItem.isEmpty!;
+    final bool itemDisabled = calendarItem.isDisabled!;
     final DateTime now = DateTime.now();
 
     return GestureDetector(
       onTap: () {
-        bool pastDay = calendarItem.itemDate
+        bool pastDay = calendarItem.itemDate!
             .isAfter(DateTime(now.year, now.month, now.day - 1));
 
         if (itemEmpty || !pastDay || itemDisabled) {
@@ -210,7 +210,7 @@ class CalendarDay extends StatelessWidget {
           child: itemEmpty
               ? Container()
               : Text(
-                  calendarItem.itemDate.day.toString(),
+                  calendarItem.itemDate!.day.toString(),
                   style: TextStyle(
                     color: itemDisabled
                         ? Constants.extraColor200
@@ -218,13 +218,13 @@ class CalendarDay extends StatelessWidget {
                                 DateTime(selectedItem.year, selectedItem.month,
                                     selectedItem.day)
                             ? Colors.white
-                            : calendarItem.itemDate
+                            : calendarItem.itemDate!
                                         .difference(DateTime(
                                             now.year, now.month, now.day))
                                         .inDays ==
                                     0
                                 ? Constants.otherColor100
-                                : !calendarItem.itemDate.isAfter(DateTime(
+                                : !calendarItem.itemDate!.isAfter(DateTime(
                                         now.year, now.month, now.day - 1))
                                     ? Constants.extraColor200
                                     : Constants.extraColor400,

@@ -143,7 +143,7 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
                                       Text(
                                         DateFormat('MMM').format(DateTime.parse(
                                                 allMedicalData[index]
-                                                    .startTimeDate)
+                                                    .startTimeDate!)
                                             .toLocal()),
                                         style: const TextStyle(
                                           color: Color(0xffDF6D51),
@@ -153,7 +153,7 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
                                       Text(
                                         DateFormat('dd').format(DateTime.parse(
                                                 allMedicalData[index]
-                                                    .startTimeDate)
+                                                    .startTimeDate!)
                                             .toLocal()),
                                         style: const TextStyle(
                                           color: Color(0xffDF6D51),

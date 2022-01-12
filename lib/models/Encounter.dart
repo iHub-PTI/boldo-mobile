@@ -1,7 +1,7 @@
 class Encounter {
-  String appointmentId;
-  String diagnosis;
-  String instructions;
+  String? appointmentId;
+  String? diagnosis;
+  String? instructions;
 
   Encounter({
     this.appointmentId,

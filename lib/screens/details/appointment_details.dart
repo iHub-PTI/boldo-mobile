@@ -70,15 +70,15 @@ class AppointmentDetailsScreen extends StatelessWidget {
                             child: SizedBox(
                               width: 64,
                               height: 64,
-                              child: appointment.doctor.photoUrl == null
+                              child: appointment.doctor?.photoUrl == null
                                   ? SvgPicture.asset(
-                                      appointment.doctor.gender == "female"
+                                      appointment.doctor!.gender == "female"
                                           ? 'assets/images/femaleDoctor.svg'
                                           : 'assets/images/maleDoctor.svg',
                                       fit: BoxFit.cover)
                                   : CachedNetworkImage(
                                       fit: BoxFit.cover,
-                                      imageUrl: appointment.doctor.photoUrl,
+                                      imageUrl: appointment.doctor.photoUrl??'',
                                       progressIndicatorBuilder:
                                           (context, url, downloadProgress) =>
                                               Padding(
@@ -110,16 +110,16 @@ class AppointmentDetailsScreen extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 2),
                                     child: Text(
-                                      "${getDoctorPrefix(appointment.doctor.gender)}${appointment.doctor.familyName}",
+                                      "${getDoctorPrefix(appointment.doctor.gender!)}${appointment.doctor.familyName!}",
                                       maxLines: 1,
                                       softWrap: false,
                                       style: boldoHeadingTextStyle,
                                     ),
                                   ),
-                                  if (appointment.doctor.specializations !=
+                                  if (appointment.doctor.specializations! !=
                                           null &&
                                       appointment
-                                          .doctor.specializations.isNotEmpty)
+                                          .doctor.specializations!.isNotEmpty)
                                     Container(
                                       width: 200,
                                       child: SingleChildScrollView(
@@ -129,13 +129,13 @@ class AppointmentDetailsScreen extends StatelessWidget {
                                             for (int i = 0;
                                                 i <
                                                     appointment.doctor
-                                                        .specializations.length;
+                                                        .specializations!.length;
                                                 i++)
                                               Padding(
                                                 padding: EdgeInsets.only(
                                                     left: i == 0 ? 0 : 3.0),
                                                 child: Text(
-                                                  "${appointment.doctor.specializations[i].description}${appointment.doctor.specializations.length > 1 && i == 0 ? "," : ""}",
+                                                  "${appointment.doctor.specializations![i].description}${appointment.doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
                                                   style: boldoSubTextStyle,
                                                 ),
                                               ),
@@ -164,7 +164,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => DoctorProfileScreen(
-                                        doctor: appointment.doctor),
+                                        doctor: appointment.doctor!),
                                   ),
                                 );
                               },
@@ -195,7 +195,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
                       Text(
                           DateFormat('EEEE, dd MMMM yyyy')
                               .format(
-                                  DateTime.parse(appointment.start).toLocal())
+                                  DateTime.parse(appointment.start!).toLocal())
                               .capitalize(),
                           style: boldoSubTextStyle.copyWith(fontSize: 16)),
                       const SizedBox(height: 24),
@@ -205,7 +205,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        "${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())} horas",
+                        "${DateFormat('HH:mm').format(DateTime.parse(appointment!.start!).toLocal())} horas",
                         style: boldoSubTextStyle.copyWith(fontSize: 16),
                       ),
                     ],
@@ -251,7 +251,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
                   child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                          "La sala de espera se abrirá a las: ${DateFormat('HH:mm, dd MMMM yyyy').format(DateTime.parse(appointment.start).toLocal()).capitalize()}")),
+                          "La sala de espera se abrirá a las: ${DateFormat('HH:mm, dd MMMM yyyy').format(DateTime.parse(appointment.start!).toLocal()).capitalize()}")),
                 ),
               const SizedBox(height: 64),
             ],

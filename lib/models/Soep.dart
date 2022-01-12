@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class Soep {
-  String evaluation;
-  String objective;
-  String plan;
-  String subjective;
+  String? evaluation;
+  String? objective;
+  String? plan;
+  String? subjective;
 
   Soep({this.evaluation, this.objective, this.plan, this.subjective});
 

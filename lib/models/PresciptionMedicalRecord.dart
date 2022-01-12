@@ -1,9 +1,9 @@
 
 
 class PrescriptionMedicalRecord {
-  String medicationId;
-  String medicationName;
-  String instructions;
+  String? medicationId;
+  String? medicationName;
+  String? instructions;
   
   PrescriptionMedicalRecord({
     this.medicationId,

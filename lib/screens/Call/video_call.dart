@@ -164,7 +164,7 @@ class _VideoCallState extends State<VideoCall> {
       //initialize the peer connection
       peerConnection = PeerConnection(
           localStream: localStream!,
-          room: widget.appointment.id,
+          room: widget.appointment.id!,
           socket: socket!,
           token: token!);
 

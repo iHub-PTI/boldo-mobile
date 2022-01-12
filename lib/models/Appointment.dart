@@ -3,13 +3,13 @@ import 'package:flutter/cupertino.dart';
 import './Doctor.dart';
 
 class Appointment {
-  String status;
-  String id;
-  String start;
-  String end;
-  String description;
-  Doctor doctor;
-  List<Prescription> prescriptions;
+  String? status;
+  String? id;
+  String? start;
+  String? end;
+  String? description;
+  Doctor? doctor;
+  List<Prescription>? prescriptions;
 
   Appointment({
     @required this.id,
@@ -38,7 +38,7 @@ class Appointment {
     data["status"] = status;
     data['description'] = description;
     if (doctor != null) {
-      data['doctor'] = doctor.toJson();
+      data['doctor'] = doctor!.toJson();
     }
     return data;
   }

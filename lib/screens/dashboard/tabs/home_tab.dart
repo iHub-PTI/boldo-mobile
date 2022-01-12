@@ -74,7 +74,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       for (Appointment appointment in map["upcomingWaitingRoomAppointments"]) {
         if (DateTime.now()
             .add(const Duration(minutes: 15))
-            .isAfter(DateTime.parse(appointment.start).toLocal())) {
+            .isAfter(DateTime.parse(appointment.start!).toLocal())) {
           timer.cancel();
           map['port'].send({"newAppointment": appointment});
           break;
@@ -161,10 +161,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       for (Appointment appointment in allAppointmets) {
         for (Prescription prescription in allPrescriptions) {
           if (prescription.encounter != null &&
-              prescription.encounter.appointmentId == appointment.id) {
+              prescription.encounter!.appointmentId! == appointment.id) {
             if (appointment.prescriptions != null) {
               appointment.prescriptions = [
-                ...appointment.prescriptions,
+                ...appointment.prescriptions!,
                 prescription
               ];
             } else {
@@ -185,14 +185,14 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       allAppointmets = [...upcomingAppointmentsItems, ...pastAppointmentsItems];
 
       allAppointmets.sort(
-          (a, b) => DateTime.parse(b.start).compareTo(DateTime.parse(a.start)));
+          (a, b) => DateTime.parse(b.start!).compareTo(DateTime.parse(a.start!)));
 
       List<Appointment> upcomingWaitingRoomAppointmetsList = allAppointmets
           .where((element) =>
               element.status == "upcoming" &&
               DateTime.now()
                   .add(const Duration(minutes: 15))
-                  .isBefore(DateTime.parse(element.start).toLocal()))
+                  .isBefore(DateTime.parse(element.start!).toLocal()))
           .toList();
       if (!mounted) return;
       if (!loadMore) {
@@ -222,7 +222,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             if (element.status == "upcoming" &&
                 DateTime.now()
                     .add(const Duration(minutes: 15))
-                    .isAfter(DateTime.parse(element.start).toLocal())) {
+                    .isAfter(DateTime.parse(element.start!).toLocal())) {
               return true;
             }
             return false;

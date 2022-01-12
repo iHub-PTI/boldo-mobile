@@ -116,7 +116,7 @@ class _BookingScreenState extends State<BookingScreen> {
             orElse: () => null!);
         if (notEmptyCalendarItem != null) {
           noAvailibilityThisMonth = false;
-          firstDay = notEmptyCalendarItem.itemDate;
+          firstDay = notEmptyCalendarItem.itemDate!;
           break;
         }
       }

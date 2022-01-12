@@ -67,7 +67,7 @@ class DoctorProfileScreen extends StatelessWidget {
                                   fit: BoxFit.cover)
                               : CachedNetworkImage(
                                   fit: BoxFit.cover,
-                                  imageUrl: doctor.photoUrl,
+                                  imageUrl: doctor.photoUrl?? '',
                                   progressIndicatorBuilder:
                                       (context, url, downloadProgress) =>
                                           Padding(
@@ -90,7 +90,7 @@ class DoctorProfileScreen extends StatelessWidget {
                         height: 9,
                       ),
                       Text(
-                        "${getDoctorPrefix(doctor.gender)}${doctor.givenName} ${doctor.familyName}",
+                        "${getDoctorPrefix(doctor.gender!)}${doctor.givenName} ${doctor.familyName}",
                         style: boldoHeadingTextStyle,
                       ),
                       const SizedBox(
@@ -103,7 +103,7 @@ class DoctorProfileScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 for (var specialization
-                                    in doctor.specializations)
+                                    in doctor.specializations!)
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 4),
                                     child: Text(
@@ -136,7 +136,7 @@ class DoctorProfileScreen extends StatelessWidget {
                             const SizedBox(
                               height: 4,
                             ),
-                            Text(doctor.biography,
+                            Text(doctor.biography??'',
                                 style: boldoSubTextStyle.copyWith(
                                     height: 1.5, fontSize: 16)),
                             const SizedBox(
@@ -148,7 +148,7 @@ class DoctorProfileScreen extends StatelessWidget {
                         height: 12,
                       ),
                       if (doctor.languages != null &&
-                          doctor.languages.isNotEmpty)
+                          doctor.languages!.isNotEmpty)
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -159,7 +159,7 @@ class DoctorProfileScreen extends StatelessWidget {
                             const SizedBox(
                               height: 4,
                             ),
-                            for (var language in doctor.languages)
+                            for (var language in doctor.languages!)
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 4),
                                 child: Text(

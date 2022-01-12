@@ -1,23 +1,23 @@
 class Doctor {
-  String addressDescription;
-  String biography;
-  String familyName;
-  String gender;
-  String birthDate;
-  String city;
-  String email;
-  String identifier;
-  String job;
-  String phone;
-  String givenName;
-  String id;
-  List<Languages> languages;
-  String license;
-  String neighborhood;
-  String photoUrl;
-  List<Specializations> specializations;
-  String street;
-  String nextAvailability;
+  String? addressDescription;
+  String? biography;
+  String? familyName;
+  String? gender;
+  String? birthDate;
+  String? city;
+  String? email;
+  String? identifier;
+  String? job;
+  String? phone;
+  String? givenName;
+  String? id;
+  List<Languages>? languages;
+  String? license;
+  String? neighborhood;
+  String? photoUrl;
+  List<Specializations>? specializations;
+  String? street;
+  String? nextAvailability;
 
   Doctor(
       {this.addressDescription,
@@ -56,7 +56,7 @@ class Doctor {
     if (json['languages'] != null) {
       languages = [];
       json['languages'].forEach((v) {
-        languages.add(Languages.fromJson(v));
+        languages!.add(Languages.fromJson(v));
       });
     }
     license = json['license'];
@@ -65,7 +65,7 @@ class Doctor {
     if (json['specializations'] != null) {
       specializations = [];
       json['specializations'].forEach((v) {
-        specializations.add(Specializations.fromJson(v));
+        specializations!.add(Specializations.fromJson(v));
       });
     }
     street = json['street'];
@@ -87,13 +87,13 @@ class Doctor {
     data['givenName'] = givenName;
     data['id'] = id;
     if (languages != null) {
-      data['languages'] = languages.map((v) => v.toJson()).toList();
+      data['languages'] = languages!.map((v) => v.toJson()).toList();
     }
     data['license'] = license;
     data['neighborhood'] = neighborhood;
     data['photoUrl'] = photoUrl;
     if (specializations != null) {
-      data['specializations'] = specializations.map((v) => v.toJson()).toList();
+      data['specializations'] = specializations!.map((v) => v.toJson()).toList();
     }
     data['street'] = street;
     data['nextAvailability'] = nextAvailability;
@@ -102,8 +102,8 @@ class Doctor {
 }
 
 class Languages {
-  String description;
-  String id;
+  String? description;
+  String? id;
 
   Languages({this.description, this.id});
 
@@ -121,8 +121,8 @@ class Languages {
 }
 
 class Specializations {
-  String description;
-  String id;
+  String? description;
+  String? id;
 
   Specializations({this.description, this.id});
 

@@ -55,7 +55,7 @@ class Call extends StatelessWidget {
         title: Padding(
           padding: const EdgeInsets.only(bottom: 24.0),
           child: Text(
-            "${getDoctorPrefix(appointment.doctor.gender)}${appointment.doctor.familyName}",
+            "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName!}",
             style: const TextStyle(color: Constants.grayColor800),
           ),
         ),
