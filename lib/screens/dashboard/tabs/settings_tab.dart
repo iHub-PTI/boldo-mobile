@@ -195,25 +195,13 @@ class _SettingsTabState extends State<SettingsTab> {
                       "client_id": "boldo-patient"
                     };
                     var url = Uri.parse(
-                        "$baseUrlKeyCloack/KeyCloack/protocol/openid-connect/logout");
-                    await http.post(url,
+                       "$baseUrlKeyCloack/protocol/openid-connect/logout");
+                     await http.post(url,
                         body: body,
                         headers: {
                           "Content-Type": "application/x-www-form-urlencoded"
                         },
                         encoding: Encoding.getByName("utf-8"));
-
-                    // var dio = Dio(); // with default Options
-
-                    // // Set default configs
-                    // dio.options.baseUrl =
-                    //     'https://sso-test.pti.org.py/auth/realms/iHub';
-                    // dio.options.headers = {
-                    //   "Content-Type": "application/x-www-form-urlencoded"
-                    // };
-                    // await dio.post('/protocol/openid-connect/logout',
-                    //     data: body);
-
                     Provider.of<AuthProvider>(context, listen: false)
                         .setAuthenticated(isAuthenticated: false);
                     Provider.of<UserProvider>(context, listen: false)

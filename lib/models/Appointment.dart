@@ -12,12 +12,12 @@ class Appointment {
   List<Prescription>? prescriptions;
 
   Appointment({
-    @required this.id,
-    @required this.start,
-    @required this.end,
+    this.id,
+    this.start,
+    this.end,
     this.description,
-    @required this.doctor,
-    @required this.status,
+    this.doctor,
+    this.status,
     this.prescriptions,
   });
 
