@@ -76,7 +76,7 @@ class _LoginWebViewHelperState extends State<LoginWebViewHelper> {
 
 Future<int> _authenticateUser({required BuildContext context}) async {
   String keycloakRealmAddress = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
-      defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']!);
+      defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
 
   FlutterAppAuth appAuth = FlutterAppAuth();
 

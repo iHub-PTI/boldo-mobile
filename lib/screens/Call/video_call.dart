@@ -37,7 +37,7 @@ class _VideoCallState extends State<VideoCall> {
   MediaStream? localStream;
 
   String socketsAddress = String.fromEnvironment('SOCKETS_ADDRESS',
-      defaultValue: DotEnv().env['SOCKETS_ADDRESS']!);
+      defaultValue: dotenv.env['SOCKETS_ADDRESS']!);
 
   @override
   void initState() {

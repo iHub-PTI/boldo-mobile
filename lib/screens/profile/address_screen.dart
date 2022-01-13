@@ -77,7 +77,7 @@ class _AddressScreenState extends State<AddressScreen> {
                 Selector<UserProvider, String>(
                   builder: (_, data, __) {
                     return CustomFormInput(
-                      initialValue: data ?? "",
+                      initialValue: data,
                       label: "Calle",
                       secondaryLabel: "Opcional",
                       onChanged: (String val) =>
@@ -91,7 +91,7 @@ class _AddressScreenState extends State<AddressScreen> {
                 Selector<UserProvider, String>(
                   builder: (_, data, __) {
                     return CustomFormInput(
-                      initialValue: data ?? "",
+                      initialValue: data,
                       label: "Barrio",
                       secondaryLabel: "Opcional",
                       onChanged: (String val) =>
@@ -105,7 +105,7 @@ class _AddressScreenState extends State<AddressScreen> {
                 Selector<UserProvider, String>(
                   builder: (_, data, __) {
                     return CustomFormInput(
-                      initialValue: data ?? "",
+                      initialValue: data,
                       label: "Ciudad",
                       secondaryLabel: "Opcional",
                       onChanged: (String val) =>
@@ -119,7 +119,7 @@ class _AddressScreenState extends State<AddressScreen> {
                 Selector<UserProvider, String>(
                   builder: (_, data, __) {
                     return CustomFormInput(
-                      initialValue: data ?? "",
+                      initialValue: data,
                       maxLines: 6,
                       label: "Referencia",
                       secondaryLabel: "Opcional",

@@ -212,7 +212,7 @@ class CarouselSlide extends StatelessWidget {
 Future<void> authenticateUser(
     {required BuildContext context, bool switchPage = true}) async {
   String keycloakRealmAddress = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
-      defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']!);
+      defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
 
   FlutterAppAuth appAuth = FlutterAppAuth();
 

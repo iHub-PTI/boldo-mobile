@@ -77,7 +77,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                 width: 20,
               ),
               Text(
-                DateFormat('MMMM').format(selectedMonth ?? widget.selectedDate),
+                DateFormat('MMMM').format(selectedMonth),
                 style: boldoHeadingTextStyle.copyWith(
                     fontWeight: FontWeight.normal),
               ),

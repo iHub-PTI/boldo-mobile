@@ -149,7 +149,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 Future<void> authenticateUser(
     {required BuildContext context, bool switchPage = true}) async {
   String keycloakRealmAddress = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
-      defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']!);
+      defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
 
   FlutterAppAuth appAuth = FlutterAppAuth();
 
@@ -167,7 +167,7 @@ Future<void> authenticateUser(
     );
 
     await storage.write(key: "access_token", value: result!.accessToken);
-    await storage.write(key: "refresh_token", value: result!.refreshToken);
+    await storage.write(key: "refresh_token", value: result.refreshToken);
 
     Provider.of<AuthProvider>(context, listen: false)
         .setAuthenticated(isAuthenticated: true);

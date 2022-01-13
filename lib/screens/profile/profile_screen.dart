@@ -178,7 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Selector<UserProvider, String>(
                       builder: (_, data, __) {
                         return CustomFormInput(
-                          initialValue: data ?? "",
+                          initialValue: data,
                           label: "Nombre",
                           validator: valdiateFirstName,
                           onChanged: (String val) => userProvider.setUserData(
@@ -194,7 +194,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Selector<UserProvider, String>(
                       builder: (_, data, __) {
                         return CustomFormInput(
-                          initialValue: data ?? "",
+                          initialValue: data,
                           label: "Apellido",
                           validator: valdiateLasttName,
                           onChanged: (String val) => userProvider.setUserData(
@@ -211,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Selector<UserProvider, String>(
                       builder: (_, data, __) {
                         return CustomFormInput(
-                          initialValue: data ?? "",
+                          initialValue: data,
                           secondaryLabel: "Opcional",
                           label: "Ocupación",
                           onChanged: (String val) =>
@@ -225,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 20),
                     Selector<UserProvider, String>(
                       builder: (_, data, __) {
-                        String selectedvalue = data ?? "unknown";
+                        String selectedvalue = data;
                         List<Map<String, String>> itemsList = [
                           {"title": "Masculino", "value": 'male'},
                           {"title": "Femenino", "value": 'female'},
@@ -257,7 +257,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         return CustomFormInput(
                           label: "Fecha de nacimiento",
                           initialValue: DateFormat('dd.MM.yyyy')
-                              .format(DateTime.parse(data ?? "1980-01-01")),
+                              .format(DateTime.parse(data)),
                           validator: null,
                           isDateTime: true,
                           onChanged: (String val) {

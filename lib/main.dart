@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,13 +21,13 @@ import 'package:boldo/constants.dart';
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // initializeDateFormatting();
   // Intl.defaultLocale = "es";
-
-  await DotEnv().load(fileName: '.env');
+  await dotenv.load(fileName: ".env");
+  // await dotenv.load(fileName: '.env');
 
   GestureBinding.instance!.resamplingEnabled = true;
 
@@ -44,7 +43,7 @@ void main() async {
 
   if (kReleaseMode) {
     String sentryDSN = String.fromEnvironment('SENTRY_DSN',
-        defaultValue: DotEnv().env['SENTRY_DSN']!);
+        defaultValue: dotenv.env['SENTRY_DSN']!);
     await SentryFlutter.init(
       (options) {
         options.environment = "production";
@@ -77,6 +76,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
         ChangeNotifierProvider<UtilsProvider>(create: (_) => UtilsProvider()),
         ChangeNotifierProvider<AuthProvider>(
+            // ignore: unnecessary_null_comparison
             create: (_) => AuthProvider(widget.session != null ? true : false)),
       ],
       child: FullApp(onboardingCompleted: widget.onboardingCompleted),

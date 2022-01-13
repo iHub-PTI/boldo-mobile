@@ -1,4 +1,4 @@
-import 'dart:ffi';
+
 
 import 'package:boldo/network/connection_status.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +15,7 @@ var dioHealthCore = Dio();
 void initDio({required GlobalKey<NavigatorState> navKey}) {
   const storage = FlutterSecureStorage();
   String baseUrl = String.fromEnvironment('SERVER_ADDRESS',
-      defaultValue: DotEnv().env['SERVER_ADDRESS']!);
+      defaultValue: dotenv.env['SERVER_ADDRESS']!);
 
   dio.options.baseUrl = baseUrl;
   dio.options.headers['content-Type'] = 'application/json';
@@ -64,7 +64,7 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
 
         String keycloakRealmAddress = String.fromEnvironment(
             'KEYCLOAK_REALM_ADDRESS',
-            defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']!);
+            defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
         final String? refreshToken = await storage.read(key: "refresh_token");
 
         try {
@@ -117,7 +117,7 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
 void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
   const storage = FlutterSecureStorage();
   String baseUrl = String.fromEnvironment('HEALTH_PTI_API',
-      defaultValue: DotEnv().env['HEALTH_PTI_API']!);
+      defaultValue: dotenv.env['HEALTH_PTI_API']!);
 
   dioHealthCore.options.baseUrl = baseUrl;
   dioHealthCore.options.headers['content-Type'] = 'application/json';
@@ -167,7 +167,7 @@ void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
 
         String keycloakRealmAddress = String.fromEnvironment(
             'KEYCLOAK_REALM_ADDRESS',
-            defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']!);
+            defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
         final String? refreshToken = await storage.read(key: "refresh_token");
 
         try {

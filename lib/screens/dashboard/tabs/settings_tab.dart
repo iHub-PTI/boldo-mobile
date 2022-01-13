@@ -181,7 +181,7 @@ class _SettingsTabState extends State<SettingsTab> {
                   try {
                     String baseUrlKeyCloack = String.fromEnvironment(
                         'KEYCLOAK_REALM_ADDRESS',
-                        defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']!);
+                        defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
 
                     const storage = FlutterSecureStorage();
                     final SharedPreferences prefs =
