@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-String validatePassword(String password) {
+String? validatePassword(String password) {
   // RegExp hasUpper = RegExp(r'[A-Z]');
   // RegExp hasLower = RegExp(r'[a-z]');
   // RegExp hasDigit = RegExp(r'\d');
-  if (password.length < 1) return 'The password must have at least 1 character';
+  if (password.length < 1) return 'Ingrese un valor primero';
   // if (password.length < 8)
   //   return 'The password must have at least 8 characters';
   // if (!hasUpper.hasMatch(password))
@@ -16,7 +16,7 @@ String validatePassword(String password) {
   // if (!hasDigit.hasMatch(password))
   //   return 'The password must have at least one number';
    // ignore: null_check_always_fails
-  return null!;
+  return null;
 }
 
 String validateEmail(String email) {
@@ -33,14 +33,13 @@ String validateEmail(String email) {
   }
 }
 
-String valdiateFirstName(String value) {
+String? valdiateFirstName(String value) {
   if (value.isNotEmpty == false)
     return "First Name is Required";
   else if (value.length > 30)
     return "The First Name is too long";
   else
-     // ignore: null_check_always_fails
-    return null!;
+    return null;
 }
 
 String valdiateLasttName(String value) {
@@ -53,8 +52,8 @@ String valdiateLasttName(String value) {
     return null!;
 }
 
-String? validatePasswordConfirmation(String pass2, String pass1) {
-  return (pass2 == pass1) ? null : "The two passwords must match";
+String? validatePasswordConfirmation(String? pass2, String? pass1) {
+  return (pass2 == pass1) ? null : "La contraseña no coincide";
 }
 
 // Phone number formatter

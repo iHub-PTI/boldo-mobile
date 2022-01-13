@@ -17,7 +17,7 @@ class CustomFormInput extends StatefulWidget {
   final String? initialValue;
   final String? customSVGIcon;
   final bool isDateTime;
-  final String Function(String)? validator;
+  final String? Function(String?)? validator;
   final Function(String)? changeValueCallback;
   final bool obscureText;
   final Function(String)? onChanged;
@@ -196,11 +196,11 @@ class _CustomFormInputState extends State<CustomFormInput> {
                   //keyboardType: TextInputType.emailAddress,
                   // validator: widget.validator,
                   validator: (string) {
-                    widget.validator!(string!);
+                    return widget.validator!(string);
                   },
                   onChanged: widget.onChanged,
                    onSaved: (string) {
-                    widget.changeValueCallback!(string!);
+                   return widget.changeValueCallback!(string!);
                   },
                   // onSaved: widget.changeValueCallback,
                 ),

@@ -67,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .clearProfileFormMessages();
 
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString("profile_url", response.data["photoUrl"]??'');
+      await prefs.setString("profile_url", response.data["photoUrl"] ?? '');
       await prefs.setString("gender", response.data["gender"]);
       setState(() {
         _dataLoading = false;
@@ -180,7 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         return CustomFormInput(
                           initialValue: data,
                           label: "Nombre",
-                          validator: valdiateFirstName,
+                          validator: (value) => valdiateFirstName(value!),
                           onChanged: (String val) => userProvider.setUserData(
                             givenName: val,
                           ),
@@ -196,14 +196,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         return CustomFormInput(
                           initialValue: data,
                           label: "Apellido",
-                          validator: valdiateLasttName,
+                          validator: (value) => valdiateLasttName(value!),
                           onChanged: (String val) => userProvider.setUserData(
                             familyName: val,
                           ),
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getFamilyName?? '',
+                          userProvider.getFamilyName ?? '',
                     ),
 
                     //CustomDropdown(),
@@ -219,7 +219,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getJob??'',
+                          userProvider.getJob ?? '',
                     ),
 
                     const SizedBox(height: 20),
@@ -247,7 +247,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getGender??'',
+                          userProvider.getGender ?? '',
                     ),
 
                     const SizedBox(height: 20),
@@ -271,7 +271,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getBirthDate??'',
+                          userProvider.getBirthDate ?? '',
                     ),
 
                     const SizedBox(height: 20),
@@ -280,13 +280,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         return CustomFormInput(
                           initialValue: data,
                           label: "Correo electrónico",
-                          validator: validateEmail,
+                          // validator: validateEmail,
                           onChanged: (String val) =>
                               userProvider.setUserData(email: val),
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getEmail??'',
+                          userProvider.getEmail ?? '',
                     ),
 
                     const SizedBox(height: 20),
@@ -304,7 +304,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getPhone??'',
+                          userProvider.getPhone ?? '',
                     ),
 
                     const SizedBox(height: 20),

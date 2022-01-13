@@ -21,9 +21,9 @@ class PasswordResetScreen extends StatefulWidget {
 class _PasswordResetScreenState extends State<PasswordResetScreen> {
   bool _validate = false;
   bool loading = false;
-  late String _currentPassword, _newPassword, _confirmation;
-  late String _errorMessage;
-  late String _successMessage;
+  String? _currentPassword, _newPassword, _confirmation;
+  String? _errorMessage;
+  String? _successMessage;
   final _formKey = GlobalKey<FormState>();
 
   Future<void> _updatePassword() async {
@@ -36,9 +36,8 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
 
     _formKey.currentState!.save();
     setState(() {
-      _errorMessage = null!;
-      // ignore: dead_code
-      _successMessage = null!;
+      _errorMessage = null;
+      _successMessage = null;
       loading = true;
     });
 
@@ -121,7 +120,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                 CustomFormInput(
                   label: "Contraseña actual",
                   customSVGIcon: "assets/icon/eyeoff.svg",
-                  validator: validatePassword,
+                  validator: (value) => validatePassword(value!),
                   obscureText: true,
                   changeValueCallback: (String val) {
                     setState(() {
@@ -133,7 +132,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                 CustomFormInput(
                   label: "Contraseña nueva",
                   customSVGIcon: "assets/icon/eyeoff.svg",
-                  validator: validatePassword,
+                  validator: (value) => validatePassword(value!),
                   obscureText: true,
                   onChanged: (String val) => setState(() => _newPassword = val),
                   changeValueCallback: (String val) {
@@ -147,7 +146,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                   label: "Confirmar contraseña nueva",
                   customSVGIcon: "assets/icon/eyeoff.svg",
                   validator: (pass2) =>
-                      validatePasswordConfirmation(pass2, _newPassword)!,
+                      validatePasswordConfirmation(pass2, _newPassword),
                   obscureText: true,
                   changeValueCallback: (String val) {
                     setState(() {
@@ -162,7 +161,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                     children: [
                       if (_errorMessage != null)
                         Text(
-                          _errorMessage,
+                          _errorMessage!,
                           style: const TextStyle(
                             fontSize: 14,
                             color: Constants.otherColor100,
@@ -170,7 +169,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                         ),
                       if (_successMessage != null)
                         Text(
-                          _successMessage,
+                          _successMessage!,
                           style: const TextStyle(
                             fontSize: 14,
                             color: Constants.primaryColor600,
