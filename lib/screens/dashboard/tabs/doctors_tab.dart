@@ -364,20 +364,26 @@ class _DoctorCard extends StatelessWidget {
                         ),
                         if (doctor.specializations != null &&
                             doctor.specializations!.isNotEmpty)
-                          Row(
-                            children: [
-                              for (int i = 0;
-                                  i < doctor.specializations!.length;
-                                  i++)
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(left: i == 0 ? 0 : 3.0),
-                                  child: Text(
-                                    "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
-                                    style: boldoSubTextStyle,
-                                  ),
-                                ),
-                            ],
+                          SizedBox(
+                            width: 300,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  for (int i = 0;
+                                      i < doctor.specializations!.length;
+                                      i++)
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.only(left: i == 0 ? 0 : 3.0),
+                                      child: Text(
+                                        "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
+                                        style: boldoSubTextStyle,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
                           ),
                         Text(availabilityText,
                             style: boldoSubTextStyle.copyWith(
