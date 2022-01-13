@@ -270,9 +270,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
     Appointment firstPastAppointment = allAppointmentsState.firstWhere(
-        (element) => ["closed", "locked"].contains(element.status),
-        // ignore: null_check_always_fails
-        orElse: () => null!);
+        (element) => ["closed", "locked"].contains(element.status));
 
     return Scaffold(
       appBar: const HomeTabAppBar(),

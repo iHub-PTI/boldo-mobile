@@ -125,7 +125,7 @@ class _SettingsTabState extends State<SettingsTab> {
               // ),
               ListTile(
                 onTap: () {
-                    Navigator.push(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const About(),
@@ -150,12 +150,14 @@ class _SettingsTabState extends State<SettingsTab> {
                 trailing: const Icon(Icons.chevron_right),
               ),
               ListTile(
-                onTap: () {Navigator.push(
+                onTap: () {
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const Contact(),
                     ),
-                  );},
+                  );
+                },
                 leading: SizedBox(
                   height: double.infinity,
                   child: Row(
@@ -192,15 +194,25 @@ class _SettingsTabState extends State<SettingsTab> {
                       "refresh_token": refreshToken,
                       "client_id": "boldo-patient"
                     };
-
-                    await http.post(
-                      
-                        Uri(host: "$baseUrlKeyCloack/protocol/openid-connect/logout"),
+                    var url = Uri.parse(
+                        "$baseUrlKeyCloack/KeyCloack/protocol/openid-connect/logout");
+                    await http.post(url,
                         body: body,
                         headers: {
                           "Content-Type": "application/x-www-form-urlencoded"
                         },
                         encoding: Encoding.getByName("utf-8"));
+
+                    // var dio = Dio(); // with default Options
+
+                    // // Set default configs
+                    // dio.options.baseUrl =
+                    //     'https://sso-test.pti.org.py/auth/realms/iHub';
+                    // dio.options.headers = {
+                    //   "Content-Type": "application/x-www-form-urlencoded"
+                    // };
+                    // await dio.post('/protocol/openid-connect/logout',
+                    //     data: body);
 
                     Provider.of<AuthProvider>(context, listen: false)
                         .setAuthenticated(isAuthenticated: false);
@@ -210,7 +222,7 @@ class _SettingsTabState extends State<SettingsTab> {
                     await storage.deleteAll();
                     await prefs.clear();
 
-                     Navigator.pushNamed(context, '/onboarding');
+                    Navigator.pushNamed(context, '/onboarding');
                   } on DioError catch (exception, stackTrace) {
                     print(exception);
 

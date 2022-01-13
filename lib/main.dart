@@ -54,7 +54,7 @@ Future<void> main() async {
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
       (value) => runApp(
-          MyApp(onboardingCompleted: onboardingCompleted, session: session!)));
+          MyApp(onboardingCompleted: onboardingCompleted, session: session??'')));
 }
 
 class MyApp extends StatefulWidget {

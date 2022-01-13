@@ -53,10 +53,11 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
 
           return handle.next(error);
         }
-        RequestOptions options = error.response!.data;
+        
+        // RequestOptions options = error.response!.data;
         // if ("bearer $accessToken" != options.headers["authorization"]) {
         //   options.headers["authorization"] = "bearer $accessToken";
-        //   return handle.next(dio.request(options.path, options: options));
+        //   return handle.next(options);
         // }
         dio.lock();
         dio.interceptors.responseLock.lock();
