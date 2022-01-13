@@ -67,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .clearProfileFormMessages();
 
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString("profile_url", response.data["photoUrl"]);
+      await prefs.setString("profile_url", response.data["photoUrl"]??'');
       await prefs.setString("gender", response.data["gender"]);
       setState(() {
         _dataLoading = false;
