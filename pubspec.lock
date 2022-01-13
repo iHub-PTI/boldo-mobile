@@ -198,12 +198,10 @@ packages:
   flutter_datetime_picker:
     dependency: "direct main"
     description:
-      path: "."
-      ref: patch-1
-      resolved-ref: "974f3d805dec941435fe62289e1948ba7d979f05"
-      url: "https://github.com/ditheshthegreat/flutter_datetime_picker"
-    source: git
-    version: "1.3.8"
+      name: flutter_datetime_picker
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.5.1"
   flutter_dotenv:
     dependency: "direct main"
     description:

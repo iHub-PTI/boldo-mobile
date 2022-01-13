@@ -78,7 +78,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
                                       fit: BoxFit.cover)
                                   : CachedNetworkImage(
                                       fit: BoxFit.cover,
-                                      imageUrl: appointment.doctor.photoUrl??'',
+                                      imageUrl: appointment.doctor!.photoUrl??'',
                                       progressIndicatorBuilder:
                                           (context, url, downloadProgress) =>
                                               Padding(
@@ -110,16 +110,16 @@ class AppointmentDetailsScreen extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 2),
                                     child: Text(
-                                      "${getDoctorPrefix(appointment.doctor.gender!)}${appointment.doctor.familyName!}",
+                                      "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName!}",
                                       maxLines: 1,
                                       softWrap: false,
                                       style: boldoHeadingTextStyle,
                                     ),
                                   ),
-                                  if (appointment.doctor.specializations! !=
+                                  if (appointment.doctor?.specializations! !=
                                           null &&
                                       appointment
-                                          .doctor.specializations!.isNotEmpty)
+                                          .doctor!.specializations!.isNotEmpty)
                                     Container(
                                       width: 200,
                                       child: SingleChildScrollView(
@@ -128,14 +128,14 @@ class AppointmentDetailsScreen extends StatelessWidget {
                                           children: [
                                             for (int i = 0;
                                                 i <
-                                                    appointment.doctor
+                                                    appointment.doctor!
                                                         .specializations!.length;
                                                 i++)
                                               Padding(
                                                 padding: EdgeInsets.only(
                                                     left: i == 0 ? 0 : 3.0),
                                                 child: Text(
-                                                  "${appointment.doctor.specializations![i].description}${appointment.doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
+                                                  "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length > 1 && i == 0 ? "," : ""}",
                                                   style: boldoSubTextStyle,
                                                 ),
                                               ),
