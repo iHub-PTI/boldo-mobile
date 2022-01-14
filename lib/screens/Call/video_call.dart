@@ -136,13 +136,16 @@ class _VideoCallState extends State<VideoCall> {
         case CallState.CallClosed:
           {
             if (peerConnection != null) peerConnection!.cleanup();
-            setState(() {
-              callStatus = false;
-            });
-            socket!.emit('patient ready',
-                {"room": widget.appointment.id, "token": token});
-            socket!.emit(
-                'ready!', {"room": widget.appointment.id, "token": token});
+            // setState(() {
+            //   callStatus = false;
+            // });
+            callStatus = false;
+            if (socket != null) {
+              socket!.emit('patient ready',
+                  {"room": widget.appointment.id, "token": token});
+              socket!.emit(
+                  'ready!', {"room": widget.appointment.id, "token": token});
+            }
             break;
           }
         default:

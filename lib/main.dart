@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 // import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,8 +26,8 @@ final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // initializeDateFormatting();
-  // Intl.defaultLocale = "es";
+ await initializeDateFormatting('es', null);
+  Intl.defaultLocale = "es";
   await dotenv.load(fileName: ".env");
   // await dotenv.load(fileName: '.env');
 
