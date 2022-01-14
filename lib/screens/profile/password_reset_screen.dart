@@ -122,11 +122,8 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                   customSVGIcon: "assets/icon/eyeoff.svg",
                   validator: (value) => validatePassword(value!),
                   obscureText: true,
-                  changeValueCallback: (String val) {
-                    setState(() {
-                      _currentPassword = val;
-                    });
-                  },
+                  onChanged: (String val) => setState(() => _currentPassword = val),
+                  
                 ),
                 const SizedBox(height: 48),
                 CustomFormInput(
@@ -135,11 +132,6 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                   validator: (value) => validatePassword(value!),
                   obscureText: true,
                   onChanged: (String val) => setState(() => _newPassword = val),
-                  changeValueCallback: (String val) {
-                    setState(() {
-                      _newPassword = val;
-                    });
-                  },
                 ),
                 const SizedBox(height: 20),
                 CustomFormInput(
@@ -148,11 +140,8 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                   validator: (pass2) =>
                       validatePasswordConfirmation(pass2, _newPassword),
                   obscureText: true,
-                  changeValueCallback: (String val) {
-                    setState(() {
-                      _confirmation = val;
-                    });
-                  },
+                    onChanged: (String val) => setState(() => _confirmation = val),
+                  
                 ),
                 const SizedBox(height: 26),
                 SizedBox(

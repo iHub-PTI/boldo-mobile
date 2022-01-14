@@ -111,9 +111,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       loading = true;
     });
-    Map<String, String> updateResponse = await updateProfile(context: context);
+    Map<String, String>? updateResponse = await updateProfile(context: context);
     Provider.of<UserProvider>(context, listen: false).updateProfileEditMessages(
-        updateResponse["successMessage"]!, updateResponse["errorMessage"]!);
+        updateResponse["successMessage"]??'', updateResponse["errorMessage"]??'');
 
     setState(() {
       loading = false;
@@ -258,7 +258,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           label: "Fecha de nacimiento",
                           initialValue: DateFormat('dd.MM.yyyy')
                               .format(DateTime.parse(data)),
-                          validator: null,
+                          // validator: null,
                           isDateTime: true,
                           onChanged: (String val) {
                             var inputFormat = DateFormat("yyyy-MM-dd");
@@ -280,13 +280,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         return CustomFormInput(
                           initialValue: data,
                           label: "Correo electrónico",
-                          // validator: validateEmail,
+                          validator: (value) => validateEmail(value!),
                           onChanged: (String val) =>
                               userProvider.setUserData(email: val),
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getEmail ?? '',
+                          userProvider.getEmail!,
                     ),
 
                     const SizedBox(height: 20),

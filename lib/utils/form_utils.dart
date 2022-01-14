@@ -1,5 +1,5 @@
 //Utilities are not project related, they are static and can be imported and moved anywhere.
-import 'package:flutter/material.dart';
+
 import 'package:flutter/services.dart';
 
 String? validatePassword(String password) {
@@ -19,17 +19,17 @@ String? validatePassword(String password) {
   return null;
 }
 
-String validateEmail(String email) {
+String? validateEmail(String email) {
   Pattern pattern =
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
   RegExp regex = RegExp(pattern.toString());
   if (email.isEmpty) {
-    return 'The email is required';
+    return 'Ingrese su correo electrónico';
   } else if (!regex.hasMatch(email)) {
-    return 'Enter a valid email address';
+    return 'Ingrese un correo electrónico válido';
   } else {
-    // ignore: null_check_always_fails
-    return null!;
+  
+    return null;
   }
 }
 
@@ -42,14 +42,13 @@ String? valdiateFirstName(String value) {
     return null;
 }
 
-String valdiateLasttName(String value) {
+String? valdiateLasttName(String value) {
   if (value.isNotEmpty == false)
     return "Last Name is Required";
   else if (value.length > 30)
     return "The Last Name is too long";
   else
-     // ignore: null_check_always_fails
-    return null!;
+    return null;
 }
 
 String? validatePasswordConfirmation(String? pass2, String? pass1) {

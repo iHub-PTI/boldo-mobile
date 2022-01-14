@@ -18,24 +18,24 @@ class CustomFormInput extends StatefulWidget {
   final String? customSVGIcon;
   final bool isDateTime;
   final String? Function(String?)? validator;
-  final Function(String)? changeValueCallback;
+  final  Function(String)? changeValueCallback;
   final bool obscureText;
   final Function(String)? onChanged;
   final List<TextInputFormatter> inputFormatters;
   CustomFormInput(
       {Key? key,
       required this.label,
-       this.validator,
-       this.changeValueCallback,
+      this.validator,
+      this.changeValueCallback,
       this.isDateTime = false,
       this.inputFormatters = const [],
       this.maxLines = 1,
-       this.customSVGIcon,
+      this.customSVGIcon,
       this.isPhoneNumber = false,
-       this.customIcon,
-       this.initialValue,
-       this.secondaryLabel,
-       this.onChanged,
+      this.customIcon,
+      this.initialValue,
+      this.secondaryLabel,
+      this.onChanged,
       this.obscureText = false})
       : super(key: key);
 
@@ -196,11 +196,13 @@ class _CustomFormInputState extends State<CustomFormInput> {
                   //keyboardType: TextInputType.emailAddress,
                   // validator: widget.validator,
                   validator: (string) {
-                    return widget.validator!(string);
+                    if (widget.validator != null)
+                      return widget.validator!(string);
                   },
                   onChanged: widget.onChanged,
-                   onSaved: (string) {
-                   return widget.changeValueCallback!(string!);
+                  onSaved: (string) {
+                    // if (widget.changeValueCallback != null)
+                    //   return widget.changeValueCallback!(string!);
                   },
                   // onSaved: widget.changeValueCallback,
                 ),
