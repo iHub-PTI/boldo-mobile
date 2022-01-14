@@ -10,7 +10,7 @@ import '../../../utils/helpers.dart';
 class Call extends StatelessWidget {
   final RTCVideoRenderer localRenderer;
   final RTCVideoRenderer remoteRenderer;
-  final Function hangUp;
+  final VoidCallback hangUp;
   final Function switchCamera;
   final Appointment appointment;
   final bool initialMicState;
@@ -77,7 +77,7 @@ class Call extends StatelessWidget {
               ),
               FloatingActionButton(
                 heroTag: null,
-                onPressed: () => hangUp,
+                onPressed: hangUp,
                 tooltip: 'Hangup',
                 elevation: 0,
                 child: SvgPicture.asset(
