@@ -37,9 +37,9 @@ class _AddressScreenState extends State<AddressScreen> {
     setState(() {
       loading = true;
     });
-    Map<String, String> updateResponse = await updateProfile(context: context);
+    Map<String, String>? updateResponse = await updateProfile(context: context);
     Provider.of<UserProvider>(context, listen: false).updateProfileEditMessages(
-        updateResponse["successMessage"]!, updateResponse["errorMessage"]!);
+        updateResponse["successMessage"]??'', updateResponse["errorMessage"]??'');
     setState(() {
       loading = false;
     });
