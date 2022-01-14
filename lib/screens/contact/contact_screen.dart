@@ -33,7 +33,7 @@ class _ContactState extends State<Contact> {
   }
 
   Widget labelLink() {
-    return const Text('info@boldo.org.py',
+    return const Text('soporte.boldo@pti.org.py',
         textAlign: TextAlign.center,
         style: TextStyle(
             color: Color.fromRGBO(237, 152, 62, 1),
