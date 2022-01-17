@@ -24,7 +24,7 @@ import '../../network/http.dart';
 import '../../constants.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key key}) : super(key: key);
+  const ProfileScreen({Key? key}) : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -67,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .clearProfileFormMessages();
 
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString("profile_url", response.data["photoUrl"]);
+      await prefs.setString("profile_url", response.data["photoUrl"] ?? '');
       await prefs.setString("gender", response.data["gender"]);
       setState(() {
         _dataLoading = false;
@@ -97,23 +97,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _updateProfile() async {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       setState(() {
         _validate = true;
       });
       return;
     }
 
-    _formKey.currentState.save();
+    _formKey.currentState!.save();
 
     Provider.of<UserProvider>(context, listen: false)
         .clearProfileFormMessages();
     setState(() {
       loading = true;
     });
-    Map<String, String> updateResponse = await updateProfile(context: context);
+    Map<String, String>? updateResponse = await updateProfile(context: context);
     Provider.of<UserProvider>(context, listen: false).updateProfileEditMessages(
-        updateResponse["successMessage"], updateResponse["errorMessage"]);
+        updateResponse["successMessage"]??'', updateResponse["errorMessage"]??'');
 
     setState(() {
       loading = false;
@@ -178,32 +178,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Selector<UserProvider, String>(
                       builder: (_, data, __) {
                         return CustomFormInput(
-                          initialValue: data ?? "",
+                          initialValue: data,
                           label: "Nombre",
-                          validator: valdiateFirstName,
+                          validator: (value) => valdiateFirstName(value!),
                           onChanged: (String val) => userProvider.setUserData(
                             givenName: val,
                           ),
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getGivenName,
+                          userProvider.getGivenName ?? '',
                     ),
 
                     const SizedBox(height: 20),
                     Selector<UserProvider, String>(
                       builder: (_, data, __) {
                         return CustomFormInput(
-                          initialValue: data ?? "",
+                          initialValue: data,
                           label: "Apellido",
-                          validator: valdiateLasttName,
+                          validator: (value) => valdiateLasttName(value!),
                           onChanged: (String val) => userProvider.setUserData(
                             familyName: val,
                           ),
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getFamilyName,
+                          userProvider.getFamilyName ?? '',
                     ),
 
                     //CustomDropdown(),
@@ -211,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Selector<UserProvider, String>(
                       builder: (_, data, __) {
                         return CustomFormInput(
-                          initialValue: data ?? "",
+                          initialValue: data,
                           secondaryLabel: "Opcional",
                           label: "Ocupación",
                           onChanged: (String val) =>
@@ -219,13 +219,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getJob,
+                          userProvider.getJob ?? '',
                     ),
 
                     const SizedBox(height: 20),
                     Selector<UserProvider, String>(
                       builder: (_, data, __) {
-                        String selectedvalue = data ?? "unknown";
+                        String selectedvalue = data;
                         List<Map<String, String>> itemsList = [
                           {"title": "Masculino", "value": 'male'},
                           {"title": "Femenino", "value": 'female'},
@@ -247,7 +247,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getGender,
+                          userProvider.getGender ?? '',
                     ),
 
                     const SizedBox(height: 20),
@@ -257,8 +257,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         return CustomFormInput(
                           label: "Fecha de nacimiento",
                           initialValue: DateFormat('dd.MM.yyyy')
-                              .format(DateTime.parse(data ?? "1980-01-01")),
-                          validator: null,
+                              .format(DateTime.parse(data)),
+                          // validator: null,
                           isDateTime: true,
                           onChanged: (String val) {
                             var inputFormat = DateFormat("yyyy-MM-dd");
@@ -271,7 +271,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getBirthDate,
+                          userProvider.getBirthDate ?? '',
                     ),
 
                     const SizedBox(height: 20),
@@ -280,13 +280,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         return CustomFormInput(
                           initialValue: data,
                           label: "Correo electrónico",
-                          validator: validateEmail,
+                          validator: (value) => validateEmail(value!),
                           onChanged: (String val) =>
                               userProvider.setUserData(email: val),
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getEmail,
+                          userProvider.getEmail!,
                     ),
 
                     const SizedBox(height: 20),
@@ -304,7 +304,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getPhone,
+                          userProvider.getPhone ?? '',
                     ),
 
                     const SizedBox(height: 20),
@@ -362,7 +362,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           if (userProvider.profileEditErrorMessage != null)
                             Text(
-                              userProvider.profileEditErrorMessage,
+                              userProvider.profileEditErrorMessage!,
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Constants.otherColor100,
@@ -370,7 +370,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           if (userProvider.profileEditSuccessMessage != null)
                             Text(
-                              userProvider.profileEditSuccessMessage,
+                              userProvider.profileEditSuccessMessage!,
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Constants.primaryColor600,

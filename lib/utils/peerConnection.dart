@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
@@ -24,21 +23,21 @@ enum CallState {
 }
 
 class PeerConnection {
-  RTCPeerConnection peerConnection;
+  late RTCPeerConnection? peerConnection;
 
   MediaStream localStream;
   io.Socket socket;
   String room;
   String token;
 
-  Function(MediaStream) onRemoteStream;
-  Function(CallState) onStateChange;
+  late Function(MediaStream) onRemoteStream;
+  late Function(CallState) onStateChange;
 
   PeerConnection(
-      {this.localStream,
-      @required this.token,
-      @required this.room,
-      @required this.socket});
+      {required this.localStream,
+      required this.token,
+      required this.room,
+      required this.socket});
 
   Future<void> init() async {
     peerConnection = await createPeerConnection(
@@ -51,7 +50,8 @@ class PeerConnection {
     //
 
     // Handle outgoing tracks
-    peerConnection.addStream(localStream);
+    if(peerConnection != null)
+    peerConnection!.addStream(localStream);
 
     // Handle incoming tracks
     void onAddStream(MediaStream stream) {
@@ -89,7 +89,7 @@ class PeerConnection {
       RTCIceCandidate candidate = RTCIceCandidate(message["ice"]['candidate'],
           message["ice"]['sdpMid'], message["ice"]['sdpMLineIndex'] ?? 1);
 
-      await peerConnection.addCandidate(candidate);
+      await peerConnection!.addCandidate(candidate);
     });
 
     //
@@ -105,7 +105,7 @@ class PeerConnection {
     // Important for us as this is the main source about failed conections
 
     void onIceConnectionState(state) {
-      print(state);
+      // print(state);
       switch (state) {
         case RTCIceConnectionState.RTCIceConnectionStateCompleted:
         case RTCIceConnectionState.RTCIceConnectionStateConnected:
@@ -130,24 +130,27 @@ class PeerConnection {
       }
     }
 
-    peerConnection.onAddStream = onAddStream;
-    peerConnection.onIceCandidate = onIceCandidate;
-    peerConnection.onIceConnectionState = onIceConnectionState;
+    if (peerConnection != null) {
+      peerConnection!.onAddStream = onAddStream;
+      peerConnection!.onIceCandidate = onIceCandidate;
+      peerConnection!.onIceConnectionState = onIceConnectionState;
+    }
   }
 
   Future<void> setSdpOffer(message) async {
     RTCSessionDescription description =
         RTCSessionDescription(message["sdp"]['sdp'], message["sdp"]['type']);
-    await peerConnection.setRemoteDescription(description);
+    if (peerConnection != null)
+      await peerConnection!.setRemoteDescription(description);
 
-    RTCSessionDescription s = await peerConnection.createAnswer({
+    RTCSessionDescription s = await peerConnection!.createAnswer({
       'mandatory': {
         'OfferToReceiveAudio': true,
         'OfferToReceiveVideo': true,
       },
       'optional': []
     });
-    peerConnection.setLocalDescription(s);
+    if (peerConnection != null) peerConnection!.setLocalDescription(s);
 
     socket.emit('sdp offer', {
       'room': room,
@@ -159,13 +162,14 @@ class PeerConnection {
   void cleanup() async {
     print('🧹🧹🧹 CLEANUP 🧹🧹🧹');
     socket.off('ice candidate');
+     await peerConnection!.close();
+     
+    if (peerConnection != null) {
+      peerConnection!.onAddStream = null;
+      peerConnection!.onIceCandidate = null;
+      peerConnection!.onIceConnectionState = null;
 
-    await peerConnection.close();
-
-    peerConnection.onAddStream = null;
-    peerConnection.onIceCandidate = null;
-    peerConnection.onIceConnectionState = null;
-
-    peerConnection = null;
+      peerConnection = null;
+    }
   }
 }

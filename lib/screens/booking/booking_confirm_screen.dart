@@ -17,7 +17,7 @@ class BookingConfirmScreen extends StatefulWidget {
   final Doctor doctor;
   final DateTime bookingDate;
   BookingConfirmScreen(
-      {Key key, @required this.bookingDate, @required this.doctor})
+      {Key? key, required this.bookingDate, required this.doctor})
       : super(key: key);
 
   @override
@@ -129,7 +129,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
 
 class _DoctorBookingInfoWidget extends StatelessWidget {
   final DateTime bookingDate;
-  const _DoctorBookingInfoWidget({Key key, @required this.bookingDate})
+  const _DoctorBookingInfoWidget({Key? key, required this.bookingDate})
       : super(key: key);
 
   @override
@@ -169,7 +169,7 @@ class _DoctorBookingInfoWidget extends StatelessWidget {
 
 class _DoctorProfileWidget extends StatelessWidget {
   final Doctor doctor;
-  const _DoctorProfileWidget({Key key, @required this.doctor})
+  const _DoctorProfileWidget({Key? key, required this.doctor})
       : super(key: key);
 
   @override
@@ -205,7 +205,7 @@ class _DoctorProfileWidget extends StatelessWidget {
                                 fit: BoxFit.cover)
                             : CachedNetworkImage(
                                 fit: BoxFit.cover,
-                                imageUrl: doctor.photoUrl,
+                                imageUrl: doctor.photoUrl!,
                                 progressIndicatorBuilder:
                                     (context, url, downloadProgress) => Padding(
                                   padding: const EdgeInsets.all(26.0),
@@ -230,7 +230,7 @@ class _DoctorProfileWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${getDoctorPrefix(doctor.gender)}${doctor.givenName} ${doctor.familyName}",
+                          "${getDoctorPrefix(doctor.gender!)}${doctor.givenName} ${doctor.familyName}",
                           style: boldoHeadingTextStyle.copyWith(
                               fontWeight: FontWeight.normal),
                         ),
@@ -238,17 +238,17 @@ class _DoctorProfileWidget extends StatelessWidget {
                           height: 5,
                         ),
                         if (doctor.specializations != null &&
-                            doctor.specializations.isNotEmpty)
+                            doctor.specializations!.isNotEmpty)
                           Row(
                             children: [
                               for (int i = 0;
-                                  i < doctor.specializations.length;
+                                  i < doctor.specializations!.length;
                                   i++)
                                 Padding(
                                   padding:
                                       EdgeInsets.only(left: i == 0 ? 0 : 3.0),
                                   child: Text(
-                                    "${doctor.specializations[i].description}${doctor.specializations.length > 1 && i == 0 ? "," : ""}",
+                                    "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
                                     style: boldoSubTextStyle.copyWith(
                                         color: Constants.otherColor100),
                                   ),
@@ -263,7 +263,7 @@ class _DoctorProfileWidget extends StatelessWidget {
                   height: 16,
                 ),
                 if (doctor.biography != null)
-                  Text(doctor.biography,
+                  Text(doctor.biography!,
                       style: boldoSubTextStyle.copyWith(
                           fontSize: 16, height: 1.5)),
               ],

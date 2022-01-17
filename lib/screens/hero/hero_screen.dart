@@ -13,7 +13,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:page_view_indicator/page_view_indicator.dart';
+import 'package:page_view_indicators/page_view_indicators.dart';
+
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -93,7 +94,7 @@ class HeroScreen extends StatelessWidget {
             ValueListenableBuilder(
               valueListenable: pageIndexNotifier,
               builder: (context, index, child) {
-                return _buildPageViewIndicator(context, index);
+                return _buildPageViewIndicator(context, index as int);
               },
             ),
             const Spacer(),
@@ -138,36 +139,36 @@ class HeroScreen extends StatelessWidget {
   Widget _buildPageViewIndicator(BuildContext context, int indexPageView) {
     return Column(
       children: [
-        PageViewIndicator(
-          pageIndexNotifier: pageIndexNotifier,
-          length: 3,
-          normalBuilder: (animationController, index) => Circle(
-            size: 10,
-            color: index < indexPageView
-                ? Constants.secondaryColor500
-                : Constants.extraColor200,
-          ),
-          highlightedBuilder: (animationController, index) => ScaleTransition(
-            scale: CurvedAnimation(
-              parent: animationController,
-              curve: Curves.ease,
-            ),
-            child: Container(
-              height: 20,
-              width: 20,
-              decoration: const BoxDecoration(
-                  color: Constants.secondaryColor200,
-                  borderRadius: BorderRadius.all(Radius.circular(20))),
-              child: Align(
-                alignment: Alignment.center,
-                child: Circle(
-                  size: 10,
-                  color: Constants.secondaryColor500,
-                ),
-              ),
-            ),
-          ),
-        ),
+        // PageViewIndicator(
+        //   pageIndexNotifier: pageIndexNotifier,
+        //   length: 3,
+        //   normalBuilder: (animationController, index) => Circle(
+        //     size: 10,
+        //     color: index < indexPageView
+        //         ? Constants.secondaryColor500
+        //         : Constants.extraColor200,
+        //   ),
+        //   highlightedBuilder: (animationController, index) => ScaleTransition(
+        //     scale: CurvedAnimation(
+        //       parent: animationController,
+        //       curve: Curves.ease,
+        //     ),
+        //     child: Container(
+        //       height: 20,
+        //       width: 20,
+        //       decoration: const BoxDecoration(
+        //           color: Constants.secondaryColor200,
+        //           borderRadius: BorderRadius.all(Radius.circular(20))),
+        //       child: Align(
+        //         alignment: Alignment.center,
+        //         child: Circle(
+        //           size: 10,
+        //           color: Constants.secondaryColor500,
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ),
         const SizedBox(
           height: 20,
         ),
@@ -195,11 +196,11 @@ class CarouselSlide extends StatelessWidget {
   final Alignment alignment;
 
   const CarouselSlide({
-    Key key,
-    @required this.image,
-    @required this.boxFit,
-    @required this.alignment,
-    @required this.index,
+    Key? key,
+    required this.image,
+    required this.boxFit,
+    required this.alignment,
+    required this.index,
   }) : super(key: key);
 
   @override
@@ -209,15 +210,15 @@ class CarouselSlide extends StatelessWidget {
 }
 
 Future<void> authenticateUser(
-    {@required BuildContext context, bool switchPage = true}) async {
+    {required BuildContext context, bool switchPage = true}) async {
   String keycloakRealmAddress = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
-      defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
+      defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
 
   FlutterAppAuth appAuth = FlutterAppAuth();
 
   const storage = FlutterSecureStorage();
   try {
-    final AuthorizationTokenResponse result =
+    final AuthorizationTokenResponse? result =
         await appAuth.authorizeAndExchangeCode(
       AuthorizationTokenRequest(
         'boldo-patient',
@@ -228,7 +229,7 @@ Future<void> authenticateUser(
       ),
     );
 
-    await storage.write(key: "access_token", value: result.accessToken);
+    await storage.write(key: "access_token", value: result!.accessToken);
     await storage.write(key: "refresh_token", value: result.refreshToken);
 
     Provider.of<AuthProvider>(context, listen: false)
@@ -241,7 +242,7 @@ Future<void> authenticateUser(
       await prefs.setString("gender", response.data["gender"]);
     }
   } on PlatformException catch (err, s) {
-    if (!err.message.contains('User cancelled flow')) {
+    if (!err.message!.contains('User cancelled flow')) {
       print(err);
       await Sentry.captureException(err, stackTrace: s);
     }

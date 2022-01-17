@@ -10,7 +10,7 @@ import '../../../utils/helpers.dart';
 class Call extends StatelessWidget {
   final RTCVideoRenderer localRenderer;
   final RTCVideoRenderer remoteRenderer;
-  final Function hangUp;
+  final VoidCallback hangUp;
   final Function switchCamera;
   final Appointment appointment;
   final bool initialMicState;
@@ -19,16 +19,16 @@ class Call extends StatelessWidget {
   final Function() muteVideo;
 
   const Call({
-    Key key,
-    @required this.initialMicState,
-    @required this.localRenderer,
-    @required this.remoteRenderer,
-    @required this.hangUp,
-    @required this.muteVideo,
-    @required this.muteMic,
-    @required this.initialVideoState,
-    @required this.switchCamera,
-    @required this.appointment,
+    Key? key,
+    required this.initialMicState,
+    required this.localRenderer,
+    required this.remoteRenderer,
+    required this.hangUp,
+    required this.muteVideo,
+    required this.muteMic,
+    required this.initialVideoState,
+    required this.switchCamera,
+    required this.appointment,
   }) : super(key: key);
 
   @override
@@ -55,7 +55,7 @@ class Call extends StatelessWidget {
         title: Padding(
           padding: const EdgeInsets.only(bottom: 24.0),
           child: Text(
-            "${getDoctorPrefix(appointment.doctor.gender)}${appointment.doctor.familyName}",
+            "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName!}",
             style: const TextStyle(color: Constants.grayColor800),
           ),
         ),
@@ -126,9 +126,9 @@ class CustomPositionedCamera extends StatefulWidget {
   final Orientation orientation;
 
   const CustomPositionedCamera({
-    Key key,
-    @required this.localRenderer,
-    @required this.orientation,
+    Key? key,
+    required this.localRenderer,
+    required this.orientation,
   }) : super(key: key);
 
   @override

@@ -18,7 +18,7 @@ import '../../models/Doctor.dart';
 import '../../utils/helpers.dart';
 
 class BookingScreen extends StatefulWidget {
-  BookingScreen({Key key, @required this.doctor}) : super(key: key);
+  BookingScreen({Key? key, required this.doctor}) : super(key: key);
   final Doctor doctor;
   @override
   _BookingScreenState createState() => _BookingScreenState();
@@ -28,8 +28,8 @@ class _BookingScreenState extends State<BookingScreen> {
   bool _loading = true;
   bool _loadingCalendar = false;
   bool notAvailibleThisMonth = false;
-  String nextAvailability;
-  DateTime _selectedBookingHour;
+  String? nextAvailability;
+  DateTime? _selectedBookingHour;
   List<DateTime> _availabilities = [];
 
   List<List<CalendarItem>> chunkArrays = [];
@@ -43,7 +43,7 @@ class _BookingScreenState extends State<BookingScreen> {
     fetchData(DateTime.now());
   }
 
-  Future<void> handleBookingHour({DateTime bookingHour}) async {
+  Future<void> handleBookingHour({ DateTime? bookingHour}) async {
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
     if (!isAuthenticated) {
@@ -56,7 +56,7 @@ class _BookingScreenState extends State<BookingScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => BookingConfirmScreen(
-          bookingDate: bookingHour ?? _selectedBookingHour,
+          bookingDate: bookingHour ?? _selectedBookingHour!,
           doctor: widget.doctor,
         ),
       ),
@@ -109,13 +109,13 @@ class _BookingScreenState extends State<BookingScreen> {
       bool noAvailibilityThisMonth = true;
       DateTime firstDay = date;
       for (List<CalendarItem> chunkArray in _chunkArrays) {
-        CalendarItem notEmptyCalendarItem = chunkArray.firstWhere(
+        CalendarItem? notEmptyCalendarItem = chunkArray.firstWhere(
             (element) =>
                 element.isEmpty == false && element.isDisabled == false,
-            orElse: () => null);
-        if (notEmptyCalendarItem != null) {
+            orElse: () => CalendarItem());
+        if (notEmptyCalendarItem.itemDate != null) {
           noAvailibilityThisMonth = false;
-          firstDay = notEmptyCalendarItem.itemDate;
+          firstDay = notEmptyCalendarItem.itemDate!;
           break;
         }
       }
@@ -201,7 +201,7 @@ class _BookingScreenState extends State<BookingScreen> {
               if (nextAvailability != null)
                 _BookDoctorCard(
                   doctor: widget.doctor,
-                  nextAvailability: nextAvailability,
+                  nextAvailability: nextAvailability!,
                   handleBookingHour: (date) =>
                       handleBookingHour(bookingHour: date),
                 ),
@@ -358,11 +358,11 @@ class _BookCalendar extends StatelessWidget {
   final Function(DateTime changeDateCallback) changeDateCallback;
 
   const _BookCalendar({
-    Key key,
-    @required this.chunkArrays,
-    @required this.notAvailibleThisMonth,
-    @required this.selectedDate,
-    @required this.changeDateCallback,
+    Key? key,
+    required this.chunkArrays,
+    required this.notAvailibleThisMonth,
+    required this.selectedDate,
+    required this.changeDateCallback,
   }) : super(key: key);
 
   @override
@@ -389,10 +389,10 @@ class _BookCalendar extends StatelessWidget {
 
 class _BookDoctorCard extends StatelessWidget {
   const _BookDoctorCard(
-      {Key key,
-      @required this.doctor,
-      @required this.nextAvailability,
-      @required this.handleBookingHour})
+      {Key? key,
+      required this.doctor,
+      required this.nextAvailability,
+      required this.handleBookingHour})
       : super(key: key);
   final Function(DateTime) handleBookingHour;
   final String nextAvailability;

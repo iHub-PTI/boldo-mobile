@@ -41,7 +41,6 @@ class Constants {
   static const Color grayColor700 = Color(0xff364152);
   static const Color grayColor800 = Color(0xff27303F);
 
-  // FIXME!
   // extra color palette
   static const Color extraColor100 = Color(0xffFFFFFF);
   static const Color extraColor200 = Color(0xffE5E7EB);

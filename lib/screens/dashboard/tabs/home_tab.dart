@@ -19,15 +19,15 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:boldo/network/http.dart';
 
 class HomeTab extends StatefulWidget {
-  HomeTab({Key key}) : super(key: key);
+  HomeTab({Key? key}) : super(key: key);
 
   @override
   _HomeTabState createState() => _HomeTabState();
 }
 
 class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
-  Isolate _isolate;
-  ReceivePort _receivePort;
+  Isolate? _isolate;
+  ReceivePort? _receivePort;
 
   List<Appointment> allAppointmentsState = [];
 
@@ -58,11 +58,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     if (_isolate != null) {
-      _isolate.kill(priority: Isolate.immediate);
+      _isolate?.kill(priority: Isolate.immediate);
       _isolate = null;
     }
     if (_receivePort != null) {
-      _receivePort.close();
+      _receivePort?.close();
       _receivePort = null;
     }
 
@@ -74,7 +74,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       for (Appointment appointment in map["upcomingWaitingRoomAppointments"]) {
         if (DateTime.now()
             .add(const Duration(minutes: 15))
-            .isAfter(DateTime.parse(appointment.start).toLocal())) {
+            .isAfter(DateTime.parse(appointment.start!).toLocal())) {
           timer.cancel();
           map['port'].send({"newAppointment": appointment});
           break;
@@ -84,9 +84,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   }
 
   void _handleWaitingRoomsListUpdate(dynamic data) async {
-    _isolate.kill(priority: Isolate.immediate);
+    _isolate?.kill(priority: Isolate.immediate);
     _isolate = null;
-    _receivePort.close();
+    _receivePort?.close();
     _receivePort = null;
     //if appointment doesnt exist in the list of appointments then update the state
     bool hasAppointment = waitingRoomAppointments
@@ -111,11 +111,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     _isolate = await Isolate.spawn(
       _updateWaitingRoomsList,
       {
-        'port': _receivePort.sendPort,
+        'port': _receivePort?.sendPort,
         'upcomingWaitingRoomAppointments': updatedUpcomingAppointments,
       },
     );
-    _receivePort.listen(_handleWaitingRoomsListUpdate);
+    _receivePort?.listen(_handleWaitingRoomsListUpdate);
   }
 
   Future<void> getAppointmentsData({bool loadMore = false}) async {
@@ -123,11 +123,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
     if (!loadMore) {
       if (_isolate != null) {
-        _isolate.kill(priority: Isolate.immediate);
+        _isolate!.kill(priority: Isolate.immediate);
         _isolate = null;
       }
       if (_receivePort != null) {
-        _receivePort.close();
+        _receivePort!.close();
         _receivePort = null;
       }
       if (!isAuthenticated) {
@@ -161,10 +161,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       for (Appointment appointment in allAppointmets) {
         for (Prescription prescription in allPrescriptions) {
           if (prescription.encounter != null &&
-              prescription.encounter.appointmentId == appointment.id) {
+              prescription.encounter!.appointmentId == appointment.id) {
             if (appointment.prescriptions != null) {
               appointment.prescriptions = [
-                ...appointment.prescriptions,
+                ...appointment.prescriptions!,
                 prescription
               ];
             } else {
@@ -184,15 +184,15 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
           .toList();
       allAppointmets = [...upcomingAppointmentsItems, ...pastAppointmentsItems];
 
-      allAppointmets.sort(
-          (a, b) => DateTime.parse(b.start).compareTo(DateTime.parse(a.start)));
+      allAppointmets.sort((a, b) =>
+          DateTime.parse(b.start!).compareTo(DateTime.parse(a.start!)));
 
       List<Appointment> upcomingWaitingRoomAppointmetsList = allAppointmets
           .where((element) =>
               element.status == "upcoming" &&
               DateTime.now()
                   .add(const Duration(minutes: 15))
-                  .isBefore(DateTime.parse(element.start).toLocal()))
+                  .isBefore(DateTime.parse(element.start!).toLocal()))
           .toList();
       if (!mounted) return;
       if (!loadMore) {
@@ -200,12 +200,12 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         _isolate = await Isolate.spawn(
           _updateWaitingRoomsList,
           {
-            'port': _receivePort.sendPort,
+            'port': _receivePort?.sendPort,
             'upcomingWaitingRoomAppointments':
                 upcomingWaitingRoomAppointmetsList,
           },
         );
-        _receivePort.listen(_handleWaitingRoomsListUpdate);
+        _receivePort?.listen(_handleWaitingRoomsListUpdate);
       }
 
       if (!mounted) return;
@@ -222,7 +222,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             if (element.status == "upcoming" &&
                 DateTime.now()
                     .add(const Duration(minutes: 15))
-                    .isAfter(DateTime.parse(element.start).toLocal())) {
+                    .isAfter(DateTime.parse(element.start!).toLocal())) {
               return true;
             }
             return false;
@@ -269,9 +269,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
+    
     Appointment firstPastAppointment = allAppointmentsState.firstWhere(
         (element) => ["closed", "locked"].contains(element.status),
-        orElse: () => null);
+        orElse: () => Appointment());
 
     return Scaffold(
       appBar: const HomeTabAppBar(),
@@ -303,7 +304,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                       onRefresh: _onRefresh,
                       footer: CustomFooter(
                         height: 140,
-                        builder: (BuildContext context, LoadStatus mode) {
+                        builder: (BuildContext context, LoadStatus? mode) {
                           print(mode);
                           Widget body = Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -337,6 +338,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                           );
                         },
                       ),
+
                       child: CustomScrollView(
                         slivers: [
                           SliverToBoxAdapter(
@@ -378,11 +380,11 @@ class _ListRenderer extends StatelessWidget {
   final List<Appointment> waitingRoomAppointments;
 
   const _ListRenderer(
-      {Key key,
-      this.index,
-      this.appointment,
-      this.firstAppointmentPast,
-      @required this.waitingRoomAppointments})
+      {Key? key,
+      required this.index,
+      required this.appointment,
+      required this.firstAppointmentPast,
+      required this.waitingRoomAppointments})
       : super(key: key);
 
   @override

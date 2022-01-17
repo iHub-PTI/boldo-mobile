@@ -1,18 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import './Encounter.dart';
 
 class Prescription {
-  String instructions;
-  String medicationId;
-  String medicationName;
+  String? instructions;
+  String? medicationId;
+  String? medicationName;
 
-  Encounter encounter;
+  Encounter? encounter;
 
   Prescription({
-    @required this.medicationId,
-    @required this.medicationName,
-    @required this.encounter,
-    @required this.instructions,
+    this.medicationId,
+    this.medicationName,
+    this.encounter,
+    this.instructions,
   });
 
   Prescription.fromJson(Map<String, dynamic> json) {
@@ -31,7 +30,7 @@ class Prescription {
     data['medicationName'] = medicationName;
     data["instructions"] = instructions;
     if (encounter != null) {
-      data['encounter'] = encounter.toJson();
+      data['encounter'] = encounter!.toJson();
     }
     return data;
   }

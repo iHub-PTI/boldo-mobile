@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -23,15 +23,15 @@ import 'package:boldo/constants.dart';
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  initializeDateFormatting();
+ await initializeDateFormatting('es', null);
   Intl.defaultLocale = "es";
+  await dotenv.load(fileName: ".env");
+  // await dotenv.load(fileName: '.env');
 
-  await DotEnv().load('.env');
-
-  GestureBinding.instance.resamplingEnabled = true;
+  GestureBinding.instance!.resamplingEnabled = true;
 
   ConnectionStatusSingleton.getInstance().initialize();
 
@@ -41,11 +41,11 @@ void main() async {
   initDio(navKey: navKey);
   initDioSecondaryAccess(navKey: navKey);
   const storage = FlutterSecureStorage();
-  String session = await storage.read(key: "access_token");
+  String? session = await storage.read(key: "access_token");
 
   if (kReleaseMode) {
     String sentryDSN = String.fromEnvironment('SENTRY_DSN',
-        defaultValue: DotEnv().env['SENTRY_DSN']);
+        defaultValue: dotenv.env['SENTRY_DSN']!);
     await SentryFlutter.init(
       (options) {
         options.environment = "production";
@@ -56,14 +56,14 @@ void main() async {
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
       (value) => runApp(
-          MyApp(onboardingCompleted: onboardingCompleted, session: session)));
+          MyApp(onboardingCompleted: onboardingCompleted, session: session??'')));
 }
 
 class MyApp extends StatefulWidget {
   final bool onboardingCompleted;
   final String session;
   const MyApp(
-      {Key key, @required this.onboardingCompleted, @required this.session})
+      {Key? key, required this.onboardingCompleted, required this.session})
       : super(key: key);
 
   @override
@@ -78,6 +78,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
         ChangeNotifierProvider<UtilsProvider>(create: (_) => UtilsProvider()),
         ChangeNotifierProvider<AuthProvider>(
+            // ignore: unnecessary_null_comparison
             create: (_) => AuthProvider(widget.session != null ? true : false)),
       ],
       child: FullApp(onboardingCompleted: widget.onboardingCompleted),
@@ -87,8 +88,8 @@ class _MyAppState extends State<MyApp> {
 
 class FullApp extends StatelessWidget {
   const FullApp({
-    Key key,
-    @required this.onboardingCompleted,
+    Key? key,
+    required this.onboardingCompleted,
   }) : super(key: key);
 
   final bool onboardingCompleted;

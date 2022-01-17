@@ -8,7 +8,7 @@ import '../../widgets/wrapper.dart';
 import '../../constants.dart';
 
 class Contact extends StatefulWidget {
-  const Contact({Key key}) : super(key: key);
+  const Contact({Key? key}) : super(key: key);
 
   @override
   _ContactState createState() => _ContactState();
@@ -33,7 +33,7 @@ class _ContactState extends State<Contact> {
   }
 
   Widget labelLink() {
-    return const Text('info@boldo.org.py',
+    return const Text('soporte.boldo@pti.org.py',
         textAlign: TextAlign.center,
         style: TextStyle(
             color: Color.fromRGBO(237, 152, 62, 1),

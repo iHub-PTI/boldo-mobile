@@ -8,11 +8,11 @@ class CustomDropdown extends StatelessWidget {
   final List<Map<String, String>> itemsList;
   final Function(String) onChanged;
   const CustomDropdown(
-      {Key key,
-      @required this.label,
-      @required this.selectedValue,
-      @required this.itemsList,
-      @required this.onChanged})
+      {Key? key,
+      required this.label,
+      required this.selectedValue,
+      required this.itemsList,
+      required this.onChanged})
       : super(key: key);
 
   @override
@@ -51,8 +51,10 @@ class CustomDropdown extends StatelessWidget {
                 iconEnabledColor: Constants.extraColor300,
                 iconDisabledColor: Constants.extraColor300,
                 elevation: 16,
-
-                onChanged: onChanged,
+                onChanged: (string) { 
+                  onChanged(string!);
+                },
+                // onChanged: onChanged,
                 items: itemsList
                     .map<DropdownMenuItem<String>>((Map<String, String> value) {
                   return DropdownMenuItem<String>(
@@ -60,7 +62,7 @@ class CustomDropdown extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: Text(
-                        value["title"],
+                        value["title"]!,
                       ),
                     ),
                   );

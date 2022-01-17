@@ -19,7 +19,7 @@ class MedicalRecordScreen extends StatefulWidget {
 class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
   bool _dataLoaded = false;
   bool _dataLoading = true;
-  List<MedicalRecord> allMedicalData;
+  late List<MedicalRecord> allMedicalData;
   @override
   void initState() {
     super.initState();
@@ -143,7 +143,7 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
                                       Text(
                                         DateFormat('MMM').format(DateTime.parse(
                                                 allMedicalData[index]
-                                                    .startTimeDate)
+                                                    .startTimeDate!)
                                             .toLocal()),
                                         style: const TextStyle(
                                           color: Color(0xffDF6D51),
@@ -153,7 +153,7 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
                                       Text(
                                         DateFormat('dd').format(DateTime.parse(
                                                 allMedicalData[index]
-                                                    .startTimeDate)
+                                                    .startTimeDate!)
                                             .toLocal()),
                                         style: const TextStyle(
                                           color: Color(0xffDF6D51),
@@ -207,7 +207,7 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
 class Loading extends StatelessWidget {
   final String title;
   const Loading({
-    this.title,
+    required this.title,
   });
 
   @override

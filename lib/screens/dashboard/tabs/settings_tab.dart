@@ -20,7 +20,7 @@ import '../../../provider/auth_provider.dart';
 import '../../../constants.dart';
 
 class SettingsTab extends StatefulWidget {
-  SettingsTab({Key key}) : super(key: key);
+  SettingsTab({Key? key}) : super(key: key);
 
   @override
   _SettingsTabState createState() => _SettingsTabState();
@@ -125,7 +125,7 @@ class _SettingsTabState extends State<SettingsTab> {
               // ),
               ListTile(
                 onTap: () {
-                    Navigator.push(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const About(),
@@ -150,12 +150,14 @@ class _SettingsTabState extends State<SettingsTab> {
                 trailing: const Icon(Icons.chevron_right),
               ),
               ListTile(
-                onTap: () {Navigator.push(
+                onTap: () {
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const Contact(),
                     ),
-                  );},
+                  );
+                },
                 leading: SizedBox(
                   height: double.infinity,
                   child: Row(
@@ -181,26 +183,25 @@ class _SettingsTabState extends State<SettingsTab> {
                   try {
                     String baseUrlKeyCloack = String.fromEnvironment(
                         'KEYCLOAK_REALM_ADDRESS',
-                        defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
+                        defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
 
                     const storage = FlutterSecureStorage();
                     final SharedPreferences prefs =
                         await SharedPreferences.getInstance();
-                    String refreshToken =
+                    String? refreshToken =
                         await storage.read(key: "refresh_token");
                     Map<String, dynamic> body = {
                       "refresh_token": refreshToken,
                       "client_id": "boldo-patient"
                     };
-
-                    await http.post(
-                        "$baseUrlKeyCloack/protocol/openid-connect/logout",
+                    var url = Uri.parse(
+                       "$baseUrlKeyCloack/protocol/openid-connect/logout");
+                     await http.post(url,
                         body: body,
                         headers: {
                           "Content-Type": "application/x-www-form-urlencoded"
                         },
                         encoding: Encoding.getByName("utf-8"));
-
                     Provider.of<AuthProvider>(context, listen: false)
                         .setAuthenticated(isAuthenticated: false);
                     Provider.of<UserProvider>(context, listen: false)
@@ -209,7 +210,7 @@ class _SettingsTabState extends State<SettingsTab> {
                     await storage.deleteAll();
                     await prefs.clear();
 
-                     Navigator.pushNamed(context, '/onboarding');
+                    Navigator.pushNamed(context, '/onboarding');
                   } on DioError catch (exception, stackTrace) {
                     print(exception);
 

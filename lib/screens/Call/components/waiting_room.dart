@@ -11,11 +11,11 @@ class WaitingRoom extends StatefulWidget {
   final Function() muteMic;
   final Function() muteVideo;
   const WaitingRoom({
-    Key key,
-    @required this.localRenderer,
-    @required this.appointment,
-    @required this.muteMic,
-    @required this.muteVideo,
+    Key? key,
+    required this.localRenderer,
+    required this.appointment,
+    required this.muteMic,
+    required this.muteVideo,
   }) : super(key: key);
 
   @override
@@ -48,7 +48,7 @@ class _WaitingRoomState extends State<WaitingRoom> {
             ),
             const SizedBox(height: 8),
             Text(
-              "En breve ${getDoctorPrefix(widget.appointment.doctor.gender)}${widget.appointment.doctor.familyName} iniciará \n la videollamada",
+              "En breve ${getDoctorPrefix(widget.appointment.doctor!.gender!)}${widget.appointment.doctor!.familyName} iniciará \n la videollamada",
               textAlign: TextAlign.center,
               style: const TextStyle(
                   height: 1.5,

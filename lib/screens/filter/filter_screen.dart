@@ -9,7 +9,7 @@ import '../../helpers/languages.dart';
 import '../../constants.dart';
 
 class FilterScreen extends StatelessWidget {
-  const FilterScreen({Key key}) : super(key: key);
+  const FilterScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +110,7 @@ class FilterScreen extends StatelessWidget {
                                                   listen: false)
                                               .removeSpecialization(
                                                   specializationId:
-                                                      specialization.id);
+                                                      specialization.id!);
                                         },
                                         child: const Icon(
                                           Icons.close,
@@ -167,7 +167,7 @@ class FilterScreen extends StatelessWidget {
 }
 
 class BuildLanguages extends StatelessWidget {
-  const BuildLanguages({Key key}) : super(key: key);
+  const BuildLanguages({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -187,20 +187,20 @@ class BuildLanguages extends StatelessWidget {
               builder: (_, data, __) {
                 return CheckboxListTile(
                   title: Text(
-                    item["name"],
+                    item["name"]!,
                     style: boldoHeadingTextStyle.copyWith(fontSize: 14),
                   ),
                   value: data.contains(item["name"]),
                   activeColor: Constants.primaryColor500,
 
                   onChanged: (newValue) {
-                    if (newValue) {
+                    if (newValue!) {
                       Provider.of<UtilsProvider>(context, listen: false)
-                          .addLanguageValue(item["name"]);
+                          .addLanguageValue(item["name"]!);
                     } else {
                       //remove
                       Provider.of<UtilsProvider>(context, listen: false)
-                          .removeLanguageValue(item["name"]);
+                          .removeLanguageValue(item["name"]!);
                     }
                   },
                   controlAffinity:

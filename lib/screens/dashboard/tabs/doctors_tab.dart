@@ -18,7 +18,7 @@ import '../../../network/http.dart';
 import '../../../utils/helpers.dart';
 
 class DoctorsTab extends StatefulWidget {
-  DoctorsTab({Key key}) : super(key: key);
+  DoctorsTab({Key? key}) : super(key: key);
 
   @override
   _DoctorsTabState createState() => _DoctorsTabState();
@@ -55,10 +55,10 @@ class _DoctorsTabState extends State<DoctorsTab> {
           Provider.of<UtilsProvider>(context, listen: false).getFilterText;
       List<String> listOfLanguages =
           Provider.of<UtilsProvider>(context, listen: false).getListOfLanguages;
-      List<String> listOfSpecializations =
-          Provider.of<UtilsProvider>(context, listen: false)
+      List<String>? listOfSpecializations =
+          Provider.of<UtilsProvider?>(context, listen: false)!
               .getListOfSpecializations
-              .map((e) => e.description)
+              .map((e) => e.description!)
               .toList();
 
       String queryStringLanguages =
@@ -217,7 +217,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
                           enablePullDown: true,
                           enablePullUp: true,
                           footer: CustomFooter(
-                            builder: (BuildContext context, LoadStatus mode) {
+                            builder: (BuildContext context, LoadStatus? mode) {
                               Widget body = Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -272,8 +272,8 @@ class _DoctorsTabState extends State<DoctorsTab> {
 
 class _DoctorCard extends StatelessWidget {
   const _DoctorCard({
-    Key key,
-    @required this.doctor,
+    Key? key,
+    required this.doctor,
   }) : super(key: key);
 
   final Doctor doctor;
@@ -285,7 +285,7 @@ class _DoctorCard extends StatelessWidget {
     if (doctor.nextAvailability != null) {
      
     final actualDay = DateTime.now();
-    final parsedAvailability = DateTime.parse(doctor.nextAvailability).toLocal();
+    final parsedAvailability = DateTime.parse(doctor.nextAvailability!).toLocal();
     int daysDifference = parsedAvailability.difference(actualDay).inDays;
 
     if (actualDay.month == parsedAvailability.month) {
@@ -329,7 +329,7 @@ class _DoctorCard extends StatelessWidget {
                             fit: BoxFit.cover)
                         : CachedNetworkImage(
                             fit: BoxFit.cover,
-                            imageUrl: doctor.photoUrl,
+                            imageUrl: doctor.photoUrl??'',
                             progressIndicatorBuilder:
                                 (context, url, downloadProgress) => Padding(
                               padding: const EdgeInsets.all(26.0),
@@ -356,28 +356,34 @@ class _DoctorCard extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 2),
                           child: Text(
-                            "${getDoctorPrefix(doctor.gender)}${doctor.familyName}",
+                            "${getDoctorPrefix(doctor.gender!)}${doctor.familyName}",
                             maxLines: 1,
                             softWrap: false,
                             style: boldoHeadingTextStyle,
                           ),
                         ),
                         if (doctor.specializations != null &&
-                            doctor.specializations.isNotEmpty)
-                          Row(
-                            children: [
-                              for (int i = 0;
-                                  i < doctor.specializations.length;
-                                  i++)
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(left: i == 0 ? 0 : 3.0),
-                                  child: Text(
-                                    "${doctor.specializations[i].description}${doctor.specializations.length > 1 && i == 0 ? "," : ""}",
-                                    style: boldoSubTextStyle,
-                                  ),
-                                ),
-                            ],
+                            doctor.specializations!.isNotEmpty)
+                          SizedBox(
+                            width: 300,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  for (int i = 0;
+                                      i < doctor.specializations!.length;
+                                      i++)
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.only(left: i == 0 ? 0 : 3.0),
+                                      child: Text(
+                                        "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
+                                        style: boldoSubTextStyle,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
                           ),
                         Text(availabilityText,
                             style: boldoSubTextStyle.copyWith(

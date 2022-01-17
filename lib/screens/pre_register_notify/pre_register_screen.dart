@@ -9,7 +9,7 @@ import '../../widgets/wrapper.dart';
 import '../../constants.dart';
 
 class PreRegisterScreen extends StatefulWidget {
-  const PreRegisterScreen({Key key}) : super(key: key);
+  const PreRegisterScreen({Key? key}) : super(key: key);
 
   @override
   _PreRegisterScreenState createState() => _PreRegisterScreenState();

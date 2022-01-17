@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeTabAppBar extends StatefulWidget implements PreferredSizeWidget {
   const HomeTabAppBar({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -22,8 +22,8 @@ class HomeTabAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _HomeTabAppBarState extends State<HomeTabAppBar> {
-  String gender;
-  String profileURL;
+  String? gender;
+  String? profileURL;
 
   @override
   void initState() {
@@ -71,38 +71,46 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                       ),
                       elevation: 9,
                       child: ClipOval(
-                        clipBehavior: Clip.antiAlias,
-                        child: data == null && profileURL == null
-                            ? SvgPicture.asset(
-                                isAuthenticated
-                                    ? gender == "female"
-                                        ? 'assets/images/femalePatient.svg'
-                                        : 'assets/images/malePatient.svg'
-                                    : 'assets/images/LogoIcon.svg',
-                              )
-                            : CachedNetworkImage(
-                                fit: BoxFit.cover,
-                                imageUrl: data ?? profileURL,
-                                progressIndicatorBuilder:
-                                    (context, url, downloadProgress) => Padding(
-                                  padding: const EdgeInsets.all(26.0),
-                                  child: CircularProgressIndicator(
-                                    value: downloadProgress.progress,
-                                    valueColor:
-                                        const AlwaysStoppedAnimation<Color>(
-                                            Constants.primaryColor400),
-                                    backgroundColor: Constants.primaryColor600,
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
-                              ),
-                      ),
+                          clipBehavior: Clip.antiAlias,
+                          child: SvgPicture.asset(
+                            isAuthenticated
+                                ? gender == "female"
+                                    ? 'assets/images/femalePatient.svg'
+                                    : 'assets/images/malePatient.svg'
+                                : 'assets/images/LogoIcon.svg',
+                          )
+                          //FIXME when server img is available again
+                          // data == null && profileURL == null
+                          //     ? SvgPicture.asset(
+                          //         isAuthenticated
+                          //             ? gender == "female"
+                          //                 ? 'assets/images/femalePatient.svg'
+                          //                 : 'assets/images/malePatient.svg'
+                          //             : 'assets/images/LogoIcon.svg',
+                          //       )
+                          //     : CachedNetworkImage(
+                          //         fit: BoxFit.cover,
+                          //         imageUrl: data,
+                          //         progressIndicatorBuilder:
+                          //             (context, url, downloadProgress) => Padding(
+                          //           padding: const EdgeInsets.all(26.0),
+                          //           child: CircularProgressIndicator(
+                          //             value: downloadProgress.progress,
+                          //             valueColor:
+                          //                 const AlwaysStoppedAnimation<Color>(
+                          //                     Constants.primaryColor400),
+                          //             backgroundColor: Constants.primaryColor600,
+                          //           ),
+                          //         ),
+                          //         errorWidget: (context, url, error) =>
+                          //             const Icon(Icons.error),
+                          //       ),
+                          ),
                     ),
                   );
                 },
                 selector: (buildContext, userProvider) =>
-                    userProvider.getPhotoUrl,
+                    userProvider.getPhotoUrl ?? '',
               ),
               const SizedBox(width: 10),
               Column(

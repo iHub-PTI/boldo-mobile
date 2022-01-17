@@ -1,9 +1,9 @@
 PODS:
-  - AppAuth (1.3.1):
-    - AppAuth/Core (= 1.3.1)
-    - AppAuth/ExternalUserAgent (= 1.3.1)
-  - AppAuth/Core (1.3.1)
-  - AppAuth/ExternalUserAgent (1.3.1)
+  - AppAuth (1.4.0):
+    - AppAuth/Core (= 1.4.0)
+    - AppAuth/ExternalUserAgent (= 1.4.0)
+  - AppAuth/Core (1.4.0)
+  - AppAuth/ExternalUserAgent (1.4.0)
   - connectivity (0.0.1):
     - Flutter
     - Reachability
@@ -43,45 +43,46 @@ PODS:
     - Flutter
   - Flutter (1.0.0)
   - flutter_appauth (0.0.1):
-    - AppAuth (= 1.3.1)
+    - AppAuth (= 1.4.0)
     - Flutter
   - flutter_secure_storage (3.3.1):
     - Flutter
-  - flutter_webrtc (0.2.2):
+  - flutter_webrtc (0.7.1):
     - Flutter
-    - GoogleWebRTC (= 1.1.31999)
     - Libyuv (= 1703)
+    - WebRTC-SDK (= 93.4577.01)
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
-  - GoogleWebRTC (1.1.31999)
-  - image_cropper (0.0.3):
+  - image_cropper (0.0.4):
     - Flutter
-    - TOCropViewController (~> 2.5.4)
+    - TOCropViewController (~> 2.6.0)
   - Libyuv (1703)
-  - package_info (0.0.1):
+  - package_info_plus (0.4.5):
     - Flutter
   - path_provider (0.0.1):
     - Flutter
   - Reachability (3.2)
-  - SDWebImage (5.10.0):
-    - SDWebImage/Core (= 5.10.0)
-  - SDWebImage/Core (5.10.0)
-  - Sentry (6.0.11):
-    - Sentry/Core (= 6.0.11)
-  - Sentry/Core (6.0.11)
+  - SDWebImage (5.12.2):
+    - SDWebImage/Core (= 5.12.2)
+  - SDWebImage/Core (5.12.2)
+  - Sentry (7.5.4):
+    - Sentry/Core (= 7.5.4)
+  - Sentry/Core (7.5.4)
   - sentry_flutter (0.0.1):
     - Flutter
-    - Sentry (~> 6.0.10)
+    - FlutterMacOS
+    - Sentry (~> 7.5.1)
   - shared_preferences (0.0.1):
     - Flutter
   - sqflite (0.0.2):
     - Flutter
     - FMDB (>= 2.7.5)
-  - SwiftyGif (5.3.0)
-  - TOCropViewController (2.5.5)
+  - SwiftyGif (5.4.2)
+  - TOCropViewController (2.6.0)
   - url_launcher (0.0.1):
     - Flutter
+  - WebRTC-SDK (93.4577.01)
 
 DEPENDENCIES:
   - connectivity (from `.symlinks/plugins/connectivity/ios`)
@@ -91,7 +92,7 @@ DEPENDENCIES:
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - flutter_webrtc (from `.symlinks/plugins/flutter_webrtc/ios`)
   - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
-  - package_info (from `.symlinks/plugins/package_info/ios`)
+  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
@@ -104,13 +105,13 @@ SPEC REPOS:
     - DKImagePickerController
     - DKPhotoGallery
     - FMDB
-    - GoogleWebRTC
     - Libyuv
     - Reachability
     - SDWebImage
     - Sentry
     - SwiftyGif
     - TOCropViewController
+    - WebRTC-SDK
 
 EXTERNAL SOURCES:
   connectivity:
@@ -127,8 +128,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_webrtc/ios"
   image_cropper:
     :path: ".symlinks/plugins/image_cropper/ios"
-  package_info:
-    :path: ".symlinks/plugins/package_info/ios"
+  package_info_plus:
+    :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
   sentry_flutter:
@@ -141,31 +142,31 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher/ios"
 
 SPEC CHECKSUMS:
-  AppAuth: 8803ba1aec6d00d9afd30093f82e600307eaa6ea
+  AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
   DKImagePickerController: b5eb7f7a388e4643264105d648d01f727110fc3d
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
   file_picker: 3e6c3790de664ccf9b882732d9db5eaf6b8d4eb1
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_appauth: a6bf9fa3192a14a981475c4cbe3bcebd3b563144
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  flutter_appauth: 05c3778a1e4ae23364dd2ef37cbae14b244f646b
   flutter_secure_storage: 7953c38a04c3fdbb00571bcd87d8e3b5ceb9daec
-  flutter_webrtc: 39898454258b54ba51996850d5da8d5d53bf1524
+  flutter_webrtc: 611cab01a48b1d20e2b2409783c182134b8729e5
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
-  image_cropper: c8f9b4157933c7bb965a66d1c5e6c8fd408c6eb4
+  image_cropper: f1668dd8d2cad2d357955caad15a40547856edcb
   Libyuv: 5f79ced0ee66e60a612ca97de1e6ccacd187a437
-  package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
+  package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
-  SDWebImage: 9169792e9eec3e45bba2a0c02f74bf8bd922d1ee
-  Sentry: 9545ecf8d809854a7e1edc0f7348e8ead7339ab7
-  sentry_flutter: e57e33f56d5791e4effa48e85e44505367686b27
+  SDWebImage: 240e5c12b592fb1268c1d03b8c90d90e8c2ffe82
+  Sentry: 5c5dd4005f3b7b9765d5a8871232cddbd0d888b7
+  sentry_flutter: 4cd99764f9fe01c9415790d1f3fb1c7fd3a5cbe9
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
-  SwiftyGif: e466e86c660d343357ab944a819a101c4127cb40
-  TOCropViewController: da59f531f8ac8a94ef6d6c0fc34009350f9e8bfe
-  url_launcher: 0067ddb8f10d36786672aa0722a21717dba3a298
+  SwiftyGif: dec758a9dd3d278e5a855dbf279bf062c923c387
+  TOCropViewController: 3105367e808b7d3d886a74ff59bf4804e7d3ab38
+  url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
+  WebRTC-SDK: 166b0e161d93d4b961f410bf7966a634f42aa17d
 
 PODFILE CHECKSUM: fe0e1ee7f3d1f7d00b11b474b62dd62134535aea
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2

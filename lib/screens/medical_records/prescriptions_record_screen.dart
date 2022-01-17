@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class PrescriptionRecordScreen extends StatelessWidget {
   final MedicalRecord medicalRecord;
-  const PrescriptionRecordScreen({@required this.medicalRecord}) : super();
+  const PrescriptionRecordScreen({required this.medicalRecord}) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class PrescriptionRecordScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 26),
                         for (int i = 0;
-                            i < medicalRecord.prescription.length;
+                            i < medicalRecord.prescription!.length;
                             i++)
                           Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,12 +106,12 @@ class PrescriptionRecordScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  medicalRecord.prescription[i].medicationName,
+                                  medicalRecord.prescription![i].medicationName!,
                                   style:
                                       boldoSubTextStyle.copyWith(fontSize: 16),
                                 ),
                                 if (medicalRecord
-                                        .prescription[i].instructions !=
+                                        .prescription![i].instructions !=
                                     null)
                                   Column(
                                       crossAxisAlignment:
@@ -125,7 +125,7 @@ class PrescriptionRecordScreen extends StatelessWidget {
                                         const SizedBox(height: 4),
                                         Text(
                                           medicalRecord
-                                              .prescription[i].instructions,
+                                              .prescription![i].instructions??'',
                                           style: boldoSubTextStyle.copyWith(
                                               fontSize: 16),
                                         ),
@@ -146,8 +146,8 @@ class PrescriptionRecordScreen extends StatelessWidget {
 class Background extends StatelessWidget {
   final Widget child;
   const Background({
-    Key key,
-    @required this.child,
+    Key? key,
+    required this.child,
   }) : super(key: key);
 
   @override

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../network/connection_status.dart';
 
 class OfflineScreen extends StatelessWidget {
-  const OfflineScreen({Key key}) : super(key: key);
+  const OfflineScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

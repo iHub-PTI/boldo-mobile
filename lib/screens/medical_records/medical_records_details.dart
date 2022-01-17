@@ -35,7 +35,7 @@ class _MedicalRecordDetailState extends State<MedicalRecordsDetails> {
       allMedicalData = List<MedicalRecord>.from(
           response.data["items"].map((i) => MedicalRecord.fromJson(i)));
       
-      allMedicalData.sort((a, b) => a.startTimeDate.compareTo(b.startTimeDate));
+      allMedicalData.sort((a, b) => a.startTimeDate!.compareTo(b.startTimeDate!));
       setState(() {
         _dataLoading = false;
         _dataLoaded = true;
@@ -134,7 +134,7 @@ class _MedicalRecordDetailState extends State<MedicalRecordsDetails> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
-                                  allMedicalData.first.mainReason,
+                                  allMedicalData.first.mainReason!,
                                   style: boldoHeadingTextStyle.copyWith(
                                       fontSize: 20,
                                       color: Constants.primaryColor500),
@@ -183,7 +183,7 @@ class _MedicalRecordDetailState extends State<MedicalRecordsDetails> {
 class Loading extends StatelessWidget {
   final String title;
   const Loading({
-    this.title,
+    required this.title,
   });
 
   @override

@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomWrapper extends StatelessWidget {
   final List<Widget> children;
-  const CustomWrapper({Key key, this.children}) : super(key: key);
+  const CustomWrapper({Key? key, required this.children}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

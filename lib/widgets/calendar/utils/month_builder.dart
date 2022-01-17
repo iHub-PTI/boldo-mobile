@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
 
 import '../../../models/CalendarItem.dart';
 
 List<List<CalendarItem>> monthBuilder(
-    {@required DateTime buildDate,
-    @required List<DateTime> allAvailabilities}) {
+    {required DateTime buildDate,
+    required List<DateTime> allAvailabilities}) {
   List<List<CalendarItem>> chunkArrays = [[], [], [], [], [], []];
   int fillingArray = 0;
   int day = 1;
