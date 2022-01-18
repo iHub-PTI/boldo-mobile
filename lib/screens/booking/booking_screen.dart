@@ -561,6 +561,7 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                   final chooseOption =
                       await _showPopupMenu(details.globalPosition);
                   print(chooseOption);
+                  widget.handleBookingHour(parsedAvailability);
                 },
                 child: Container(
                   child: Text(

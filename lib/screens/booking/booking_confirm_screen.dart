@@ -229,32 +229,44 @@ class _DoctorProfileWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "${getDoctorPrefix(doctor.gender!)}${doctor.givenName} ${doctor.familyName}",
-                          style: boldoHeadingTextStyle.copyWith(
-                              fontWeight: FontWeight.normal),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Text(
+                              "${getDoctorPrefix(doctor.gender!)}${doctor.givenName} ${doctor.familyName}",
+                              style: boldoHeadingTextStyle.copyWith(
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ),
                         ),
                         const SizedBox(
                           height: 5,
                         ),
                         if (doctor.specializations != null &&
                             doctor.specializations!.isNotEmpty)
-                          Row(
-                            children: [
-                              for (int i = 0;
-                                  i < doctor.specializations!.length;
-                                  i++)
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(left: i == 0 ? 0 : 3.0),
-                                  child: Text(
-                                    "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
-                                    style: boldoSubTextStyle.copyWith(
-                                        color: Constants.otherColor100),
-                                  ),
-                                ),
-                            ],
-                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.6,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  for (int i = 0;
+                                      i < doctor.specializations!.length;
+                                      i++)
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: i == 0 ? 0 : 3.0),
+                                      child: Text(
+                                        "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
+                                        style: boldoSubTextStyle.copyWith(
+                                            color: Constants.otherColor100),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          )
                       ],
                     )
                   ],
