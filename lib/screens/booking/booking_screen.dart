@@ -1,3 +1,4 @@
+import 'package:boldo/widgets/in-person-virtual-switch.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -264,6 +265,8 @@ class _BookingScreenState extends State<BookingScreen> {
                                   boldoHeadingTextStyle.copyWith(fontSize: 13),
                             ),
                           ),
+                         VirtualInPersonSwitch(),
+                         const SizedBox(height: 15,),
                         Center(
                           child: Container(
                             padding: const EdgeInsets.all(8),
@@ -477,6 +480,8 @@ class _BookDoctorCard extends StatelessWidget {
                       ],
                     ),
                     flex: 5),
+                     SvgPicture.asset('assets/icon/virtual-inperson.svg',
+                        semanticsLabel: 'Clock Icon'),
               ],
             ),
           ),
