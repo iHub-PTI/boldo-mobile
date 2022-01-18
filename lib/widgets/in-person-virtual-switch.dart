@@ -116,7 +116,7 @@ class _VirtualInPersonSwitchState extends State<VirtualInPersonSwitch> {
                       Padding(
                         padding: const EdgeInsets.only(right:10.0),
                         child: SvgPicture.asset('assets/icon/video.svg',
-                            semanticsLabel: 'Clock Icon',color: signInColor,),
+                            semanticsLabel: 'video Icon',color: signInColor,),
                       ),
                       Text(
                         'Remoto',

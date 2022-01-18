@@ -1,4 +1,5 @@
 import 'package:boldo/widgets/in-person-virtual-switch.dart';
+import 'package:boldo/widgets/in-person-virtual-alert.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -44,7 +45,7 @@ class _BookingScreenState extends State<BookingScreen> {
     fetchData(DateTime.now());
   }
 
-  Future<void> handleBookingHour({ DateTime? bookingHour}) async {
+  Future<void> handleBookingHour({DateTime? bookingHour}) async {
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
     if (!isAuthenticated) {
@@ -265,8 +266,8 @@ class _BookingScreenState extends State<BookingScreen> {
                                   boldoHeadingTextStyle.copyWith(fontSize: 13),
                             ),
                           ),
-                         VirtualInPersonSwitch(),
-                         const SizedBox(height: 15,),
+                        VirtualInPersonSwitch(),
+                        const SizedBox(height: 15),
                         Center(
                           child: Container(
                             padding: const EdgeInsets.all(8),
@@ -390,7 +391,7 @@ class _BookCalendar extends StatelessWidget {
   }
 }
 
-class _BookDoctorCard extends StatelessWidget {
+class _BookDoctorCard extends StatefulWidget {
   const _BookDoctorCard(
       {Key? key,
       required this.doctor,
@@ -402,21 +403,59 @@ class _BookDoctorCard extends StatelessWidget {
   final Doctor doctor;
 
   @override
+  State<_BookDoctorCard> createState() => _BookDoctorCardState();
+}
+
+class _BookDoctorCardState extends State<_BookDoctorCard> {
+  final List<String> popupRoutes = <String>["Remoto (on line)", "En persona"];
+  Future<String?>? _showPopupMenu(Offset offset) async {
+    double left = offset.dx;
+    double top = offset.dy;
+    return await showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(left, top - 130, 50, 0),
+      items: popupRoutes.map((String popupRoute) {
+        return PopupMenuItem<String>(
+          child: Container(
+              decoration: const BoxDecoration(color: Constants.accordionbg),
+              child: Container(
+                height: 50,
+                child: ListTile(
+                  leading: popupRoute == 'En persona'
+                      ? const Icon(
+                          Icons.person,
+                          color: Colors.black,
+                        )
+                      : SvgPicture.asset('assets/icon/video.svg'),
+                  title: Text(popupRoute),
+                ),
+              )),
+          value: popupRoute,
+          padding:
+              const EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 5),
+        );
+      }).toList(),
+      elevation: 8.0,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     String availabilityText = "";
     bool isToday = false;
 
     final actualDay = DateTime.now();
-    final parsedAvailability = DateTime.parse(nextAvailability).toLocal();
+    final parsedAvailability =
+        DateTime.parse(widget.nextAvailability).toLocal();
     int daysDifference = parsedAvailability.difference(actualDay).inDays;
 
     if (actualDay.month == parsedAvailability.month) {
       daysDifference = parsedAvailability.day - actualDay.day;
     }
-    if(daysDifference == 0){
+    if (daysDifference == 0) {
       isToday = true;
     }
-    
+
     if (isToday) {
       availabilityText = "Disponible Hoy!";
     } else if (daysDifference > 0) {
@@ -480,11 +519,32 @@ class _BookDoctorCard extends StatelessWidget {
                       ],
                     ),
                     flex: 5),
-                     SvgPicture.asset('assets/icon/virtual-inperson.svg',
-                        semanticsLabel: 'Clock Icon'),
+                SvgPicture.asset('assets/icon/virtual-inperson.svg',
+                    semanticsLabel: 'Clock Icon'),
               ],
             ),
           ),
+          // Container(
+          //   width: double.infinity,
+          //   height: 52,
+          //   decoration: const BoxDecoration(
+          //     color: Constants.tertiaryColor100,
+          //     borderRadius: BorderRadius.only(
+          //       bottomLeft: Radius.circular(8),
+          //       bottomRight: Radius.circular(8),
+          //     ),
+          //   ),
+          //   child: TextButton(
+          //     onPressed: () {
+          //       widget.handleBookingHour(parsedAvailability);
+          //     },
+          //     child: Text(
+          //       'Reservar ahora',
+          //       style: boldoHeadingTextStyle.copyWith(
+          //           color: Constants.primaryColor500),
+          //     ),
+          //   ),
+          // ),
           Container(
             width: double.infinity,
             height: 52,
@@ -495,14 +555,20 @@ class _BookDoctorCard extends StatelessWidget {
                 bottomRight: Radius.circular(8),
               ),
             ),
-            child: TextButton(
-              onPressed: () {
-                handleBookingHour(parsedAvailability);
-              },
-              child: Text(
-                'Reservar ahora',
-                style: boldoHeadingTextStyle.copyWith(
-                    color: Constants.primaryColor500),
+            child: Center(
+              child: GestureDetector(
+                onTapDown: (TapDownDetails details) async {
+                  final chooseOption =
+                      await _showPopupMenu(details.globalPosition);
+                  print(chooseOption);
+                },
+                child: Container(
+                  child: Text(
+                    'Reservar ahora',
+                    style: boldoHeadingTextStyle.copyWith(
+                        color: Constants.primaryColor500),
+                  ),
+                ),
               ),
             ),
           ),
