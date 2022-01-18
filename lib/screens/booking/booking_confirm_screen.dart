@@ -62,7 +62,44 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
           ),
         ),
         const SizedBox(
-          height: 50,
+          height: 8,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Container(
+              // decoration: const BoxDecoration(color: Constants.accordionbg),
+              decoration: const BoxDecoration(
+                  // border: Border.all(color: Constants.extraColor200),
+                  borderRadius: BorderRadius.all(Radius.circular(6)),
+                  color: Constants.accordionbg),
+              child: Container(
+                // height: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: ListTile(
+                    leading: Container(
+                      height: 35,
+                      width: 50,
+                      decoration: const BoxDecoration(
+                          // border: Border.all(color: Constants.extraColor200),
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          color: Colors.white),
+                      child: Padding(
+                        padding: const EdgeInsets.all(11.0),
+                        child: SvgPicture.asset(
+                          'assets/icon/video.svg',
+                          color: Constants.secondaryColor500,
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      'Esta consulta será realizada de forma remota a través de esta aplicación.',
+                      style:
+                          boldoSubTextStyle.copyWith(fontSize: 16, height: 1.5),
+                    ),
+                  ),
+                ),
+              )),
         ),
         Center(
           child: Text(
@@ -72,9 +109,6 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
               color: Constants.otherColor100,
             ),
           ),
-        ),
-        const SizedBox(
-          height: 10,
         ),
         Container(
           padding: const EdgeInsets.only(left: 16, right: 16),
