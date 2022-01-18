@@ -53,6 +53,8 @@ class _DoctorsTabState extends State<DoctorsTab> {
       }
       String text =
           Provider.of<UtilsProvider>(context, listen: false).getFilterText;
+          bool isOnline =  Provider.of<UtilsProvider>(context, listen: false).isAppoinmentOnline;
+          bool isInPerson =  Provider.of<UtilsProvider>(context, listen: false).isAppoinmentInPerson;
       List<String> listOfLanguages =
           Provider.of<UtilsProvider>(context, listen: false).getListOfLanguages;
       List<String>? listOfSpecializations =
@@ -170,8 +172,8 @@ class _DoctorsTabState extends State<DoctorsTab> {
                   child: Stack(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top:15.0),
-                        child: SvgPicture.asset('assets/icon/filter.svg',height: 27),
+                        padding: const EdgeInsets.only(top:15.0,left: 0.0),
+                        child: SvgPicture.asset('assets/icon/filter.svg',),
                       ),
                       Selector<UtilsProvider, bool>(
                         selector: (buildContext, userProvider) =>

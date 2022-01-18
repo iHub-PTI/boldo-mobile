@@ -7,7 +7,8 @@ class UtilsProvider with ChangeNotifier {
   List<String> _selectedLanguages = [];
   String _filterText = "";
   int _selectedPageIndex = 0;
-
+  bool isAppoinmentOnline = true;
+  bool isAppoinmentInPerson = false;
   int get getSelectedPageIndex => _selectedPageIndex;
   List<Specialization> get getListOfSpecializations => _selectedSpecializations;
   List<String> get getListOfLanguages => _selectedLanguages;
@@ -46,6 +47,14 @@ class UtilsProvider with ChangeNotifier {
   void addLanguageValue(String languageValue) {
     _selectedLanguages = [..._selectedLanguages, languageValue];
 
+    notifyListeners();
+  }
+  void setVirtualModality(bool isOnline) {
+    isAppoinmentOnline = isOnline;
+    notifyListeners();
+  }
+  void setInPersonModality(bool isInPerson) {
+    isAppoinmentInPerson = isInPerson;
     notifyListeners();
   }
 

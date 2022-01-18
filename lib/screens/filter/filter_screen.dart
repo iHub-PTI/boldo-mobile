@@ -129,6 +129,7 @@ class FilterScreen extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 28),
+                ModalityCheck(),
                 const BuildLanguages(),
                 const SizedBox(height: 36),
                 SizedBox(
@@ -140,7 +141,7 @@ class FilterScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop(true);
                     },
-                    child: const Text("Buscar"),
+                    child: const Text("Mostrar"),
                   ),
                 ),
                 const SizedBox(height: 15),
@@ -210,6 +211,61 @@ class BuildLanguages extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+class ModalityCheck extends StatefulWidget {
+  @override
+  ModalityCheckState createState() => ModalityCheckState();
+}
+
+class ModalityCheckState extends State<ModalityCheck> {
+  Map<String, bool> values = {
+    'Remoto (en linea)': true,
+    'Presencial': false,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 150,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Modalidad",
+            style: boldoHeadingTextStyle.copyWith(fontSize: 14),
+          ),
+          Container(
+            height: 100,
+            child: ListView(
+              children: values.keys.map((String key) {
+                return CheckboxListTile(
+                  title: Text(key),
+                  value: values[key]!,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      values[key] = value!;
+                      values.forEach((key, value) {
+                        if (key == 'Presencial') {
+                          Provider.of<UtilsProvider>(context, listen: false)
+                              .setInPersonModality(value);
+                        } else {
+                          Provider.of<UtilsProvider>(context, listen: false)
+                              .setVirtualModality(value);
+                        }
+                      });
+                    });
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
+                  activeColor: Constants.primaryColor500,
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
