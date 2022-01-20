@@ -4,6 +4,9 @@ import 'package:flutter_svg/svg.dart';
 import '../constants.dart';
 
 class VirtualInPersonSwitch extends StatefulWidget {
+  final Function(String text) switchCallbackResponse;
+  const VirtualInPersonSwitch({Key? key, required this.switchCallbackResponse})
+      : super(key: key);
   @override
   _VirtualInPersonSwitchState createState() => _VirtualInPersonSwitchState();
 }
@@ -62,8 +65,8 @@ class _VirtualInPersonSwitchState extends State<VirtualInPersonSwitch> {
                 setState(() {
                   xAlign = loginAlign;
                   loginColor = selectedColor;
-
                   signInColor = normalColor;
+                  widget.switchCallbackResponse('A');
                 });
               },
               child: Align(
@@ -98,8 +101,8 @@ class _VirtualInPersonSwitchState extends State<VirtualInPersonSwitch> {
                 setState(() {
                   xAlign = signInAlign;
                   signInColor = selectedColor;
-
                   loginColor = normalColor;
+                  widget.switchCallbackResponse('V');
                 });
               },
               child: Align(
@@ -112,11 +115,13 @@ class _VirtualInPersonSwitchState extends State<VirtualInPersonSwitch> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                     
                       Padding(
-                        padding: const EdgeInsets.only(right:10.0),
-                        child: SvgPicture.asset('assets/icon/video.svg',
-                            semanticsLabel: 'video Icon',color: signInColor,),
+                        padding: const EdgeInsets.only(right: 10.0),
+                        child: SvgPicture.asset(
+                          'assets/icon/video.svg',
+                          semanticsLabel: 'video Icon',
+                          color: signInColor,
+                        ),
                       ),
                       Text(
                         'Remoto',

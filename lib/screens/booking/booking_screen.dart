@@ -32,11 +32,11 @@ class _BookingScreenState extends State<BookingScreen> {
   bool _loadingCalendar = false;
   bool notAvailibleThisMonth = false;
   NextAvailability? nextAvailability;
-  DateTime? _selectedBookingHour;
-  List<DateTime> _availabilities = [];
-
+  NextAvailability? _selectedBookingHour;
+  List<AppoinmentWithDateAndType> _availabilities = [];
+  String _typeAppoinmentSelected = 'A';
   List<List<CalendarItem>> chunkArrays = [];
-  List<DateTime> _availabilitiesForDay = [];
+  List<AppoinmentWithDateAndType> _availabilitiesForDay = [];
   String _errorMessage = "";
   DateTime selectedDate = DateTime.now();
 
@@ -59,38 +59,43 @@ class _BookingScreenState extends State<BookingScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => BookingConfirmScreen(
-          bookingDate: bookingHour!,
+          bookingDate: bookingHour ?? _selectedBookingHour!,
           doctor: widget.doctor,
         ),
       ),
     );
   }
 
-  List<DateTime> findAvailabilitesForDay(
-      List<DateTime> allAvailabilites, DateTime day) {
-    List<DateTime> availabilitiesForDay = [];
-    for (DateTime availability in allAvailabilites) {
+  List<AppoinmentWithDateAndType> findAvailabilitesForDay(
+      List<AppoinmentWithDateAndType> allAvailabilites, DateTime day) {
+    List<AppoinmentWithDateAndType> availabilitiesForDay = [];
+    for (AppoinmentWithDateAndType availability in allAvailabilites) {
       //we do this because we need to have a dateTime object with 00:00:00 HH:MM:SS for comparison
-      DateTime dateWithOutHours =
-          DateTime(availability.year, availability.month, availability.day);
+      DateTime dateWithOutHours = DateTime(availability.dateTime.year,
+          availability.dateTime.month, availability.dateTime.day);
 
       if (dateWithOutHours == DateTime(day.year, day.month, day.day)) {
-        availabilitiesForDay.add(availability);
+        availabilitiesForDay.add(AppoinmentWithDateAndType(
+            dateTime: availability.dateTime,
+            appoinmentType: availability.appoinmentType));
       }
     }
-    availabilitiesForDay.sort((a, b) => a.compareTo(b));
+    availabilitiesForDay.sort((a, b) => a.dateTime.compareTo(b.dateTime));
     return availabilitiesForDay;
   }
 
-  List<DateTime> convertToDateTime(List<NextAvailability> allAvailabilites) {
-    List<DateTime> availabilitiesForDay = [];
+  List<AppoinmentWithDateAndType> convertToDateTime(
+      List<NextAvailability> allAvailabilites) {
+    List<AppoinmentWithDateAndType> availabilitiesForDay = [];
     for (NextAvailability availability in allAvailabilites) {
       DateTime parsedAvailability =
           DateTime.parse(availability.availability!).toLocal();
 
-      availabilitiesForDay.add(parsedAvailability);
+      availabilitiesForDay.add(AppoinmentWithDateAndType(
+          dateTime: parsedAvailability,
+          appoinmentType: availability.appointmentType!));
     }
-    availabilitiesForDay.sort((a, b) => a.compareTo(b));
+    availabilitiesForDay.sort((a, b) => a.dateTime.compareTo(b.dateTime));
     return availabilitiesForDay;
   }
 
@@ -107,9 +112,7 @@ class _BookingScreenState extends State<BookingScreen> {
         allAvailabilities.add(NextAvailability.fromJson(v));
       });
 
-      // List<NextAvailability> allAvailabilities =
-      //     response.data["availabilities"].cast<String>();
-      List<DateTime> allAvailabilitesDateTime =
+      List<AppoinmentWithDateAndType> allAvailabilitesDateTime =
           convertToDateTime(allAvailabilities);
 
       List<List<CalendarItem>> _chunkArrays = monthBuilder(
@@ -276,7 +279,13 @@ class _BookingScreenState extends State<BookingScreen> {
                                   boldoHeadingTextStyle.copyWith(fontSize: 13),
                             ),
                           ),
-                        VirtualInPersonSwitch(),
+                        VirtualInPersonSwitch(
+                          switchCallbackResponse: (String text) {
+                            setState(() {
+                              _typeAppoinmentSelected = text;
+                            });
+                          },
+                        ),
                         const SizedBox(height: 15),
                         Center(
                           child: Container(
@@ -289,52 +298,121 @@ class _BookingScreenState extends State<BookingScreen> {
                               runSpacing: 27,
                               children: [
                                 ..._availabilitiesForDay
-                                    .map((e) => GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              _selectedBookingHour =
-                                                  _selectedBookingHour == e
-                                                      ? null
-                                                      : e;
-                                            });
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                color:
-                                                    _selectedBookingHour == e
-                                                        ? Constants
-                                                            .primaryColor400
+                                    .map(
+                                      (e) => _typeAppoinmentSelected ==
+                                                  e.appoinmentType ||
+                                              e.appoinmentType == 'AV'
+                                          ? GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  if (_selectedBookingHour !=
+                                                      null) {
+                                                    _selectedBookingHour = DateTime
+                                                                .tryParse(
+                                                                    _selectedBookingHour!
+                                                                        .availability!) ==
+                                                            e.dateTime
+                                                        ? null
+                                                        : NextAvailability(
+                                                            availability: e
+                                                                .dateTime
+                                                                .toString(),
+                                                            appointmentType: e
+                                                                .appoinmentType);
+                                                  } else {
+                                                    _selectedBookingHour =
+                                                        NextAvailability(
+                                                            availability: e
+                                                                .dateTime
+                                                                .toString(),
+                                                            appointmentType: e
+                                                                .appoinmentType);
+                                                  }
+                                                });
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    color: _selectedBookingHour !=
+                                                            null
+                                                        ? DateTime.tryParse(
+                                                                    _selectedBookingHour!
+                                                                        .availability!) ==
+                                                                e.dateTime
+                                                            ? Constants
+                                                                .primaryColor400
+                                                            : Constants
+                                                                .tertiaryColor100
                                                         : Constants
                                                             .tertiaryColor100,
-                                                borderRadius:
-                                                    BorderRadius.circular(9),
-                                                border: Border.all(
-                                                    color:
-                                                        _selectedBookingHour ==
-                                                                e
-                                                            ? Constants
-                                                                .primaryColor600
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            9),
+                                                    border: Border.all(
+                                                        color: _selectedBookingHour !=
+                                                                null
+                                                            ? DateTime.tryParse(
+                                                                        _selectedBookingHour!
+                                                                            .availability!) ==
+                                                                    e.dateTime
+                                                                ? Constants
+                                                                    .primaryColor600
+                                                                : Constants
+                                                                    .extraColor200
                                                             : Constants
                                                                 .extraColor200)),
-                                            width: 60,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                DateFormat('HH:mm').format(e),
-                                                textAlign: TextAlign.center,
-                                                style: boldoHeadingTextStyle.copyWith(
-                                                    fontSize: 14,
-                                                    color:
-                                                        _selectedBookingHour ==
-                                                                e
-                                                            ? Colors.white
+                                                width: 60,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                      DateFormat('HH:mm')
+                                                          .format(e.dateTime),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style:
+                                                          boldoHeadingTextStyle
+                                                              .copyWith(
+                                                        fontSize: 14,
+                                                        color: _selectedBookingHour !=
+                                                                null
+                                                            ? DateTime.tryParse(
+                                                                        _selectedBookingHour!
+                                                                            .availability!) ==
+                                                                    e.dateTime
+                                                                ? Colors.white
+                                                                : Constants
+                                                                    .extraColor400
                                                             : Constants
-                                                                .extraColor400),
+                                                                .extraColor400,
+                                                      )),
+                                                ),
+                                              ),
+                                            )
+                                          : Container(
+                                              decoration: BoxDecoration(
+                                                  color: Constants
+                                                      .tertiaryColor100,
+                                                  borderRadius:
+                                                      BorderRadius.circular(9),
+                                                  border: Border.all(
+                                                      color: Constants
+                                                          .extraColor200)),
+                                              width: 60,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                    DateFormat('HH:mm')
+                                                        .format(e.dateTime),
+                                                    textAlign: TextAlign.center,
+                                                    style: boldoHeadingTextStyle
+                                                        .copyWith(
+                                                      fontSize: 14,
+                                                      color: Colors.grey,
+                                                    )),
                                               ),
                                             ),
-                                          ),
-                                        ))
+                                    )
                                     .toList()
                               ],
                             ),
@@ -534,27 +612,6 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
               ],
             ),
           ),
-          // Container(
-          //   width: double.infinity,
-          //   height: 52,
-          //   decoration: const BoxDecoration(
-          //     color: Constants.tertiaryColor100,
-          //     borderRadius: BorderRadius.only(
-          //       bottomLeft: Radius.circular(8),
-          //       bottomRight: Radius.circular(8),
-          //     ),
-          //   ),
-          //   child: TextButton(
-          //     onPressed: () {
-          //       widget.handleBookingHour(parsedAvailability);
-          //     },
-          //     child: Text(
-          //       'Reservar ahora',
-          //       style: boldoHeadingTextStyle.copyWith(
-          //           color: Constants.primaryColor500),
-          //     ),
-          //   ),
-          // ),
           Container(
             width: double.infinity,
             height: 52,
@@ -605,4 +662,12 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
       ),
     );
   }
+}
+
+class AppoinmentWithDateAndType {
+  final DateTime dateTime;
+  final String appoinmentType;
+
+  AppoinmentWithDateAndType(
+      {required this.dateTime, required this.appoinmentType});
 }

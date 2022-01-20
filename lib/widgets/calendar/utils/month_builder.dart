@@ -1,9 +1,11 @@
 
+import 'package:boldo/screens/booking/booking_screen.dart';
+
 import '../../../models/CalendarItem.dart';
 
 List<List<CalendarItem>> monthBuilder(
     {required DateTime buildDate,
-    required List<DateTime> allAvailabilities}) {
+    required List<AppoinmentWithDateAndType> allAvailabilities}) {
   List<List<CalendarItem>> chunkArrays = [[], [], [], [], [], []];
   int fillingArray = 0;
   int day = 1;
@@ -15,7 +17,7 @@ List<List<CalendarItem>> monthBuilder(
         itemDate: date,
         isEmpty: false,
         isDisabled: !allAvailabilities.any((element) =>
-            DateTime(element.year, element.month, element.day)
+            DateTime(element.dateTime.year, element.dateTime.month, element.dateTime.day)
                 .difference(date)
                 .inDays ==
             0),

@@ -191,16 +191,18 @@ class CalendarDay extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        bool pastDay = calendarItem.itemDate!
-            .isAfter(DateTime(now.year, now.month, now.day - 1));
+        if (calendarItem.itemDate != null) {
+          bool pastDay = calendarItem.itemDate!
+              .isAfter(DateTime(now.year, now.month, now.day - 1));
 
-        if (itemEmpty || !pastDay || itemDisabled) {
-          return;
+          if (itemEmpty || !pastDay || itemDisabled) {
+            return;
+          }
+
+          getItemsForDayCallback(
+            calendarItem.itemDate,
+          );
         }
-
-        getItemsForDayCallback(
-          calendarItem.itemDate,
-        );
       },
       child: Container(
         height: 40,
