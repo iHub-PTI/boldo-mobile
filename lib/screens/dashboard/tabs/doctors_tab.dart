@@ -84,7 +84,6 @@ class _DoctorsTabState extends State<DoctorsTab> {
       }
 
       Response response = await dio.get("/doctors?$finalQueryString");
-      print(response);
       if (!mounted) return;
       if (response.statusCode == 200) {
         List<Doctor> doctorsList = List<Doctor>.from(
@@ -404,7 +403,7 @@ class _DoctorCard extends StatelessWidget {
                       ]),
                 ),
 
-                ShowDoctorAvailability(
+                ShowDoctorAvailabilityIcon(
                               filter: doctor.nextAvailability!.appointmentType!,
                             ),
               ],
@@ -472,9 +471,9 @@ class _DoctorCard extends StatelessWidget {
   }
 }
 
-class ShowDoctorAvailability extends StatelessWidget {
+class ShowDoctorAvailabilityIcon extends StatelessWidget {
   final String filter;
-  const ShowDoctorAvailability({Key? key, required this.filter})
+  const ShowDoctorAvailabilityIcon({Key? key, required this.filter})
       : super(key: key);
 
   Widget filterWidget() {

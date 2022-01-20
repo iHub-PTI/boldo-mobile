@@ -1,3 +1,4 @@
+import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/widgets/in-person-virtual-switch.dart';
 import 'package:boldo/widgets/in-person-virtual-alert.dart';
 import 'package:dio/dio.dart';
@@ -30,7 +31,7 @@ class _BookingScreenState extends State<BookingScreen> {
   bool _loading = true;
   bool _loadingCalendar = false;
   bool notAvailibleThisMonth = false;
-  String? nextAvailability;
+  NextAvailability? nextAvailability;
   DateTime? _selectedBookingHour;
   List<DateTime> _availabilities = [];
 
@@ -45,7 +46,7 @@ class _BookingScreenState extends State<BookingScreen> {
     fetchData(DateTime.now());
   }
 
-  Future<void> handleBookingHour({DateTime? bookingHour}) async {
+  Future<void> handleBookingHour({NextAvailability? bookingHour}) async {
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
     if (!isAuthenticated) {
@@ -58,7 +59,7 @@ class _BookingScreenState extends State<BookingScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => BookingConfirmScreen(
-          bookingDate: bookingHour ?? _selectedBookingHour!,
+          bookingDate: bookingHour!,
           doctor: widget.doctor,
         ),
       ),
@@ -81,10 +82,11 @@ class _BookingScreenState extends State<BookingScreen> {
     return availabilitiesForDay;
   }
 
-  List<DateTime> convertToDateTime(List<String> allAvailabilites) {
+  List<DateTime> convertToDateTime(List<NextAvailability> allAvailabilites) {
     List<DateTime> availabilitiesForDay = [];
-    for (String availability in allAvailabilites) {
-      DateTime parsedAvailability = DateTime.parse(availability).toLocal();
+    for (NextAvailability availability in allAvailabilites) {
+      DateTime parsedAvailability =
+          DateTime.parse(availability.availability!).toLocal();
 
       availabilitiesForDay.add(parsedAvailability);
     }
@@ -100,8 +102,13 @@ class _BookingScreenState extends State<BookingScreen> {
         'end': DateTime(date.year, date.month + 1, 1).toUtc().toIso8601String(),
       });
 
-      List<String> allAvailabilities =
-          response.data["availabilities"].cast<String>();
+      List<NextAvailability>? allAvailabilities = [];
+      response.data['availabilities'].forEach((v) {
+        allAvailabilities.add(NextAvailability.fromJson(v));
+      });
+
+      // List<NextAvailability> allAvailabilities =
+      //     response.data["availabilities"].cast<String>();
       List<DateTime> allAvailabilitesDateTime =
           convertToDateTime(allAvailabilities);
 
@@ -129,7 +136,10 @@ class _BookingScreenState extends State<BookingScreen> {
             ? []
             : findAvailabilitesForDay(allAvailabilitesDateTime, firstDay);
         _availabilities = allAvailabilitesDateTime;
-        nextAvailability = response.data["nextAvailability"];
+        if (response.data['nextAvailability'] != null) {
+          nextAvailability =
+              NextAvailability.fromJson(response.data["nextAvailability"]);
+        }
         selectedDate = firstDay;
         _loading = false;
         _loadingCalendar = false;
@@ -203,7 +213,7 @@ class _BookingScreenState extends State<BookingScreen> {
               if (nextAvailability != null)
                 _BookDoctorCard(
                   doctor: widget.doctor,
-                  nextAvailability: nextAvailability!,
+                  nextAvailability: nextAvailability!.availability!,
                   handleBookingHour: (date) =>
                       handleBookingHour(bookingHour: date),
                 ),
@@ -398,7 +408,7 @@ class _BookDoctorCard extends StatefulWidget {
       required this.nextAvailability,
       required this.handleBookingHour})
       : super(key: key);
-  final Function(DateTime) handleBookingHour;
+  final Function(NextAvailability) handleBookingHour;
   final String nextAvailability;
   final Doctor doctor;
 
@@ -519,8 +529,8 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                       ],
                     ),
                     flex: 5),
-                SvgPicture.asset('assets/icon/virtual-inperson.svg',
-                    semanticsLabel: 'Clock Icon'),
+                ShowDoctorAvailabilityIcon(
+                    filter: widget.doctor.nextAvailability!.appointmentType!)
               ],
             ),
           ),
@@ -558,10 +568,28 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
             child: Center(
               child: GestureDetector(
                 onTapDown: (TapDownDetails details) async {
-                  final chooseOption =
-                      await _showPopupMenu(details.globalPosition);
-                  print(chooseOption);
-                  widget.handleBookingHour(parsedAvailability);
+                  if (widget.doctor.nextAvailability!.appointmentType! ==
+                      'AV') {
+                    final chooseOption =
+                        await _showPopupMenu(details.globalPosition);
+                    if (chooseOption == 'En persona') {
+                      widget.handleBookingHour(
+                        NextAvailability(
+                            appointmentType: 'A',
+                            availability:
+                                widget.doctor.nextAvailability!.availability!),
+                      );
+                    } else {
+                      widget.handleBookingHour(
+                        NextAvailability(
+                            appointmentType: 'V',
+                            availability:
+                                widget.doctor.nextAvailability!.availability!),
+                      );
+                    }
+                  } else {
+                    widget.handleBookingHour(widget.doctor.nextAvailability!);
+                  }
                 },
                 child: Container(
                   child: Text(

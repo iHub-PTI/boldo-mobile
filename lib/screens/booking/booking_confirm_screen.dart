@@ -15,7 +15,7 @@ import 'booking_final_screen.dart';
 
 class BookingConfirmScreen extends StatefulWidget {
   final Doctor doctor;
-  final DateTime bookingDate;
+  final NextAvailability bookingDate;
   BookingConfirmScreen(
       {Key? key, required this.bookingDate, required this.doctor})
       : super(key: key);
@@ -58,48 +58,14 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16),
           child: _DoctorBookingInfoWidget(
-            bookingDate: widget.bookingDate,
+            bookingDate: DateTime.parse(widget.bookingDate.availability!),
           ),
         ),
         const SizedBox(
           height: 8,
         ),
-        Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Container(
-              // decoration: const BoxDecoration(color: Constants.accordionbg),
-              decoration: const BoxDecoration(
-                  // border: Border.all(color: Constants.extraColor200),
-                  borderRadius: BorderRadius.all(Radius.circular(6)),
-                  color: Constants.accordionbg),
-              child: Container(
-                // height: 0,
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: ListTile(
-                    leading: Container(
-                      height: 35,
-                      width: 50,
-                      decoration: const BoxDecoration(
-                          // border: Border.all(color: Constants.extraColor200),
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          color: Colors.white),
-                      child: Padding(
-                        padding: const EdgeInsets.all(11.0),
-                        child: SvgPicture.asset(
-                          'assets/icon/video.svg',
-                          color: Constants.secondaryColor500,
-                        ),
-                      ),
-                    ),
-                    title: Text(
-                      'Esta consulta será realizada de forma remota a través de esta aplicación.',
-                      style:
-                          boldoSubTextStyle.copyWith(fontSize: 16, height: 1.5),
-                    ),
-                  ),
-                ),
-              )),
+        ShowAppoinmentDescription(
+          nextAvailability: widget.bookingDate,
         ),
         Center(
           child: Text(
@@ -124,7 +90,9 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                 });
 
                 await dio.post("/profile/patient/appointments", data: {
-                  'start': widget.bookingDate.toUtc().toIso8601String(),
+                  'start': DateTime.parse(widget.bookingDate.availability!)
+                      .toUtc()
+                      .toIso8601String(),
                   "doctorId": widget.doctor.id,
                 });
 
@@ -157,6 +125,58 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class ShowAppoinmentDescription extends StatelessWidget {
+  final NextAvailability nextAvailability;
+  const ShowAppoinmentDescription({Key? key, required this.nextAvailability})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final inPersonDesc =
+        "Esta consulta será realizada en persona en el Hospital Los Ángeles.";
+    final onlineDesc =
+        "Esta consulta será realizada de forma remota a través de esta aplicación.";
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Container(
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(6)),
+              color: Constants.accordionbg),
+          child: Container(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: ListTile(
+                leading: Container(
+                  height: 35,
+                  width: 50,
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      color: Colors.white),
+                  child: nextAvailability.appointmentType == 'V'
+                      ? Padding(
+                          padding: const EdgeInsets.all(11.0),
+                          child: SvgPicture.asset(
+                            'assets/icon/video.svg',
+                            color: Constants.secondaryColor500,
+                          ))
+                      : const Icon(
+                          Icons.person,
+                          color: Constants.primaryColor500,
+                        ),
+                ),
+                title: Text(
+                  nextAvailability.appointmentType == 'A'
+                      ? inPersonDesc
+                      : onlineDesc,
+                  style: boldoSubTextStyle.copyWith(fontSize: 16, height: 1.5),
+                ),
+              ),
+            ),
+          )),
     );
   }
 }
