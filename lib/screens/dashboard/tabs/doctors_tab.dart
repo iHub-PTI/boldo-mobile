@@ -53,8 +53,10 @@ class _DoctorsTabState extends State<DoctorsTab> {
       }
       String text =
           Provider.of<UtilsProvider>(context, listen: false).getFilterText;
-          bool isOnline =  Provider.of<UtilsProvider>(context, listen: false).isAppoinmentOnline;
-          bool isInPerson =  Provider.of<UtilsProvider>(context, listen: false).isAppoinmentInPerson;
+      bool isOnline =
+          Provider.of<UtilsProvider>(context, listen: false).isAppoinmentOnline;
+      bool isInPerson = Provider.of<UtilsProvider>(context, listen: false)
+          .isAppoinmentInPerson;
       List<String> listOfLanguages =
           Provider.of<UtilsProvider>(context, listen: false).getListOfLanguages;
       List<String>? listOfSpecializations =
@@ -82,7 +84,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
       }
 
       Response response = await dio.get("/doctors?$finalQueryString");
-
+      print(response);
       if (!mounted) return;
       if (response.statusCode == 200) {
         List<Doctor> doctorsList = List<Doctor>.from(
@@ -172,8 +174,10 @@ class _DoctorsTabState extends State<DoctorsTab> {
                   child: Stack(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top:15.0,left: 0.0),
-                        child: SvgPicture.asset('assets/icon/filter.svg',),
+                        padding: const EdgeInsets.only(top: 15.0, left: 0.0),
+                        child: SvgPicture.asset(
+                          'assets/icon/filter.svg',
+                        ),
                       ),
                       Selector<UtilsProvider, bool>(
                         selector: (buildContext, userProvider) =>
@@ -290,7 +294,7 @@ class _DoctorCard extends StatelessWidget {
     if (doctor.nextAvailability != null) {
       final actualDay = DateTime.now();
       final parsedAvailability =
-          DateTime.parse(doctor.nextAvailability!).toLocal();
+          DateTime.parse(doctor.nextAvailability!.availability!).toLocal();
       int daysDifference = parsedAvailability.difference(actualDay).inDays;
 
       if (actualDay.month == parsedAvailability.month) {
@@ -364,7 +368,8 @@ class _DoctorCard extends StatelessWidget {
                             "${getDoctorPrefix(doctor.gender!)}${doctor.familyName}",
                             maxLines: 1,
                             softWrap: false,
-                            style: boldoHeadingTextStyle,
+                            style: boldoHeadingTextStyle.copyWith(
+                                fontSize: 14),
                           ),
                         ),
                         if (doctor.specializations != null &&
@@ -380,7 +385,7 @@ class _DoctorCard extends StatelessWidget {
                                       i++)
                                     Padding(
                                       padding: EdgeInsets.only(
-                                          left: i == 0 ? 0 : 3.0),
+                                          left: i == 0 ? 0 : 3.0,bottom: 5),
                                       child: Text(
                                         "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
                                         style: boldoSubTextStyle,
@@ -397,7 +402,11 @@ class _DoctorCard extends StatelessWidget {
                                     ? Constants.primaryColor600
                                     : Constants.secondaryColor500))
                       ]),
-                )
+                ),
+
+                ShowDoctorAvailability(
+                              filter: doctor.nextAvailability!.appointmentType!,
+                            ),
               ],
             ),
           ),
@@ -459,6 +468,43 @@ class _DoctorCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class ShowDoctorAvailability extends StatelessWidget {
+  final String filter;
+  const ShowDoctorAvailability({Key? key, required this.filter})
+      : super(key: key);
+
+  Widget filterWidget() {
+    switch (filter) {
+      case 'AV':
+        return SvgPicture.asset('assets/icon/virtual-inperson.svg',
+            semanticsLabel: 'virtual-inperson');
+      case 'V':
+        return SvgPicture.asset('assets/icon/virtual-no-inperson.svg',
+            semanticsLabel: 'virtual');
+      case 'A':
+        return SvgPicture.asset('assets/icon/inperson-no-virtual.svg',
+            semanticsLabel: 'in person');
+
+      default:
+        return Container();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text(
+          "Modalidad",
+          style: boldoSubTextStyle,
+        ),
+     const SizedBox(height: 10,),
+        filterWidget(),
+      ],
     );
   }
 }
