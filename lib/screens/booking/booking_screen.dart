@@ -283,6 +283,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           switchCallbackResponse: (String text) {
                             setState(() {
                               _typeAppoinmentSelected = text;
+                              _selectedBookingHour = null;
                             });
                           },
                         ),
@@ -317,16 +318,16 @@ class _BookingScreenState extends State<BookingScreen> {
                                                             availability: e
                                                                 .dateTime
                                                                 .toString(),
-                                                            appointmentType: e
-                                                                .appoinmentType);
+                                                            appointmentType:
+                                                                _typeAppoinmentSelected);
                                                   } else {
                                                     _selectedBookingHour =
                                                         NextAvailability(
                                                             availability: e
                                                                 .dateTime
                                                                 .toString(),
-                                                            appointmentType: e
-                                                                .appoinmentType);
+                                                            appointmentType:
+                                                                _typeAppoinmentSelected);
                                                   }
                                                 });
                                               },
@@ -629,20 +630,22 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                       'AV') {
                     final chooseOption =
                         await _showPopupMenu(details.globalPosition);
-                    if (chooseOption == 'En persona') {
-                      widget.handleBookingHour(
-                        NextAvailability(
-                            appointmentType: 'A',
-                            availability:
-                                widget.doctor.nextAvailability!.availability!),
-                      );
-                    } else {
-                      widget.handleBookingHour(
-                        NextAvailability(
-                            appointmentType: 'V',
-                            availability:
-                                widget.doctor.nextAvailability!.availability!),
-                      );
+                    if (chooseOption != null) {
+                      if (chooseOption == 'En persona') {
+                        widget.handleBookingHour(
+                          NextAvailability(
+                              appointmentType: 'A',
+                              availability: widget
+                                  .doctor.nextAvailability!.availability!),
+                        );
+                      } else {
+                        widget.handleBookingHour(
+                          NextAvailability(
+                              appointmentType: 'V',
+                              availability: widget
+                                  .doctor.nextAvailability!.availability!),
+                        );
+                      }
                     }
                   } else {
                     widget.handleBookingHour(widget.doctor.nextAvailability!);

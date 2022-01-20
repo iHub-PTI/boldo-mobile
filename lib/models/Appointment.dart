@@ -1,5 +1,4 @@
 import 'package:boldo/models/Prescription.dart';
-import 'package:flutter/cupertino.dart';
 import './Doctor.dart';
 
 class Appointment {
@@ -9,6 +8,7 @@ class Appointment {
   String? end;
   String? description;
   Doctor? doctor;
+  String? appointmentType;
   List<Prescription>? prescriptions;
 
   Appointment({
@@ -27,6 +27,7 @@ class Appointment {
     end = json['end'];
     description = json['description'];
     status = json["status"];
+    appointmentType = json["appointmentType"];
     doctor = json['doctor'] != null ? Doctor.fromJson(json['doctor']) : null;
   }
 
@@ -40,6 +41,7 @@ class Appointment {
     if (doctor != null) {
       data['doctor'] = doctor!.toJson();
     }
+    data["appointmentType"] = appointmentType;
     return data;
   }
 }

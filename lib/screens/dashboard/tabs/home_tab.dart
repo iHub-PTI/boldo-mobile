@@ -232,6 +232,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         allAppointmentsState = [
           ...allAppointmets,
         ];
+       allAppointmentsState = (allAppointmentsState).reversed.toList();
       });
     } on DioError catch (exception, stackTrace) {
       print(exception);
@@ -346,9 +347,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                               children: [
                                 for (Appointment appointment
                                     in waitingRoomAppointments)
+                                    appointment.appointmentType != 'A'?
                                   WaitingRoomCard(
                                       appointment: appointment,
-                                      getAppointmentsData: getAppointmentsData),
+                                      getAppointmentsData: getAppointmentsData):Container(),
                               ],
                             ),
                           ),

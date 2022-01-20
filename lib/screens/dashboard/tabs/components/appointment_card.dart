@@ -1,7 +1,7 @@
+import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/details/appointment_details.dart';
 import 'package:boldo/screens/details/prescription_details.dart';
 import 'package:boldo/utils/helpers.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -77,9 +77,7 @@ class AppointmentCard extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset('assets/icon/phone.svg',
-                          fit: BoxFit.cover),
-                      const SizedBox(height: 6),
+                     
                       Text(
                         DateFormat('MMM').format(
                             DateTime.parse(appointment.start!).toLocal()),
@@ -100,6 +98,10 @@ class AppointmentCard extends StatelessWidget {
                           fontSize: 16,
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: ShowAppoinmentTypeIcon(appointmentType: appointment.appointmentType!,),
+                      )
                     ],
                   ),
                 ),

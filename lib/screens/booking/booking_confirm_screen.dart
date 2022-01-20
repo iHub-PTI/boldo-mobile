@@ -94,6 +94,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                       .toUtc()
                       .toIso8601String(),
                   "doctorId": widget.doctor.id,
+                  "appointmentType":widget.bookingDate.appointmentType
                 });
 
                 Navigator.push(
@@ -150,24 +151,7 @@ class ShowAppoinmentDescription extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: ListTile(
-                leading: Container(
-                  height: 35,
-                  width: 50,
-                  decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      color: Colors.white),
-                  child: nextAvailability.appointmentType == 'V'
-                      ? Padding(
-                          padding: const EdgeInsets.all(11.0),
-                          child: SvgPicture.asset(
-                            'assets/icon/video.svg',
-                            color: Constants.secondaryColor500,
-                          ))
-                      : const Icon(
-                          Icons.person,
-                          color: Constants.primaryColor500,
-                        ),
-                ),
+                leading: ShowAppoinmentTypeIcon(appointmentType: nextAvailability.appointmentType!),
                 title: Text(
                   nextAvailability.appointmentType == 'A'
                       ? inPersonDesc
@@ -177,6 +161,46 @@ class ShowAppoinmentDescription extends StatelessWidget {
               ),
             ),
           )),
+    );
+  }
+}
+
+class ShowAppoinmentTypeIcon extends StatelessWidget {
+  const ShowAppoinmentTypeIcon({
+    Key? key,
+    required this.appointmentType,
+  }) : super(key: key);
+
+  final String appointmentType;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // height: 30,
+      width: 40,
+      decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          color: Colors.white),
+      child: appointmentType == 'V'
+          ? Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 10,
+                width: 10,
+                child: SvgPicture.asset(
+                  'assets/icon/video.svg',
+                  color: Constants.secondaryColor500,
+                  
+                ),
+              ))
+          : Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: const Icon(
+                Icons.person,
+                color: Constants.primaryColor500,
+                size: 20,
+              ),
+          ),
     );
   }
 }
