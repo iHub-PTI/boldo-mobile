@@ -17,7 +17,7 @@ class Doctor {
   String? photoUrl;
   List<Specializations>? specializations;
   String? street;
-  String? nextAvailability;
+  NextAvailability? nextAvailability;
 
   Doctor(
       {this.addressDescription,
@@ -40,7 +40,7 @@ class Doctor {
       this.street,
       this.nextAvailability});
 
-  Doctor.fromJson(Map<String, dynamic> json) {
+  Doctor.fromJson(Map<String, dynamic> json,) {
     addressDescription = json['addressDescription'];
     biography = json['biography'];
     familyName = json['familyName'];
@@ -69,7 +69,9 @@ class Doctor {
       });
     }
     street = json['street'];
-    nextAvailability = json['nextAvailability'];
+   if (json['nextAvailability'] != null) {
+     nextAvailability = NextAvailability.fromJson(json["nextAvailability"]);
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -93,7 +95,8 @@ class Doctor {
     data['neighborhood'] = neighborhood;
     data['photoUrl'] = photoUrl;
     if (specializations != null) {
-      data['specializations'] = specializations!.map((v) => v.toJson()).toList();
+      data['specializations'] =
+          specializations!.map((v) => v.toJson()).toList();
     }
     data['street'] = street;
     data['nextAvailability'] = nextAvailability;
@@ -135,6 +138,25 @@ class Specializations {
     final Map<String, dynamic> data = {};
     data['description'] = description;
     data['id'] = id;
+    return data;
+  }
+}
+
+class NextAvailability {
+  String? availability;
+  String? appointmentType;
+
+  NextAvailability({this.availability, this.appointmentType});
+
+  NextAvailability.fromJson(Map<String, dynamic> json) {
+    availability = json['availability'];
+    appointmentType = json['appointmentType'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['availability'] = availability;
+    data['appointmentType'] = appointmentType;
     return data;
   }
 }

@@ -53,6 +53,10 @@ class _DoctorsTabState extends State<DoctorsTab> {
       }
       String text =
           Provider.of<UtilsProvider>(context, listen: false).getFilterText;
+      bool isOnline =
+          Provider.of<UtilsProvider>(context, listen: false).isAppoinmentOnline;
+      bool isInPerson = Provider.of<UtilsProvider>(context, listen: false)
+          .isAppoinmentInPerson;
       List<String> listOfLanguages =
           Provider.of<UtilsProvider>(context, listen: false).getListOfLanguages;
       List<String>? listOfSpecializations =
@@ -80,7 +84,6 @@ class _DoctorsTabState extends State<DoctorsTab> {
       }
 
       Response response = await dio.get("/doctors?$finalQueryString");
-
       if (!mounted) return;
       if (response.statusCode == 200) {
         List<Doctor> doctorsList = List<Doctor>.from(
@@ -123,56 +126,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        actions: [
-          GestureDetector(
-            onTap: () async {
-              final updateDoctors = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const FilterScreen(),
-                ),
-              );
-              if (updateDoctors != null && updateDoctors) {
-                getDoctors();
-              }
-            },
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: SvgPicture.asset('assets/icon/filter.svg'),
-                  ),
-                ),
-                Selector<UtilsProvider, bool>(
-                  selector: (buildContext, userProvider) =>
-                      userProvider.getFilterState,
-                  builder: (_, data, __) {
-                    if (data) {
-                      return Positioned(
-                        right: 13,
-                        top: 13,
-                        child: Container(
-                          padding: const EdgeInsets.all(1),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          constraints: const BoxConstraints(
-                            minWidth: 9,
-                            minHeight: 9,
-                          ),
-                        ),
-                      );
-                    }
-                    return const SizedBox();
-                  },
-                ),
-              ],
-            ),
-          )
-        ],
+        actions: [],
         leadingWidth: 200,
         leading: Padding(
           padding: const EdgeInsets.only(left: 16.0),
@@ -191,13 +145,67 @@ class _DoctorsTabState extends State<DoctorsTab> {
               child: Text("Médicos",
                   style: boldoHeadingTextStyle.copyWith(fontSize: 20)),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16),
-              child: CustomSearchBar(changeTextCallback: (text) {
-                Provider.of<UtilsProvider>(context, listen: false)
-                    .setFilterText(text);
-                getDoctors(offset: 0);
-              }),
+            Row(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 16),
+                    child: CustomSearchBar(changeTextCallback: (text) {
+                      Provider.of<UtilsProvider>(context, listen: false)
+                          .setFilterText(text);
+                      getDoctors(offset: 0);
+                    }),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    final updateDoctors = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const FilterScreen(),
+                      ),
+                    );
+                    if (updateDoctors != null && updateDoctors) {
+                      getDoctors();
+                    }
+                  },
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15.0, left: 0.0),
+                        child: SvgPicture.asset(
+                          'assets/icon/filter.svg',
+                        ),
+                      ),
+                      Selector<UtilsProvider, bool>(
+                        selector: (buildContext, userProvider) =>
+                            userProvider.getFilterState,
+                        builder: (_, data, __) {
+                          if (data) {
+                            return Positioned(
+                              right: 13,
+                              top: 13,
+                              child: Container(
+                                padding: const EdgeInsets.all(1),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 9,
+                                  minHeight: 9,
+                                ),
+                              ),
+                            );
+                          }
+                          return const SizedBox();
+                        },
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
             const SizedBox(height: 20),
             Expanded(
@@ -283,17 +291,17 @@ class _DoctorCard extends StatelessWidget {
     String availabilityText = "Sin disponibilidad en los próximos 30 días";
     bool isToday = false;
     if (doctor.nextAvailability != null) {
-     
-    final actualDay = DateTime.now();
-    final parsedAvailability = DateTime.parse(doctor.nextAvailability!).toLocal();
-    int daysDifference = parsedAvailability.difference(actualDay).inDays;
+      final actualDay = DateTime.now();
+      final parsedAvailability =
+          DateTime.parse(doctor.nextAvailability!.availability!).toLocal();
+      int daysDifference = parsedAvailability.difference(actualDay).inDays;
 
-    if (actualDay.month == parsedAvailability.month) {
-      daysDifference = parsedAvailability.day - actualDay.day;
-    }
-    if(daysDifference == 0){
-      isToday = true;
-    }
+      if (actualDay.month == parsedAvailability.month) {
+        daysDifference = parsedAvailability.day - actualDay.day;
+      }
+      if (daysDifference == 0) {
+        isToday = true;
+      }
 
       if (isToday) {
         availabilityText = "Disponible Hoy!";
@@ -329,7 +337,7 @@ class _DoctorCard extends StatelessWidget {
                             fit: BoxFit.cover)
                         : CachedNetworkImage(
                             fit: BoxFit.cover,
-                            imageUrl: doctor.photoUrl??'',
+                            imageUrl: doctor.photoUrl ?? '',
                             progressIndicatorBuilder:
                                 (context, url, downloadProgress) => Padding(
                               padding: const EdgeInsets.all(26.0),
@@ -359,7 +367,8 @@ class _DoctorCard extends StatelessWidget {
                             "${getDoctorPrefix(doctor.gender!)}${doctor.familyName}",
                             maxLines: 1,
                             softWrap: false,
-                            style: boldoHeadingTextStyle,
+                            style: boldoHeadingTextStyle.copyWith(
+                                fontSize: 14),
                           ),
                         ),
                         if (doctor.specializations != null &&
@@ -374,8 +383,8 @@ class _DoctorCard extends StatelessWidget {
                                       i < doctor.specializations!.length;
                                       i++)
                                     Padding(
-                                      padding:
-                                          EdgeInsets.only(left: i == 0 ? 0 : 3.0),
+                                      padding: EdgeInsets.only(
+                                          left: i == 0 ? 0 : 3.0,bottom: 5),
                                       child: Text(
                                         "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
                                         style: boldoSubTextStyle,
@@ -392,7 +401,13 @@ class _DoctorCard extends StatelessWidget {
                                     ? Constants.primaryColor600
                                     : Constants.secondaryColor500))
                       ]),
-                )
+                ),
+            doctor.nextAvailability != null?
+               ShowDoctorAvailabilityIcon(
+                              filter: doctor.nextAvailability!.appointmentType!,
+                            ):Container(),
+            
+               
               ],
             ),
           ),
@@ -454,6 +469,43 @@ class _DoctorCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class ShowDoctorAvailabilityIcon extends StatelessWidget {
+  final String filter;
+  const ShowDoctorAvailabilityIcon({Key? key, required this.filter})
+      : super(key: key);
+
+  Widget filterWidget() {
+    switch (filter) {
+      case 'AV':
+        return SvgPicture.asset('assets/icon/virtual-inperson.svg',
+            semanticsLabel: 'virtual-inperson');
+      case 'V':
+        return SvgPicture.asset('assets/icon/virtual-no-inperson.svg',
+            semanticsLabel: 'virtual');
+      case 'A':
+        return SvgPicture.asset('assets/icon/inperson-no-virtual.svg',
+            semanticsLabel: 'in person');
+
+      default:
+        return Container();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const Text(
+          "Modalidad",
+          style: boldoSubTextStyle,
+        ),
+     const SizedBox(height: 10,),
+        filterWidget(),
+      ],
     );
   }
 }
