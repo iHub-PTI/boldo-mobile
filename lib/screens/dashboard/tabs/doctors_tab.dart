@@ -402,10 +402,12 @@ class _DoctorCard extends StatelessWidget {
                                     : Constants.secondaryColor500))
                       ]),
                 ),
-
-                ShowDoctorAvailabilityIcon(
+            doctor.nextAvailability != null?
+               ShowDoctorAvailabilityIcon(
                               filter: doctor.nextAvailability!.appointmentType!,
-                            ),
+                            ):Container(),
+            
+               
               ],
             ),
           ),
