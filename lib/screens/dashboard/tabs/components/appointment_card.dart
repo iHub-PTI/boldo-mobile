@@ -77,7 +77,6 @@ class AppointmentCard extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                     
                       Text(
                         DateFormat('MMM').format(
                             DateTime.parse(appointment.start!).toLocal()),
@@ -100,7 +99,9 @@ class AppointmentCard extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(10.0),
-                        child: ShowAppoinmentTypeIcon(appointmentType: appointment.appointmentType!,),
+                        child: ShowAppoinmentTypeIcon(
+                          appointmentType: appointment.appointmentType!,
+                        ),
                       )
                     ],
                   ),
@@ -109,12 +110,27 @@ class AppointmentCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName}",
-                      style: const TextStyle(
-                        color: Constants.extraColor400,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                    Container(
+                      width: 300,
+                      height: 20,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName}",
+                            style: const TextStyle(
+                              color: Constants.extraColor400,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          CancelAppointmentWidget(
+                            onTapCallback: (result) {
+                              print('result' + result);
+                            },
+                          )
+                        ],
                       ),
                     ),
                     const SizedBox(
@@ -123,29 +139,23 @@ class AppointmentCard extends StatelessWidget {
                     if (appointment.doctor!.specializations != null &&
                         appointment.doctor!.specializations!.isNotEmpty)
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.6,
+                        width: 300,
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: [
                               for (int i = 0;
-                                  i < appointment.doctor!.specializations!.length;
+                                  i <
+                                      appointment
+                                          .doctor!.specializations!.length;
                                   i++)
-                                Row(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: i == 0 ? 0 : 3.0),
-                                      child: Text(
-                                        "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length > 1 && i == 0 ? "," : ""}",
-                                        
-                                        style: const TextStyle(
-                                          color: Constants.extraColor300,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: i == 0 ? 0 : 3.0, bottom: 5),
+                                  child: Text(
+                                    "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length > 1 && i == 0 ? "," : ""}",
+                                    style: boldoSubTextStyle,
+                                  ),
                                 ),
                             ],
                           ),
@@ -299,6 +309,49 @@ class AppointmentCard extends StatelessWidget {
               ),
             ),
           ),
+      ],
+    );
+  }
+}
+
+class CancelAppointmentWidget extends StatelessWidget {
+  final void Function(String result)? onTapCallback;
+  const CancelAppointmentWidget({
+    Key? key,
+    required this.onTapCallback,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<String>(
+      onSelected: (String result) {
+        if (onTapCallback != null) {
+          onTapCallback!(result.toString());
+        }
+      },
+      child: const Icon(
+        Icons.more_vert,
+      ),
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        PopupMenuItem<String>(
+          value: 'Descartar',
+          child: Container(
+            height: 45,
+            decoration: const BoxDecoration(color: Constants.accordionbg),
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: SvgPicture.asset('assets/icon/trash.svg'),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Text('Descartar'),
+                )
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
