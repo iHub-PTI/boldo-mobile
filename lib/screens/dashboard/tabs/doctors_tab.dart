@@ -361,14 +361,26 @@ class _DoctorCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 2),
-                          child: Text(
-                            "${getDoctorPrefix(doctor.gender!)}${doctor.familyName}",
-                            maxLines: 1,
-                            softWrap: false,
-                            style: boldoHeadingTextStyle.copyWith(
-                                fontSize: 14),
+                        Container(
+                          height: 40,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "${getDoctorPrefix(doctor.gender!)}${doctor.familyName}",
+                                maxLines: 1,
+                                softWrap: false,
+                                style: boldoHeadingTextStyle.copyWith(
+                                    fontSize: 14),
+                              ),
+                              const Spacer(),
+                              doctor.nextAvailability != null
+                                  ? ShowDoctorAvailabilityIcon(
+                                      filter: doctor
+                                          .nextAvailability!.appointmentType!,
+                                    )
+                                  : Container(),
+                            ],
                           ),
                         ),
                         if (doctor.specializations != null &&
@@ -384,7 +396,7 @@ class _DoctorCard extends StatelessWidget {
                                       i++)
                                     Padding(
                                       padding: EdgeInsets.only(
-                                          left: i == 0 ? 0 : 3.0,bottom: 5),
+                                          left: i == 0 ? 0 : 3.0, bottom: 5),
                                       child: Text(
                                         "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
                                         style: boldoSubTextStyle,
@@ -402,12 +414,6 @@ class _DoctorCard extends StatelessWidget {
                                     : Constants.secondaryColor500))
                       ]),
                 ),
-            doctor.nextAvailability != null?
-               ShowDoctorAvailabilityIcon(
-                              filter: doctor.nextAvailability!.appointmentType!,
-                            ):Container(),
-            
-               
               ],
             ),
           ),
@@ -498,12 +504,16 @@ class ShowDoctorAvailabilityIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
-          "Modalidad",
-          style: boldoSubTextStyle,
-        ),
-     const SizedBox(height: 10,),
+        // const Text(
+        //   "Modalidad",
+        //   style: boldoSubTextStyle,
+        // ),
+
+        // const SizedBox(
+        //   height: 10,
+        // ),
         filterWidget(),
       ],
     );
