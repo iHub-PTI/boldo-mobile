@@ -53,29 +53,35 @@ class _DoctorsTabState extends State<DoctorsTab> {
       }
       String text =
           Provider.of<UtilsProvider>(context, listen: false).getFilterText;
+
+      String searchText =
+          Uri(queryParameters: {'names': text.split(" ")}).query;
+
       bool isOnline =
           Provider.of<UtilsProvider>(context, listen: false).isAppoinmentOnline;
+
       bool isInPerson = Provider.of<UtilsProvider>(context, listen: false)
           .isAppoinmentInPerson;
+
       List<String> listOfLanguages =
           Provider.of<UtilsProvider>(context, listen: false).getListOfLanguages;
       List<String>? listOfSpecializations =
           Provider.of<UtilsProvider?>(context, listen: false)!
               .getListOfSpecializations
-              .map((e) => e.description!)
+              .map((e) => e.id!)
               .toList();
 
       String queryStringLanguages =
-          Uri(queryParameters: {'content': listOfLanguages}).query;
+          Uri(queryParameters: {'languageCodes': listOfLanguages}).query;
       String queryStringSpecializations =
-          Uri(queryParameters: {'content': listOfSpecializations}).query;
-      String queryStringOther = Uri(queryParameters: {
-        if (text != "") ...{"content": text},
-        "offset": offset.toString(),
-        "count": "20"
-      }).query;
+          Uri(queryParameters: {'specialtyIds': listOfSpecializations}).query;
 
-      String finalQueryString = queryStringOther;
+      String finalQueryString = "";
+
+      if (text.length > 0) {
+        finalQueryString = "$searchText";
+      }
+
       if (queryStringLanguages != "") {
         finalQueryString = "$finalQueryString&$queryStringLanguages";
       }
@@ -83,6 +89,24 @@ class _DoctorsTabState extends State<DoctorsTab> {
         finalQueryString = "$finalQueryString&$queryStringSpecializations";
       }
 
+      String appointmentType = "";
+      if (isOnline == true && isInPerson == true) {
+        appointmentType = Uri(queryParameters: {"appointmentType": "AV"}).query;
+      } else if (isOnline) {
+        appointmentType = Uri(queryParameters: {"appointmentType": "V"}).query;
+      } else if (isInPerson) {
+        appointmentType = "${Uri(queryParameters: {
+              "appointmentType": "A"
+            }).query}";
+      }
+
+      if (appointmentType != "") {
+        finalQueryString = "$finalQueryString&$appointmentType";
+      }
+      String queryStringOther =
+          Uri(queryParameters: {"offset": offset.toString(), "count": "20"})
+              .query;
+      finalQueryString = "$finalQueryString&$queryStringOther";
       Response response = await dio.get("/doctors?$finalQueryString");
       if (!mounted) return;
       if (response.statusCode == 200) {
