@@ -634,24 +634,28 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                     final chooseOption =
                         await _showPopupMenu(details.globalPosition);
                     if (chooseOption != null) {
+                      DateTime parsedAvailability = DateTime.parse(
+                              widget.doctor.nextAvailability!.availability!)
+                          .toLocal();
                       if (chooseOption == 'En persona') {
                         widget.handleBookingHour(
                           NextAvailability(
                               appointmentType: 'A',
-                              availability: widget
-                                  .doctor.nextAvailability!.availability!),
+                              availability: parsedAvailability.toString()),
                         );
                       } else {
                         widget.handleBookingHour(
                           NextAvailability(
                               appointmentType: 'V',
-                              availability: widget
-                                  .doctor.nextAvailability!.availability!),
+                              availability: parsedAvailability.toString()),
                         );
                       }
                     }
                   } else {
-                    widget.handleBookingHour(widget.doctor.nextAvailability!);
+                    widget.handleBookingHour(NextAvailability(
+                        appointmentType:
+                            widget.doctor.nextAvailability!.appointmentType,
+                        availability: parsedAvailability.toString()));
                   }
                 },
                 child: Container(
