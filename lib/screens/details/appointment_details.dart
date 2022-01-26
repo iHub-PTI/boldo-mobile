@@ -251,7 +251,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
                   child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                          "La sala de espera se abrirá a las: ${DateFormat('HH:mm, dd MMMM yyyy').format(DateTime.parse(appointment.start!).toLocal()).capitalize()}")),
+                          "${appointment.appointmentType == 'V' ?'La sala de espera se abrirá a las: ${DateFormat('HH:mm, dd MMMM yyyy').format(DateTime.parse(appointment.start!).toLocal()).capitalize()}':'Tiene agendada una consulta presencial en el Hospital Los Ángeles'} ")),
                 ),
               const SizedBox(height: 64),
             ],

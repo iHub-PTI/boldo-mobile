@@ -191,7 +191,7 @@ class _SettingsTabState extends State<SettingsTab> {
                     String? refreshToken =
                         await storage.read(key: "refresh_token");
                     Map<String, dynamic> body = {
-                      "refresh_token": refreshToken,
+                      "refresh_token": refreshToken??'',
                       "client_id": "boldo-patient"
                     };
                     var url = Uri.parse(

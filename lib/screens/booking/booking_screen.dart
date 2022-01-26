@@ -361,7 +361,6 @@ class _BookingScreenState extends State<BookingScreen> {
                                                                     .extraColor200
                                                             : Constants
                                                                 .extraColor200)),
-                                                width: 60,
                                                 child: Padding(
                                                   padding:
                                                       const EdgeInsets.all(8.0),
@@ -398,7 +397,6 @@ class _BookingScreenState extends State<BookingScreen> {
                                                   border: Border.all(
                                                       color: Constants
                                                           .extraColor200)),
-                                              width: 60,
                                               child: Padding(
                                                 padding:
                                                     const EdgeInsets.all(8.0),
@@ -562,7 +560,6 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
       child: Column(
         children: [
           Container(
-            height: 96,
             padding: const EdgeInsets.only(top: 18, right: 19, bottom: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -580,14 +577,22 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          availabilityText,
-                          style: boldoHeadingTextStyle.copyWith(
-                            fontSize: 14,
-                            color: isToday
-                                ? Constants.primaryColor600
-                                : Constants.secondaryColor500,
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              availabilityText,
+                              style: boldoHeadingTextStyle.copyWith(
+                                fontSize: 14,
+                                color: isToday
+                                    ? Constants.primaryColor600
+                                    : Constants.secondaryColor500,
+                              ),
+                            ),
+                            const Spacer(),
+                            ShowDoctorAvailabilityIcon(
+                                filter: widget
+                                    .doctor.nextAvailability!.appointmentType!)
+                          ],
                         ),
                         const SizedBox(
                           height: 4,
@@ -608,8 +613,6 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                       ],
                     ),
                     flex: 5),
-                ShowDoctorAvailabilityIcon(
-                    filter: widget.doctor.nextAvailability!.appointmentType!)
               ],
             ),
           ),
