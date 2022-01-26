@@ -232,7 +232,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         allAppointmentsState = [
           ...allAppointmets,
         ];
-     
       });
     } on DioError catch (exception, stackTrace) {
       print(exception);
@@ -347,10 +346,12 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                               children: [
                                 for (Appointment appointment
                                     in waitingRoomAppointments)
-                                    appointment.appointmentType != 'A'?
-                                  WaitingRoomCard(
-                                      appointment: appointment,
-                                      getAppointmentsData: getAppointmentsData):Container(),
+                                  appointment.appointmentType != 'A'
+                                      ? WaitingRoomCard(
+                                          appointment: appointment,
+                                          getAppointmentsData:
+                                              getAppointmentsData)
+                                      : Container(),
                               ],
                             ),
                           ),
@@ -420,7 +421,10 @@ class _ListRenderer extends StatelessWidget {
           height: 1,
         ),
         AppointmentCard(
-            appointment: appointment, isInWaitingRoom: isInWaitingRoom),
+          appointment: appointment,
+          isInWaitingRoom: isInWaitingRoom,
+          showCancelOption: true,
+        ),
       ]);
     if (firstAppointmentPast != null &&
         firstAppointmentPast!.id == appointment.id) {
@@ -450,10 +454,16 @@ class _ListRenderer extends StatelessWidget {
           height: 1,
         ),
         AppointmentCard(
-            appointment: appointment, isInWaitingRoom: isInWaitingRoom),
+          appointment: appointment,
+          isInWaitingRoom: isInWaitingRoom,
+          showCancelOption: false,
+        ),
       ]);
     }
     return AppointmentCard(
-        appointment: appointment, isInWaitingRoom: isInWaitingRoom);
+      appointment: appointment,
+      isInWaitingRoom: isInWaitingRoom,
+      showCancelOption: true,
+    );
   }
 }
