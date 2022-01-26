@@ -37,7 +37,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   bool _dataFetchError = false;
   bool _loading = true;
 
-  RefreshController _refreshController =
+  RefreshController? _refreshController =
       RefreshController(initialRefresh: false);
   DateTime dateOffset = DateTime.now().subtract(const Duration(days: 30));
   void _onRefresh() async {
@@ -232,7 +232,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         allAppointmentsState = [
           ...allAppointmets,
         ];
-       allAppointmentsState = (allAppointmentsState).reversed.toList();
+     
       });
     } on DioError catch (exception, stackTrace) {
       print(exception);
@@ -260,8 +260,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       );
     } finally {
       if (_refreshController != null) {
-        _refreshController.refreshCompleted();
-        _refreshController.loadComplete();
+        _refreshController!.refreshCompleted();
+        _refreshController!.loadComplete();
       }
     }
   }
@@ -295,7 +295,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                       header: const MaterialClassicHeader(
                         color: Constants.primaryColor800,
                       ),
-                      controller: _refreshController,
+                      controller: _refreshController!,
                       onLoading: () {
                         dateOffset =
                             dateOffset.subtract(const Duration(days: 30));
@@ -378,7 +378,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 class _ListRenderer extends StatelessWidget {
   final int index;
   final Appointment appointment;
-  final Appointment firstAppointmentPast;
+  final Appointment? firstAppointmentPast;
   final List<Appointment> waitingRoomAppointments;
 
   const _ListRenderer(
@@ -423,7 +423,7 @@ class _ListRenderer extends StatelessWidget {
             appointment: appointment, isInWaitingRoom: isInWaitingRoom),
       ]);
     if (firstAppointmentPast != null &&
-        firstAppointmentPast.id == appointment.id) {
+        firstAppointmentPast!.id == appointment.id) {
       return Column(children: [
         Align(
           alignment: Alignment.centerLeft,

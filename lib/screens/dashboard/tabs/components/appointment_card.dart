@@ -179,7 +179,7 @@ class AppointmentCard extends StatelessWidget {
                         children: [
                           const SizedBox(height: 4),
                           Text(
-                            "En $daysDifference ${daysDifference > 1 ? 'días' : 'dia'}  - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start!).toLocal())}",
+                            "En $daysDifference ${daysDifference > 1 ? 'días' : 'dia'}  - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start!).toLocal())} hs",
                             style: const TextStyle(
                               color: Constants.otherColor200,
                               fontSize: 12,
@@ -295,7 +295,7 @@ class AppointmentCard extends StatelessWidget {
                           children: [
                             const SizedBox(height: 4),
                             Text(
-                              "En $daysDifference ${daysDifference > 1 ? 'días' : 'dia'} - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start!).toLocal())}",
+                              "En $daysDifference ${daysDifference > 1 ? 'días' : 'dia'} - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start!).toLocal())} hs",
                               style: const TextStyle(
                                 color: Constants.otherColor200,
                                 fontSize: 12,
