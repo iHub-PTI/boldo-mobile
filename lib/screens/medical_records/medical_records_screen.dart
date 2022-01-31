@@ -141,20 +141,14 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
                                           fit: BoxFit.cover),
                                       const SizedBox(height: 6),
                                       Text(
-                                        DateFormat('MMM').format(DateTime.parse(
-                                                allMedicalData[index]
-                                                    .startTimeDate!)
-                                            .toLocal()),
+                                        "${allMedicalData[index].startTimeDate != null ? DateFormat('MMM').format(DateTime.parse(allMedicalData[index].startTimeDate!).toLocal()) : ''}",
                                         style: const TextStyle(
                                           color: Color(0xffDF6D51),
                                           fontSize: 18,
                                         ),
                                       ),
                                       Text(
-                                        DateFormat('dd').format(DateTime.parse(
-                                                allMedicalData[index]
-                                                    .startTimeDate!)
-                                            .toLocal()),
+                                        "${allMedicalData[index].startTimeDate != null ? DateFormat('dd').format(DateTime.parse(allMedicalData[index].startTimeDate!).toLocal()) : ""}",
                                         style: const TextStyle(
                                           color: Color(0xffDF6D51),
                                           fontSize: 16,
