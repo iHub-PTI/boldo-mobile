@@ -124,110 +124,109 @@ class _AppointmentCardState extends State<AppointmentCard> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 300,
-                      height: 20,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text(
-                            "${getDoctorPrefix(widget.appointment.doctor!.gender!)}${widget.appointment.doctor!.familyName}",
-                            style: const TextStyle(
-                              color: Constants.extraColor400,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
+                Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              "${getDoctorPrefix(widget.appointment.doctor!.gender!)}${widget.appointment.doctor!.familyName}",
+                              style: const TextStyle(
+                                color: Constants.extraColor400,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                          const Spacer(),
-                          widget.showCancelOption && !isCancelled
-                              ? CancelAppointmentWidget(
-                                  onTapCallback: (result) async {
-                                    if (result == 'Descartar') {
-                                      final response = await dio.post(
-                                          "/profile/patient/appointments/cancel/${widget.appointment.id}");
-                                      if (response.statusMessage != null) {
-                                        if (response.statusMessage!
-                                            .contains('OK')) {
-                                          setState(() {
-                                            isCancelled = true;
-                                          });
+                            const Spacer(),
+                            widget.showCancelOption && !isCancelled
+                                ? CancelAppointmentWidget(
+                                    onTapCallback: (result) async {
+                                      if (result == 'Descartar') {
+                                        final response = await dio.post(
+                                            "/profile/patient/appointments/cancel/${widget.appointment.id}");
+                                        if (response.statusMessage != null) {
+                                          if (response.statusMessage!
+                                              .contains('OK')) {
+                                            setState(() {
+                                              isCancelled = true;
+                                            });
+                                          }
                                         }
                                       }
-                                    }
-                                  },
-                                )
-                              : Container()
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    if (widget.appointment.doctor!.specializations != null &&
-                        widget.appointment.doctor!.specializations!.isNotEmpty)
-                      SizedBox(
-                        width: 300,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
+                                    },
+                                  )
+                                : Container()
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        if (widget.appointment.doctor!.specializations !=
+                                null &&
+                            widget.appointment.doctor!.specializations!
+                                .isNotEmpty)
+                          SizedBox(
+                            width: 300,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  for (int i = 0;
+                                      i <
+                                          widget.appointment.doctor!
+                                              .specializations!.length;
+                                      i++)
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: i == 0 ? 0 : 3.0, bottom: 5),
+                                      child: Text(
+                                        "${widget.appointment.doctor!.specializations![i].description}${widget.appointment.doctor!.specializations!.length > 1 && i == 0 ? "," : ""}",
+                                        style: boldoSubTextStyle,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        if (isCancelled)
+                          const Text(
+                            "Cancelado",
+                            style: TextStyle(
+                              color: Constants.otherColor300,
+                              fontSize: 12,
+                              // fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        if (isToday && !isCancelled)
+                          Column(
                             children: [
-                              for (int i = 0;
-                                  i <
-                                      widget.appointment.doctor!
-                                          .specializations!.length;
-                                  i++)
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      left: i == 0 ? 0 : 3.0, bottom: 5),
-                                  child: Text(
-                                    "${widget.appointment.doctor!.specializations![i].description}${widget.appointment.doctor!.specializations!.length > 1 && i == 0 ? "," : ""}",
-                                    style: boldoSubTextStyle,
-                                  ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "¡Hoy! - ${DateFormat('HH:mm').format(DateTime.parse(widget.appointment.start!).toLocal())}",
+                                style: const TextStyle(
+                                  color: Constants.primaryColor600,
+                                  fontSize: 12,
                                 ),
+                              ),
                             ],
                           ),
-                        ),
-                      ),
-                    if (isCancelled)
-                      const Text(
-                        "Cancelado",
-                        style: TextStyle(
-                          color: Constants.otherColor300,
-                          fontSize: 12,
-                          // fontWeight: FontWeight.bold
-                        ),
-                      ),
-                    if (isToday && !isCancelled)
-                      Column(
-                        children: [
-                          const SizedBox(height: 4),
-                          Text(
-                            "¡Hoy! - ${DateFormat('HH:mm').format(DateTime.parse(widget.appointment.start!).toLocal())}",
-                            style: const TextStyle(
-                              color: Constants.primaryColor600,
-                              fontSize: 12,
-                            ),
+                        if (daysDifference > 0 && !isCancelled)
+                          Column(
+                            children: [
+                              const SizedBox(height: 4),
+                              Text(
+                                "En $daysDifference ${daysDifference > 1 ? 'días' : 'dia'}  - ${DateFormat('HH:mm').format(DateTime.parse(widget.appointment.start!).toLocal())} hs",
+                                style: const TextStyle(
+                                  color: Constants.otherColor200,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    if (daysDifference > 0 && !isCancelled)
-                      Column(
-                        children: [
-                          const SizedBox(height: 4),
-                          Text(
-                            "En $daysDifference ${daysDifference > 1 ? 'días' : 'dia'}  - ${DateFormat('HH:mm').format(DateTime.parse(widget.appointment.start!).toLocal())} hs",
-                            style: const TextStyle(
-                              color: Constants.otherColor200,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                  ],
-                )
+                      ],
+                    ),
+                    flex: 5),
               ],
             ),
           ),
