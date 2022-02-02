@@ -1,5 +1,3 @@
-
-
 import 'package:boldo/network/connection_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -53,12 +51,28 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
 
           return handle.next(error);
         }
-        
-        // RequestOptions options = error.response!.data;
-        // if ("bearer $accessToken" != options.headers["authorization"]) {
-        //   options.headers["authorization"] = "bearer $accessToken";
-        //   return handle.next(options);
-        // }
+
+        RequestOptions options = error.response!.requestOptions;
+        Options optionsDio = Options(
+            contentType: options.contentType,
+            followRedirects: options.followRedirects,
+            extra: options.extra,
+            headers: options.headers,
+            listFormat: options.listFormat,
+            maxRedirects: options.maxRedirects,
+            method: options.method,
+            receiveDataWhenStatusError: options.receiveDataWhenStatusError,
+            receiveTimeout: options.receiveTimeout,
+            requestEncoder: options.requestEncoder,
+            responseDecoder: options.responseDecoder,
+            responseType: options.responseType,
+            sendTimeout: options.sendTimeout,
+            validateStatus: options.validateStatus);
+        if ("bearer $accessToken" != options.headers["authorization"]) {
+          options.headers["authorization"] = "bearer $accessToken";
+          handle.resolve(await dio.request(options.path, options: optionsDio));
+          // return handle.next(dio.request(options.path));
+        }
         dio.lock();
         dio.interceptors.responseLock.lock();
         dio.interceptors.errorLock.lock();
@@ -82,8 +96,8 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
           dio.interceptors.responseLock.unlock();
           dio.interceptors.errorLock.unlock();
           //retry request
-          // return handle.next(dio.request(options.path!, options: options!));
-
+          return handle
+              .resolve(await dio.request(options.path, options: optionsDio));
         } catch (e) {
           dio.unlock();
           dio.interceptors.responseLock.unlock();
@@ -157,11 +171,27 @@ void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
 
           return handle.next(error);
         }
-        RequestOptions options = error.response!.data;
-        // if ("bearer $accessToken" != options.headers["authorization"]) {
-        //   options.headers["authorization"] = "bearer $accessToken";
-        //   return handle.next(dio.request(options.path, options: options));
-        // }
+
+        RequestOptions options = error.response!.requestOptions;
+        Options optionsDio = Options(
+            contentType: options.contentType,
+            followRedirects: options.followRedirects,
+            extra: options.extra,
+            headers: options.headers,
+            listFormat: options.listFormat,
+            maxRedirects: options.maxRedirects,
+            method: options.method,
+            receiveDataWhenStatusError: options.receiveDataWhenStatusError,
+            receiveTimeout: options.receiveTimeout,
+            requestEncoder: options.requestEncoder,
+            responseDecoder: options.responseDecoder,
+            responseType: options.responseType,
+            sendTimeout: options.sendTimeout,
+            validateStatus: options.validateStatus);
+        if ("bearer $accessToken" != options.headers["authorization"]) {
+          options.headers["authorization"] = "bearer $accessToken";
+          handle.resolve(await dio.request(options.path, options: optionsDio));
+        }
         dio.lock();
         dio.interceptors.responseLock.lock();
         dio.interceptors.errorLock.lock();
@@ -184,9 +214,8 @@ void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
           dio.unlock();
           dio.interceptors.responseLock.unlock();
           dio.interceptors.errorLock.unlock();
-          //retry request
-          // return handle.next(dio.request(options.path!, options: options!));
-
+          return handle
+              .resolve(await dio.request(options.path, options: optionsDio));
         } catch (e) {
           dio.unlock();
           dio.interceptors.responseLock.unlock();

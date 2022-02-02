@@ -105,7 +105,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                 print(exception);
                 setState(() {
                   _loading = false;
-                  _error = "Somethig went wrong, please try again later.";
+                  _error = "Intente nuevamente, por favor";
                 });
                 await Sentry.captureException(
                   exception,
@@ -115,7 +115,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                 print(exception);
                 setState(() {
                   _loading = false;
-                  _error = "Somethig went wrong, please try again later.";
+                  _error = "Intente nuevamente, por favor";
                 });
                 await Sentry.captureException(
                   exception,
@@ -193,9 +193,9 @@ class ShowAppoinmentTypeIcon extends StatelessWidget {
                   
                 ),
               ))
-          : Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: const Icon(
+          : const Padding(
+            padding: EdgeInsets.all(4.0),
+            child: Icon(
                 Icons.person,
                 color: Constants.primaryColor500,
                 size: 20,

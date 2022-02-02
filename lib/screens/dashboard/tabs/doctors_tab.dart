@@ -95,9 +95,8 @@ class _DoctorsTabState extends State<DoctorsTab> {
       } else if (isOnline) {
         appointmentType = Uri(queryParameters: {"appointmentType": "V"}).query;
       } else if (isInPerson) {
-        appointmentType = "${Uri(queryParameters: {
-              "appointmentType": "A"
-            }).query}";
+        appointmentType =
+            "${Uri(queryParameters: {"appointmentType": "A"}).query}";
       }
 
       if (appointmentType != "") {
@@ -184,15 +183,14 @@ class _DoctorsTabState extends State<DoctorsTab> {
                 ),
                 GestureDetector(
                   onTap: () async {
-                    final updateDoctors = await Navigator.push(
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const FilterScreen(),
                       ),
                     );
-                    if (updateDoctors != null && updateDoctors) {
-                      getDoctors();
-                    }
+
+                    getDoctors();
                   },
                   child: Stack(
                     children: [

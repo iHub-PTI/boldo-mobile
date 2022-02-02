@@ -37,7 +37,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   bool _dataFetchError = false;
   bool _loading = true;
 
-  RefreshController _refreshController =
+  RefreshController? _refreshController =
       RefreshController(initialRefresh: false);
   DateTime dateOffset = DateTime.now().subtract(const Duration(days: 30));
   void _onRefresh() async {
@@ -232,7 +232,16 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         allAppointmentsState = [
           ...allAppointmets,
         ];
-       allAppointmentsState = (allAppointmentsState).reversed.toList();
+
+        allAppointmentsState
+          ..sort((a, b) {
+            final startTimeA = DateFormat('dd/MM/yyyy HH:mm')
+                .format(DateTime.parse(a.start!).toLocal());
+            final startTimeB = DateFormat('dd/MM/yyyy HH:mm')
+                .format(DateTime.parse(b.start!).toLocal());
+
+            return startTimeA.compareTo(startTimeB);
+          });
       });
     } on DioError catch (exception, stackTrace) {
       print(exception);
@@ -260,8 +269,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       );
     } finally {
       if (_refreshController != null) {
-        _refreshController.refreshCompleted();
-        _refreshController.loadComplete();
+        _refreshController!.refreshCompleted();
+        _refreshController!.loadComplete();
       }
     }
   }
@@ -270,7 +279,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
-    
     Appointment firstPastAppointment = allAppointmentsState.firstWhere(
         (element) => ["closed", "locked"].contains(element.status),
         orElse: () => Appointment());
@@ -295,7 +303,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                       header: const MaterialClassicHeader(
                         color: Constants.primaryColor800,
                       ),
-                      controller: _refreshController,
+                      controller: _refreshController!,
                       onLoading: () {
                         dateOffset =
                             dateOffset.subtract(const Duration(days: 30));
@@ -339,7 +347,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                           );
                         },
                       ),
-
                       child: CustomScrollView(
                         slivers: [
                           SliverToBoxAdapter(
@@ -347,10 +354,12 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                               children: [
                                 for (Appointment appointment
                                     in waitingRoomAppointments)
-                                    appointment.appointmentType != 'A'?
-                                  WaitingRoomCard(
-                                      appointment: appointment,
-                                      getAppointmentsData: getAppointmentsData):Container(),
+                                  appointment.appointmentType != 'A'
+                                      ? WaitingRoomCard(
+                                          appointment: appointment,
+                                          getAppointmentsData:
+                                              getAppointmentsData)
+                                      : Container(),
                               ],
                             ),
                           ),
@@ -378,7 +387,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 class _ListRenderer extends StatelessWidget {
   final int index;
   final Appointment appointment;
-  final Appointment firstAppointmentPast;
+  final Appointment? firstAppointmentPast;
   final List<Appointment> waitingRoomAppointments;
 
   const _ListRenderer(
@@ -420,10 +429,13 @@ class _ListRenderer extends StatelessWidget {
           height: 1,
         ),
         AppointmentCard(
-            appointment: appointment, isInWaitingRoom: isInWaitingRoom),
+          appointment: appointment,
+          isInWaitingRoom: isInWaitingRoom,
+          showCancelOption: true,
+        ),
       ]);
     if (firstAppointmentPast != null &&
-        firstAppointmentPast.id == appointment.id) {
+        firstAppointmentPast!.id == appointment.id) {
       return Column(children: [
         Align(
           alignment: Alignment.centerLeft,
@@ -450,10 +462,16 @@ class _ListRenderer extends StatelessWidget {
           height: 1,
         ),
         AppointmentCard(
-            appointment: appointment, isInWaitingRoom: isInWaitingRoom),
+          appointment: appointment,
+          isInWaitingRoom: isInWaitingRoom,
+          showCancelOption: false,
+        ),
       ]);
     }
     return AppointmentCard(
-        appointment: appointment, isInWaitingRoom: isInWaitingRoom);
+      appointment: appointment,
+      isInWaitingRoom: isInWaitingRoom,
+      showCancelOption: true,
+    );
   }
 }
