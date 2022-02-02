@@ -232,6 +232,16 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         allAppointmentsState = [
           ...allAppointmets,
         ];
+
+        allAppointmentsState
+          ..sort((a, b) {
+            final startTimeA = DateFormat('dd/MM/yyyy HH:mm')
+                .format(DateTime.parse(a.start!).toLocal());
+            final startTimeB = DateFormat('dd/MM/yyyy HH:mm')
+                .format(DateTime.parse(b.start!).toLocal());
+
+            return startTimeA.compareTo(startTimeB);
+          });
       });
     } on DioError catch (exception, stackTrace) {
       print(exception);
@@ -269,7 +279,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
-    
     Appointment firstPastAppointment = allAppointmentsState.firstWhere(
         (element) => ["closed", "locked"].contains(element.status),
         orElse: () => Appointment());
@@ -338,7 +347,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                           );
                         },
                       ),
-
                       child: CustomScrollView(
                         slivers: [
                           SliverToBoxAdapter(

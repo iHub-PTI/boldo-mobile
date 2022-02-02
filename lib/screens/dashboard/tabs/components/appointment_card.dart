@@ -139,7 +139,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                               ),
                             ),
                             const Spacer(),
-                            widget.showCancelOption && !isCancelled
+                            widget.showCancelOption && !isCancelled && daysDifference >= 0
                                 ? Padding(
                                   padding: const EdgeInsets.only(right:4.0),
                                   child: CancelAppointmentWidget(
@@ -193,9 +193,9 @@ class _AppointmentCardState extends State<AppointmentCard> {
                             ),
                           ),
                         if (isCancelled)
-                          const Text(
-                            "Cancelado",
-                            style: TextStyle(
+                           Text(
+                            "Cancelado - ${DateFormat('HH:mm').format(DateTime.parse(widget.appointment.start!).toLocal())} hs ",
+                            style: const TextStyle(
                               color: Constants.otherColor300,
                               fontSize: 12,
                               // fontWeight: FontWeight.bold
@@ -206,7 +206,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                             children: [
                               const SizedBox(height: 4),
                               Text(
-                                "¡Hoy! - ${DateFormat('HH:mm').format(DateTime.parse(widget.appointment.start!).toLocal())}",
+                                "¡Hoy! - ${DateFormat('HH:mm').format(DateTime.parse(widget.appointment.start!).toLocal())} hs",
                                 style: const TextStyle(
                                   color: Constants.primaryColor600,
                                   fontSize: 12,
