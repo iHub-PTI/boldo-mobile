@@ -134,7 +134,7 @@ class _MedicalRecordDetailState extends State<MedicalRecordsDetails> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
-                                  allMedicalData.first.mainReason!,
+                                  allMedicalData.first.mainReason??'',
                                   style: boldoHeadingTextStyle.copyWith(
                                       fontSize: 20,
                                       color: Constants.primaryColor500),
