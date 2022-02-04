@@ -145,7 +145,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
               if (widget.notAvailibleThisMonth)
                 const Padding(
                   padding: EdgeInsets.only(top: 8.0),
-                  child: Text("The doctor is not availible this month"),
+                  child: Text("El médico no se encuentra disponible este mes"),
                 ),
               if (_calendarLoading == false && !widget.notAvailibleThisMonth)
                 for (int i = 0; i < 6; i++)

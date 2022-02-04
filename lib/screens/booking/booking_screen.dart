@@ -589,6 +589,8 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                               ),
                             ),
                             const Spacer(),
+                            if(widget
+                                    .doctor.nextAvailability != null)
                             ShowDoctorAvailabilityIcon(
                                 filter: widget
                                     .doctor.nextAvailability!.appointmentType!)
