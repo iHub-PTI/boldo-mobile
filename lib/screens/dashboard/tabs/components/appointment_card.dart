@@ -139,10 +139,14 @@ class _AppointmentCardState extends State<AppointmentCard> {
                               ),
                             ),
                             const Spacer(),
-                            widget.showCancelOption && !isCancelled && daysDifference >= 0
+                            widget.showCancelOption &&
+                                    !isCancelled &&
+                                    daysDifference >= 0 &&
+                                    !["closed", "locked"]
+                                        .contains(widget.appointment.status)
                                 ? Padding(
-                                  padding: const EdgeInsets.only(right:4.0),
-                                  child: CancelAppointmentWidget(
+                                    padding: const EdgeInsets.only(right: 4.0),
+                                    child: CancelAppointmentWidget(
                                       onTapCallback: (result) async {
                                         if (result == 'Descartar') {
                                           final response = await dio.post(
@@ -158,7 +162,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                         }
                                       },
                                     ),
-                                )
+                                  )
                                 : Container()
                           ],
                         ),
@@ -193,7 +197,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                             ),
                           ),
                         if (isCancelled)
-                           Text(
+                          Text(
                             "Cancelado - ${DateFormat('HH:mm').format(DateTime.parse(widget.appointment.start!).toLocal())} hs ",
                             style: const TextStyle(
                               color: Constants.otherColor300,
@@ -374,7 +378,8 @@ class CancelAppointmentWidget extends StatelessWidget {
         }
       },
       child: const Icon(
-        Icons.more_vert, color: Colors.grey,
+        Icons.more_vert,
+        color: Colors.grey,
       ),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
         PopupMenuItem<String>(
@@ -389,7 +394,7 @@ class CancelAppointmentWidget extends StatelessWidget {
                   child: SvgPicture.asset('assets/icon/trash.svg'),
                 ),
                 const Padding(
-                  padding: EdgeInsets.only(left: 8.0,right: 2.0),
+                  padding: EdgeInsets.only(left: 8.0, right: 2.0),
                   child: Text('Cancelar cita'),
                 )
               ],
