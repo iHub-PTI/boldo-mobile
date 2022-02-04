@@ -12,7 +12,6 @@ import 'dart:async';
 import 'package:intl/intl.dart';
 import 'dart:isolate';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -30,7 +29,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   ReceivePort? _receivePort;
 
   List<Appointment> allAppointmentsState = [];
-
+  List<Appointment> nextAppointments = [];
   List<Appointment> upcomingWaitingRoomAppointments = [];
   List<Appointment> waitingRoomAppointments = [];
 
@@ -232,16 +231,18 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         allAppointmentsState = [
           ...allAppointmets,
         ];
-
-        allAppointmentsState
-          ..sort((a, b) {
-            final startTimeA = DateFormat('dd/MM/yyyy HH:mm')
-                .format(DateTime.parse(a.start!).toLocal());
-            final startTimeB = DateFormat('dd/MM/yyyy HH:mm')
-                .format(DateTime.parse(b.start!).toLocal());
-
-            return startTimeA.compareTo(startTimeB);
-          });
+        Appointment firstPastAppointment = allAppointmentsState.firstWhere(
+            (element) => ["closed", "locked"].contains(element.status),
+            orElse: () => Appointment());
+        nextAppointments = [];
+        for (int i = 0; i < allAppointmentsState.length; i++) {
+          if (firstPastAppointment.id != allAppointmentsState[i].id) {
+            nextAppointments.add(allAppointmentsState[i]);
+          }else{
+            break;
+          }
+        }
+       nextAppointments =  nextAppointments.reversed.toList();
       });
     } on DioError catch (exception, stackTrace) {
       print(exception);
@@ -370,7 +371,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                                   i++)
                                 _ListRenderer(
                                   index: i,
-                                  appointment: allAppointmentsState[i],
+                                  appointment: nextAppointments.length > i
+                                      ? nextAppointments[i]
+                                      : allAppointmentsState[i],
                                   firstAppointmentPast: firstPastAppointment,
                                   waitingRoomAppointments:
                                       waitingRoomAppointments,
