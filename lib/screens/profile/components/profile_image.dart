@@ -137,7 +137,7 @@ class _ProfileImageState extends State<ProfileImage> {
                               photoUrl: response.data["location"],
                               notify: true);
 
-                      await http.put(response.data["uploadUrl"],
+                      await http.put(Uri.parse(response.data["uploadUrl"]),
                           body: croppedFile.readAsBytesSync());
                       setState(() {
                         _isLoading = false;

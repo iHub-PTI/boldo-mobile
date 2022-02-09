@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:boldo/constants.dart';
@@ -71,41 +70,36 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                       ),
                       elevation: 9,
                       child: ClipOval(
-                          clipBehavior: Clip.antiAlias,
-                          child: SvgPicture.asset(
-                            isAuthenticated
-                                ? gender == "female"
-                                    ? 'assets/images/femalePatient.svg'
-                                    : 'assets/images/malePatient.svg'
-                                : 'assets/images/LogoIcon.svg',
-                          )
-                          //FIXME when server img is available again
-                          // data == null && profileURL == null
-                          //     ? SvgPicture.asset(
-                          //         isAuthenticated
-                          //             ? gender == "female"
-                          //                 ? 'assets/images/femalePatient.svg'
-                          //                 : 'assets/images/malePatient.svg'
-                          //             : 'assets/images/LogoIcon.svg',
-                          //       )
-                          //     : CachedNetworkImage(
-                          //         fit: BoxFit.cover,
-                          //         imageUrl: data,
-                          //         progressIndicatorBuilder:
-                          //             (context, url, downloadProgress) => Padding(
-                          //           padding: const EdgeInsets.all(26.0),
-                          //           child: CircularProgressIndicator(
-                          //             value: downloadProgress.progress,
-                          //             valueColor:
-                          //                 const AlwaysStoppedAnimation<Color>(
-                          //                     Constants.primaryColor400),
-                          //             backgroundColor: Constants.primaryColor600,
-                          //           ),
-                          //         ),
-                          //         errorWidget: (context, url, error) =>
-                          //             const Icon(Icons.error),
-                          //       ),
-                          ),
+                        clipBehavior: Clip.antiAlias,
+                        child:
+                            data == null && profileURL == null
+                                ? SvgPicture.asset(
+                                    isAuthenticated
+                                        ? gender == "female"
+                                            ? 'assets/images/femalePatient.svg'
+                                            : 'assets/images/malePatient.svg'
+                                        : 'assets/images/LogoIcon.svg',
+                                  )
+                                : CachedNetworkImage(
+                                    fit: BoxFit.cover,
+                                    imageUrl: data,
+                                    progressIndicatorBuilder:
+                                        (context, url, downloadProgress) =>
+                                            Padding(
+                                      padding: const EdgeInsets.all(26.0),
+                                      child: CircularProgressIndicator(
+                                        value: downloadProgress.progress,
+                                        valueColor:
+                                            const AlwaysStoppedAnimation<Color>(
+                                                Constants.primaryColor400),
+                                        backgroundColor:
+                                            Constants.primaryColor600,
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
+                                  ),
+                      ),
                     ),
                   );
                 },
