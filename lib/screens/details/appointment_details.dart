@@ -213,7 +213,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              if (isInWaitingRoom)
+              if (isInWaitingRoom && appointment.appointmentType == 'V')
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
