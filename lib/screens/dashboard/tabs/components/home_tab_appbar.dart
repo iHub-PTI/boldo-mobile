@@ -36,7 +36,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
     if (!isAuthenticated) return;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    profileURL = prefs.getString("profile_url");
+    profileURL = prefs.getString("profile_url")??'';
     gender = prefs.getString("gender");
     setState(() {});
   }
@@ -72,7 +72,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                       child: ClipOval(
                         clipBehavior: Clip.antiAlias,
                         child:
-                            data == null && profileURL == null
+                            data == '' && profileURL == null
                                 ? SvgPicture.asset(
                                     isAuthenticated
                                         ? gender == "female"
@@ -82,7 +82,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                                   )
                                 : CachedNetworkImage(
                                     fit: BoxFit.cover,
-                                    imageUrl: data,
+                                    imageUrl: data != ''? data: profileURL!,
                                     progressIndicatorBuilder:
                                         (context, url, downloadProgress) =>
                                             Padding(
