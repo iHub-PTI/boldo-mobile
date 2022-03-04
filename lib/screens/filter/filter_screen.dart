@@ -174,7 +174,6 @@ class FilterScreen extends StatelessWidget {
         return SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            
             style: ElevatedButton.styleFrom(
               primary: Constants.grayColor500,
             ),
@@ -286,15 +285,17 @@ class ModalityCheckState extends State<ModalityCheck> {
                     onChanged: (bool? value) {
                       setState(() {
                         values[key] = value!;
+                        bool inPerson = false;
+                        bool remote = false;
                         values.forEach((key, value) {
                           if (key == 'Presencial') {
-                            Provider.of<UtilsProvider>(context, listen: false)
-                                .setInPersonModality(value);
+                            inPerson = value;
                           } else {
-                            Provider.of<UtilsProvider>(context, listen: false)
-                                .setVirtualModality(value);
+                            remote = value;
                           }
                         });
+                        Provider.of<UtilsProvider>(context, listen: false)
+                            .setVirtualRemoteStatus(inPerson, remote);
                       });
                     },
                     controlAffinity: ListTileControlAffinity.leading,

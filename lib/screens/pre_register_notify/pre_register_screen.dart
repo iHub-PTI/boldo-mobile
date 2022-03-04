@@ -82,7 +82,7 @@ class _PreRegisterScreenState extends State<PreRegisterScreen> {
         ),
       ),
       Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(20.0),
         child: RichText(
           text: const TextSpan(
             text: 'Boldo se encuentra en un período de prueba controlado.\n\n'

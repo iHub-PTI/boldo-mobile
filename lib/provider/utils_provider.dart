@@ -60,13 +60,8 @@ class UtilsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setVirtualModality(bool isOnline) {
+  void setVirtualRemoteStatus(bool isInPerson, bool isOnline) {
     isAppoinmentOnline = isOnline;
-    getDoctors();
-    notifyListeners();
-  }
-
-  void setInPersonModality(bool isInPerson) {
     isAppoinmentInPerson = isInPerson;
     getDoctors();
     notifyListeners();
@@ -91,14 +86,11 @@ class UtilsProvider with ChangeNotifier {
   void getDoctors({int offset = 0}) async {
     try {
       List<String>? listOfSpecializations =
-              getListOfSpecializations
-              .map((e) => e.id!)
-              .toList();
+          getListOfSpecializations.map((e) => e.id!).toList();
       String queryStringLanguages =
           Uri(queryParameters: {'languageCodes': _selectedLanguages}).query;
       String queryStringSpecializations =
-          Uri(queryParameters: {'specialtyIds': listOfSpecializations})
-              .query;
+          Uri(queryParameters: {'specialtyIds': listOfSpecializations}).query;
 
       String finalQueryString = "";
 
@@ -145,6 +137,6 @@ class UtilsProvider with ChangeNotifier {
         stackTrace: stackTrace,
       );
     }
-     notifyListeners();
+    notifyListeners();
   }
 }
