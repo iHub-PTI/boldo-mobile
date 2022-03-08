@@ -105,7 +105,7 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
                     ),
                   if (!_dataLoading && _dataLoaded)
                     SizedBox(
-                      height: MediaQuery.of(context).size.height - 250,
+                      height: MediaQuery.of(context).size.height - 260,
                       child: ListView.separated(
                         itemCount: allMedicalData.length,
                         shrinkWrap: true,

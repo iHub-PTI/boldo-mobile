@@ -393,7 +393,7 @@ class _DoctorCard extends StatelessWidget {
                                 maxLines: 1,
                                 softWrap: false,
                                 style: boldoHeadingTextStyle.copyWith(
-                                    fontSize: 14),
+                                    fontSize: 13),
                               ),
                               const Spacer(),
                               doctor.nextAvailability != null
