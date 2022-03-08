@@ -16,10 +16,7 @@ The mobile app is specifically for patients.
 3. Create a `.env` file in the project's root folder and add these contents:
 
    ```
-   # ####################### Online #######################п
-    SOCKETS_ADDRESS = https://sockets.boldo.penguin.software
-    SERVER_ADDRESS = https://api.boldo.penguin.software
-    KEYCLOAK_REALM_ADDRESS = https://sso-test.pti.org.py/auth/realms/iHub
+   # ###################### Amientes locales ######################
 
    # ###################### Android ######################
    # SOCKETS_ADDRESS = http://10.0.2.2:8000
@@ -30,6 +27,29 @@ The mobile app is specifically for patients.
    # SOCKETS_ADDRESS = http://localhost:8000
    # SERVER_ADDRESS = http://localhost:8008
    # KEYCLOAK_REALM_ADDRESS = http://localhost:8080/auth/realms/iHub
+   
+   # ###################### Amientes online ######################
+   
+   # ###################### SENTRY global para todos los entornos online ##########
+   # SENTRY_DSN=ASK DEVELOPERS FOR KEY
+   
+   # ######################## dev online 01/03/2022 ########################
+   # SOCKETS_ADDRESS = https://boldo-dev.pti.org.py/
+   # SERVER_ADDRESS = https://boldo-dev.pti.org.py/api 
+   # HEALTH_PTI_API = https://sso-dev.pti.org.py/api 
+   # KEYCLOAK_REALM_ADDRESS = https://sso-dev.pti.org.py/auth/realms/iHub
+   
+   # ######################## Test online 01/03/2022 ########################
+   SOCKETS_ADDRESS = https://boldo-test.pti.org.py/
+   SERVER_ADDRESS = https://boldo-test.pti.org.py/api
+   HEALTH_PTI_API = https://sso-test2.pti.org.py/api/
+   KEYCLOAK_REALM_ADDRESS = https://sso-test2.pti.org.py/auth/realms/iHub
+   
+   # ######################## Prod online 01/03/2022 ########################
+   # SOCKETS_ADDRESS = https://bol.do 
+   # SERVER_ADDRESS = https://bol.do/api 
+   # HEALTH_PTI_API = https://sso.bol.do/api 
+   # KEYCLOAK_REALM_ADDRESS = https://sso.bol.do/auth/realms/iHub
    ```
 
    Note: Uncomment the Android secion in case you want to run it on an Android and you have the servers running on localhost.
