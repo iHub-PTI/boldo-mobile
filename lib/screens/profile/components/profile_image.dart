@@ -92,7 +92,7 @@ class _ProfileImageState extends State<ProfileImage> {
                 FilePickerResult? result =
                     await FilePicker.platform.pickFiles(type: FileType.image);
                 if (result != null) {
-                  File? croppedFile = await ImageCropper.cropImage(
+                  File? croppedFile = await ImageCropper().cropImage(
                     sourcePath: result.files.first.path!,
                     aspectRatioPresets: Platform.isAndroid
                         ? [

@@ -5,15 +5,14 @@ import 'package:boldo/screens/pre_register_notify/pre_register_screen.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:page_view_indicators/page_view_indicators.dart';
 
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -109,7 +108,7 @@ class HeroScreen extends StatelessWidget {
                   final SharedPreferences prefs =
                       await SharedPreferences.getInstance();
                   bool onboardingCompleted =
-                       prefs.getBool("preRegisterNotify") ?? false;
+                      prefs.getBool("preRegisterNotify") ?? false;
                   if (onboardingCompleted == true) {
                     _openWebView(context);
                   } else {
@@ -139,36 +138,15 @@ class HeroScreen extends StatelessWidget {
   Widget _buildPageViewIndicator(BuildContext context, int indexPageView) {
     return Column(
       children: [
-        // PageViewIndicator(
-        //   pageIndexNotifier: pageIndexNotifier,
-        //   length: 3,
-        //   normalBuilder: (animationController, index) => Circle(
-        //     size: 10,
-        //     color: index < indexPageView
-        //         ? Constants.secondaryColor500
-        //         : Constants.extraColor200,
-        //   ),
-        //   highlightedBuilder: (animationController, index) => ScaleTransition(
-        //     scale: CurvedAnimation(
-        //       parent: animationController,
-        //       curve: Curves.ease,
-        //     ),
-        //     child: Container(
-        //       height: 20,
-        //       width: 20,
-        //       decoration: const BoxDecoration(
-        //           color: Constants.secondaryColor200,
-        //           borderRadius: BorderRadius.all(Radius.circular(20))),
-        //       child: Align(
-        //         alignment: Alignment.center,
-        //         child: Circle(
-        //           size: 10,
-        //           color: Constants.secondaryColor500,
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-        // ),
+        const SizedBox(
+          height: 20,
+        ),
+        PageViewDotIndicator(
+          currentItem: pageIndexNotifier.value,
+          count: 3,
+          unselectedColor: Constants.extraColor200,
+          selectedColor: Constants.secondaryColor500,
+        ),
         const SizedBox(
           height: 20,
         ),
