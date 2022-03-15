@@ -35,7 +35,7 @@ dependencies:
   flutter_secure_storage: ^5.0.2
   flutter_dotenv: ^5.0.2
   page_view_dot_indicator: ^1.1.0
-  google_fonts: ^2.2.0
+  google_fonts: 2.2.0
   flutter_appauth: ^2.2.0
   provider: ^6.0.2
   connectivity: ^3.0.6

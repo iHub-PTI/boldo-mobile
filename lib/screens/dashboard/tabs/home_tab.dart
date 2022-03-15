@@ -148,7 +148,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
           "/profile/patient/appointments?start=${dateOffset.toUtc().toIso8601String().substring(0, 23)}Z");
       Response responsePrescriptions =
           await dio.get("/profile/patient/prescriptions");
-
+      print(responsePrescriptions.headers);
       List<Prescription> allPrescriptions = List<Prescription>.from(
           responsePrescriptions.data["prescriptions"]
               .map((i) => Prescription.fromJson(i)));

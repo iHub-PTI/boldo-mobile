@@ -121,3 +121,32 @@ ThemeData boldoTheme = ThemeData(
   brightness: Brightness.light,
   visualDensity: VisualDensity.adaptivePlatformDensity,
 );
+
+
+// Colors Boldo V2
+class ConstantsV2 {
+  // background primary color palette
+  static const Color primaryColor100 = Color(0xffFFFFFF);
+  static const Color primaryColor200 = Color(0xff74B49E);
+  static const Color primaryColor300 = Color(0xffFDA57D);
+
+  // stops primary background colors
+  static const double primaryStop100 = -0.14;
+  static const double primaryStop200 = 1.25;
+  static const double primaryStop300 = 1.79;
+
+  // hero cards colors gradient
+  static const Color primaryCardHeroColor100 = Color(0xffFDA57D);
+
+  // stops hero cards background colors
+  static const double primaryCardStop100 = 0.20;
+  static const double primaryCardStop200 = 0.72;
+
+  // hero cards colors gradient
+  static const Color secondaryCardHeroColor100 = Color(0xffFDA57D);
+
+  // stops hero cards background colors
+  static const double secondaryCardStop100 = 0.82;
+  static const double secondaryCardStop200 = 1.46;
+
+}

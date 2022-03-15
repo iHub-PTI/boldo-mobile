@@ -1,3 +1,4 @@
+import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +108,7 @@ class FullApp extends StatelessWidget {
       ),
       initialRoute: onboardingCompleted ? '/home' : "/onboarding",
       routes: {
-        '/onboarding': (context) => HeroScreen(),
+        '/onboarding': (context) => HeroScreenV2(),
         '/home': (context) => DashboardScreen(),
       },
     );
