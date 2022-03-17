@@ -6,7 +6,7 @@ import '../../constants.dart';
 import '../../utils/helpers.dart';
 
 class PrescriptionDetailsScreen extends StatelessWidget {
-  const PrescriptionDetailsScreen({Key key, @required this.appointment})
+  const PrescriptionDetailsScreen({Key? key, required this.appointment})
       : super(key: key);
   final Appointment appointment;
 
@@ -71,7 +71,7 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                            "${getDoctorPrefix(appointment.doctor.gender)}${appointment.doctor.familyName}",
+                            "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName!}",
                             overflow: TextOverflow.ellipsis,
                             style: boldoSubTextStyle.copyWith(fontSize: 16)),
                         const SizedBox(height: 24),
@@ -81,7 +81,7 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          "${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.parse(appointment.start).toLocal())} horas",
+                          "${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.parse(appointment.start!).toLocal())} horas",
                           style: boldoSubTextStyle.copyWith(fontSize: 16),
                         ),
                         const SizedBox(height: 24),
@@ -91,7 +91,7 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          appointment.prescriptions[0].encounter.diagnosis??'',
+                          appointment.prescriptions![0].encounter?.diagnosis??'',
                           style: boldoSubTextStyle.copyWith(fontSize: 16),
                         ),
                         const SizedBox(height: 24),
@@ -101,12 +101,12 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          appointment.prescriptions[0].encounter.instructions??'',
+                          appointment.prescriptions![0].encounter?.instructions??'',
                           style: boldoSubTextStyle.copyWith(fontSize: 16),
                         ),
                         const SizedBox(height: 26),
                         for (int i = 0;
-                            i < appointment.prescriptions.length;
+                            i < appointment.prescriptions!.length;
                             i++)
                           Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,11 +140,11 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  appointment.prescriptions[i].medicationName,
+                                  appointment.prescriptions![i].medicationName!,
                                   style:
                                       boldoSubTextStyle.copyWith(fontSize: 16),
                                 ),
-                                if (appointment.prescriptions[i].instructions !=
+                                if (appointment.prescriptions![i].instructions !=
                                     null)
                                   Column(
                                       crossAxisAlignment:
@@ -158,7 +158,7 @@ class PrescriptionDetailsScreen extends StatelessWidget {
                                         const SizedBox(height: 4),
                                         Text(
                                           appointment
-                                              .prescriptions[i].instructions,
+                                              .prescriptions![i].instructions??'',
                                           style: boldoSubTextStyle.copyWith(
                                               fontSize: 16),
                                         ),
@@ -179,8 +179,8 @@ class PrescriptionDetailsScreen extends StatelessWidget {
 class Background extends StatelessWidget {
   final Widget child;
   const Background({
-    Key key,
-    @required this.child,
+    Key? key,
+    required this.child,
   }) : super(key: key);
 
   @override

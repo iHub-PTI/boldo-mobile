@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class DataFetchErrorWidget extends StatelessWidget {
   final Function() retryCallback;
-  const DataFetchErrorWidget({Key key, @required this.retryCallback})
+  const DataFetchErrorWidget({Key? key, required this.retryCallback})
       : super(key: key);
 
   @override

@@ -14,7 +14,7 @@ import '../../../provider/user_provider.dart';
 import '../../../network/http.dart';
 
 class ProfileImage extends StatefulWidget {
-  const ProfileImage({Key key}) : super(key: key);
+  const ProfileImage({Key? key}) : super(key: key);
 
   @override
   _ProfileImageState createState() => _ProfileImageState();
@@ -71,11 +71,11 @@ class _ProfileImageState extends State<ProfileImage> {
                             );
                           },
                           selector: (buildContext, userProvider) =>
-                              userProvider.getPhotoUrl,
+                              userProvider.getPhotoUrl??'',
                         );
                       },
                       selector: (buildContext, userProvider) =>
-                          userProvider.getGender,
+                          userProvider.getGender??'',
                     ),
                   ),
             elevation: 4.0,
@@ -89,11 +89,11 @@ class _ProfileImageState extends State<ProfileImage> {
           child: GestureDetector(
             onTap: () async {
               try {
-                FilePickerResult result =
+                FilePickerResult? result =
                     await FilePicker.platform.pickFiles(type: FileType.image);
                 if (result != null) {
-                  File croppedFile = await ImageCropper.cropImage(
-                    sourcePath: result.files.first.path,
+                  File? croppedFile = await ImageCropper().cropImage(
+                    sourcePath: result.files.first.path!,
                     aspectRatioPresets: Platform.isAndroid
                         ? [
                             CropAspectRatioPreset.square,
@@ -130,14 +130,14 @@ class _ProfileImageState extends State<ProfileImage> {
                       });
                       Response response = await dio.get("/presigned");
 
-                      imageCache.clear();
+                      imageCache!.clear();
 
                       Provider.of<UserProvider>(context, listen: false)
                           .setUserData(
                               photoUrl: response.data["location"],
                               notify: true);
 
-                      await http.put(response.data["uploadUrl"],
+                      await http.put(Uri.parse(response.data["uploadUrl"]),
                           body: croppedFile.readAsBytesSync());
                       setState(() {
                         _isLoading = false;

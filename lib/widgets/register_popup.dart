@@ -4,7 +4,7 @@ import 'dart:core';
 import '../constants.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 
-Future<bool> notLoggedInPop({@required BuildContext context}) async {
+Future<bool?> notLoggedInPop({required BuildContext context}) async {
   return showDialog<bool>(
       useRootNavigator: false,
       context: context,

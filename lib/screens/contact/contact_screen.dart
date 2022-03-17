@@ -8,7 +8,7 @@ import '../../widgets/wrapper.dart';
 import '../../constants.dart';
 
 class Contact extends StatefulWidget {
-  const Contact({Key key}) : super(key: key);
+  const Contact({Key? key}) : super(key: key);
 
   @override
   _ContactState createState() => _ContactState();
@@ -31,18 +31,20 @@ class _ContactState extends State<Contact> {
       throw 'Could not launch $url';
     }
   }
-  Widget labelLink(){
-    return      
-      const Text('info@boldo.org.py', textAlign: TextAlign.center, style: TextStyle(
-        color: Color.fromRGBO(237, 152, 62, 1),
-        fontFamily: 'Inter',
-        fontSize: 20,
-        letterSpacing: 0.15000000596046448,
-        fontWeight: FontWeight.normal,
-         decoration: TextDecoration.underline,
-        height: 1.2
-      ));
+
+  Widget labelLink() {
+    return const Text('soporte.boldo@pti.org.py',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            color: Color.fromRGBO(237, 152, 62, 1),
+            fontFamily: 'Inter',
+            fontSize: 20,
+            letterSpacing: 0.15000000596046448,
+            fontWeight: FontWeight.normal,
+            decoration: TextDecoration.underline,
+            height: 1.2));
   }
+
   @override
   Widget build(BuildContext context) {
     return CustomWrapper(children: [
@@ -70,17 +72,15 @@ class _ContactState extends State<Contact> {
                 color: Color.fromRGBO(54, 65, 82, 1),
                 fontFamily: 'PT Serif',
                 fontSize: 20,
-                letterSpacing:
-                    0 /*percentages not used in flutter. defaulting to zero*/,
+                letterSpacing: 0,
                 fontWeight: FontWeight.normal,
                 height: 1.5 /*PERCENT not supported*/
                 ),
-            
           ),
         ),
       ),
       Padding(
-        padding: const EdgeInsets.only(bottom:10.0),
+        padding: const EdgeInsets.only(bottom: 10.0),
         child: Center(
           child: GestureDetector(
               onTap: () {

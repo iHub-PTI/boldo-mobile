@@ -1,23 +1,23 @@
 import 'package:boldo/models/Prescription.dart';
-import 'package:flutter/cupertino.dart';
 import './Doctor.dart';
 
 class Appointment {
-  String status;
-  String id;
-  String start;
-  String end;
-  String description;
-  Doctor doctor;
-  List<Prescription> prescriptions;
+  String? status;
+  String? id;
+  String? start;
+  String? end;
+  String? description;
+  Doctor? doctor;
+  String? appointmentType;
+  List<Prescription>? prescriptions;
 
   Appointment({
-    @required this.id,
-    @required this.start,
-    @required this.end,
+    this.id,
+    this.start,
+    this.end,
     this.description,
-    @required this.doctor,
-    @required this.status,
+    this.doctor,
+    this.status,
     this.prescriptions,
   });
 
@@ -27,6 +27,7 @@ class Appointment {
     end = json['end'];
     description = json['description'];
     status = json["status"];
+    appointmentType = json["appointmentType"];
     doctor = json['doctor'] != null ? Doctor.fromJson(json['doctor']) : null;
   }
 
@@ -38,8 +39,9 @@ class Appointment {
     data["status"] = status;
     data['description'] = description;
     if (doctor != null) {
-      data['doctor'] = doctor.toJson();
+      data['doctor'] = doctor!.toJson();
     }
+    data["appointmentType"] = appointmentType;
     return data;
   }
 }

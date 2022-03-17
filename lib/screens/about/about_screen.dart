@@ -8,7 +8,7 @@ import '../../widgets/wrapper.dart';
 import '../../constants.dart';
 
 class About extends StatefulWidget {
-  const About({Key key}) : super(key: key);
+  const About({Key? key}) : super(key: key);
 
   @override
   _AboutState createState() => _AboutState();
@@ -71,7 +71,7 @@ class _AboutState extends State<About> {
                 fontFamily: 'PT Serif',
                 fontSize: 20,
                 letterSpacing:
-                    0 /*percentages not used in flutter. defaulting to zero*/,
+                    0,
                 fontWeight: FontWeight.normal,
                 height: 1.5 /*PERCENT not supported*/
                 ),

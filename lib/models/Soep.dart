@@ -1,22 +1,26 @@
-import 'package:flutter/foundation.dart';
 
 class Soep {
-  final String title;
-  final String date;
-  final String description;
+  String? evaluation;
+  String? objective;
+  String? plan;
+  String? subjective;
 
-  Soep({
-    @required this.title,
-    @required this.date,
-    @required this.description,
-  });
+  Soep({this.evaluation, this.objective, this.plan, this.subjective});
+
+  Soep.fromJson(Map<String, dynamic> json) {
+    evaluation = json['evaluation'];
+    objective = json['objective'];
+    plan = json['plan'];
+    subjective = json['subjective'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['evaluation'] = evaluation;
+    data['objective'] = objective;
+    data['plan'] = plan;
+    data['subjective'] = subjective;
+
+    return data;
+  }
 }
-
-final String fakeDescr =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sociis tristique ut odio lorem ultrices adipiscing lacus tortor, et. Dictumst eu iaculis commodo platea.";
-List<Soep> soepFakeDate = [
-  Soep(title: 'Primera Consulta', date: '25/12/2020', description: fakeDescr),
-  Soep(title: 'Seguimiento', date: '30/01/2021', description: fakeDescr),
-  Soep(title: 'Seguimiento', date: '05/03/2021', description: fakeDescr),
-  Soep(title: 'Seguimiento', date: '09/04/2021', description: fakeDescr),
-];

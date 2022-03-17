@@ -7,8 +7,8 @@ import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-Future<bool> callEndedPopup(
-    {@required BuildContext context, @required Appointment appointment}) async {
+Future<bool?> callEndedPopup(
+    {required BuildContext context, required Appointment appointment}) async {
   return showDialog<bool>(
       useRootNavigator: false,
       context: context,
@@ -46,15 +46,15 @@ Future<bool> callEndedPopup(
                       child: SizedBox(
                         height: 72,
                         width: 72,
-                        child: appointment.doctor.photoUrl == null
+                        child: appointment.doctor?.photoUrl == null
                             ? SvgPicture.asset(
-                                appointment.doctor.gender == "female"
+                                appointment.doctor?.gender == "female"
                                     ? 'assets/images/femaleDoctor.svg'
                                     : 'assets/images/maleDoctor.svg',
                                 fit: BoxFit.cover)
                             : CachedNetworkImage(
                                 fit: BoxFit.cover,
-                                imageUrl: appointment.doctor.photoUrl,
+                                imageUrl: appointment.doctor!.photoUrl??'',
                                 progressIndicatorBuilder:
                                     (context, url, downloadProgress) => Padding(
                                   padding: const EdgeInsets.all(26.0),
@@ -73,7 +73,7 @@ Future<bool> callEndedPopup(
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      "${getDoctorPrefix(appointment.doctor.gender)}${appointment.doctor.familyName}",
+                      "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName!}",
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                           color: Constants.extraColor400,
@@ -81,10 +81,10 @@ Future<bool> callEndedPopup(
                           fontSize: 16),
                     ),
                     const SizedBox(height: 8),
-                    if (appointment.doctor.specializations != null &&
-                        appointment.doctor.specializations.isNotEmpty)
+                    if (appointment.doctor?.specializations != null &&
+                        appointment.doctor!.specializations!.isNotEmpty)
                       for (var specialization
-                          in appointment.doctor.specializations)
+                          in appointment.doctor!.specializations!)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Text(
@@ -105,7 +105,7 @@ Future<bool> callEndedPopup(
                           const SizedBox(height: 4),
                           Text(
                               DateFormat('EEEE, dd MMMM yyyy')
-                                  .format(DateTime.parse(appointment.start)
+                                  .format(DateTime.parse(appointment.start!)
                                       .toLocal())
                                   .capitalize(),
                               style: boldoSubTextStyle.copyWith(fontSize: 16)),
@@ -116,7 +116,7 @@ Future<bool> callEndedPopup(
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            "${DateFormat('HH:mm').format(DateTime.parse(appointment.start).toLocal())} horas",
+                            "${DateFormat('HH:mm').format(DateTime.parse(appointment.start!).toLocal())} horas",
                             style: boldoSubTextStyle.copyWith(fontSize: 16),
                           ),
                         ],

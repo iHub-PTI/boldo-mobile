@@ -1,10 +1,10 @@
 class Specialization {
-  String id;
-  String description;
+  String? id;
+  String? description;
 
   Specialization({
-    this.id,
-    this.description,
+     this.id,
+     this.description,
   });
 
   factory Specialization.fromJson(Map<String, dynamic> json) {

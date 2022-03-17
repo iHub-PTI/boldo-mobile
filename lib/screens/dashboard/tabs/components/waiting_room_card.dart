@@ -9,7 +9,7 @@ class WaitingRoomCard extends StatelessWidget {
   final Appointment appointment;
   final Function() getAppointmentsData;
   const WaitingRoomCard(
-      {Key key, @required this.appointment, @required this.getAppointmentsData})
+      {Key? key, required this.appointment, required this.getAppointmentsData})
       : super(key: key);
 
   @override
@@ -36,7 +36,7 @@ class WaitingRoomCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                      "La sala de espera de tu consulta con ${getDoctorPrefix(appointment.doctor.gender)}${appointment.doctor.familyName} ya se encuentra habilitada. ",
+                      "${appointment.appointmentType == 'V' ?'La sala de espera de tu consulta con ${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName!} ya se encuentra habilitada.':'Tiene agendada una consulta presencial en el Hospital Los Ángeles'}  ",
                       style: boldoSubTextStyle.copyWith(
                         height: 1.2,
                         fontSize: 15,

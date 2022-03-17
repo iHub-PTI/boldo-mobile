@@ -9,7 +9,7 @@ import '../../provider/user_provider.dart';
 import '../../constants.dart';
 
 class AddressScreen extends StatefulWidget {
-  AddressScreen({Key key}) : super(key: key);
+  AddressScreen({Key? key}) : super(key: key);
 
   @override
   _AddressScreenState createState() => _AddressScreenState();
@@ -18,28 +18,28 @@ class AddressScreen extends StatefulWidget {
 class _AddressScreenState extends State<AddressScreen> {
   bool _validate = false;
   bool loading = false;
-  String street, neighborhood, city, addressDescription;
+  late String street, neighborhood, city, addressDescription;
 
   final _formKey = GlobalKey<FormState>();
 
   Future<void> _updateLocation() async {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       setState(() {
         _validate = true;
       });
       return;
     }
 
-    _formKey.currentState.save();
+    _formKey.currentState!.save();
 
     Provider.of<UserProvider>(context, listen: false)
         .clearProfileFormMessages();
     setState(() {
       loading = true;
     });
-    Map<String, String> updateResponse = await updateProfile(context: context);
+    Map<String, String>? updateResponse = await updateProfile(context: context);
     Provider.of<UserProvider>(context, listen: false).updateProfileEditMessages(
-        updateResponse["successMessage"], updateResponse["errorMessage"]);
+        updateResponse["successMessage"]??'', updateResponse["errorMessage"]??'');
     setState(() {
       loading = false;
     });
@@ -77,7 +77,7 @@ class _AddressScreenState extends State<AddressScreen> {
                 Selector<UserProvider, String>(
                   builder: (_, data, __) {
                     return CustomFormInput(
-                      initialValue: data ?? "",
+                      initialValue: data,
                       label: "Calle",
                       secondaryLabel: "Opcional",
                       onChanged: (String val) =>
@@ -85,13 +85,13 @@ class _AddressScreenState extends State<AddressScreen> {
                     );
                   },
                   selector: (buildContext, userProvider) =>
-                      userProvider.getStreet,
+                      userProvider.getStreet??'',
                 ),
                 const SizedBox(height: 20),
                 Selector<UserProvider, String>(
                   builder: (_, data, __) {
                     return CustomFormInput(
-                      initialValue: data ?? "",
+                      initialValue: data,
                       label: "Barrio",
                       secondaryLabel: "Opcional",
                       onChanged: (String val) =>
@@ -99,13 +99,13 @@ class _AddressScreenState extends State<AddressScreen> {
                     );
                   },
                   selector: (buildContext, userProvider) =>
-                      userProvider.getNeighborhood,
+                      userProvider.getNeighborhood??'',
                 ),
                 const SizedBox(height: 20),
                 Selector<UserProvider, String>(
                   builder: (_, data, __) {
                     return CustomFormInput(
-                      initialValue: data ?? "",
+                      initialValue: data,
                       label: "Ciudad",
                       secondaryLabel: "Opcional",
                       onChanged: (String val) =>
@@ -113,13 +113,13 @@ class _AddressScreenState extends State<AddressScreen> {
                     );
                   },
                   selector: (buildContext, userProvider) =>
-                      userProvider.getCity,
+                      userProvider.getCity??'',
                 ),
                 const SizedBox(height: 20),
                 Selector<UserProvider, String>(
                   builder: (_, data, __) {
                     return CustomFormInput(
-                      initialValue: data ?? "",
+                      initialValue: data,
                       maxLines: 6,
                       label: "Referencia",
                       secondaryLabel: "Opcional",
@@ -128,7 +128,7 @@ class _AddressScreenState extends State<AddressScreen> {
                     );
                   },
                   selector: (buildContext, userProvider) =>
-                      userProvider.getAddressDescription,
+                      userProvider.getAddressDescription??'',
                 ),
                 const SizedBox(height: 26),
                 SizedBox(
@@ -136,7 +136,7 @@ class _AddressScreenState extends State<AddressScreen> {
                     children: [
                       if (userProvider.profileEditErrorMessage != null)
                         Text(
-                          userProvider.profileEditErrorMessage,
+                          userProvider.profileEditErrorMessage??'',
                           style: const TextStyle(
                             fontSize: 14,
                             color: Constants.otherColor100,
@@ -144,7 +144,7 @@ class _AddressScreenState extends State<AddressScreen> {
                         ),
                       if (userProvider.profileEditSuccessMessage != null)
                         Text(
-                          userProvider.profileEditSuccessMessage,
+                          userProvider.profileEditSuccessMessage??'',
                           style: const TextStyle(
                             fontSize: 14,
                             color: Constants.primaryColor600,

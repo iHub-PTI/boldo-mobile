@@ -1,7 +1,7 @@
 class CalendarItem {
-  DateTime itemDate;
-  bool isEmpty;
-  bool isDisabled;
+  DateTime? itemDate;
+  bool? isEmpty;
+  bool? isDisabled;
 
   CalendarItem({
     this.isDisabled,

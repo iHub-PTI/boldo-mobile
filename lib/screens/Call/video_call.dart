@@ -14,30 +14,30 @@ import 'package:boldo/utils/peerConnection.dart';
 
 class VideoCall extends StatefulWidget {
   final Appointment appointment;
-  VideoCall({Key key, @required this.appointment}) : super(key: key);
+  VideoCall({Key? key, required this.appointment}) : super(key: key);
 
   @override
   _VideoCallState createState() => _VideoCallState();
 }
 
 class _VideoCallState extends State<VideoCall> {
-  String token;
+  String? token;
   bool _loading = true;
 
   bool callStatus = false;
   bool isDisconnected = false;
 
-  PeerConnection peerConnection;
+  PeerConnection? peerConnection;
 
-  io.Socket socket;
+  io.Socket? socket;
 
   RTCVideoRenderer localRenderer = RTCVideoRenderer();
   RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
 
-  MediaStream localStream;
+  MediaStream? localStream;
 
   String socketsAddress = String.fromEnvironment('SOCKETS_ADDRESS',
-      defaultValue: DotEnv().env['SOCKETS_ADDRESS']);
+      defaultValue: dotenv.env['SOCKETS_ADDRESS']!);
 
   @override
   void initState() {
@@ -63,14 +63,14 @@ class _VideoCallState extends State<VideoCall> {
         'transports': ['websocket'],
         'autoConnect': false
       });
-      socket.connect();
+      socket!.connect();
 
-      socket.emit(
+      socket!.emit(
           'patient ready', {"room": widget.appointment.id, "token": token});
 
-      socket.on('find patient', (data) {
+      socket!.on('find patient', (data) {
         if (callStatus) return;
-        socket.emit(
+        socket!.emit(
             'patient ready', {"room": widget.appointment.id, "token": token});
       });
 
@@ -100,8 +100,8 @@ class _VideoCallState extends State<VideoCall> {
       Navigator.of(context)
           .pop({"error": "You have to give access to your camera."});
     }
-    if (localStream.getAudioTracks() != null) {
-      localStream.getAudioTracks().forEach((track) {
+    if (localStream!.getAudioTracks() != null) {
+      localStream!.getAudioTracks().forEach((track) {
         track.enableSpeakerphone(true);
       });
     }
@@ -122,7 +122,7 @@ class _VideoCallState extends State<VideoCall> {
               isDisconnected = false;
               callStatus = true;
             });
-            socket.emit('patient in call',
+            socket!.emit('patient in call',
                 {"room": widget.appointment.id, "token": token});
             break;
           }
@@ -135,14 +135,17 @@ class _VideoCallState extends State<VideoCall> {
           }
         case CallState.CallClosed:
           {
-            if (peerConnection != null) peerConnection.cleanup();
-            setState(() {
-              callStatus = false;
-            });
-            socket.emit('patient ready',
-                {"room": widget.appointment.id, "token": token});
-            socket.emit(
-                'ready!', {"room": widget.appointment.id, "token": token});
+            if (peerConnection != null) peerConnection!.cleanup();
+            // setState(() {
+            //   callStatus = false;
+            // });
+            callStatus = false;
+            if (socket != null) {
+              socket!.emit('patient ready',
+                  {"room": widget.appointment.id, "token": token});
+              socket!.emit(
+                  'ready!', {"room": widget.appointment.id, "token": token});
+            }
             break;
           }
         default:
@@ -156,34 +159,34 @@ class _VideoCallState extends State<VideoCall> {
     }
 
     // Ready. Wait for start.
-    socket.on('sdp offer', (message) async {
+    socket!.on('sdp offer', (message) async {
       print('offer');
 
-      if (peerConnection != null) peerConnection.cleanup();
+      if (peerConnection != null) peerConnection!.cleanup();
 
       //initialize the peer connection
       peerConnection = PeerConnection(
-          localStream: localStream,
-          room: widget.appointment.id,
-          socket: socket,
-          token: token);
+          localStream: localStream!,
+          room: widget.appointment.id!,
+          socket: socket!,
+          token: token!);
 
-      peerConnection.onRemoteStream = onRemoteStream;
-      peerConnection.onStateChange = onStateChange;
+      peerConnection!.onRemoteStream = onRemoteStream;
+      peerConnection!.onStateChange = onStateChange;
 
-      await peerConnection.init();
+      await peerConnection!.init();
       print('setting description');
-      await peerConnection.setSdpOffer(message);
+      await peerConnection!.setSdpOffer(message);
     });
 
     // Inform Doctor that we are ready.
-    socket.emit('ready!', {"room": widget.appointment.id, "token": token});
-    socket.on('ready?', (message) {
+    socket!.emit('ready!', {"room": widget.appointment.id, "token": token});
+    socket!.on('ready?', (message) {
       print('ready!');
-      socket.emit('ready!', {"room": widget.appointment.id, "token": token});
+      socket!.emit('ready!', {"room": widget.appointment.id, "token": token});
     });
 
-    socket.on('end call', (data) {
+    socket!.on('end call', (data) {
       Navigator.of(context).pop({"appointment": widget.appointment});
     });
 
@@ -195,8 +198,8 @@ class _VideoCallState extends State<VideoCall> {
   void dispose() {
     //cleanup the socket
     if (socket != null) {
-      socket.clearListeners();
-      socket.dispose();
+      socket!.clearListeners();
+      socket!.dispose();
       socket = null;
     }
 
@@ -205,28 +208,28 @@ class _VideoCallState extends State<VideoCall> {
     remoteRenderer.dispose();
 
     //cleanup the peer connection
-    if (peerConnection != null) peerConnection.cleanup();
+    if (peerConnection != null) peerConnection!.cleanup();
     super.dispose();
   }
 
   void hangUp() {
-    socket.emit('end call', {"room": widget.appointment.id, "token": token});
+    socket!.emit('end call', {"room": widget.appointment.id, "token": token});
     Navigator.of(context).pop();
   }
 
   void switchCamera() {
     if (localStream == null) return;
-    localStream.getVideoTracks()[0].switchCamera();
+    localStream!.getVideoTracks()[0].switchCamera();
   }
 
   void muteMic() {
-    final newState = !localStream.getAudioTracks()[0].enabled;
-    localStream.getAudioTracks()[0].enabled = newState;
+    final newState = !localStream!.getAudioTracks()[0].enabled;
+    localStream!.getAudioTracks()[0].enabled = newState;
   }
 
   void muteVideo() {
-    final newState = !localStream.getVideoTracks()[0].enabled;
-    localStream.getVideoTracks()[0].enabled = newState;
+    final newState = !localStream!.getVideoTracks()[0].enabled;
+    localStream!.getVideoTracks()[0].enabled = newState;
   }
 
   @override
@@ -240,8 +243,8 @@ class _VideoCallState extends State<VideoCall> {
                     Call(
                       muteVideo: muteVideo,
                       initialVideoState:
-                          localStream.getVideoTracks()[0].enabled,
-                      initialMicState: localStream.getAudioTracks()[0].enabled,
+                          localStream!.getVideoTracks()[0].enabled,
+                      initialMicState: localStream!.getAudioTracks()[0].enabled,
                       muteMic: muteMic,
                       localRenderer: localRenderer,
                       remoteRenderer: remoteRenderer,

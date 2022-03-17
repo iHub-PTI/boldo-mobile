@@ -9,7 +9,7 @@ import '../../helpers/languages.dart';
 import '../../constants.dart';
 
 class FilterScreen extends StatelessWidget {
-  const FilterScreen({Key key}) : super(key: key);
+  const FilterScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +110,7 @@ class FilterScreen extends StatelessWidget {
                                                   listen: false)
                                               .removeSpecialization(
                                                   specializationId:
-                                                      specialization.id);
+                                                      specialization.id!);
                                         },
                                         child: const Icon(
                                           Icons.close,
@@ -129,20 +129,10 @@ class FilterScreen extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 28),
+                ModalityCheck(),
                 const BuildLanguages(),
                 const SizedBox(height: 36),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Constants.primaryColor500,
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                    },
-                    child: const Text("Buscar"),
-                  ),
-                ),
+                dynamicFilterButton(context),
                 const SizedBox(height: 15),
                 SizedBox(
                   width: double.infinity,
@@ -164,10 +154,54 @@ class FilterScreen extends StatelessWidget {
       ),
     );
   }
+
+  Widget dynamicFilterButton(BuildContext context) {
+    switch (
+        Provider.of<UtilsProvider>(context, listen: true).getFilterCounter) {
+      case -1:
+        return SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Constants.grayColor500,
+            ),
+            onPressed: null,
+            child: const Text("Aplique algún filtro primero"),
+          ),
+        );
+
+      case 0:
+        return SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Constants.grayColor500,
+            ),
+            onPressed: null,
+            child: const Text("No hay coincidencias"),
+          ),
+        );
+
+      default:
+        return SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Constants.primaryColor500,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            child: Text(
+                "Mostrar ${Provider.of<UtilsProvider>(context, listen: true).getFilterCounter > 0 ? '(' + Provider.of<UtilsProvider>(context, listen: false).getFilterCounter.toString() + ') coincidencia(s)' : ''}"),
+          ),
+        );
+    }
+  }
 }
 
 class BuildLanguages extends StatelessWidget {
-  const BuildLanguages({Key key}) : super(key: key);
+  const BuildLanguages({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -187,20 +221,20 @@ class BuildLanguages extends StatelessWidget {
               builder: (_, data, __) {
                 return CheckboxListTile(
                   title: Text(
-                    item["name"],
+                    item["name"]!,
                     style: boldoHeadingTextStyle.copyWith(fontSize: 14),
                   ),
-                  value: data.contains(item["name"]),
+                  value: data.contains(item["value"]),
                   activeColor: Constants.primaryColor500,
 
                   onChanged: (newValue) {
-                    if (newValue) {
+                    if (newValue!) {
                       Provider.of<UtilsProvider>(context, listen: false)
-                          .addLanguageValue(item["name"]);
+                          .addLanguageValue(item["value"]!);
                     } else {
                       //remove
                       Provider.of<UtilsProvider>(context, listen: false)
-                          .removeLanguageValue(item["name"]);
+                          .removeLanguageValue(item["value"]!);
                     }
                   },
                   controlAffinity:
@@ -210,6 +244,69 @@ class BuildLanguages extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+class ModalityCheck extends StatefulWidget {
+  @override
+  ModalityCheckState createState() => ModalityCheckState();
+}
+
+class ModalityCheckState extends State<ModalityCheck> {
+  @override
+  Widget build(BuildContext context) {
+    Map<String, bool> values = {
+      'Remoto (en linea)':
+          Provider.of<UtilsProvider>(context, listen: true).isAppoinmentOnline,
+      'Presencial':
+          Provider.of<UtilsProvider>(context, listen: true).isAppoinmentInPerson
+    };
+    return Container(
+      height: 150,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Modalidad",
+            style: boldoHeadingTextStyle.copyWith(fontSize: 14),
+          ),
+          Expanded(
+            child: Theme(
+              data: ThemeData(unselectedWidgetColor: Constants.extraColor200),
+              child: ListView(
+                children: values.keys.map((String key) {
+                  return CheckboxListTile(
+                    title: Text(
+                      key,
+                      style: boldoHeadingTextStyle.copyWith(fontSize: 14),
+                    ),
+                    value: values[key]!,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        values[key] = value!;
+                        bool inPerson = false;
+                        bool remote = false;
+                        values.forEach((key, value) {
+                          if (key == 'Presencial') {
+                            inPerson = value;
+                          } else {
+                            remote = value;
+                          }
+                        });
+                        Provider.of<UtilsProvider>(context, listen: false)
+                            .setVirtualRemoteStatus(inPerson, remote);
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    activeColor: Constants.primaryColor500,
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

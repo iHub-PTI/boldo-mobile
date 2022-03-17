@@ -41,7 +41,6 @@ class Constants {
   static const Color grayColor700 = Color(0xff364152);
   static const Color grayColor800 = Color(0xff27303F);
 
-  // FIXME!
   // extra color palette
   static const Color extraColor100 = Color(0xffFFFFFF);
   static const Color extraColor200 = Color(0xffE5E7EB);
@@ -51,11 +50,19 @@ class Constants {
   // others color palette
   static const Color otherColor100 = Color(0xffDF6D51);
   static const Color otherColor200 = Color(0xffEE983F);
+  static const Color otherColor300 = Color(0xffC53030);
 
   //Accordion background color
   static const Color accordionbg = Color(0xfff3FAF7);
   static const Color dividerAccordion = Color(0x40F08F77);
 
+ 
+  // SOEP final string
+  static const String objective = "Objetivo";
+  static const String subjective = "Subjetivo";
+  static const String evaluation = "Evaluación";
+  static const String plan = "Plan";
+  
 }
 
 // Text Style

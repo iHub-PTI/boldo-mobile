@@ -5,7 +5,7 @@ import '../../../constants.dart';
 
 class ConnectionProblemPopup extends StatelessWidget {
   const ConnectionProblemPopup({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override

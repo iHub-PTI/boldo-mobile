@@ -6,7 +6,7 @@ import '../../constants.dart';
 
 class BookingFinalScreen extends StatefulWidget {
   BookingFinalScreen({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override

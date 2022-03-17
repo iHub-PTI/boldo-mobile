@@ -7,7 +7,7 @@ import '../../widgets/wrapper.dart';
 import '../../constants.dart';
 
 class TermsOfServices extends StatefulWidget {
-  const TermsOfServices({Key key}) : super(key: key);
+  const TermsOfServices({Key? key}) : super(key: key);
 
   @override
   _TermsOfServicesState createState() => _TermsOfServicesState();
@@ -53,8 +53,7 @@ class _TermsOfServicesState extends State<TermsOfServices> {
                 color: Color.fromRGBO(255, 255, 255, 1),
                 fontFamily: 'Inter',
                 fontSize: 17,
-                letterSpacing:
-                    0 /*percentages not used in flutter. defaulting to zero*/,
+                letterSpacing: 0,
                 fontWeight: FontWeight.normal,
                 height: 1.1428571428571428),
           ),
@@ -91,14 +90,13 @@ class _TermsOfServicesState extends State<TermsOfServices> {
                 '   Boldo se reserva el derecho de modificar el contenido del presente acuerdo , en cualquier momento y a su entero criterio, mediante la publicación de una nueva versión de este en el sitio web de Boldo. La versión revisada entrará en vigor al momento de su publicación. Es responsabilidad exclusiva suya la revisión frecuente de este documento. \n'
                 '   Usted es el único responsable de comprender y dar cumplimiento a todas y cada una de las leyes, normas y regu- laciones que se le puedan aplicar en relación con el uso que haga de los servicios de Boldo, incluyendo, pero sin limitarse a, toda actividad relacionada a la generación de recetas médicas, fichas médicas, registro de medicamentos, farmacias, laboratorios, etc. y cualquier otro servicios tangibles e intangibles. \n\n',
             style: TextStyle(
-                color: Color.fromRGBO(54, 65, 82, 1),
-                fontFamily: 'PT Serif',
-                fontSize: 20,
-                letterSpacing:
-                    0 /*percentages not used in flutter. defaulting to zero*/,
-                fontWeight: FontWeight.normal,
-                height: 1.5 /*PERCENT not supported*/
-                ),
+              color: Color.fromRGBO(54, 65, 82, 1),
+              fontFamily: 'PT Serif',
+              fontSize: 20,
+              letterSpacing: 0,
+              fontWeight: FontWeight.normal,
+              height: 1.5,
+            ),
             children: <TextSpan>[
               TextSpan(
                   text: 'DEFINICIONES \n\n',

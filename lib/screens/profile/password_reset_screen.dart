@@ -12,7 +12,7 @@ import '../../network/http.dart';
 import '../../utils/form_utils.dart';
 
 class PasswordResetScreen extends StatefulWidget {
-  PasswordResetScreen({Key key}) : super(key: key);
+  PasswordResetScreen({Key? key}) : super(key: key);
 
   @override
   _PasswordResetScreenState createState() => _PasswordResetScreenState();
@@ -21,20 +21,20 @@ class PasswordResetScreen extends StatefulWidget {
 class _PasswordResetScreenState extends State<PasswordResetScreen> {
   bool _validate = false;
   bool loading = false;
-  String _currentPassword, _newPassword, _confirmation;
-  String _errorMessage;
-  String _successMessage;
+  String? _currentPassword, _newPassword, _confirmation;
+  String? _errorMessage;
+  String? _successMessage;
   final _formKey = GlobalKey<FormState>();
 
   Future<void> _updatePassword() async {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       setState(() {
         _validate = true;
       });
       return;
     }
 
-    _formKey.currentState.save();
+    _formKey.currentState!.save();
     setState(() {
       _errorMessage = null;
       _successMessage = null;
@@ -43,7 +43,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
 
     try {
       String baseUrlKeyCloack = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
-          defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
+          defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
       dio.options.baseUrl = baseUrlKeyCloack;
 
       await dio.post(
@@ -63,7 +63,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
       print(exception);
 
       setState(() {
-        _errorMessage = exception.response.statusCode == 400
+        _errorMessage = exception.response!.statusCode == 400
             ? "Contraseña incorrecta"
             : "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         loading = false;
@@ -85,7 +85,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
       );
     }
     String baseUrlServer = String.fromEnvironment('SERVER_ADDRESS',
-        defaultValue: DotEnv().env['SERVER_ADDRESS']);
+        defaultValue: dotenv.env['SERVER_ADDRESS']!);
     dio.options.baseUrl = baseUrlServer;
   }
 
@@ -120,26 +120,18 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                 CustomFormInput(
                   label: "Contraseña actual",
                   customSVGIcon: "assets/icon/eyeoff.svg",
-                  validator: validatePassword,
+                  validator: (value) => validatePassword(value!),
                   obscureText: true,
-                  changeValueCallback: (String val) {
-                    setState(() {
-                      _currentPassword = val;
-                    });
-                  },
+                  onChanged: (String val) => setState(() => _currentPassword = val),
+                  
                 ),
                 const SizedBox(height: 48),
                 CustomFormInput(
                   label: "Contraseña nueva",
                   customSVGIcon: "assets/icon/eyeoff.svg",
-                  validator: validatePassword,
+                  validator: (value) => validatePassword(value!),
                   obscureText: true,
                   onChanged: (String val) => setState(() => _newPassword = val),
-                  changeValueCallback: (String val) {
-                    setState(() {
-                      _newPassword = val;
-                    });
-                  },
                 ),
                 const SizedBox(height: 20),
                 CustomFormInput(
@@ -148,11 +140,8 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                   validator: (pass2) =>
                       validatePasswordConfirmation(pass2, _newPassword),
                   obscureText: true,
-                  changeValueCallback: (String val) {
-                    setState(() {
-                      _confirmation = val;
-                    });
-                  },
+                    onChanged: (String val) => setState(() => _confirmation = val),
+                  
                 ),
                 const SizedBox(height: 26),
                 SizedBox(
@@ -161,7 +150,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                     children: [
                       if (_errorMessage != null)
                         Text(
-                          _errorMessage,
+                          _errorMessage!,
                           style: const TextStyle(
                             fontSize: 14,
                             color: Constants.otherColor100,
@@ -169,7 +158,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                         ),
                       if (_successMessage != null)
                         Text(
-                          _successMessage,
+                          _successMessage!,
                           style: const TextStyle(
                             fontSize: 14,
                             color: Constants.primaryColor600,

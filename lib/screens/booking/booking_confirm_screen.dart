@@ -15,9 +15,9 @@ import 'booking_final_screen.dart';
 
 class BookingConfirmScreen extends StatefulWidget {
   final Doctor doctor;
-  final DateTime bookingDate;
+  final NextAvailability bookingDate;
   BookingConfirmScreen(
-      {Key key, @required this.bookingDate, @required this.doctor})
+      {Key? key, required this.bookingDate, required this.doctor})
       : super(key: key);
 
   @override
@@ -58,11 +58,14 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16),
           child: _DoctorBookingInfoWidget(
-            bookingDate: widget.bookingDate,
+            bookingDate: DateTime.parse(widget.bookingDate.availability!),
           ),
         ),
         const SizedBox(
-          height: 50,
+          height: 8,
+        ),
+        ShowAppoinmentDescription(
+          nextAvailability: widget.bookingDate,
         ),
         Center(
           child: Text(
@@ -72,9 +75,6 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
               color: Constants.otherColor100,
             ),
           ),
-        ),
-        const SizedBox(
-          height: 10,
         ),
         Container(
           padding: const EdgeInsets.only(left: 16, right: 16),
@@ -90,8 +90,11 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                 });
 
                 await dio.post("/profile/patient/appointments", data: {
-                  'start': widget.bookingDate.toUtc().toIso8601String(),
+                  'start': DateTime.parse(widget.bookingDate.availability!)
+                      .toUtc()
+                      .toIso8601String(),
                   "doctorId": widget.doctor.id,
+                  "appointmentType":widget.bookingDate.appointmentType
                 });
 
                 Navigator.push(
@@ -102,7 +105,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                 print(exception);
                 setState(() {
                   _loading = false;
-                  _error = "Somethig went wrong, please try again later.";
+                  _error = "Intente nuevamente, por favor";
                 });
                 await Sentry.captureException(
                   exception,
@@ -112,7 +115,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                 print(exception);
                 setState(() {
                   _loading = false;
-                  _error = "Somethig went wrong, please try again later.";
+                  _error = "Intente nuevamente, por favor";
                 });
                 await Sentry.captureException(
                   exception,
@@ -127,9 +130,84 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
   }
 }
 
+class ShowAppoinmentDescription extends StatelessWidget {
+  final NextAvailability nextAvailability;
+  const ShowAppoinmentDescription({Key? key, required this.nextAvailability})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final inPersonDesc =
+        "Esta consulta será realizada en persona en el Hospital Los Ángeles.";
+    final onlineDesc =
+        "Esta consulta será realizada de forma remota a través de esta aplicación.";
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Container(
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(6)),
+              color: Constants.accordionbg),
+          child: Container(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: ListTile(
+                leading: ShowAppoinmentTypeIcon(appointmentType: nextAvailability.appointmentType!),
+                title: Text(
+                  nextAvailability.appointmentType == 'A'
+                      ? inPersonDesc
+                      : onlineDesc,
+                  style: boldoSubTextStyle.copyWith(fontSize: 16, height: 1.5),
+                ),
+              ),
+            ),
+          )),
+    );
+  }
+}
+
+class ShowAppoinmentTypeIcon extends StatelessWidget {
+  const ShowAppoinmentTypeIcon({
+    Key? key,
+    required this.appointmentType,
+  }) : super(key: key);
+
+  final String appointmentType;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // height: 30,
+      width: 40,
+      decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          color: Colors.white),
+      child: appointmentType == 'V'
+          ? Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 10,
+                width: 10,
+                child: SvgPicture.asset(
+                  'assets/icon/video.svg',
+                  color: Constants.secondaryColor500,
+                  
+                ),
+              ))
+          : const Padding(
+            padding: EdgeInsets.all(4.0),
+            child: Icon(
+                Icons.person,
+                color: Constants.primaryColor500,
+                size: 20,
+              ),
+          ),
+    );
+  }
+}
+
 class _DoctorBookingInfoWidget extends StatelessWidget {
   final DateTime bookingDate;
-  const _DoctorBookingInfoWidget({Key key, @required this.bookingDate})
+  const _DoctorBookingInfoWidget({Key? key, required this.bookingDate})
       : super(key: key);
 
   @override
@@ -169,7 +247,7 @@ class _DoctorBookingInfoWidget extends StatelessWidget {
 
 class _DoctorProfileWidget extends StatelessWidget {
   final Doctor doctor;
-  const _DoctorProfileWidget({Key key, @required this.doctor})
+  const _DoctorProfileWidget({Key? key, required this.doctor})
       : super(key: key);
 
   @override
@@ -205,7 +283,7 @@ class _DoctorProfileWidget extends StatelessWidget {
                                 fit: BoxFit.cover)
                             : CachedNetworkImage(
                                 fit: BoxFit.cover,
-                                imageUrl: doctor.photoUrl,
+                                imageUrl: doctor.photoUrl!,
                                 progressIndicatorBuilder:
                                     (context, url, downloadProgress) => Padding(
                                   padding: const EdgeInsets.all(26.0),
@@ -229,32 +307,44 @@ class _DoctorProfileWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "${getDoctorPrefix(doctor.gender)}${doctor.givenName} ${doctor.familyName}",
-                          style: boldoHeadingTextStyle.copyWith(
-                              fontWeight: FontWeight.normal),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Text(
+                              "${getDoctorPrefix(doctor.gender!)}${doctor.givenName} ${doctor.familyName}",
+                              style: boldoHeadingTextStyle.copyWith(
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ),
                         ),
                         const SizedBox(
                           height: 5,
                         ),
                         if (doctor.specializations != null &&
-                            doctor.specializations.isNotEmpty)
-                          Row(
-                            children: [
-                              for (int i = 0;
-                                  i < doctor.specializations.length;
-                                  i++)
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(left: i == 0 ? 0 : 3.0),
-                                  child: Text(
-                                    "${doctor.specializations[i].description}${doctor.specializations.length > 1 && i == 0 ? "," : ""}",
-                                    style: boldoSubTextStyle.copyWith(
-                                        color: Constants.otherColor100),
-                                  ),
-                                ),
-                            ],
-                          ),
+                            doctor.specializations!.isNotEmpty)
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.6,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  for (int i = 0;
+                                      i < doctor.specializations!.length;
+                                      i++)
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: i == 0 ? 0 : 3.0),
+                                      child: Text(
+                                        "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
+                                        style: boldoSubTextStyle.copyWith(
+                                            color: Constants.otherColor100),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          )
                       ],
                     )
                   ],
@@ -263,7 +353,7 @@ class _DoctorProfileWidget extends StatelessWidget {
                   height: 16,
                 ),
                 if (doctor.biography != null)
-                  Text(doctor.biography,
+                  Text(doctor.biography!,
                       style: boldoSubTextStyle.copyWith(
                           fontSize: 16, height: 1.5)),
               ],

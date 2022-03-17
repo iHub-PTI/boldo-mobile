@@ -22,7 +22,7 @@ import 'package:boldo/constants.dart';
 class DashboardScreen extends StatefulWidget {
   final bool setLoggedOut;
 
-  DashboardScreen({Key key, this.setLoggedOut = false}) : super(key: key);
+  DashboardScreen({Key? key, this.setLoggedOut = false}) : super(key: key);
 
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
@@ -43,20 +43,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget getPage(int index) {
-    if (index == 0) {
-      return HomeTab();
-    }
-    if (index == 1) {
-      return DoctorsTab();
-    }
-    if (index == 2) {
-      return MedicalRecordScreen();
-    }
-    if (index == 3) {
-      bool isAuthenticated =
-          Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
-      if (!isAuthenticated) {
-        authenticateUser(context: context);
+
+     bool isAuthenticated =
+            Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
+        if (!isAuthenticated) {
+          authenticateUser(context: context);
 
         return const Center(
             child: CircularProgressIndicator(
@@ -65,7 +56,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ));
       }
 
-      return SettingsTab();
+      if (index == 0) {
+        return HomeTab();
+      }
+      if (index == 1) {
+        return DoctorsTab();
+      }
+      if (index == 2) {
+        return MedicalRecordScreen();
+      }
+      if (index == 3) {
+        return SettingsTab();
     }
     return HomeTab();
   }
@@ -109,8 +110,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                         label: 'Médicos',
                       ),
-                    const   BottomNavigationBarItem(
-                        icon: Icon(Icons.table_rows,color: Colors.grey,),
+                       BottomNavigationBarItem(
+                        icon: SvgPicture.asset(
+                          'assets/icon/file.svg',
+                          semanticsLabel: 'Doctor Icon',
+                          color: _selectedPageIndex == 2
+                              ? Constants.secondaryColor500
+                              : Constants.extraColor200,
+                        ),
                         label: 'Mis Fichas',
                       ),
                       BottomNavigationBarItem(
@@ -119,7 +126,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               ? 'assets/icon/profileIcon.svg'
                               : 'assets/icon/settingsIcon.svg',
                           semanticsLabel: 'Doctor Icon',
-                          color: _selectedPageIndex == 2
+                          color: _selectedPageIndex == 3
                               ? Constants.secondaryColor500
                               : Constants.extraColor200,
                         ),
@@ -140,26 +147,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
 }
 
 Future<void> authenticateUser(
-    {@required BuildContext context, bool switchPage = true}) async {
+    {required BuildContext context, bool switchPage = true}) async {
   String keycloakRealmAddress = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
-      defaultValue: DotEnv().env['KEYCLOAK_REALM_ADDRESS']);
+      defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
 
   FlutterAppAuth appAuth = FlutterAppAuth();
 
   const storage = FlutterSecureStorage();
   try {
-    final AuthorizationTokenResponse result =
+    final AuthorizationTokenResponse? result =
         await appAuth.authorizeAndExchangeCode(
       AuthorizationTokenRequest(
         'boldo-patient',
-        'com.penguin.boldo:/login',
+        'py.org.pti.boldo:/login',
         discoveryUrl: '$keycloakRealmAddress/.well-known/openid-configuration',
         scopes: ['openid', 'offline_access'],
         allowInsecureConnections: true,
       ),
     );
 
-    await storage.write(key: "access_token", value: result.accessToken);
+    await storage.write(key: "access_token", value: result!.accessToken);
     await storage.write(key: "refresh_token", value: result.refreshToken);
 
     Provider.of<AuthProvider>(context, listen: false)
@@ -172,7 +179,7 @@ Future<void> authenticateUser(
       await prefs.setString("gender", response.data["gender"]);
     }
   } on PlatformException catch (err, s) {
-    if (!err.message.contains('User cancelled flow')) {
+    if (!err.message!.contains('User cancelled flow')) {
       print(err);
       await Sentry.captureException(err, stackTrace: s);
     }

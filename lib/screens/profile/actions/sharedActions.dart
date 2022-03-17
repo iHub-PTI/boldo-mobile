@@ -9,7 +9,7 @@ import '../../../provider/user_provider.dart';
 import '../../../network/http.dart';
 
 Future<Map<String, String>> updateProfile(
-    {@required BuildContext context}) async {
+    {required BuildContext context}) async {
   try {
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
@@ -30,8 +30,8 @@ Future<Map<String, String>> updateProfile(
     });
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("profile_url", userProvider.getPhotoUrl);
-    await prefs.setString("gender", userProvider.getGender);
+    await prefs.setString("profile_url", userProvider.getPhotoUrl??'');
+    await prefs.setString("gender", userProvider.getGender??'');
 
     return {"successMessage": "Perfil actualizado con éxito."};
   } on DioError catch (exception, stackTrace) {
