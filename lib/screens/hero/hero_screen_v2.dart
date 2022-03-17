@@ -28,6 +28,10 @@ class HeroScreenV2 extends StatelessWidget {
       boxFit: BoxFit.contain,
       alignment: Alignment.bottomCenter,
       index: 0,
+      title: 'Consultas remotas',
+      description: 'Con Boldo podés agendar, gestionar y asistir a consultas'
+          'remotas. Todo desde donde estés.',
+      secondaryText: 'ver doctores disponibles',
     ),
     CarouselSlide(
       key: UniqueKey(),
@@ -35,6 +39,9 @@ class HeroScreenV2 extends StatelessWidget {
       boxFit: BoxFit.cover,
       alignment: Alignment.centerLeft,
       index: 1,
+      title: 'Recetas electrónicas',
+      description: '',
+      secondaryText: '',
     ),
     CarouselSlide(
       key: UniqueKey(),
@@ -42,6 +49,9 @@ class HeroScreenV2 extends StatelessWidget {
       boxFit: BoxFit.cover,
       alignment: Alignment.bottomCenter,
       index: 2,
+      title: 'Estudios',
+      description: '',
+      secondaryText: '',
     )
   ];
 
@@ -56,70 +66,137 @@ class HeroScreenV2 extends StatelessWidget {
     double safeBlockHorizontal = (screenWidth - _safeAreaHorizontal) / 100;
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration( // Background linear gradient
-          gradient: LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            colors: <Color> [
-              ConstantsV2.primaryColor100,
-              ConstantsV2.primaryColor200,
-              ConstantsV2.primaryColor300
-            ],
-            stops: <double> [
-              ConstantsV2.primaryStop100,
-              ConstantsV2.primaryStop200,
-              ConstantsV2.primaryStop300,
-            ]
-          )
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              const Spacer(),
-              Align(
-                alignment: Alignment.center,
-                child: AspectRatio(
-                  aspectRatio: 1.0,
-                  child: ListView.builder(
-                    itemCount: items.length*2+1,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, int index) {
-                      return _buildCarousel(context, index);
-                    },
-                  ),
-                ),
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.transparent,
+              image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/images/hero_background.png')
               ),
-
-              const Spacer(),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Constants.primaryColor500,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration( // Background linear gradient
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: <Color> [
+                  ConstantsV2.primaryColor100.withOpacity(0.8),
+                  ConstantsV2.primaryColor200.withOpacity(0.8),
+                  ConstantsV2.primaryColor300.withOpacity(0.8),
+                ],
+                stops: <double> [
+                  ConstantsV2.primaryStop100,
+                  ConstantsV2.primaryStop200,
+                  ConstantsV2.primaryStop300,
+                ]
+              )
+            ),
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container (
+                    margin: const EdgeInsets.all(16.0),
+                    child: Align(
+                        child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset('assets/icon/logo_text.svg'),
+                              const SizedBox(width: 16),
+                              const Expanded(
+                                child: Text(
+                                  "Tu ecosistema integral de servicios integrales de salud",
+                                  textAlign: TextAlign.end,
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.normal,
+                                    fontStyle: FontStyle.normal,
+                                    fontFamily: 'Montserrat',
+                                    color: Color(0xffF5F5F5),
+                                  ),
+                                ),
+                              )
+                            ]
+                        )
                     ),
                   ),
-                  onPressed: () async {
-                    final SharedPreferences prefs =
-                    await SharedPreferences.getInstance();
-                    bool onboardingCompleted =
-                        prefs.getBool("preRegisterNotify") ?? false;
-                    if (onboardingCompleted == true) {
-                      _openWebView(context);
-                    } else {
-                      //show pre register
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const PreRegisterScreen()),
-                      );
-                    }
-                  },
-                  child: const Text("Iniciar Sesión")),
-              const Spacer(),
-            ],
-          ),
-        ),
+                  const Spacer(),
+                  Align(
+                    alignment: Alignment.center,
+                    child: AspectRatio(
+                      aspectRatio: 1.0,
+                      child: ListView.builder(
+                        itemCount: items.length*2+1,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: _buildCarousel,
+                      ),
+                    ),
+                  ),
+
+                  const Spacer(),
+
+                  Container(
+                    margin: const EdgeInsets.only(right: 16, bottom: 16),
+                    alignment: Alignment.bottomRight,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: ConstantsV2.buttonPrimaryColor100,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                      ),
+                      onPressed: () async {
+                        final SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                        bool onboardingCompleted =
+                            prefs.getBool("preRegisterNotify") ?? false;
+                        if (onboardingCompleted == true) {
+                          _openWebView(context);
+                        } else {
+                          //show pre register
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const PreRegisterScreen()),
+                          );
+                        }
+                      },
+                      child: Container(
+                          constraints: const BoxConstraints(maxWidth: 142, minHeight: 48),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "comenzar",
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.normal,
+                                    fontStyle: FontStyle.normal,
+                                    fontFamily: 'Montserrat',
+                                    color: Color(0xffF5F5F5),
+                                  ),
+                                ),
+                                const Padding(padding: EdgeInsets.only(left: 10.0)),
+                                SvgPicture.asset(
+                                  'assets/icon/arrow-right.svg',
+                                  semanticsLabel: 'Start icon',
+                                ),
+                              ]
+                          )
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ]
       )
 
     );
@@ -139,16 +216,7 @@ class HeroScreenV2 extends StatelessWidget {
     if ( carouselIndex % 2 == 0 ) // Padding between Cards
       return const Padding(padding: EdgeInsets.only(left: 16.0));
     return InkWell(
-      child: Card(
-        margin: EdgeInsets.zero,
-        clipBehavior: Clip.antiAlias,
-        elevation: 6,
-        shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        ),
-        child: CustomCardAnimated(carouselSlide: items[(carouselIndex-1)~/2])
-
-      ),
+      child: CustomCardAnimated(carouselSlide: items[(carouselIndex-1)~/2])
     );
   }
 
@@ -189,6 +257,9 @@ class CarouselSlide extends StatelessWidget {
   final int index;
   final BoxFit boxFit;
   final Alignment alignment;
+  final String title;
+  final String description;
+  final String secondaryText;
 
   const CarouselSlide({
     Key? key,
@@ -196,6 +267,9 @@ class CarouselSlide extends StatelessWidget {
     required this.boxFit,
     required this.alignment,
     required this.index,
+    required this.title,
+    required this.description,
+    required this.secondaryText,
   }) : super(key: key);
 
   @override
@@ -204,7 +278,9 @@ class CarouselSlide extends StatelessWidget {
   }
 }
 
-
+/// return Card class with image background and linear gradient colors, required
+/// a [CarouselSlide] with image and text to use the image as background an text
+/// as description.
 class CustomCardAnimated extends StatefulWidget {
 
   final CarouselSlide? carouselSlide;
@@ -219,7 +295,7 @@ class CustomCardAnimated extends StatefulWidget {
 }
 
 class _CustomCardAnimatedState extends State<CustomCardAnimated>{
-  // first state
+  // colors and stops that define a visual state of the card
   Color? color100;
   Color? color200;
   double? stopColor100;
@@ -251,13 +327,15 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated>{
         color200 = ConstantsV2.secondaryCardHeroColor100.withOpacity(0);
         stopColor100 = ConstantsV2.secondaryCardStop100;
         stopColor200 = ConstantsV2.secondaryCardStop200;
+
+        // To delay a state change for animated false to animated true
         Future.delayed(const Duration(milliseconds: 300), () {
           setState(() {
             textAppear = true;
           });
         });
       } else {
-        color100 = ConstantsV2.primaryCardHeroColor100.withOpacity(0.97);
+        color100 = ConstantsV2.primaryCardHeroColor100.withOpacity(0.81);
         color200 = ConstantsV2.primaryCardHeroColor100.withOpacity(0);
         stopColor100 = ConstantsV2.primaryCardStop100;
         stopColor200 = ConstantsV2.primaryCardStop200;
@@ -269,13 +347,17 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated>{
   @override
   Widget build(BuildContext context) {
     return Card(
+      clipBehavior: Clip.antiAlias,
+      elevation: 6,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: InkWell(
         onTap: () {
           if(!(animate!))
             setState(() {
               animate = true;
               showInfoPlayer(animate!);
-              print(carouselSlide!.image);
             });
           else
             setState(() {
@@ -288,13 +370,17 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated>{
           alignment: Alignment.bottomLeft,
           child: Stack(
             children: [
+              // Container that define the image background
               Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
+                    fit: BoxFit.cover,
                     image: AssetImage(carouselSlide!.image)
                   ),
                 ),
               ),
+
+              // Container that define the linear gradient background
               Container(
                 decoration: BoxDecoration( // Back ground linear gradient
                   gradient: LinearGradient(
@@ -311,80 +397,96 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated>{
                   ),
                 ),
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: AnimatedOpacity(
-                  opacity: textAppear! ? 0 : 1,
-                  duration: Duration(milliseconds: textAppear! ? 200 : 200),
-                  child: const
-                    Text(
-                      "Consultas Remotas",
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.white,
+
+              // Container used for group text info
+              Container(
+                margin: const EdgeInsets.only(left:16, right: 16, top: 16, bottom: 16),
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: AnimatedOpacity(
+                        opacity: textAppear! ? 0 : 1,
+                        duration: Duration(milliseconds: textAppear! ? 200 : 200),
+                        child:
+                        Text(
+                          carouselSlide!.title,
+                          style: const TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.normal,
+                            fontStyle: FontStyle.normal,
+                            fontFamily: 'Montserrat',
+                            color: Color(0xffF5F5F5),
+                          ),
+                        ),
                       ),
                     ),
-                ),
-              ),
-              Align(
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  child: AnimatedOpacity(
-                    opacity: textAppear! ? 1 : 0,
-                    duration: Duration(milliseconds: textAppear! ? 400 : 100),
-                    curve: Curves.easeOut,
-                    child: Column(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            "Consultas remotas",
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w400,
-                              fontFamily: 'Montserrat',
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
+                    Align(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        child: AnimatedOpacity(
+                          opacity: textAppear! ? 1 : 0,
+                          duration: Duration(milliseconds: textAppear! ? 400 : 100),
+                          curve: Curves.easeOut,
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  carouselSlide!.title,
+                                  style: const TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.normal,
+                                    fontStyle: FontStyle.normal,
+                                    fontFamily: 'Montserrat',
+                                    color: Color(0xffF5F5F5),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  carouselSlide!.description,
+                                  style: const TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.normal,
+                                    fontStyle: FontStyle.normal,
+                                    fontFamily: 'Montserrat',
+                                    color: Color(0xffF5F5F5),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 0.0,
+                                    primary: Constants.primaryColor500.withOpacity(0),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                  ),
+                                  onPressed: () async {
 
-                        const Expanded(
-                          child: Text(
-                            "Con Boldo podés agendar, gestionar y asistir a consultas remotas. Todo desde donde estés",
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
+                                  },
+                                  child: Text(
+                                    carouselSlide!.secondaryText,
+                                    style: const TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.normal,
+                                      fontStyle: FontStyle.normal,
+                                      fontFamily: 'Montserrat',
+                                      color: Color(0xffF5F5F5),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const Expanded(
-                          child: Text(
-                            "Ver doctores disponibles",
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        /*Container(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          width: 270,
-                          child: const Text(
-                            "Mohamed Salah is one of the most prolific forwards in European football and a Champions League and Premier League winner with Liverpool.",
-                            style: TextStyle(
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ),*/
-                      ],
+                      ),
                     ),
-                  ),
-                ),
+                  ]
+                )
               ),
+
             ],
           ),
         ),

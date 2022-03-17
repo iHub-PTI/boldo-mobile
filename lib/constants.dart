@@ -135,6 +135,9 @@ class ConstantsV2 {
   static const double primaryStop200 = 1.25;
   static const double primaryStop300 = 1.79;
 
+  // button color
+  static const Color buttonPrimaryColor100 = Color(0xffEB8B76);
+
   // hero cards colors gradient
   static const Color primaryCardHeroColor100 = Color(0xffFDA57D);
 
