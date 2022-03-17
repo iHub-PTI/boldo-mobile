@@ -84,7 +84,7 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
 
         try {
           final TokenResponse? result = await appAuth.token(TokenRequest(
-              'boldo-patient', 'com.penguin.boldo:/login',
+              'boldo-patient', 'py.org.pti.boldo:/login',
               discoveryUrl:
                   '$keycloakRealmAddress/.well-known/openid-configuration',
               refreshToken: refreshToken,
@@ -203,7 +203,7 @@ void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
 
         try {
           final TokenResponse? result = await appAuth.token(TokenRequest(
-              'boldo-patient', 'com.penguin.boldo:/login',
+              'boldo-patient', 'py.org.pti.boldo:/login',
               discoveryUrl:
                   '$keycloakRealmAddress/.well-known/openid-configuration',
               refreshToken: refreshToken,

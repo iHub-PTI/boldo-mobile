@@ -200,7 +200,7 @@ Future<void> authenticateUser(
         await appAuth.authorizeAndExchangeCode(
       AuthorizationTokenRequest(
         'boldo-patient',
-        'com.penguin.boldo:/login',
+        'py.org.pti.boldo:/login',
         discoveryUrl: '$keycloakRealmAddress/.well-known/openid-configuration',
         scopes: ['openid', 'offline_access'],
         allowInsecureConnections: true,
