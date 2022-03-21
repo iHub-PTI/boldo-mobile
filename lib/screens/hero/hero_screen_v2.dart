@@ -2,6 +2,8 @@ import 'package:boldo/network/http.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/pre_register_notify/pre_register_screen.dart';
+import 'package:boldo/screens/register/sign_up_basic_info.dart';
+import 'package:boldo/screens/register/sign_up_phone_number.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -69,23 +71,14 @@ class HeroScreenV2 extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              color: Colors.transparent,
-              image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage('assets/images/hero_background.png')
-              ),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration( // Background linear gradient
+            decoration: const BoxDecoration( // Background linear gradient
               gradient: LinearGradient(
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
                 colors: <Color> [
-                  ConstantsV2.primaryColor100.withOpacity(0.8),
-                  ConstantsV2.primaryColor200.withOpacity(0.8),
-                  ConstantsV2.primaryColor300.withOpacity(0.8),
+                  ConstantsV2.primaryColor100,
+                  ConstantsV2.primaryColor200,
+                  ConstantsV2.primaryColor300,
                 ],
                 stops: <double> [
                   ConstantsV2.primaryStop100,
@@ -94,6 +87,19 @@ class HeroScreenV2 extends StatelessWidget {
                 ]
               )
             ),
+          ),
+          Opacity(
+            opacity: 0.2,
+            child: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: AssetImage('assets/images/hero_background.png')
+                ),
+              ),
+            ),
+          ),
+          Container(
             child: SafeArea(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -157,13 +163,13 @@ class HeroScreenV2 extends StatelessWidget {
                         bool onboardingCompleted =
                             prefs.getBool("preRegisterNotify") ?? false;
                         if (onboardingCompleted == true) {
-                          _openWebView(context);
+                          _openRegister(context);
                         } else {
                           //show pre register
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const PreRegisterScreen()),
+                                builder: (context) => const SignUpPhoneInfo()),
                           );
                         }
                       },
@@ -179,7 +185,7 @@ class HeroScreenV2 extends StatelessWidget {
                                     fontWeight: FontWeight.normal,
                                     fontStyle: FontStyle.normal,
                                     fontFamily: 'Montserrat',
-                                    color: Color(0xffF5F5F5),
+                                    color: ConstantsV2.primaryColor,
                                   ),
                                 ),
                                 const Padding(padding: EdgeInsets.only(left: 10.0)),
@@ -205,10 +211,10 @@ class HeroScreenV2 extends StatelessWidget {
 
   final pageController = PageController(viewportFraction: 1.1);
 
-  void _openWebView(context) {
+  void _openRegister(context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const LoginWebViewHelper()),
+      MaterialPageRoute(builder: (context) => const SignUpPhoneInfo()),
     );
   }
 

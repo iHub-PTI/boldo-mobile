@@ -88,30 +88,30 @@ ThemeData boldoTheme = ThemeData(
     ),
   ),
   inputDecorationTheme: InputDecorationTheme(
-    enabledBorder: OutlineInputBorder(
+    enabledBorder: UnderlineInputBorder(
       borderRadius: BorderRadius.circular(6),
       borderSide: const BorderSide(
-        color: Constants.extraColor200,
+        color: ConstantsV2.enableBorded,
         width: 1.0,
       ),
     ),
-    focusedBorder: OutlineInputBorder(
+    focusedBorder: UnderlineInputBorder(
       borderRadius: BorderRadius.circular(6),
       borderSide: const BorderSide(
-        color: Constants.extraColor200,
+        color: ConstantsV2.focuseBorder,
         width: 1.25,
       ),
     ),
-    focusedErrorBorder: OutlineInputBorder(
+    focusedErrorBorder: UnderlineInputBorder(
       borderRadius: BorderRadius.circular(6),
       borderSide: const BorderSide(
-        color: Constants.extraColor200,
+        color: ConstantsV2.buttonPrimaryColor100,
       ),
     ),
-    errorBorder: OutlineInputBorder(
+    errorBorder: UnderlineInputBorder(
       borderRadius: BorderRadius.circular(6),
       borderSide: const BorderSide(
-        color: Constants.extraColor200,
+        color: ConstantsV2.buttonPrimaryColor100,
         width: 1.0,
       ),
     ),
@@ -151,5 +151,12 @@ class ConstantsV2 {
   // stops hero cards background colors
   static const double secondaryCardStop100 = 0.82;
   static const double secondaryCardStop200 = 1.46;
+
+  // Text color
+  static const Color primaryColor = Color(0xffF5F5F5);
+
+  // Input line border
+  static const Color enableBorded = Color(0xff424649);
+  static const Color focuseBorder = Color(0xff707882);
 
 }
