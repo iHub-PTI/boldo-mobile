@@ -534,6 +534,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.4.0"
+  pin_code_text_field:
+    dependency: "direct main"
+    description:
+      name: pin_code_text_field
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.8.0"
   platform:
     dependency: transitive
     description:

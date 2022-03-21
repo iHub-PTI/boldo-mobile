@@ -125,7 +125,7 @@ class _SignUpPhoneInfoState extends State<SignUpPhoneInfo> {
                                 code = "${Random().nextInt(10000)}".padLeft(4, '0'),
                                 print(code),
                                 Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) => ValidateUserPhone(phoneNumber: phoneController!.value.text, code: code )
+                                    builder: (context) => ValidateUserPhone(phoneNumber: phoneController.value.text, code: code )
                                   )
                                 )
                               //_formPhoneKey.currentState.h
