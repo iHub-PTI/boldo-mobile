@@ -1,4 +1,5 @@
 import 'package:boldo/screens/hero/hero_screen.dart';
+import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/foundation.dart';
@@ -99,7 +100,7 @@ class _PreRegisterSuccessState extends State<PreRegisterSuccess> {
                   onPressed: () async {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HeroScreen()),
+                      MaterialPageRoute(builder: (context) => HeroScreenV2()),
                     );
                   },
                   child: const Text("Entendido"),

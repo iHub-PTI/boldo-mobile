@@ -3,6 +3,7 @@ import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/screens/hero/hero_screen.dart';
+import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:boldo/screens/pre_register_notify/pre_register_success_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,7 @@ class _LoginWebViewHelperState extends State<LoginWebViewHelper> {
         //user canceled or generic error
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HeroScreen()),
+          MaterialPageRoute(builder: (context) => HeroScreenV2()),
         );
         break;
       case 1:

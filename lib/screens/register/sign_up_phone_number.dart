@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:boldo/screens/register/validate_phone.dart';
+import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:email_validator/email_validator.dart';
@@ -165,6 +166,31 @@ class _SignUpPhoneInfoState extends State<SignUpPhoneInfo> {
                           ),
                         ),
                       ),
+                      const SizedBox(
+                        height: 80,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "¿Ya tenés cuenta?"
+                          ),
+                          const SizedBox(
+                            width: 16,
+                          ),
+                          GestureDetector(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginWebViewHelper()),
+                            ),
+                            child: const Text('iniciar sesión',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    decoration: TextDecoration.underline,
+                                    color: ConstantsV2.buttonPrimaryColor100)),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),

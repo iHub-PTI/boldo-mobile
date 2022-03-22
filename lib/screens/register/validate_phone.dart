@@ -1,3 +1,4 @@
+import 'package:boldo/screens/register/dni_register.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -117,9 +118,12 @@ class _ValidateUserPhoneState extends State<ValidateUserPhone> {
                             print("Error");
                           }else{
                             hasError = false;
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => DniRegister()
+                              )
+                            );
                           }
                         });
-                        print("DONE $text");
                       },
                     ),
                     Visibility(
@@ -128,96 +132,6 @@ class _ValidateUserPhoneState extends State<ValidateUserPhone> {
                       ),
                       visible: hasError,
                     ),
-                    /*Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                            width: 70,
-                            height: 70,
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              color: Colors.white,
-                              child: TextFormField(
-                                textAlign: TextAlign.center,
-                                maxLength: 1,
-                                decoration: const InputDecoration(
-                                  focusedBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  contentPadding:
-                                  EdgeInsetsDirectional.only(top: 10.0),
-                                ),
-                              ),
-                            )),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                            width: 70,
-                            height: 70,
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              color: Colors.white,
-                              child: TextFormField(
-                                textAlign: TextAlign.center,
-                                maxLength: 1,
-                                decoration: const InputDecoration(
-                                  focusedBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  contentPadding:
-                                  EdgeInsetsDirectional.only(top: 10.0),
-                                ),
-                              ),
-                            )),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                            width: 70,
-                            height: 70,
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              color: Colors.white,
-                              child: TextFormField(
-                                textAlign: TextAlign.center,
-                                maxLength: 1,
-                                decoration: const InputDecoration(
-                                  focusedBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  contentPadding:
-                                  EdgeInsetsDirectional.only(top: 10.0),
-                                ),
-                              ),
-                            )),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                            width: 70,
-                            height: 70,
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              color: Colors.white,
-                              child: TextFormField(
-                                textAlign: TextAlign.center,
-                                maxLength: 1,
-                                decoration: const InputDecoration(
-                                  focusedBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  contentPadding:
-                                  EdgeInsetsDirectional.only(top: 10.0),
-                                ),
-                              ),
-                            )),
-                      ],
-                    ),*/
                     Align(
                       alignment: Alignment.bottomLeft,
                       child: Padding(
