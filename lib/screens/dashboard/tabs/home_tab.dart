@@ -6,7 +6,10 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state.dart';
 import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
 import 'package:boldo/screens/dashboard/tabs/components/waiting_room_card.dart';
+import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
@@ -35,6 +38,66 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
   bool _dataFetchError = false;
   bool _loading = true;
+  bool _expandedCarousel = true;
+  double _heightAppBarExpandable = ConstantsV2.homeAppBarMaxHeight;
+  double _heightCarouselTitleExpandable = ConstantsV2.homeCarouselTitleContainerMaxHeight;
+  double _heightCarouselExpandable = ConstantsV2.homeCarouselContainerMaxHeight;
+
+  double _heightCarouselCard = ConstantsV2.homeCarouselCardMaxHeight;
+  double _widthCarouselCard = ConstantsV2.homeCarouselCardMaxWidth;
+  double _radiusCarouselCard = ConstantsV2.homeCarouselCardMinRadius;
+
+  final List<CarouselCardPages> items = [
+    CarouselCardPages(
+      key: UniqueKey(),
+      image: 'assets/images/card_appointment.png',
+      boxFit: BoxFit.contain,
+      alignment: Alignment.bottomCenter,
+      index: 0,
+      title: 'Marcar una consulta remota',
+      appear: true,
+      page: DoctorsTab(),
+    ),
+    CarouselCardPages(
+      key: UniqueKey(),
+      image: 'assets/images/card_prescriptions.png',
+      boxFit: BoxFit.cover,
+      alignment: Alignment.centerLeft,
+      index: 1,
+      title: 'Ver mis recetas',
+      appear: true,
+    ),
+    CarouselCardPages(
+      key: UniqueKey(),
+      image: 'assets/images/card_medicalStudies.png',
+      boxFit: BoxFit.cover,
+      alignment: Alignment.bottomCenter,
+      index: 2,
+      title: 'Ver mis estudios',
+      appear: false,
+    ),
+    CarouselCardPages(
+      key: UniqueKey(),
+      image: 'assets/images/card_healthPassport.png',
+      boxFit: BoxFit.contain,
+      alignment: Alignment.bottomCenter,
+      index: 3,
+      title: 'Pasaporte de salud',
+      appear: false,
+      page: DoctorsTab(),
+    ),
+    CarouselCardPages(
+      key: UniqueKey(),
+      image: 'assets/images/card_medicalInspection.png',
+      boxFit: BoxFit.contain,
+      alignment: Alignment.bottomCenter,
+      index: 4,
+      title: 'Mi inspección médica empresarial',
+      appear: false,
+      page: DoctorsTab(),
+    ),
+  ];
+
 
   RefreshController? _refreshController =
       RefreshController(initialRefresh: false);
@@ -50,7 +113,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     getAppointmentsData(loadMore: false);
-
+    print("AGAIN home");
     super.initState();
   }
 
@@ -285,107 +348,349 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         orElse: () => Appointment());
 
     return Scaffold(
-      appBar: const HomeTabAppBar(),
-      body: _dataFetchError
-          ? DataFetchErrorWidget(retryCallback: getAppointmentsData)
-          : _loading
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              pinned: true,
+              floating: false,
+              expandedHeight: ConstantsV2.homeExpandedMaxHeight,
+              automaticallyImplyLeading: false,
+              backgroundColor: Colors.white,
+              leadingWidth: double.infinity,
+              toolbarHeight: ConstantsV2.homeExpandedMinHeight,
+              flexibleSpace: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  _heightAppBarExpandable = ConstantsV2.homeAppBarMaxHeight - (ConstantsV2.homeAppBarMaxHeight -ConstantsV2.homeAppBarMinHeight)*((ConstantsV2.homeExpandedMaxHeight- constraints.biggest.height)/(ConstantsV2.homeExpandedMaxHeight-ConstantsV2.homeExpandedMinHeight));
+                  _heightCarouselTitleExpandable = ConstantsV2.homeCarouselTitleContainerMaxHeight - (ConstantsV2.homeCarouselTitleContainerMaxHeight -ConstantsV2.homeCarouselTitleContainerMinHeight)*((ConstantsV2.homeExpandedMaxHeight- constraints.biggest.height)/(ConstantsV2.homeExpandedMaxHeight-ConstantsV2.homeExpandedMinHeight));
+                  _heightCarouselExpandable = ConstantsV2.homeCarouselContainerMaxHeight - (ConstantsV2.homeCarouselContainerMaxHeight -ConstantsV2.homeCarouselContainerMinHeight)*((ConstantsV2.homeExpandedMaxHeight- constraints.biggest.height)/(ConstantsV2.homeExpandedMaxHeight-ConstantsV2.homeExpandedMinHeight));
+                  _heightCarouselCard = ConstantsV2.homeCarouselCardMaxHeight - (ConstantsV2.homeCarouselCardMaxHeight -ConstantsV2.homeCarouselCardMinHeight)*((ConstantsV2.homeExpandedMaxHeight- constraints.biggest.height)/(ConstantsV2.homeExpandedMaxHeight-ConstantsV2.homeExpandedMinHeight));
+                  _widthCarouselCard = ConstantsV2.homeCarouselCardMaxWidth - (ConstantsV2.homeCarouselCardMaxWidth -ConstantsV2.homeCarouselCardMinWidth)*((ConstantsV2.homeExpandedMaxHeight- constraints.biggest.height)/(ConstantsV2.homeExpandedMaxHeight-ConstantsV2.homeExpandedMinHeight));
+                  _radiusCarouselCard = ConstantsV2.homeCarouselCardMinRadius + (ConstantsV2.homeCarouselCardMaxRadius -ConstantsV2.homeCarouselCardMinRadius)*((ConstantsV2.homeExpandedMaxHeight- constraints.biggest.height)/(ConstantsV2.homeExpandedMaxHeight-ConstantsV2.homeExpandedMinHeight));
+
+                  return Column(
+                      children: [
+                        HomeTabAppBar(max: _heightAppBarExpandable),
+                        Container(
+                          width: double.maxFinite ,
+                          height: _heightCarouselTitleExpandable,
+                          padding: const EdgeInsetsDirectional.all(16),
+                          decoration: const BoxDecoration(
+                            color: ConstantsV2.lightGrey,
+                          ),
+                          child: const Text(
+                            "qué desea hacer",
+                            style: boldoSubTextStyle,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          height: _heightCarouselExpandable,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: items.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: _buildCarousel,
+                          ),
+                        ),
+                      ]
+                  );
+                }
+              ),
+            ),
+
+            SliverToBoxAdapter(
+              child: Container(
+                padding: const EdgeInsetsDirectional.all(16),
+                  decoration: const BoxDecoration(
+                    color: ConstantsV2.primaryColor
+                  ),
+                  child: const SizedBox(
+                    height: 30,
+                    child: Text(
+                      "novedades",
+                      style: boldoSubTextStyle,
+                    ),
+                  )
+              )
+            ),
+            /*_dataFetchError
+            ? DataFetchErrorWidget(retryCallback: getAppointmentsData)
+            : _loading
               ? const Center(
-                  child: CircularProgressIndicator(
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                  backgroundColor: Constants.primaryColor600,
-                ))
+                child: CircularProgressIndicator(
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                backgroundColor: Constants.primaryColor600,
+                )
+              )
               : !isAuthenticated || allAppointmentsState.isEmpty
-                  ? const EmptyAppointmentsState(
-                      size: "big", text: "Agrega tu primera cita")
-                  : SmartRefresher(
-                      enablePullDown: true,
-                      enablePullUp: true,
-                      header: const MaterialClassicHeader(
-                        color: Constants.primaryColor800,
-                      ),
-                      controller: _refreshController!,
-                      onLoading: () {
-                        dateOffset =
-                            dateOffset.subtract(const Duration(days: 30));
-                        setState(() {});
-                        getAppointmentsData(loadMore: true);
-                      },
-                      onRefresh: _onRefresh,
-                      footer: CustomFooter(
-                        height: 140,
-                        builder: (BuildContext context, LoadStatus? mode) {
-                          print(mode);
-                          Widget body = Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
-                                style: const TextStyle(
-                                  color: Constants.primaryColor800,
-                                ),
-                              )
-                            ],
-                          );
-                          if (mode == LoadStatus.loading) {
-                            body = Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  "cargando datos ...",
-                                  style: TextStyle(
-                                    color: Constants.primaryColor800,
-                                  ),
-                                )
-                              ],
-                            );
-                          }
-                          return Column(
-                            children: [
-                              const SizedBox(height: 30),
-                              Center(child: body),
-                            ],
-                          );
-                        },
-                      ),
-                      child: CustomScrollView(
-                        slivers: [
-                          SliverToBoxAdapter(
-                            child: Column(
-                              children: [
-                                for (Appointment appointment
-                                    in waitingRoomAppointments)
-                                  appointment.appointmentType != 'A'
-                                      ? WaitingRoomCard(
-                                          appointment: appointment,
-                                          getAppointmentsData:
-                                              getAppointmentsData)
-                                      : Container(),
-                              ],
+                ? const EmptyAppointmentsState(
+                    size: "big", text: "nada para mostrar")
+                : SmartRefresher(
+                  enablePullDown: true,
+                  enablePullUp: true,
+                  header: const MaterialClassicHeader(
+                    color: Constants.primaryColor800,
+                  ),
+                  controller: _refreshController!,
+                  onLoading: () {
+                    dateOffset =
+                        dateOffset.subtract(const Duration(days: 30));
+                    setState(() {});
+                    getAppointmentsData(loadMore: true);
+                  },
+                  onRefresh: _onRefresh,
+                  footer: CustomFooter(
+                    height: 140,
+                    builder: (BuildContext context, LoadStatus? mode) {
+                      print(mode);
+                      Widget body = Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
+                            style: const TextStyle(
+                              color: Constants.primaryColor800,
                             ),
-                          ),
-                          SliverList(
-                            delegate: SliverChildListDelegate([
-                              for (int i = 0;
-                                  i < allAppointmentsState.length;
-                                  i++)
-                                _ListRenderer(
-                                  index: i,
-                                  appointment: nextAppointments.length > i
-                                      ? nextAppointments[i]
-                                      : allAppointmentsState[i],
-                                  firstAppointmentPast: firstPastAppointment,
-                                  waitingRoomAppointments:
-                                      waitingRoomAppointments,
-                                ),
-                            ]),
-                          ),
+                          )
                         ],
+                      );
+                      if (mode == LoadStatus.loading) {
+                        body = Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "cargando datos ...",
+                              style: TextStyle(
+                                color: Constants.primaryColor800,
+                              ),
+                            )
+                          ],
+                        );
+                      }
+                      return Column(
+                        children: [
+                          const SizedBox(height: 30),
+                          Center(child: body),
+                        ],
+                      );
+                    },
+                  ),
+            ),*/
+            /*SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  for (Appointment appointment
+                      in waitingRoomAppointments)
+                    appointment.appointmentType != 'A'
+                        ? WaitingRoomCard(
+                            appointment: appointment,
+                            getAppointmentsData:
+                                getAppointmentsData)
+                        : Container(),
+                ],
+              ),
+            ),*/
+            !_loading ? allAppointmentsState.isEmpty
+                ? SliverToBoxAdapter(
+                  child: Container(
+                    child: Column(
+                      children: [
+                        const Text(
+                            "nada para mostrar",
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(left: 1, right: 1),
+                          child: SvgPicture.asset(
+                              'assets/icon/feed_empty.svg',
+                            color: Color(0xff233C58),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Text(
+                          "a medida que uses la app, las novedades se van a ir mostrando en esta sección",
+                        ),
+                      ]
+                    )
+                  )
+                ) :
+            SliverFixedExtentList(
+              itemExtent: 280,
+              delegate: SliverChildBuilderDelegate(
+                  (builder, index) => _buildAppointment(index),
+                childCount: allAppointmentsState.length,
+              )
+            ) : const SliverToBoxAdapter(
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor:
+                  AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                  backgroundColor: Constants.primaryColor600,
+                )
+            ),
+            ),
+                /*[
+                  for (int i = 0;
+                      i < allAppointmentsState.length;
+                      i++)
+                    _ListRenderer(
+                      index: i,
+                      appointment: nextAppointments.length > i
+                          ? nextAppointments[i]
+                          : allAppointmentsState[i],
+                      firstAppointmentPast: firstPastAppointment,
+                      waitingRoomAppointments:
+                          waitingRoomAppointments,
+                    ),
+                ]
+              ),
+            ) : */
+          ]
+        ),
+      )
+    );
+  }
+
+  Widget _buildAppointment(int index){
+    return const Text("Appointment");
+  }
+
+  Widget _buildCarousel(BuildContext context, int carouselIndex){
+    return CustomCardPage(carouselCardPage: items[carouselIndex], height: _heightCarouselCard, width: _widthCarouselCard, radius: _radiusCarouselCard, );
+  }
+
+}
+
+class CustomCardPage extends StatefulWidget {
+
+  final CarouselCardPages? carouselCardPage;
+  final double height;
+  final double width;
+  final double radius;
+
+  const CustomCardPage({
+    Key? key,
+    required this.carouselCardPage,
+    required this.height,
+    required this.width,
+    required this.radius,
+  }) : super(key: key);
+
+  @override
+  State<CustomCardPage> createState() => _CustomCardPageState(carouselCardPage: carouselCardPage);
+}
+
+class _CustomCardPageState extends State<CustomCardPage>{
+
+  // text and image
+  CarouselCardPages? carouselCardPage;
+  _CustomCardPageState({
+    required this.carouselCardPage
+  });
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.all(6),
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(widget.radius),
+      ),
+      child: InkWell(
+        onTap: carouselCardPage!.appear ? () {
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => carouselCardPage!.page!
+          )
+          ) ;
+        } :
+          () {} ,
+        child: Container(
+          constraints: BoxConstraints(maxWidth: widget.width, maxHeight: widget.height),
+          child: Stack(
+            children: [
+              // Container that define the image background
+              Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage(carouselCardPage!.image)
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration( // Background linear gradient
+                    gradient: LinearGradient(
+                        begin: Alignment.bottomLeft,
+                        end: Alignment.topRight,
+                        colors: <Color> [
+                          Colors.black,
+                          Colors.black.withOpacity(0.01),
+                        ],
+                        stops: <double> [
+                          -.0159,
+                          0.9034,
+                        ]
+                    )
+                ),
+              ),
+              // Container used for group text info
+              Container(
+                padding: const EdgeInsets.only(left: 6, right: 6, bottom: 7, top: 7),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    carouselCardPage!.appear ? const Text(""): CardNotAvailable(),
+                    Flexible(
+                      child: Text(
+                        carouselCardPage!.title ,
+                        style: boldoCorpMediumBlackTextStyle,
                       ),
                     ),
+                  ]
+                )
+              ),
+
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
+
+class CardNotAvailable extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+      ),
+      color: ConstantsV2.green,
+      child: Container(
+        padding: const EdgeInsets.only(left: 4, right: 4, bottom: 2, top: 2),
+        child: const Text(
+          "en breve",
+          style: TextStyle(
+            color: ConstantsV2.lightGrey,
+            fontStyle: FontStyle.normal,
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Montserrat',
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 class _ListRenderer extends StatelessWidget {
   final int index;
@@ -476,5 +781,31 @@ class _ListRenderer extends StatelessWidget {
       isInWaitingRoom: isInWaitingRoom,
       showCancelOption: true,
     );
+  }
+}
+
+class CarouselCardPages extends StatelessWidget {
+  final String image;
+  final int index;
+  final BoxFit boxFit;
+  final Alignment alignment;
+  final String title;
+  final bool appear;
+  final Widget? page;
+
+  const CarouselCardPages({
+    Key? key,
+    required this.image,
+    required this.boxFit,
+    required this.alignment,
+    required this.index,
+    required this.title,
+    required this.appear,
+    this.page,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(image, fit: boxFit, alignment: alignment);
   }
 }
