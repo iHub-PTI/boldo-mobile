@@ -67,15 +67,52 @@ class Constants {
 
 // Text Style
 const boldoHeadingTextStyle = TextStyle(
-  color: Constants.extraColor400,
-  fontSize: 16,
-  fontWeight: FontWeight.w600,
+  color: ConstantsV2.inactiveText,
+  fontStyle: FontStyle.normal,
+  fontSize: 18,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
 );
 
 const boldoSubTextStyle = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.normal,
-    color: Constants.extraColor300);
+    color: ConstantsV2.inactiveText,
+    fontStyle: FontStyle.normal,
+    fontSize: 18,
+    fontWeight: FontWeight.w400,
+    fontFamily: 'Montserrat',
+);
+
+const boldoCardHeadingTextStyle = TextStyle(
+  color: Colors.white,
+  fontStyle: FontStyle.normal,
+  fontSize: 17,
+  fontWeight: FontWeight.w600,
+  fontFamily: 'Montserrat',
+);
+
+const boldoCorpMediumTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 14,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoCorpMediumBlackTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 14,
+  fontWeight: FontWeight.w500,
+  fontFamily: 'Montserrat',
+);
+
+const boldoCorpSmallTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 10,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
 
 ThemeData boldoTheme = ThemeData(
   elevatedButtonTheme: ElevatedButtonThemeData(
@@ -154,9 +191,41 @@ class ConstantsV2 {
 
   // Text color
   static const Color primaryColor = Color(0xffF5F5F5);
+  static const Color inactiveText = Color(0xff707882);
 
   // Input line border
   static const Color enableBorded = Color(0xff424649);
   static const Color focuseBorder = Color(0xff707882);
+
+  static const Color patientAppBarColor100 = Color(0xff364F6B);
+  static const Color patientAppBarColor200 = Color(0xff74B49E);
+  static const Color patientAppBarColor300 = Color(0xffFDA57D);
+
+  // stops primary background colors
+  static const double patientAppBarStop100 = 0;
+  static const double patientAppBarStop200 = 0.3067;
+  static const double patientAppBarStop300 = 1.0;
+
+  // colors
+  static const Color lightGrey = Color(0xffF5F5F5);
+  static const Color green = Color(0xff28B3BB);
+
+
+  // home heights
+  static double homeAppBarMaxHeight = 154.0;
+  static double homeAppBarMinHeight = 98.0;
+  static double homeCarouselContainerMaxHeight = 162.0;
+  static double homeCarouselContainerMinHeight = 82.0;
+  static double homeCarouselTitleContainerMaxHeight = 62.0;
+  static double homeCarouselTitleContainerMinHeight = 24.0;
+  static double homeCarouselCardMaxHeight = 130.0;
+  static double homeCarouselCardMinHeight = 50.0;
+  static double homeCarouselCardMaxWidth = 110.0;
+  static double homeCarouselCardMinWidth = 50.0;
+  static double homeCarouselCardMaxRadius = 100.0;
+  static double homeCarouselCardMinRadius = 10.0;
+
+  static double homeExpandedMaxHeight = homeAppBarMaxHeight + homeCarouselContainerMaxHeight + homeCarouselTitleContainerMaxHeight;
+  static double homeExpandedMinHeight = homeAppBarMinHeight + homeCarouselContainerMinHeight + homeCarouselTitleContainerMinHeight;
 
 }
