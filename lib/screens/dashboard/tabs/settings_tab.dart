@@ -210,7 +210,7 @@ class _SettingsTabState extends State<SettingsTab> {
                     await storage.deleteAll();
                     await prefs.clear();
 
-                    Navigator.pushNamed(context, '/onboarding');
+                    Navigator.of(context).pushNamedAndRemoveUntil('/onboarding', (Route<dynamic> route) => false);
                   } on DioError catch (exception, stackTrace) {
                     print(exception);
 

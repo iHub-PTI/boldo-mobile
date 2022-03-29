@@ -70,7 +70,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
     expanded = widget.max > (ConstantsV2.homeAppBarMaxHeight+ConstantsV2.homeAppBarMinHeight)/2;
     return Container(
-      constraints: BoxConstraints(maxHeight: ConstantsV2.homeAppBarMaxHeight, minHeight: ConstantsV2.homeAppBarMinHeight),
+      constraints: BoxConstraints(maxHeight: widget.max, minHeight: widget.max),
       height: widget.max,
       decoration: const BoxDecoration(
           borderRadius: BorderRadius.only(bottomRight: Radius.circular(24)),
@@ -92,84 +92,86 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
               ]
           )
       ),
-      child: Row(
-        children: [
-          const SizedBox(width: 10),
-          Selector<UserProvider, String>(
-            builder: (_, data, __) {
-              return SizedBox(
-                height: expanded ? 100 : 60,
-                width: expanded ? 100 : 60,
-                child: Card(
-                  margin: const EdgeInsets.all(0),
-                  shape: const StadiumBorder(
-                      side: BorderSide(
-                        color: Colors.white,
-                        width: 3,
+      child: SafeArea(
+        child: Row(
+          children: [
+            const SizedBox(width: 10),
+            Selector<UserProvider, String>(
+              builder: (_, data, __) {
+                return SizedBox(
+                  height: expanded ? 100 : 60,
+                  width: expanded ? 100 : 60,
+                  child: Card(
+                    margin: const EdgeInsets.all(0),
+                    shape: const StadiumBorder(
+                        side: BorderSide(
+                          color: Colors.white,
+                          width: 3,
+                        )
+                    ),
+                    child: ClipOval(
+                      clipBehavior: Clip.antiAlias,
+                      child:
+                      profileURL == null || profileURL == ''
+                          ? SvgPicture.asset(
+                        isAuthenticated
+                            ? gender == "female"
+                            ? 'assets/images/femalePatient.svg'
+                            : 'assets/images/malePatient.svg'
+                            : 'assets/images/LogoIcon.svg',
                       )
-                  ),
-                  child: ClipOval(
-                    clipBehavior: Clip.antiAlias,
-                    child:
-                    profileURL == null || profileURL == ''
-                        ? SvgPicture.asset(
-                      isAuthenticated
-                          ? gender == "female"
-                          ? 'assets/images/femalePatient.svg'
-                          : 'assets/images/malePatient.svg'
-                          : 'assets/images/LogoIcon.svg',
-                    )
-                        : CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      imageUrl: data != ''? data: profileURL!,
-                      progressIndicatorBuilder:
-                          (context, url, downloadProgress) =>
-                          Padding(
-                            padding: const EdgeInsets.all(26.0),
-                            child: CircularProgressIndicator(
-                              value: downloadProgress.progress,
-                              valueColor:
-                              const AlwaysStoppedAnimation<Color>(
-                                  Constants.primaryColor400),
-                              backgroundColor:
-                              Constants.primaryColor600,
+                          : CachedNetworkImage(
+                        fit: BoxFit.cover,
+                        imageUrl: data != ''? data: profileURL!,
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) =>
+                            Padding(
+                              padding: const EdgeInsets.all(26.0),
+                              child: CircularProgressIndicator(
+                                value: downloadProgress.progress,
+                                valueColor:
+                                const AlwaysStoppedAnimation<Color>(
+                                    Constants.primaryColor400),
+                                backgroundColor:
+                                Constants.primaryColor600,
+                              ),
                             ),
-                          ),
-                      errorWidget: (context, url, error) =>
-                      const Icon(Icons.error),
+                        errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                      ),
                     ),
                   ),
+                );
+              },
+              selector: (buildContext, userProvider) =>
+              userProvider.getPhotoUrl ?? '',
+            ),
+            const SizedBox(width: 10),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  !_dataLoading ? name! + " " + lastname! : '',
+                  style: expanded ? boldoCardHeadingTextStyle : boldoCorpMediumBlackTextStyle,
                 ),
-              );
-            },
-            selector: (buildContext, userProvider) =>
-            userProvider.getPhotoUrl ?? '',
-          ),
-          const SizedBox(width: 10),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                !_dataLoading ? name! + " " + lastname! : '',
-                style: expanded ? boldoCardHeadingTextStyle : boldoCorpMediumBlackTextStyle,
-              ),
-              const SizedBox(height: 10),
-              Text(
-                !_dataLoading ? city != null ? city! : '' : '',
-                style: expanded ? boldoCorpMediumTextStyle : boldoCorpSmallTextStyle,
-              ),
-              Text(
-                formatDate(
-                  DateTime.now(),
-                  [d, ' de ', MM, ' de ', yyyy],
-                  locale: const SpanishDateLocale(),
+                const SizedBox(height: 10),
+                Text(
+                  !_dataLoading ? city != null ? city! : '' : '',
+                  style: expanded ? boldoCorpMediumTextStyle : boldoCorpSmallTextStyle,
                 ),
-                style: expanded ? boldoCorpMediumTextStyle : boldoCorpSmallTextStyle,
-              ),
-            ],
-          )
-        ],
+                Text(
+                  formatDate(
+                    DateTime.now(),
+                    [d, ' de ', MM, ' de ', yyyy],
+                    locale: const SpanishDateLocale(),
+                  ),
+                  style: expanded ? boldoCorpMediumTextStyle : boldoCorpSmallTextStyle,
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

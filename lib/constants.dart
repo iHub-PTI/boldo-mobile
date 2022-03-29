@@ -224,8 +224,10 @@ class ConstantsV2 {
   static double homeCarouselCardMinWidth = 50.0;
   static double homeCarouselCardMaxRadius = 100.0;
   static double homeCarouselCardMinRadius = 10.0;
+  static double homeFeedTitleContainerMaxHeight = 62.0;
+  static double homeFeedTitleContainerMinHeight = 62.0;
 
-  static double homeExpandedMaxHeight = homeAppBarMaxHeight + homeCarouselContainerMaxHeight + homeCarouselTitleContainerMaxHeight;
-  static double homeExpandedMinHeight = homeAppBarMinHeight + homeCarouselContainerMinHeight + homeCarouselTitleContainerMinHeight;
+  static double homeExpandedMaxHeight = homeAppBarMaxHeight + homeCarouselContainerMaxHeight + homeCarouselTitleContainerMaxHeight + homeFeedTitleContainerMaxHeight;
+  static double homeExpandedMinHeight = homeAppBarMinHeight + homeCarouselContainerMinHeight + homeCarouselTitleContainerMinHeight + homeFeedTitleContainerMinHeight;
 
 }

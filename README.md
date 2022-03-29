@@ -28,7 +28,7 @@ The mobile app is specifically for patients.
    # SERVER_ADDRESS = http://localhost:8008
    # KEYCLOAK_REALM_ADDRESS = http://localhost:8080/auth/realms/iHub
    
-   # ###################### Amientes online ######################
+   # ###################### Ambientes online ######################
    
    # ###################### SENTRY global para todos los entornos online ##########
    # SENTRY_DSN=ASK DEVELOPERS FOR KEY
