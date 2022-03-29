@@ -426,29 +426,82 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
               ))
               : !isAuthenticated || allAppointmentsState.isEmpty
               ? const SliverToBoxAdapter(child: EmptyAppointmentsStateV2(picture: "feed_empty.svg"),)
-              : SliverToBoxAdapter(
-                child: Column(
+              :SliverFillRemaining(
+              child: SmartRefresher(
+                enablePullDown: true,
+                enablePullUp: true,
+                header: const MaterialClassicHeader(
+                  color: Constants.primaryColor800,
+                ),
+                controller: _refreshController!,
+                onLoading: () {
+                  dateOffset =
+                      dateOffset.subtract(const Duration(days: 30));
+                  setState(() {});
+                  getAppointmentsData(loadMore: true);
+                },
+                onRefresh: _onRefresh,
+                footer: CustomFooter(
+                  height: 140,
+                  builder: (BuildContext context, LoadStatus? mode) {
+                    print(mode);
+                    Widget body = Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
+                          style: const TextStyle(
+                            color: Constants.primaryColor800,
+                          ),
+                        )
+                      ],
+                    );
+                    if (mode == LoadStatus.loading) {
+                      body = Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "cargando datos ...",
+                            style: TextStyle(
+                              color: Constants.primaryColor800,
+                            ),
+                          )
+                        ],
+                      );
+                    }
+                    return Column(
+                      children: [
+                        const SizedBox(height: 30),
+                        Center(child: body),
+                      ],
+                    );
+                  },
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
 
-                  children: [
-                    for(Appointment appointment in waitingRoomAppointments)
-                      appointment.appointmentType != 'A'
-                          ? WaitingRoomCard(appointment: appointment, getAppointmentsData: getAppointmentsData)
-                          : Container(),
-                    for (int i = 0;
-                    i < allAppointmentsState.length;
-                    i++)
-                      _ListRenderer(
-                        index: i,
-                        appointment: nextAppointments.length > i
-                            ? nextAppointments[i]
-                            : allAppointmentsState[i],
-                        firstAppointmentPast: firstPastAppointment,
-                        waitingRoomAppointments:
-                        waitingRoomAppointments,
-                      ),
-                  ],
-                )
+                    children: [
+                      for(Appointment appointment in waitingRoomAppointments)
+                        appointment.appointmentType != 'A'
+                            ? WaitingRoomCard(appointment: appointment, getAppointmentsData: getAppointmentsData)
+                            : Container(),
+                      for (int i = 0;
+                      i < allAppointmentsState.length;
+                      i++)
+                        _ListRenderer(
+                          index: i,
+                          appointment: nextAppointments.length > i
+                              ? nextAppointments[i]
+                              : allAppointmentsState[i],
+                          firstAppointmentPast: firstPastAppointment,
+                          waitingRoomAppointments:
+                          waitingRoomAppointments,
+                        ),
+                    ],
+                  ),
+                ),
               ),
+            ) ,
           ]
         ),
       )
