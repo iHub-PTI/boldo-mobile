@@ -74,12 +74,36 @@ const boldoHeadingTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoTitleRegularTextStyle = TextStyle(
+  color: ConstantsV2.lightest,
+  fontStyle: FontStyle.normal,
+  fontSize: 24,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
+);
+
+const boldoTitleBlackTextStyle = TextStyle(
+  color: ConstantsV2.activeText,
+  fontStyle: FontStyle.normal,
+  fontSize: 24,
+  fontWeight: FontWeight.w500,
+  fontFamily: 'Montserrat',
+);
+
 const boldoSubTextStyle = TextStyle(
     color: ConstantsV2.inactiveText,
     fontStyle: FontStyle.normal,
     fontSize: 18,
     fontWeight: FontWeight.w400,
     fontFamily: 'Montserrat',
+);
+
+const boldoSubTextMediumStyle = TextStyle(
+  color: ConstantsV2.activeText,
+  fontStyle: FontStyle.normal,
+  fontSize: 16,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
 );
 
 const boldoCardHeadingTextStyle = TextStyle(
@@ -162,15 +186,23 @@ ThemeData boldoTheme = ThemeData(
 
 // Colors Boldo V2
 class ConstantsV2 {
-  // background primary color palette
+  // background colors palette
   static const Color primaryColor100 = Color(0xffFFFFFF);
   static const Color primaryColor200 = Color(0xff74B49E);
   static const Color primaryColor300 = Color(0xffFDA57D);
+
+  static const Color menuBackgroundColor100 = Color(0xff364F6B);
+  static const Color menuBackgroundColor200 = Color(0xff74B49E);
+  static const Color menuBackgroundColor300 = Color(0xffFFF7A3E);
 
   // stops primary background colors
   static const double primaryStop100 = -0.14;
   static const double primaryStop200 = 1.25;
   static const double primaryStop300 = 1.79;
+
+  static const double menuBackgroundStop100 = 0.0;
+  static const double menuBackgroundStop200 = 0.30;
+  static const double menuBackgroundStop300 = 1.0;
 
   // button color
   static const Color buttonPrimaryColor100 = Color(0xffEB8B76);
@@ -192,6 +224,7 @@ class ConstantsV2 {
   // Text color
   static const Color primaryColor = Color(0xffF5F5F5);
   static const Color inactiveText = Color(0xff707882);
+  static const Color activeText = Color(0xff424649);
 
   // Input line border
   static const Color enableBorded = Color(0xff424649);
@@ -208,7 +241,10 @@ class ConstantsV2 {
 
   // colors
   static const Color lightGrey = Color(0xffF5F5F5);
+  static const Color lightest = Color(0xffFFFFFF);
   static const Color green = Color(0xff28B3BB);
+  static const Color yellow = Color(0xffF9D620);
+  static const Color darkBlue = Color(0xff364F6B);
 
 
   // home heights

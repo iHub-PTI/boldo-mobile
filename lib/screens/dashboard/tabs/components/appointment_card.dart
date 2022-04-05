@@ -3,6 +3,7 @@ import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/details/appointment_details.dart';
 import 'package:boldo/screens/details/prescription_details.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -92,26 +93,36 @@ class _AppointmentCardState extends State<AppointmentCard> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        DateFormat('MMM').format(
-                            DateTime.parse(widget.appointment.start!)
-                                .toLocal()),
-                        style: TextStyle(
-                          color: isToday
-                              ? Constants.extraColor100
-                              : Constants.primaryColor500,
-                          fontSize: 18,
-                        ),
-                      ),
-                      Text(
-                        DateFormat('dd').format(
-                            DateTime.parse(widget.appointment.start!)
-                                .toLocal()),
-                        style: TextStyle(
-                          color: isToday
-                              ? Constants.extraColor100
-                              : Constants.primaryColor500,
-                          fontSize: 16,
+                      ClipOval(
+                        child: SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: widget.appointment.doctor?.photoUrl == null
+                              ? SvgPicture.asset(
+                              widget.appointment.doctor!.gender == "female"
+                                  ? 'assets/images/femaleDoctor.svg'
+                                  : 'assets/images/maleDoctor.svg',
+                              fit: BoxFit.cover)
+                              : CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl: widget.appointment.doctor!.photoUrl??'',
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) =>
+                                Padding(
+                                  padding: const EdgeInsets.all(26.0),
+                                  child: LinearProgressIndicator(
+                                    value: downloadProgress.progress,
+                                    valueColor:
+                                    const AlwaysStoppedAnimation<
+                                        Color>(
+                                        Constants.primaryColor400),
+                                    backgroundColor:
+                                    Constants.primaryColor600,
+                                  ),
+                                ),
+                            errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                          ),
                         ),
                       ),
                       Padding(
@@ -132,11 +143,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                           children: [
                             Text(
                               "${getDoctorPrefix(widget.appointment.doctor!.gender!)}${widget.appointment.doctor!.familyName}",
-                              style: const TextStyle(
-                                color: Constants.extraColor400,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: boldoSubTextMediumStyle,
                             ),
                             const Spacer(),
                             widget.showCancelOption &&
@@ -189,7 +196,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                           left: i == 0 ? 0 : 3.0, bottom: 5),
                                       child: Text(
                                         "${widget.appointment.doctor!.specializations![i].description}${widget.appointment.doctor!.specializations!.length > 1 && i == 0 ? "," : ""}",
-                                        style: boldoSubTextStyle,
+                                        style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
                                       ),
                                     ),
                                 ],

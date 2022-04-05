@@ -177,10 +177,7 @@ class _DniRegisterState extends State<DniRegister> {
                                   ),
                                 );
                                 if(_selfieRequest){
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const LoginWebViewHelper()),
-                                  );
+                                  Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
                                 }
                                 setState(() {
                                   if (_isFrontDni == true) {

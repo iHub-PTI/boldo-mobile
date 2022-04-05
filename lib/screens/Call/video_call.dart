@@ -202,8 +202,10 @@ class _VideoCallState extends State<VideoCall> {
       socket!.dispose();
       socket = null;
     }
-
+    print("LALALALALALLALA");
     // cleanup the video renderers
+    localRenderer.srcObject = null;
+    remoteRenderer.srcObject = null;
     localRenderer.dispose();
     remoteRenderer.dispose();
 
@@ -212,7 +214,7 @@ class _VideoCallState extends State<VideoCall> {
     super.dispose();
   }
 
-  void hangUp() {
+  Future<void> hangUp() async {
     socket!.emit('end call', {"room": widget.appointment.id, "token": token});
     Navigator.of(context).pop();
   }

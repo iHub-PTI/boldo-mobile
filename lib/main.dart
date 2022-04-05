@@ -1,4 +1,5 @@
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
+import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -110,6 +111,7 @@ class FullApp extends StatelessWidget {
       routes: {
         '/onboarding': (context) => HeroScreenV2(),
         '/home': (context) => DashboardScreen(),
+        '/login': (context) => const LoginWebViewHelper(),
       },
     );
   }

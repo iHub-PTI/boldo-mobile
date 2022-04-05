@@ -1,5 +1,6 @@
 import 'package:boldo/network/http.dart';
 import 'package:boldo/provider/auth_provider.dart';
+import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/screens/hero/hero_screen.dart';
@@ -41,7 +42,7 @@ class _LoginWebViewHelperState extends State<LoginWebViewHelper> {
   }
 
   void _initWebView(context) async {
-    final _result = await _authenticateUser(context: context);
+    final _result = await authenticateUser(context: context);
     switch (_result) {
       case 0:
         //user canceled or generic error
@@ -75,7 +76,7 @@ class _LoginWebViewHelperState extends State<LoginWebViewHelper> {
   }
 }
 
-Future<int> _authenticateUser({required BuildContext context}) async {
+Future<int> authenticateUser({required BuildContext context}) async {
   String keycloakRealmAddress = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
       defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
 
@@ -103,11 +104,22 @@ Future<int> _authenticateUser({required BuildContext context}) async {
     await prefs.setBool("onboardingCompleted", true);
 
     Response response = await dio.get("/profile/patient");
-    if (response.data["photoUrl"] != null) {
-      await prefs.setString("profile_url", response.data["photoUrl"]);
-      await prefs.setString("gender", response.data["gender"]);
-      await prefs.setString("name", response.data["givenName"]);
-    }
+    print("DATOS ${response.data}");
+    await prefs.setString("profile_url", response.data["photoUrl"] ?? '');
+    await prefs.setString("gender", response.data["gender"]);
+    await prefs.setString("name", response.data["givenName"]);
+
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    userProvider.setUserData(
+      givenName: response.data['givenName'],
+      familyName: response.data['familyName'],
+      gender: response.data['gender'],
+      photoUrl: response.data['photoUrl'],
+      email: response.data['email'],
+      birthDate: response.data['birthDate'],
+      street: response.data['street'],
+      city: response.data['city'],
+    );
 
     return 2;
   } on PlatformException catch (err, s) {

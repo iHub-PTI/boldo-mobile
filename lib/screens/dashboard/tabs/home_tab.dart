@@ -3,6 +3,7 @@ import 'package:boldo/models/Prescription.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
+import 'package:boldo/screens/dashboard/tabs/components/divider_feed_secction_home.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
@@ -66,7 +67,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       alignment: Alignment.centerLeft,
       index: 1,
       title: 'Ver mis recetas',
-      appear: true,
+      appear: false,
     ),
     CarouselCardPages(
       key: UniqueKey(),
@@ -372,18 +373,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                   return Column(
                       children: [
                         HomeTabAppBar(max: _heightAppBarExpandable),
-                        Container(
-                          width: double.maxFinite ,
-                          height: _heightCarouselTitleExpandable,
-                          padding: const EdgeInsetsDirectional.all(16),
-                          decoration: const BoxDecoration(
-                            color: ConstantsV2.lightGrey,
-                          ),
-                          child: const Text(
-                            "qué desea hacer",
-                            style: boldoSubTextStyle,
-                          ),
-                        ),
+                        DividerFeedSectionHome(text: "qué desea hacer", height: _heightCarouselTitleExpandable),
                         Container(
                           padding: const EdgeInsets.all(16),
                           alignment: Alignment.centerLeft,
@@ -398,17 +388,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                             ),
                           ),
                         ),
-                        Container(
-                          constraints: BoxConstraints(minHeight: ConstantsV2.homeFeedTitleContainerMaxHeight, minWidth: MediaQuery.of(context).size.height),
-                          decoration: const BoxDecoration(
-                            color: ConstantsV2.primaryColor
-                          ),
-                          padding: const EdgeInsetsDirectional.all(16),
-                          child: const Text(
-                            "novedades",
-                            style: boldoSubTextStyle,
-                          )
-                        ),
+                        DividerFeedSectionHome(text: "novedades", height: ConstantsV2.homeFeedTitleContainerMaxHeight),
                       ]
                   );
                 }
@@ -425,7 +405,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 )
               ))
               : !isAuthenticated || allAppointmentsState.isEmpty
-              ? const SliverToBoxAdapter(child: EmptyAppointmentsStateV2(picture: "feed_empty.svg"),)
+              ? const SliverToBoxAdapter(child: EmptyStateV2(
+                picture: "feed_empty.svg",
+                textTop: "nada para mostrar",
+                textBottom: "a medida que uses la app, las novedades se van a ir mostrando en esta sección",
+              ),)
               :SliverFillRemaining(
               child: SmartRefresher(
                 enablePullDown: true,
@@ -779,81 +763,3 @@ class CarouselCardPages extends StatelessWidget {
     return SvgPicture.asset(image, fit: boxFit, alignment: alignment);
   }
 }
-
-
-/*Container(
-                  height: MediaQuery.of(context).size.height - _heightExpandedCarousel- 100,
-                  child: SmartRefresher(
-                    enablePullDown: true,
-                    enablePullUp: true,
-                    header: const MaterialClassicHeader(
-                      color: Constants.primaryColor800,
-                    ),
-                    controller: _refreshController!,
-                    onLoading: () {
-                      dateOffset =
-                          dateOffset.subtract(const Duration(days: 30));
-                      setState(() {});
-                      getAppointmentsData(loadMore: true);
-                    },
-                    onRefresh: _onRefresh,
-                    footer: CustomFooter(
-                      height: 140,
-                      builder: (BuildContext context, LoadStatus? mode) {
-                        print(mode);
-                        Widget body = Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
-                              style: const TextStyle(
-                                color: Constants.primaryColor800,
-                              ),
-                            )
-                          ],
-                        );
-                        if (mode == LoadStatus.loading) {
-                          body = Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                "cargando datos ...",
-                                style: TextStyle(
-                                  color: Constants.primaryColor800,
-                                ),
-                              )
-                            ],
-                          );
-                        }
-                        return Column(
-                          children: [
-                            const SizedBox(height: 30),
-                            Center(child: body),
-                          ],
-                        );
-                      },
-                    ),
-                    child:
-                    Column(
-
-                      children: [
-                        for(Appointment appointment in waitingRoomAppointments)
-                          appointment.appointmentType != 'A'
-                              ? WaitingRoomCard(appointment: appointment, getAppointmentsData: getAppointmentsData)
-                              : Container(),
-                        for (int i = 0;
-                        i < allAppointmentsState.length;
-                        i++)
-                          _ListRenderer(
-                            index: i,
-                            appointment: nextAppointments.length > i
-                                ? nextAppointments[i]
-                                : allAppointmentsState[i],
-                            firstAppointmentPast: firstPastAppointment,
-                            waitingRoomAppointments:
-                            waitingRoomAppointments,
-                          ),
-                      ],
-                    ),
-                  ),
-                ),*/

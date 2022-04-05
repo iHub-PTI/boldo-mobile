@@ -17,7 +17,7 @@ class Background extends StatelessWidget {
             decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(bottomRight: Radius.circular(24)),
                 gradient: RadialGradient(
-                    radius: 9,
+                    radius: 6,
                     center: Alignment(
                       1.80,
                       3.20,
@@ -33,6 +33,16 @@ class Background extends StatelessWidget {
                       ConstantsV2.patientAppBarStop300,
                     ]
                 )
+            ),
+          ),
+        ],
+      );
+    else if(text == "family")
+      return Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+                color: ConstantsV2.lightGrey
             ),
           ),
         ],

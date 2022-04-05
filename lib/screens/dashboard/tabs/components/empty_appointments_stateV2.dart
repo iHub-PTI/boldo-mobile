@@ -8,10 +8,12 @@ import '../../../../constants.dart';
 import 'package:boldo/constants.dart';
 import 'package:flutter/foundation.dart';
 
-class EmptyAppointmentsStateV2 extends StatelessWidget {
+class EmptyStateV2 extends StatelessWidget {
   final String picture;
-  const EmptyAppointmentsStateV2(
-      {Key? key, required this.picture})
+  final String? textTop;
+  final String? textBottom;
+  const EmptyStateV2(
+      {Key? key, required this.picture, this.textTop, this.textBottom})
       : super(key: key);
 
   @override
@@ -21,19 +23,24 @@ class EmptyAppointmentsStateV2 extends StatelessWidget {
       child: Container(
         child: Column(
           children: [
-            const Text(
-              "nada para mostrar",
+            Text(
+              textTop ?? '',
+              style: boldoCorpSmallTextStyle.copyWith(
+                color: ConstantsV2.darkBlue,
+              ),
             ),
             Container(
-              padding: EdgeInsets.only(left: 1, right: 1),
+              padding: const EdgeInsets.only(left: 1, right: 1),
               child: SvgPicture.asset(
-                'assets/icon/${picture}',
-                color: Color(0xff233C58),
+                'assets/icon/$picture',
                 fit: BoxFit.cover,
               ),
             ),
-            const Text(
-              "a medida que uses la app, las novedades se van a ir mostrando en esta sección",
+            Text(
+              textBottom ?? '',
+              style: boldoCorpMediumTextStyle.copyWith(
+                color: ConstantsV2.activeText,
+              ),
             ),
           ]
         )

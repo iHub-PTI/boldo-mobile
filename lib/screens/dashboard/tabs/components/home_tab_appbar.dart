@@ -13,6 +13,8 @@ import 'package:boldo/utils/helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:date_format/date_format.dart';
 
+import '../../menu.dart';
+
 class HomeTabAppBar extends StatefulWidget implements PreferredSizeWidget {
   final double max;
   const HomeTabAppBar({
@@ -58,7 +60,6 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
     city = response!.data["city"];
     profileURL = prefs.getString("profile_url")??'';
     gender = prefs.getString("gender");
-    print("Ciudad $city");
     setState(() {
       _dataLoading = false;
     });
@@ -92,73 +93,103 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
               ]
           )
       ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            const SizedBox(width: 10),
-            Selector<UserProvider, String>(
-              builder: (_, data, __) {
-                return SizedBox(
-                  height: expanded ? 100 : 60,
-                  width: expanded ? 100 : 60,
-                  child: Card(
-                    margin: const EdgeInsets.all(0),
-                    shape: const StadiumBorder(
-                        side: BorderSide(
-                          color: Colors.white,
-                          width: 3,
-                        )
-                    ),
-                    child: ClipOval(
-                      clipBehavior: Clip.antiAlias,
-                      child:
-                      profileURL == null || profileURL == ''
-                          ? SvgPicture.asset(
-                        isAuthenticated
-                            ? gender == "female"
-                            ? 'assets/images/femalePatient.svg'
-                            : 'assets/images/malePatient.svg'
-                            : 'assets/images/LogoIcon.svg',
+      child: Row(
+        children: [
+          const SizedBox(width: 10),
+          Selector<UserProvider, String>(
+            builder: (_, data, __) {
+              return SizedBox(
+                height: expanded ? 100 : 60,
+                width: expanded ? 100 : 60,
+                child: Card(
+                  margin: const EdgeInsets.all(0),
+                  shape: const StadiumBorder(
+                      side: BorderSide(
+                        color: Colors.white,
+                        width: 3,
                       )
-                          : CachedNetworkImage(
-                        fit: BoxFit.cover,
-                        imageUrl: data != ''? data: profileURL!,
-                        progressIndicatorBuilder:
-                            (context, url, downloadProgress) =>
-                            Padding(
-                              padding: const EdgeInsets.all(26.0),
-                              child: CircularProgressIndicator(
-                                value: downloadProgress.progress,
-                                valueColor:
-                                const AlwaysStoppedAnimation<Color>(
-                                    Constants.primaryColor400),
-                                backgroundColor:
-                                Constants.primaryColor600,
-                              ),
+                  ),
+                  child: ClipOval(
+                    clipBehavior: Clip.antiAlias,
+                    child:
+                    profileURL == null || profileURL == ''
+                        ? SvgPicture.asset(
+                      isAuthenticated
+                          ? gender == "female"
+                          ? 'assets/images/femalePatient.svg'
+                          : 'assets/images/malePatient.svg'
+                          : 'assets/images/LogoIcon.svg',
+                    )
+                        : CachedNetworkImage(
+                      fit: BoxFit.cover,
+                      imageUrl: data != ''? data: profileURL!,
+                      progressIndicatorBuilder:
+                          (context, url, downloadProgress) =>
+                          Padding(
+                            padding: const EdgeInsets.all(26.0),
+                            child: CircularProgressIndicator(
+                              value: downloadProgress.progress,
+                              valueColor:
+                              const AlwaysStoppedAnimation<Color>(
+                                  Constants.primaryColor400),
+                              backgroundColor:
+                              Constants.primaryColor600,
                             ),
-                        errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
-                      ),
+                          ),
+                      errorWidget: (context, url, error) =>
+                      const Icon(Icons.error),
                     ),
                   ),
-                );
-              },
-              selector: (buildContext, userProvider) =>
-              userProvider.getPhotoUrl ?? '',
-            ),
-            const SizedBox(width: 10),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+                ),
+              );
+            },
+            selector: (buildContext, userProvider) =>
+            userProvider.getPhotoUrl ?? '',
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  !_dataLoading ? name! + " " + lastname! : '',
-                  style: expanded ? boldoCardHeadingTextStyle : boldoCorpMediumBlackTextStyle,
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        onPressed: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => MenuScreen()));
+                        },
+                        icon: SvgPicture.asset(
+                          'assets/icon/menu-alt-1.svg',
+                          semanticsLabel: 'Doctor Icon',
+                          color: ConstantsV2.lightest,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children:
+                  [
+                    Text(
+                      !_dataLoading ? name! + " " + lastname! : '',
+                      style: expanded ? boldoCardHeadingTextStyle : boldoCorpMediumBlackTextStyle,
+                    ),
+                  ],
+                ),
+
                 const SizedBox(height: 10),
-                Text(
-                  !_dataLoading ? city != null ? city! : '' : '',
-                  style: expanded ? boldoCorpMediumTextStyle : boldoCorpSmallTextStyle,
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children:[
+                      Text(
+                        !_dataLoading ? city != null ? city! : '' : '',
+                        style: expanded ? boldoCorpMediumTextStyle : boldoCorpSmallTextStyle,
+                      ),
+                    ]
                 ),
                 Text(
                   formatDate(
@@ -169,9 +200,10 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                   style: expanded ? boldoCorpMediumTextStyle : boldoCorpSmallTextStyle,
                 ),
               ],
-            )
-          ],
-        ),
+            ),
+          ),
+        ],
+
       ),
     );
   }
