@@ -47,6 +47,40 @@ class Background extends StatelessWidget {
           ),
         ],
       );
+    else if(text == "linkFamily")
+      return Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration( // Background linear gradient
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: <Color> [
+                  ConstantsV2.primaryColor100,
+                  ConstantsV2.primaryColor200,
+                  ConstantsV2.primaryColor300,
+                ],
+                stops: <double> [
+                  ConstantsV2.primaryStop100,
+                  ConstantsV2.primaryStop200,
+                  ConstantsV2.primaryStop300,
+                ]
+              )
+            ),
+          ),
+          Opacity(
+            opacity: 0.2,
+            child: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/images/register_background.png')
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
     else
       return Stack(
         children: [

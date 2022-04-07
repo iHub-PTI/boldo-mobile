@@ -139,12 +139,13 @@ const boldoCorpSmallTextStyle = TextStyle(
 );
 
 ThemeData boldoTheme = ThemeData(
+  fontFamily: 'Montserrat',
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      textStyle: const TextStyle(fontWeight: FontWeight.w500),
-      primary: Constants.primaryColor500,
+      textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+      primary: ConstantsV2.orange,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(100),
       ),
     ),
   ),
@@ -245,6 +246,8 @@ class ConstantsV2 {
   static const Color green = Color(0xff28B3BB);
   static const Color yellow = Color(0xffF9D620);
   static const Color darkBlue = Color(0xff364F6B);
+  static const Color orange = Color(0xffEB8B76);
+  static const Color lightAndClear = Color(0xffF5F5F5);
 
 
   // home heights

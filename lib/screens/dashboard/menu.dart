@@ -151,24 +151,26 @@ class _MenuScreenState extends State<MenuScreen> {
                       ],
                     ),
                   ),
-                  Container(
-                    padding: EdgeInsets.all(16),
-                    child: Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        child: TextButton.icon(
-                          onPressed: () {
-                           UtilsProvider().logout(context);
-                          },
-                          icon: SvgPicture.asset(
-                            "assets/icon/power-settings-new.svg",
-                            color: ConstantsV2.yellow,
-                          ),
-                          label: Text(
-                            "Cerrrar Sesión",
-                            style: boldoSubTextStyle.copyWith(
-                              color: ConstantsV2.lightest,
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      child: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          child: TextButton.icon(
+                            onPressed: () {
+                              UtilsProvider().logout(context);
+                            },
+                            icon: SvgPicture.asset(
+                              "assets/icon/power-settings-new.svg",
+                              color: ConstantsV2.yellow,
+                            ),
+                            label: Text(
+                              "Cerrar Sesión",
+                              style: boldoSubTextStyle.copyWith(
+                                color: ConstantsV2.lightest,
+                              ),
                             ),
                           ),
                         ),

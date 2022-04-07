@@ -202,7 +202,6 @@ class _VideoCallState extends State<VideoCall> {
       socket!.dispose();
       socket = null;
     }
-    print("LALALALALALLALA");
     // cleanup the video renderers
     localRenderer.srcObject = null;
     remoteRenderer.srcObject = null;

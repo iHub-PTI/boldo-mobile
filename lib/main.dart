@@ -102,11 +102,7 @@ class FullApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       navigatorKey: navKey,
       title: 'Boldo',
-      theme: boldoTheme.copyWith(
-        textTheme: GoogleFonts.interTextTheme(
-          boldoTheme.textTheme,
-        ),
-      ),
+      theme: boldoTheme,
       initialRoute: onboardingCompleted ? '/home' : "/onboarding",
       routes: {
         '/onboarding': (context) => HeroScreenV2(),

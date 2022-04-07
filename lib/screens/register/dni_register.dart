@@ -164,29 +164,34 @@ class _DniRegisterState extends State<DniRegister> {
                               ]
                             ),
                             onPressed: () async {
-                              XFile? image = await picker.pickImage(
-                                  source: ImageSource.camera);
+                              try {
+                                XFile? image = await picker.pickImage(
+                                    source: ImageSource.camera);
 
-                              if (image != null) {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => LoadingHelper(
-                                      image: File(image.path),
-                                    )
-                                  ),
-                                );
-                                if(_selfieRequest){
-                                  Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
-                                }
-                                setState(() {
-                                  if (_isFrontDni == true) {
-                                    _isFrontDni = false;
-                                  } else {
-                                    _selfieRequest = true;
+                                if (image != null) {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoadingHelper(
+                                          image: File(image.path),
+                                        )
+                                    ),
+                                  );
+                                  if(_selfieRequest){
+                                    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
                                   }
-                                });
+                                  setState(() {
+                                    if (_isFrontDni == true) {
+                                      _isFrontDni = false;
+                                    } else {
+                                      _selfieRequest = true;
+                                    }
+                                  });
+                                }
+                              }catch(e){
+                                print("Image error $e");
                               }
+
                             },
                           ),
                         ],
