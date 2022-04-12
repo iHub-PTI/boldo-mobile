@@ -174,6 +174,8 @@ class UtilsProvider with ChangeNotifier {
           },
           encoding: Encoding.getByName("utf-8"));
       Provider.of<AuthProvider>(context, listen: false)
+          .setIsFamily(isFamily: false);
+      Provider.of<AuthProvider>(context, listen: false)
           .setAuthenticated(isAuthenticated: false);
       Provider.of<UserProvider>(context, listen: false)
           .clearProvider();

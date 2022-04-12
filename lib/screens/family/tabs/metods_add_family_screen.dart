@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import 'family_register_account.dart';
+
 class FamilyMetodsAdd extends StatelessWidget {
   const FamilyMetodsAdd({Key? key}) : super(key: key);
 
@@ -108,7 +110,7 @@ class FamilyMetodsAdd extends StatelessWidget {
                           child: InkWell(
                             onTap: () {
                               Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) => DniRegister()
+                                  builder: (context) => DniFamilyRegister()
                               )
                               );
                             },

@@ -23,7 +23,10 @@ import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/constants.dart';
 
+import 'models/Patient.dart';
+
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+final Patient patientModel = Patient();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

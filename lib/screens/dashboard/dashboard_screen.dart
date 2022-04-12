@@ -45,29 +45,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget getPage(int index) {
 
-     bool isAuthenticated =
+    MaterialPageRoute(
+        builder: (context) => const LoginWebViewHelper());
+      bool isAuthenticated =
             Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
-        if (!isAuthenticated) {
-          authenticateUser(context: context);
+    if (!isAuthenticated) {
+        authenticateUser(context: context);
 
-        return const Center(
-            child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-          backgroundColor: Constants.primaryColor600,
-        ));
-      }
+      return const Center(
+          child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+        backgroundColor: Constants.primaryColor600,
+      ));
+    }
 
-      if (index == 0) {
-        return HomeTab();
-      }
-      if (index == 1) {
-        return DoctorsTab();
-      }
-      if (index == 2) {
-        return MedicalRecordScreen();
-      }
-      if (index == 3) {
-        return SettingsTab();
+    if (index == 0) {
+      return HomeTab();
+    }
+    if (index == 1) {
+      return DoctorsTab();
+    }
+    if (index == 2) {
+      return MedicalRecordScreen();
+    }
+    if (index == 3) {
+      return SettingsTab();
     }
     return HomeTab();
   }

@@ -1,3 +1,4 @@
+import 'package:boldo/models/Patient.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
 import 'package:boldo/screens/family/components/family_rectagle_card.dart';
@@ -28,7 +29,7 @@ class FamilyScreen extends StatefulWidget {
 
 class _FamilyScreenState extends State<FamilyScreen> {
 
-  final List<ItemMenu> items = [
+  final List<Patient> items = [
   ];
 
   Response? response;
@@ -157,7 +158,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
   }
 
   Widget _buildItem(BuildContext context, int index){
-    return items[index];
+    return FamilyRectangleCard(patient: items[index], isDependent: true,);
   }
 
 }

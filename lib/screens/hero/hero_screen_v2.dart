@@ -160,6 +160,7 @@ class HeroScreenV2 extends StatelessWidget {
                       onPressed: () async {
                         final SharedPreferences prefs =
                         await SharedPreferences.getInstance();
+                        Provider.of<AuthProvider>(context, listen: false).setAuthenticated(isAuthenticated: false);
                         bool onboardingCompleted =
                             prefs.getBool("preRegisterNotify") ?? false;
                         if (onboardingCompleted == true) {

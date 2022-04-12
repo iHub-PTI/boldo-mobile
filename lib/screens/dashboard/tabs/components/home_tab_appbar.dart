@@ -73,26 +73,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
     return Container(
       constraints: BoxConstraints(maxHeight: widget.max, minHeight: widget.max),
       height: widget.max,
-      decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(bottomRight: Radius.circular(24)),
-          gradient: RadialGradient(
-              radius: 4,
-              center: Alignment(
-                1.80,
-                0.77,
-              ),
-              colors: <Color>[
-                ConstantsV2.patientAppBarColor100,
-                ConstantsV2.patientAppBarColor200,
-                ConstantsV2.patientAppBarColor300,
-              ],
-              stops: <double>[
-                ConstantsV2.patientAppBarStop100,
-                ConstantsV2.patientAppBarStop200,
-                ConstantsV2.patientAppBarStop300,
-              ]
-          )
-      ),
+      decoration: _decoration(),
       child: Row(
         children: [
           const SizedBox(width: 10),
@@ -112,7 +93,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                   child: ClipOval(
                     clipBehavior: Clip.antiAlias,
                     child:
-                    profileURL == null || profileURL == ''
+                    data == null || data == ''
                         ? SvgPicture.asset(
                       isAuthenticated
                           ? gender == "female"
@@ -122,7 +103,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                     )
                         : CachedNetworkImage(
                       fit: BoxFit.cover,
-                      imageUrl: data != ''? data: profileURL!,
+                      imageUrl: data ,
                       progressIndicatorBuilder:
                           (context, url, downloadProgress) =>
                           Padding(
@@ -207,4 +188,51 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
       ),
     );
   }
+
+  BoxDecoration _decoration(){
+    if(Provider.of<AuthProvider>(context, listen: false).getIsFamily){
+      return const BoxDecoration(
+          borderRadius: BorderRadius.only(bottomRight: Radius.circular(24)),
+          gradient: RadialGradient(
+              radius: 4,
+              center: Alignment(
+                1.80,
+                0.77,
+              ),
+              colors: <Color>[
+                ConstantsV2.patientAppBarColor100,
+                ConstantsV2.patientAppBarColor200,
+                ConstantsV2.patientAppBarColor300,
+              ],
+              stops: <double>[
+                ConstantsV2.patientAppBarStop100,
+                ConstantsV2.patientAppBarStop200,
+                ConstantsV2.patientAppBarStop300,
+              ]
+          )
+      );
+    }else{
+      return const BoxDecoration(
+          borderRadius: BorderRadius.only(bottomRight: Radius.circular(24)),
+          gradient: RadialGradient(
+              radius: 4,
+              center: Alignment(
+                1.80,
+                0.77,
+              ),
+              colors: <Color>[
+                ConstantsV2.patientAppBarColor100,
+                ConstantsV2.patientAppBarColor200,
+                ConstantsV2.patientAppBarColor300,
+              ],
+              stops: <double>[
+                ConstantsV2.patientAppBarStop100,
+                ConstantsV2.patientAppBarStop200,
+                ConstantsV2.patientAppBarStop300,
+              ]
+          )
+      );
+    }
+  }
+
 }

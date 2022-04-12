@@ -1,4 +1,5 @@
 import 'package:boldo/network/connection_status.dart';
+import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -99,6 +100,7 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
           return handle
               .resolve(await dio.request(options.path, options: optionsDio));
         } catch (e) {
+          print(e);
           dio.unlock();
           dio.interceptors.responseLock.unlock();
           dio.interceptors.errorLock.unlock();
@@ -107,7 +109,7 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
 
           navKey.currentState!.pushAndRemoveUntil(
             MaterialPageRoute(
-              builder: (context) => DashboardScreen(setLoggedOut: true),
+              builder: (context) => HeroScreenV2(),
             ),
             (route) => false,
           );

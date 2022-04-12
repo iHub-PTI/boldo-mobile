@@ -6,6 +6,7 @@ import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/screens/hero/hero_screen.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:boldo/screens/pre_register_notify/pre_register_success_screen.dart';
+import 'package:boldo/screens/sing_in/sing_in_transition.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -45,11 +46,9 @@ class _LoginWebViewHelperState extends State<LoginWebViewHelper> {
     final _result = await authenticateUser(context: context);
     switch (_result) {
       case 0:
+        Provider.of<UtilsProvider>(context, listen: false).logout(context);
         //user canceled or generic error
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => HeroScreenV2()),
-        );
+        Navigator.of(context).pushNamedAndRemoveUntil('/onboarding', (Route<dynamic> route) => false);
         break;
       case 1:
         //new user register
@@ -63,13 +62,14 @@ class _LoginWebViewHelperState extends State<LoginWebViewHelper> {
         // success login
         Provider.of<UtilsProvider>(context, listen: false)
             .setSelectedPageIndex(pageIndex: 0);
-        Navigator.push(
+        await Navigator.push(
           context,
           MaterialPageRoute(
-            settings: const RouteSettings(name: "/home"),
-            builder: (context) => DashboardScreen(),
+              builder: (context) => SingInTransition(
+              )
           ),
         );
+        Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
         break;
       default:
     }
@@ -120,6 +120,8 @@ Future<int> authenticateUser({required BuildContext context}) async {
       street: response.data['street'],
       city: response.data['city'],
     );
+
+    print("FAMILY ${Provider.of<AuthProvider>(context, listen: false).getIsFamily}");
 
     return 2;
   } on PlatformException catch (err, s) {

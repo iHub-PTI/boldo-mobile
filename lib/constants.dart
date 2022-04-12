@@ -138,6 +138,13 @@ const boldoCorpSmallTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoBillboardTextStyleAlt = TextStyle(
+  color: ConstantsV2.inactiveText,
+  fontStyle: FontStyle.normal,
+  fontSize: 40,
+  fontFamily: 'Montserrat',
+);
+
 ThemeData boldoTheme = ThemeData(
   fontFamily: 'Montserrat',
   elevatedButtonTheme: ElevatedButtonThemeData(
@@ -234,11 +241,33 @@ class ConstantsV2 {
   static const Color patientAppBarColor100 = Color(0xff364F6B);
   static const Color patientAppBarColor200 = Color(0xff74B49E);
   static const Color patientAppBarColor300 = Color(0xffFDA57D);
+  static const Color familyAppBarColor100 = Color(0xff364F6B);
+  static const Color familyAppBarColor200 = Color(0xff74B49E);
+  static const Color familyAppBarColor300 = Color(0xff5E7B97);
 
   // stops primary background colors
   static const double patientAppBarStop100 = 0;
   static const double patientAppBarStop200 = 0.3067;
   static const double patientAppBarStop300 = 1.0;
+  static const double familyAppBarStop100 = 0;
+  static const double familyAppBarStop200 = 0.3762;
+  static const double familyAppBarStop300 = 1.0;
+
+  // Sing In background colors
+  static const Color singInPrimaryColor100 = Color(0xff364F6B);
+  static const Color singInPrimaryColor200 = Color(0xff74B49E);
+  static const Color singInPrimaryColor300 = Color(0xff93D2C2);
+  static const Color singInSecondaryColor100 = Color(0xffFDA57D);
+  static const Color singInSecondaryColor200 = Color(0xff62B7DC);
+  static const Color singInSecondaryColor300 = Color(0xff639890);
+
+  // Sing In background stops
+  static const double singInPrimaryStop100 = 0;
+  static const double singInPrimaryStop200 = 0.6757;
+  static const double singInPrimaryStop300 = 1.0;
+  static const double singInSecondaryStop100 = 0;
+  static const double singInSecondaryStop200 = 0.5479;
+  static const double singInSecondaryStop300 = 1.0;
 
   // colors
   static const Color lightGrey = Color(0xffF5F5F5);

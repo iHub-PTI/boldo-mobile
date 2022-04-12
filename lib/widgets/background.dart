@@ -15,7 +15,6 @@ class Background extends StatelessWidget {
         children: [
           Container(
             decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(bottomRight: Radius.circular(24)),
                 gradient: RadialGradient(
                     radius: 6,
                     center: Alignment(
@@ -81,6 +80,58 @@ class Background extends StatelessWidget {
           ),
         ],
       );
+    else if(text == "SingIn_1")
+      return Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+                gradient: RadialGradient(
+                    radius: 3,
+                    center: Alignment(
+                      0,
+                      0,
+                    ),
+                    colors: <Color>[
+                      ConstantsV2.singInPrimaryColor100,
+                      ConstantsV2.singInPrimaryColor200,
+                      ConstantsV2.singInPrimaryColor300,
+                    ],
+                    stops: <double>[
+                      ConstantsV2.singInPrimaryStop100,
+                      ConstantsV2.singInPrimaryStop200,
+                      ConstantsV2.singInPrimaryStop300,
+                    ]
+                )
+            ),
+          ),
+        ],
+      );
+    else if(text == "SingIn_2")
+      return Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+                gradient: RadialGradient(
+                    radius: 3,
+                    center: Alignment(
+                      0,
+                      0,
+                    ),
+                    colors: <Color>[
+                      ConstantsV2.singInSecondaryColor100,
+                      ConstantsV2.singInSecondaryColor200,
+                      ConstantsV2.singInSecondaryColor300,
+                    ],
+                    stops: <double>[
+                      ConstantsV2.singInSecondaryStop100,
+                      ConstantsV2.singInSecondaryStop200,
+                      ConstantsV2.singInSecondaryStop300,
+                    ]
+                )
+            ),
+          ),
+        ],
+      );
     else
       return Stack(
         children: [
@@ -90,14 +141,14 @@ class Background extends StatelessWidget {
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
                     colors: <Color> [
-                      ConstantsV2.primaryColor100,
-                      ConstantsV2.primaryColor200,
-                      ConstantsV2.primaryColor300,
+                      ConstantsV2.familyAppBarColor100,
+                      ConstantsV2.familyAppBarColor200,
+                      ConstantsV2.familyAppBarColor300,
                     ],
                     stops: <double> [
-                      ConstantsV2.primaryStop100,
-                      ConstantsV2.primaryStop200,
-                      ConstantsV2.primaryStop300,
+                      ConstantsV2.familyAppBarStop100,
+                      ConstantsV2.familyAppBarStop200,
+                      ConstantsV2.familyAppBarStop300,
                     ]
                 )
             ),

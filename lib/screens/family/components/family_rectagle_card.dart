@@ -1,3 +1,4 @@
+import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
@@ -15,11 +16,11 @@ import 'package:boldo/models/Appointment.dart';
 import 'package:provider/provider.dart';
 
 class FamilyRectangleCard extends StatefulWidget {
-  final int? idPatient;
+  final Patient? patient;
   final bool isDependent;
   const FamilyRectangleCard({
     Key? key,
-    this.idPatient,
+    this.patient,
     required this.isDependent,
   }) : super(key: key);
 

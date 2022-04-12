@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:boldo/provider/auth_provider.dart';
+import 'package:boldo/screens/sing_in/sing_in_transition.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:boldo/utils/loading_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 import '../../constants.dart';
 
@@ -165,7 +168,7 @@ class _DniRegisterState extends State<DniRegister> {
                             ),
                             onPressed: () async {
                               try {
-                                XFile? image = await picker.pickImage(
+                                XFile? image = await ImagePicker().pickImage(
                                     source: ImageSource.camera);
 
                                 if (image != null) {
@@ -178,7 +181,20 @@ class _DniRegisterState extends State<DniRegister> {
                                     ),
                                   );
                                   if(_selfieRequest){
-                                    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+                                    print(Provider.of<AuthProvider>(context, listen: false).getAuthenticated);
+                                    if(!Provider.of<AuthProvider>(context, listen: false).getAuthenticated)
+                                      Navigator.of(context).pushNamedAndRemoveUntil('/login', ModalRoute.withName('/home') );
+                                    else {
+                                      Provider.of<AuthProvider>(context, listen: false).setIsFamily(isFamily: true);
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => SingInTransition(
+                                            )
+                                        ),
+                                      );
+                                      Navigator.of(context).pushNamedAndRemoveUntil('/home', ModalRoute.withName('/home') );
+                                    }
                                   }
                                   setState(() {
                                     if (_isFrontDni == true) {
