@@ -18,6 +18,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants.dart';
+import '../main.dart';
 
 class LoginWebViewHelper extends StatefulWidget {
   const LoginWebViewHelper({Key? key}) : super(key: key);
@@ -69,7 +70,7 @@ class _LoginWebViewHelperState extends State<LoginWebViewHelper> {
               )
           ),
         );
-        Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
+        Navigator.of(context).pushNamedAndRemoveUntil('/home', ModalRoute.withName('/onboarding'));
         break;
       default:
     }
@@ -82,7 +83,6 @@ Future<int> authenticateUser({required BuildContext context}) async {
 
   FlutterAppAuth appAuth = FlutterAppAuth();
 
-  const storage = FlutterSecureStorage();
   try {
     final AuthorizationTokenResponse? result =
         await appAuth.authorizeAndExchangeCode(
@@ -98,9 +98,9 @@ Future<int> authenticateUser({required BuildContext context}) async {
     await storage.write(key: "access_token", value: result!.accessToken);
     await storage.write(key: "refresh_token", value: result.refreshToken);
 
+    await prefs.setBool("isLogged", true);
     Provider.of<AuthProvider>(context, listen: false)
         .setAuthenticated(isAuthenticated: true);
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool("onboardingCompleted", true);
 
     Response response = await dio.get("/profile/patient");

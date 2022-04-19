@@ -87,9 +87,9 @@ class FamilyMetodsAdd extends StatelessWidget {
                                   const SizedBox(width: 10,),
                                   Flexible(
                                     child: Text(
-                                      "Si la persona a la que querés agregar ya"
-                                          "cuenta con un perfil en Boldo, pedile"
-                                          "que genere una QR dentro de la app."
+                                      "Si la persona a la que querés agregar ya "
+                                          "cuenta con un perfil en Boldo, pedile "
+                                          "que genere una QR dentro de la app. "
                                           "Escaneá y listo.",
                                       style: boldoCorpMediumTextStyle.copyWith(
                                         color: ConstantsV2.activeText,

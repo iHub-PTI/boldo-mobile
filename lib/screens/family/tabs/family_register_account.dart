@@ -2,11 +2,15 @@ import 'dart:io';
 
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/screens/sing_in/sing_in_transition.dart';
+import 'package:boldo/screens/take_picture/take_picture_screen.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:boldo/utils/loading_helper.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
@@ -20,6 +24,19 @@ class DniFamilyRegister extends StatefulWidget {
 
 class _DniFamilyRegisterState extends State<DniFamilyRegister> {
   ImagePicker picker = ImagePicker();
+  late var cameras;
+  late var firstCamera;
+  @override
+  void initState(){
+    super.initState();
+    initializedCamera();
+  }
+
+  void initializedCamera() async {
+    cameras = await availableCameras();
+    firstCamera = cameras[0];
+  }
+
   var _image;
   bool _isFrontDni = true;
   bool _selfieRequest = false;
@@ -168,22 +185,28 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                                 ),
                                 onPressed: () async {
                                   try {
-                                    XFile? image = await ImagePicker().pickImage(
-                                        source: ImageSource.camera);
+                                    final path = join((await getTemporaryDirectory()).path, 'selfie.png');
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => TakePictureScreen(camera: firstCamera, path: path),
+                                      ),
+                                    );
+                                    Image? image = Image.file(File(path));
 
                                     if (image != null) {
                                       await Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) => LoadingHelper(
-                                              image: File(image.path),
+                                              image: File(path),
                                             )
                                         ),
                                       );
                                       if(_selfieRequest){
                                         print(Provider.of<AuthProvider>(context, listen: false).getAuthenticated);
                                         if(!Provider.of<AuthProvider>(context, listen: false).getAuthenticated)
-                                          Navigator.of(context).pushNamedAndRemoveUntil('/login', ModalRoute.withName('/home') );
+                                          Navigator.of(context).pushNamedAndRemoveUntil('/login', ModalRoute.withName('/onboarding') );
                                         else {
                                           Provider.of<AuthProvider>(context, listen: false).setIsFamily(isFamily: true);
                                           await Navigator.push(
@@ -193,7 +216,7 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                                                 )
                                             ),
                                           );
-                                          Navigator.of(context).pushNamedAndRemoveUntil('/home', ModalRoute.withName('/home') );
+                                          Navigator.of(context).popUntil(ModalRoute.withName('/home') );
                                         }
                                       }
                                       setState(() {

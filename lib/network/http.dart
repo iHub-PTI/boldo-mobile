@@ -2,17 +2,16 @@ import 'package:boldo/network/connection_status.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 
+import '../main.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/offline/offline_screen.dart';
 
 var dio = Dio();
 var dioHealthCore = Dio();
 void initDio({required GlobalKey<NavigatorState> navKey}) {
-  const storage = FlutterSecureStorage();
   String baseUrl = String.fromEnvironment('SERVER_ADDRESS',
       defaultValue: dotenv.env['SERVER_ADDRESS']!);
 
@@ -132,7 +131,6 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
 }
 
 void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
-  const storage = FlutterSecureStorage();
   String baseUrl = String.fromEnvironment('HEALTH_PTI_API',
       defaultValue: dotenv.env['HEALTH_PTI_API']!);
 

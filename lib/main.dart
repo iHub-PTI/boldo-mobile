@@ -27,6 +27,8 @@ import 'models/Patient.dart';
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 final Patient patientModel = Patient();
+late SharedPreferences prefs;
+const storage = FlutterSecureStorage();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,7 +42,7 @@ Future<void> main() async {
 
   ConnectionStatusSingleton.getInstance().initialize();
 
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs = await SharedPreferences.getInstance();
   bool onboardingCompleted = prefs.getBool("onboardingCompleted") ?? false;
 
   initDio(navKey: navKey);
