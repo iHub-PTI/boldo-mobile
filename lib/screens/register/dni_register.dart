@@ -193,9 +193,8 @@ class _DniRegisterState extends State<DniRegister> {
                                     builder: (context) => TakePictureScreen(cameras: cameras, path: path),
                                   ),
                                 );
-                                Image? image = Image.file(File(path));
-
-                                if (image != null) {
+                                bool isExist = await File(path).exists();
+                                if ( isExist ) {
                                   await Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -204,6 +203,9 @@ class _DniRegisterState extends State<DniRegister> {
                                         )
                                     ),
                                   );
+                                  File(path).delete();
+                                  imageCache!.clearLiveImages();
+                                  imageCache!.clear();
                                   if(_selfieRequest){
                                     print(Provider.of<AuthProvider>(context, listen: false).getAuthenticated);
                                     if(!Provider.of<AuthProvider>(context, listen: false).getAuthenticated)

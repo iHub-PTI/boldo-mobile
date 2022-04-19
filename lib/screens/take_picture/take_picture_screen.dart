@@ -617,6 +617,7 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
       if (mounted) {
         setState(() {
           imageFile = file;
+          print(widget.path);
           file!.saveTo(widget.path);
           Navigator.pop(context);
         });
