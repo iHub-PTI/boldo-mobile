@@ -185,11 +185,13 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                                 ),
                                 onPressed: () async {
                                   try {
-                                    final path = join((await getTemporaryDirectory()).path, 'selfie.png');
+                                    final path = join(
+                                        (await getTemporaryDirectory()).path,
+                                        _isFrontDni ? 'front.png' : _selfieRequest ? 'selfie.png' : 'back.png');
                                     await Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => TakePictureScreen(camera: firstCamera, path: path),
+                                          builder: (context) => TakePictureScreen(cameras: cameras, path: path),
                                       ),
                                     );
                                     Image? image = Image.file(File(path));

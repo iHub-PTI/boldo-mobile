@@ -190,7 +190,7 @@ class _DniRegisterState extends State<DniRegister> {
                                 await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => TakePictureScreen(camera: firstCamera, path: path),
+                                    builder: (context) => TakePictureScreen(cameras: cameras, path: path),
                                   ),
                                 );
                                 Image? image = Image.file(File(path));
