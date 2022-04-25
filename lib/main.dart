@@ -1,3 +1,4 @@
+import 'package:boldo/screens/family/tabs/metods_add_family_screen.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:flutter/foundation.dart';
@@ -113,6 +114,7 @@ class FullApp extends StatelessWidget {
         '/onboarding': (context) => HeroScreenV2(),
         '/home': (context) => DashboardScreen(),
         '/login': (context) => const LoginWebViewHelper(),
+        'methods' : (context) => const FamilyMetodsAdd(),
       },
     );
   }

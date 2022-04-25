@@ -18,16 +18,18 @@ import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/constants.dart';
 
-class FamilyScreen extends StatefulWidget {
+import 'QR_generator.dart';
+
+class MyManagersTab extends StatefulWidget {
   final bool setLoggedOut;
 
-  FamilyScreen({Key? key, this.setLoggedOut = false}) : super(key: key);
+  MyManagersTab({Key? key, this.setLoggedOut = false}) : super(key: key);
 
   @override
-  _FamilyScreenState createState() => _FamilyScreenState();
+  _MyManagersTabState createState() => _MyManagersTabState();
 }
 
-class _FamilyScreenState extends State<FamilyScreen> {
+class _MyManagersTabState extends State<MyManagersTab> {
 
   final List<Patient> items = [
   ];
@@ -95,7 +97,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           const Text(
-                            "Mi Familia",
+                            "Mis gestores",
                             style: boldoTitleBlackTextStyle,
                           ),
                         ],
@@ -106,13 +108,6 @@ class _FamilyScreenState extends State<FamilyScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Container(
-                            child :Column(
-                              children: [
-                                const FamilyRectangleCard(isDependent: false)
-                              ]
-                            )
-                          ),
-                          Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             alignment: Alignment.topLeft,
                             child: items.length > 0 ? ListView.builder(
@@ -121,10 +116,18 @@ class _FamilyScreenState extends State<FamilyScreen> {
                               padding: const EdgeInsets.all(8),
                               scrollDirection: Axis.vertical,
                               itemBuilder: _buildItem,
-                            ) : const EmptyStateV2(picture: "Helping old man 1.svg", textBottom: "aún no agregaste ningún perfil para gestionar",),
+                            ) : const EmptyStateV2(picture: "Helping old man 1.svg", textBottom: "aún no tienes ningún gestor",),
                           ),
                         ],
                       ),
+                    ),
+                    items.length > 0 ? Container(): Container(
+                      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                      child: const Text("Aquí apareceran las personas a quienes des "
+                            "permiso como gestor. Esto significa que van a poder "
+                            "ver tu historia clinica y realizar gestiones como "
+                            "marcar y cancelar consultas en tu nombre, entre otras "
+                            "funciones"),
                     ),
                     Expanded(
                       child: Container(
@@ -132,16 +135,28 @@ class _FamilyScreenState extends State<FamilyScreen> {
                         child: Align(
                           alignment: Alignment.bottomCenter,
                           child: Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  onPressed: (){
-                                    Navigator.pushNamed(context, '/methods');
-                                  },
-                                  child: Text(items.length>0 ? "nuevo miembro" : "agregar"),
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: (){
+                                      Navigator.push(context, MaterialPageRoute(
+                                          builder: (context) => const QRGenerator()
+                                      ));
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Text("vincular con QR"),
+                                        const SizedBox(width: 10,),
+                                        SvgPicture.asset(
+                                          'assets/icon/qrcode.svg',
+                                          color: ConstantsV2.lightGrey,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ]
+                              ]
                           ),
                         ),
                       ),

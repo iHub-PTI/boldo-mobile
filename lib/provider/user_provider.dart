@@ -13,7 +13,8 @@ class UserProvider with ChangeNotifier {
       _neighborhood,
       _city,
       _addressDescription,
-      _photoUrl;
+      _photoUrl,
+      _identifier;
 
   String? _profileEditSuccessMessage;
   String? _profileEditErrorMessage;
@@ -30,6 +31,7 @@ class UserProvider with ChangeNotifier {
   String? get getCity => _city;
   String? get getAddressDescription => _addressDescription;
   String? get getPhotoUrl => _photoUrl;
+  String? get getIdentifier => _identifier;
 
   String? get profileEditSuccessMessage => _profileEditSuccessMessage;
   String? get profileEditErrorMessage => _profileEditErrorMessage;
@@ -74,6 +76,7 @@ class UserProvider with ChangeNotifier {
     String? photoUrl,
     String? city,
     String? addressDescription,
+    String? identifier,
     bool notify = false,
   }) {
     _givenName = givenName ?? _givenName;
@@ -88,7 +91,7 @@ class UserProvider with ChangeNotifier {
     _city = city ?? _city;
     _addressDescription = addressDescription ?? _addressDescription;
     _photoUrl = photoUrl ?? _photoUrl;
-
+    _identifier = identifier ?? _identifier;
     if (notify) {
       notifyListeners();
     }

@@ -11,7 +11,8 @@ class Patient {
       city,
       addressDescription,
       photoUrl,
-      id;
+      id,
+      identifier;
 
   Patient(
       {this.id,
@@ -25,7 +26,8 @@ class Patient {
         this.phone,
         this.neighborhood,
         this.photoUrl,
-        this.street,});
+        this.street,
+        this.identifier});
 
   Patient.fromJson(Map<String, dynamic> json,) {
     givenName = json['givenName'];
@@ -41,6 +43,7 @@ class Patient {
     addressDescription = json['addressDescription'];
     photoUrl = json['photoUrl'];
     id = json['id'];
+    identifier = json['identifier'];
   }
 
   Map<String, dynamic> toJson() {
@@ -58,6 +61,7 @@ class Patient {
     data['neighborhood'] = neighborhood;
     data['photoUrl'] = photoUrl;
     data['street'] = street;
+    data['identifier'] = identifier;
     return data;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/models/Patient.dart';
 import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
@@ -266,6 +267,88 @@ class _ProfileImageViewState extends State<ProfileImageView> {
                 color: Colors.white,
                 width: 3,
               )
+            ) : const CircleBorder(),
+            clipBehavior: Clip.antiAlias,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ProfileImageView2 extends StatefulWidget {
+
+  final double height;
+  final double width;
+  final bool border;
+  final Patient? patient;
+
+  const ProfileImageView2({
+    Key? key,
+    required this.height,
+    required this.width,
+    required this.border,
+    required this.patient,
+  }) : super(key: key);
+
+  @override
+  _ProfileImageViewState2 createState() => _ProfileImageViewState2();
+}
+
+class _ProfileImageViewState2 extends State<ProfileImageView2> {
+  bool _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        SizedBox(
+          height: widget.height,
+          width: widget.width,
+          child: Card(
+            child: _isLoading
+                ? const Padding(
+              padding: EdgeInsets.all(26.0),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    Constants.primaryColor400),
+                backgroundColor: Constants.primaryColor600,
+              ),
+            )
+            : ClipOval(
+              child: widget.patient != null ? widget.patient!.photoUrl == null || widget.patient!.photoUrl == '' ?
+                SvgPicture.asset(
+                  widget.patient!.gender == null || widget.patient!.gender == 'unknown'
+                      ? 'assets/images/LogoIcon.svg'
+                      : widget.patient!.gender == "female"
+                      ? 'assets/images/femalePatient.svg'
+                      : 'assets/images/malePatient.svg',
+                ) :
+               CachedNetworkImage(
+                fit: BoxFit.cover,
+                imageUrl: widget.patient!.photoUrl!,
+                progressIndicatorBuilder:
+                    (context, url, downloadProgress) => Padding(
+                  padding: const EdgeInsets.all(26.0),
+                  child: CircularProgressIndicator(
+                    value: downloadProgress.progress,
+                    valueColor:
+                    const AlwaysStoppedAnimation<Color>(
+                        Constants.primaryColor400),
+                    backgroundColor: Constants.primaryColor600,
+                  ),
+                ),
+                errorWidget: (context, url, error) =>
+                const Icon(Icons.error),
+              ): SvgPicture.asset('assets/images/LogoIcon.svg')
+
+            ),
+            elevation: 4.0,
+            shape: widget.border ? const StadiumBorder(
+                side: BorderSide(
+                  color: Colors.white,
+                  width: 3,
+                )
             ) : const CircleBorder(),
             clipBehavior: Clip.antiAlias,
           ),

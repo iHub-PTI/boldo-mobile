@@ -1,13 +1,16 @@
 import 'dart:io';
 
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../constants.dart';
 
 class LoadingHelper extends StatefulWidget {
   final File? image;
-  const LoadingHelper({Key? key, this.image}) : super(key: key);
+  final QrImage? qrImage;
+  const LoadingHelper({Key? key, this.image, this.qrImage}) : super(key: key);
 
   @override
   State<LoadingHelper> createState() => _LoadingHelperState();
@@ -50,7 +53,17 @@ class _LoadingHelperState extends State<LoadingHelper> {
                 ),
               ),
             )
-                : Container(),
+                : widget.qrImage != null  && !_loaded
+                ? Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Opacity(
+                  opacity: 0.5,
+                  child: widget.qrImage,
+                ),
+              ),
+            ) : Container(),
             Align(
               alignment: Alignment.center,
               child: !_loaded

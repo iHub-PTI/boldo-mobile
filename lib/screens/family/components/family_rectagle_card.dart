@@ -4,6 +4,7 @@ import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/details/appointment_details.dart';
 import 'package:boldo/screens/details/prescription_details.dart';
+import 'package:boldo/screens/family/tabs/my_managers_tab.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -39,7 +40,12 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
     return Card(
       child: InkWell(
         onTap: (){
-
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MyManagersTab()
+            ),
+          );
         },
         child: Row(
           children: [

@@ -119,6 +119,7 @@ Future<int> authenticateUser({required BuildContext context}) async {
       birthDate: response.data['birthDate'],
       street: response.data['street'],
       city: response.data['city'],
+      identifier: response.data['identifier']
     );
 
     print("FAMILY ${Provider.of<AuthProvider>(context, listen: false).getIsFamily}");

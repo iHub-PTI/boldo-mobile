@@ -1,4 +1,5 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/screens/family/tabs/QR_scanner.dart';
 import 'package:boldo/screens/register/dni_register.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:flutter/cupertino.dart';
@@ -72,7 +73,13 @@ class FamilyMetodsAdd extends StatelessWidget {
                           ),
                           color: ConstantsV2.lightAndClear.withOpacity(0.80),
                           child: InkWell(
-                            onTap: () {
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => QRScanner()
+                                ),
+                              );
                             },
                             child: Container(
                               padding: const EdgeInsets.all(8),
