@@ -65,6 +65,8 @@ class Constants {
   
 }
 
+const String genericError = "Algo salió mal, vuelve a intentarlo más tarde";
+
 // Text Style
 const boldoHeadingTextStyle = TextStyle(
   color: ConstantsV2.inactiveText,
