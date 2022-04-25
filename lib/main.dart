@@ -114,7 +114,7 @@ class FullApp extends StatelessWidget {
         '/onboarding': (context) => HeroScreenV2(),
         '/home': (context) => DashboardScreen(),
         '/login': (context) => const LoginWebViewHelper(),
-        'methods' : (context) => const FamilyMetodsAdd(),
+        '/methods' : (context) => const FamilyMetodsAdd(),
       },
     );
   }
