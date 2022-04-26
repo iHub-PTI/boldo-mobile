@@ -5,6 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import 'familyConnectTransition.dart';
+
 class QRScanner extends StatefulWidget {
   QRScanner({Key? key}) : super(key: key);
 
@@ -46,7 +48,6 @@ class _QRScannerState extends State<QRScanner> {
                 size: 200,
                 embeddedImage: const AssetImage('assets/images/logo.png'),
                 embeddedImageStyle: QrEmbeddedImageStyle(
-                    size: const Size(40,40)
                 ),
                 eyeStyle: const QrEyeStyle(
                   eyeShape: QrEyeShape.circle,
@@ -63,6 +64,13 @@ class _QRScannerState extends State<QRScanner> {
                     builder: (context) => LoadingHelper(
                       qrImage: qrImage,
                     )),
+              );
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => FamilyConnectTransition(
+                    )
+                ),
               );
               await Navigator.push(
                 context,
