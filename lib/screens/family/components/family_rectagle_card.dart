@@ -77,7 +77,7 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
                       );
                     },
                     selector: (buildContext, userProvider) =>
-                    "${userProvider.getGivenName} ${userProvider.getFamilyName}",
+                    "${userProvider.getGivenName ?? ''} ${userProvider.getFamilyName ?? ''}",
                   ),
                   Text(
                     ! widget.isDependent ? "mi perfil" : widget.patient!.relationship!,
