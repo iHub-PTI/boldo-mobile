@@ -18,6 +18,8 @@ import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/constants.dart';
 
+import '../../main.dart';
+
 class FamilyScreen extends StatefulWidget {
   final bool setLoggedOut;
 
@@ -29,8 +31,6 @@ class FamilyScreen extends StatefulWidget {
 
 class _FamilyScreenState extends State<FamilyScreen> {
 
-  final List<Patient> items = [
-  ];
 
   Response? response;
   bool _dataLoading = true;
@@ -115,9 +115,9 @@ class _FamilyScreenState extends State<FamilyScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             alignment: Alignment.topLeft,
-                            child: items.length > 0 ? ListView.builder(
+                            child: families.length > 0 ? ListView.builder(
                               shrinkWrap: true,
-                              itemCount: items.length,
+                              itemCount: families.length,
                               padding: const EdgeInsets.all(8),
                               scrollDirection: Axis.vertical,
                               itemBuilder: _buildItem,
@@ -138,7 +138,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
                                   onPressed: (){
                                     Navigator.pushNamed(context, '/methods');
                                   },
-                                  child: Text(items.length>0 ? "nuevo miembro" : "agregar"),
+                                  child: Text(families.length>0 ? "nuevo miembro" : "agregar"),
                                 ),
                               ),
                             ]
@@ -156,7 +156,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
   }
 
   Widget _buildItem(BuildContext context, int index){
-    return FamilyRectangleCard(patient: items[index], isDependent: true,);
+    return FamilyRectangleCard(patient: families[index], isDependent: true,);
   }
 
 }

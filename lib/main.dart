@@ -1,3 +1,4 @@
+import 'package:boldo/screens/family/family_tab.dart';
 import 'package:boldo/screens/family/tabs/metods_add_family_screen.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
@@ -30,6 +31,7 @@ final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 final Patient patientModel = Patient();
 late SharedPreferences prefs;
 const storage = FlutterSecureStorage();
+final List<Patient> families = [];
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -115,6 +117,7 @@ class FullApp extends StatelessWidget {
         '/home': (context) => DashboardScreen(),
         '/login': (context) => const LoginWebViewHelper(),
         '/methods' : (context) => const FamilyMetodsAdd(),
+        '/familyScreen' : (context) => FamilyScreen(),
       },
     );
   }

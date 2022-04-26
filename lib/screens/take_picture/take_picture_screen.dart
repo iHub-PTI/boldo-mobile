@@ -83,6 +83,8 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
     _ambiguate(WidgetsBinding.instance)?.removeObserver(this);
     _flashModeControlRowAnimationController.dispose();
     _exposureModeControlRowAnimationController.dispose();
+    _focusModeControlRowAnimationController.dispose();
+    controller!.dispose();
     super.dispose();
   }
 

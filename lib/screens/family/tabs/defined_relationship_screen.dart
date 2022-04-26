@@ -21,6 +21,8 @@ import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/constants.dart';
 
+import '../../../main.dart';
+
 class DefinedRelationshipScreen extends StatefulWidget {
   final bool setLoggedOut;
 
@@ -32,7 +34,7 @@ class DefinedRelationshipScreen extends StatefulWidget {
 
 class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
 
-  late List<String> items = [];
+  late List<String> relationType = [];
 
   Response? response;
   bool _dataLoading = true;
@@ -46,7 +48,7 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
 
   Future _getFamiliesRelationship() async {
 
-    items = ["Papá", "Mamá", "Hijo", "Hija", "Abuelo", "Abuela", "Nieto", "Nieta"];
+    relationType = ["Papá", "Mamá", "Hijo", "Hija", "Abuelo", "Abuela", "Nieto", "Nieta"];
 
     //response = await dio.get("/profile/patient");
   }
@@ -57,6 +59,7 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
       familyName: "Aguirre",
       gender: "unknown",
       identifier: "1233445",
+      photoUrl: "https://s3-alpha-sig.figma.com/img/9210/fd70/99decdd7aa6b9bf23fff1bc150449738?Expires=1652054400&Signature=ABbH0Fzwd4OhVen3MNLsqhhUrmIkDJ9vJ-i5eOPfTKfBJyXx8LAQQL3jviRhUR1Ncu8pEYKaTAJ8csylZCSIEOTzUDmey2u7-VXygECH9QE-C34VVLJEQK5hCalSLAuq469nZ3TaNkTODmFDCHIbhgMQW9wgswoDg4cal3pBD0cSohGi8frnkergVupuf89wmICfMOsfv4KcLCH6ewy4WJDF00yaH7948uQU8W8jKjhf3EcRSNg6hcY2z0RHnzaL-vQqPwBgjHQuRkopzSyZvzlgtfLTrfBJXKQ~wIPCYWReUxsNshP5gYwkCa0BaO5RAp0ABp4YBvJzhE5oWRDuJQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
     );
   }
 
@@ -126,8 +129,10 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                                 style: boldoSubTextMediumStyle.copyWith(color: Colors.black),
                                 onChanged: (value) => setState(() {
                                   relationship = value!;
+                                  dependent!.relationship = relationship;
+                                  selected = true;
                                 }),
-                                items: items
+                                items: relationType
                                     .map((relationship) => DropdownMenuItem<String>(
                                   child: Text(relationship),
                                   value: relationship,
@@ -141,22 +146,44 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                       ),
                     ),
                     Expanded(
-                      child: Container(
-                        padding: EdgeInsets.all(16),
-                        child: Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            child: OutlinedButton(
-                              onPressed: () {
-                                Navigator.of(context)
-                                    .popUntil(ModalRoute.withName("/methods"));
-                              },
-                              child: const Text(
-                                "desvincular",
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          padding: EdgeInsets.all(16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                child: OutlinedButton(
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .popUntil(ModalRoute.withName("/methods"));
+                                  },
+                                  child: const Text(
+                                    "cancelar",
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
+                              AnimatedOpacity(
+                                opacity: selected ? 1 : 0,
+                                duration: const Duration(milliseconds: 300),
+                                child: Container(
+                                  child: ElevatedButton(
+                                    onPressed: selected ? () {
+                                      setState(() {
+                                        families.add(dependent!);
+                                      });
+                                      Navigator.of(context)
+                                          .popUntil(ModalRoute.withName("/home"));
+                                    } : (){},
+                                    child: const Text(
+                                      "vincular",
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
                         ),
                       ),
                     ),

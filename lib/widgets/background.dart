@@ -132,6 +132,58 @@ class Background extends StatelessWidget {
           ),
         ],
       );
+    else if(text == "FamilyConnect_1")
+      return Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+                gradient: RadialGradient(
+                    radius: 3,
+                    center: Alignment(
+                      0,
+                      0,
+                    ),
+                    colors: <Color>[
+                      ConstantsV2.familyConnectPrimaryColor100,
+                      ConstantsV2.familyConnectPrimaryColor200,
+                      ConstantsV2.familyConnectPrimaryColor300,
+                    ],
+                    stops: <double>[
+                      ConstantsV2.familyConnectPrimaryStop100,
+                      ConstantsV2.familyConnectPrimaryStop200,
+                      ConstantsV2.familyConnectPrimaryStop300,
+                    ]
+                )
+            ),
+          ),
+        ],
+      );
+    else if(text == "FamilyConnect_2")
+      return Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+                gradient: RadialGradient(
+                    radius: 3,
+                    center: Alignment(
+                      0,
+                      0,
+                    ),
+                    colors: <Color>[
+                      ConstantsV2.familyConnectSecondaryColor100,
+                      ConstantsV2.familyConnectSecondaryColor200,
+                      ConstantsV2.familyConnectSecondaryColor300,
+                    ],
+                    stops: <double>[
+                      ConstantsV2.familyConnectSecondaryStop100,
+                      ConstantsV2.familyConnectSecondaryStop200,
+                      ConstantsV2.familyConnectSecondaryStop300,
+                    ]
+                )
+            ),
+          ),
+        ],
+      );
     else
       return Stack(
         children: [
