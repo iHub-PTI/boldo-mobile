@@ -14,6 +14,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
+import 'defined_relationship_screen.dart';
+import 'familyConnectTransition.dart';
 
 class DniFamilyRegister extends StatefulWidget {
   DniFamilyRegister({Key? key}) : super(key: key);
@@ -216,11 +218,16 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                                           await Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) => SingInTransition(
+                                                builder: (context) => FamilyConnectTransition(
                                                 )
                                             ),
                                           );
-                                          Navigator.of(context).popUntil(ModalRoute.withName('/home') );
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => DefinedRelationshipScreen()
+                                            ),
+                                          );
                                         }
                                       }
                                       setState(() {

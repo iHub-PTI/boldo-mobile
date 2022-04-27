@@ -282,6 +282,22 @@ class ConstantsV2 {
   static const double singInSecondaryStop200 = 0.5479;
   static const double singInSecondaryStop300 = 1.0;
 
+  // Family Connect background colors
+  static const Color familyConnectPrimaryColor100 = Color(0xff364F6B);
+  static const Color familyConnectPrimaryColor200 = Color(0xff74B49E);
+  static const Color familyConnectPrimaryColor300 = Color(0xffFDA57D);
+  static const Color familyConnectSecondaryColor100 = Color(0xff364F6B);
+  static const Color familyConnectSecondaryColor200 = Color(0xff74B49E);
+  static const Color familyConnectSecondaryColor300 = Color(0xff93D2C2);
+
+  // Family Connect background stops
+  static const double familyConnectPrimaryStop100 = 0;
+  static const double familyConnectPrimaryStop200 = 0.6757;
+  static const double familyConnectPrimaryStop300 = 1.0;
+  static const double familyConnectSecondaryStop100 = 0;
+  static const double familyConnectSecondaryStop200 = 0.5479;
+  static const double familyConnectSecondaryStop300 = 1.0;
+
   // colors
   static const Color lightGrey = Color(0xffF5F5F5);
   static const Color lightest = Color(0xffFFFFFF);

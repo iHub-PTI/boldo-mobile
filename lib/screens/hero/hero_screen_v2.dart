@@ -175,7 +175,7 @@ class HeroScreenV2 extends StatelessWidget {
                         }
                       },
                       child: Container(
-                          constraints: const BoxConstraints(maxWidth: 142, minHeight: 48),
+                          constraints: const BoxConstraints(maxWidth: 142, maxHeight: 48),
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [

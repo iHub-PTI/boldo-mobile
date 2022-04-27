@@ -35,7 +35,7 @@ class _MenuScreenState extends State<MenuScreen> {
     ItemMenu(
       image: 'assets/icon/family.svg',
       title: 'Mi Familia',
-      page: FamilyScreen(),
+      route: '/familyScreen',
     ),
     const ItemMenu(
       image: 'assets/icon/shield-check.svg',

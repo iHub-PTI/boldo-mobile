@@ -39,7 +39,7 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
   Widget build(BuildContext context) {
     return Card(
       child: InkWell(
-        onTap: (){
+        onTap: widget.isDependent ? (){} : (){
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -51,14 +51,23 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
           children: [
             Container(
               padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8, right: 8),
-              child: const ProfileImageView(height: 60, width: 60, border: false),
+              child: widget.isDependent
+                  ? ProfileImageView2(height: 60, width: 60, border: false, patient: widget.patient,)
+                  : const ProfileImageView(height: 60, width: 60, border: false),
             ),
             Container(
               padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Selector<UserProvider, String>(
+                  widget.isDependent
+                      ? Text(
+                        "${widget.patient!.givenName} ${widget.patient!.familyName}",
+                        style: boldoSubTextMediumStyle.copyWith(
+                            color: ConstantsV2.activeText
+                        ),
+                      )
+                      :Selector<UserProvider, String>(
                     builder: (_, name, __){
                       return Text(
                         name,
@@ -68,10 +77,10 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
                       );
                     },
                     selector: (buildContext, userProvider) =>
-                    "${userProvider.getGivenName} ${userProvider.getFamilyName}",
+                    "${userProvider.getGivenName ?? ''} ${userProvider.getFamilyName ?? ''}",
                   ),
                   Text(
-                    ! widget.isDependent ? "mi perfil" : "Familar",
+                    ! widget.isDependent ? "mi perfil" : widget.patient!.relationship!,
                     style: boldoCorpMediumTextStyle.copyWith(
                       color: ConstantsV2.green,
                     ),

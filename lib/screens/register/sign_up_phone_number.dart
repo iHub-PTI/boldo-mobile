@@ -138,7 +138,7 @@ class _SignUpPhoneInfoState extends State<SignUpPhoneInfo> {
                           },
                           child: Container(
                             constraints: const BoxConstraints(
-                                maxWidth: 142, minHeight: 48),
+                                maxWidth: 142, maxHeight: 48),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [

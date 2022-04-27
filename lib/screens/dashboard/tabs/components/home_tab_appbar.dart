@@ -1,5 +1,6 @@
 import 'package:boldo/network/http.dart';
 import 'package:boldo/provider/auth_provider.dart';
+import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -32,11 +33,6 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
 
   _HomeTabAppBarState(this.max);
   double max;
-  String? gender;
-  String? profileURL;
-  String? name;
-  String? lastname;
-  String? city;
   Response? response;
   bool _dataLoading = true;
   var expanded = true ;
@@ -54,12 +50,24 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    response = await dio.get("/profile/patient");
-    name = response!.data["givenName"];
-    lastname = response!.data["familyName"];
-    city = response!.data["city"];
-    profileURL = prefs.getString("profile_url")??'';
-    gender = prefs.getString("gender");
+    Response response = await dio.get("/profile/patient");
+    print("DATOS ${response.data}");
+    await prefs.setString("profile_url", response.data["photoUrl"] ?? '');
+    await prefs.setString("gender", response.data["gender"]);
+    await prefs.setString("name", response.data["givenName"]);
+
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    userProvider.setUserData(
+        givenName: response.data['givenName'],
+        familyName: response.data['familyName'],
+        gender: response.data['gender'],
+        photoUrl: response.data['photoUrl'],
+        email: response.data['email'],
+        birthDate: response.data['birthDate'],
+        street: response.data['street'],
+        city: response.data['city'],
+        identifier: response.data['identifier']
+    );
     setState(() {
       _dataLoading = false;
     });
@@ -77,56 +85,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
       child: Row(
         children: [
           const SizedBox(width: 10),
-          Selector<UserProvider, String>(
-            builder: (_, data, __) {
-              return SizedBox(
-                height: expanded ? 100 : 60,
-                width: expanded ? 100 : 60,
-                child: Card(
-                  margin: const EdgeInsets.all(0),
-                  shape: const StadiumBorder(
-                      side: BorderSide(
-                        color: Colors.white,
-                        width: 3,
-                      )
-                  ),
-                  child: ClipOval(
-                    clipBehavior: Clip.antiAlias,
-                    child:
-                    data == null || data == ''
-                        ? SvgPicture.asset(
-                      isAuthenticated
-                          ? gender == "female"
-                          ? 'assets/images/femalePatient.svg'
-                          : 'assets/images/malePatient.svg'
-                          : 'assets/images/LogoIcon.svg',
-                    )
-                        : CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      imageUrl: data ,
-                      progressIndicatorBuilder:
-                          (context, url, downloadProgress) =>
-                          Padding(
-                            padding: const EdgeInsets.all(26.0),
-                            child: CircularProgressIndicator(
-                              value: downloadProgress.progress,
-                              valueColor:
-                              const AlwaysStoppedAnimation<Color>(
-                                  Constants.primaryColor400),
-                              backgroundColor:
-                              Constants.primaryColor600,
-                            ),
-                          ),
-                      errorWidget: (context, url, error) =>
-                      const Icon(Icons.error),
-                    ),
-                  ),
-                ),
-              );
-            },
-            selector: (buildContext, userProvider) =>
-            userProvider.getPhotoUrl ?? '',
-          ),
+          ProfileImageView(height: expanded ? 100 : 60, width: expanded ? 100 : 60, border: true),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -144,34 +103,43 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                         },
                         icon: SvgPicture.asset(
                           'assets/icon/menu-alt-1.svg',
-                          semanticsLabel: 'Doctor Icon',
                           color: ConstantsV2.lightest,
                         ),
                       )
                     ],
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children:
-                  [
-                    Text(
-                      !_dataLoading ? name! + " " + lastname! : '',
-                      style: expanded ? boldoCardHeadingTextStyle : boldoCorpMediumBlackTextStyle,
-                    ),
-                  ],
+                Selector<UserProvider, String>(
+                    builder: (_, name, __){
+                      return Text(
+                        name,
+                        style: boldoCardHeadingTextStyle.copyWith(
+                            color: ConstantsV2.lightest
+                        ),
+                      );
+                    },
+                    selector: (buildContext, userProvider) =>
+                    "${userProvider.getGivenName ?? ''} ${userProvider.getFamilyName ?? ''}",
                 ),
 
                 const SizedBox(height: 10),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children:[
-                      Text(
-                        !_dataLoading ? city != null ? city! : '' : '',
-                        style: expanded ? boldoCorpMediumTextStyle : boldoCorpSmallTextStyle,
-                      ),
-                    ]
+                Selector<UserProvider, String>(
+                  builder: (_, data, __) {
+                    return Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children:[
+                          Text(
+                            data,
+                            style: expanded ? boldoCorpMediumTextStyle : boldoCorpSmallTextStyle,
+                          ),
+                        ]
+                    );
+                  },
+                  selector: (buildContext, userProvider) =>
+                  userProvider.getCity ?? '',
                 ),
+
+                const SizedBox(height: 4),
                 Text(
                   formatDate(
                     DateTime.now(),
