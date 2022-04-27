@@ -164,19 +164,21 @@ class _VideoCallState extends State<VideoCall> {
 
       if (peerConnection != null) peerConnection!.cleanup();
 
-      //initialize the peer connection
-      peerConnection = PeerConnection(
-          localStream: localStream!,
-          room: widget.appointment.id!,
-          socket: socket!,
-          token: token!);
+      if (localStream != null && socket != null && token != null) {
+        //initialize the peer connection
+        peerConnection = PeerConnection(
+            localStream: localStream!,
+            room: widget.appointment.id!,
+            socket: socket!,
+            token: token!);
 
-      peerConnection!.onRemoteStream = onRemoteStream;
-      peerConnection!.onStateChange = onStateChange;
+        peerConnection!.onRemoteStream = onRemoteStream;
+        peerConnection!.onStateChange = onStateChange;
 
-      await peerConnection!.init();
-      print('setting description');
-      await peerConnection!.setSdpOffer(message);
+        await peerConnection!.init();
+        print('setting description');
+        await peerConnection!.setSdpOffer(message);
+      }
     });
 
     // Inform Doctor that we are ready.
