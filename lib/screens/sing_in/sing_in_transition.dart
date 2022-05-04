@@ -1,3 +1,4 @@
+import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
 import 'package:boldo/screens/family/family_tab.dart';
@@ -42,10 +43,15 @@ class _SingInTransitionState extends State<SingInTransition> {
   GlobalKey scaffoldKey = GlobalKey();
 
   Future<void> timer() async {
-    await Future.delayed(const Duration(seconds: 3));
+    if(prefs.getBool("isFamily")?? false)
+      patient = (await UserRepository().getPatient(prefs.getString("idFamily")))!;
+    else
+      patient = (await UserRepository().getPatient(null))!;
     setState(() {
+      _dataLoading = false;
       _background = const Background(text: "SingIn_2");
     });
+    await UserRepository().getDependents();
     await Future.delayed(const Duration(seconds: 2));
     Navigator.of(context).pushNamedAndRemoveUntil('/home', ModalRoute.withName('/onboarding'));
   }
@@ -93,7 +99,9 @@ class _SingInTransitionState extends State<SingInTransition> {
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
-                                              Text(
+                                                _dataLoading ? Text('Cargando',style: boldoSubTextStyle.copyWith(
+                                                    color: ConstantsV2.lightGrey
+                                                ),) :Text(
                                                 patient.gender == "unknown" ?
                                                   "Bienvenido/a" :
                                                 patient.gender == "male" ?

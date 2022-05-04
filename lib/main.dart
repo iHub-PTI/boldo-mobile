@@ -144,7 +144,7 @@ class FullApp extends StatelessWidget {
       navigatorKey: navKey,
       title: 'Boldo',
       theme: boldoTheme,
-      initialRoute: onboardingCompleted ? '/home' : "/onboarding",
+      initialRoute: onboardingCompleted ? '/SignInSuccess' : "/onboarding",
       routes: {
         '/onboarding': (context) => HeroScreenV2(),
         '/home': (context) => DashboardScreen(),

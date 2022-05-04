@@ -30,7 +30,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
         }else{
-          patient = _post;
+          //patient = _post;
           emit(Success());
         }
       }

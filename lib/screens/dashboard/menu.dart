@@ -21,6 +21,8 @@ import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/constants.dart';
 
+import '../../main.dart';
+
 class MenuScreen extends StatefulWidget {
   final bool setLoggedOut;
 
@@ -55,27 +57,13 @@ class _MenuScreenState extends State<MenuScreen> {
     ),
   ];
 
-  Response? response;
-  bool _dataLoading = true;
-
   FlutterAppAuth appAuth = FlutterAppAuth();
 
   GlobalKey scaffoldKey = GlobalKey();
 
-  Future _getProfileData() async {
-
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    response = await dio.get("/profile/patient");
-    setState(() {
-      _dataLoading = false;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    _getProfileData();
   }
 
   @override
@@ -123,7 +111,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    !_dataLoading ? response!.data["givenName"]! + " " + response!.data["familyName"]! : '',
+                                    "${patient.givenName??''} ${patient.familyName??''}",
                                     style: boldoTitleRegularTextStyle,
                                   ),
                                 ],

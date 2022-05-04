@@ -228,9 +228,12 @@ class _ProfileImageViewState extends State<ProfileImageView> {
                 child: patient.photoUrl == null || patient.photoUrl == ''
                 ?
                 SvgPicture.asset(
-                  patient.gender != null && patient.gender == "female"
+                  patient.gender != null ? patient.gender == "female"
                       ? 'assets/images/femalePatient.svg'
-                      : 'assets/images/malePatient.svg',
+                      : patient.gender == "male"
+                        ? 'assets/images/malePatient.svg'
+                        :'assets/images/LogoIcon.svg'
+                    : 'assets/images/LogoIcon.svg',
                 )
                 :CachedNetworkImage(
                   fit: BoxFit.cover,

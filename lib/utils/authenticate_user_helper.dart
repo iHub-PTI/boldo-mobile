@@ -98,7 +98,6 @@ Future<int> authenticateUser({required BuildContext context}) async {
     await prefs.setString("gender", response.data["gender"]);
     await prefs.setString("name", response.data["givenName"]);
     await prefs.setBool("isFamily", false);
-    patient = await UserRepository().getPatient(null)!;
     /*
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     userProvider.setUserData(
