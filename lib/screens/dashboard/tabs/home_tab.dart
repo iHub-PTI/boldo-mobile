@@ -61,7 +61,7 @@ class _HomeTabState extends State<HomeTab> {
       alignment: Alignment.bottomCenter,
       index: 0,
       title: 'Marcar una consulta remota',
-      appear: false,
+      appear: true,
       page: DoctorsTab(),
     ),
     CarouselCardPages(
@@ -185,7 +185,7 @@ class _HomeTabState extends State<HomeTab> {
     );
     _receivePort?.listen(_handleWaitingRoomsListUpdate);
   }
-
+ 
   Future<void> getAppointmentsData({bool loadMore = false}) async {
     patient = await UserRepository().getPatient(context, null)!;
     await UserRepository().getDependents();
@@ -211,7 +211,7 @@ class _HomeTabState extends State<HomeTab> {
           "/profile/patient/appointments?start=${dateOffset.toUtc().toIso8601String().substring(0, 23)}Z");
       Response responsePrescriptions =
           await dio.get("/profile/patient/prescriptions");
-      print(responseAppointments.data);
+      // print(responseAppointments.data);
       List<Prescription> allPrescriptions = List<Prescription>.from(
           responsePrescriptions.data["prescriptions"]
               .map((i) => Prescription.fromJson(i)));
@@ -525,11 +525,6 @@ class _CustomCardPageState extends State<CustomCardPage>{
   _CustomCardPageState({
     required this.carouselCardPage
   });
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

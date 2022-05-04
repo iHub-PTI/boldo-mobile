@@ -1,4 +1,7 @@
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
+import 'package:boldo/provider/auth_provider.dart';
+import 'package:boldo/provider/user_provider.dart';
+import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/family/family_tab.dart';
 import 'package:boldo/screens/family/tabs/defined_relationship_screen.dart';
 import 'package:boldo/screens/family/tabs/familyConnectTransition.dart';
@@ -16,6 +19,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 // import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -39,7 +43,7 @@ User user = User();
 Patient patient = Patient();
 late List<MedicalRecord> allMedicalData;
 late XFile? userImageSelected = null;
-int selectedPageIndex  = 0;
+int selectedPageIndex = 0;
 const storage = FlutterSecureStorage();
 late List<Patient> families = [
   /*Patient(
@@ -66,7 +70,7 @@ late UploadUrl userSelfieUrl;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
- await initializeDateFormatting('es', null);
+  await initializeDateFormatting('es', null);
   Intl.defaultLocale = "es";
   await dotenv.load(fileName: ".env");
   // await dotenv.load(fileName: '.env');
@@ -96,8 +100,8 @@ Future<void> main() async {
   }
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
-      (value) => runApp(
-          MyApp(onboardingCompleted: onboardingCompleted, session: session??'')));
+      (value) => runApp(MyApp(
+          onboardingCompleted: onboardingCompleted, session: session ?? '')));
 }
 
 class MyApp extends StatefulWidget {
@@ -115,16 +119,26 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
-        BlocProvider<PatientRegisterBloc>(
-          create: (BuildContext context) => PatientRegisterBloc(),
-        ),
-        BlocProvider<PatientBloc>(
-          create: (BuildContext context) => PatientBloc(),
-        )
-      ],
-      child: FullApp(onboardingCompleted: widget.onboardingCompleted),
-    );
+        providers: [
+          BlocProvider<PatientRegisterBloc>(
+            create: (BuildContext context) => PatientRegisterBloc(),
+          ),
+          BlocProvider<PatientBloc>(
+            create: (BuildContext context) => PatientBloc(),
+          ),
+        ],
+        child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
+            ChangeNotifierProvider<UtilsProvider>(
+                create: (_) => UtilsProvider()),
+            ChangeNotifierProvider<AuthProvider>(
+                // ignore: unnecessary_null_comparison
+                create: (_) =>
+                    AuthProvider(widget.session != null ? true : false)),
+          ],
+          child: FullApp(onboardingCompleted: widget.onboardingCompleted),
+        ));
   }
 }
 
@@ -148,10 +162,10 @@ class FullApp extends StatelessWidget {
         '/onboarding': (context) => HeroScreenV2(),
         '/home': (context) => DashboardScreen(),
         '/login': (context) => const LoginWebViewHelper(),
-        '/methods' : (context) => const FamilyMetodsAdd(),
-        '/familyScreen' : (context) => FamilyScreen(),
-        '/defineRelationship' : (context) => DefinedRelationshipScreen(),
-        '/familyTransition' : (context) => FamilyConnectTransition(),
+        '/methods': (context) => const FamilyMetodsAdd(),
+        '/familyScreen': (context) => FamilyScreen(),
+        '/defineRelationship': (context) => DefinedRelationshipScreen(),
+        '/familyTransition': (context) => FamilyConnectTransition(),
       },
     );
   }

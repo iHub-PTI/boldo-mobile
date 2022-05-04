@@ -69,8 +69,10 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                         onPressed: () {
                           Provider.of<UtilsProvider>(context, listen: false)
                               .setSelectedPageIndex(pageIndex: 0);
-                          Navigator.of(context)
-                              .popUntil(ModalRoute.withName("/home"));
+                          // Navigator.of(context)
+                          //     .popUntil(ModalRoute.withName("/home"));
+                              Navigator.pushNamed(context, '/home').then((_) => setState(() {}));
+
                         },
 
                         child: Text(
