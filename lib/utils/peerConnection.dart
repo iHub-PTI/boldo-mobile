@@ -23,7 +23,7 @@ enum CallState {
 }
 
 class PeerConnection {
-  late RTCPeerConnection? peerConnection;
+  RTCPeerConnection? peerConnection;
 
   MediaStream localStream;
   io.Socket socket;
@@ -50,8 +50,7 @@ class PeerConnection {
     //
 
     // Handle outgoing tracks
-    if(peerConnection != null)
-    peerConnection!.addStream(localStream);
+    peerConnection?.addStream(localStream);
 
     // Handle incoming tracks
     void onAddStream(MediaStream stream) {
@@ -71,14 +70,12 @@ class PeerConnection {
     //
 
     // Handle outgoing candidates
-    void onIceCandidate(candidate) {
-      final iceCandidate = {
-        'sdpMLineIndex': candidate.sdpMlineIndex,
-        'sdpMid': candidate.sdpMid,
-        'candidate': candidate.candidate,
-      };
-      socket.emit(
-          'ice candidate', {'room': room, 'ice': iceCandidate, "token": token});
+    void onIceCandidate(RTCIceCandidate? candidate) {
+      // RTCIceCandidate
+      if (candidate != null) {
+        socket.emit('ice candidate',
+            {'room': room, 'ice': candidate.toMap(), "token": token});
+      }
     }
 
     // Handle incoming candidates
@@ -89,7 +86,7 @@ class PeerConnection {
       RTCIceCandidate candidate = RTCIceCandidate(message["ice"]['candidate'],
           message["ice"]['sdpMid'], message["ice"]['sdpMLineIndex'] ?? 1);
 
-      await peerConnection!.addCandidate(candidate);
+      await peerConnection?.addCandidate(candidate);
     });
 
     //
@@ -105,7 +102,7 @@ class PeerConnection {
     // Important for us as this is the main source about failed conections
 
     void onIceConnectionState(state) {
-      // print(state);
+      print(state);
       switch (state) {
         case RTCIceConnectionState.RTCIceConnectionStateCompleted:
         case RTCIceConnectionState.RTCIceConnectionStateConnected:
@@ -124,52 +121,48 @@ class PeerConnection {
             onStateChange(CallState.CallClosed);
             break;
           }
-          break;
         default:
           break;
       }
     }
 
-    if (peerConnection != null) {
-      peerConnection!.onAddStream = onAddStream;
-      peerConnection!.onIceCandidate = onIceCandidate;
-      peerConnection!.onIceConnectionState = onIceConnectionState;
-    }
+    peerConnection?.onAddStream = onAddStream;
+    peerConnection?.onIceCandidate = onIceCandidate;
+    peerConnection?.onIceConnectionState = onIceConnectionState;
   }
 
   Future<void> setSdpOffer(message) async {
     RTCSessionDescription description =
         RTCSessionDescription(message["sdp"]['sdp'], message["sdp"]['type']);
-    if (peerConnection != null)
-      await peerConnection!.setRemoteDescription(description);
+    await peerConnection?.setRemoteDescription(description);
 
-    RTCSessionDescription s = await peerConnection!.createAnswer({
-      'mandatory': {
-        'OfferToReceiveAudio': true,
-        'OfferToReceiveVideo': true,
-      },
-      'optional': []
-    });
-    if (peerConnection != null) peerConnection!.setLocalDescription(s);
-
-    socket.emit('sdp offer', {
-      'room': room,
-      'sdp': {'sdp': s.sdp, 'type': s.type},
-      "token": token
-    });
+    if (peerConnection != null) {
+      RTCSessionDescription s = await peerConnection!.createAnswer({
+        'mandatory': {
+          'OfferToReceiveAudio': true,
+          'OfferToReceiveVideo': true,
+        },
+        'optional': []
+      });
+      peerConnection?.setLocalDescription(s);
+      socket.emit('sdp offer', {
+        'room': room,
+        'sdp': {'sdp': s.sdp, 'type': s.type},
+        "token": token
+      });
+    }
   }
 
   void cleanup() async {
     print('🧹🧹🧹 CLEANUP 🧹🧹🧹');
     socket.off('ice candidate');
-     await peerConnection!.close();
-     
-    if (peerConnection != null) {
-      peerConnection!.onAddStream = null;
-      peerConnection!.onIceCandidate = null;
-      peerConnection!.onIceConnectionState = null;
 
-      peerConnection = null;
-    }
+    await peerConnection?.close();
+
+    peerConnection?.onAddStream = null;
+    peerConnection?.onIceCandidate = null;
+    peerConnection?.onIceConnectionState = null;
+
+    peerConnection = null;
   }
 }
