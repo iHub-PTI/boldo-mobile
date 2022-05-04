@@ -16,6 +16,8 @@ import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:provider/provider.dart';
 
+import '../../../main.dart';
+
 class FamilyRectangleCard extends StatefulWidget {
   final Patient? patient;
   final bool isDependent;
@@ -61,24 +63,18 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   widget.isDependent
-                      ? Text(
-                        "${widget.patient!.givenName} ${widget.patient!.familyName}",
-                        style: boldoSubTextMediumStyle.copyWith(
-                            color: ConstantsV2.activeText
-                        ),
-                      )
-                      :Selector<UserProvider, String>(
-                    builder: (_, name, __){
-                      return Text(
-                        name,
-                        style: boldoSubTextMediumStyle.copyWith(
+                    ? Text(
+                      "${widget.patient!.givenName} ${widget.patient!.familyName}",
+                      style: boldoSubTextMediumStyle.copyWith(
                           color: ConstantsV2.activeText
-                        ),
-                      );
-                    },
-                    selector: (buildContext, userProvider) =>
-                    "${userProvider.getGivenName ?? ''} ${userProvider.getFamilyName ?? ''}",
-                  ),
+                      ),
+                    )
+                    :Text(
+                      "${patient.givenName ?? ''} ${patient.familyName ?? ''}",
+                      style: boldoSubTextMediumStyle.copyWith(
+                        color: ConstantsV2.activeText
+                      ),
+                    ),
                   Text(
                     ! widget.isDependent ? "mi perfil" : widget.patient!.relationship!,
                     style: boldoCorpMediumTextStyle.copyWith(

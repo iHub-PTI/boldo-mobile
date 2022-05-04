@@ -1,37 +1,67 @@
+import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/screens/family/family_tab.dart';
+import 'package:boldo/screens/family/tabs/defined_relationship_screen.dart';
+import 'package:boldo/screens/family/tabs/familyConnectTransition.dart';
 import 'package:boldo/screens/family/tabs/metods_add_family_screen.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 // import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'package:boldo/network/connection_status.dart';
 import 'package:boldo/network/http.dart';
-import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/screens/hero/hero_screen.dart';
-import 'package:boldo/provider/user_provider.dart';
-import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/constants.dart';
 
+import 'blocs/user_bloc/patient_bloc.dart';
+import 'models/MedicalRecord.dart';
 import 'models/Patient.dart';
+import 'models/User.dart';
+import 'models/upload_url_model.dart';
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 final Patient patientModel = Patient();
 late SharedPreferences prefs;
+User user = User();
+Patient patient = Patient();
+late List<MedicalRecord> allMedicalData;
+late XFile? userImageSelected = null;
+int selectedPageIndex  = 0;
 const storage = FlutterSecureStorage();
-final List<Patient> families = [];
+late List<Patient> families = [
+  /*Patient(
+  givenName: "Fidel",
+  familyName: "Aguirre",
+  gender: "unknown",
+  identifier: "1233445",
+  relationship: "papa",
+  photoUrl: "https://s3-alpha-sig.figma.com/img/9210/fd70/99decdd7aa6b9bf23fff1bc150449738?Expires=1652054400&Signature=ABbH0Fzwd4OhVen3MNLsqhhUrmIkDJ9vJ-i5eOPfTKfBJyXx8LAQQL3jviRhUR1Ncu8pEYKaTAJ8csylZCSIEOTzUDmey2u7-VXygECH9QE-C34VVLJEQK5hCalSLAuq469nZ3TaNkTODmFDCHIbhgMQW9wgswoDg4cal3pBD0cSohGi8frnkergVupuf89wmICfMOsfv4KcLCH6ewy4WJDF00yaH7948uQU8W8jKjhf3EcRSNg6hcY2z0RHnzaL-vQqPwBgjHQuRkopzSyZvzlgtfLTrfBJXKQ~wIPCYWReUxsNshP5gYwkCa0BaO5RAp0ABp4YBvJzhE5oWRDuJQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+  ),
+  Patient(
+  givenName: "Fidel",
+  familyName: "Aguirre",
+  gender: "unknown",
+  identifier: "1233445",
+  relationship: "abuelo",
+  photoUrl: "https://s3-alpha-sig.figma.com/img/9210/fd70/99decdd7aa6b9bf23fff1bc150449738?Expires=1652054400&Signature=ABbH0Fzwd4OhVen3MNLsqhhUrmIkDJ9vJ-i5eOPfTKfBJyXx8LAQQL3jviRhUR1Ncu8pEYKaTAJ8csylZCSIEOTzUDmey2u7-VXygECH9QE-C34VVLJEQK5hCalSLAuq469nZ3TaNkTODmFDCHIbhgMQW9wgswoDg4cal3pBD0cSohGi8frnkergVupuf89wmICfMOsfv4KcLCH6ewy4WJDF00yaH7948uQU8W8jKjhf3EcRSNg6hcY2z0RHnzaL-vQqPwBgjHQuRkopzSyZvzlgtfLTrfBJXKQ~wIPCYWReUxsNshP5gYwkCa0BaO5RAp0ABp4YBvJzhE5oWRDuJQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+),*/
+];
+late UploadUrl frontDniUrl;
+late UploadUrl backDniUrl;
+late UploadUrl userSelfieUrl;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +77,7 @@ Future<void> main() async {
 
   prefs = await SharedPreferences.getInstance();
   bool onboardingCompleted = prefs.getBool("onboardingCompleted") ?? false;
+  prefs.setBool("isFamily", prefs.getBool("isFamily") ?? false);
 
   initDio(navKey: navKey);
   initDioSecondaryAccess(navKey: navKey);
@@ -83,13 +114,14 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
+    return MultiBlocProvider(
       providers: [
-        ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
-        ChangeNotifierProvider<UtilsProvider>(create: (_) => UtilsProvider()),
-        ChangeNotifierProvider<AuthProvider>(
-            // ignore: unnecessary_null_comparison
-            create: (_) => AuthProvider(widget.session != null ? true : false)),
+        BlocProvider<PatientRegisterBloc>(
+          create: (BuildContext context) => PatientRegisterBloc(),
+        ),
+        BlocProvider<PatientBloc>(
+          create: (BuildContext context) => PatientBloc(),
+        )
       ],
       child: FullApp(onboardingCompleted: widget.onboardingCompleted),
     );
@@ -118,6 +150,8 @@ class FullApp extends StatelessWidget {
         '/login': (context) => const LoginWebViewHelper(),
         '/methods' : (context) => const FamilyMetodsAdd(),
         '/familyScreen' : (context) => FamilyScreen(),
+        '/defineRelationship' : (context) => DefinedRelationshipScreen(),
+        '/familyTransition' : (context) => FamilyConnectTransition(),
       },
     );
   }

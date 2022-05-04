@@ -1,19 +1,18 @@
+import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
+import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/http.dart';
-import 'package:boldo/provider/auth_provider.dart';
+import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:boldo/provider/user_provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:date_format/date_format.dart';
 
+import '../../../../main.dart';
 import '../../menu.dart';
 
 class HomeTabAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -44,30 +43,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
   }
 
   Future _getProfileData() async {
-    bool isAuthenticated =
-        Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
-    if (!isAuthenticated) return;
 
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    Response response = await dio.get("/profile/patient");
-    print("DATOS ${response.data}");
-    await prefs.setString("profile_url", response.data["photoUrl"] ?? '');
-    await prefs.setString("gender", response.data["gender"]);
-    await prefs.setString("name", response.data["givenName"]);
-
-    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
-    userProvider.setUserData(
-        givenName: response.data['givenName'],
-        familyName: response.data['familyName'],
-        gender: response.data['gender'],
-        photoUrl: response.data['photoUrl'],
-        email: response.data['email'],
-        birthDate: response.data['birthDate'],
-        street: response.data['street'],
-        city: response.data['city'],
-        identifier: response.data['identifier']
-    );
     setState(() {
       _dataLoading = false;
     });
@@ -75,8 +51,6 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    bool isAuthenticated =
-        Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
     expanded = widget.max > (ConstantsV2.homeAppBarMaxHeight+ConstantsV2.homeAppBarMinHeight)/2;
     return Container(
       constraints: BoxConstraints(maxHeight: widget.max, minHeight: widget.max),
@@ -89,54 +63,26 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
           const SizedBox(width: 10),
           Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => MenuScreen()));
-                        },
-                        icon: SvgPicture.asset(
-                          'assets/icon/menu-alt-1.svg',
-                          color: ConstantsV2.lightest,
-                        ),
-                      )
-                    ],
+                Flexible(
+                  child: Text(
+                    "${patient.givenName ?? ''} ${patient.familyName ?? ''}",
+                    style: boldoCardHeadingTextStyle.copyWith(
+                        color: ConstantsV2.lightest
+                    ),
                   ),
                 ),
-                Selector<UserProvider, String>(
-                    builder: (_, name, __){
-                      return Text(
-                        name,
-                        style: boldoCardHeadingTextStyle.copyWith(
-                            color: ConstantsV2.lightest
-                        ),
-                      );
-                    },
-                    selector: (buildContext, userProvider) =>
-                    "${userProvider.getGivenName ?? ''} ${userProvider.getFamilyName ?? ''}",
-                ),
-
-                const SizedBox(height: 10),
-                Selector<UserProvider, String>(
-                  builder: (_, data, __) {
-                    return Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children:[
-                          Text(
-                            data,
-                            style: expanded ? boldoCorpMediumTextStyle : boldoCorpSmallTextStyle,
-                          ),
-                        ]
-                    );
-                  },
-                  selector: (buildContext, userProvider) =>
-                  userProvider.getCity ?? '',
+                SizedBox(height: (widget.max/ConstantsV2.homeAppBarMaxHeight)*10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children:[
+                    Text(
+                      patient.city ?? '',
+                      style: expanded ? boldoCorpMediumTextStyle : boldoCorpSmallTextStyle,
+                    ),
+                  ]
                 ),
 
                 const SizedBox(height: 4),
@@ -151,14 +97,201 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
               ],
             ),
           ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => MenuScreen()));
+                },
+                icon: SvgPicture.asset(
+                  'assets/icon/menu-alt-1.svg',
+                  color: ConstantsV2.lightest,
+                ),
+              ),
+              Container(
+                constraints: const BoxConstraints(maxHeight: 33, maxWidth: 33),
+                margin: const EdgeInsets.all(16),
+                child: FloatingActionButton(
+                  onPressed: (){
+                    _showFamilyBox();
+                  },
+                  backgroundColor: ConstantsV2.orange,
+
+                  child: SvgPicture.asset('assets/icon/bell.svg'),
+                  elevation: 0,
+                ),
+              ),
+            ],
+          ),
         ],
 
       ),
     );
   }
 
+  _showFamilyBox(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        bool expand = false;
+        double start = 0;
+        return StatefulBuilder(
+          builder: (BuildContext context, setState) {
+            return AlertDialog(
+              contentPadding: const EdgeInsetsDirectional.all(0),
+              scrollable: true,
+              backgroundColor: ConstantsV2.lightGrey,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              content: Container(
+                width: 330,
+                height: expand ? 375 : 100,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    !expand
+                    ? Container(
+                      height: 55,
+                      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+                      width: 305,
+                      alignment: Alignment.topLeft,
+                      child: families.length > 0 ? ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: families.length + 2,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: _buildPictureRoundedFamily,
+                      ) : Container(),
+                    ) :
+                    Container(
+                      width: 305,
+                      height: 250,
+                      alignment: Alignment.topLeft,
+                      child: families.length > 0 ? GridView.builder(
+                        shrinkWrap: true,
+                        itemCount: families.length + 2,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 4,
+                          mainAxisSpacing: 4,
+                        ),
+                        scrollDirection: Axis.vertical,
+                        itemBuilder:  _buildPictureSquareFamily,
+                      ) : Container(),
+                    ),
+                    Listener(
+                      onPointerDown: (PointerDownEvent event) {
+                        setState ((){
+                          start = event.localPosition.dy;
+                          print("Down ${start}");
+                        });
+                      },
+                      onPointerUp: (PointerUpEvent event) {
+                        setState ((){
+                          print("UP ${event.localPosition.dy}");
+                          if(start < event.localPosition.dy)
+                            expand = true;
+                          else if( start > event.localPosition.dy )
+                            expand = false;
+                        });
+                      },
+                      child: Container(
+                        height: expand? 55: 20,
+                        width: 200,
+                        color: ConstantsV2.lightGrey,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            expand? OutlinedButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/familyScreen');
+                                },
+                                child: const Text("más opciones")
+                            ) : Container(),
+                            Container(
+                              width: 55,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                color: ConstantsV2.inactiveText,
+                              ),
+                            ),
+                          ]
+                        ),
+                      ),
+                    ),
+                  ]
+                ),
+              ),
+            );
+          },
+
+        );
+      }
+    );
+  }
+
+  Widget _buildPictureRoundedFamily(BuildContext context, int index){
+    return _profileFamily(index, "rounded");
+  }
+
+  Widget _buildPictureSquareFamily(BuildContext context, int index){
+    return _profileFamily(index, "square");
+  }
+
+  Widget _profileFamily(int index, String type){
+    double height = type == "rounded"? 54 : 85;
+    double width = type == "rounded"? 54 : 120;
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 125, maxWidth: 120),
+      child: GestureDetector(
+        child: type == "square"? Column(
+          children: [
+            index <= families.length ?
+              index == 0
+                ? ProfileImageViewTypeForm(height: height, width: width, border: false, form: type,)
+                :ProfileImageViewTypeForm(height: height, width: width, border: false, patient: families[index-1], form: type,)
+              : InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, '/methods');
+                },
+                child: SvgPicture.asset('assets/icon/family-add.svg', height: height, width: width,),
+              ),
+
+            index <= families.length ?
+              index == 0
+                ? Text("Yo", style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.activeText),)
+                :Text(families[index-1].relationship!, style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.activeText),)
+              :Text("agregar", style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.green),),
+
+            index <= families.length ?
+              index == 0
+                ? Container()
+                :Text("${families[index-1].givenName?? ''} ${families[index-1].familyName?? ''}", style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.green),)
+                : Container(),
+          ],
+        )
+        :index <= families.length ?
+          index == 0
+            ? ProfileImageViewTypeForm(height: height, width: width, border: false, form: type,)
+            :ProfileImageViewTypeForm(height: height, width: width, border: false, patient: families[index-1], form: type,)
+          :InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, '/methods');
+            },
+            child: SvgPicture.asset('assets/icon/family-add.svg', height: height, width: width,),
+          ),
+
+        onTap: null,
+      ),
+    );
+  }
+
   BoxDecoration _decoration(){
-    if(Provider.of<AuthProvider>(context, listen: false).getIsFamily){
+    if((prefs.getBool("isFamily")?? false)){
       return const BoxDecoration(
           borderRadius: BorderRadius.only(bottomRight: Radius.circular(24)),
           gradient: RadialGradient(
@@ -168,14 +301,14 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                 0.77,
               ),
               colors: <Color>[
-                ConstantsV2.patientAppBarColor100,
-                ConstantsV2.patientAppBarColor200,
-                ConstantsV2.patientAppBarColor300,
+                ConstantsV2.familyAppBarColor100,
+                ConstantsV2.familyAppBarColor200,
+                ConstantsV2.familyAppBarColor200,
               ],
               stops: <double>[
-                ConstantsV2.patientAppBarStop100,
-                ConstantsV2.patientAppBarStop200,
-                ConstantsV2.patientAppBarStop300,
+                ConstantsV2.familyAppBarStop100,
+                ConstantsV2.familyAppBarStop200,
+                ConstantsV2.familyAppBarStop300,
               ]
           )
       );

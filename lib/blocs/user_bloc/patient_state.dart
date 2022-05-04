@@ -7,7 +7,12 @@ class PatientInitial extends PatientState {}
 
 class PatientLogoutSuccessfully extends PatientState {}
 
-class Failure extends PatientState {
-  final String message;
-  Failure(this.message);
+
+class Loading extends PatientState {}
+
+class Failed extends PatientState {
+  final response;
+  Failed({required this.response});
 }
+
+class Success extends PatientState {}

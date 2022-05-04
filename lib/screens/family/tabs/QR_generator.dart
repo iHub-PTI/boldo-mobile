@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../../../main.dart';
 import 'family_register_account.dart';
 
 class QRGenerator extends StatelessWidget {
@@ -38,8 +39,9 @@ class QRGenerator extends StatelessWidget {
                       ),
                       Container(
                         margin: const EdgeInsets.all(16),
-                        child: Row(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Flexible(
                               child: Text(
@@ -66,23 +68,17 @@ class QRGenerator extends StatelessWidget {
                         child:Container(
                           alignment: Alignment.center,
                           margin: const EdgeInsets.symmetric(vertical: 80, horizontal: 58),
-                          child: Selector<UserProvider, String>(
-                            builder: (_, identifier, __){
-                              return QrImage(
-                                data: identifier,
-                                embeddedImage: const AssetImage('assets/images/logo.png'),
-                                eyeStyle: const QrEyeStyle(
-                                  eyeShape: QrEyeShape.circle,
-                                  color: Colors.black,
-                                ),
-                                dataModuleStyle: const QrDataModuleStyle(
-                                  dataModuleShape: QrDataModuleShape.circle,
-                                  color: Colors.black,
-                                ),
-                              );
-                            },
-                            selector: (buildContext, userProvider) =>
-                            "${userProvider.getIdentifier}",
+                          child: QrImage(
+                            data: patient.identifier!,
+                            embeddedImage: const AssetImage('assets/images/logo.png'),
+                            eyeStyle: const QrEyeStyle(
+                              eyeShape: QrEyeShape.circle,
+                              color: Colors.black,
+                            ),
+                            dataModuleStyle: const QrDataModuleStyle(
+                              dataModuleShape: QrDataModuleShape.circle,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ),

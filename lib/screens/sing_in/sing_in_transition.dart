@@ -21,6 +21,8 @@ import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/constants.dart';
 
+import '../../main.dart';
+
 class SingInTransition extends StatefulWidget {
   final bool setLoggedOut;
 
@@ -49,9 +51,6 @@ class _SingInTransitionState extends State<SingInTransition> {
   }
 
   Future _getProfileData() async {
-    bool isAuthenticated =
-        Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
-    if (!isAuthenticated) return;
 
 
   }
@@ -95,9 +94,9 @@ class _SingInTransitionState extends State<SingInTransition> {
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                Provider.of<UserProvider>(context, listen: false).getGender == "unknown" ?
+                                                patient.gender == "unknown" ?
                                                   "Bienvenido/a" :
-                                                Provider.of<UserProvider>(context, listen: false).getGender == "male" ?
+                                                patient.gender == "male" ?
                                                   "Bienvenido" : "Bienvenida",
                                                 style: boldoSubTextStyle.copyWith(
                                                   color: ConstantsV2.lightGrey
@@ -110,7 +109,7 @@ class _SingInTransitionState extends State<SingInTransition> {
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                Provider.of<UserProvider>(context, listen: false).getGivenName ?? '',
+                                                patient.givenName ?? '',
                                                 style: boldoBillboardTextStyleAlt.copyWith(
                                                     color: ConstantsV2.lightGrey
                                                 ),

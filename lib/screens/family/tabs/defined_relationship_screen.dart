@@ -1,4 +1,6 @@
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/models/User.dart';
+import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
 import 'package:boldo/screens/family/family_tab.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
@@ -55,11 +57,11 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
 
   Future _getDependentDniInfo() async {
     dependent = Patient(
-      givenName: "Fidel",
-      familyName: "Aguirre",
-      gender: "unknown",
-      identifier: "1233445",
-      photoUrl: "https://s3-alpha-sig.figma.com/img/9210/fd70/99decdd7aa6b9bf23fff1bc150449738?Expires=1652054400&Signature=ABbH0Fzwd4OhVen3MNLsqhhUrmIkDJ9vJ-i5eOPfTKfBJyXx8LAQQL3jviRhUR1Ncu8pEYKaTAJ8csylZCSIEOTzUDmey2u7-VXygECH9QE-C34VVLJEQK5hCalSLAuq469nZ3TaNkTODmFDCHIbhgMQW9wgswoDg4cal3pBD0cSohGi8frnkergVupuf89wmICfMOsfv4KcLCH6ewy4WJDF00yaH7948uQU8W8jKjhf3EcRSNg6hcY2z0RHnzaL-vQqPwBgjHQuRkopzSyZvzlgtfLTrfBJXKQ~wIPCYWReUxsNshP5gYwkCa0BaO5RAp0ABp4YBvJzhE5oWRDuJQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+      givenName: user.givenName,
+      familyName: user.familyName,
+      gender: user.gender,
+      identifier: user.identifier,
+      //photoUrl: "https://s3-alpha-sig.figma.com/img/9210/fd70/99decdd7aa6b9bf23fff1bc150449738?Expires=1652054400&Signature=ABbH0Fzwd4OhVen3MNLsqhhUrmIkDJ9vJ-i5eOPfTKfBJyXx8LAQQL3jviRhUR1Ncu8pEYKaTAJ8csylZCSIEOTzUDmey2u7-VXygECH9QE-C34VVLJEQK5hCalSLAuq469nZ3TaNkTODmFDCHIbhgMQW9wgswoDg4cal3pBD0cSohGi8frnkergVupuf89wmICfMOsfv4KcLCH6ewy4WJDF00yaH7948uQU8W8jKjhf3EcRSNg6hcY2z0RHnzaL-vQqPwBgjHQuRkopzSyZvzlgtfLTrfBJXKQ~wIPCYWReUxsNshP5gYwkCa0BaO5RAp0ABp4YBvJzhE5oWRDuJQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
     );
   }
 
@@ -103,7 +105,9 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        Text(
+                                        !user.isNew ? Text("${dependent!.identifier ?? ''}",style: boldoBillboardTextStyleAlt.copyWith(
+                                            color: ConstantsV2.lightGrey
+                                        ),) : Text(
                                           !_dataLoading ? dependent!.givenName! + " " + dependent!.familyName! : '',
                                           style: boldoTitleRegularTextStyle,
                                         ),
@@ -156,6 +160,7 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                               Container(
                                 child: OutlinedButton(
                                   onPressed: () {
+                                    user = User();
                                     Navigator.of(context)
                                         .popUntil(ModalRoute.withName("/methods"));
                                   },
@@ -169,12 +174,25 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                                 duration: const Duration(milliseconds: 300),
                                 child: Container(
                                   child: ElevatedButton(
-                                    onPressed: selected ? () {
+                                    onPressed: selected ? () async {
                                       setState(() {
-                                        families.add(dependent!);
+                                        user.relationship = relationship;
+
+                                        families.add(Patient(
+                                          givenName: user.givenName,
+                                          familyName: user.familyName,
+                                          identifier: user.identifier,
+                                          birthDate: user.birthDate,
+                                          relationship: user.relationship,
+                                          gender: user.gender,
+                                        ));
                                       });
+                                      await UserRepository().setDependent(user.isNew);
+                                      await UserRepository().getDependents();
+                                      user = User();
                                       Navigator.of(context)
                                           .popUntil(ModalRoute.withName("/home"));
+
                                     } : (){},
                                     child: const Text(
                                       "vincular",

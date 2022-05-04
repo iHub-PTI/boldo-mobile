@@ -33,7 +33,6 @@ class _DoctorsTabState extends State<DoctorsTab> {
 
   @override
   void initState() {
-    Provider.of<UtilsProvider>(context, listen: false).clearText();
     getDoctors();
     super.initState();
   }

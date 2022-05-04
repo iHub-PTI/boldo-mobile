@@ -13,7 +13,8 @@ class Patient {
       photoUrl,
       id,
       identifier,
-      relationship;
+      relationship,
+      startDependenceDate;
 
   Patient(
       {this.id,
@@ -30,7 +31,8 @@ class Patient {
         this.photoUrl,
         this.street,
         this.identifier,
-        this.relationship});
+        this.relationship,
+        this.startDependenceDate,});
 
   factory Patient.fromJson(Map<String, dynamic> json,) => Patient(
     givenName : json['givenName'],
@@ -47,7 +49,8 @@ class Patient {
     photoUrl : json['photoUrl'],
     id : json['id'],
     identifier : json['identifier'],
-    relationship: json['relationship']
+    relationship: json['relationship_code'],
+    startDependenceDate: json['startDependenceDate'],
   );
 
   Map<String, dynamic> toJson() {
@@ -66,7 +69,8 @@ class Patient {
     data['photoUrl'] = photoUrl;
     data['street'] = street;
     data['identifier'] = identifier;
-    data['relationship'] = relationship;
+    data['relationship_code'] = relationship;
+    data['startDependenceDate'] = startDependenceDate;
     return data;
   }
 }

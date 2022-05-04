@@ -1,16 +1,13 @@
+import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/network/http.dart';
-import 'package:boldo/provider/auth_provider.dart';
-import 'package:boldo/provider/user_provider.dart';
-import 'package:boldo/provider/utils_provider.dart';
-import 'package:boldo/screens/dashboard/dashboard_screen.dart';
-import 'package:boldo/screens/hero/hero_screen.dart';
-import 'package:boldo/screens/hero/hero_screen_v2.dart';
+import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/pre_register_notify/pre_register_success_screen.dart';
 import 'package:boldo/screens/sing_in/sing_in_transition.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
@@ -45,11 +42,13 @@ class _LoginWebViewHelperState extends State<LoginWebViewHelper> {
 
   void _initWebView(context) async {
     final _result = await authenticateUser(context: context);
+    print("Result $_result");
     switch (_result) {
       case 0:
-        Provider.of<UtilsProvider>(context, listen: false).logout(context);
+        UserRepository().logout(context);
         //user canceled or generic error
-        Navigator.of(context).pushNamedAndRemoveUntil('/onboarding', (Route<dynamic> route) => false);
+        Navigator.of(context)
+            .popUntil(ModalRoute.withName("/onboarding"));
         break;
       case 1:
         //new user register
@@ -61,8 +60,7 @@ class _LoginWebViewHelperState extends State<LoginWebViewHelper> {
 
       case 2:
         // success login
-        Provider.of<UtilsProvider>(context, listen: false)
-            .setSelectedPageIndex(pageIndex: 0);
+        selectedPageIndex = 0;
         await Navigator.push(
           context,
           MaterialPageRoute(
@@ -99,8 +97,6 @@ Future<int> authenticateUser({required BuildContext context}) async {
     await storage.write(key: "refresh_token", value: result.refreshToken);
 
     await prefs.setBool("isLogged", true);
-    Provider.of<AuthProvider>(context, listen: false)
-        .setAuthenticated(isAuthenticated: true);
     await prefs.setBool("onboardingCompleted", true);
 
     Response response = await dio.get("/profile/patient");
@@ -109,6 +105,8 @@ Future<int> authenticateUser({required BuildContext context}) async {
     await prefs.setString("gender", response.data["gender"]);
     await prefs.setString("name", response.data["givenName"]);
 
+    patient = await UserRepository().getPatient(context, null)!;
+    /*
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     userProvider.setUserData(
       givenName: response.data['givenName'],
@@ -119,11 +117,12 @@ Future<int> authenticateUser({required BuildContext context}) async {
       birthDate: response.data['birthDate'],
       street: response.data['street'],
       city: response.data['city'],
-      identifier: response.data['identifier']
+      identifier: response.data['identifier'],
+      id: response.data['id'],
     );
 
     print("FAMILY ${Provider.of<AuthProvider>(context, listen: false).getIsFamily}");
-
+    */
     return 2;
   } on PlatformException catch (err, s) {
     if (err.message!.contains('User disabled')) {

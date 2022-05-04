@@ -1,6 +1,7 @@
 import 'package:boldo/constants.dart';
 import 'package:boldo/screens/family/tabs/QR_scanner.dart';
 import 'package:boldo/screens/register/dni_register.dart';
+import 'package:boldo/screens/register/sign_up_basic_info.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -117,7 +118,7 @@ class FamilyMetodsAdd extends StatelessWidget {
                           child: InkWell(
                             onTap: () {
                               Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) => DniFamilyRegister()
+                                  builder: (context) => SignUpBasicInfo()
                               )
                               );
                             },

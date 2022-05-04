@@ -1,5 +1,6 @@
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Prescription.dart';
+import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
@@ -9,6 +10,7 @@ import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state
 import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
 import 'package:boldo/screens/dashboard/tabs/components/waiting_room_card.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
+import 'package:boldo/screens/medical_records/medical_records_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -22,6 +24,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:boldo/network/http.dart';
 
+import '../../../main.dart';
+
 class HomeTab extends StatefulWidget {
   HomeTab({Key? key}) : super(key: key);
 
@@ -29,7 +33,7 @@ class HomeTab extends StatefulWidget {
   _HomeTabState createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
+class _HomeTabState extends State<HomeTab> {
   Isolate? _isolate;
   ReceivePort? _receivePort;
 
@@ -57,7 +61,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       alignment: Alignment.bottomCenter,
       index: 0,
       title: 'Marcar una consulta remota',
-      appear: true,
+      appear: false,
       page: DoctorsTab(),
     ),
     CarouselCardPages(
@@ -76,7 +80,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       alignment: Alignment.bottomCenter,
       index: 2,
       title: 'Ver mis estudios',
-      appear: false,
+      appear: true,
+      page: MedicalRecordScreen(),
     ),
     CarouselCardPages(
       key: UniqueKey(),
@@ -182,8 +187,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   }
 
   Future<void> getAppointmentsData({bool loadMore = false}) async {
-    bool isAuthenticated =
-        Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
+    patient = await UserRepository().getPatient(context, null)!;
+    await UserRepository().getDependents();
+    print("ID PATIENT ${patient.id}");
     if (!loadMore) {
       if (_isolate != null) {
         _isolate!.kill(priority: Isolate.immediate);
@@ -192,13 +198,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       if (_receivePort != null) {
         _receivePort!.close();
         _receivePort = null;
-      }
-      if (!isAuthenticated) {
-        setState(() {
-          _loading = false;
-          _dataFetchError = false;
-        });
-        return;
       }
       if (!mounted) return;
       setState(() {
@@ -212,7 +211,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
           "/profile/patient/appointments?start=${dateOffset.toUtc().toIso8601String().substring(0, 23)}Z");
       Response responsePrescriptions =
           await dio.get("/profile/patient/prescriptions");
-      print(responsePrescriptions.headers);
+      print(responseAppointments.data);
       List<Prescription> allPrescriptions = List<Prescription>.from(
           responsePrescriptions.data["prescriptions"]
               .map((i) => Prescription.fromJson(i)));
@@ -342,8 +341,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    bool isAuthenticated =
-        Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
     Appointment firstPastAppointment = allAppointmentsState.firstWhere(
         (element) => ["closed", "locked"].contains(element.status),
         orElse: () => Appointment());
@@ -404,7 +401,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 backgroundColor: Constants.primaryColor600,
                 )
               ))
-              : !isAuthenticated || allAppointmentsState.isEmpty
+              : allAppointmentsState.isEmpty
               ? const SliverToBoxAdapter(child: EmptyStateV2(
                 picture: "feed_empty.svg",
                 textTop: "nada para mostrar",

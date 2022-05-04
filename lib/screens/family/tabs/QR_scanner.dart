@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../../../main.dart';
 import 'familyConnectTransition.dart';
 
 class QRScanner extends StatefulWidget {
@@ -17,6 +18,7 @@ class QRScanner extends StatefulWidget {
 class _QRScannerState extends State<QRScanner> {
 
   MobileScannerController? cameraController;
+  String? code;
 
   @override
   void initState() {
@@ -42,7 +44,7 @@ class _QRScannerState extends State<QRScanner> {
             allowDuplicates: false,
             controller: cameraController,
             onDetect: (barcode, args) async {
-              final String? code = barcode.rawValue;
+              code = barcode.rawValue;
               final QrImage qrImage = QrImage(
                 data: code!,
                 size: 200,
@@ -58,6 +60,7 @@ class _QRScannerState extends State<QRScanner> {
                   color: Colors.black,
                 ),
               );
+              cameraController!.stop();
               await Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -65,19 +68,9 @@ class _QRScannerState extends State<QRScanner> {
                       qrImage: qrImage,
                     )),
               );
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => FamilyConnectTransition(
-                    )
-                ),
-              );
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => DefinedRelationshipScreen()
-                ),
-              );
+              user.identifier = code;
+              user.isNew = false;
+              await Navigator.pushNamed(context, '/familyTransition');
             },
           )
         ],

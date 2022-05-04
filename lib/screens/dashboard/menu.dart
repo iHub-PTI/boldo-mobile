@@ -1,3 +1,4 @@
+import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
 import 'package:boldo/screens/family/family_tab.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
@@ -62,9 +63,6 @@ class _MenuScreenState extends State<MenuScreen> {
   GlobalKey scaffoldKey = GlobalKey();
 
   Future _getProfileData() async {
-    bool isAuthenticated =
-        Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
-    if (!isAuthenticated) return;
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -77,10 +75,6 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.setLoggedOut) {
-      Future.microtask(() => Provider.of<AuthProvider>(context, listen: false)
-          .setAuthenticated(isAuthenticated: false));
-    }
     _getProfileData();
   }
 
@@ -160,7 +154,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           padding: const EdgeInsets.all(8),
                           child: TextButton.icon(
                             onPressed: () {
-                              UtilsProvider().logout(context);
+                              UserRepository().logout(context);
                             },
                             icon: SvgPicture.asset(
                               "assets/icon/power-settings-new.svg",

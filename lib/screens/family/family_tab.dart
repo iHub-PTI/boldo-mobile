@@ -9,13 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:boldo/network/http.dart';
-import 'package:boldo/provider/utils_provider.dart';
 
-import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/constants.dart';
 
 import '../../main.dart';
@@ -31,34 +28,19 @@ class FamilyScreen extends StatefulWidget {
 
 class _FamilyScreenState extends State<FamilyScreen> {
 
-
-  Response? response;
-  bool _dataLoading = true;
-
   FlutterAppAuth appAuth = FlutterAppAuth();
 
   GlobalKey scaffoldKey = GlobalKey();
 
   Future _getProfileData() async {
-    bool isAuthenticated =
-        Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
-    if (!isAuthenticated) return;
 
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    response = await dio.get("/profile/patient");
     setState(() {
-      _dataLoading = false;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    if (widget.setLoggedOut) {
-      Future.microtask(() => Provider.of<AuthProvider>(context, listen: false)
-          .setAuthenticated(isAuthenticated: false));
-    }
     _getProfileData();
   }
 

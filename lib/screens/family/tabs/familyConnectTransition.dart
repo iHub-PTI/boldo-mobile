@@ -1,4 +1,6 @@
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/models/User.dart';
+import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
 import 'package:boldo/screens/family/family_tab.dart';
@@ -22,10 +24,13 @@ import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/constants.dart';
 
-class FamilyConnectTransition extends StatefulWidget {
-  final bool setLoggedOut;
+import '../../../main.dart';
+import 'defined_relationship_screen.dart';
 
-  FamilyConnectTransition({Key? key, this.setLoggedOut = false}) : super(key: key);
+class FamilyConnectTransition extends StatefulWidget {
+  final String? identifier;
+
+  FamilyConnectTransition({Key? key, this.identifier }) : super(key: key);
 
   @override
   _FamilyConnectTransitionTransitionState createState() => _FamilyConnectTransitionTransitionState();
@@ -33,7 +38,8 @@ class FamilyConnectTransition extends StatefulWidget {
 
 class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransition> {
 
-  Patient? dependent;
+  User? dependent;
+  Patient? dependentPhoto;
   Response? response;
   bool _dataLoading = true;
   Widget _background = const Background(text: "FamilyConnect_1");
@@ -42,13 +48,23 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
   GlobalKey scaffoldKey = GlobalKey();
 
   Future _getDependentDniInfo() async {
-    dependent = Patient(
-      givenName: "Fidel",
-      familyName: "Aguirre",
-      gender: "unknown",
-      identifier: "1233445",
-      photoUrl: "https://s3-alpha-sig.figma.com/img/9210/fd70/99decdd7aa6b9bf23fff1bc150449738?Expires=1652054400&Signature=ABbH0Fzwd4OhVen3MNLsqhhUrmIkDJ9vJ-i5eOPfTKfBJyXx8LAQQL3jviRhUR1Ncu8pEYKaTAJ8csylZCSIEOTzUDmey2u7-VXygECH9QE-C34VVLJEQK5hCalSLAuq469nZ3TaNkTODmFDCHIbhgMQW9wgswoDg4cal3pBD0cSohGi8frnkergVupuf89wmICfMOsfv4KcLCH6ewy4WJDF00yaH7948uQU8W8jKjhf3EcRSNg6hcY2z0RHnzaL-vQqPwBgjHQuRkopzSyZvzlgtfLTrfBJXKQ~wIPCYWReUxsNshP5gYwkCa0BaO5RAp0ABp4YBvJzhE5oWRDuJQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
-    );
+    dependent =  user;
+    if(!user.isNew){
+      String? code = user.identifier;
+      print("IDENTIFICADOR ${user.identifier}");
+      dependent = await UserRepository().getDependent(user.identifier!);
+      dependent = dependent??  User(
+        //givenName: "Fidel",
+        //familyName: "Aguirre",
+        //gender: "unknown",
+        identifier: code,
+        isNew: false,
+        //photoUrl: "https://s3-alpha-sig.figma.com/img/9210/fd70/99decdd7aa6b9bf23fff1bc150449738?Expires=1652054400&Signature=ABbH0Fzwd4OhVen3MNLsqhhUrmIkDJ9vJ-i5eOPfTKfBJyXx8LAQQL3jviRhUR1Ncu8pEYKaTAJ8csylZCSIEOTzUDmey2u7-VXygECH9QE-C34VVLJEQK5hCalSLAuq469nZ3TaNkTODmFDCHIbhgMQW9wgswoDg4cal3pBD0cSohGi8frnkergVupuf89wmICfMOsfv4KcLCH6ewy4WJDF00yaH7948uQU8W8jKjhf3EcRSNg6hcY2z0RHnzaL-vQqPwBgjHQuRkopzSyZvzlgtfLTrfBJXKQ~wIPCYWReUxsNshP5gYwkCa0BaO5RAp0ABp4YBvJzhE5oWRDuJQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+      );
+
+      user = dependent!;
+    }
+    dependentPhoto = Patient(givenName: user.givenName, familyName: user.familyName, gender: user.gender);
   }
 
   Future<void> timer() async {
@@ -57,15 +73,12 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
       _background = const Background(text: "FamilyConnect_2");
     });
     await Future.delayed(const Duration(seconds: 2));
-    Navigator.pop(context);
-  }
-
-  Future _getProfileData() async {
-    bool isAuthenticated =
-        Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
-    if (!isAuthenticated) return;
-
-
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => DefinedRelationshipScreen()
+      ),
+    );
   }
 
   @override
@@ -96,7 +109,7 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        ProfileImageView2(height: 170, width: 170, border: true, patient: dependent,),
+                                        ProfileImageView2(height: 170, width: 170, border: true, patient: dependentPhoto,),
                                       ],
                                     ),
                                     const SizedBox(height: 29,),
@@ -118,8 +131,10 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
-                                              Text(
-                                                "${dependent!.givenName} ${dependent!.familyName}",
+                                              !dependent!.isNew ? Text("${dependent!.identifier ?? ''}",style: boldoBillboardTextStyleAlt.copyWith(
+                                                  color: ConstantsV2.lightGrey
+                                              ),) : Text(
+                                                "${dependent!.givenName ?? ''} ${dependent!.familyName ?? ''}",
                                                 style: boldoBillboardTextStyleAlt.copyWith(
                                                     color: ConstantsV2.lightGrey
                                                 ),

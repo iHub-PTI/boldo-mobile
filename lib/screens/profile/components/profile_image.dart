@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:sentry_flutter/sentry_flutter.dart';
+import '../../../main.dart';
 import '../../../provider/user_provider.dart';
 import '../../../network/http.dart';
 
@@ -215,52 +216,40 @@ class _ProfileImageViewState extends State<ProfileImageView> {
           width: widget.width,
           child: Card(
             child: _isLoading
-                ? const Padding(
-              padding: EdgeInsets.all(26.0),
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                    Constants.primaryColor400),
-                backgroundColor: Constants.primaryColor600,
+              ? const Padding(
+                padding: EdgeInsets.all(26.0),
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Constants.primaryColor400),
+                  backgroundColor: Constants.primaryColor600,
+                ),
+              )
+              : ClipOval(
+                child: patient.photoUrl == null || patient.photoUrl == ''
+                ?
+                SvgPicture.asset(
+                  patient.gender != null && patient.gender == "female"
+                      ? 'assets/images/femalePatient.svg'
+                      : 'assets/images/malePatient.svg',
+                )
+                :CachedNetworkImage(
+                  fit: BoxFit.cover,
+                  imageUrl: patient.photoUrl!,
+                  progressIndicatorBuilder:
+                      (context, url, downloadProgress) => Padding(
+                    padding: const EdgeInsets.all(26.0),
+                    child: CircularProgressIndicator(
+                      value: downloadProgress.progress,
+                      valueColor:
+                      const AlwaysStoppedAnimation<Color>(
+                          Constants.primaryColor400),
+                      backgroundColor: Constants.primaryColor600,
+                    ),
+                  ),
+                  errorWidget: (context, url, error) =>
+                  const Icon(Icons.error),
+                )
               ),
-            )
-                : ClipOval(
-              child: Selector<UserProvider, String>(
-                builder: (_, gender, __) {
-                  return Selector<UserProvider, String>(
-                    builder: (_, data, __) {
-                      if (data == null || data == '') {
-                        return SvgPicture.asset(
-                          gender != null && gender == "female"
-                              ? 'assets/images/femalePatient.svg'
-                              : 'assets/images/malePatient.svg',
-                        );
-                      }
-                      return CachedNetworkImage(
-                        fit: BoxFit.cover,
-                        imageUrl: data,
-                        progressIndicatorBuilder:
-                            (context, url, downloadProgress) => Padding(
-                          padding: const EdgeInsets.all(26.0),
-                          child: CircularProgressIndicator(
-                            value: downloadProgress.progress,
-                            valueColor:
-                            const AlwaysStoppedAnimation<Color>(
-                                Constants.primaryColor400),
-                            backgroundColor: Constants.primaryColor600,
-                          ),
-                        ),
-                        errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
-                      );
-                    },
-                    selector: (buildContext, userProvider) =>
-                    userProvider.getPhotoUrl??'',
-                  );
-                },
-                selector: (buildContext, userProvider) =>
-                userProvider.getGender??'',
-              ),
-            ),
             elevation: 4.0,
             shape: widget.border ? const StadiumBorder(
               side: BorderSide(
@@ -350,6 +339,96 @@ class _ProfileImageViewState2 extends State<ProfileImageView2> {
                   width: 3,
                 )
             ) : const CircleBorder(),
+            clipBehavior: Clip.antiAlias,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+/// Image profile form url o default defined in [Patient] o the global patient
+/// The forms accepted are "rounded" and "square", by default is "rounded"
+class ProfileImageViewTypeForm extends StatefulWidget {
+
+  final double height;
+  final double width;
+  final bool border;
+  final Patient? patient;
+  final String form;
+
+  const ProfileImageViewTypeForm({
+    Key? key,
+    required this.height,
+    required this.width,
+    required this.border,
+    this.patient,
+    this.form = "rounded"
+  }) : super(key: key);
+
+  @override
+  _ProfileImageViewTypeForm createState() => _ProfileImageViewTypeForm();
+}
+
+class _ProfileImageViewTypeForm extends State<ProfileImageViewTypeForm> {
+  bool _isLoading = false;
+  Patient? patientFamily;
+  @override
+  void initState() {
+    patientFamily = widget.patient?? patient;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        SizedBox(
+          height: widget.height,
+          width: widget.width,
+          child: Card(
+            child: _isLoading
+            ? const Padding(
+              padding: EdgeInsets.all(26.0),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    Constants.primaryColor400),
+                backgroundColor: Constants.primaryColor600,
+              ),
+            )
+            : patientFamily!.photoUrl == null || patientFamily!.photoUrl == '' ?
+            SvgPicture.asset(
+              patientFamily!.gender == null || patientFamily!.gender == 'unknown'
+                  ? 'assets/images/LogoIcon.svg'
+                  : patientFamily!.gender == "female"
+                  ? 'assets/images/femalePatient.svg'
+                  : 'assets/images/malePatient.svg',
+            ) :
+            CachedNetworkImage(
+              fit: BoxFit.cover,
+              imageUrl: patientFamily!.photoUrl!,
+              progressIndicatorBuilder:
+                  (context, url, downloadProgress) => Padding(
+                padding: const EdgeInsets.all(26.0),
+                child: CircularProgressIndicator(
+                  value: downloadProgress.progress,
+                  valueColor:
+                  const AlwaysStoppedAnimation<Color>(
+                      Constants.primaryColor400),
+                  backgroundColor: Constants.primaryColor600,
+                ),
+              ),
+              errorWidget: (context, url, error) =>
+              const Icon(Icons.error),
+            ),
+            shape: widget.form == "rounded" ? StadiumBorder(
+                side: widget.border ? const BorderSide(
+                  color: Colors.white,
+                  width: 3,
+                ) : BorderSide.none,
+            ) : widget.form == "square" ? RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(3)) : const CircleBorder(),
             clipBehavior: Clip.antiAlias,
           ),
         ),

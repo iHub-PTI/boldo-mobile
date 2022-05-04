@@ -1,5 +1,7 @@
+import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/medicalRecord.dart';
 import 'package:boldo/network/http.dart';
+import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/medical_records/medical_records_details.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:intl/intl.dart';
 
 import '../../constants.dart';
+import '../../main.dart';
 
 class MedicalRecordScreen extends StatefulWidget {
   // MedicalRecordScrenn({Key? key}) : super(key: key);
@@ -19,7 +22,6 @@ class MedicalRecordScreen extends StatefulWidget {
 class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
   bool _dataLoaded = false;
   bool _dataLoading = true;
-  late List<MedicalRecord> allMedicalData;
   @override
   void initState() {
     super.initState();
@@ -28,11 +30,7 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
 
   Future<void> _fetchProfileData() async {
     try {
-      Response response = await dioHealthCore.get(
-          "/profile/patient/relatedEncounters?includePrescriptions=false&includeSoep=false&lastOnly=true");
-      allMedicalData = List<MedicalRecord>.from(
-          response.data.map((i) => MedicalRecord.fromJson(i[0])));
-
+      await getMedicalRecords();
       setState(() {
         _dataLoading = false;
         _dataLoaded = true;

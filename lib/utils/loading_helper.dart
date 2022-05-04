@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../constants.dart';
+import '../main.dart';
 
 class LoadingHelper extends StatefulWidget {
   final File? image;
@@ -17,19 +18,9 @@ class LoadingHelper extends StatefulWidget {
 }
 
 class _LoadingHelperState extends State<LoadingHelper> {
-  bool _loaded = false;
-  Future<void> timer() async {
-    await Future.delayed(Duration(seconds: 3));
-    setState(() {
-      _loaded = true;
-    });
-    await Future.delayed(Duration(seconds: 2));
-    Navigator.pop(context);
-  }
 
   @override
   void initState() {
-    timer();
     super.initState();
   }
 
@@ -37,10 +28,10 @@ class _LoadingHelperState extends State<LoadingHelper> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: !_loaded ? Colors.transparent : Constants.primaryColor600,
+        color: Colors.transparent,
         child: Stack(
           children: [
-            widget.image != null && !_loaded
+            userImageSelected != null
                 ? Align(
               alignment: Alignment.center,
               child: Padding(
@@ -48,12 +39,12 @@ class _LoadingHelperState extends State<LoadingHelper> {
                 child: Opacity(
                   opacity: 0.5,
                   child: Image.file(
-                    widget.image!,
+                    File(userImageSelected!.path),
                   ),
                 ),
               ),
             )
-                : widget.qrImage != null  && !_loaded
+                : widget.qrImage != null
                 ? Align(
               alignment: Alignment.center,
               child: Padding(
@@ -66,17 +57,33 @@ class _LoadingHelperState extends State<LoadingHelper> {
             ) : Container(),
             Align(
               alignment: Alignment.center,
-              child: !_loaded
-                  ? Image.asset(
+              child:
+                  Image.asset(
                 'assets/images/loading.gif',
               )
-                  : SvgPicture.asset(
-                'assets/icon/success.svg',
-              ),
             )
           ],
         )
       )
+    );
+  }
+}
+
+class SuccesLoaded extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color:  Constants.primaryColor600,
+      child: Stack(
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: SvgPicture.asset(
+              'assets/icon/success.svg',
+            ),
+          )
+        ],
+      ),
     );
   }
 }

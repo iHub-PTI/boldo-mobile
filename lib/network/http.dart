@@ -46,6 +46,7 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
           print(e);
         }
       } else if (error.response?.statusCode == 401) {
+        print("401 DIO");
         if (accessToken == null) {
           await storage.deleteAll();
 
@@ -166,6 +167,7 @@ void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
           print(e);
         }
       } else if (error.response?.statusCode == 401) {
+        print("401 DIOHealtcore");
         if (accessToken == null) {
           await storage.deleteAll();
 
