@@ -21,6 +21,8 @@ import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/constants.dart';
 
+import '../../utils/helpers.dart';
+
 class MenuScreen extends StatefulWidget {
   final bool setLoggedOut;
 
@@ -118,17 +120,17 @@ class _MenuScreenState extends State<MenuScreen> {
                                   const ProfileImageView(height: 170, width: 170, border: true),
                                 ],
                               ),
-                              const SizedBox(height: 10,),
+                              const SizedBox(height: 15,),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    !_dataLoading ? response!.data["givenName"]! + " " + response!.data["familyName"]! : '',
+                                    !_dataLoading ? response!.data["givenName"] != null ? capitalize(response!.data["givenName"]!.split(" ")[0].toLowerCase().toString())+' '+ capitalize(response!.data["familyName"]!.split(" ")[0].toLowerCase().toString()):'':'',
                                     style: boldoTitleRegularTextStyle,
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 40,),
+                              const SizedBox(height: 30,),
                             ]
                           )
                         ),
