@@ -1,6 +1,7 @@
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
 import 'package:boldo/screens/family/family_tab.dart';
+import 'package:boldo/screens/privacy_policy/privacy_policy.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
 import 'package:boldo/widgets/background.dart';
@@ -43,18 +44,18 @@ class _MenuScreenState extends State<MenuScreen> {
     const ItemMenu(
       image: 'assets/icon/shield-check.svg',
       title: 'Politicas de privacidad',
-      page: null,
+      page: PrivacyPolicy(),
     ),
     const ItemMenu(
       image: 'assets/icon/document-text.svg',
       title: 'Terminos de servicio',
       page: TermsOfServices(),
     ),
-    const ItemMenu(
-      image: 'assets/icon/adjustments.svg',
-      title: 'Configuraciones',
-      page: null,
-    ),
+    // const ItemMenu(
+    //   image: 'assets/icon/adjustments.svg',
+    //   title: 'Configuraciones',
+    //   page: null,
+    // ),
   ];
 
   Response? response;
