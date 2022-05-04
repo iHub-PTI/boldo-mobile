@@ -61,14 +61,7 @@ class _LoginWebViewHelperState extends State<LoginWebViewHelper> {
       case 2:
         // success login
         selectedPageIndex = 0;
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => SingInTransition(
-              )
-          ),
-        );
-        Navigator.of(context).pushNamedAndRemoveUntil('/home', ModalRoute.withName('/onboarding'));
+        Navigator.pushNamed(context, '/SignInSuccess');
         break;
       default:
     }
@@ -104,8 +97,8 @@ Future<int> authenticateUser({required BuildContext context}) async {
     await prefs.setString("profile_url", response.data["photoUrl"] ?? '');
     await prefs.setString("gender", response.data["gender"]);
     await prefs.setString("name", response.data["givenName"]);
-
-    patient = await UserRepository().getPatient(context, null)!;
+    await prefs.setBool("isFamily", false);
+    patient = await UserRepository().getPatient(null)!;
     /*
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     userProvider.setUserData(

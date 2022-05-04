@@ -187,7 +187,7 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Future<void> getAppointmentsData({bool loadMore = false}) async {
-    patient = await UserRepository().getPatient(context, null)!;
+    patient = await UserRepository().getPatient(null)!;
     await UserRepository().getDependents();
     print("ID PATIENT ${patient.id}");
     if (!loadMore) {

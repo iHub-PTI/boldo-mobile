@@ -47,7 +47,7 @@ class _SingInTransitionState extends State<SingInTransition> {
       _background = const Background(text: "SingIn_2");
     });
     await Future.delayed(const Duration(seconds: 2));
-    Navigator.pop(context);
+    Navigator.of(context).pushNamedAndRemoveUntil('/home', ModalRoute.withName('/onboarding'));
   }
 
   Future _getProfileData() async {

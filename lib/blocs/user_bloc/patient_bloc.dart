@@ -18,7 +18,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.getPatient(event.context, event.id)!)
+        _patientRepository.getPatient(event.id)!)
             .attempt()
             .run()
             .then((value) {

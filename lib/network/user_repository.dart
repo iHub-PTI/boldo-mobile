@@ -23,7 +23,7 @@ import 'http.dart';
 
 class UserRepository {
 
-  Future<Patient>? getPatient(BuildContext context, String? id) async {
+  Future<Patient>? getPatient(String? id) async {
     try {
       Response response = id == null
           ? await dio.get("/profile/patient")

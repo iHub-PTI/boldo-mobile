@@ -73,12 +73,7 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
       _background = const Background(text: "FamilyConnect_2");
     });
     await Future.delayed(const Duration(seconds: 2));
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => DefinedRelationshipScreen()
-      ),
-    );
+    Navigator.pushNamed(context, '/defineRelationship');
   }
 
   @override

@@ -24,7 +24,7 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
   //setup interceptors
   dio.interceptors.add(QueuedInterceptorsWrapper(
     onRequest: (options, handler) async {
-      accessToken = (await storage.read(key: "access_token"))!;
+      accessToken = (await storage.read(key: "access_token")??'');
       options.headers["authorization"] = "bearer $accessToken";
 
       return handler.next(options);
