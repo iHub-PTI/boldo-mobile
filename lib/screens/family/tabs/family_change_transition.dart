@@ -94,7 +94,8 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          const ProfileImageView(height: 170, width: 170, border: true),
+                                          if(!_dataLoading)
+                                            const ProfileImageView(height: 170, width: 170, border: true),
                                         ],
                                       ),
                                       const SizedBox(height: 29,),
@@ -127,10 +128,11 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
+                                                if(!_dataLoading)
                                                 prefs.getBool("isFamily")?? false ?
                                                 Flexible(
                                                   child: Text(
-                                                    "mis datos",
+                                                    "${patient.givenName ?? ''} ${patient.familyName ?? ''}",
                                                     style: boldoBillboardTextStyleAlt.copyWith(
                                                         color: ConstantsV2.lightGrey
                                                     ),
@@ -138,7 +140,7 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                                                 ):
                                                 Flexible(
                                                   child: Text(
-                                                    "${patient.givenName ?? ''} ${patient.familyName ?? ''}",
+                                                    "mis datos",
                                                     style: boldoBillboardTextStyleAlt.copyWith(
                                                         color: ConstantsV2.lightGrey
                                                     ),
