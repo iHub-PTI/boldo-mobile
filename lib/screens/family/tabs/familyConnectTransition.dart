@@ -38,28 +38,14 @@ class FamilyConnectTransition extends StatefulWidget {
 
 class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransition> {
 
-  User? dependent;
   Patient? dependentPhoto;
   Response? response;
-  bool _dataLoading = true;
+  bool _dataLoading = false;
   Widget _background = const Background(text: "FamilyConnect_1");
   FlutterAppAuth appAuth = FlutterAppAuth();
 
   GlobalKey scaffoldKey = GlobalKey();
 
-  Future _getDependentDniInfo() async {
-    if(!user.isNew){
-      String? code = user.identifier;
-      print("IDENTIFICADOR ${user.identifier}");
-      dependent = await UserRepository().getDependent(user.identifier!);
-
-      user = dependent!;
-    }else{
-      dependent =  user;
-    }
-    _dataLoading = false;
-    dependentPhoto = Patient(givenName: user.givenName, familyName: user.familyName, gender: user.gender);
-  }
 
   Future<void> timer() async {
     await Future.delayed(const Duration(seconds: 3));
@@ -73,7 +59,6 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
 
   @override
   void initState() {
-    _getDependentDniInfo();
     timer();
     super.initState();
   }
@@ -124,7 +109,7 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
                                               _dataLoading ? Text("cargando", style: boldoBillboardTextStyleAlt.copyWith(
                                                   color: ConstantsV2.lightGrey
                                               )) :Text(
-                                                "${dependent!.givenName ?? ''} ${dependent!.familyName ?? ''}",
+                                                "${user.givenName ?? ''} ${user.familyName ?? ''}",
                                                 style: boldoBillboardTextStyleAlt.copyWith(
                                                     color: ConstantsV2.lightGrey
                                                 ),

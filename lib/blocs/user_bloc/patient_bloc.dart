@@ -36,6 +36,30 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           emit(RedirectNextScreen());
         }
       }
+      if(event is ValidateQr) {
+        emit(Loading());
+        var _post;
+        await Task(() =>
+        _patientRepository.getDependent(event.id)!)
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        }
+        );
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(Failed(response: response));
+
+          await Future.delayed(const Duration(seconds: 2));
+          emit(RedirectBackScreen());
+        }else{
+          emit(Success());
+          await Future.delayed(const Duration(seconds: 2));
+          emit(RedirectNextScreen());
+        }
+      }
     }
     );
   }

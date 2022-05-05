@@ -63,6 +63,9 @@ class _SingInTransitionState extends State<SingInTransition> {
             }
             if(state is Success){
               _dataLoading = false;
+            }
+            if(state is RedirectNextScreen){
+              // go to home
               Navigator.of(context).pushNamedAndRemoveUntil('/home', ModalRoute.withName('/onboarding'));
             }
             if(state is Loading){

@@ -122,7 +122,7 @@ class _MyAppState extends State<MyApp> {
                 create: (_) =>
                     AuthProvider(widget.session != null ? true : false)),
           ],
-          child: FullApp(onboardingCompleted: widget.onboardingCompleted),
+          child: FullApp(onboardingCompleted: widget.session),
         ));
   }
 }

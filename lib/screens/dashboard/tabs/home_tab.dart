@@ -79,7 +79,7 @@ class _HomeTabState extends State<HomeTab> {
       boxFit: BoxFit.cover,
       alignment: Alignment.bottomCenter,
       index: 2,
-      title: 'Ver mis estudios',
+      title: 'Ver mis fichas médicas',
       appear: true,
       page: MedicalRecordScreen(),
     ),
@@ -99,7 +99,7 @@ class _HomeTabState extends State<HomeTab> {
       boxFit: BoxFit.contain,
       alignment: Alignment.bottomCenter,
       index: 4,
-      title: 'Mi inspección médica empresarial',
+      title: 'Ver mis estudios',
       appear: false,
       page: DoctorsTab(),
     ),
@@ -188,8 +188,6 @@ class _HomeTabState extends State<HomeTab> {
  
   Future<void> getAppointmentsData({bool loadMore = false}) async {
 
-    await UserRepository().getDependents();
-    print("ID PATIENT ${patient.id}");
     if (!loadMore) {
       if (_isolate != null) {
         _isolate!.kill(priority: Isolate.immediate);
@@ -211,7 +209,6 @@ class _HomeTabState extends State<HomeTab> {
           "/profile/patient/appointments?start=${dateOffset.toUtc().toIso8601String().substring(0, 23)}Z");
       Response responsePrescriptions =
           await dio.get("/profile/patient/prescriptions");
-      // print(responseAppointments.data);
       List<Prescription> allPrescriptions = List<Prescription>.from(
           responsePrescriptions.data["prescriptions"]
               .map((i) => Prescription.fromJson(i)));
@@ -238,13 +235,16 @@ class _HomeTabState extends State<HomeTab> {
 
       if (!mounted) return;
 
-      List<Appointment> pastAppointmentsItems = allAppointmets
+      // Past appointment will be ignored
+      /*List<Appointment> pastAppointmentsItems = allAppointmets
           .where((element) => ["closed", "locked"].contains(element.status))
-          .toList();
+          .toList();*/
+
+      // Appointments cancelled will be ignored
       List<Appointment> upcomingAppointmentsItems = allAppointmets
-          .where((element) => !["closed", "locked"].contains(element.status))
+          .where((element) => !["closed", "locked","cancelled"].contains(element.status))
           .toList();
-      allAppointmets = [...upcomingAppointmentsItems, ...pastAppointmentsItems];
+      allAppointmets = [...upcomingAppointmentsItems, /*...pastAppointmentsItems*/];
 
       allAppointmets.sort((a, b) =>
           DateTime.parse(b.start!).compareTo(DateTime.parse(a.start!)));

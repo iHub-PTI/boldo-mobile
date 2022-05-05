@@ -158,20 +158,12 @@ class HeroScreenV2 extends StatelessWidget {
                         ),
                       ),
                       onPressed: () async {
-                        final SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                        bool onboardingCompleted =
-                            prefs.getBool("preRegisterNotify") ?? false;
-                        if (onboardingCompleted == true) {
-                          _openRegister(context);
-                        } else {
-                          //show pre register
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const SignUpPhoneInfo()),
-                          );
-                        }
+                        /*Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignUpPhoneInfo()),
+                        );*/
+                        Navigator.pushNamed(context, '/login');
                       },
                       child: Container(
                           constraints: const BoxConstraints(maxWidth: 142, maxHeight: 48),

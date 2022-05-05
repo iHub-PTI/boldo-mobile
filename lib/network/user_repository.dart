@@ -75,13 +75,14 @@ class UserRepository {
     }
   }
 
-  Future<User>? getDependent(String id) async {
+  Future<None>? getDependent(String id) async {
     print("ID $id");
     try {
       Response response = await dio.get("/profile/caretaker/dependent/confirm/$id");
       if(response.statusCode == 200){
         print(response.data);
-        return User.fromJson(response.data);
+        user = User.fromJson(response.data);
+        return None();
       }
       print(response.statusCode);
       throw Failure(genericError);

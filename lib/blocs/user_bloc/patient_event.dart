@@ -8,4 +8,9 @@ class ChangeUser extends PatientEvent {
   ChangeUser({this.id});
 }
 
+class ValidateQr extends PatientEvent {
+  final String id;
+  ValidateQr({required this.id});
+}
+
 class LogoutPatientPressed extends PatientEvent {}

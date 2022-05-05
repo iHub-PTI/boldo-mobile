@@ -20,3 +20,5 @@ class Success extends PatientState {}
 class RedirectNextScreen extends PatientState {}
 
 class RedirectToHome extends PatientState {}
+
+class RedirectBackScreen extends PatientState {}
