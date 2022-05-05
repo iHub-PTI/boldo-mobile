@@ -27,15 +27,12 @@ class FamilyScreen extends StatefulWidget {
 }
 
 class _FamilyScreenState extends State<FamilyScreen> {
-
   FlutterAppAuth appAuth = FlutterAppAuth();
 
   GlobalKey scaffoldKey = GlobalKey();
 
   Future _getProfileData() async {
-
-    setState(() {
-    });
+    setState(() {});
   }
 
   @override
@@ -47,98 +44,96 @@ class _FamilyScreenState extends State<FamilyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-          children: [
-            const Background(text: "family"),
-            SafeArea(
-              child: Container(
-                child: Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(right: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          IconButton(
-                            onPressed: (){
-                              Navigator.pop(context);
-                            },
-                            icon: SvgPicture.asset(
-                              'assets/icon/chevron-left.svg',
-                              color: ConstantsV2.activeText,
-                            ),
-                          )
-                        ],
+      body: Stack(children: [
+        const Background(text: "family"),
+        SafeArea(
+          child: Container(
+            child: Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(right: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: SvgPicture.asset(
+                          'assets/icon/chevron-left.svg',
+                          color: ConstantsV2.activeText,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Mi Familia",
+                        style: boldoTitleBlackTextStyle,
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all( 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Mi Familia",
-                            style: boldoTitleBlackTextStyle,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            child :Column(
-                              children: [
-                                const FamilyRectangleCard(isDependent: false)
-                              ]
-                            )
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            alignment: Alignment.topLeft,
-                            child: families.length > 0 ? ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: families.length,
-                              padding: const EdgeInsets.all(8),
-                              scrollDirection: Axis.vertical,
-                              itemBuilder: _buildItem,
-                            ) : const EmptyStateV2(picture: "Helping old man 1.svg", textBottom: "aún no agregaste ningún perfil para gestionar",),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  onPressed: (){
-                                    Navigator.pushNamed(context, '/methods');
-                                  },
-                                  child: Text(families.length>0 ? "nuevo miembro" : "agregar"),
-                                ),
+                    ],
+                  ),
+                ),
+                Container(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                          child: Column(children: [
+                        const FamilyRectangleCard(isDependent: false)
+                      ])),
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.6,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        alignment: Alignment.topLeft,
+                        child: families.length > 0
+                            ? ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: families.length,
+                                padding: const EdgeInsets.all(8),
+                                scrollDirection: Axis.vertical,
+                                itemBuilder: _buildItem,
+                              )
+                            : const EmptyStateV2(
+                                picture: "Helping old man 1.svg",
+                                textBottom:
+                                    "aún no agregaste ningún perfil para gestionar",
                               ),
-                            ]
-                          ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/methods');
+                          },
+                          child: Text(families.length > 0
+                              ? "nuevo miembro"
+                              : "agregar"),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ]
-      ),
+          ),
+        ),
+      ]),
     );
   }
 
-  Widget _buildItem(BuildContext context, int index){
-    return FamilyRectangleCard(patient: families[index], isDependent: true,);
+  Widget _buildItem(BuildContext context, int index) {
+    return FamilyRectangleCard(
+      patient: families[index],
+      isDependent: true,
+    );
   }
-
 }

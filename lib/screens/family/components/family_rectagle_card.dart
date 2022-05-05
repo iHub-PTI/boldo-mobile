@@ -76,7 +76,7 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
                       ),
                     ),
                   Text(
-                    ! widget.isDependent ? "mi perfil" : widget.patient!.relationshipDisplaySpan!,
+                    ! widget.isDependent ? "mi perfil" : widget.patient!.relationshipDisplaySpan??'',
                     style: boldoCorpMediumTextStyle.copyWith(
                       color: ConstantsV2.green,
                     ),
