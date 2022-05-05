@@ -23,6 +23,8 @@ import 'package:boldo/constants.dart';
 
 import '../../main.dart';
 
+import '../../utils/helpers.dart';
+
 class MenuScreen extends StatefulWidget {
   final bool setLoggedOut;
 
@@ -43,18 +45,18 @@ class _MenuScreenState extends State<MenuScreen> {
     const ItemMenu(
       image: 'assets/icon/shield-check.svg',
       title: 'Politicas de privacidad',
-      page: null,
+      page: PrivacyPolicy(),
     ),
     const ItemMenu(
       image: 'assets/icon/document-text.svg',
       title: 'Terminos de servicio',
       page: TermsOfServices(),
     ),
-    const ItemMenu(
-      image: 'assets/icon/adjustments.svg',
-      title: 'Configuraciones',
-      page: null,
-    ),
+    // const ItemMenu(
+    //   image: 'assets/icon/adjustments.svg',
+    //   title: 'Configuraciones',
+    //   page: null,
+    // ),
   ];
 
   FlutterAppAuth appAuth = FlutterAppAuth();
@@ -106,7 +108,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                   const ProfileImageView(height: 170, width: 170, border: true),
                                 ],
                               ),
-                              const SizedBox(height: 10,),
+                              const SizedBox(height: 15,),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -116,7 +118,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 40,),
+                              const SizedBox(height: 30,),
                             ]
                           )
                         ),

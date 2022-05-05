@@ -46,7 +46,7 @@ User user = User();
 Patient patient = Patient();
 late List<MedicalRecord> allMedicalData;
 late XFile? userImageSelected = null;
-int selectedPageIndex  = 0;
+int selectedPageIndex = 0;
 const storage = FlutterSecureStorage();
 late List<Relationship> relationTypes = [];
 late List<Patient> families = [];
@@ -57,7 +57,7 @@ late UploadUrl userSelfieUrl;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
- await initializeDateFormatting('es', null);
+  await initializeDateFormatting('es', null);
   Intl.defaultLocale = "es";
   await dotenv.load(fileName: ".env");
   // await dotenv.load(fileName: '.env');
@@ -104,23 +104,26 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
-        BlocProvider<PatientRegisterBloc>(
-          create: (BuildContext context) => PatientRegisterBloc(),
-        ),
-        BlocProvider<PatientBloc>(
-          create: (BuildContext context) => PatientBloc(),
-        )
-      ],
-      child: MultiProvider(
         providers: [
-          ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider(),),
-          ChangeNotifierProvider<UtilsProvider>(create: (_) => UtilsProvider(),),
-          ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider(widget.session != null ? true : false ),),
+          BlocProvider<PatientRegisterBloc>(
+            create: (BuildContext context) => PatientRegisterBloc(),
+          ),
+          BlocProvider<PatientBloc>(
+            create: (BuildContext context) => PatientBloc(),
+          ),
         ],
-        child: FullApp(onboardingCompleted: widget.session),
-      )
-    );
+        child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
+            ChangeNotifierProvider<UtilsProvider>(
+                create: (_) => UtilsProvider()),
+            ChangeNotifierProvider<AuthProvider>(
+                // ignore: unnecessary_null_comparison
+                create: (_) =>
+                    AuthProvider(widget.session != null ? true : false)),
+          ],
+          child: FullApp(onboardingCompleted: widget.onboardingCompleted),
+        ));
   }
 }
 
