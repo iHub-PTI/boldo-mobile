@@ -146,7 +146,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                         color: ConstantsV2.lightest,
                       ),
                     ),
-                    Container(
+                    families.length != 0 ? Container(
                       constraints: const BoxConstraints(
                           maxHeight: 33, maxWidth: 33),
                       margin: const EdgeInsets.all(16),
@@ -155,10 +155,9 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                           _showFamilyBox();
                         },
                         backgroundColor: ConstantsV2.orange,
-
-                        child: SvgPicture.asset('assets/icon/bell.svg'),
+                        child: SvgPicture.asset('assets/icon/family.svg'),
                         elevation: 0,
-                      ),
+                      ) : Container(),
                     ),
                   ],
                 ),

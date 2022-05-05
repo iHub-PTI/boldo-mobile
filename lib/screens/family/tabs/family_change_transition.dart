@@ -64,6 +64,9 @@ class _FamilyTransitionState extends State<FamilyTransition> {
             }
             if(state is Success){
               _dataLoading = false;
+            }
+            if(state is RedirectNextScreen){
+              // back to home
               Navigator.pop(context);
             }
             if(state is Loading){
@@ -103,11 +106,17 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                                               children: [
                                                 _dataLoading ? Text('Cargando',style: boldoSubTextStyle.copyWith(
                                                     color: ConstantsV2.lightGrey
-                                                ),) :Text(
-                                                  patient.gender == "unknown" ?
-                                                  "Bienvenido/a" :
-                                                  patient.gender == "male" ?
-                                                  "Bienvenido" : "Bienvenida",
+                                                ),) :
+                                                prefs.getBool("isFamily")?? false ?
+                                                Text(
+                                                  "mostrando datos de",
+                                                  style: boldoSubTextStyle.copyWith(
+                                                      color: ConstantsV2.lightGrey
+                                                  ),
+                                                )
+                                                :
+                                                Text(
+                                                  "ahora mostrando",
                                                   style: boldoSubTextStyle.copyWith(
                                                       color: ConstantsV2.lightGrey
                                                   ),
@@ -118,10 +127,21 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
-                                                Text(
-                                                  patient.givenName ?? '',
-                                                  style: boldoBillboardTextStyleAlt.copyWith(
-                                                      color: ConstantsV2.lightGrey
+                                                prefs.getBool("isFamily")?? false ?
+                                                Flexible(
+                                                  child: Text(
+                                                    "mis datos",
+                                                    style: boldoBillboardTextStyleAlt.copyWith(
+                                                        color: ConstantsV2.lightGrey
+                                                    ),
+                                                  ),
+                                                ):
+                                                Flexible(
+                                                  child: Text(
+                                                    "${patient.givenName ?? ''} ${patient.familyName ?? ''}",
+                                                    style: boldoBillboardTextStyleAlt.copyWith(
+                                                        color: ConstantsV2.lightGrey
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -145,7 +165,6 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                 Align(
                     alignment: Alignment.center,
                     child: Container(
-                        color: Colors.transparent,
                         child: const LoadingHelper()
                     )
                 )
