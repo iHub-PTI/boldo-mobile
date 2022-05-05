@@ -48,22 +48,16 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
   GlobalKey scaffoldKey = GlobalKey();
 
   Future _getDependentDniInfo() async {
-    dependent =  user;
     if(!user.isNew){
       String? code = user.identifier;
       print("IDENTIFICADOR ${user.identifier}");
       dependent = await UserRepository().getDependent(user.identifier!);
-      dependent = dependent??  User(
-        //givenName: "Fidel",
-        //familyName: "Aguirre",
-        //gender: "unknown",
-        identifier: code,
-        isNew: false,
-        //photoUrl: "https://s3-alpha-sig.figma.com/img/9210/fd70/99decdd7aa6b9bf23fff1bc150449738?Expires=1652054400&Signature=ABbH0Fzwd4OhVen3MNLsqhhUrmIkDJ9vJ-i5eOPfTKfBJyXx8LAQQL3jviRhUR1Ncu8pEYKaTAJ8csylZCSIEOTzUDmey2u7-VXygECH9QE-C34VVLJEQK5hCalSLAuq469nZ3TaNkTODmFDCHIbhgMQW9wgswoDg4cal3pBD0cSohGi8frnkergVupuf89wmICfMOsfv4KcLCH6ewy4WJDF00yaH7948uQU8W8jKjhf3EcRSNg6hcY2z0RHnzaL-vQqPwBgjHQuRkopzSyZvzlgtfLTrfBJXKQ~wIPCYWReUxsNshP5gYwkCa0BaO5RAp0ABp4YBvJzhE5oWRDuJQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
-      );
 
       user = dependent!;
+    }else{
+      dependent =  user;
     }
+    _dataLoading = false;
     dependentPhoto = Patient(givenName: user.givenName, familyName: user.familyName, gender: user.gender);
   }
 
@@ -72,6 +66,7 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
     setState(() {
       _background = const Background(text: "FamilyConnect_2");
     });
+    await UserRepository().getRelationships();
     await Future.delayed(const Duration(seconds: 2));
     Navigator.pushNamed(context, '/defineRelationship');
   }
@@ -126,9 +121,9 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
-                                              !dependent!.isNew ? Text("${dependent!.identifier ?? ''}",style: boldoBillboardTextStyleAlt.copyWith(
+                                              _dataLoading ? Text("cargando", style: boldoBillboardTextStyleAlt.copyWith(
                                                   color: ConstantsV2.lightGrey
-                                              ),) : Text(
+                                              )) :Text(
                                                 "${dependent!.givenName ?? ''} ${dependent!.familyName ?? ''}",
                                                 style: boldoBillboardTextStyleAlt.copyWith(
                                                     color: ConstantsV2.lightGrey

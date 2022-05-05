@@ -7,7 +7,8 @@ class User {
       photoUrl,
       identifier,
       password,
-      relationship;
+      relationshipCode,
+      relationshipDisplaySpan;
 
   bool isNew;
 
@@ -20,7 +21,7 @@ class User {
         this.photoUrl,
         this.identifier,
         this.password,
-        this.relationship,
+        this.relationshipCode,
         this.isNew = true});
 
   factory User.fromJson(Map<String, dynamic> json,) => User(
@@ -31,7 +32,7 @@ class User {
       phone : json['phone'],
       photoUrl : json['photoUrl'],
       identifier : json['identifier'],
-      relationship: json['relationship']
+      relationshipCode: json['relationshipCode']
   );
 
   Map<String, dynamic> toJson() {
@@ -43,7 +44,7 @@ class User {
     data['givenName'] = givenName;
     data['photoUrl'] = photoUrl;
     data['identifier'] = identifier;
-    data['relationship'] = relationship;
+    data['relationshipCode'] = relationshipCode;
     return data;
   }
 
@@ -56,14 +57,14 @@ class User {
     data['givenName'] = givenName;
     //data['photoUrl'] = photoUrl;
     data['identifier'] = identifier;
-    data['relationship_code'] = relationship;
+    data['relationshipCode'] = relationshipCode;
     return data;
   }
 
   Map<String, dynamic> toJsonExistPatient() {
     final Map<String, dynamic> data = {};
     data['identifier'] = identifier;
-    data['relationship_code'] = relationship;
+    data['relationshipCode'] = relationshipCode;
     return data;
   }
 }

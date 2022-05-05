@@ -97,6 +97,7 @@ Future<int> authenticateUser({required BuildContext context}) async {
     await prefs.setString("profile_url", response.data["photoUrl"] ?? '');
     await prefs.setString("gender", response.data["gender"]);
     await prefs.setString("name", response.data["givenName"]);
+    await prefs.setString("lastName", response.data["givenName"]);
     await prefs.setBool("isFamily", false);
     /*
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);

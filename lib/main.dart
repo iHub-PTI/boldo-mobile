@@ -1,7 +1,11 @@
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
+import 'package:boldo/provider/auth_provider.dart';
+import 'package:boldo/provider/user_provider.dart';
+import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/family/family_tab.dart';
 import 'package:boldo/screens/family/tabs/defined_relationship_screen.dart';
 import 'package:boldo/screens/family/tabs/familyConnectTransition.dart';
+import 'package:boldo/screens/family/tabs/family_change_transition.dart';
 import 'package:boldo/screens/family/tabs/metods_add_family_screen.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:boldo/screens/sing_in/sing_in_transition.dart';
@@ -17,6 +21,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 // import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -30,6 +35,7 @@ import 'package:boldo/constants.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
 import 'models/MedicalRecord.dart';
 import 'models/Patient.dart';
+import 'models/Relationship.dart';
 import 'models/User.dart';
 import 'models/upload_url_model.dart';
 
@@ -42,24 +48,8 @@ late List<MedicalRecord> allMedicalData;
 late XFile? userImageSelected = null;
 int selectedPageIndex  = 0;
 const storage = FlutterSecureStorage();
-late List<Patient> families = [
-  /*Patient(
-  givenName: "Fidel",
-  familyName: "Aguirre",
-  gender: "unknown",
-  identifier: "1233445",
-  relationship: "papa",
-  photoUrl: "https://s3-alpha-sig.figma.com/img/9210/fd70/99decdd7aa6b9bf23fff1bc150449738?Expires=1652054400&Signature=ABbH0Fzwd4OhVen3MNLsqhhUrmIkDJ9vJ-i5eOPfTKfBJyXx8LAQQL3jviRhUR1Ncu8pEYKaTAJ8csylZCSIEOTzUDmey2u7-VXygECH9QE-C34VVLJEQK5hCalSLAuq469nZ3TaNkTODmFDCHIbhgMQW9wgswoDg4cal3pBD0cSohGi8frnkergVupuf89wmICfMOsfv4KcLCH6ewy4WJDF00yaH7948uQU8W8jKjhf3EcRSNg6hcY2z0RHnzaL-vQqPwBgjHQuRkopzSyZvzlgtfLTrfBJXKQ~wIPCYWReUxsNshP5gYwkCa0BaO5RAp0ABp4YBvJzhE5oWRDuJQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
-  ),
-  Patient(
-  givenName: "Fidel",
-  familyName: "Aguirre",
-  gender: "unknown",
-  identifier: "1233445",
-  relationship: "abuelo",
-  photoUrl: "https://s3-alpha-sig.figma.com/img/9210/fd70/99decdd7aa6b9bf23fff1bc150449738?Expires=1652054400&Signature=ABbH0Fzwd4OhVen3MNLsqhhUrmIkDJ9vJ-i5eOPfTKfBJyXx8LAQQL3jviRhUR1Ncu8pEYKaTAJ8csylZCSIEOTzUDmey2u7-VXygECH9QE-C34VVLJEQK5hCalSLAuq469nZ3TaNkTODmFDCHIbhgMQW9wgswoDg4cal3pBD0cSohGi8frnkergVupuf89wmICfMOsfv4KcLCH6ewy4WJDF00yaH7948uQU8W8jKjhf3EcRSNg6hcY2z0RHnzaL-vQqPwBgjHQuRkopzSyZvzlgtfLTrfBJXKQ~wIPCYWReUxsNshP5gYwkCa0BaO5RAp0ABp4YBvJzhE5oWRDuJQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
-),*/
-];
+late List<Relationship> relationTypes = [];
+late List<Patient> families = [];
 late UploadUrl frontDniUrl;
 late UploadUrl backDniUrl;
 late UploadUrl userSelfieUrl;
@@ -77,7 +67,6 @@ Future<void> main() async {
   ConnectionStatusSingleton.getInstance().initialize();
 
   prefs = await SharedPreferences.getInstance();
-  bool onboardingCompleted = prefs.getBool("onboardingCompleted") ?? false;
   prefs.setBool("isFamily", prefs.getBool("isFamily") ?? false);
 
   initDio(navKey: navKey);
@@ -98,14 +87,13 @@ Future<void> main() async {
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
       (value) => runApp(
-          MyApp(onboardingCompleted: onboardingCompleted, session: session??'')));
+          MyApp(session: session??'')));
 }
 
 class MyApp extends StatefulWidget {
-  final bool onboardingCompleted;
   final String session;
   const MyApp(
-      {Key? key, required this.onboardingCompleted, required this.session})
+      {Key? key, required this.session})
       : super(key: key);
 
   @override
@@ -124,7 +112,14 @@ class _MyAppState extends State<MyApp> {
           create: (BuildContext context) => PatientBloc(),
         )
       ],
-      child: FullApp(onboardingCompleted: widget.onboardingCompleted),
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider(),),
+          ChangeNotifierProvider<UtilsProvider>(create: (_) => UtilsProvider(),),
+          ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider(widget.session != null ? true : false ),),
+        ],
+        child: FullApp(onboardingCompleted: widget.session),
+      )
     );
   }
 }
@@ -135,7 +130,7 @@ class FullApp extends StatelessWidget {
     required this.onboardingCompleted,
   }) : super(key: key);
 
-  final bool onboardingCompleted;
+  final String onboardingCompleted;
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +139,7 @@ class FullApp extends StatelessWidget {
       navigatorKey: navKey,
       title: 'Boldo',
       theme: boldoTheme,
-      initialRoute: onboardingCompleted ? '/SignInSuccess' : "/onboarding",
+      initialRoute: onboardingCompleted!='' ? '/SignInSuccess' : "/onboarding",
       routes: {
         '/onboarding': (context) => HeroScreenV2(),
         '/home': (context) => DashboardScreen(),
@@ -154,6 +149,7 @@ class FullApp extends StatelessWidget {
         '/defineRelationship' : (context) => DefinedRelationshipScreen(),
         '/familyTransition' : (context) => FamilyConnectTransition(),
         '/SignInSuccess' : (context) => SingInTransition(),
+        '/FamilyTransition' : (context) => FamilyTransition(),
       },
     );
   }

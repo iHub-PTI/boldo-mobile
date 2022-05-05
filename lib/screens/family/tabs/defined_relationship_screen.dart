@@ -1,4 +1,5 @@
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/models/Relationship.dart';
 import 'package:boldo/models/User.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
@@ -36,13 +37,11 @@ class DefinedRelationshipScreen extends StatefulWidget {
 
 class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
 
-  late List<String> relationType = [];
-
   Response? response;
   bool _dataLoading = true;
   Patient? dependent;
   bool selected = false;
-  String? relationship;
+  Relationship? relationship;
 
   FlutterAppAuth appAuth = FlutterAppAuth();
 
@@ -50,8 +49,7 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
 
   Future _getFamiliesRelationship() async {
 
-    relationType = ["Papá", "Mamá", "Hijo", "Hija", "Abuelo", "Abuela", "Nieto", "Nieta"];
-
+    relationship =  relationTypes[0];
     //response = await dio.get("/profile/patient");
   }
 
@@ -105,10 +103,8 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        !user.isNew ? Text("${dependent!.identifier ?? ''}",style: boldoBillboardTextStyleAlt.copyWith(
-                                            color: ConstantsV2.lightGrey
-                                        ),) : Text(
-                                          !_dataLoading ? dependent!.givenName! + " " + dependent!.familyName! : '',
+                                        Text(
+                                          !_dataLoading ? user.givenName! + " " + user.familyName! : '',
                                           style: boldoTitleRegularTextStyle,
                                         ),
                                       ],
@@ -117,11 +113,11 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                                   ]
                               )
                           ),
-                          Container(
+                          _dataLoading? Container() :Container(
                             alignment: Alignment.topLeft,
                             child: Padding(
                               padding: const EdgeInsets.all(15.0),
-                              child: DropdownButton<String>(
+                              child: DropdownButton<Relationship>(
                                 value: relationship,
                                 hint: Text(
                                   "¿Cuál es su relación con esta persona?",
@@ -133,12 +129,12 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                                 style: boldoSubTextMediumStyle.copyWith(color: Colors.black),
                                 onChanged: (value) => setState(() {
                                   relationship = value!;
-                                  dependent!.relationship = relationship;
+                                  user.relationshipCode = relationship!.code;
                                   selected = true;
                                 }),
-                                items: relationType
-                                    .map((relationship) => DropdownMenuItem<String>(
-                                  child: Text(relationship),
+                                items: relationTypes
+                                    .map((relationship) => DropdownMenuItem<Relationship>(
+                                  child: Text(relationship.displaySpan!),
                                   value: relationship,
                                 )).toList(),
                                 isExpanded: true,
@@ -176,16 +172,7 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                                   child: ElevatedButton(
                                     onPressed: selected ? () async {
                                       setState(() {
-                                        user.relationship = relationship;
-
-                                        families.add(Patient(
-                                          givenName: user.givenName,
-                                          familyName: user.familyName,
-                                          identifier: user.identifier,
-                                          birthDate: user.birthDate,
-                                          relationship: user.relationship,
-                                          gender: user.gender,
-                                        ));
+                                        user.relationshipCode = relationship!.code;
                                       });
                                       await UserRepository().setDependent(user.isNew);
                                       await UserRepository().getDependents();

@@ -30,8 +30,9 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
         }else{
-          //patient = _post;
+          await _patientRepository.getDependents();
           emit(Success());
+          await Future.delayed(const Duration(seconds: 2));
         }
       }
     }

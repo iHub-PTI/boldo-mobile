@@ -61,7 +61,7 @@ class _HomeTabState extends State<HomeTab> {
       alignment: Alignment.bottomCenter,
       index: 0,
       title: 'Marcar una consulta remota',
-      appear: false,
+      appear: true,
       page: DoctorsTab(),
     ),
     CarouselCardPages(
@@ -187,6 +187,8 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Future<void> getAppointmentsData({bool loadMore = false}) async {
+
+    await UserRepository().getDependents();
     print("ID PATIENT ${patient.id}");
     if (!loadMore) {
       if (_isolate != null) {

@@ -3,9 +3,11 @@ import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
+import 'package:boldo/screens/profile/profile_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/utils/helpers.dart';
@@ -56,76 +58,114 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
       constraints: BoxConstraints(maxHeight: widget.max, minHeight: widget.max),
       height: widget.max,
       decoration: _decoration(),
-      child: Row(
-        children: [
-          const SizedBox(width: 10),
-          ProfileImageView(height: expanded ? 100 : 60, width: expanded ? 100 : 60, border: true),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: BlocListener<PatientBloc, PatientState>(
+        listener: (context, state){
+          setState(() {
+            if(state is Failed){
+              _dataLoading = false;
+            }
+            if(state is Success){
+              _dataLoading = false;
+            }
+            if(state is Loading){
+              _dataLoading = true;
+            }
+          });
+        },
+        child: BlocBuilder<PatientBloc, PatientState>(
+          builder: (context, state) {
+            return Row(
               children: [
-                Flexible(
-                  child: Text(
-                    "${patient.givenName ?? ''} ${patient.familyName ?? ''}",
-                    style: boldoCardHeadingTextStyle.copyWith(
-                        color: ConstantsV2.lightest
-                    ),
-                  ),
+                const SizedBox(width: 10),
+                GestureDetector(
+                  /*onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ProfileScreen(),
+                      ),
+                    );
+                  },*/
+                  child: ProfileImageView(height: expanded ? 100 : 60,
+                      width: expanded ? 100 : 60,
+                      border: true),
                 ),
-                SizedBox(height: (widget.max/ConstantsV2.homeAppBarMaxHeight)*10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children:[
-                    Text(
-                      patient.city ?? '',
-                      style: expanded ? boldoCorpMediumTextStyle : boldoCorpSmallTextStyle,
-                    ),
-                  ]
-                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          "${patient.givenName ?? ''} ${patient.familyName ??
+                              ''}",
+                          style: boldoCardHeadingTextStyle.copyWith(
+                              color: ConstantsV2.lightest
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: (widget.max /
+                          ConstantsV2.homeAppBarMaxHeight) * 10),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              patient.city ?? '',
+                              style: expanded
+                                  ? boldoCorpMediumTextStyle
+                                  : boldoCorpSmallTextStyle,
+                            ),
+                          ]
+                      ),
 
-                const SizedBox(height: 4),
-                Text(
-                  formatDate(
-                    DateTime.now(),
-                    [d, ' de ', MM, ' de ', yyyy],
-                    locale: const SpanishDateLocale(),
+                      const SizedBox(height: 4),
+                      Text(
+                        formatDate(
+                          DateTime.now(),
+                          [d, ' de ', MM, ' de ', yyyy],
+                          locale: const SpanishDateLocale(),
+                        ),
+                        style: expanded
+                            ? boldoCorpMediumTextStyle
+                            : boldoCorpSmallTextStyle,
+                      ),
+                    ],
                   ),
-                  style: expanded ? boldoCorpMediumTextStyle : boldoCorpSmallTextStyle,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (
+                            context) => MenuScreen()));
+                      },
+                      icon: SvgPicture.asset(
+                        'assets/icon/menu-alt-1.svg',
+                        color: ConstantsV2.lightest,
+                      ),
+                    ),
+                    Container(
+                      constraints: const BoxConstraints(
+                          maxHeight: 33, maxWidth: 33),
+                      margin: const EdgeInsets.all(16),
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          _showFamilyBox();
+                        },
+                        backgroundColor: ConstantsV2.orange,
+
+                        child: SvgPicture.asset('assets/icon/bell.svg'),
+                        elevation: 0,
+                      ),
+                    ),
+                  ],
                 ),
               ],
-            ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MenuScreen()));
-                },
-                icon: SvgPicture.asset(
-                  'assets/icon/menu-alt-1.svg',
-                  color: ConstantsV2.lightest,
-                ),
-              ),
-              Container(
-                constraints: const BoxConstraints(maxHeight: 33, maxWidth: 33),
-                margin: const EdgeInsets.all(16),
-                child: FloatingActionButton(
-                  onPressed: (){
-                    _showFamilyBox();
-                  },
-                  backgroundColor: ConstantsV2.orange,
-
-                  child: SvgPicture.asset('assets/icon/bell.svg'),
-                  elevation: 0,
-                ),
-              ),
-            ],
-          ),
-        ],
-
+            );
+          }
+        ),
       ),
     );
   }
@@ -252,8 +292,22 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
           children: [
             index <= families.length ?
               index == 0
-                ? ProfileImageViewTypeForm(height: height, width: width, border: false, form: type,)
-                :ProfileImageViewTypeForm(height: height, width: width, border: false, patient: families[index-1], form: type,)
+                ? InkWell(
+                  onTap: () {
+                    prefs.remove("idFamily");
+                    prefs.setBool("isFamily", false);
+                    Navigator.pushNamed(context, '/FamilyTransition');
+                  },
+                  child:ProfileImageViewTypeForm(height: height, width: width, border: false, form: type,)
+                )
+                :InkWell(
+                  onTap: () {
+                    prefs.setString("idFamily", families[index-1].id!);
+                    prefs.setBool("isFamily", true);
+                    Navigator.pushNamed(context, '/FamilyTransition');
+                  },
+                  child:ProfileImageViewTypeForm(height: height, width: width, border: false, patient: families[index-1], form: type,)
+                )
               : InkWell(
                 onTap: () {
                   Navigator.pushNamed(context, '/methods');
@@ -264,7 +318,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
             index <= families.length ?
               index == 0
                 ? Text("Yo", style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.activeText),)
-                :Text(families[index-1].relationship!, style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.activeText),)
+                :Text(families[index-1].relationshipDisplaySpan!, style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.activeText),)
               :Text("agregar", style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.green),),
 
             index <= families.length ?
@@ -276,8 +330,22 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
         )
         :index <= families.length ?
           index == 0
-            ? ProfileImageViewTypeForm(height: height, width: width, border: false, form: type,)
-            :ProfileImageViewTypeForm(height: height, width: width, border: false, patient: families[index-1], form: type,)
+            ? InkWell(
+              onTap: () {
+                prefs.remove("idFamily");
+                prefs.setBool("isFamily", false);
+                Navigator.pushNamed(context, '/FamilyTransition');
+              },
+              child: ProfileImageViewTypeForm(height: height, width: width, border: false, form: type,)
+            )
+            :InkWell(
+              onTap: () {
+                prefs.setString("idFamily", families[index-1].id!);
+                prefs.setBool("isFamily", true);
+                Navigator.pushNamed(context, '/FamilyTransition');
+              },
+              child: ProfileImageViewTypeForm(height: height, width: width, border: false, patient: families[index-1], form: type,)
+            )
           :InkWell(
             onTap: () {
               Navigator.pushNamed(context, '/methods');

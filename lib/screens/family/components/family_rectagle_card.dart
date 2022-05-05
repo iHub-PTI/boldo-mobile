@@ -55,7 +55,7 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
               padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8, right: 8),
               child: widget.isDependent
                   ? ProfileImageView2(height: 60, width: 60, border: false, patient: widget.patient,)
-                  : const ProfileImageView(height: 60, width: 60, border: false),
+                  : const ProfileImageViewTypeForm(height: 60, width: 60, border: false, form: "rounded",),
             ),
             Container(
               padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 16),
@@ -70,17 +70,28 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
                       ),
                     )
                     :Text(
-                      "${patient.givenName ?? ''} ${patient.familyName ?? ''}",
+                      "${prefs.getString('name') ?? ''} ${prefs.getString('lastName') ?? ''}",
                       style: boldoSubTextMediumStyle.copyWith(
                         color: ConstantsV2.activeText
                       ),
                     ),
                   Text(
-                    ! widget.isDependent ? "mi perfil" : widget.patient!.relationship!,
+                    ! widget.isDependent ? "mi perfil" : widget.patient!.relationshipDisplaySpan!,
                     style: boldoCorpMediumTextStyle.copyWith(
                       color: ConstantsV2.green,
                     ),
                   ),
+                  if(widget.isDependent)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text("agregado el ${widget.patient!.startDependenceDate!}",
+                          style: boldoCorpSmallTextStyle.copyWith(
+                            color: ConstantsV2.inactiveText,
+                          ),
+                        )
+                      ],
+                    ),
                 ],
               ),
             ),

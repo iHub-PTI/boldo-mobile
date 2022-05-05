@@ -376,10 +376,8 @@ class ProfileImageViewTypeForm extends StatefulWidget {
 
 class _ProfileImageViewTypeForm extends State<ProfileImageViewTypeForm> {
   bool _isLoading = false;
-  Patient? patientFamily;
   @override
   void initState() {
-    patientFamily = widget.patient?? patient;
     super.initState();
   }
 
@@ -391,26 +389,42 @@ class _ProfileImageViewTypeForm extends State<ProfileImageViewTypeForm> {
           height: widget.height,
           width: widget.width,
           child: Card(
-            child: _isLoading
-            ? const Padding(
-              padding: EdgeInsets.all(26.0),
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                    Constants.primaryColor400),
-                backgroundColor: Constants.primaryColor600,
-              ),
-            )
-            : patientFamily!.photoUrl == null || patientFamily!.photoUrl == '' ?
+            child: widget.patient == null
+            ? prefs.getString('profile_url') == '' ?
             SvgPicture.asset(
-              patientFamily!.gender == null || patientFamily!.gender == 'unknown'
+              prefs.getString('gender') == 'unknown'
                   ? 'assets/images/LogoIcon.svg'
-                  : patientFamily!.gender == "female"
+                  : prefs.getString('gender') == "female"
+                  ? 'assets/images/femalePatient.svg'
+                  : 'assets/images/malePatient.svg',
+            ) : CachedNetworkImage(
+              fit: BoxFit.cover,
+              imageUrl: prefs.getString('profile_url')?? '',
+              progressIndicatorBuilder:
+                  (context, url, downloadProgress) => Padding(
+                padding: const EdgeInsets.all(26.0),
+                child: CircularProgressIndicator(
+                  value: downloadProgress.progress,
+                  valueColor:
+                  const AlwaysStoppedAnimation<Color>(
+                      Constants.primaryColor400),
+                  backgroundColor: Constants.primaryColor600,
+                ),
+              ),
+              errorWidget: (context, url, error) =>
+              const Icon(Icons.error),
+            )
+            : widget.patient!.photoUrl == null || widget.patient!.photoUrl == '' ?
+            SvgPicture.asset(
+              widget.patient!.gender == null || widget.patient!.gender == 'unknown'
+                  ? 'assets/images/LogoIcon.svg'
+                  : widget.patient!.gender == "female"
                   ? 'assets/images/femalePatient.svg'
                   : 'assets/images/malePatient.svg',
             ) :
             CachedNetworkImage(
               fit: BoxFit.cover,
-              imageUrl: patientFamily!.photoUrl!,
+              imageUrl: widget.patient!.photoUrl!,
               progressIndicatorBuilder:
                   (context, url, downloadProgress) => Padding(
                 padding: const EdgeInsets.all(26.0),

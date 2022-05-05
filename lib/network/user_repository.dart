@@ -5,6 +5,7 @@ import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/models/Relationship.dart';
 import 'package:boldo/models/User.dart';
 import 'package:boldo/models/upload_url_model.dart';
 import 'package:boldo/network/repository_helper.dart';
@@ -23,13 +24,14 @@ import 'http.dart';
 
 class UserRepository {
 
-  Future<Patient>? getPatient(String? id) async {
+  Future<None>? getPatient(String? id) async {
     try {
       Response response = id == null
           ? await dio.get("/profile/patient")
           : await dio.get("/profile/caretaker/dependent/$id");
       if(response.statusCode == 200){
-        return Patient.fromJson(response.data);
+        patient = Patient.fromJson(response.data);
+        return None();
       }
       throw Failure(genericError);
     } catch (e) {
@@ -39,7 +41,7 @@ class UserRepository {
 
   Future<None>? getDependents() async {
     try {
-      Response response = await dio.get("/profile/caretaker/dependent");
+      Response response = await dio.get("/profile/caretaker/dependents");
       print(response.data);
       print(response.statusCode);
       if(response.statusCode == 200){
@@ -76,7 +78,7 @@ class UserRepository {
   Future<User>? getDependent(String id) async {
     print("ID $id");
     try {
-      Response response = await dio.get("/profile/caretaker/dependent/$id");
+      Response response = await dio.get("/profile/caretaker/dependent/confirm/$id");
       if(response.statusCode == 200){
         print(response.data);
         return User.fromJson(response.data);
@@ -103,12 +105,14 @@ class UserRepository {
     return list;
   }
 
-  Future<List<String>>? getRelationships() async {
+  Future<None>? getRelationships() async {
     try {
-      Response response = await dio.get("/profile/caretaker/relationship");
+      Response response = await dio.get("/profile/caretaker/relationships");
       if(response.statusCode == 200){
-        return List<String>.from(
-            response.data.map((i) => i[0]));
+        print(response.data);
+        relationTypes =  List<Relationship>.from(
+            response.data.map((i) => Relationship.fromJson(i)));
+        return None();
       }
       throw Failure(genericError);
     } catch (e) {

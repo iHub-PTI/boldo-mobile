@@ -26,45 +26,47 @@ class _LoadingHelperState extends State<LoadingHelper> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.transparent,
-        child: Stack(
-          children: [
-            userImageSelected != null
-                ? Align(
-              alignment: Alignment.center,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Opacity(
-                  opacity: 0.5,
-                  child: Image.file(
-                    File(userImageSelected!.path),
-                  ),
+    return Container(
+      child: Stack(
+        children: [
+          userImageSelected != null
+              ? Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Opacity(
+                opacity: 0.5,
+                child: Image.file(
+                  File(userImageSelected!.path),
                 ),
               ),
-            )
-                : widget.qrImage != null
-                ? Align(
-              alignment: Alignment.center,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Opacity(
-                  opacity: 0.5,
-                  child: widget.qrImage,
-                ),
+            ),
+          )
+              : widget.qrImage != null
+              ? Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Opacity(
+                opacity: 0.5,
+                child: widget.qrImage,
               ),
-            ) : Container(),
-            Align(
-              alignment: Alignment.center,
-              child:
-                  Image.asset(
-                'assets/images/loading.gif',
-              )
-            )
-          ],
-        )
-      )
+            ),
+          ) : Container(
+            width:  MediaQuery.of(context).size.width,
+            height:  MediaQuery.of(context).size.height,
+            color: Colors.white.withOpacity(0.1),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Image.asset(
+              'assets/images/loading.gif',
+              height: 60,
+              width: 60,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

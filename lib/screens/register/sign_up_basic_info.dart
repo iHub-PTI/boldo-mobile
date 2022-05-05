@@ -139,7 +139,7 @@ class SignUpBasicInfo extends StatelessWidget {
                     height: 20,
                   ),
                   DropdownButtonFormField<String>(
-                      value: user.relationship,
+                      value: user.relationshipDisplaySpan,
                       hint: Text(
                         "Género",
                         style: boldoSubTextMediumStyle.copyWith(
@@ -151,7 +151,7 @@ class SignUpBasicInfo extends StatelessWidget {
                       onChanged: (value) {
                         user.gender = value!;
                       },
-                      items: ['male', 'female', 'unknow']
+                      items: ['male', 'female']
                           .map((relationship) => DropdownMenuItem<String>(
                         child: Text(relationship),
                         value: relationship,

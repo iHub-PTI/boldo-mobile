@@ -5,8 +5,7 @@ abstract class PatientEvent {}
 
 class ChangeUser extends PatientEvent {
   final String? id;
-  final BuildContext context;
-  ChangeUser({this.id, required this.context});
+  ChangeUser({this.id});
 }
 
 class LogoutPatientPressed extends PatientEvent {}

@@ -49,7 +49,6 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
         print("401 DIO");
         if (accessToken == null) {
           await storage.deleteAll();
-
           return handle.next(error);
         }
 
