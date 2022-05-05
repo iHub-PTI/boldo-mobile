@@ -59,7 +59,6 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           emit(RedirectBackScreen());
         }else{
           user.isNew = false;
-          user.identifier = event.id;
           emit(Success());
           await Future.delayed(const Duration(seconds: 2));
           emit(RedirectNextScreen());

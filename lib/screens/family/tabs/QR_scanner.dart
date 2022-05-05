@@ -58,7 +58,6 @@ class _QRScannerState extends State<QRScanner> {
               _dataLoading = false;
             }
             if(state is RedirectNextScreen){
-              user.identifier = code;
               user.isNew = false;
               Navigator.pushNamed(context, '/familyTransition');
             }
