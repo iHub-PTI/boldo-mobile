@@ -22,6 +22,7 @@ class _QRScannerState extends State<QRScanner> {
   MobileScannerController? cameraController;
   bool _dataLoading = false;
   String? code;
+  QrImage? qrImage;
 
   @override
   void initState() {
@@ -57,6 +58,8 @@ class _QRScannerState extends State<QRScanner> {
               _dataLoading = false;
             }
             if(state is RedirectNextScreen){
+              user.identifier = code;
+              user.isNew = false;
               Navigator.pushNamed(context, '/familyTransition');
             }
             if(state is RedirectBackScreen){
@@ -76,7 +79,7 @@ class _QRScannerState extends State<QRScanner> {
                 controller: cameraController,
                 onDetect: (barcode, args) async {
                   code = barcode.rawValue;
-                  final QrImage qrImage = QrImage(
+                  qrImage= QrImage(
                     data: code!,
                     size: 200,
                     embeddedImage: const AssetImage('assets/images/logo.png'),
@@ -93,9 +96,6 @@ class _QRScannerState extends State<QRScanner> {
                   );
                   cameraController!.stop();
                   BlocProvider.of<PatientBloc>(context).add(ValidateQr(id: code?? ''));
-
-                  user.identifier = code;
-                  user.isNew = false;
                   
                 },
               ),
@@ -103,7 +103,7 @@ class _QRScannerState extends State<QRScanner> {
                 Align(
                     alignment: Alignment.center,
                     child: Container(
-                        child: const LoadingHelper()
+                        child: LoadingHelper(qrImage: qrImage,)
                     )
                 )
             ],

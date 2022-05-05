@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/Relationship.dart';
 import 'package:boldo/models/User.dart';
@@ -6,9 +7,11 @@ import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
 import 'package:boldo/screens/family/family_tab.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
+import 'package:boldo/utils/loading_helper.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -59,7 +62,7 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
       familyName: user.familyName,
       gender: user.gender,
       identifier: user.identifier,
-      //photoUrl: "https://s3-alpha-sig.figma.com/img/9210/fd70/99decdd7aa6b9bf23fff1bc150449738?Expires=1652054400&Signature=ABbH0Fzwd4OhVen3MNLsqhhUrmIkDJ9vJ-i5eOPfTKfBJyXx8LAQQL3jviRhUR1Ncu8pEYKaTAJ8csylZCSIEOTzUDmey2u7-VXygECH9QE-C34VVLJEQK5hCalSLAuq469nZ3TaNkTODmFDCHIbhgMQW9wgswoDg4cal3pBD0cSohGi8frnkergVupuf89wmICfMOsfv4KcLCH6ewy4WJDF00yaH7948uQU8W8jKjhf3EcRSNg6hcY2z0RHnzaL-vQqPwBgjHQuRkopzSyZvzlgtfLTrfBJXKQ~wIPCYWReUxsNshP5gYwkCa0BaO5RAp0ABp4YBvJzhE5oWRDuJQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+      photoUrl: user.photoUrl,
     );
   }
 
@@ -82,120 +85,151 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
           children: [
             const Background(text: "linkFamily"),
             SafeArea(
-              child: Container(
-                child: Column(
-                  children: [
-
-                    Container(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                              child :Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        ProfileImageView2(height: 100, width: 100, border: true, patient: dependent),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10,),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          !_dataLoading ? user.givenName! + " " + user.familyName! : '',
-                                          style: boldoTitleRegularTextStyle,
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 40,),
-                                  ]
-                              )
-                          ),
-                          _dataLoading? Container() :Container(
-                            alignment: Alignment.topLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: DropdownButton<Relationship>(
-                                value: relationship,
-                                hint: Text(
-                                  "¿Cuál es su relación con esta persona?",
-                                  style: boldoSubTextMediumStyle.copyWith(
-                                      color: ConstantsV2.activeText
-                                  ),
-                                ),
-                                dropdownColor: ConstantsV2.lightGrey.withOpacity(0.5),
-                                style: boldoSubTextMediumStyle.copyWith(color: Colors.black),
-                                onChanged: (value) => setState(() {
-                                  relationship = value!;
-                                  user.relationshipCode = relationship!.code;
-                                  selected = true;
-                                }),
-                                items: relationTypes
-                                    .map((relationship) => DropdownMenuItem<Relationship>(
-                                  child: Text(relationship.displaySpan!),
-                                  value: relationship,
-                                )).toList(),
-                                isExpanded: true,
-
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          padding: EdgeInsets.all(16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: BlocListener<PatientBloc, PatientState>(
+                listener: (context, state){
+                  setState(() {
+                    if(state is Failed){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(state.response!),
+                          backgroundColor: Colors.redAccent,
+                        ),
+                      );
+                      _dataLoading = false;
+                    }
+                    if(state is Success){
+                      _dataLoading = false;
+                    }
+                    if(state is RedirectNextScreen){
+                      Navigator.of(context).popUntil(ModalRoute.withName("/home"));
+                    }
+                    if(state is RedirectBackScreen){
+                      Navigator.pop(context);
+                    }
+                    if(state is Loading){
+                      _dataLoading = true;
+                    }
+                  });
+                },
+                child: BlocBuilder<PatientBloc, PatientState>(
+                builder: (context, state) {
+                  return Container(
+                    child: Column(
+                      children: [
+                        Container(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
-                                child: OutlinedButton(
-                                  onPressed: () {
-                                    user = User();
-                                    Navigator.of(context)
-                                        .popUntil(ModalRoute.withName("/methods"));
-                                  },
-                                  child: const Text(
-                                    "cancelar",
-                                  ),
-                                ),
+                                  child :Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            ProfileImageView2(height: 100, width: 100, border: true, patient: dependent),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 10,),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              !_dataLoading ? user.givenName! + " " + user.familyName! : '',
+                                              style: boldoTitleRegularTextStyle,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 40,),
+                                      ]
+                                  )
                               ),
-                              AnimatedOpacity(
-                                opacity: selected ? 1 : 0,
-                                duration: const Duration(milliseconds: 300),
-                                child: Container(
-                                  child: ElevatedButton(
-                                    onPressed: selected ? () async {
-                                      setState(() {
-                                        user.relationshipCode = relationship!.code;
-                                      });
-                                      await UserRepository().setDependent(user.isNew);
-                                      await UserRepository().getDependents();
-                                      user = User();
-                                      Navigator.of(context)
-                                          .popUntil(ModalRoute.withName("/home"));
-
-                                    } : (){},
-                                    child: const Text(
-                                      "vincular",
+                              _dataLoading? Container() :Container(
+                                alignment: Alignment.topLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: DropdownButton<Relationship>(
+                                    value: relationship,
+                                    hint: Text(
+                                      "¿Cuál es su relación con esta persona?",
+                                      style: boldoSubTextMediumStyle.copyWith(
+                                          color: ConstantsV2.activeText
+                                      ),
                                     ),
+                                    dropdownColor: ConstantsV2.lightGrey.withOpacity(0.5),
+                                    style: boldoSubTextMediumStyle.copyWith(color: Colors.black),
+                                    onChanged: (value) => setState(() {
+                                      relationship = value!;
+                                      user.relationshipCode = relationship!.code;
+                                      selected = true;
+                                    }),
+                                    items: relationTypes
+                                        .map((relationship) => DropdownMenuItem<Relationship>(
+                                      child: Text(relationship.displaySpan!),
+                                      value: relationship,
+                                    )).toList(),
+                                    isExpanded: true,
+
                                   ),
                                 ),
                               ),
                             ],
-                          )
+                          ),
                         ),
-                      ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Container(
+                                padding: EdgeInsets.all(16),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      child: OutlinedButton(
+                                        onPressed: () {
+                                          user = User();
+                                          Navigator.of(context)
+                                              .popUntil(ModalRoute.withName("/methods"));
+                                        },
+                                        child: const Text(
+                                          "cancelar",
+                                        ),
+                                      ),
+                                    ),
+                                    AnimatedOpacity(
+                                      opacity: selected ? 1 : 0,
+                                      duration: const Duration(milliseconds: 300),
+                                      child: Container(
+                                        child: ElevatedButton(
+                                          onPressed: selected ? () async {
+                                            setState(() {
+                                              user.relationshipCode = relationship!.code;
+                                            });
+                                            BlocProvider.of<PatientBloc>(context).add(LinkFamily());
+                                          } : (){},
+                                          child: const Text(
+                                            "vincular",
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                }),
               ),
             ),
+            if(_dataLoading)
+              Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                      child: LoadingHelper()
+                  )
+              )
           ]
       ),
     );

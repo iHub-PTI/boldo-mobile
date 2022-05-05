@@ -13,4 +13,6 @@ class ValidateQr extends PatientEvent {
   ValidateQr({required this.id});
 }
 
+class LinkFamily extends PatientEvent {}
+
 class LogoutPatientPressed extends PatientEvent {}

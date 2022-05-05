@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/screens/register/dni_register.dart';
