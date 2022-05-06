@@ -73,7 +73,7 @@ class _HomeTabState extends State<HomeTab> {
       alignment: Alignment.bottomCenter,
       index: 0,
       title: 'Reservar una consulta',
-      appear: !(prefs.getBool("isFamily")?? false),
+      appear: !(prefs.getBool("isFamily")?? true),
       page: DoctorsTab(),
     ),
     CarouselCardPages(
