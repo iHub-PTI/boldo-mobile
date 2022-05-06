@@ -35,6 +35,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
         }else{
           await _patientRepository.getDependents();
           emit(Success());
+          emit(ChangeFamily());
           await Future.delayed(const Duration(seconds: 2));
           emit(RedirectNextScreen());
         }

@@ -30,7 +30,10 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
 
   Future<void> _fetchProfileData() async {
     try {
-      await getMedicalRecords();
+      if(prefs.getBool("isFamily")?? false)
+        allMedicalData = [];
+      else
+        await getMedicalRecords();
       setState(() {
         _dataLoading = false;
         _dataLoaded = true;

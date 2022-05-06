@@ -11,6 +11,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../constants.dart';
+import '../../../main.dart';
 import '../../booking/booking_screen.dart';
 import '../../doctor_profile/doctor_profile_screen.dart';
 import '../../../models/Doctor.dart';
@@ -472,11 +473,11 @@ class _DoctorCard extends StatelessWidget {
                   width: 1,
                   color: const Color(0xffE5E7EB),
                 ),
-                Expanded(
+                prefs.getBool("isFamily")?? false ? Container() :Expanded(
                   child: SizedBox(
                     height: 52,
                     child: TextButton(
-                      onPressed: () {
+                      onPressed: prefs.getBool("isFamily")?? false ? (){} : () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(

@@ -17,6 +17,8 @@ class Failed extends PatientState {
 
 class Success extends PatientState {}
 
+class ChangeFamily extends PatientState {}
+
 class RedirectNextScreen extends PatientState {}
 
 class RedirectToHome extends PatientState {}
