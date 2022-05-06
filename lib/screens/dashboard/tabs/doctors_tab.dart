@@ -486,7 +486,7 @@ class _DoctorCard extends StatelessWidget {
                         );
                       },
                       child: const Text(
-                        'Reservar',
+                        'Agendar',
                         style: boldoHeadingTextStyle,
                       ),
                     ),

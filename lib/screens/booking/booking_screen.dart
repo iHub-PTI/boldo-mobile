@@ -189,7 +189,7 @@ class _BookingScreenState extends State<BookingScreen> {
             color: Constants.extraColor400,
           ),
           label: Text(
-            'Reservar',
+            'Agendar',
             style: boldoHeadingTextStyle.copyWith(fontSize: 20),
           ),
         ),
@@ -662,7 +662,7 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                 },
                 child: Container(
                   child: Text(
-                    'Reservar ahora',
+                    'Agendar ahora',
                     style: boldoHeadingTextStyle.copyWith(
                         color: Constants.primaryColor500),
                   ),

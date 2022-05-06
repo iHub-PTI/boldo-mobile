@@ -58,23 +58,23 @@ class _HomeTabState extends State<HomeTab> {
   final List<CarouselCardPages> items = [
     CarouselCardPages(
       key: UniqueKey(),
+      image: 'assets/images/card_appointment.png',
+      boxFit: BoxFit.contain,
+      alignment: Alignment.bottomCenter,
+      index: 0,
+      title: 'Agendar una consulta',
+      appear: !(prefs.getBool("isFamily")?? false),
+      page: DoctorsTab(),
+    ),
+    CarouselCardPages(
+      key: UniqueKey(),
       image: 'assets/images/card_medicalStudies.png',
       boxFit: BoxFit.cover,
       alignment: Alignment.bottomCenter,
       index: 2,
       title: 'Ver mis fichas médicas',
-      appear: true,
+      appear: !(prefs.getBool("isFamily")?? false),
       page: medScreen.MedicalRecordScreen(),
-    ),
-    CarouselCardPages(
-      key: UniqueKey(),
-      image: 'assets/images/card_appointment.png',
-      boxFit: BoxFit.contain,
-      alignment: Alignment.bottomCenter,
-      index: 0,
-      title: 'Reservar una consulta',
-      appear: !(prefs.getBool("isFamily")?? true),
-      page: DoctorsTab(),
     ),
     CarouselCardPages(
       key: UniqueKey(),
@@ -208,7 +208,7 @@ class _HomeTabState extends State<HomeTab> {
 
     try {
       Response responseAppointments = await dio.get(
-          "/profile/patient/appointments?start=${dateOffset.toUtc().toIso8601String().substring(0, 23)}Z");
+          "/profile/patient/appointments?start=${DateTime.now().toUtc().toIso8601String().substring(0, 23)}Z");
       Response responsePrescriptions =
           await dio.get("/profile/patient/prescriptions");
       List<Prescription> allPrescriptions = List<Prescription>.from(

@@ -44,7 +44,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
             color: Constants.extraColor400,
           ),
           label: Text(
-            'Reservar',
+            'Agendar',
             style: boldoHeadingTextStyle.copyWith(fontSize: 20),
           ),
         ),
