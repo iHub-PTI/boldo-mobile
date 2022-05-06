@@ -117,10 +117,7 @@ class FamilyMetodsAdd extends StatelessWidget {
                           color: ConstantsV2.lightAndClear.withOpacity(0.80),
                           child: InkWell(
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) => SignUpBasicInfo()
-                              )
-                              );
+                              Navigator.pushNamed(context, '/familyDniRegister');
                             },
                             child: Container(
                               padding: const EdgeInsets.all(8),

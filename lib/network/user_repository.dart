@@ -159,18 +159,18 @@ class UserRepository {
       switch (urlUploadType) {
         case UrlUploadType.frontal:
           url = isLogged == null ?
-          "preRegister/s3/validateDocument/idCardParaguay/side1/uploadPresigned?hash=$hash" :
-              "profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side1/uploadPresigned" ;
+          "/preRegister/s3/validateDocument/idCardParaguay/side1/uploadPresigned?hash=$hash" :
+              "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side1/uploadPresigned" ;
           break;
         case UrlUploadType.back:
           url = isLogged == null ?
-          "preRegister/s3/validateDocument/idCardParaguay/side2/uploadPresigned?hash=$hash" :
-          "profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side2/uploadPresigned?hash=$hash";
+          "/preRegister/s3/validateDocument/idCardParaguay/side2/uploadPresigned?hash=$hash" :
+          "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side2/uploadPresigned?hash=$hash";
           break;
         case UrlUploadType.selfie:
           url = isLogged == null ?
-          "preRegister/s4/validateSelfie/uploadPresigned?hash=$hash" :
-          "profile/caretaker/dependent/s4/validateSelfie/uploadPresigned?hash=$hash";
+          "/preRegister/s4/validateSelfie/uploadPresigned?hash=$hash" :
+          "/profile/caretaker/dependent/s4/validateSelfie/uploadPresigned?hash=$hash";
           break;
         default:
       }
@@ -183,6 +183,7 @@ class UserRepository {
             frontDniUrl = uploadUrlFromJson(response.data);
             print("${frontDniUrl.hash} url=${frontDniUrl.uploadUrl}");
             await storage.write(key: "hash", value: frontDniUrl.hash);
+            print("hash frontal ${frontDniUrl.hash}");
             break;
           case UrlUploadType.back:
             backDniUrl = uploadUrlFromJson(response.data);
@@ -256,24 +257,26 @@ class UserRepository {
         switch (urlUploadType) {
           case UrlUploadType.frontal:
             _url = isLogged == null ?
-            "preRegister/s3/validateDocument/idCardParaguay/side1/validate?hash=$hash" :
-            "profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side1/validate?hash=$hash";
+            "/preRegister/s3/validateDocument/idCardParaguay/side1/validate?hash=$hash" :
+            "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side1/validate?hash=$hash";
             break;
           case UrlUploadType.back:
             _url = isLogged == null ?
-            "preRegister/s3/validateDocument/idCardParaguay/side2/validate?hash=$hash" :
-            "profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side2/validate?hash=$hash";
+            "/preRegister/s3/validateDocument/idCardParaguay/side2/validate?hash=$hash" :
+            "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side2/validate?hash=$hash";
             break;
           case UrlUploadType.selfie:
             _url = isLogged == null ?
-            "preRegister/s4/validateSelfie/validate?hash=$hash" :
-            "profile/caretaker/dependent/s4/validateSelfie/validate?hash=$hash";
+            "/preRegister/s4/validateSelfie/validate?hash=$hash" :
+            "/profile/caretaker/dependent/s4/validateSelfie/validate?hash=$hash";
             break;
           default:
         }
         final _finalUrl = Uri.parse(
             '${String.fromEnvironment('SERVER_ADDRESS', defaultValue: dotenv.env['SERVER_ADDRESS']!)}$_url');
+        print(_finalUrl);
         var response = await http.post(_finalUrl);
+        print(response.statusCode);
         if (response.statusCode == 200) {
           if(urlUploadType == UrlUploadType.selfie && isLogged != null){
             user = User.fromJson(jsonDecode(response.body));

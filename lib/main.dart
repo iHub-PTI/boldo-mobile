@@ -6,6 +6,7 @@ import 'package:boldo/screens/family/family_tab.dart';
 import 'package:boldo/screens/family/tabs/defined_relationship_screen.dart';
 import 'package:boldo/screens/family/tabs/familyConnectTransition.dart';
 import 'package:boldo/screens/family/tabs/family_change_transition.dart';
+import 'package:boldo/screens/family/tabs/family_register_account.dart';
 import 'package:boldo/screens/family/tabs/metods_add_family_screen.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:boldo/screens/sing_in/sing_in_transition.dart';
@@ -153,6 +154,7 @@ class FullApp extends StatelessWidget {
         '/familyTransition' : (context) => FamilyConnectTransition(),
         '/SignInSuccess' : (context) => SingInTransition(),
         '/FamilyTransition' : (context) => FamilyTransition(),
+        '/familyDniRegister' : (context) => DniFamilyRegister(),
       },
     );
   }
