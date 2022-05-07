@@ -63,7 +63,7 @@ class _HomeTabState extends State<HomeTab> {
       alignment: Alignment.bottomCenter,
       index: 0,
       title: 'Agendar una consulta',
-      appear: !(prefs.getBool("isFamily")?? false),
+      appear: (prefs.getBool("isFamily") == false ? true : false),
       page: DoctorsTab(),
     ),
     CarouselCardPages(
@@ -71,9 +71,9 @@ class _HomeTabState extends State<HomeTab> {
       image: 'assets/images/card_medicalStudies.png',
       boxFit: BoxFit.cover,
       alignment: Alignment.bottomCenter,
-      index: 2,
+      index: 1,
       title: 'Ver mis fichas médicas',
-      appear: !(prefs.getBool("isFamily")?? false),
+      appear: (prefs.getBool("isFamily") == false ? true : false),
       page: medScreen.MedicalRecordScreen(),
     ),
     CarouselCardPages(
@@ -81,7 +81,7 @@ class _HomeTabState extends State<HomeTab> {
       image: 'assets/images/card_prescriptions.png',
       boxFit: BoxFit.cover,
       alignment: Alignment.centerLeft,
-      index: 1,
+      index: 2,
       title: 'Ver mis recetas',
       appear: false,
     ),
@@ -574,13 +574,14 @@ class _CustomCardPageState extends State<CustomCardPage>{
           borderRadius: BorderRadius.circular(widget.radius),
         ) : const StadiumBorder(),
         child: InkWell(
-          onTap: carouselCardPage!.appear ? () {
+          onTap: () {
+             //TODO: improve this call
+            if(prefs.getBool("isFamily") == false && carouselCardPage!.index < 2)
             Navigator.push(context, MaterialPageRoute(
                 builder: (context) => carouselCardPage!.page!
             )
             ) ;
-          } :
-              () {} ,
+          },
           child: Container(
             child: Stack(
               children: [
@@ -617,7 +618,8 @@ class _CustomCardPageState extends State<CustomCardPage>{
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          carouselCardPage!.appear ? const Text("")
+                          //TODO: improve this call
+                         prefs.getBool("isFamily") == false && carouselCardPage!.index < 2 ? const Text("")
                               : AnimatedOpacity(
                             opacity: widget.radius < 70 ? 1 : 0,
                             duration: const Duration(milliseconds: 1),
