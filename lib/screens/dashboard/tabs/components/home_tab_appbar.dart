@@ -98,7 +98,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                     children: [
                       Flexible(
                         child: Text(
-                          "${patient.givenName ?? ''} ${patient.familyName ??
+                          "${patient.givenName ?? ''}${patient.familyName ??
                               ''}",
                           style: boldoCardHeadingTextStyle.copyWith(
                               color: ConstantsV2.lightest

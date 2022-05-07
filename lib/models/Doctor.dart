@@ -45,7 +45,7 @@ class Doctor {
   Doctor.fromJson(Map<String, dynamic> json,) {
     addressDescription = json['addressDescription'];
     biography = json['biography'];
-    familyName = json['familyName']!= null ? _toLowerCase(json['familyName']!) : null;
+    familyName = json['familyName']!= null ? toLowerCase(json['familyName']!) : null;
     gender = json['gender'];
     birthDate = json['birthDate'];
     city = json['city'];
@@ -53,7 +53,7 @@ class Doctor {
     identifier = json['identifier'];
     job = json['job'];
     phone = json['phone'];
-    givenName = json['givenName']!= null ? _toLowerCase(json['givenName']!) : null;
+    givenName = json['givenName']!= null ? toLowerCase(json['givenName']!) : null;
     id = json['id'];
     if (json['languages'] != null) {
       languages = [];
@@ -163,11 +163,3 @@ class NextAvailability {
   }
 }
 
-String _toLowerCase(String word){
-  var words = word.split(" ");
-  String _result = "";
-  for(String a in words){
-    _result = "${_result} ${a[0].toUpperCase()}${a.substring(1).toLowerCase()}";
-  }
-  return "$_result";
-}

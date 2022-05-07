@@ -1,3 +1,5 @@
+import '../utils/helpers.dart';
+
 class Patient {
   String? givenName,
       familyName,
@@ -37,8 +39,8 @@ class Patient {
         this.startDependenceDate,});
 
   factory Patient.fromJson(Map<String, dynamic> json,) => Patient(
-    givenName : json['givenName']!= null ? _toLowerCase(json['givenName']!) : null,
-    familyName : json['familyName']!= null ? _toLowerCase(json['familyName']!) : null,
+    givenName : json['givenName']!= null ? toLowerCase(json['givenName']!) : null,
+    familyName : json['familyName']!= null ? toLowerCase(json['familyName']!) : null,
     birthDate : json['birthDate'],
     job : json['job'],
     gender : json['gender'],
@@ -79,11 +81,3 @@ class Patient {
   }
 }
 
-String _toLowerCase(String word){
-  var words = word.split(" ");
-  String _result = "";
-  for(String a in words){
-    _result = "${_result} ${a[0].toUpperCase()}${a.substring(1).toLowerCase()}";
-  }
-  return "$_result";
-}
