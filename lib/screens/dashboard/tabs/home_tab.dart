@@ -367,7 +367,9 @@ class _HomeTabState extends State<HomeTab> {
                 });
               }
               if(state is Success){
-                _loading = false;
+                setState((){
+                  _loading = false;
+                });
               }
               if(state is RedirectNextScreen){
                 // back to home

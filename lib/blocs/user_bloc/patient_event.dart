@@ -8,6 +8,8 @@ class ChangeUser extends PatientEvent {
   ChangeUser({this.id});
 }
 
+class ReloadHome extends PatientEvent {}
+
 class ValidateQr extends PatientEvent {
   final String id;
   ValidateQr({required this.id});

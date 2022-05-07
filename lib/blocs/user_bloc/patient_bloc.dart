@@ -87,6 +87,9 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           emit(RedirectNextScreen());
         }
       }
+      if(event is ReloadHome){
+        emit(Success());
+      }
     }
 
     );
