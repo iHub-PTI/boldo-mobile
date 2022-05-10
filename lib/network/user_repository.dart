@@ -272,22 +272,24 @@ class UserRepository {
             break;
           default:
         }
-        final _finalUrl = Uri.parse(
-            '${String.fromEnvironment('SERVER_ADDRESS', defaultValue: dotenv.env['SERVER_ADDRESS']!)}$_url');
+        final _finalUrl =
+            '${String.fromEnvironment('SERVER_ADDRESS', defaultValue: dotenv.env['SERVER_ADDRESS']!)}$_url';
         print(_finalUrl);
-        var response = await http.post(_finalUrl);
+        var response = await dio.post(_finalUrl);
         print(response.statusCode);
         if (response.statusCode == 200) {
+          print(response.data);
           if(urlUploadType == UrlUploadType.selfie && isLogged != null){
-            user = User.fromJson(jsonDecode(response.body));
+            user = User.fromJson(response.data);
           }
           return None();
         } else {
-          return throw Failure(response.body);
+          return throw Failure(response.data);
         }
       }
       throw Failure(genericError);
     } catch (e) {
+      print(e);
       throw Failure('${e.toString().length > 60 ? '$genericError' : e}');
     }
   }

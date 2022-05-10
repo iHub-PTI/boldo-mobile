@@ -66,6 +66,9 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
         if(_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
+          File(userImageSelected!.path).delete();
+          imageCache!.clearLiveImages();
+          imageCache!.clear();
         }else {
           print("send image");
           await Task(() => _patientRepository.sendImagetoServer(
@@ -81,6 +84,9 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
             //image can't be uploaded to server or images don't match with user data
             _post.leftMap((l) => response = l.message);
             emit(Failed(response: response));
+            File(userImageSelected!.path).delete();
+            imageCache!.clearLiveImages();
+            imageCache!.clear();
           } else {
             if (event.urlUploadType == UrlUploadType.selfie) {
               if (isLogged == null) {
@@ -90,6 +96,9 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
                   //can't save user password in server
                   _post.leftMap((l) => response = l.message);
                   emit(Failed(response: response));
+                  File(userImageSelected!.path).delete();
+                  imageCache!.clearLiveImages();
+                  imageCache!.clear();
                 } else {
                   // succefully inserted password in server, go to login screen, need access token [require webview login]
                   emit(Success());
@@ -107,8 +116,9 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
                 emit(Success());
                 // photoStage frontal again for a new patient registration
                 emit(SuccessPhotoUploaded(actualPhotoStage: UrlUploadType.frontal));
-
                 File(userImageSelected!.path).delete();
+                // clear user registration image
+                userImageSelected = null;
                 imageCache!.clearLiveImages();
                 imageCache!.clear();
                 await Future.delayed(const Duration(seconds: 2));
