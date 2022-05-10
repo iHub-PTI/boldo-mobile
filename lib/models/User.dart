@@ -1,3 +1,5 @@
+import '../utils/helpers.dart';
+
 class User {
   String? givenName,
       familyName,
@@ -25,14 +27,12 @@ class User {
         this.isNew = true});
 
   factory User.fromJson(Map<String, dynamic> json,) => User(
-      givenName : json['givenName'],
-      familyName : json['familyName'],
-      birthDate : json['birthDate'],
-      gender : json['gender'],
-      phone : json['phone'],
+      givenName : json['givenName']!= null ? toLowerCase(json['givenName']!) : null,
+      familyName : json['familyName']!= null ? toLowerCase(json['familyName']!) : null,
+      birthDate : json['birthDate'].toString(),
+      gender : spanishGenderToEnglish(json['gender']),
       photoUrl : json['photoUrl'],
       identifier : json['identifier'],
-      relationshipCode: json['relationshipCode']
   );
 
   Map<String, dynamic> toJson() {
@@ -55,7 +55,7 @@ class User {
     data['birthDate'] = birthDate;
     //data['phone'] = phone;
     data['givenName'] = givenName;
-    //data['photoUrl'] = photoUrl;
+    data['photoUrl'] = photoUrl;
     data['identifier'] = identifier;
     data['relationshipCode'] = relationshipCode;
     return data;

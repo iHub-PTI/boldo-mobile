@@ -46,7 +46,7 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
   void getImageFromCamera() async {
     final path = path_package.join(
         (await getTemporaryDirectory()).path,
-        _isFrontDni ? 'front.png' : _selfieRequest ? 'selfie.png' : 'back.png');
+        photoStage == UrlUploadType.frontal ? 'front.png' : photoStage == UrlUploadType.selfie ? 'selfie.png' : 'back.png');
 
     // Take a picture and save in path directory
     await Navigator.push(
@@ -181,13 +181,13 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                               ),
                               Align(
                                 alignment:
-                                _selfieRequest ? Alignment.centerLeft : Alignment.center,
+                                photoStage == UrlUploadType.selfie ? Alignment.centerLeft : Alignment.center,
                                 child: Padding(
                                   padding: const EdgeInsets.all(10.0),
                                   child: Text(
-                                    _selfieRequest == true
+                                    photoStage == UrlUploadType.selfie
                                         ? 'Por último, tomate una selfie.'
-                                        : _isFrontDni
+                                        : photoStage == UrlUploadType.frontal
                                         ? 'A continuación, subí una foto de la cara frontal de tu cédula de identidad paraguaya.'
                                         : 'Genial! Ahora una foto de la cara posterior de tu cédula de identidad paraguaya.',
                                     style: boldoSubTextStyle.copyWith(
@@ -207,9 +207,9 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                                 height: 20,
                               ),
                               Image.asset(
-                                _selfieRequest == true
+                                photoStage == UrlUploadType.selfie
                                     ? 'assets/images/selfie.png'
-                                    : _isFrontDni
+                                    : photoStage == UrlUploadType.frontal
                                     ? 'assets/images/dni_front.png'
                                     : 'assets/images/dni_back.png',
                                 height: 250,
@@ -223,7 +223,7 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    _selfieRequest == false
+                                    photoStage != UrlUploadType.selfie
                                         ? Padding(
                                       padding: const EdgeInsets.only(right: 10.0),
                                       child: OutlinedButton(

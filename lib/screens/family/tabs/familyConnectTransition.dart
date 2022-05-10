@@ -90,6 +90,7 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
                                     const SizedBox(height: 29,),
                                     Container(
                                       child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
@@ -108,12 +109,13 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
                                             children: [
                                               _dataLoading ? Text("Cargando", style: boldoBillboardTextStyleAlt.copyWith(
                                                   color: ConstantsV2.lightGrey
-                                              )) :Text(
-                                                "${user.givenName ?? ''} ${user.familyName ?? ''}",
+                                              )) :Flexible(child:Text(
+                                                "${user.givenName ?? ''}${user.familyName ?? ''}",
+                                                textAlign: TextAlign.center,
                                                 style: boldoBillboardTextStyleAlt.copyWith(
-                                                    color: ConstantsV2.lightGrey
+                                                    color: ConstantsV2.lightGrey,
                                                 ),
-                                              ),
+                                              )),
                                             ],
                                           ),
                                         ],

@@ -20,3 +20,14 @@ String toLowerCase(String word){
   }
   return "$_result";
 }
+
+String? spanishGenderToEnglish(String? word){
+  if(word == null){
+    return null;
+  }
+  if(word.toLowerCase() == 'masculino')
+    return 'male';
+  if(word.toLowerCase() == 'femenino')
+    return 'female';
+  return 'unknow';
+}
