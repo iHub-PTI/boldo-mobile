@@ -37,7 +37,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
   @override
   Widget build(BuildContext context) {
     final actualDay = DateTime.now();
-    final appointmentDay = DateTime.parse(widget.appointment.start!);
+    final appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
     int daysDifference = DateTime.parse(widget.appointment.start!)
         .toLocal()
         .difference(actualDay)

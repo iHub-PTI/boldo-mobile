@@ -2,6 +2,7 @@ import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/medicalRecord.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/network/user_repository.dart';
+import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/medical_records/medical_records_details.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,10 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
 
   Future<void> _fetchProfileData() async {
     try {
-      await getMedicalRecords();
+      if(prefs.getBool("isFamily")?? false)
+        allMedicalData = [];
+      else
+        await getMedicalRecords();
       setState(() {
         _dataLoading = false;
         _dataLoaded = true;
@@ -102,7 +106,12 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
                       ),
                     ),
                   if (!_dataLoading && _dataLoaded)
-                    SizedBox(
+                    allMedicalData.isEmpty
+                    ? const EmptyStateV2(
+                      picture: "feed_empty.svg",
+                      textTop: "Nada para mostrar",
+                    )
+                    : SizedBox(
                       height: MediaQuery.of(context).size.height - 260,
                       child: ListView.separated(
                         itemCount: allMedicalData.length,

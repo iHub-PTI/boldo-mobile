@@ -1,4 +1,6 @@
+import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
@@ -69,9 +71,8 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                         onPressed: () {
                           Provider.of<UtilsProvider>(context, listen: false)
                               .setSelectedPageIndex(pageIndex: 0);
-                          // Navigator.of(context)
-                          //     .popUntil(ModalRoute.withName("/home"));
-                              Navigator.pushNamed(context, '/home').then((_) => setState(() {}));
+                          BlocProvider.of<PatientBloc>(context).add(ReloadHome());
+                          Navigator.of(context).popUntil(ModalRoute.withName("/home"));
 
                         },
 

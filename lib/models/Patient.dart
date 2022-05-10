@@ -1,3 +1,5 @@
+import '../utils/helpers.dart';
+
 class Patient {
   String? givenName,
       familyName,
@@ -37,8 +39,8 @@ class Patient {
         this.startDependenceDate,});
 
   factory Patient.fromJson(Map<String, dynamic> json,) => Patient(
-    givenName : json['givenName'],
-    familyName : json['familyName'],
+    givenName : json['givenName']!= null ? toLowerCase(json['givenName']!) : null,
+    familyName : json['familyName']!= null ? toLowerCase(json['familyName']!) : null,
     birthDate : json['birthDate'],
     job : json['job'],
     gender : json['gender'],
@@ -78,3 +80,4 @@ class Patient {
     return data;
   }
 }
+

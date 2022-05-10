@@ -10,3 +10,13 @@ extension StringExtension on String {
   }
 }
 String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
+
+String toLowerCase(String word){
+  var words = word.split(" ");
+  String _result = "";
+  for(String a in words){
+    if(a!= "")
+    _result += "${a[0].toUpperCase()}${a.substring(1).toLowerCase()} ";
+  }
+  return "$_result";
+}

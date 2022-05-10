@@ -106,7 +106,7 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
-                                              _dataLoading ? Text("cargando", style: boldoBillboardTextStyleAlt.copyWith(
+                                              _dataLoading ? Text("Cargando", style: boldoBillboardTextStyleAlt.copyWith(
                                                   color: ConstantsV2.lightGrey
                                               )) :Text(
                                                 "${user.givenName ?? ''} ${user.familyName ?? ''}",

@@ -110,14 +110,14 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                                                 ),) :
                                                 prefs.getBool("isFamily")?? false ?
                                                 Text(
-                                                  "mostrando datos de",
+                                                  "Mostrando datos de",
                                                   style: boldoSubTextStyle.copyWith(
                                                       color: ConstantsV2.lightGrey
                                                   ),
                                                 )
                                                 :
                                                 Text(
-                                                  "ahora mostrando",
+                                                  "Ahora mostrando",
                                                   style: boldoSubTextStyle.copyWith(
                                                       color: ConstantsV2.lightGrey
                                                   ),
@@ -132,7 +132,7 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                                                 prefs.getBool("isFamily")?? false ?
                                                 Flexible(
                                                   child: Text(
-                                                    "${patient.givenName ?? ''} ${patient.familyName ?? ''}",
+                                                    "${patient.givenName ?? ''}${patient.familyName ?? ''}",
                                                     style: boldoBillboardTextStyleAlt.copyWith(
                                                         color: ConstantsV2.lightGrey
                                                     ),

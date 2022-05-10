@@ -33,7 +33,9 @@ class HeroScreenV2 extends StatelessWidget {
       title: 'Consultas remotas',
       description: 'Con Boldo podés agendar, gestionar y asistir a consultas'
           'remotas. Todo desde donde estés.',
-      secondaryText: 'ver doctores disponibles',
+      //no implemented yet
+      // secondaryText: 'ver doctores disponibles',
+      secondaryText: '',
     ),
     CarouselSlide(
       key: UniqueKey(),

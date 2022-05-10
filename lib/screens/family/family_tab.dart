@@ -102,7 +102,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
                             : const EmptyStateV2(
                                 picture: "Helping old man 1.svg",
                                 textBottom:
-                                    "aún no agregaste ningún perfil para gestionar",
+                                    "Aún no agregaste ningún perfil para gestionar",
                               ),
                       ),
                       const SizedBox(
