@@ -16,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants.dart';
 import '../main.dart';
+import 'helpers.dart';
 
 class LoginWebViewHelper extends StatefulWidget {
   const LoginWebViewHelper({Key? key}) : super(key: key);
@@ -96,8 +97,8 @@ Future<int> authenticateUser({required BuildContext context}) async {
     print("DATOS ${response.data}");
     await prefs.setString("profile_url", response.data["photoUrl"] ?? '');
     await prefs.setString("gender", response.data["gender"]);
-    await prefs.setString("name", response.data["givenName"]);
-    await prefs.setString("lastName", response.data["givenName"]);
+    await prefs.setString("name", response.data['givenName']!= null ? toLowerCase(response.data['givenName']!) : '');
+    await prefs.setString("lastName", response.data['familyName']!= null ? toLowerCase(response.data['familyName']!) : '');
     await prefs.setBool("isFamily", false);
     /*
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
