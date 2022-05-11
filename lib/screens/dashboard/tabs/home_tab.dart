@@ -368,6 +368,8 @@ class _HomeTabState extends State<HomeTab> {
               }
               if(state is Success){
                 setState((){
+                  _loading = true;
+                  getAppointmentsData();
                   _loading = false;
                 });
               }
