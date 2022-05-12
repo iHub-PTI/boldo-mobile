@@ -212,7 +212,7 @@ class _HomeTabState extends State<HomeTab> {
           "/profile/patient/appointments?start=${DateTime.now().toUtc().toIso8601String().substring(0, 23)}Z");
       else
         responseAppointments = await dio.get(
-            "/profile/caretaker/dependent/${patient.id}/appointments?start=${DateTime.now().toUtc().toIso8601String().substring(0, 23)}Z");
+            "/profile/caretaker/dependent/${patient.id}/appointments?start=${DateTime.now().toLocal().toIso8601String().substring(0, 23)}Z");
 
       Response responsePrescriptions =
           await dio.get("/profile/patient/prescriptions");
