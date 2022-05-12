@@ -63,7 +63,7 @@ class _HomeTabState extends State<HomeTab> {
       alignment: Alignment.bottomCenter,
       index: 0,
       title: 'Agendar una consulta',
-      appear: (prefs.getBool("isFamily") == false ? true : false),
+      appear: true,
       page: DoctorsTab(),
     ),
     CarouselCardPages(
@@ -73,7 +73,7 @@ class _HomeTabState extends State<HomeTab> {
       alignment: Alignment.bottomCenter,
       index: 1,
       title: 'Ver mis fichas médicas',
-      appear: (prefs.getBool("isFamily") == false ? true : false),
+      appear: true,
       page: medScreen.MedicalRecordScreen(),
     ),
     CarouselCardPages(
@@ -205,10 +205,15 @@ class _HomeTabState extends State<HomeTab> {
         _dataFetchError = false;
       });
     }
-
+    Response responseAppointments;
     try {
-      Response responseAppointments = await dio.get(
+      if(! prefs.getBool("isFamily")!)
+        responseAppointments = await dio.get(
           "/profile/patient/appointments?start=${DateTime.now().toUtc().toIso8601String().substring(0, 23)}Z");
+      else
+        responseAppointments = await dio.get(
+            "/profile/caretaker/dependent/${patient.id}/appointments?start=${DateTime.now().toUtc().toIso8601String().substring(0, 23)}Z");
+
       Response responsePrescriptions =
           await dio.get("/profile/patient/prescriptions");
       List<Prescription> allPrescriptions = List<Prescription>.from(
@@ -438,7 +443,7 @@ class _HomeTabState extends State<HomeTab> {
                             backgroundColor: Constants.primaryColor600,
                           )
                       ))
-                          : allAppointmentsState.isEmpty || prefs.getBool("isFamily")!
+                          : allAppointmentsState.isEmpty
                           ? const SliverToBoxAdapter(child: EmptyStateV2(
                         picture: "feed_empty.svg",
                         textTop: "Nada para mostrar",
@@ -578,14 +583,12 @@ class _CustomCardPageState extends State<CustomCardPage>{
           borderRadius: BorderRadius.circular(widget.radius),
         ) : const StadiumBorder(),
         child: InkWell(
-          onTap: () {
-             //TODO: improve this call
-            if(prefs.getBool("isFamily") == false && carouselCardPage!.index < 2)
+          onTap:  carouselCardPage!.appear ? () {
             Navigator.push(context, MaterialPageRoute(
                 builder: (context) => carouselCardPage!.page!
             )
             ) ;
-          },
+          } : (){},
           child: Container(
             child: Stack(
               children: [
@@ -622,8 +625,7 @@ class _CustomCardPageState extends State<CustomCardPage>{
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          //TODO: improve this call
-                         prefs.getBool("isFamily") == false && carouselCardPage!.index < 2 ? const Text("")
+                          carouselCardPage!.appear ? const Text("")
                               : AnimatedOpacity(
                             opacity: widget.radius < 70 ? 1 : 0,
                             duration: const Duration(milliseconds: 1),

@@ -1,3 +1,4 @@
+import 'package:boldo/main.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -88,14 +89,22 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                   _loading = true;
                   _error = "";
                 });
-
-                await dio.post("/profile/patient/appointments", data: {
-                  'start': DateTime.parse(widget.bookingDate.availability!)
-                      .toUtc()
-                      .toIso8601String(),
-                  "doctorId": widget.doctor.id,
-                  "appointmentType":widget.bookingDate.appointmentType
-                });
+                if(! prefs.getBool("isFamily")!)
+                  await dio.post("/profile/patient/appointments", data: {
+                    'start': DateTime.parse(widget.bookingDate.availability!)
+                        .toUtc()
+                        .toIso8601String(),
+                    "doctorId": widget.doctor.id,
+                    "appointmentType":widget.bookingDate.appointmentType
+                  });
+                else
+                  await dio.post("/profile/caretaker/dependent/${patient.id}/appointments", data: {
+                    'start': DateTime.parse(widget.bookingDate.availability!)
+                        .toUtc()
+                        .toIso8601String(),
+                    "doctorId": widget.doctor.id,
+                    "appointmentType":widget.bookingDate.appointmentType
+                  });
 
                 Navigator.push(
                   context,

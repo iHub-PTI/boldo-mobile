@@ -473,11 +473,11 @@ class _DoctorCard extends StatelessWidget {
                   width: 1,
                   color: const Color(0xffE5E7EB),
                 ),
-                prefs.getBool("isFamily")?? false ? Container() :Expanded(
+                Expanded(
                   child: SizedBox(
                     height: 52,
                     child: TextButton(
-                      onPressed: prefs.getBool("isFamily")?? false ? (){} : () {
+                      onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
