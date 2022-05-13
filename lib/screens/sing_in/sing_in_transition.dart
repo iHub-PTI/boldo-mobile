@@ -61,6 +61,9 @@ class _SingInTransitionState extends State<SingInTransition> {
               );
               _dataLoading = false;
             }
+            if(state is RedirectBackScreen){
+              UserRepository().logout(context);
+            }
             if(state is Success){
               _dataLoading = false;
             }
@@ -93,7 +96,7 @@ class _SingInTransitionState extends State<SingInTransition> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        const ProfileImageView(height: 170, width: 170, border: true),
+                                        if(!_dataLoading) const ProfileImageView(height: 170, width: 170, border: true),
                                       ],
                                     ),
                                     const SizedBox(height: 29,),
