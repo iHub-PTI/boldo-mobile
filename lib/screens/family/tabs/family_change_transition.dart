@@ -60,6 +60,7 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                   backgroundColor: Colors.redAccent,
                 ),
               );
+              Navigator.pop(context);
               _dataLoading = false;
             }
             if(state is Success){

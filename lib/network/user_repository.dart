@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import '../constants.dart';
 import '../main.dart';
+import '../models/Doctor.dart';
 import 'http.dart';
 
 class UserRepository {
@@ -35,7 +36,7 @@ class UserRepository {
       }
       throw Failure(genericError);
     } catch (e) {
-      throw Failure(genericError);
+      throw Failure("No se puede obtener el usuario");
     }
   }
 
@@ -349,6 +350,25 @@ class UserRepository {
         exception,
         stackTrace: stackTrace,
       );
+    }
+  }
+
+  Future<List<NextAvailability>>? getDoctorAvailability(Doctor doctor, DateTime date) async {
+    try {
+      Response response = await dio.get("/doctors/${doctor.id}/availability", queryParameters: {
+      'start': date.toUtc().toIso8601String(),
+      'end': DateTime(date.year, date.month + 1, 1).toUtc().toIso8601String(),});
+      List<NextAvailability>? allAvailabilities = [];
+      if(response.statusCode == 200){
+        return response.data['availabilities'].forEach((v) {
+          allAvailabilities.add(NextAvailability.fromJson(v));
+        });
+      }else if(response.statusCode == 204){
+        return [];
+      }
+      throw Failure(genericError);
+    } catch (e) {
+      throw Failure(genericError);
     }
   }
 

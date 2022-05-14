@@ -10,13 +10,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../main.dart';
 
 
-part 'patient_event.dart';
-part 'patient_state.dart';
+part 'doctor_event.dart';
+part 'doctor_state.dart';
 
-class PatientBloc extends Bloc<PatientEvent, PatientState> {
+class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
   final UserRepository _patientRepository = UserRepository();
-  PatientBloc() : super(PatientInitial()) {
-    on<PatientEvent>((event, emit) async {
+  DoctorBloc() : super(DoctorInitial()) {
+    on<DoctorEvent>((event, emit) async {
       if(event is ChangeUser) {
         emit(Loading());
         var _post;
@@ -32,10 +32,6 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
-          // Do not change from user to dependent and vice versa
-          await prefs.setBool("isFamily",! prefs.getBool("isFamily")!);
-          await Future.delayed(const Duration(seconds: 2));
-          emit(RedirectBackScreen());
         }else{
           await _patientRepository.getDependents();
           emit(Success());

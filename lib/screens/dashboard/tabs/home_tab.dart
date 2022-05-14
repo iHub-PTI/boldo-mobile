@@ -43,6 +43,7 @@ class _HomeTabState extends State<HomeTab> {
   List<Appointment> nextAppointments = [];
   List<Appointment> upcomingWaitingRoomAppointments = [];
   List<Appointment> waitingRoomAppointments = [];
+  List<Appointment> appointments = [];
 
   bool _dataFetchError = false;
   bool _loading = true;
@@ -206,25 +207,26 @@ class _HomeTabState extends State<HomeTab> {
       });
     }
     Response responseAppointments;
+    print(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).toUtc().toIso8601String());
     try {
       if(! prefs.getBool("isFamily")!)
         responseAppointments = await dio.get(
-          "/profile/patient/appointments?start=${DateTime.now().toUtc().toIso8601String().substring(0, 23)}Z");
+          "/profile/patient/appointments?start=${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).toUtc().toIso8601String()}");
       else
         responseAppointments = await dio.get(
-            "/profile/caretaker/dependent/${patient.id}/appointments?start=${DateTime.now().toLocal().toIso8601String().substring(0, 23)}Z");
+            "/profile/caretaker/dependent/${patient.id}/appointments?start=${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).toUtc().toIso8601String()}");
 
-      Response responsePrescriptions =
+      /*Response responsePrescriptions =
           await dio.get("/profile/patient/prescriptions");
       List<Prescription> allPrescriptions = List<Prescription>.from(
           responsePrescriptions.data["prescriptions"]
-              .map((i) => Prescription.fromJson(i)));
-
+              .map((i) => Prescription.fromJson(i)));*/
+      print(responseAppointments.data["appointments"]);
       List<Appointment> allAppointmets = List<Appointment>.from(
           responseAppointments.data["appointments"]
               .map((i) => Appointment.fromJson(i)));
 
-      for (Appointment appointment in allAppointmets) {
+      /*for (Appointment appointment in allAppointmets) {
         for (Prescription prescription in allPrescriptions) {
           if (prescription.encounter != null &&
               prescription.encounter!.appointmentId == appointment.id) {
@@ -238,7 +240,7 @@ class _HomeTabState extends State<HomeTab> {
             }
           }
         }
-      }
+      }*/
 
       if (!mounted) return;
 
@@ -255,6 +257,12 @@ class _HomeTabState extends State<HomeTab> {
 
       allAppointmets.sort((a, b) =>
           DateTime.parse(b.start!).compareTo(DateTime.parse(a.start!)));
+
+      appointments = allAppointmets
+          .where((element) => !["closed", "locked","cancelled"].contains(element.status))
+          .toList();
+      appointments.sort((a, b) =>
+          DateTime.parse(a.start!).compareTo(DateTime.parse(b.start!)));
 
       List<Appointment> upcomingWaitingRoomAppointmetsList = allAppointmets
           .where((element) =>
@@ -414,7 +422,6 @@ class _HomeTabState extends State<HomeTab> {
                                     HomeTabAppBar(max: _heightAppBarExpandable),
                                     DividerFeedSectionHome(text: "¿Qué desea hacer?", height: _heightCarouselTitleExpandable),
                                     Container(
-                                      padding: const EdgeInsets.all(16),
                                       alignment: Alignment.centerLeft,
                                       height: _heightCarouselExpandable,
                                       child: Container(
@@ -504,21 +511,15 @@ class _HomeTabState extends State<HomeTab> {
                             child: Column(
 
                               children: [
-                                for(Appointment appointment in waitingRoomAppointments)
+                                /*for(Appointment appointment in waitingRoomAppointments)
                                   appointment.appointmentType != 'A'
                                       ? WaitingRoomCard(appointment: appointment, getAppointmentsData: getAppointmentsData)
-                                      : Container(),
+                                      : Container(),*/
                                 for (int i = 0;
                                 i < allAppointmentsState.length;
                                 i++)
-                                  _ListRenderer(
-                                    index: i,
-                                    appointment: nextAppointments.length > i
-                                        ? nextAppointments[i]
-                                        : allAppointmentsState[i],
-                                    firstAppointmentPast: firstPastAppointment,
-                                    waitingRoomAppointments:
-                                    waitingRoomAppointments,
+                                  _ListRenderer2(
+                                    appointment: appointments[i],
                                   ),
                               ],
                             ),
@@ -681,7 +682,7 @@ class CardNotAvailable extends StatelessWidget {
   }
 }
 
-
+/*
 class _ListRenderer extends StatelessWidget {
   final int index;
   final Appointment appointment;
@@ -771,6 +772,28 @@ class _ListRenderer extends StatelessWidget {
       isInWaitingRoom: isInWaitingRoom,
       showCancelOption: true,
     );
+  }
+}*/
+
+
+class _ListRenderer2 extends StatelessWidget {
+  final Appointment appointment;
+
+  const _ListRenderer2(
+      {Key? key,
+        required this.appointment,})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+      return Column(children: [
+        AppointmentCard(
+          appointment: appointment,
+          isInWaitingRoom: appointment.status == "upcoming",
+          showCancelOption: true,
+        ),
+      ]);
+
   }
 }
 
