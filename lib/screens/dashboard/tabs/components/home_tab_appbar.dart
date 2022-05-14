@@ -96,6 +96,15 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if(prefs.getBool("isFamily")!)
+                        Flexible(
+                          child: Text(
+                            "mostrando a",
+                            style: boldoCorpMediumTextStyle.copyWith(
+                                color: ConstantsV2.lightGrey
+                            ),
+                          ),
+                        ),
                       Flexible(
                         child: Text(
                           "${patient.givenName ?? ''}${patient.familyName ??
@@ -107,7 +116,8 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                       ),
                       SizedBox(height: (widget.max /
                           ConstantsV2.homeAppBarMaxHeight) * 10),
-                      Row(
+                      if(! prefs.getBool("isFamily")!)
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
@@ -117,10 +127,10 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                                   : boldoCorpSmallTextStyle,
                             ),
                           ]
-                      ),
+                        ),
 
                       const SizedBox(height: 4),
-                      Text(
+                      !prefs.getBool("isFamily")! ?Text(
                         formatDate(
                           DateTime.now(),
                           [d, ' de ', MM, ' de ', yyyy],
@@ -129,6 +139,13 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                         style: expanded
                             ? boldoCorpMediumTextStyle
                             : boldoCorpSmallTextStyle,
+                      ): Flexible(
+                        child: Text(
+                          "${patient.relationshipDisplaySpan?? ''}",
+                          style: boldoCorpMediumTextStyle.copyWith(
+                              color: ConstantsV2.lightGrey
+                          ),
+                        ),
                       ),
                     ],
                   ),
