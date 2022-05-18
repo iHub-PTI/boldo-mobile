@@ -49,6 +49,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
         SafeArea(
           child: Container(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
                   margin: const EdgeInsets.only(right: 10),
@@ -81,14 +82,14 @@ class _FamilyScreenState extends State<FamilyScreen> {
                 ),
                 Container(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
                           child: Column(children: [
                         const FamilyRectangleCard(isDependent: false)
                       ])),
                       Container(
-                        height: MediaQuery.of(context).size.height * 0.6,
+                        height: MediaQuery.of(context).size.height * 0.55,
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         alignment: Alignment.topLeft,
                         child: families.length > 0
@@ -110,6 +111,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width * 0.9,
+                        padding: const EdgeInsets.only(bottom: 16),
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.pushNamed(context, '/methods');
