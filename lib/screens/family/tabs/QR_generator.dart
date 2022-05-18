@@ -70,7 +70,7 @@ class QRGenerator extends StatelessWidget {
                           alignment: Alignment.center,
                           margin: const EdgeInsets.symmetric(vertical: 80, horizontal: 58),
                           child: QrImage(
-                            data: patient.id!,
+                            data: patient.identifier!,
                             embeddedImage: const AssetImage('assets/images/logo.png'),
                             eyeStyle: const QrEyeStyle(
                               eyeShape: QrEyeShape.circle,
