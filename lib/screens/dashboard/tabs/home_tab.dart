@@ -38,6 +38,7 @@ class HomeTab extends StatefulWidget {
 class _HomeTabState extends State<HomeTab> {
   Isolate? _isolate;
   ReceivePort? _receivePort;
+  bool _isAppointments = false;
 
   List<Appointment> allAppointmentsState = [];
   List<Appointment> nextAppointments = [];
@@ -73,7 +74,7 @@ class _HomeTabState extends State<HomeTab> {
       boxFit: BoxFit.cover,
       alignment: Alignment.bottomCenter,
       index: 1,
-      title: 'Ver mis fichas médicas',
+      title: 'Ver mis consultas',
       appear: true,
       page: medScreen.MedicalRecordScreen(),
     ),
@@ -468,7 +469,7 @@ class _HomeTabState extends State<HomeTab> {
                             dateOffset =
                                 dateOffset.subtract(const Duration(days: 30));
                             setState(() {});
-                            getAppointmentsData(loadMore: true);
+                            //getAppointmentsData(loadMore: true);
                           },
                           onRefresh: _onRefresh,
                           footer: CustomFooter(
@@ -518,7 +519,7 @@ class _HomeTabState extends State<HomeTab> {
                                 for (int i = 0;
                                 i < allAppointmentsState.length;
                                 i++)
-                                  _ListRenderer2(
+                                  _ListAppointments(
                                     appointment: appointments[i],
                                   ),
                               ],
@@ -535,7 +536,7 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  Widget _buildAppointment(int index){
+  Widget _buildNews(int index){
     return const Text("Appointment");
   }
 
@@ -776,10 +777,10 @@ class _ListRenderer extends StatelessWidget {
 }*/
 
 
-class _ListRenderer2 extends StatelessWidget {
+class _ListAppointments extends StatelessWidget {
   final Appointment appointment;
 
-  const _ListRenderer2(
+  const _ListAppointments(
       {Key? key,
         required this.appointment,})
       : super(key: key);
@@ -789,7 +790,7 @@ class _ListRenderer2 extends StatelessWidget {
       return Column(children: [
         AppointmentCard(
           appointment: appointment,
-          isInWaitingRoom: appointment.status == "upcoming",
+          isInWaitingRoom: appointment.status == "open",
           showCancelOption: true,
         ),
       ]);

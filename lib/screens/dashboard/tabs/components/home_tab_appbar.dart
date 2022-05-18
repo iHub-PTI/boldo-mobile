@@ -153,7 +153,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    IconButton(
+                   expanded ? IconButton(
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute(builder: (
                             context) => MenuScreen()));
@@ -162,7 +162,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                         'assets/icon/menu-alt-1.svg',
                         color: ConstantsV2.lightest,
                       ),
-                    ),
+                    ) : Container(),
                     families.length != 0 ? Container(
                       constraints: const BoxConstraints(
                           maxHeight: 33, maxWidth: 33),

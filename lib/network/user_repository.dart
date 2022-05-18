@@ -285,6 +285,7 @@ class UserRepository {
           }
           return None();
         } else {
+          print(response.data);
           return throw Failure(response.data);
         }
       }
