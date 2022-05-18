@@ -85,6 +85,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
+                        width: MediaQuery.of(context).size.width-16,
                           child: Column(children: [
                         const FamilyRectangleCard(isDependent: false)
                       ])),

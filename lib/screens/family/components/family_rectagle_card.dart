@@ -39,72 +39,101 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: widget.isDependent ? (){} : (){
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => MyManagersTab()
-            ),
-          );
-        },
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8, right: 8),
-              child: widget.isDependent
-                  ? ProfileImageView2(height: 60, width: 60, border: false, patient: widget.patient,)
-                  : const ProfileImageViewTypeForm(height: 60, width: 60, border: false, form: "rounded",),
-            ),
-            Container(
-              padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  widget.isDependent
-                    ? Text(
-                      "${widget.patient!.givenName}${widget.patient!.familyName}",
-                      style: boldoSubTextMediumStyle.copyWith(
-                          color: ConstantsV2.activeText
-                      ),
-                    )
-                    :Text(
-                      "${prefs.getString('name') ?? ''}${prefs.getString('lastName') ?? ''}",
-                      style: boldoSubTextMediumStyle.copyWith(
-                        color: ConstantsV2.activeText
-                      ),
-                    ),
-                  Text(
-                    ! widget.isDependent ? "mi perfil" : widget.patient!.relationshipDisplaySpan??'',
-                    style: boldoCorpMediumTextStyle.copyWith(
-                      color: ConstantsV2.green,
-                    ),
-                  ),
-                  if(widget.isDependent)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text("agregado el ${widget.patient!.startDependenceDate!}",
-                          style: boldoCorpSmallTextStyle.copyWith(
-                            color: ConstantsV2.inactiveText,
-                          ),
-                        )
-                      ],
-                    ),
-                ],
+    return Container(
+      child: Card(
+        child: InkWell(
+          onTap: widget.isDependent ? (){} : (){
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MyManagersTab()
               ),
+            );
+          },
+          child: Container(
+            width: MediaQuery.of(context).size.width-16,
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8, right: 8),
+                  child: widget.isDependent
+                      ? ProfileImageView2(height: 60, width: 60, border: false, patient: widget.patient,)
+                      : const ProfileImageViewTypeForm(height: 60, width: 60, border: false, form: "rounded",),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            widget.isDependent
+                                ? Text(
+                              "${widget.patient!.givenName}${widget.patient!.familyName}",
+                              style: boldoSubTextMediumStyle.copyWith(
+                                  color: ConstantsV2.activeText
+                              ),
+                            )
+                                :Text(
+                              "${prefs.getString('name') ?? ''}${prefs.getString('lastName') ?? ''}",
+                              style: boldoSubTextMediumStyle.copyWith(
+                                  color: ConstantsV2.activeText
+                              ),
+                            ),
+                            widget.isDependent && ! prefs.getBool("isFamily")! ? UnlinkFamilyWidget(
+                              onTapCallback: (result) async {
+                                if (result == 'Desvincular') {
+                                  final response = await dio.put(
+                                      "/profile/caretaker/inactivate/dependent/${widget.patient!.id}");
+                                  if (response.statusMessage != null) {
+                                    if (response.statusMessage!
+                                        .contains('OK')) {
+                                      setState(() {
+                                        //isEliminated = true;
+                                      });
+                                    }
+                                  }
+                                }
+                              },
+                            ): Container(),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        ! widget.isDependent ? "mi perfil" : widget.patient!.relationshipDisplaySpan??'',
+                        style: boldoCorpMediumTextStyle.copyWith(
+                          color: ConstantsV2.green,
+                        ),
+                      ),
+                      if(widget.isDependent)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text("agregado el ${widget.patient!.startDependenceDate!}",
+                              style: boldoCorpSmallTextStyle.copyWith(
+                                color: ConstantsV2.inactiveText,
+                              ),
+                            )
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
 
-class DeleteFamilyWidget extends StatelessWidget {
+class UnlinkFamilyWidget extends StatelessWidget {
   final void Function(String result)? onTapCallback;
-  const DeleteFamilyWidget({
+  const UnlinkFamilyWidget({
     Key? key,
     required this.onTapCallback,
   }) : super(key: key);
@@ -117,13 +146,10 @@ class DeleteFamilyWidget extends StatelessWidget {
           onTapCallback!(result.toString());
         }
       },
-      child: const Icon(
-        Icons.more_vert,
-        color: Colors.grey,
-      ),
+      child: SvgPicture.asset('assets/icon/familyTrash.svg'),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
         PopupMenuItem<String>(
-          value: 'Descartar',
+          value: 'Desvincular',
           child: Container(
             height: 45,
             decoration: const BoxDecoration(color: Constants.accordionbg),
@@ -135,7 +161,7 @@ class DeleteFamilyWidget extends StatelessWidget {
                 ),
                 const Padding(
                   padding: EdgeInsets.only(left: 8.0, right: 2.0),
-                  child: Text('Cancelar cita'),
+                  child: Text('Desvincular familiar'),
                 )
               ],
             ),
