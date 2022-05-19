@@ -307,7 +307,9 @@ class UserRepository {
         }
       }
       throw Failure(genericError);
-    } catch (e) {
+    } on DioError  catch (ex) {
+        throw Failure(ex.response?.data['messages'].join(', ') ?? genericError);
+    }catch (e) {
       print(e);
       throw Failure('${e.toString().length > 60 ? '$genericError' : e}');
     }
