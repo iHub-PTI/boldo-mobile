@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/provider/user_provider.dart';
@@ -9,6 +10,7 @@ import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
@@ -86,16 +88,7 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
                             widget.isDependent && ! prefs.getBool("isFamily")! ? UnlinkFamilyWidget(
                               onTapCallback: (result) async {
                                 if (result == 'Desvincular') {
-                                  final response = await dio.put(
-                                      "/profile/caretaker/inactivate/dependent/${widget.patient!.id}");
-                                  if (response.statusMessage != null) {
-                                    if (response.statusMessage!
-                                        .contains('OK')) {
-                                      setState(() {
-                                        //isEliminated = true;
-                                      });
-                                    }
-                                  }
+                                  BlocProvider.of<PatientBloc>(context).add(UnlinkDependent(id: widget.patient!.id!));
                                 }
                               },
                             ): Container(),
