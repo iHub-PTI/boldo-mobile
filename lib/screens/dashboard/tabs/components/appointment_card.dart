@@ -246,9 +246,15 @@ class _AppointmentCardState extends State<AppointmentCard> {
         child: appointmentDay.compareTo(actualDay) <=0 ? Container(
           color: ConstantsV2.orange,
           padding: const EdgeInsets.only(left: 6.5, right: 6.5, bottom: 2, top: 2),
-          child: Text(
+          child: const Text(
               "ahora",
-              style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.lightGrey)
+              style: TextStyle(
+                color: ConstantsV2.lightGrey,
+                fontStyle: FontStyle.normal,
+                fontSize: 8,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Montserrat',
+              ),
           ),
         ) : Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
