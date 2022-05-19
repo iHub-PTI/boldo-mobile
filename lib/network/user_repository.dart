@@ -54,9 +54,11 @@ class UserRepository {
         families = List<Patient>.from([]);
         return None();
       }
+      families = List<Patient>.from([]);
       throw Failure(genericError);
     } catch (e) {
       print(e);
+      families = List<Patient>.from([]);
       throw Failure(genericError);
     }
   }
@@ -130,6 +132,21 @@ class UserRepository {
       Response response = await dio.post("/profile/caretaker/dependent", data: data);
       if(response.statusCode == 200){
         return None();
+      }
+      throw Failure(genericError);
+    } catch (e) {
+      throw Failure(genericError);
+    }
+  }
+
+  Future<None>? unlinkDependent(String id) async {
+    try {
+      Response response = await dio.put(
+          "/profile/caretaker/inactivate/dependent/$id");
+      if(response.statusCode == 200){
+        return None();
+      }else if(response.statusCode == 204 ){
+        throw Failure("El familiar ya fue borrado con anterioridad");
       }
       throw Failure(genericError);
     } catch (e) {
