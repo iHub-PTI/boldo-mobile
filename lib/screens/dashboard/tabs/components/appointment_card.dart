@@ -12,6 +12,8 @@ import 'package:intl/intl.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
 
+import '../../../../main.dart';
+
 class AppointmentCard extends StatefulWidget {
   final Appointment appointment;
   final bool isInWaitingRoom;
@@ -106,7 +108,9 @@ class _AppointmentCardState extends State<AppointmentCard> {
                           onTapCallback: (result) async {
                             if (result == 'Descartar') {
                               final response = await dio.post(
-                                  "/profile/patient/appointments/cancel/${widget.appointment.id}");
+                                  !prefs.getBool("isFamily")! ?
+                                    "/profile/patient/appointments/cancel/${widget.appointment.id}"
+                                  : "/profile/caretaker/appointments/cancel/${widget.appointment.id}");
                               if (response.statusMessage != null) {
                                 if (response.statusMessage!
                                     .contains('OK')) {
@@ -288,10 +292,22 @@ class _AppointmentCardState extends State<AppointmentCard> {
                 padding: const EdgeInsets.all(4),
                 child: isToday && appointmentDay.difference(actualDay).compareTo(Duration(minutes: 15)) <= 0 ?
                   Text("${appointmentDay.difference(actualDay).inMinutes} min",
-                    style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),
+                    style: const TextStyle(
+                      color: ConstantsV2.activeText,
+                      fontStyle: FontStyle.normal,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Montserrat',
+                    ),
                   ) :
                   Text("${DateFormat('HH:mm').format(appointmentDay.toLocal())}",
-                    style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),
+                    style: const TextStyle(
+                      color: ConstantsV2.activeText,
+                      fontStyle: FontStyle.normal,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Montserrat',
+                    ),
                   ),
               )
             ],
