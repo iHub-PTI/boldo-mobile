@@ -25,6 +25,25 @@ import 'http.dart';
 
 class UserRepository {
 
+  final List<String> errorInFrontSide = [
+    "The front of the IdCardParaguay card could not be validated",
+    "Invalid name",
+    "Invalid last name",
+    "Invalid sex",
+    "Invalid birthDate",
+  ];
+
+  final List<String> errorInBackSide = [
+    "The back of the IdCardParaguay card could not be validated",
+    "Invalid IC",
+    "Invalid Document number",
+    "Invalid nationality",
+  ];
+
+  final List<String> errorInSelfie = [
+    "Face could not be validated",
+  ];
+
   Future<None>? getPatient(String? id) async {
     try {
       Response response = id == null
@@ -300,6 +319,9 @@ class UserRepository {
           if(urlUploadType == UrlUploadType.selfie && isLogged != null){
             user = User.fromJson(response.data);
           }
+          photoStage == UrlUploadType.frontal
+              ? photoStage = UrlUploadType.back
+              : photoStage = UrlUploadType.selfie;
           return None();
         } else {
           print(response.data);
@@ -308,7 +330,16 @@ class UserRepository {
       }
       throw Failure(genericError);
     } on DioError  catch (ex) {
-        throw Failure(ex.response?.data['messages'].join(', ') ?? genericError);
+      if(errorInFrontSide.contains(ex.response?.data['messages'].join()) ) {
+        photoStage = UrlUploadType.frontal;
+        throw Failure("Error al validar la parte frontal");
+      }else if(errorInBackSide.contains(ex.response?.data['messages'].join()) ) {
+        photoStage = UrlUploadType.back;
+        throw Failure("Error al validar la parte posterior");
+      }else if(errorInSelfie.contains(ex.response?.data['messages'].join()) ) {
+        photoStage = UrlUploadType.selfie;
+        throw Failure("Error al validar la selfie");
+      }throw Failure(genericError);
     }catch (e) {
       print(e);
       throw Failure('${e.toString().length > 60 ? '$genericError' : e}');
@@ -355,6 +386,7 @@ class UserRepository {
       await prefs.setBool("onboardingCompleted", false);
       await storage.deleteAll();
       await prefs.clear();
+      patient = Patient();
 
       Navigator.of(context).pushNamedAndRemoveUntil('/onboarding', (Route<dynamic> route) => false);
     } on DioError catch (exception, stackTrace) {
