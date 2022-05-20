@@ -85,6 +85,7 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
             _post.leftMap((l) => response = l.message);
             emit(Failed(response: response));
             File(userImageSelected!.path).delete();
+            userImageSelected = null;
             imageCache!.clearLiveImages();
             imageCache!.clear();
           } else {
@@ -97,6 +98,7 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
                   _post.leftMap((l) => response = l.message);
                   emit(Failed(response: response));
                   File(userImageSelected!.path).delete();
+                  userImageSelected = null;
                   imageCache!.clearLiveImages();
                   imageCache!.clear();
                 } else {

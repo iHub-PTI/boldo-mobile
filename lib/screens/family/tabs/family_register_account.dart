@@ -28,7 +28,6 @@ class DniFamilyRegister extends StatefulWidget {
 
 class _DniFamilyRegisterState extends State<DniFamilyRegister> {
   ImagePicker picker = ImagePicker();
-  var photoStage = UrlUploadType.frontal;
   late var cameras;
   late var firstCamera;
   @override
@@ -127,7 +126,6 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                 listener: (context, state) {
                   if (state is SuccessPhotoUploaded) {
                     setState(() {
-                      photoStage = state.actualPhotoStage;
                     });
                   }
                   if (state is Failed) {

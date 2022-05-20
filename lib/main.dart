@@ -43,6 +43,7 @@ import 'models/upload_url_model.dart';
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 final Patient patientModel = Patient();
 late SharedPreferences prefs;
+UrlUploadType photoStage = UrlUploadType.frontal;
 User user = User();
 Patient patient = Patient();
 late List<MedicalRecord> allMedicalData;
