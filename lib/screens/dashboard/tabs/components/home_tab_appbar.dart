@@ -78,14 +78,14 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
               children: [
                 const SizedBox(width: 10),
                 GestureDetector(
-                  /*onTap: () {
+                  onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const ProfileScreen(),
                       ),
                     );
-                  },*/
+                  },
                   child: ProfileImageView(height: expanded ? 100 : 60,
                       width: expanded ? 100 : 60,
                       border: true),

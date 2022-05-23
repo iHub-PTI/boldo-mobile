@@ -46,6 +46,7 @@ late SharedPreferences prefs;
 UrlUploadType photoStage = UrlUploadType.frontal;
 User user = User();
 Patient patient = Patient();
+Patient editingPatient = Patient();
 late List<MedicalRecord> allMedicalData;
 late XFile? userImageSelected = null;
 int selectedPageIndex = 0;

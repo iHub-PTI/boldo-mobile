@@ -38,7 +38,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool loading = false;
   bool _dataLoaded = false;
   bool _dataLoading = true;
-  Patient auxiliaryPatient = Patient();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -51,8 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _fetchProfileData() async {
     try {
 
-      auxiliaryPatient = Patient.fromJson(patient.toJson());
-
+      editingPatient = Patient.fromJson(patient.toJson());
       setState(() {
         _dataLoading = false;
         _dataLoaded = true;
@@ -177,37 +175,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Column(
                           children: [
                             CustomFormInput(
-                              initialValue: auxiliaryPatient.givenName,
+                              initialValue: editingPatient.givenName,
                               label: "Nombre",
                               validator: (value) => valdiateFirstName(value!),
-                              onChanged: (String val) => (auxiliaryPatient.givenName = val
+                              onChanged: (String val) => (editingPatient.givenName = val
                               ),
                             ),
 
 
                             const SizedBox(height: 20),
                             CustomFormInput(
-                              initialValue: auxiliaryPatient.familyName,
+                              initialValue: editingPatient.familyName,
                               label: "Apellido",
                               validator: (value) => valdiateLasttName(value!),
                               onChanged: (String val) => (
-                                auxiliaryPatient.familyName = val
+                                editingPatient.familyName = val
                               ),
                             ),
 
                             //CustomDropdown(),
                             const SizedBox(height: 20),
                             CustomFormInput(
-                              initialValue: auxiliaryPatient.job,
+                              initialValue: editingPatient.job,
                               secondaryLabel: "Opcional",
                               label: "Ocupación",
-                              onChanged: (String val) => (auxiliaryPatient.job = val),
+                              onChanged: (String val) => (editingPatient.job = val),
                             ),
 
                             const SizedBox(height: 20),
                             Builder(
                               builder: (context) {
-                                String selectedvalue = auxiliaryPatient.gender?? 'unknown';
+                                String selectedvalue = editingPatient.gender?? 'unknown';
                                 List<Map<String, String>> itemsList = [
                                   {"title": "Masculino", "value": 'male'},
                                   {"title": "Femenino", "value": 'female'}
@@ -223,7 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   selectedValue: selectedvalue,
                                   itemsList: itemsList,
                                   onChanged: (String val) =>
-                                    (auxiliaryPatient.gender = val),
+                                    (editingPatient.gender = val),
                                 );
                               },
                             ),
@@ -231,7 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             const SizedBox(height: 20),
 
                             TextFormField(
-                              initialValue: DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd').parse(auxiliaryPatient.birthDate!)),
+                              initialValue: DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd').parse(editingPatient.birthDate!)),
                               inputFormatters: [MaskTextInputFormatter(mask: "##/##/####")],
                               keyboardType: TextInputType.number,
                               validator: (value) {
@@ -244,7 +242,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     var date1 = inputFormat
                                         .parse(value.toString().trim());
                                     var date2 = outputFormat.format(date1);
-                                    auxiliaryPatient.birthDate = date2;
+                                    editingPatient.birthDate = date2;
                                   } catch (e) {
                                     return "El formato de la fecha debe ser (dd/MM/yyyy)";
                                   }
@@ -258,22 +256,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
 
                             const SizedBox(height: 20),
-                            CustomFormInput(
-                              initialValue: auxiliaryPatient.email?? '',
-                              label: "Correo electrónico",
-                              validator: (value) => validateEmail(value!),
-                              onChanged: (String val) => (auxiliaryPatient.email = val),
-                            ),
+                            if(!prefs.getBool("isFamily")!)
+                              CustomFormInput(
+                                initialValue: editingPatient.email?? '',
+                                label: "Correo electrónico",
+                                validator: (value) => validateEmail(value!),
+                                onChanged: (String val) => (editingPatient.email = val),
+                              ),
+                            if(!prefs.getBool("isFamily")!)
+                              const SizedBox(height: 20),
 
-                            const SizedBox(height: 20),
-
                             CustomFormInput(
-                              initialValue: auxiliaryPatient.phone,
+                              initialValue: editingPatient.phone,
                               isPhoneNumber: true,
                               secondaryLabel: "Opcional",
                               label: "Número de teléfono",
                               inputFormatters: [ValidatorInputFormatter()],
-                              onChanged: (String val) => (auxiliaryPatient.phone = val),
+                              onChanged: (String val) => (editingPatient.phone = val),
                             ),
 
                             const SizedBox(height: 20),

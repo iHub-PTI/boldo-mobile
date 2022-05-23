@@ -41,19 +41,19 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                 ),
               )
             : ClipOval(
-            child: patient.photoUrl == null || patient.photoUrl == ''
+            child: editingPatient.photoUrl == null || editingPatient.photoUrl == ''
                 ?
             SvgPicture.asset(
-              patient.gender != null ? patient.gender == "female"
+              editingPatient.gender != null ? editingPatient.gender == "female"
                   ? 'assets/images/femalePatient.svg'
-                  : patient.gender == "male"
+                  : editingPatient.gender == "male"
                   ? 'assets/images/malePatient.svg'
                   :'assets/images/LogoIcon.svg'
                   : 'assets/images/LogoIcon.svg',
             )
                 :CachedNetworkImage(
                   fit: BoxFit.cover,
-                  imageUrl: patient.photoUrl!,
+                  imageUrl: editingPatient.photoUrl!,
                   progressIndicatorBuilder:
                       (context, url, downloadProgress) => Padding(
                     padding: const EdgeInsets.all(26.0),
@@ -123,7 +123,7 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
 
                       imageCache!.clear();
 
-                      patient.photoUrl = response.data["location"];
+                      editingPatient.photoUrl = response.data["location"];
 
                       await http.put(Uri.parse(response.data["uploadUrl"]),
                           body: croppedFile.readAsBytesSync());
