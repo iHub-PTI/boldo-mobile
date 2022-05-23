@@ -2,7 +2,6 @@ import 'package:boldo/constants.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:file_picker/file_picker.dart';
@@ -12,7 +11,6 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../main.dart';
-import '../../../provider/user_provider.dart';
 import '../../../network/http.dart';
 
 class ProfileImageEdit extends StatefulWidget {
@@ -34,52 +32,43 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
           width: 128,
           child: Card(
             child: _isLoading
-                ? const Padding(
-                    padding: EdgeInsets.all(26.0),
+            ? const Padding(
+                padding: EdgeInsets.all(26.0),
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Constants.primaryColor400),
+                  backgroundColor: Constants.primaryColor600,
+                ),
+              )
+            : ClipOval(
+            child: patient.photoUrl == null || patient.photoUrl == ''
+                ?
+            SvgPicture.asset(
+              patient.gender != null ? patient.gender == "female"
+                  ? 'assets/images/femalePatient.svg'
+                  : patient.gender == "male"
+                  ? 'assets/images/malePatient.svg'
+                  :'assets/images/LogoIcon.svg'
+                  : 'assets/images/LogoIcon.svg',
+            )
+                :CachedNetworkImage(
+                  fit: BoxFit.cover,
+                  imageUrl: patient.photoUrl!,
+                  progressIndicatorBuilder:
+                      (context, url, downloadProgress) => Padding(
+                    padding: const EdgeInsets.all(26.0),
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
+                      value: downloadProgress.progress,
+                      valueColor:
+                      const AlwaysStoppedAnimation<Color>(
                           Constants.primaryColor400),
                       backgroundColor: Constants.primaryColor600,
                     ),
-                  )
-                : ClipOval(
-                    child: Selector<UserProvider, String>(
-                      builder: (_, gender, __) {
-                        return Selector<UserProvider, String>(
-                          builder: (_, data, __) {
-                            if (data == null || data == '') {
-                              return SvgPicture.asset(
-                                gender != null && gender == "female"
-                                    ? 'assets/images/femalePatient.svg'
-                                    : 'assets/images/malePatient.svg',
-                              );
-                            }
-                            return CachedNetworkImage(
-                              fit: BoxFit.cover,
-                              imageUrl: data,
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) => Padding(
-                                padding: const EdgeInsets.all(26.0),
-                                child: CircularProgressIndicator(
-                                  value: downloadProgress.progress,
-                                  valueColor:
-                                      const AlwaysStoppedAnimation<Color>(
-                                          Constants.primaryColor400),
-                                  backgroundColor: Constants.primaryColor600,
-                                ),
-                              ),
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.error),
-                            );
-                          },
-                          selector: (buildContext, userProvider) =>
-                              userProvider.getPhotoUrl??'',
-                        );
-                      },
-                      selector: (buildContext, userProvider) =>
-                          userProvider.getGender??'',
-                    ),
                   ),
+                  errorWidget: (context, url, error) =>
+                  const Icon(Icons.error),
+                )
+            ),
             elevation: 4.0,
             shape: const CircleBorder(),
             clipBehavior: Clip.antiAlias,
@@ -134,10 +123,7 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
 
                       imageCache!.clear();
 
-                      Provider.of<UserProvider>(context, listen: false)
-                          .setUserData(
-                              photoUrl: response.data["location"],
-                              notify: true);
+                      patient.photoUrl = response.data["location"];
 
                       await http.put(Uri.parse(response.data["uploadUrl"]),
                           body: croppedFile.readAsBytesSync());
@@ -375,7 +361,6 @@ class ProfileImageViewTypeForm extends StatefulWidget {
 }
 
 class _ProfileImageViewTypeForm extends State<ProfileImageViewTypeForm> {
-  bool _isLoading = false;
   @override
   void initState() {
     super.initState();
