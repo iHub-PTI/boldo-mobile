@@ -12,6 +12,7 @@ import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
 import 'package:boldo/screens/dashboard/tabs/components/waiting_room_card.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/medical_records/medical_records_screen.dart' as medScreen;
+import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -85,7 +86,8 @@ class _HomeTabState extends State<HomeTab> {
       alignment: Alignment.centerLeft,
       index: 2,
       title: 'Ver mis recetas',
-      appear: false,
+      appear: true,
+      page: PrescriptionRecordScreen(),
     ),
     CarouselCardPages(
       key: UniqueKey(),
@@ -434,8 +436,26 @@ class _HomeTabState extends State<HomeTab> {
                                           itemBuilder: _buildCarousel,
                                         ),
                                       ),
+                                    ),SizedBox(
+                                      width: double.infinity,
+                                      child: Container(
+                                          width: double.maxFinite ,
+                                          height: ConstantsV2.homeFeedTitleContainerMaxHeight,
+                                          padding: const EdgeInsetsDirectional.all(16),
+                                          decoration: const BoxDecoration(
+                                            color: ConstantsV2.lightGrey,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                'Novedades${prefs.getBool("isFamily")?? false ? " de " : ''}',
+                                                style: boldoSubTextStyle,
+                                              ),
+                                              prefs.getBool("isFamily")?? false ? Text('${patient.relationshipDisplaySpan}', style: boldoSubTextStyle.copyWith(color: ConstantsV2.green)) : Container(),
+                                            ],
+                                          )
+                                      ),
                                     ),
-                                    DividerFeedSectionHome(text: "Novedades", height: ConstantsV2.homeFeedTitleContainerMaxHeight),
                                   ]
                               );
                             }
