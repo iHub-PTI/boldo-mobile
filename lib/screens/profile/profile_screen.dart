@@ -274,9 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               inputFormatters: [ValidatorInputFormatter()],
                               onChanged: (String val) => (editingPatient.phone = val),
                             ),
-                            //TODO: not implemented for dependents
                             const SizedBox(height: 20),
-                            if(!prefs.getBool("isFamily")!)
                             ListTile(
                               onTap: () {
                                 Navigator.push(
