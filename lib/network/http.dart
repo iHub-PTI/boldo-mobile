@@ -191,11 +191,11 @@ void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
             validateStatus: options.validateStatus);
         if ("bearer $accessToken" != options.headers["authorization"]) {
           options.headers["authorization"] = "bearer $accessToken";
-          handle.resolve(await dio.request(options.path, options: optionsDio));
+          handle.resolve(await dioHealthCore.request(options.path, options: optionsDio));
         }
-        dio.lock();
-        dio.interceptors.responseLock.lock();
-        dio.interceptors.errorLock.lock();
+        dioHealthCore.lock();
+        dioHealthCore.interceptors.responseLock.lock();
+        dioHealthCore.interceptors.errorLock.lock();
 
         String keycloakRealmAddress = String.fromEnvironment(
             'KEYCLOAK_REALM_ADDRESS',
@@ -212,15 +212,15 @@ void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
           await storage.write(key: "access_token", value: result!.accessToken);
           await storage.write(key: "refresh_token", value: result.refreshToken);
           accessToken = result.accessToken;
-          dio.unlock();
-          dio.interceptors.responseLock.unlock();
-          dio.interceptors.errorLock.unlock();
+          dioHealthCore.unlock();
+          dioHealthCore.interceptors.responseLock.unlock();
+          dioHealthCore.interceptors.errorLock.unlock();
           return handle
-              .resolve(await dio.request(options.path, options: optionsDio));
+              .resolve(await dioHealthCore.request(options.path, options: optionsDio));
         } catch (e) {
-          dio.unlock();
-          dio.interceptors.responseLock.unlock();
-          dio.interceptors.errorLock.unlock();
+          dioHealthCore.unlock();
+          dioHealthCore.interceptors.responseLock.unlock();
+          dioHealthCore.interceptors.errorLock.unlock();
           await storage.deleteAll();
           accessToken = null;
 
