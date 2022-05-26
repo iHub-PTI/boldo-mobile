@@ -15,21 +15,22 @@ import 'package:boldo/constants.dart';
 
 import '../../blocs/user_bloc/patient_bloc.dart';
 import '../../main.dart';
+import '../../utils/loading_helper.dart';
 
 class FamilyScreen extends StatefulWidget {
-  final bool setLoggedOut;
 
-  FamilyScreen({Key? key, this.setLoggedOut = false}) : super(key: key);
+  FamilyScreen({Key? key}) : super(key: key);
 
   @override
   _FamilyScreenState createState() => _FamilyScreenState();
 }
 
 class _FamilyScreenState extends State<FamilyScreen> {
-
+  bool _loading = false;
 
   @override
   void initState() {
+    BlocProvider.of<PatientBloc>(context).add(GetFamilyList());
     super.initState();
   }
 
@@ -40,7 +41,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
         listener: (context, state){
           if(state is Success) {
             setState(() {
-
+              _loading = false;
             });
           }else if(state is Failed){
             ScaffoldMessenger.of(context).showSnackBar(
@@ -49,6 +50,12 @@ class _FamilyScreenState extends State<FamilyScreen> {
                 backgroundColor: Colors.redAccent,
               ),
             );
+            _loading = false;
+          }else if(state is Loading){
+            print("LOADING");
+            setState(() {
+              _loading = true;
+            });
           }
       },
       child: BlocBuilder<PatientBloc, PatientState>(
@@ -138,6 +145,13 @@ class _FamilyScreenState extends State<FamilyScreen> {
                 ),
               ),
             ),
+            if(_loading)
+              Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                      child: const LoadingHelper()
+                  )
+              ),
           ]);
         }),
       ),
