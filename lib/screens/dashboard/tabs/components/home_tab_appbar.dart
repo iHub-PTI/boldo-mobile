@@ -1,20 +1,15 @@
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
-import 'package:boldo/models/Patient.dart';
-import 'package:boldo/network/http.dart';
-import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:boldo/constants.dart';
-import 'package:boldo/utils/helpers.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:date_format/date_format.dart';
 
 import '../../../../main.dart';
+import '../../../../utils/loading_helper.dart';
 import '../../menu.dart';
 
 class HomeTabAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -190,101 +185,139 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        BlocProvider.of<PatientBloc>(context).add(GetFamilyList());
         bool expand = false;
         double start = 0;
-        return StatefulBuilder(
-          builder: (BuildContext context, setState) {
-            return AlertDialog(
-              contentPadding: const EdgeInsetsDirectional.all(0),
-              scrollable: true,
-              backgroundColor: ConstantsV2.lightGrey,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              content: Container(
-                width: 330,
-                height: expand ? 375 : 100,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    !expand
-                    ? Container(
-                      height: 55,
-                      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 6),
-                      width: 305,
-                      alignment: Alignment.topLeft,
-                      child: families.length > 0 ? ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: families.length + 2,
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: _buildPictureRoundedFamily,
-                      ) : Container(),
-                    ) :
-                    Container(
-                      width: 305,
-                      height: 250,
-                      alignment: Alignment.topLeft,
-                      child: families.length > 0 ? GridView.builder(
-                        shrinkWrap: true,
-                        itemCount: families.length + 2,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 4,
-                          mainAxisSpacing: 4,
-                        ),
-                        scrollDirection: Axis.vertical,
-                        itemBuilder:  _buildPictureSquareFamily,
-                      ) : Container(),
+        bool _loading = false;
+        return BlocListener<PatientBloc, PatientState>(
+          listener: (context, state){
+            if(state is Success) {
+              setState(() {
+                _loading = false;
+              });
+            }else if(state is Failed){
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.response!),
+                  backgroundColor: Colors.redAccent,
+                ),
+              );
+              _loading = false;
+            }else if(state is Loading){
+              print("LOADING");
+              setState(() {
+                _loading = true;
+              });
+            }
+          },
+          child: BlocBuilder<PatientBloc, PatientState>(
+            builder: (context, state) {
+              return StatefulBuilder(
+                builder: (BuildContext context, setState) {
+                  return AlertDialog(
+                    contentPadding: const EdgeInsetsDirectional.all(0),
+                    scrollable: true,
+                    backgroundColor: ConstantsV2.lightGrey,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    Listener(
-                      onPointerDown: (PointerDownEvent event) {
-                        setState ((){
-                          start = event.localPosition.dy;
-                          print("Down ${start}");
-                        });
-                      },
-                      onPointerUp: (PointerUpEvent event) {
-                        setState ((){
-                          print("UP ${event.localPosition.dy}");
-                          if(start < event.localPosition.dy)
-                            expand = true;
-                          else if( start > event.localPosition.dy )
-                            expand = false;
-                        });
-                      },
-                      child: Container(
-                        height: expand? 55: 20,
-                        width: 200,
-                        color: ConstantsV2.lightGrey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            expand? OutlinedButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(context, '/familyScreen');
-                                },
-                                child: const Text("más opciones")
-                            ) : Container(),
-                            Container(
-                              width: 55,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                color: ConstantsV2.inactiveText,
-                              ),
+                    content: Container(
+                      width: 330,
+                      height: expand ? 375 : 100,
+                      child: Stack(
+                        children: [
+                          Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                !expand
+                                    ? Container(
+                                  height: 55,
+                                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+                                  width: 305,
+                                  alignment: Alignment.topLeft,
+                                  child: families.length > 0 ? ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: families.length + 2,
+                                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: _buildPictureRoundedFamily,
+                                  ) : Container(),
+                                ) :
+                                Container(
+                                  width: 305,
+                                  height: 250,
+                                  alignment: Alignment.topLeft,
+                                  child: families.length > 0 ? GridView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: families.length + 2,
+                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                      crossAxisSpacing: 4,
+                                      mainAxisSpacing: 4,
+                                    ),
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder:  _buildPictureSquareFamily,
+                                  ) : Container(),
+                                ),
+                                Listener(
+                                  onPointerDown: (PointerDownEvent event) {
+                                    setState ((){
+                                      start = event.localPosition.dy;
+                                      print("Down ${start}");
+                                    });
+                                  },
+                                  onPointerUp: (PointerUpEvent event) {
+                                    setState ((){
+                                      print("UP ${event.localPosition.dy}");
+                                      if(start < event.localPosition.dy)
+                                        expand = true;
+                                      else if( start > event.localPosition.dy )
+                                        expand = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    height: expand? 55: 20,
+                                    width: 200,
+                                    color: ConstantsV2.lightGrey,
+                                    child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        children: [
+                                          expand? OutlinedButton(
+                                              onPressed: () {
+                                                Navigator.pushNamed(context, '/familyScreen');
+                                              },
+                                              child: const Text("más opciones")
+                                          ) : Container(),
+                                          Container(
+                                            width: 55,
+                                            height: 6,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(16),
+                                              color: ConstantsV2.inactiveText,
+                                            ),
+                                          ),
+                                        ]
+                                    ),
+                                  ),
+                                ),
+                              ]
+                          ),
+                          if(_loading)
+                            Align(
+                                alignment: Alignment.center,
+                                child: Container(
+                                    child: const LoadingHelper()
+                                )
                             ),
-                          ]
-                        ),
+                        ],
                       ),
                     ),
-                  ]
-                ),
-              ),
-            );
-          },
-
+                  );
+                },
+              );
+            }
+          )
         );
       }
     );
