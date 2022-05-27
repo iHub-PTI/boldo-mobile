@@ -22,6 +22,4 @@ class UnlinkDependent extends PatientEvent {
   UnlinkDependent({required this.id});
 }
 
-class GetFamilyList extends PatientEvent {}
-
 class LogoutPatientPressed extends PatientEvent {}

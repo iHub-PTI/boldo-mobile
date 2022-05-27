@@ -155,25 +155,6 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           }
         }
       }
-      if(event is GetFamilyList){
-        emit(Loading());
-        var _post;
-        await Task(() =>
-        _patientRepository.getDependents()!)
-            .attempt()
-            .run()
-            .then((value) {
-          _post = value;
-        }
-        );
-        var response;
-        if (_post.isLeft()) {
-          _post.leftMap((l) => response = l.message);
-          emit(Failed(response: response));
-        } else {
-          emit(Success());
-        }
-      }
     }
 
     );
