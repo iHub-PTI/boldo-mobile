@@ -322,15 +322,12 @@ class _DoctorProfileWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.6,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Text(
+                          width: MediaQuery.of(context).size.width * 0.55,
+                          child: Text(
                               "${getDoctorPrefix(doctor.gender!)}${doctor.givenName} ${doctor.familyName}",
                               style: boldoHeadingTextStyle.copyWith(
                                   fontWeight: FontWeight.normal),
                             ),
-                          ),
                         ),
                         const SizedBox(
                           height: 5,
@@ -338,22 +335,20 @@ class _DoctorProfileWidget extends StatelessWidget {
                         if (doctor.specializations != null &&
                             doctor.specializations!.isNotEmpty)
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.6,
+                            width: MediaQuery.of(context).size.width * 0.55,
                             child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
+                              scrollDirection: Axis.vertical,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   for (int i = 0;
                                       i < doctor.specializations!.length;
                                       i++)
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: i == 0 ? 0 : 3.0),
-                                      child: Text(
-                                        "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
-                                        style: boldoSubTextStyle.copyWith(
-                                            color: Constants.otherColor100),
-                                      ),
+                                    Text(
+                                      "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
+                                      style: boldoSubTextStyle.copyWith(
+                                          color: Constants.otherColor100),
                                     ),
                                 ],
                               ),
