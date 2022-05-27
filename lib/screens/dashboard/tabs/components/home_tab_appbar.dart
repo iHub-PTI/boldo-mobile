@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart' as family;
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
@@ -185,17 +186,17 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        BlocProvider.of<PatientBloc>(context).add(GetFamilyList());
+        BlocProvider.of<family.FamilyBloc>(context).add(family.GetFamilyList());
         bool expand = false;
         double start = 0;
         bool _loading = false;
-        return BlocListener<PatientBloc, PatientState>(
+        return BlocListener<family.FamilyBloc, family.FamilyState>(
           listener: (context, state){
-            if(state is Success) {
+            if(state is family.Success) {
               setState(() {
                 _loading = false;
               });
-            }else if(state is Failed){
+            }else if(state is family.Failed){
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.response!),
@@ -203,14 +204,13 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                 ),
               );
               _loading = false;
-            }else if(state is Loading){
-              print("LOADING");
+            }else if(state is family.Loading){
               setState(() {
                 _loading = true;
               });
             }
           },
-          child: BlocBuilder<PatientBloc, PatientState>(
+          child: BlocBuilder<family.FamilyBloc, family.FamilyState>(
             builder: (context, state) {
               return StatefulBuilder(
                 builder: (BuildContext context, setState) {

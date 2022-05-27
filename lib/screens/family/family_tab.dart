@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
@@ -13,7 +14,6 @@ import 'package:boldo/network/http.dart';
 
 import 'package:boldo/constants.dart';
 
-import '../../blocs/user_bloc/patient_bloc.dart';
 import '../../main.dart';
 import '../../utils/loading_helper.dart';
 
@@ -30,14 +30,14 @@ class _FamilyScreenState extends State<FamilyScreen> {
 
   @override
   void initState() {
-    BlocProvider.of<PatientBloc>(context).add(GetFamilyList());
+    BlocProvider.of<FamilyBloc>(context).add(GetFamilyList());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocListener<PatientBloc, PatientState>(
+      body: BlocListener<FamilyBloc, FamilyState>(
         listener: (context, state){
           if(state is Success) {
             setState(() {
@@ -58,7 +58,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
             });
           }
       },
-      child: BlocBuilder<PatientBloc, PatientState>(
+      child: BlocBuilder<FamilyBloc, FamilyState>(
         builder: (context, state) {
           return Stack(children: [
             const Background(text: "family"),
