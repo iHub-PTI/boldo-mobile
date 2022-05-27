@@ -1,10 +1,8 @@
 import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/details/appointment_details.dart';
-import 'package:boldo/screens/details/prescription_details.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -93,10 +91,11 @@ class _AppointmentCardState extends State<AppointmentCard> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      /*Text(
                         "Marcaste esta consulta hace X dias",
                         style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.darkBlue),
-                      ),
+                      ),*/
+                      Container(),
                       widget.showCancelOption &&
                           !isCancelled &&
                           daysDifference >= 0 &&
