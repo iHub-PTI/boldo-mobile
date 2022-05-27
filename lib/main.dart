@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/provider/user_provider.dart';
@@ -113,6 +114,9 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<PatientBloc>(
             create: (BuildContext context) => PatientBloc(),
+          ),
+          BlocProvider<FamilyBloc>(
+            create: (BuildContext context) => FamilyBloc(),
           ),
         ],
         child: MultiProvider(
