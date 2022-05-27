@@ -13,6 +13,7 @@ import 'package:boldo/screens/dashboard/tabs/components/waiting_room_card.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/medical_records/medical_records_screen.dart' as medScreen;
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,6 +29,9 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:boldo/network/http.dart';
 
 import '../../../main.dart';
+import '../../../utils/helpers.dart';
+import '../../booking/booking_confirm_screen.dart';
+import '../../details/appointment_details.dart';
 
 class HomeTab extends StatefulWidget {
   HomeTab({Key? key}) : super(key: key);
@@ -377,11 +381,6 @@ class _HomeTabState extends State<HomeTab> {
                 );
                 _loading = false;
               }
-              if(state is ChangeFamily){
-                setState(() {
-
-                });
-              }
               if(state is Success){
                 setState((){
                   _loading = true;
@@ -532,15 +531,10 @@ class _HomeTabState extends State<HomeTab> {
                             child: Column(
 
                               children: [
-                                /*for(Appointment appointment in waitingRoomAppointments)
-                                  appointment.appointmentType != 'A'
-                                      ? WaitingRoomCard(appointment: appointment, getAppointmentsData: getAppointmentsData)
-                                      : Container(),*/
                                 for (int i = 0;
-                                i < allAppointmentsState.length;
+                                i < appointments.length;
                                 i++)
-                                  _ListAppointments(
-                                    appointment: appointments[i],
+                                  _ListAppointments(appointments[i],
                                   ),
                               ],
                             ),
@@ -562,6 +556,276 @@ class _HomeTabState extends State<HomeTab> {
 
   Widget _buildCarousel(BuildContext context, int carouselIndex){
     return CustomCardPage(carouselCardPage: items[carouselIndex], height: _heightCarouselCard, width: _widthCarouselCard, radius: _radiusCarouselCard, );
+  }
+
+  //TODO: improve appointment view because a stateful don't reload his view if his parent don't set State for each appointments view
+  Widget _ListAppointments(Appointment appointment) {
+    bool isCancelled = appointment.status!.contains('cancelled');
+    DateTime actualDay = DateTime.now();
+    DateTime appointmentDay = DateTime.now();
+    int daysDifference = DateTime.parse(appointment.start!)
+        .toLocal()
+        .difference(actualDay)
+        .inDays.abs();
+    bool isToday = daysDifference == 0 &&
+        !["closed", "locked"].contains(appointment.status);
+    bool isPastOrToday = appointmentDay.compareTo(actualDay) <=0;
+    appointmentDay = DateTime.parse(appointment.start!).toLocal();
+    daysDifference = DateTime.parse(appointment.start!)
+        .toLocal()
+        .difference(actualDay)
+        .inDays;
+    if (actualDay.month == appointmentDay.month) {
+      daysDifference = appointmentDay.day - actualDay.day;
+    }
+    bool isInWaitingRoom = appointment.status == "open";
+    bool showCancelOption = true;
+    return Column(
+      children: [
+        Card(
+          elevation: 4,
+          margin: const EdgeInsets.only(bottom: 4),
+          child: InkWell(
+            onTap: () {
+              if (!isCancelled)
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AppointmentDetailsScreen(
+                        appointment: appointment,
+                        isInWaitingRoom: isInWaitingRoom && appointmentDay.difference(actualDay).compareTo(Duration(minutes: 15)) <= 0),
+                  ),
+                );
+            },
+            child: Container(
+              padding: const EdgeInsets.only(top: 8, left: 8),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      /*Text(
+                        "Marcaste esta consulta hace X dias",
+                        style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.darkBlue),
+                      ),*/
+                      Container(),
+                      showCancelOption &&
+                          !isCancelled &&
+                          daysDifference >= 0 &&
+                          !["closed", "locked"]
+                              .contains(appointment.status)
+                          ? Padding(
+                        padding: const EdgeInsets.only(right: 4.0),
+                        child: CancelAppointmentWidget(
+                          onTapCallback: (result) async {
+                            if (result == 'Descartar') {
+                              final response = await dio.post(
+                                  !prefs.getBool("isFamily")! ?
+                                  "/profile/patient/appointments/cancel/${appointment.id}"
+                                      : "/profile/caretaker/appointments/cancel/${appointment.id}");
+                              if (response.statusMessage != null) {
+                                if (response.statusMessage!
+                                    .contains('OK')) {
+                                  setState(() {
+                                    isCancelled = true;
+                                  });
+                                }
+                              }
+                            }
+                          },
+                        ),
+                      )
+                          : Container(),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      ClipOval(
+                        child: SizedBox(
+                          width: 54,
+                          height: 54,
+                          child: appointment.doctor?.photoUrl == null
+                              ? SvgPicture.asset(
+                              appointment.doctor!.gender == "female"
+                                  ? 'assets/images/femaleDoctor.svg'
+                                  : 'assets/images/maleDoctor.svg',
+                              fit: BoxFit.cover)
+                              : CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl: appointment.doctor!.photoUrl??'',
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) =>
+                                Padding(
+                                  padding: const EdgeInsets.all(26.0),
+                                  child: LinearProgressIndicator(
+                                    value: downloadProgress.progress,
+                                    valueColor:
+                                    const AlwaysStoppedAnimation<
+                                        Color>(
+                                        Constants.primaryColor400),
+                                    backgroundColor:
+                                    Constants.primaryColor600,
+                                  ),
+                                ),
+                            errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                          ),
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName}",
+                                style: boldoSubTextMediumStyle,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 4,
+                          ),
+                          if (appointment.doctor!.specializations !=
+                              null &&
+                              appointment.doctor!.specializations!
+                                  .isNotEmpty)
+                            SizedBox(
+                              width: 300,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    for (int i = 0;
+                                    i <
+                                        appointment.doctor!
+                                            .specializations!.length;
+                                    i++)
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: i == 0 ? 0 : 3.0, bottom: 5),
+                                        child: Text(
+                                          "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length > 1 && i == 0 ? "," : ""}",
+                                          style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          if (isCancelled)
+                            Text(
+                              "Cancelado - ${DateFormat('HH:mm').format(DateTime.parse(appointment.start!).toLocal())} hs ",
+                              style: const TextStyle(
+                                color: Constants.otherColor300,
+                                fontSize: 12,
+                                // fontWeight: FontWeight.bold
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                          width: 54,
+                          child: Card(
+                            clipBehavior: Clip.antiAlias,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: isPastOrToday ? Container(
+                              color: ConstantsV2.orange,
+                              padding: const EdgeInsets.only(left: 6.5, right: 6.5, bottom: 2, top: 2),
+                              child: const Text(
+                                "ahora",
+                                style: TextStyle(
+                                  color: ConstantsV2.lightGrey,
+                                  fontStyle: FontStyle.normal,
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Montserrat',
+                                ),
+                              ),
+                            ) : Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                appointmentDay.difference(actualDay).compareTo(Duration(minutes: 15)) <= 0 ?
+                                Container(
+                                  padding: const EdgeInsets.only(left: 6.5, right: 6.5, bottom: 2, top: 2),
+                                  color: ConstantsV2.orange,
+                                  child: const Text("dentro de",
+                                    style: TextStyle(
+                                      color: ConstantsV2.lightGrey,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Montserrat',
+                                    ),),
+                                ) :
+                                Container(
+                                  padding: const EdgeInsets.only(left: 6.5, right: 6.5, bottom: 2, top: 2),
+                                  color: ConstantsV2.green,
+                                  child: Text(isToday ? "hoy" : '${DateFormat('MM/dd').format(DateTime.parse(appointment.start!).toLocal())}',
+                                    style: const TextStyle(
+                                      color: ConstantsV2.lightGrey,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Montserrat',
+                                    ),),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(4),
+                                  child: isToday && appointmentDay.difference(actualDay).compareTo(Duration(minutes: 15)) <= 0 ?
+                                  Text("${appointmentDay.difference(actualDay).inMinutes} min",
+                                    style: const TextStyle(
+                                      color: ConstantsV2.activeText,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Montserrat',
+                                    ),
+                                  ) :
+                                  Text("${DateFormat('HH:mm').format(appointmentDay.toLocal())}",
+                                    style: const TextStyle(
+                                      color: ConstantsV2.activeText,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Montserrat',
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                      ),
+                      ShowAppoinmentTypeIcon(appointmentType: appointment.appointmentType!),
+                      Text(
+                        appointment.appointmentType == 'V' ? "Remoto" : "Presencial",
+                        style: TextStyle(
+                          color: appointment.appointmentType == 'V' ? ConstantsV2.orange : ConstantsV2.green,
+                          fontSize: 12,
+                          // fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+
   }
 
 }
@@ -796,27 +1060,6 @@ class _ListRenderer extends StatelessWidget {
   }
 }*/
 
-
-class _ListAppointments extends StatelessWidget {
-  final Appointment appointment;
-
-  const _ListAppointments(
-      {Key? key,
-        required this.appointment,})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-      return Column(children: [
-        AppointmentCard(
-          appointment: appointment,
-          isInWaitingRoom: appointment.status == "open",
-          showCancelOption: true,
-        ),
-      ]);
-
-  }
-}
 
 class CarouselCardPages extends StatelessWidget {
   final String image;
