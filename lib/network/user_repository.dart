@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import '../constants.dart';
 import '../main.dart';
+import '../models/Appointment.dart';
 import '../models/Doctor.dart';
 import 'http.dart';
 
@@ -420,6 +421,53 @@ class UserRepository {
       }
       throw Failure(genericError);
     } catch (e) {
+      throw Failure(genericError);
+    }
+  }
+
+  Future<List<Appointment>>? getPastAppointments(String date) async {
+    Response responseAppointments;
+    try {
+      if(! prefs.getBool("isFamily")!)
+        responseAppointments = await dio.get(
+            "/profile/patient/appointments?start=${date}");
+      else
+        responseAppointments = await dio.get(
+            "/profile/caretaker/dependent/${patient.id}/appointments?start=${date}");
+
+
+      if(responseAppointments.statusCode==200){
+        List<Appointment> allAppointmets = List<Appointment>.from(
+            responseAppointments.data["appointments"]
+                .map((i) => Appointment.fromJson(i)));
+
+        // Past appointment
+        allAppointmets = allAppointmets
+            .where((element) => ["closed", "locked"].contains(element.status))
+            .toList();
+
+        allAppointmets.sort((a, b) =>
+            DateTime.parse(b.start!).compareTo(DateTime.parse(a.start!)));
+
+        return allAppointmets;
+      }
+
+      throw Failure("Status deconocido ${responseAppointments.statusCode}");
+    } on DioError catch (exception, stackTrace) {
+      print(exception);
+
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      print(exception);
+
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
       throw Failure(genericError);
     }
   }
