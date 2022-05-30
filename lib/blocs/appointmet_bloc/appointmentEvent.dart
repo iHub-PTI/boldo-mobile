@@ -10,4 +10,7 @@ class UnlinkDependent extends AppointmentEvent {
   UnlinkDependent({required this.id});
 }
 
-class GetPastAppointmentList extends AppointmentEvent {}
+class GetPastAppointmentList extends AppointmentEvent {
+  final String date;
+  GetPastAppointmentList({required this.date});
+}

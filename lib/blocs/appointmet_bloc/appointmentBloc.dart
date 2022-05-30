@@ -1,5 +1,6 @@
 
 import 'package:boldo/models/Appointment.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
@@ -19,8 +20,9 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.getDependents()!)
+        _patientRepository.getPastAppointments(event.date)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -31,6 +33,10 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
         } else {
+          late List<Appointment> appointments;
+          _post.foldRight(
+              Appointment, (a, previous) => appointments = a);
+          emit(AppointmentLoadedState(appointments: appointments));
           emit(Success());
         }
       }
