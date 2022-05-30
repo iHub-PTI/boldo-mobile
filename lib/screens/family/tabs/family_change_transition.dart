@@ -68,7 +68,7 @@ class _FamilyTransitionState extends State<FamilyTransition> {
             }
             if(state is RedirectNextScreen){
               // back to home
-              Navigator.pop(context);
+              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
             }
             if(state is Loading){
               _dataLoading = true;
