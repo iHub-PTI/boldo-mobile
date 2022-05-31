@@ -488,27 +488,14 @@ class _HomeTabState extends State<HomeTab> {
                               Widget body = Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
+                                  /*Text(
                                     "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
                                     style: const TextStyle(
                                       color: Constants.primaryColor800,
                                     ),
-                                  )
+                                  )*/
                                 ],
                               );
-                              if (mode == LoadStatus.loading) {
-                                body = Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      "Cargando datos ...",
-                                      style: TextStyle(
-                                        color: Constants.primaryColor800,
-                                      ),
-                                    )
-                                  ],
-                                );
-                              }
                               return Column(
                                 children: [
                                   const SizedBox(height: 30),
