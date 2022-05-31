@@ -25,7 +25,6 @@ import '../models/Doctor.dart';
 import 'http.dart';
 
 class UserRepository {
-
   final List<String> errorInFrontSide = [
     "The front of the IdCardParaguay card could not be validated",
     "Invalid name",
@@ -50,7 +49,7 @@ class UserRepository {
       Response response = id == null
           ? await dio.get("/profile/patient")
           : await dio.get("/profile/caretaker/dependent/$id");
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         patient = Patient.fromJson(response.data);
         return None();
       }
@@ -65,12 +64,12 @@ class UserRepository {
       Response response = await dio.get("/profile/caretaker/dependents");
       print(response.data);
       print(response.statusCode);
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         print(response.data.map((i) => Patient.fromJson(i)));
-        families =  List<Patient>.from(
-            response.data.map((i) => Patient.fromJson(i)));
+        families =
+            List<Patient>.from(response.data.map((i) => Patient.fromJson(i)));
         return None();
-      }else if(response.statusCode == 204){
+      } else if (response.statusCode == 204) {
         families = List<Patient>.from([]);
         return None();
       }
@@ -86,10 +85,10 @@ class UserRepository {
   Future<List<Patient>>? getManagements() async {
     try {
       Response response = await dio.get("/profile/patient/caretaker");
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         return List<Patient>.from(
             response.data.map((i) => Patient.fromJson(i)));
-      }else if(response.statusCode == 204){
+      } else if (response.statusCode == 204) {
         return List<Patient>.from([]);
       }
       throw Failure(genericError);
@@ -101,8 +100,9 @@ class UserRepository {
   Future<None>? getDependent(String id) async {
     print("ID $id");
     try {
-      Response response = await dio.get("/profile/caretaker/dependent/confirm/$id");
-      if(response.statusCode == 200){
+      Response response =
+          await dio.get("/profile/caretaker/dependent/confirm/$id");
+      if (response.statusCode == 200) {
         print(response.data);
         user = User.fromJson(response.data);
         return None();
@@ -122,7 +122,7 @@ class UserRepository {
     try {
       list = List<MedicalRecord>.from(
           response.data.map((x) => MedicalRecord.fromJson(x[0])));
-    }catch (e){
+    } catch (e) {
       print("ERROR $e");
     }
     print("GETTED");
@@ -132,9 +132,9 @@ class UserRepository {
   Future<None>? getRelationships() async {
     try {
       Response response = await dio.get("/profile/caretaker/relationships");
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         print(response.data);
-        relationTypes =  List<Relationship>.from(
+        relationTypes = List<Relationship>.from(
             response.data.map((i) => Relationship.fromJson(i)));
         return None();
       }
@@ -146,11 +146,11 @@ class UserRepository {
 
   Future<None>? setDependent(bool isNew) async {
     try {
-      var data = isNew? user.toJsonNewPatient() :
-      user.toJsonExistPatient();
+      var data = isNew ? user.toJsonNewPatient() : user.toJsonExistPatient();
       print(data);
-      Response response = await dio.post("/profile/caretaker/dependent", data: data);
-      if(response.statusCode == 200){
+      Response response =
+          await dio.post("/profile/caretaker/dependent", data: data);
+      if (response.statusCode == 200) {
         return None();
       }
       throw Failure(genericError);
@@ -161,11 +161,11 @@ class UserRepository {
 
   Future<None>? unlinkDependent(String id) async {
     try {
-      Response response = await dio.put(
-          "/profile/caretaker/inactivate/dependent/$id");
-      if(response.statusCode == 200){
+      Response response =
+          await dio.put("/profile/caretaker/inactivate/dependent/$id");
+      if (response.statusCode == 200) {
         return None();
-      }else if(response.statusCode == 204 ){
+      } else if (response.statusCode == 204) {
         throw Failure("El familiar ya fue borrado con anterioridad");
       }
       throw Failure(genericError);
@@ -177,8 +177,9 @@ class UserRepository {
   Future<None>? sendUserPreliminaryProfile(BuildContext context) async {
     try {
       final String cellPhone = user.phone!;
-      Response response = await dio.post("/preRegister/sedCode?cellphone=%2B$cellPhone");
-      if(response.statusCode == 201){
+      Response response =
+          await dio.post("/preRegister/sedCode?cellphone=%2B$cellPhone");
+      if (response.statusCode == 201) {
         return None();
       }
       throw Failure(genericError);
@@ -196,19 +197,19 @@ class UserRepository {
       String url = "";
       switch (urlUploadType) {
         case UrlUploadType.frontal:
-          url = isLogged == null ?
-          "/preRegister/s3/validateDocument/idCardParaguay/side1/uploadPresigned?hash=$hash" :
-              "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side1/uploadPresigned" ;
+          url = isLogged == null
+              ? "/preRegister/s3/validateDocument/idCardParaguay/side1/uploadPresigned?hash=$hash"
+              : "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side1/uploadPresigned";
           break;
         case UrlUploadType.back:
-          url = isLogged == null ?
-          "/preRegister/s3/validateDocument/idCardParaguay/side2/uploadPresigned?hash=$hash" :
-          "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side2/uploadPresigned?hash=$hash";
+          url = isLogged == null
+              ? "/preRegister/s3/validateDocument/idCardParaguay/side2/uploadPresigned?hash=$hash"
+              : "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side2/uploadPresigned?hash=$hash";
           break;
         case UrlUploadType.selfie:
-          url = isLogged == null ?
-          "/preRegister/s4/validateSelfie/uploadPresigned?hash=$hash" :
-          "/profile/caretaker/dependent/s4/validateSelfie/uploadPresigned?hash=$hash";
+          url = isLogged == null
+              ? "/preRegister/s4/validateSelfie/uploadPresigned?hash=$hash"
+              : "/profile/caretaker/dependent/s4/validateSelfie/uploadPresigned?hash=$hash";
           break;
         default:
       }
@@ -241,11 +242,12 @@ class UserRepository {
   }
 
   Future<None>? validateUserPhone(String hash, BuildContext context) async {
-    try{
+    try {
       final String phone = user.phone!;
       final String password = user.password!;
-      Response response = await dio.post("preRegister/validateCode?hash=$hash&phone=$phone");
-      if(response.statusCode == 200){
+      Response response =
+          await dio.post("preRegister/validateCode?hash=$hash&phone=$phone");
+      if (response.statusCode == 200) {
         return None();
       }
       throw Failure('No fue posible validad el número, intente nuevamente');
@@ -254,7 +256,8 @@ class UserRepository {
     }
   }
 
-  Future<None>? sendImagetoServer(UrlUploadType urlUploadType, XFile image) async {
+  Future<None>? sendImagetoServer(
+      UrlUploadType urlUploadType, XFile image) async {
     try {
       print("send image to server");
       String url = "";
@@ -294,19 +297,19 @@ class UserRepository {
         String _url = "";
         switch (urlUploadType) {
           case UrlUploadType.frontal:
-            _url = isLogged == null ?
-            "/preRegister/s3/validateDocument/idCardParaguay/side1/validate?hash=$hash" :
-            "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side1/validate?hash=$hash";
+            _url = isLogged == null
+                ? "/preRegister/s3/validateDocument/idCardParaguay/side1/validate?hash=$hash"
+                : "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side1/validate?hash=$hash";
             break;
           case UrlUploadType.back:
-            _url = isLogged == null ?
-            "/preRegister/s3/validateDocument/idCardParaguay/side2/validate?hash=$hash" :
-            "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side2/validate?hash=$hash";
+            _url = isLogged == null
+                ? "/preRegister/s3/validateDocument/idCardParaguay/side2/validate?hash=$hash"
+                : "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side2/validate?hash=$hash";
             break;
           case UrlUploadType.selfie:
-            _url = isLogged == null ?
-            "/preRegister/s4/validateSelfie/validate?hash=$hash" :
-            "/profile/caretaker/dependent/s4/validateSelfie/validate?hash=$hash";
+            _url = isLogged == null
+                ? "/preRegister/s4/validateSelfie/validate?hash=$hash"
+                : "/profile/caretaker/dependent/s4/validateSelfie/validate?hash=$hash";
             break;
           default:
         }
@@ -317,7 +320,7 @@ class UserRepository {
         print(response.statusCode);
         if (response.statusCode == 200) {
           print(response.data);
-          if(urlUploadType == UrlUploadType.selfie && isLogged != null){
+          if (urlUploadType == UrlUploadType.selfie && isLogged != null) {
             user = User.fromJson(response.data);
           }
           photoStage == UrlUploadType.frontal
@@ -330,24 +333,24 @@ class UserRepository {
         }
       }
       throw Failure(genericError);
-    } on DioError  catch (ex) {
-      if(errorInFrontSide.contains(ex.response?.data['messages'].join()) ) {
+    } on DioError catch (ex) {
+      if (errorInFrontSide.contains(ex.response?.data['messages'].join())) {
         photoStage = UrlUploadType.frontal;
         throw Failure("Error al validar la parte frontal");
-      }else if(errorInBackSide.contains(ex.response?.data['messages'].join()) ) {
+      } else if (errorInBackSide
+          .contains(ex.response?.data['messages'].join())) {
         photoStage = UrlUploadType.back;
         throw Failure("Error al validar la parte posterior");
-      }else if(errorInSelfie.contains(ex.response?.data['messages'].join()) ) {
+      } else if (errorInSelfie.contains(ex.response?.data['messages'].join())) {
         photoStage = UrlUploadType.selfie;
         throw Failure("Error al validar la selfie");
-      }throw Failure(genericError);
-    }catch (e) {
+      }
+      throw Failure(genericError);
+    } catch (e) {
       print(e);
       throw Failure('${e.toString().length > 60 ? '$genericError' : e}');
     }
   }
-
-
 
   Future<None>? sendUserPassword() async {
     try {
@@ -366,30 +369,26 @@ class UserRepository {
 
   void logout(BuildContext context) async {
     try {
-      String baseUrlKeyCloack = String.fromEnvironment(
-          'KEYCLOAK_REALM_ADDRESS',
+      String baseUrlKeyCloack = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
           defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
 
-      String? refreshToken =
-      await storage.read(key: "refresh_token");
+      String? refreshToken = await storage.read(key: "refresh_token");
       Map<String, dynamic> body = {
-        "refresh_token": refreshToken??'',
+        "refresh_token": refreshToken ?? '',
         "client_id": "boldo-patient"
       };
-      var url = Uri.parse(
-          "$baseUrlKeyCloack/protocol/openid-connect/logout");
+      var url = Uri.parse("$baseUrlKeyCloack/protocol/openid-connect/logout");
       await http.post(url,
           body: body,
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
+          headers: {"Content-Type": "application/x-www-form-urlencoded"},
           encoding: Encoding.getByName("utf-8"));
       await prefs.setBool("onboardingCompleted", false);
       await storage.deleteAll();
       await prefs.clear();
       patient = Patient();
 
-      Navigator.of(context).pushNamedAndRemoveUntil('/onboarding', (Route<dynamic> route) => false);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          '/onboarding', (Route<dynamic> route) => false);
     } on DioError catch (exception, stackTrace) {
       print(exception);
 
@@ -406,17 +405,20 @@ class UserRepository {
     }
   }
 
-  Future<List<NextAvailability>>? getDoctorAvailability(Doctor doctor, DateTime date) async {
+  Future<List<NextAvailability>>? getDoctorAvailability(
+      Doctor doctor, DateTime date) async {
     try {
-      Response response = await dio.get("/doctors/${doctor.id}/availability", queryParameters: {
-      'start': date.toUtc().toIso8601String(),
-      'end': DateTime(date.year, date.month + 1, 1).toUtc().toIso8601String(),});
+      Response response =
+          await dio.get("/doctors/${doctor.id}/availability", queryParameters: {
+        'start': date.toUtc().toIso8601String(),
+        'end': DateTime(date.year, date.month + 1, 1).toUtc().toIso8601String(),
+      });
       List<NextAvailability>? allAvailabilities = [];
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         return response.data['availabilities'].forEach((v) {
           allAvailabilities.add(NextAvailability.fromJson(v));
         });
-      }else if(response.statusCode == 204){
+      } else if (response.statusCode == 204) {
         return [];
       }
       throw Failure(genericError);
@@ -428,15 +430,14 @@ class UserRepository {
   Future<List<Appointment>>? getPastAppointments(String date) async {
     Response responseAppointments;
     try {
-      if(! prefs.getBool("isFamily")!)
-        responseAppointments = await dio.get(
-            "/profile/patient/appointments?start=${date}");
+      if (!prefs.getBool("isFamily")!)
+        responseAppointments =
+            await dio.get("/profile/patient/appointments?start=${date}");
       else
         responseAppointments = await dio.get(
             "/profile/caretaker/dependent/${patient.id}/appointments?start=${date}");
 
-
-      if(responseAppointments.statusCode==200){
+      if (responseAppointments.statusCode == 200) {
         List<Appointment> allAppointmets = List<Appointment>.from(
             responseAppointments.data["appointments"]
                 .map((i) => Appointment.fromJson(i)));
@@ -472,32 +473,39 @@ class UserRepository {
     }
   }
 
-  Future<MedicalRecord>? getMedicalRecordByAppointment(String appointmentId) async {
+  Future<MedicalRecord>? getMedicalRecordByAppointment(
+      String appointmentId) async {
     try {
+      String url =
+          "${prefs.getBool('isFamily') == true ? '/profile/caretaker/dependent/${patient.id}/appointments/$appointmentId/encounter?includePrescriptions=true&includeSoep=true' :
+           '/profile/patient/appointments/$appointmentId/encounter?includePrescriptions=true&includeSoep=true'}";
+      print("esta es $url");
       MedicalRecord medicalRecord;
-      Response response = await dioHealthCore.get(
-        "/profile/patient/appointments/${appointmentId}/encounter?includePrescriptions=true&includeSoep=true");
-      if(response.statusCode == 200) {
+      Response response = await dioHealthCore.get(url);
+      if (response.statusCode == 200) {
         print(response.data);
         medicalRecord = MedicalRecord.fromJson(response.data);
         return medicalRecord;
       }
       throw Failure("Response status desconocido ${response.statusCode}");
-    }catch (e){
+    } catch (e) {
       print("ERROR $e");
       throw Failure(genericError);
     }
   }
-
 }
 
 Future<None> getMedicalRecords() async {
-  Response response = await dioHealthCore.get(
-      "/profile/patient/relatedEncounters?includePrescriptions=false&includeSoep=false&lastOnly=true");
+  //TODO: check this aproach
+  final String url =
+      "${prefs.getBool('isFamily') == true ? 'profile/takecare/dependent/${patient.id}/relatedEncounters?includePrescriptions=false&includeSoep=false&lastOnly=true' : '/profile/patient/relatedEncounters?includePrescriptions=false&includeSoep=false&lastOnly=true'}"
+          .trim();
+  print("esta es $url");
+  Response response = await dioHealthCore.get(url);
   try {
     allMedicalData = List<MedicalRecord>.from(
         response.data.map((x) => MedicalRecord.fromJson(x[0])));
-  }catch (e){
+  } catch (e) {
     print("ERROR $e");
   }
   return None();
