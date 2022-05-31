@@ -1,26 +1,19 @@
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/constants.dart';
-import 'package:boldo/models/Prescription.dart';
-import 'package:boldo/network/user_repository.dart';
-import 'package:boldo/provider/auth_provider.dart';
+import 'package:boldo/screens/appointments/pastAppointments_screen.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/divider_feed_secction_home.dart';
-import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
-import 'package:boldo/screens/dashboard/tabs/components/waiting_room_card.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/medical_records/medical_records_screen.dart' as medScreen;
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
 import 'dart:async';
-import 'package:intl/intl.dart';
 import 'dart:isolate';
 import 'package:dio/dio.dart';
 import 'package:boldo/models/Appointment.dart';
@@ -29,9 +22,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:boldo/network/http.dart';
 
 import '../../../main.dart';
-import '../../../utils/helpers.dart';
-import '../../booking/booking_confirm_screen.dart';
-import '../../details/appointment_details.dart';
 
 class HomeTab extends StatefulWidget {
   HomeTab({Key? key}) : super(key: key);
@@ -81,7 +71,7 @@ class _HomeTabState extends State<HomeTab> {
       index: 1,
       title: 'Ver mis consultas',
       appear: true,
-      page: medScreen.MedicalRecordScreen(),
+      page: PastAppointmentsScreen(),
     ),
     CarouselCardPages(
       key: UniqueKey(),

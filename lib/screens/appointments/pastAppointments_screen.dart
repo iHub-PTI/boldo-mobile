@@ -1,6 +1,7 @@
 import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
+import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
 
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/utils/helpers.dart';
@@ -55,11 +56,6 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
           );
           _dataLoading = false;
           _dataLoaded = false;
-        }else if(state is Loading){
-          setState(() {
-            _dataLoading = true;
-            _dataLoaded = false;
-          });
         }else if(state is AppointmentLoadedState){
           allAppointments = state.appointments;
         }
@@ -77,7 +73,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
               ),
             ),
             body: _dataLoading == true
-                ? Text('Mis recetas',
+                ? Text('Mis consultas',
                 style: boldoHeadingTextStyle.copyWith(fontSize: 20)
             )
                 : Container(
@@ -88,7 +84,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10.0),
                     child: Text(
-                      'Mis Recetas',
+                      'Mis Consultas',
                       textAlign: TextAlign.start,
                       style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                     ),
@@ -112,8 +108,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                       picture: "feed_empty.svg",
                       textTop: "Nada para mostrar",
                     )
-                        : SizedBox(
-                      height: MediaQuery.of(context).size.height - 260,
+                        : Expanded(
                       child: ListView.separated(
                         itemCount: allAppointments.length,
                         shrinkWrap: true,
@@ -121,18 +116,17 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                           color: Colors.transparent,
                         ),
                         itemBuilder: (context, index) {
-                          int daysDifference = DateTime.parse(allAppointments[index].start!)
-                              .toLocal()
-                              .difference(DateTime.now())
+                          int daysDifference = DateTime.now().difference(DateTime.parse(allAppointments[index].start!)
+                              .toLocal())
                               .inDays;
                           return GestureDetector(
                             onTap: () {
-                              /*Navigator.push(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => MedicalRecordsDetails(
-                                        encounterId: allMedicalData[index].id)),
-                              );*/
+                                    builder: (context) => MedicalRecordsScreen(
+                                        encounterId: allAppointments[index].id)),
+                              );
                             },
                             child: Container(
                               child: Card(
@@ -145,7 +139,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          "Receta pendiente de obtener",
+                                          "Consultaste con",
                                           style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.darkBlue),
                                         ),
                                         Text(
@@ -212,7 +206,6 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                                                 allAppointments[index].doctor!.specializations!
                                                     .isNotEmpty)
                                               SizedBox(
-                                                width: 150,
                                                 child: SingleChildScrollView(
                                                   scrollDirection: Axis.horizontal,
                                                   child: Row(
@@ -222,31 +215,15 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                                                           allAppointments[index].doctor!
                                                               .specializations!.length;
                                                       i++)
-                                                        Padding(
-                                                          padding: EdgeInsets.only(
-                                                              left: i == 0 ? 0 : 3.0, bottom: 5),
-                                                          child: Text(
-                                                            "${toLowerCase(allAppointments[index].doctor!.specializations![i].description?? '')}${allAppointments[index].doctor!.specializations!.length > 1 && i == 0 ? "," : ""}",
-                                                            style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
-                                                          ),
+                                                      Text(
+                                                          "${toLowerCase(allAppointments[index].doctor!.specializations![i].description?? '')}${allAppointments[index].doctor!.specializations!.length > 1 && i == 0 ? "," : ""}",
+                                                          style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
                                                         ),
                                                     ],
                                                   ),
                                                 ),
                                               ),
                                           ],
-                                        ),
-                                        SizedBox(
-                                          width: 124,
-                                          height: 42,
-                                          child: SingleChildScrollView(
-                                            scrollDirection: Axis.vertical,
-                                            child: Column(
-                                              children: [
-
-                                              ],
-                                            ),
-                                          ),
                                         ),
                                       ],
                                     ),
