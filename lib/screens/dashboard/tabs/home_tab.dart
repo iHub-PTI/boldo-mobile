@@ -91,7 +91,7 @@ class _HomeTabState extends State<HomeTab> {
       index: 2,
       title: 'Ver mis recetas',
       appear: true,
-      page: PrescriptionRecordScreen(),
+      page: PrescriptionsScreen(),
     ),
     CarouselCardPages(
       key: UniqueKey(),

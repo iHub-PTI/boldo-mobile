@@ -4,7 +4,9 @@ import 'package:boldo/models/Appointment.dart';
 
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Prescription.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
+import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
@@ -15,15 +17,15 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../network/http.dart';
 
-class PrescriptionRecordScreen extends StatefulWidget {
+class PrescriptionsScreen extends StatefulWidget {
 
-  const PrescriptionRecordScreen() : super();
+  const PrescriptionsScreen() : super();
 
   @override
-  _PrescriptionRecordScreenState createState() => _PrescriptionRecordScreenState();
+  _PrescriptionsScreenState createState() => _PrescriptionsScreenState();
 }
 
-class _PrescriptionRecordScreenState extends State<PrescriptionRecordScreen> {
+class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
   bool _dataLoading = true;
   bool _dataLoaded =false;
   late List<Appointment> allAppointments = [];
@@ -124,7 +126,8 @@ class _PrescriptionRecordScreenState extends State<PrescriptionRecordScreen> {
         ),
       ),
       body: _dataLoading == true
-          ? const Text('Mis recetas',
+          ? Text('Mis recetas',
+          style: boldoHeadingTextStyle.copyWith(fontSize: 20)
       )
           : Container(
         child: Column(
@@ -134,7 +137,7 @@ class _PrescriptionRecordScreenState extends State<PrescriptionRecordScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 10.0),
               child: Text(
-                'Ficha Médica',
+                'Mis Recetas',
                 textAlign: TextAlign.start,
                 style: boldoHeadingTextStyle.copyWith(fontSize: 20),
               ),
@@ -167,18 +170,36 @@ class _PrescriptionRecordScreenState extends State<PrescriptionRecordScreen> {
                     color: Colors.transparent,
                   ),
                   itemBuilder: (context, index) {
-                    int daysDifference = DateTime.parse(allAppointments[index].start!)
-                        .toLocal()
-                        .difference(DateTime.now())
+                    int daysDifference = DateTime.now()
+                        .difference(DateTime.parse(allAppointments[index].start!)
+                        .toLocal())
                         .inDays;
                     return GestureDetector(
-                      onTap: () {
-                        /*Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MedicalRecordsDetails(
-                                  encounterId: allMedicalData[index].id)),
-                        );*/
+                      onTap: () async {
+                        _dataLoading = true;
+                        try {
+                          MedicalRecord medicalRecord;
+                          Response response = await dioHealthCore.get(
+                              "/profile/patient/appointments/${allAppointments[index].id}/encounter?includePrescriptions=true&includeSoep=true");
+                          if(response.statusCode == 200) {
+                            print(response.data);
+                            medicalRecord = MedicalRecord.fromJson(response.data);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      PrescriptionRecordScreen(medicalRecord:  medicalRecord)),
+                            );
+                            _dataLoading = false;
+                          }else {
+                            _dataLoaded = false;
+                            _dataLoading = false;
+                          }
+                        }catch (e){
+                          _dataLoaded = false;
+                          _dataLoading = false;
+                          print("ERROR $e");
+                        }
                       },
                       child: Container(
                         child: Card(
@@ -191,7 +212,7 @@ class _PrescriptionRecordScreenState extends State<PrescriptionRecordScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Receta pendiente de obtener",
+                                    "Receta",
                                     style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.darkBlue),
                                   ),
                                   Text(
