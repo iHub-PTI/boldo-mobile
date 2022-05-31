@@ -26,156 +26,155 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<MedicalRecordBloc>(context).add(GetMedicalRecord(appointmentId: widget.encounterId));
+    BlocProvider.of<MedicalRecordBloc>(context)
+        .add(GetMedicalRecord(appointmentId: widget.encounterId));
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<MedicalRecordBloc, MedicalRecordState>(
-        listener: (context, state){
-          if(state is Success) {
-            setState(() {
-              _dataLoading = false;
-              _dataLoaded = true;
-            });
-          }else if(state is Failed){
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.response!),
-                backgroundColor: Colors.redAccent,
-              ),
-            );
-            _dataLoading = false;
-            _dataLoaded = false;
-          }else if(state is Loading){
-            setState(() {
-              _dataLoading = true;
-              _dataLoaded = false;
-            });
-          }else if(state is MedicalRecordLoadedState){
-            medicalRecord = state.medicalRecord;
-          }
-        },
-        child: BlocBuilder<MedicalRecordBloc, MedicalRecordState>(
+        listener: (context, state) {
+      if (state is Success) {
+        setState(() {
+          _dataLoading = false;
+          _dataLoaded = true;
+        });
+      } else if (state is Failed) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(state.response!),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+        _dataLoading = false;
+        _dataLoaded = false;
+      } else if (state is Loading) {
+        setState(() {
+          _dataLoading = true;
+          _dataLoaded = false;
+        });
+      } else if (state is MedicalRecordLoadedState) {
+        medicalRecord = state.medicalRecord;
+      }
+    }, child: BlocBuilder<MedicalRecordBloc, MedicalRecordState>(
             builder: (context, state) {
-              return Scaffold(
-                appBar: AppBar(
-                  backgroundColor: Colors.white,
-                  leadingWidth: 200,
-                  leading: Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child:
-                    SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
-                  ),
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          leadingWidth: 200,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: SvgPicture.asset('assets/Logo.svg',
+                semanticsLabel: 'BOLDO Logo'),
+          ),
+        ),
+        body: _dataLoading == true
+            ? const Center(
+                child: Text(
+                  'Cargando datos ...',
                 ),
-                body: _dataLoading == true
-                    ? const Text(
-                  'Anotacion medica',
-                )
-                    : Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.chevron_left_rounded,
-                              size: 25,
-                              color: Constants.extraColor400,
+              )
+            : Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.chevron_left_rounded,
+                            size: 25,
+                            color: Constants.extraColor400,
+                          ),
+                          Text(
+                            'Anotación médica',
+                            style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (!_dataLoading && !_dataLoaded)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 40.0),
+                        child: Center(
+                          child: Text(
+                            "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Constants.otherColor100,
                             ),
-                            Text(
-                              'Anotacion medica',
-                              style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
-                      if (!_dataLoading && !_dataLoaded)
-                        const Padding(
-                          padding: EdgeInsets.only(top: 40.0),
-                          child: Center(
-                            child: Text(
-                              "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Constants.otherColor100,
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (!_dataLoading && _dataLoaded)
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.8,
-                          child: SingleChildScrollView(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(top: 15.0),
-                                    child: Text("Motivo principal",
-                                        style: boldoSubTextStyle),
+                    if (!_dataLoading && _dataLoaded)
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 15.0),
+                                  child: Text("Motivo principal",
+                                      style: boldoSubTextStyle),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Text(
+                                    medicalRecord?.mainReason ?? '',
+                                    style: boldoHeadingTextStyle.copyWith(
+                                        fontSize: 20,
+                                        color: Constants.primaryColor500),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Text(
-                                      medicalRecord?.mainReason??'',
-                                      style: boldoHeadingTextStyle.copyWith(
-                                          fontSize: 20,
-                                          color: Constants.primaryColor500),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  SoepAccordion(
-                                      title: Constants.subjective,
-                                      medicalRecord: medicalRecord!),
-                                  const Divider(
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                SoepAccordion(
+                                    title: Constants.subjective,
+                                    medicalRecord: medicalRecord!),
+                                const Divider(
+                                  color: Constants.dividerAccordion,
+                                  thickness: 1,
+                                ),
+                                SoepAccordion(
+                                    title: Constants.objective,
+                                    medicalRecord: medicalRecord!),
+                                const Divider(
                                     color: Constants.dividerAccordion,
-                                    thickness: 1,
-                                  ),
-                                  SoepAccordion(
-                                      title: Constants.objective,
-                                      medicalRecord: medicalRecord!),
-                                  const Divider(
-                                      color: Constants.dividerAccordion,
-                                      thickness: 1),
-                                  SoepAccordion(
-                                      title: Constants.evaluation,
-                                      medicalRecord: medicalRecord!),
-                                  const Divider(
-                                      color: Constants.dividerAccordion,
-                                      thickness: 1),
-                                  SoepAccordion(
-                                      title: Constants.plan,
-                                      medicalRecord: medicalRecord!),
-                                  const Divider(
-                                      color: Constants.dividerAccordion,
-                                      thickness: 1),
-                                ],
-                              ),
+                                    thickness: 1),
+                                SoepAccordion(
+                                    title: Constants.evaluation,
+                                    medicalRecord: medicalRecord!),
+                                const Divider(
+                                    color: Constants.dividerAccordion,
+                                    thickness: 1),
+                                SoepAccordion(
+                                    title: Constants.plan,
+                                    medicalRecord: medicalRecord!),
+                                const Divider(
+                                    color: Constants.dividerAccordion,
+                                    thickness: 1),
+                              ],
                             ),
                           ),
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
-              );
-            }
-        )
-    );
+              ),
+      );
+    }));
   }
 }
-
 
 class SoepAccordion extends StatefulWidget {
   final String title;
@@ -219,12 +218,12 @@ class _SoepAccordionState extends State<SoepAccordion> {
         ),
         _showContent
             ? Container(
-          height: 250,
-          // width:300,
-          padding:
-          const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-          child: SoepScreen(widget.medicalRecord, widget.title),
-        )
+                height: 250,
+                // width:300,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                child: SoepScreen(widget.medicalRecord, widget.title),
+              )
             : Container()
       ]),
     );
@@ -293,36 +292,38 @@ class SoepScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    medicalRecord.startTimeDate != null
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                                //HH:mm  dd/MM/yy
+                                DateFormat('dd/MM/yy').format(
+                                    DateTime.parse(medicalRecord.startTimeDate!)
+                                        .toLocal()),
+                                style: boldoHeadingTextStyle.copyWith(
+                                    fontSize: 20, fontWeight: FontWeight.w500)),
+                          )
+                        : Container(),
+                    // const Spacer(),
                     medicalRecord.prescription!.isNotEmpty
                         ? GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  PrescriptionRecordScreen(medicalRecord:  medicalRecord)),
-                        );
-                      },
-                      child: SvgPicture.asset('assets/icon/pill.svg',
-                          fit: BoxFit.cover),
-                    )
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        PrescriptionRecordScreen(
+                                            medicalRecord: medicalRecord)),
+                              );
+                            },
+                            child: SvgPicture.asset('assets/icon/pill.svg',
+                                fit: BoxFit.cover),
+                          )
                         : Container(),
                   ],
                 ),
-                medicalRecord.startTimeDate != null ?
-                Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: Text(
-                    //HH:mm  dd/MM/yy
-                      DateFormat('dd/MM/yy').format(
-                          DateTime.parse(medicalRecord.startTimeDate!)
-                              .toLocal()),
-                      style: boldoHeadingTextStyle.copyWith(
-                          fontSize: 20, fontWeight: FontWeight.w500)),
-                )
-                :Container(),
                 soepDescription(medicalRecord.soep!)
               ],
             ),

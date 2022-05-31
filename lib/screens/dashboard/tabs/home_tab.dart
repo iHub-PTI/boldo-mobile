@@ -453,7 +453,7 @@ class _HomeTabState extends State<HomeTab> {
                       _dataFetchError
                           ? SliverToBoxAdapter(child :DataFetchErrorWidget(retryCallback: getAppointmentsData))
                           : _loading
-                          ? const SliverToBoxAdapter(child: Center(
+                          ? const SliverFillRemaining(child: Center(
                           child: CircularProgressIndicator(
                             valueColor:
                             AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
