@@ -311,6 +311,7 @@ class SoepScreen extends StatelessWidget {
                         : Container(),
                   ],
                 ),
+                medicalRecord.startTimeDate != null ?
                 Padding(
                   padding: const EdgeInsets.only(top: 4.0),
                   child: Text(
@@ -320,7 +321,8 @@ class SoepScreen extends StatelessWidget {
                               .toLocal()),
                       style: boldoHeadingTextStyle.copyWith(
                           fontSize: 20, fontWeight: FontWeight.w500)),
-                ),
+                )
+                :Container(),
                 soepDescription(medicalRecord.soep!)
               ],
             ),
