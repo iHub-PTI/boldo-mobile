@@ -472,6 +472,23 @@ class UserRepository {
     }
   }
 
+  Future<MedicalRecord>? getMedicalRecordByAppointment(String appointmentId) async {
+    try {
+      MedicalRecord medicalRecord;
+      Response response = await dioHealthCore.get(
+        "/profile/patient/appointments/${appointmentId}/encounter?includePrescriptions=true&includeSoep=true");
+      if(response.statusCode == 200) {
+        print(response.data);
+        medicalRecord = MedicalRecord.fromJson(response.data);
+        return medicalRecord;
+      }
+      throw Failure("Response status desconocido ${response.statusCode}");
+    }catch (e){
+      print("ERROR $e");
+      throw Failure(genericError);
+    }
+  }
+
 }
 
 Future<None> getMedicalRecords() async {
