@@ -70,8 +70,10 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
         ),
         body: _dataLoading == true
             ? const Center(
-                child: Text(
-                  'Cargando datos ...',
+                child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                  backgroundColor: Constants.primaryColor600,
                 ),
               )
             : Padding(

@@ -76,9 +76,12 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
           ),
         ),
         body: _dataLoading == true
-            ? Center(
-                child: Text('Cargando datos ...',
-                    style: boldoHeadingTextStyle.copyWith(fontSize: 20)),
+            ? const Center(
+                child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                  backgroundColor: Constants.primaryColor600,
+                ),
               )
             : Container(
                 child: Column(
@@ -260,7 +263,11 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                                                               .specializations!
                                                               .isNotEmpty)
                                                         SizedBox(
-                                                          width: MediaQuery.of(context).size.width - 90,
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width -
+                                                              90,
                                                           child:
                                                               SingleChildScrollView(
                                                             scrollDirection:
