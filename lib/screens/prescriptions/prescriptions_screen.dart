@@ -193,7 +193,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                     _dataLoading = true;
                                     try {
                                       String url =
-                                          "${prefs.getBool('isFamily') == true ? '/profile/caretaker/dependent/${patient.id}/appointments/${allAppointments[index].id}/encounter' : ' /profile/patient/appointments/${allAppointments[index].id}/encounter?includePrescriptions=true&includeSoep=true'}";
+                                          "${prefs.getBool('isFamily') == true ? '/profile/caretaker/dependent/${patient.id}/appointments/${allAppointments[index].id}/encounter' : ' /profile/patient/appointments/${allAppointments[index].id}/encounter?includePrescriptions=true&includeSoep=true'}".trim();
                                       MedicalRecord medicalRecord;
                                       Response response =
                                           await dioHealthCore.get(url);
@@ -385,7 +385,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                                           index]
                                                                       .prescriptions!
                                                                       .length >
-                                                                  0)
+                                                                  1)
                                                                 Padding(
                                                                   padding: const EdgeInsets
                                                                           .only(
@@ -421,6 +421,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                                     ],
                                                                   ),
                                                                 ),
+                                                             
                                                               if (allAppointments[
                                                                           index]
                                                                       .prescriptions!
