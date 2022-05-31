@@ -106,7 +106,7 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
-                                                _dataLoading ? Text('Cargando',style: boldoSubTextStyle.copyWith(
+                                                _dataLoading ? Text('',style: boldoSubTextStyle.copyWith(
                                                     color: ConstantsV2.lightGrey
                                                 ),) :
                                                 prefs.getBool("isFamily")?? false ?

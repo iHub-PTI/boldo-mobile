@@ -106,7 +106,7 @@ class _SingInTransitionState extends State<SingInTransition> {
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
-                                              _dataLoading ? Text('Cargando',style: boldoSubTextStyle.copyWith(
+                                              _dataLoading ? Text('',style: boldoSubTextStyle.copyWith(
                                                   color: ConstantsV2.lightGrey
                                               ),) :Text(
                                                 patient.gender == "unknown" ?
