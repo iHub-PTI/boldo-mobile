@@ -327,12 +327,15 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                         children: [
                                                           SizedBox(
                                                             width: 150,
-                                                            child: Flexible(
-                                                              child: Text(
-                                                                "${getDoctorPrefix(allAppointments[index].doctor!.gender!)}${allAppointments[index].doctor!.familyName}",
-                                                                style:
-                                                                    boldoSubTextMediumStyle,
-                                                              ),
+                                                            child: Flex(direction: Axis.horizontal,
+                                                              children: [
+                                                                Flexible(
+                                                                  child: Text(
+                                                                    "${getDoctorPrefix(allAppointments[index].doctor!.gender!)}${allAppointments[index].doctor!.familyName}",
+                                                                    style: boldoSubTextMediumStyle,
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
                                                           Column(
