@@ -72,7 +72,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                           Provider.of<UtilsProvider>(context, listen: false)
                               .setSelectedPageIndex(pageIndex: 0);
                           BlocProvider.of<PatientBloc>(context).add(ReloadHome());
-                          Navigator.of(context).popUntil(ModalRoute.withName("/home"));
+                          Navigator.of(context).pushNamedAndRemoveUntil("/home", (Route<dynamic> route) => false);
 
                         },
 
