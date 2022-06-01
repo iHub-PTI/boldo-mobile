@@ -534,11 +534,12 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
     final actualDay = DateTime.now();
     final parsedAvailability =
         DateTime.parse(widget.nextAvailability).toLocal();
-    int daysDifference = parsedAvailability.difference(actualDay).inDays;
+    // int daysDifference = parsedAvailability.difference(actualDay).inDays;
+      int daysDifference = daysBetween(actualDay,parsedAvailability);
 
-    if (actualDay.month == parsedAvailability.month) {
-      daysDifference = parsedAvailability.day - actualDay.day;
-    }
+    // if (actualDay.month == parsedAvailability.month) {
+    //   daysDifference = parsedAvailability.day - actualDay.day;
+    // }
     if (daysDifference == 0) {
       isToday = true;
     }
