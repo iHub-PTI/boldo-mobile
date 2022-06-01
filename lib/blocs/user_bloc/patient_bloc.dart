@@ -113,7 +113,6 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
             emit(Failed(response: response));
           }else{
             emit(Success());
-            await Future.delayed(const Duration(seconds: 2));
             emit(RedirectNextScreen());
           }
         }

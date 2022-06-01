@@ -98,7 +98,6 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                       _dataLoading = false;
                     }
                     if(state is Success){
-                      _dataLoading = false;
                     }
                     if(state is RedirectNextScreen){
                       Navigator.of(context).popUntil(ModalRoute.withName("/home"));
