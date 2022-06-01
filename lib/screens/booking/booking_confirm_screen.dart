@@ -127,7 +127,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                   });
                 }
 
-              } on DioError catch (exception, stackTrace) {
+              } on DioError catch (exception) {
                 print(exception.response?.data['message']);
                 setState(() {
                   _loading = false;
@@ -135,9 +135,8 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                 });
                 await Sentry.captureException(
                   exception,
-                  stackTrace: stackTrace,
                 );
-              } catch (exception, stackTrace) {
+              } catch (exception) {
                 print(exception);
                 setState(() {
                   _loading = false;
@@ -145,7 +144,6 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                 });
                 await Sentry.captureException(
                   exception,
-                  stackTrace: stackTrace,
                 );
               }
             },
