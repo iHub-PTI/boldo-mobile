@@ -39,13 +39,15 @@ class _AppointmentCardState extends State<AppointmentCard> {
     isCancelled = widget.appointment.status!.contains('cancelled');
     actualDay = DateTime.now();
     appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
+
+    // set local date with format aaaa-mm-dd 00:00.000 for prevent days difference
+    // get a bug, e.g: 30/06 21:00hs difference with 01/07 18:00, days difference
+    // is calculated whit hours differences resulting <24:hs -> days = 0, therefore
+    // this is presented like the same day
     daysDifference = DateTime.parse(widget.appointment.start!)
         .toLocal()
-        .difference(actualDay)
+        .difference(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day))
         .inDays;
-    if (actualDay.month == appointmentDay.month) {
-      daysDifference = appointmentDay.day - actualDay.day;
-    }
     setState(() {
       isToday = daysDifference == 0 &&
           !["closed", "locked"].contains(widget.appointment.status);
