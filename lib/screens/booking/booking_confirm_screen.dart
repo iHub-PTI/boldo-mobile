@@ -84,6 +84,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
             text: "Confirmar",
             loading: _loading,
             actionCallback: () async {
+              Response response;
               try {
                 setState(() {
                   _loading = true;
@@ -95,7 +96,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                 print("start: ${widget.doctor.id}");
                 print("start: ${widget.bookingDate.appointmentType}");
                 if(! prefs.getBool("isFamily")!)
-                  await dio.post("/profile/patient/appointments", data: {
+                  response = await dio.post("/profile/patient/appointments", data: {
                     'start': DateTime.parse(widget.bookingDate.availability!)
                         .toUtc()
                         .toIso8601String(),
@@ -103,23 +104,34 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                     "appointmentType":widget.bookingDate.appointmentType
                   });
                 else
-                  await dio.post("/profile/caretaker/dependent/${patient.id}/appointments", data: {
+                  response = await dio.post("/profile/caretaker/dependent/${patient.id}/appointments", data: {
                     'start': DateTime.parse(widget.bookingDate.availability!)
                         .toUtc()
                         .toIso8601String(),
                     "doctorId": widget.doctor.id,
                     "appointmentType":widget.bookingDate.appointmentType
                   });
+                if(response.statusCode == 200) {
+                  setState(() {
+                    _loading = false;
+                    _error = "";
+                  });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => BookingFinalScreen()),
+                  );
+                }else {
+                  setState(() {
+                    _loading = false;
+                    _error = response.data['message'];
+                  });
+                }
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => BookingFinalScreen()),
-                );
               } on DioError catch (exception, stackTrace) {
-                print(exception);
+                print(exception.response?.data['message']);
                 setState(() {
                   _loading = false;
-                  _error = "Intente nuevamente, por favor";
+                  _error = exception.response?.data['message'];
                 });
                 await Sentry.captureException(
                   exception,
