@@ -358,7 +358,7 @@ class _DoctorProfileWidget extends StatelessWidget {
                                     Text(
                                       "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
                                       style: boldoSubTextStyle.copyWith(
-                                          color: Constants.otherColor100),
+                                          color: Constants.otherColor100,fontSize: 12),
                                     ),
                                 ],
                               ),
