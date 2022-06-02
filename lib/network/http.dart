@@ -216,7 +216,7 @@ void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
           dioHealthCore.interceptors.responseLock.unlock();
           dioHealthCore.interceptors.errorLock.unlock();
           return handle
-              .resolve(await dioHealthCore.request(options.path, options: optionsDio));
+              .resolve(await dioHealthCore.request(options.path,data: options.data, options: optionsDio));
         } catch (e) {
           dioHealthCore.unlock();
           dioHealthCore.interceptors.responseLock.unlock();
