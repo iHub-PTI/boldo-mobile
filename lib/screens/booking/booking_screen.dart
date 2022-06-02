@@ -637,9 +637,7 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                     final chooseOption =
                         await _showPopupMenu(details.globalPosition);
                     if (chooseOption != null) {
-                      DateTime parsedAvailability = DateTime.parse(
-                              widget.doctor.nextAvailability!.availability!)
-                          .toLocal();
+                      DateTime parsedAvailability = DateTime.parse(widget.nextAvailability).toLocal();
                       if (chooseOption == 'En persona') {
                         widget.handleBookingHour(
                           NextAvailability(
