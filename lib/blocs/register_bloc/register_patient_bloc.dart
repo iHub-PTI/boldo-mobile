@@ -2,10 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:boldo/main.dart';
-import 'package:boldo/models/User.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/network/user_repository.dart';
-import 'package:boldo/screens/filter/filter_screen.dart';
 import 'package:camera/camera.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dartz/dartz.dart';

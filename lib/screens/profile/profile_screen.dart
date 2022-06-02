@@ -7,7 +7,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../blocs/user_bloc/patient_bloc.dart';
@@ -256,14 +255,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
 
                             const SizedBox(height: 20),
-                            if(!prefs.getBool("isFamily")!)
+                            if(!prefs.getBool(isFamily)!)
                               CustomFormInput(
                                 initialValue: editingPatient.email?? '',
                                 label: "Correo electrónico",
                                 validator: (value) => validateEmail(value!),
                                 onChanged: (String val) => (editingPatient.email = val),
                               ),
-                            if(!prefs.getBool("isFamily")!)
+                            if(!prefs.getBool(isFamily)!)
                               const SizedBox(height: 20),
 
                             CustomFormInput(
@@ -300,7 +299,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               trailing: const Icon(Icons.chevron_right),
                             ),
                             //TODO: not implemented for dependents
-                            if(!prefs.getBool("isFamily")!)
+                            if(!prefs.getBool(isFamily)!)
                             ListTile(
                               onTap: () {
                                 Navigator.push(

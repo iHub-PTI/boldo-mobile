@@ -1,30 +1,16 @@
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
-import 'package:boldo/screens/family/family_tab.dart';
 import 'package:boldo/screens/privacy_policy/privacy_policy.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
 import 'package:boldo/widgets/background.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:boldo/network/http.dart';
-import 'package:boldo/provider/utils_provider.dart';
-import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/constants.dart';
 
 import '../../main.dart';
-
-import '../../utils/helpers.dart';
 
 class MenuScreen extends StatefulWidget {
   final bool setLoggedOut;
@@ -38,7 +24,7 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
 
   final List<ItemMenu> items = [
-    ItemMenu(
+    const ItemMenu(
       image: 'assets/icon/family.svg',
       title: 'Mi Familia',
       route: '/familyScreen',
@@ -138,7 +124,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                   Expanded(
                     child: Container(
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       child: Align(
                         alignment: Alignment.bottomLeft,
                         child: Container(

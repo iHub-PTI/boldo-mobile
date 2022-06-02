@@ -1,16 +1,9 @@
-import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/constants.dart';
-import 'package:boldo/provider/user_provider.dart';
-import 'package:boldo/screens/register/dni_register.dart';
 import 'package:boldo/widgets/background.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../main.dart';
-import 'family_register_account.dart';
 
 class QRGenerator extends StatelessWidget {
   const QRGenerator({Key? key}) : super(key: key);

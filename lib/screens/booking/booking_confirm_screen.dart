@@ -95,7 +95,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                     .toIso8601String()}");
                 print("start: ${widget.doctor.id}");
                 print("start: ${widget.bookingDate.appointmentType}");
-                if(! prefs.getBool("isFamily")!)
+                if(! prefs.getBool(isFamily)!)
                   response = await dio.post("/profile/patient/appointments", data: {
                     'start': DateTime.parse(widget.bookingDate.availability!)
                         .toUtc()

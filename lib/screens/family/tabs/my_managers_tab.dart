@@ -1,10 +1,7 @@
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
-import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
 import 'package:boldo/screens/family/components/family_rectagle_card.dart';
-import 'package:boldo/screens/family/tabs/metods_add_family_screen.dart';
 import 'package:boldo/widgets/background.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';

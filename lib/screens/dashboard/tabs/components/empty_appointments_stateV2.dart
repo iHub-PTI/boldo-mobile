@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
-
-import 'package:boldo/provider/utils_provider.dart';
 
 import '../../../../constants.dart';
 import 'package:boldo/constants.dart';
-import 'package:flutter/foundation.dart';
 
 class EmptyStateV2 extends StatelessWidget {
   final String picture;

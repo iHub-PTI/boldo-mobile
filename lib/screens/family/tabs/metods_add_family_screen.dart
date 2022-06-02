@@ -1,13 +1,9 @@
 import 'package:boldo/constants.dart';
 import 'package:boldo/screens/family/tabs/QR_scanner.dart';
-import 'package:boldo/screens/register/dni_register.dart';
-import 'package:boldo/screens/register/sign_up_basic_info.dart';
 import 'package:boldo/widgets/background.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import 'family_register_account.dart';
 
 class FamilyMetodsAdd extends StatelessWidget {
   const FamilyMetodsAdd({Key? key}) : super(key: key);

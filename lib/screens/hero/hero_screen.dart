@@ -1,20 +1,10 @@
-import 'package:boldo/network/http.dart';
-import 'package:boldo/provider/auth_provider.dart';
-import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/pre_register_notify/pre_register_screen.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter/services.dart';
-import 'package:flutter_appauth/flutter_appauth.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants.dart';

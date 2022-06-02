@@ -1,9 +1,7 @@
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
-import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/loading_helper.dart';
 import 'package:boldo/widgets/background.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart';
@@ -33,7 +31,7 @@ class _FamilyTransitionState extends State<FamilyTransition> {
   GlobalKey scaffoldKey = GlobalKey();
 
   Future<void> timer() async {
-    if(prefs.getBool("isFamily")?? false)
+    if(prefs.getBool(isFamily)?? false)
       BlocProvider.of<PatientBloc>(context).add(ChangeUser(id: prefs.getString("idFamily")));
     else
       BlocProvider.of<PatientBloc>(context).add(ChangeUser(id: null));
@@ -109,7 +107,7 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                                                 _dataLoading ? Text('',style: boldoSubTextStyle.copyWith(
                                                     color: ConstantsV2.lightGrey
                                                 ),) :
-                                                prefs.getBool("isFamily")?? false ?
+                                                prefs.getBool(isFamily)?? false ?
                                                 Flexible(child:Text(
                                                   "Mostrando datos de",
                                                   textAlign: TextAlign.center,
@@ -131,7 +129,7 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
                                                 if(!_dataLoading)
-                                                prefs.getBool("isFamily")?? false ?
+                                                prefs.getBool(isFamily)?? false ?
                                                 Flexible(
                                                   child: Text(
                                                     "${patient.givenName ?? ''}${patient.familyName ?? ''}",

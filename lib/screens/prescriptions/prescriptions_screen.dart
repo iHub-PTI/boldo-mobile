@@ -4,7 +4,6 @@ import 'package:boldo/models/Appointment.dart';
 
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Prescription.dart';
-import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
 import 'package:boldo/utils/helpers.dart';
@@ -12,7 +11,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../network/http.dart';
@@ -47,13 +45,13 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
     try {
       Response responseAppointments;
       Response responsePrescriptions;
-      if (!prefs.getBool("isFamily")!)
+      if (!prefs.getBool(isFamily)!)
         responseAppointments = await dio.get(
             "/profile/patient/appointments?start=${DateTime(dateOffset.year, dateOffset.month, dateOffset.day).toUtc().toIso8601String()}");
       else
         responseAppointments = await dio.get(
             "/profile/caretaker/dependent/${patient.id}/appointments?start=${DateTime(dateOffset.year, dateOffset.month, dateOffset.day).toUtc().toIso8601String()}");
-      if (!prefs.getBool("isFamily")!)
+      if (!prefs.getBool(isFamily)!)
         responsePrescriptions = await dio.get("/profile/patient/prescriptions");
       else
         responsePrescriptions = await dio
@@ -193,7 +191,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                     _dataLoading = true;
                                     try {
                                       String url =
-                                          "${prefs.getBool('isFamily') == true ? '/profile/caretaker/dependent/${patient.id}/appointments/${allAppointments[index].id}/encounter' : ' /profile/patient/appointments/${allAppointments[index].id}/encounter?includePrescriptions=true&includeSoep=true'}".trim();
+                                          "${prefs.getBool(isFamily) == true ? '/profile/caretaker/dependent/${patient.id}/appointments/${allAppointments[index].id}/encounter' : ' /profile/patient/appointments/${allAppointments[index].id}/encounter?includePrescriptions=true&includeSoep=true'}".trim();
                                       MedicalRecord medicalRecord;
                                       Response response =
                                           await dioHealthCore.get(url);
@@ -359,7 +357,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                                       SvgPicture
                                                                           .asset(
                                                                         'assets/icon/pill.svg',
-                                                                        color: Color(
+                                                                        color: const Color(
                                                                             0xff707882),
                                                                         // height: 8,
                                                                         width:

@@ -1,8 +1,4 @@
-import 'dart:convert';
-
-import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/user_repository.dart';
-import 'package:crypto/crypto.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

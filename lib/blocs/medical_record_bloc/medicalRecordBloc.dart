@@ -33,7 +33,7 @@ class MedicalRecordBloc extends Bloc<MedicalRecordEvent, MedicalRecordState> {
           late MedicalRecord medicalRecord;
           _post.foldRight(MedicalRecord, (a, previous) => medicalRecord = a);
           emit(MedicalRecordLoadedState(medicalRecord: medicalRecord));
-          await Future.delayed(Duration(seconds: 1));
+          await Future.delayed(const Duration(seconds: 1));
           emit(Success());
         }
       }

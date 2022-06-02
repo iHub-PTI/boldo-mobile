@@ -72,7 +72,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                   MaterialPageRoute(
                     builder: (context) => AppointmentDetailsScreen(
                         appointment: widget.appointment,
-                        isInWaitingRoom: widget.isInWaitingRoom && appointmentDay.difference(actualDay).compareTo(Duration(minutes: 15)) <= 0),
+                        isInWaitingRoom: widget.isInWaitingRoom && appointmentDay.difference(actualDay).compareTo(const Duration(minutes: 15)) <= 0),
                   ),
                 );
             },
@@ -102,7 +102,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                           onTapCallback: (result) async {
                             if (result == 'Descartar') {
                               final response = await dio.post(
-                                  !prefs.getBool("isFamily")! ?
+                                  !prefs.getBool(isFamily)! ?
                                     "/profile/patient/appointments/cancel/${widget.appointment.id}"
                                   : "/profile/caretaker/appointments/cancel/${widget.appointment.id}");
                               if (response.statusMessage != null) {
@@ -257,7 +257,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
         ) : Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              appointmentDay.difference(actualDay).compareTo(Duration(minutes: 15)) <= 0 ?
+              appointmentDay.difference(actualDay).compareTo(const Duration(minutes: 15)) <= 0 ?
                   Container(
                     padding: const EdgeInsets.only(left: 6.5, right: 6.5, bottom: 2, top: 2),
                     color: ConstantsV2.orange,
@@ -284,7 +284,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
               ),
               Container(
                 padding: const EdgeInsets.all(4),
-                child: isToday && appointmentDay.difference(actualDay).compareTo(Duration(minutes: 15)) <= 0 ?
+                child: isToday && appointmentDay.difference(actualDay).compareTo(const Duration(minutes: 15)) <= 0 ?
                   Text("${appointmentDay.difference(actualDay).inMinutes} min",
                     style: const TextStyle(
                       color: ConstantsV2.activeText,

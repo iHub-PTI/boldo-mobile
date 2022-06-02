@@ -1,8 +1,5 @@
-import 'dart:convert';
-
-import 'package:boldo/models/Patient.dart';
+import 'package:boldo/constants.dart';
 import 'package:boldo/network/user_repository.dart';
-import 'package:crypto/crypto.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,7 +30,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
           // Do not change from user to dependent and vice versa
-          await prefs.setBool("isFamily",! prefs.getBool("isFamily")!);
+          await prefs.setBool(isFamily,! prefs.getBool(isFamily)!);
           await Future.delayed(const Duration(seconds: 2));
           emit(RedirectBackScreen());
         }else{

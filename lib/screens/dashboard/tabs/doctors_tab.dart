@@ -11,7 +11,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../constants.dart';
-import '../../../main.dart';
 import '../../booking/booking_screen.dart';
 import '../../doctor_profile/doctor_profile_screen.dart';
 import '../../../models/Doctor.dart';

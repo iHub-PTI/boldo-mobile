@@ -329,3 +329,8 @@ class ConstantsV2 {
   static double homeExpandedMinHeight = homeAppBarMinHeight + homeCarouselContainerMinHeight + homeCarouselTitleContainerMinHeight + homeFeedTitleContainerMinHeight;
 
 }
+
+
+// Constants
+
+const String isFamily = 'isFamily';

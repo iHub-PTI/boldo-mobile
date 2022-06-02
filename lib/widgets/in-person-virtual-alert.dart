@@ -29,16 +29,16 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
     return Stack(
       children: <Widget>[
         Container(
-          padding: EdgeInsets.only(left: 10,top: 10
+          padding: const EdgeInsets.only(left: 10,top: 10
               + 10, right: 10,bottom: 10
           ),
-          margin: EdgeInsets.only(top: 10),
+          margin: const EdgeInsets.only(top: 10),
           decoration: BoxDecoration(
             shape: BoxShape.rectangle,
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
-              BoxShadow(color: Colors.black,offset: Offset(0,10),
+              const BoxShadow(color: Colors.black,offset: Offset(0,10),
               blurRadius: 10
               ),
             ]
@@ -46,17 +46,17 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text(widget.title,style: TextStyle(fontSize: 22,fontWeight: FontWeight.w600),),
-              SizedBox(height: 15,),
-              Text(widget.descriptions,style: TextStyle(fontSize: 14),textAlign: TextAlign.center,),
-              SizedBox(height: 22,),
+              Text(widget.title,style: const TextStyle(fontSize: 22,fontWeight: FontWeight.w600),),
+              const SizedBox(height: 15,),
+              Text(widget.descriptions,style: const TextStyle(fontSize: 14),textAlign: TextAlign.center,),
+              const SizedBox(height: 22,),
               Align(
                 alignment: Alignment.bottomRight,
                 child: FlatButton(
                     onPressed: (){
                       Navigator.of(context).pop();
                     },
-                    child: Text(widget.text,style: TextStyle(fontSize: 18),)),
+                    child: Text(widget.text,style: const TextStyle(fontSize: 18),)),
               ),
             ],
           ),

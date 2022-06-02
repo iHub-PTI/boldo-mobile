@@ -1,31 +1,14 @@
 import 'package:boldo/models/Patient.dart';
-import 'package:boldo/models/User.dart';
 import 'package:boldo/network/user_repository.dart';
-import 'package:boldo/provider/user_provider.dart';
-import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
-import 'package:boldo/screens/family/family_tab.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
-import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
 import 'package:boldo/widgets/background.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:boldo/network/http.dart';
-import 'package:boldo/provider/utils_provider.dart';
-import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/constants.dart';
 
 import '../../../main.dart';
-import 'defined_relationship_screen.dart';
 
 class FamilyConnectTransition extends StatefulWidget {
   final String? identifier;

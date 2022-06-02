@@ -1,10 +1,7 @@
 import 'dart:io';
 
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
-import 'package:boldo/provider/auth_provider.dart';
-import 'package:boldo/screens/sing_in/sing_in_transition.dart';
 import 'package:boldo/screens/take_picture/take_picture_screen.dart';
-import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:boldo/utils/loading_helper.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +10,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path_package;
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 
 import '../../constants.dart';
 import '../../main.dart';

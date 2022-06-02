@@ -1,18 +1,12 @@
-import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/pre_register_notify/pre_register_success_screen.dart';
-import 'package:boldo/screens/sing_in/sing_in_transition.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants.dart';
 import '../main.dart';
@@ -99,7 +93,7 @@ Future<int> authenticateUser({required BuildContext context}) async {
     await prefs.setString("gender", response.data["gender"]);
     await prefs.setString("name", response.data['givenName']!= null ? toLowerCase(response.data['givenName']!) : '');
     await prefs.setString("lastName", response.data['familyName']!= null ? toLowerCase(response.data['familyName']!) : '');
-    await prefs.setBool("isFamily", false);
+    await prefs.setBool(isFamily, false);
     /*
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     userProvider.setUserData(

@@ -1,6 +1,5 @@
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/widgets/in-person-virtual-switch.dart';
-import 'package:boldo/widgets/in-person-virtual-alert.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';

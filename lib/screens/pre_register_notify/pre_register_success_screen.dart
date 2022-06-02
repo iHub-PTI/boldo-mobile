@@ -1,8 +1,6 @@
-import 'package:boldo/screens/hero/hero_screen.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/svg.dart';
 
 class PreRegisterSuccess extends StatefulWidget {

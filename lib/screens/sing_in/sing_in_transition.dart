@@ -3,7 +3,6 @@ import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/loading_helper.dart';
 import 'package:boldo/widgets/background.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart';
@@ -32,7 +31,7 @@ class _SingInTransitionState extends State<SingInTransition> {
   GlobalKey scaffoldKey = GlobalKey();
 
   Future<void> timer() async {
-    if(prefs.getBool("isFamily")?? false)
+    if(prefs.getBool(isFamily)?? false)
       BlocProvider.of<PatientBloc>(context).add(ChangeUser(id: prefs.getString("idFamily")));
     else
       BlocProvider.of<PatientBloc>(context).add(ChangeUser(id: null));

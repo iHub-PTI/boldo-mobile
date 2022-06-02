@@ -1,24 +1,6 @@
-import 'package:boldo/network/http.dart';
-import 'package:boldo/provider/auth_provider.dart';
-import 'package:boldo/provider/utils_provider.dart';
-import 'package:boldo/screens/pre_register_notify/pre_register_screen.dart';
-import 'package:boldo/screens/register/sign_up_basic_info.dart';
-import 'package:boldo/screens/register/sign_up_phone_number.dart';
-import 'package:boldo/utils/authenticate_user_helper.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter/services.dart';
-import 'package:flutter_appauth/flutter_appauth.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants.dart';
 
@@ -205,12 +187,6 @@ class HeroScreenV2 extends StatelessWidget {
 
   final pageController = PageController(viewportFraction: 1.1);
 
-  void _openRegister(context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const SignUpPhoneInfo()),
-    );
-  }
 
   Widget _buildCarousel(BuildContext context, int carouselIndex){
     if ( carouselIndex % 2 == 0 ) // Padding between Cards
@@ -220,36 +196,6 @@ class HeroScreenV2 extends StatelessWidget {
     );
   }
 
-  Widget _buildPageViewIndicator(BuildContext context, int indexPageView) {
-    return Column(
-      children: [
-        const SizedBox(
-          height: 20,
-        ),
-        PageViewDotIndicator(
-          currentItem: pageIndexNotifier.value,
-          count: 3,
-          unselectedColor: Constants.extraColor200,
-          selectedColor: Constants.secondaryColor500,
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        SizedBox(
-          width: 220,
-          child: Text(
-            indexPageView == 0
-                ? "Acceso a médicos de confianza de forma instantánea"
-                : indexPageView == 1
-                ? "Reserva una consulta en línea con un médico"
-                : "Fácil acceso a tus citas pasadas y futuras",
-            style: boldoSubTextStyle,
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 class CarouselSlide extends StatelessWidget {

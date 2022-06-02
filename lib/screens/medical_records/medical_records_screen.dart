@@ -1,6 +1,3 @@
-import 'package:boldo/models/Patient.dart';
-import 'package:boldo/models/medicalRecord.dart';
-import 'package:boldo/network/http.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/medical_records/medical_records_details.dart';
@@ -31,7 +28,7 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
 
   Future<void> _fetchProfileData() async {
     try {
-      if(prefs.getBool("isFamily")?? false)
+      if(prefs.getBool(isFamily)?? false)
         allMedicalData = [];
       else
         await getMedicalRecords();

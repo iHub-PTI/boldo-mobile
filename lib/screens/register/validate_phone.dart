@@ -1,5 +1,4 @@
 import 'package:boldo/screens/register/dni_register.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';

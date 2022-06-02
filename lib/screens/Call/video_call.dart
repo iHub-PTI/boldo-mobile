@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'package:boldo/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
@@ -49,7 +50,7 @@ class _VideoCallState extends State<VideoCall> {
   Future _getCallToken() async {
     try {
       Response response;
-      if(! prefs.getBool("isFamily")!)
+      if(! prefs.getBool(isFamily)!)
         response = await dio
             .get("/profile/patient/appointments/${widget.appointment.id}");
       else

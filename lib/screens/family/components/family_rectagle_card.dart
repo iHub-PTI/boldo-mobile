@@ -1,22 +1,12 @@
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/models/Patient.dart';
-import 'package:boldo/network/http.dart';
-import 'package:boldo/provider/user_provider.dart';
-import 'package:boldo/screens/booking/booking_confirm_screen.dart';
-import 'package:boldo/screens/details/appointment_details.dart';
-import 'package:boldo/screens/details/prescription_details.dart';
 import 'package:boldo/screens/family/tabs/my_managers_tab.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
-import 'package:boldo/utils/helpers.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
 
 import 'package:boldo/constants.dart';
-import 'package:boldo/models/Appointment.dart';
-import 'package:provider/provider.dart';
 
 import '../../../main.dart';
 
@@ -85,7 +75,7 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
                                   color: ConstantsV2.activeText
                               ),
                             ),
-                            widget.isDependent && ! prefs.getBool("isFamily")! ? UnlinkFamilyWidget(
+                            widget.isDependent && ! prefs.getBool(isFamily)! ? UnlinkFamilyWidget(
                               onTapCallback: (result) async {
                                 if (result == 'Desvincular') {
                                   BlocProvider.of<PatientBloc>(context).add(UnlinkDependent(id: widget.patient!.id!));

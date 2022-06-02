@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../constants.dart';
 import 'package:boldo/constants.dart';
-import 'package:flutter/foundation.dart';
 
 class EmptyAppointmentsState extends StatelessWidget {
   final String text;

@@ -22,18 +22,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-// import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'package:boldo/network/connection_status.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
-import 'package:boldo/screens/hero/hero_screen.dart';
 import 'package:boldo/constants.dart';
 
 import 'blocs/user_bloc/patient_bloc.dart';
@@ -51,7 +48,7 @@ User user = User();
 Patient patient = Patient();
 Patient editingPatient = Patient();
 late List<MedicalRecord> allMedicalData;
-late XFile? userImageSelected = null;
+late XFile? userImageSelected;
 int selectedPageIndex = 0;
 const storage = FlutterSecureStorage();
 late List<Relationship> relationTypes = [];
@@ -73,7 +70,7 @@ Future<void> main() async {
   ConnectionStatusSingleton.getInstance().initialize();
 
   prefs = await SharedPreferences.getInstance();
-  prefs.setBool("isFamily", prefs.getBool("isFamily") ?? false);
+  prefs.setBool(isFamily, prefs.getBool(isFamily) ?? false);
 
   initDio(navKey: navKey);
   initDioSecondaryAccess(navKey: navKey);

@@ -5,7 +5,6 @@ import 'package:boldo/models/Specialization.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';

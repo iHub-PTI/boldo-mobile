@@ -92,7 +92,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if(prefs.getBool("isFamily")!)
+                      if(prefs.getBool(isFamily)!)
                         Flexible(
                           child: Text(
                             "mostrando a",
@@ -112,7 +112,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                       ),
                       SizedBox(height: (widget.max /
                           ConstantsV2.homeAppBarMaxHeight) * 10),
-                      if(! prefs.getBool("isFamily")!)
+                      if(! prefs.getBool(isFamily)!)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -126,7 +126,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                         ),
 
                       const SizedBox(height: 4),
-                      !prefs.getBool("isFamily")! ?Text(
+                      !prefs.getBool(isFamily)! ?Text(
                         formatDate(
                           DateTime.now(),
                           [d, ' de ', MM, ' de ', yyyy],
@@ -233,7 +233,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                                 !expand
                                     ? Container(
                                   height: 55,
-                                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+                                  margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
                                   width: 305,
                                   alignment: Alignment.topLeft,
                                   child: families.length > 0 ? ListView.builder(
@@ -264,12 +264,10 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                                   onPointerDown: (PointerDownEvent event) {
                                     setState ((){
                                       start = event.localPosition.dy;
-                                      print("Down ${start}");
                                     });
                                   },
                                   onPointerUp: (PointerUpEvent event) {
                                     setState ((){
-                                      print("UP ${event.localPosition.dy}");
                                       if(start < event.localPosition.dy)
                                         expand = true;
                                       else if( start > event.localPosition.dy )
@@ -344,7 +342,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                 ? InkWell(
                   onTap: () {
                     prefs.remove("idFamily");
-                    prefs.setBool("isFamily", false);
+                    prefs.setBool(isFamily, false);
                     Navigator.pushNamed(context, '/FamilyTransition');
                   },
                   child:ProfileImageViewTypeForm(height: height, width: width, border: false, form: type,)
@@ -352,7 +350,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                 :InkWell(
                   onTap: () {
                     prefs.setString("idFamily", families[index-1].id!);
-                    prefs.setBool("isFamily", true);
+                    prefs.setBool(isFamily, true);
                     Navigator.pushNamed(context, '/FamilyTransition');
                   },
                   child:ProfileImageViewTypeForm(height: height, width: width, border: false, patient: families[index-1], form: type,)
@@ -382,7 +380,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
             ? InkWell(
               onTap: () {
                 prefs.remove("idFamily");
-                prefs.setBool("isFamily", false);
+                prefs.setBool(isFamily, false);
                 Navigator.pushNamed(context, '/FamilyTransition');
               },
               child: ProfileImageViewTypeForm(height: height, width: width, border: false, form: type,)
@@ -390,7 +388,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
             :InkWell(
               onTap: () {
                 prefs.setString("idFamily", families[index-1].id!);
-                prefs.setBool("isFamily", true);
+                prefs.setBool(isFamily, true);
                 Navigator.pushNamed(context, '/FamilyTransition');
               },
               child: ProfileImageViewTypeForm(height: height, width: width, border: false, patient: families[index-1], form: type,)
@@ -408,7 +406,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
   }
 
   BoxDecoration _decoration(){
-    if((prefs.getBool("isFamily")?? false)){
+    if((prefs.getBool(isFamily)?? false)){
       return const BoxDecoration(
           borderRadius: BorderRadius.only(bottomRight: Radius.circular(24)),
           gradient: RadialGradient(

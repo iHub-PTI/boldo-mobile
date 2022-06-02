@@ -7,9 +7,7 @@ import 'package:boldo/screens/dashboard/tabs/components/divider_feed_secction_ho
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
-import 'package:boldo/screens/medical_records/medical_records_screen.dart' as medScreen;
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -71,7 +69,7 @@ class _HomeTabState extends State<HomeTab> {
       index: 1,
       title: 'Ver mis consultas',
       appear: true,
-      page: PastAppointmentsScreen(),
+      page: const PastAppointmentsScreen(),
     ),
     CarouselCardPages(
       key: UniqueKey(),
@@ -81,7 +79,7 @@ class _HomeTabState extends State<HomeTab> {
       index: 2,
       title: 'Ver mis recetas',
       appear: true,
-      page: PrescriptionsScreen(),
+      page: const PrescriptionsScreen(),
     ),
     CarouselCardPages(
       key: UniqueKey(),
@@ -206,7 +204,7 @@ class _HomeTabState extends State<HomeTab> {
     Response responseAppointments;
     print(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).toUtc().toIso8601String());
     try {
-      if(! prefs.getBool("isFamily")!)
+      if(! prefs.getBool(isFamily)!)
         responseAppointments = await dio.get(
           "/profile/patient/appointments?start=${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).toUtc().toIso8601String()}");
       else
@@ -437,10 +435,10 @@ class _HomeTabState extends State<HomeTab> {
                                           child: Row(
                                             children: [
                                               Text(
-                                                'Novedades${prefs.getBool("isFamily")?? false ? " de " : ''}',
+                                                'Novedades${prefs.getBool(isFamily)?? false ? " de " : ''}',
                                                 style: boldoSubTextStyle,
                                               ),
-                                              prefs.getBool("isFamily")?? false ? Text('${patient.relationshipDisplaySpan}', style: boldoSubTextStyle.copyWith(color: ConstantsV2.green)) : Container(),
+                                              prefs.getBool(isFamily)?? false ? Text('${patient.relationshipDisplaySpan}', style: boldoSubTextStyle.copyWith(color: ConstantsV2.green)) : Container(),
                                             ],
                                           )
                                       ),
@@ -613,7 +611,7 @@ class _CustomCardPageState extends State<CustomCardPage>{
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      colorFilter: carouselCardPage!.appear ? null : widget.radius < 70 ? null : ColorFilter.mode(Colors.black, BlendMode.hue),
+                      colorFilter: carouselCardPage!.appear ? null : widget.radius < 70 ? null : const ColorFilter.mode(Colors.black, BlendMode.hue),
                       image: AssetImage(carouselCardPage!.image),
                     ),
                   ),

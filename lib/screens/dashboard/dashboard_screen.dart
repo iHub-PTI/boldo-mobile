@@ -1,21 +1,10 @@
 import 'package:boldo/screens/medical_records/medical_records_screen.dart';
-import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter/services.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:boldo/network/http.dart';
 
 import 'package:boldo/screens/dashboard/tabs/home_tab.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/dashboard/tabs/settings_tab.dart';
-import 'package:boldo/constants.dart';
 
 import '../../main.dart';
 
