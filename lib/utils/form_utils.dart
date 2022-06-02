@@ -25,7 +25,7 @@ String? validateEmail(String email) {
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
   RegExp regex = RegExp(pattern.toString());
   // email is only for a not dependent
-  if (email.isEmpty && !prefs.getBool("isFAmily")!) {
+  if (email.isEmpty && !prefs.getBool("isFamily")!) {
     return 'Ingrese su correo electrónico';
   } else if (email.isNotEmpty && !regex.hasMatch(email)) {
     return 'Ingrese un correo electrónico válido';
