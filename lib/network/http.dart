@@ -97,7 +97,7 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
           dio.interceptors.errorLock.unlock();
           //retry request
           return handle
-              .resolve(await dio.request(options.path, options: optionsDio));
+              .resolve(await dio.request(options.path, data: options.data, options: optionsDio));
         } catch (e) {
           print(e);
           dio.unlock();
