@@ -48,7 +48,7 @@ User user = User();
 Patient patient = Patient();
 Patient editingPatient = Patient();
 late List<MedicalRecord> allMedicalData;
-late XFile? userImageSelected;
+late XFile? userImageSelected = null;
 int selectedPageIndex = 0;
 const storage = FlutterSecureStorage();
 late List<Relationship> relationTypes = [];
@@ -65,7 +65,7 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   // await dotenv.load(fileName: '.env');
 
-  GestureBinding.instance!.resamplingEnabled = true;
+  //GestureBinding.instance!.resamplingEnabled = true;
 
   ConnectionStatusSingleton.getInstance().initialize();
 

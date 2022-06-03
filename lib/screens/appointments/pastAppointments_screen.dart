@@ -9,6 +9,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 class PastAppointmentsScreen extends StatefulWidget {
   const PastAppointmentsScreen() : super();
@@ -169,7 +170,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                                                   Text(
                                                     daysDifference == 0
                                                         ? "hoy"
-                                                        : "hace $daysDifference dias",
+                                                        : '${DateFormat('dd/MM/yy').format(DateTime.parse(allAppointments[index].start!).toLocal())}',
                                                     style: boldoCorpSmallTextStyle
                                                         .copyWith(
                                                             color: ConstantsV2

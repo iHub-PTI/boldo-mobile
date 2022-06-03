@@ -11,6 +11,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../network/http.dart';
@@ -172,7 +173,6 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                             textTop: "Nada para mostrar",
                           )
                         : SizedBox(
-                            height: MediaQuery.of(context).size.height - 260,
                             child: ListView.separated(
                               itemCount: allAppointments.length,
                               shrinkWrap: true,
@@ -244,7 +244,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                 Text(
                                                   daysDifference == 0
                                                       ? "hoy"
-                                                      : "hace $daysDifference dias",
+                                                      : '${DateFormat('dd/MM/yy').format(DateTime.parse(allAppointments[index].start!).toLocal())}',
                                                   style: boldoCorpSmallTextStyle
                                                       .copyWith(
                                                           color: ConstantsV2

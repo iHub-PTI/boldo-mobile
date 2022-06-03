@@ -273,7 +273,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
               Container(
                 padding: const EdgeInsets.only(left: 6.5, right: 6.5, bottom: 2, top: 2),
                 color: ConstantsV2.green,
-                child: Text(isToday ? "hoy" : '${DateFormat('MM/dd').format(DateTime.parse(widget.appointment.start!).toLocal())}',
+                child: Text(isToday ? "hoy" : '${DateFormat('dd/MM').format(DateTime.parse(widget.appointment.start!).toLocal())}',
                   style: const TextStyle(
                     color: ConstantsV2.lightGrey,
                     fontStyle: FontStyle.normal,
