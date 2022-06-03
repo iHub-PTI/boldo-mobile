@@ -48,7 +48,7 @@ User user = User();
 Patient patient = Patient();
 Patient editingPatient = Patient();
 late List<MedicalRecord> allMedicalData;
-late XFile? userImageSelected = null;
+XFile? userImageSelected;
 int selectedPageIndex = 0;
 const storage = FlutterSecureStorage();
 late List<Relationship> relationTypes = [];
