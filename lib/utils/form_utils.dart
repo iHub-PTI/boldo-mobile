@@ -1,5 +1,7 @@
 //Utilities are not project related, they are static and can be imported and moved anywhere.
 
+import 'package:boldo/constants.dart';
+import 'package:boldo/main.dart';
 import 'package:flutter/services.dart';
 
 String? validatePassword(String password) {
@@ -23,9 +25,10 @@ String? validateEmail(String email) {
   Pattern pattern =
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
   RegExp regex = RegExp(pattern.toString());
-  if (email.isEmpty) {
+  // email is only for a not dependent
+  if (email.isEmpty && !prefs.getBool(isFamily)!) {
     return 'Ingrese su correo electrónico';
-  } else if (!regex.hasMatch(email)) {
+  } else if (email.isNotEmpty && !regex.hasMatch(email)) {
     return 'Ingrese un correo electrónico válido';
   } else {
   

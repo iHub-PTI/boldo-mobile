@@ -1,8 +1,8 @@
+import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
 
 import '../constants.dart';
-import '../screens/dashboard/dashboard_screen.dart';
 
 Future<bool?> notLoggedInPop({required BuildContext context}) async {
   return showDialog<bool>(
@@ -73,7 +73,7 @@ Future<bool?> notLoggedInPop({required BuildContext context}) async {
                                       _loading = true;
                                     });
                                     await authenticateUser(
-                                        context: context, switchPage: false);
+                                        context: context);
 
                                     Navigator.of(context).pop(false);
                                   },

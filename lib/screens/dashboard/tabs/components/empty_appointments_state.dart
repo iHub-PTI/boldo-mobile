@@ -1,12 +1,10 @@
+import 'package:boldo/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 
-import 'package:boldo/provider/utils_provider.dart';
 
 import '../../../../constants.dart';
 import 'package:boldo/constants.dart';
-import 'package:flutter/foundation.dart';
 
 class EmptyAppointmentsState extends StatelessWidget {
   final String text;
@@ -52,8 +50,7 @@ class EmptyAppointmentsState extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              Provider.of<UtilsProvider>(context, listen: false)
-                  .setSelectedPageIndex(pageIndex: 1);
+              selectedPageIndex = 1;
             },
             child: const Text("Agregar Cita"),
           )

@@ -1,10 +1,12 @@
 import 'dart:core';
+import 'package:boldo/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:dio/dio.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
+import '../../main.dart';
 import '../../network/http.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/screens/Call/components/call.dart';
@@ -47,8 +49,13 @@ class _VideoCallState extends State<VideoCall> {
 
   Future _getCallToken() async {
     try {
-      Response response = await dio
-          .get("/profile/patient/appointments/${widget.appointment.id}");
+      Response response;
+      if(! prefs.getBool(isFamily)!)
+        response = await dio
+            .get("/profile/patient/appointments/${widget.appointment.id}");
+      else
+        response = await dio.get(
+            "/profile/caretaker/dependent/${patient.id}/appointments/${widget.appointment.id}");
 
       if (response.data["token"] == null ||
           response.data["token"] == "" ||
@@ -204,8 +211,9 @@ class _VideoCallState extends State<VideoCall> {
       socket!.dispose();
       socket = null;
     }
-
     // cleanup the video renderers
+    localRenderer.srcObject = null;
+    remoteRenderer.srcObject = null;
     localRenderer.dispose();
     remoteRenderer.dispose();
 
@@ -214,7 +222,7 @@ class _VideoCallState extends State<VideoCall> {
     super.dispose();
   }
 
-  void hangUp() {
+  Future<void> hangUp() async {
     socket!.emit('end call', {"room": widget.appointment.id, "token": token});
     Navigator.of(context).pop();
   }

@@ -15,7 +15,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+38
+version: 1.0.3+47
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -35,18 +35,32 @@ dependencies:
   flutter_secure_storage: ^5.0.2
   flutter_dotenv: ^5.0.2
   page_view_dot_indicator: ^1.1.0
-  google_fonts: ^2.2.0
+  google_fonts: 2.2.0
   flutter_appauth: ^2.4.1
   provider: ^6.0.2
   connectivity: ^3.0.6
   cached_network_image: ^3.2.0
+  path: 1.8.0
   path_provider: ^2.0.4
   file_picker: ^4.3.1
   image_cropper: ^1.4.1
   url_launcher: ^6.0.10
   intl: ^0.17.0-nullsafety.2
   flutter_datetime_picker: ^1.5.1
-
+  email_validator: ^2.0.1
+  intl_phone_field: ^3.0.1
+  passwordfield: ^0.1.0
+  pin_code_text_field: ^1.8.0
+  image_picker: 0.8.5
+  camera: ^0.9.4+16
+  date_format: ^2.0.5
+  permission_handler: 9.0.2
+  flutter_bloc: ^8.0.1
+  dartz: ^0.10.1
+  qr_flutter: ^4.0.0
+  mobile_scanner: 1.0.0
+  crypto: ^3.0.1
+  mask_text_input_formatter: ^2.3.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.3
@@ -71,6 +85,51 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat/Montserrat-Thin.ttf
+          weight: 100
+        - asset: assets/fonts/Montserrat/Montserrat-ThinItalic.ttf
+          style: italic
+          weight: 100
+        - asset: assets/fonts/Montserrat/Montserrat-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/Montserrat/Montserrat-ExtraLightItalic.ttf
+          style: italic
+          weight: 200
+        - asset: assets/fonts/Montserrat/Montserrat-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Montserrat/Montserrat-LightItalic.ttf
+          style: italic
+          weight: 300
+        - asset: assets/fonts/Montserrat/Montserrat-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Montserrat/Montserrat-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Montserrat/Montserrat-MediumItalic.ttf
+          style: italic
+          weight: 500
+        - asset: assets/fonts/Montserrat/Montserrat-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Montserrat/Montserrat-SemiBoldItalic.ttf
+          style: italic
+          weight: 600
+        - asset: assets/fonts/Montserrat/Montserrat-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Montserrat/Montserrat-BoldItalic.ttf
+          style: italic
+          weight: 700
+        - asset: assets/fonts/Montserrat/Montserrat-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/Montserrat/Montserrat-ExtraBoldItalic.ttf
+          style: italic
+          weight: 800
+        - asset: assets/fonts/Montserrat/Montserrat-Black.ttf
+          weight: 900
+        - asset: assets/fonts/Montserrat/Montserrat-BlackItalic.ttf
+          style: italic
+          weight: 900
   # To add assets to your application, add an assets section, like this:
   assets:
     - .env
@@ -78,6 +137,7 @@ flutter:
     - assets/icon/
     - assets/images/
     - assets/decorations/
+    - assets/fonts/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -65,53 +65,135 @@ class Constants {
   
 }
 
+const String genericError = "Algo salió mal, vuelve a intentarlo más tarde";
+
 // Text Style
 const boldoHeadingTextStyle = TextStyle(
-  color: Constants.extraColor400,
-  fontSize: 16,
-  fontWeight: FontWeight.w600,
+  color: ConstantsV2.inactiveText,
+  fontStyle: FontStyle.normal,
+  fontSize: 18,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
+);
+
+const boldoTitleRegularTextStyle = TextStyle(
+  color: ConstantsV2.lightest,
+  fontStyle: FontStyle.normal,
+  fontSize: 24,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
+);
+
+const boldoTitleBlackTextStyle = TextStyle(
+  color: ConstantsV2.activeText,
+  fontStyle: FontStyle.normal,
+  fontSize: 24,
+  fontWeight: FontWeight.w500,
+  fontFamily: 'Montserrat',
 );
 
 const boldoSubTextStyle = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.normal,
-    color: Constants.extraColor300);
+    color: ConstantsV2.inactiveText,
+    fontStyle: FontStyle.normal,
+    fontSize: 18,
+    fontWeight: FontWeight.w400,
+    fontFamily: 'Montserrat',
+);
+
+const boldoSubTextMediumStyle = TextStyle(
+  color: ConstantsV2.activeText,
+  fontStyle: FontStyle.normal,
+  fontSize: 16,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
+);
+
+const boldoCardHeadingTextStyle = TextStyle(
+  color: Colors.white,
+  fontStyle: FontStyle.normal,
+  fontSize: 17,
+  fontWeight: FontWeight.w600,
+  fontFamily: 'Montserrat',
+);
+
+const boldoCorpMediumTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 14,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoCorpMediumBlackTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 14,
+  fontWeight: FontWeight.w500,
+  fontFamily: 'Montserrat',
+);
+
+const boldoCorpSmallTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 10,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoBillboardTextStyleAlt = TextStyle(
+  color: ConstantsV2.inactiveText,
+  fontStyle: FontStyle.normal,
+  fontSize: 40,
+  fontFamily: 'Montserrat',
+);
 
 ThemeData boldoTheme = ThemeData(
+  fontFamily: 'Montserrat',
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      textStyle: const TextStyle(fontWeight: FontWeight.w500),
-      primary: Constants.primaryColor500,
+      textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      primary: ConstantsV2.orange,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(100),
+      ),
+    ),
+  ),
+  outlinedButtonTheme: OutlinedButtonThemeData(
+    style: OutlinedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      textStyle: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: ConstantsV2.orange),
+      primary: ConstantsV2.orange,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(100),
       ),
     ),
   ),
   inputDecorationTheme: InputDecorationTheme(
-    enabledBorder: OutlineInputBorder(
+    enabledBorder: UnderlineInputBorder(
       borderRadius: BorderRadius.circular(6),
       borderSide: const BorderSide(
-        color: Constants.extraColor200,
+        color: ConstantsV2.enableBorded,
         width: 1.0,
       ),
     ),
-    focusedBorder: OutlineInputBorder(
+    focusedBorder: UnderlineInputBorder(
       borderRadius: BorderRadius.circular(6),
       borderSide: const BorderSide(
-        color: Constants.extraColor200,
+        color: ConstantsV2.focuseBorder,
         width: 1.25,
       ),
     ),
-    focusedErrorBorder: OutlineInputBorder(
+    focusedErrorBorder: UnderlineInputBorder(
       borderRadius: BorderRadius.circular(6),
       borderSide: const BorderSide(
-        color: Constants.extraColor200,
+        color: ConstantsV2.buttonPrimaryColor100,
       ),
     ),
-    errorBorder: OutlineInputBorder(
+    errorBorder: UnderlineInputBorder(
       borderRadius: BorderRadius.circular(6),
       borderSide: const BorderSide(
-        color: Constants.extraColor200,
+        color: ConstantsV2.buttonPrimaryColor100,
         width: 1.0,
       ),
     ),
@@ -121,3 +203,134 @@ ThemeData boldoTheme = ThemeData(
   brightness: Brightness.light,
   visualDensity: VisualDensity.adaptivePlatformDensity,
 );
+
+
+// Colors Boldo V2
+class ConstantsV2 {
+  // background colors palette
+  static const Color primaryColor100 = Color(0xffFFFFFF);
+  static const Color primaryColor200 = Color(0xff74B49E);
+  static const Color primaryColor300 = Color(0xffFDA57D);
+
+  static const Color menuBackgroundColor100 = Color(0xff364F6B);
+  static const Color menuBackgroundColor200 = Color(0xff74B49E);
+  static const Color menuBackgroundColor300 = Color(0xffFFF7A3E);
+
+  // stops primary background colors
+  static const double primaryStop100 = -0.14;
+  static const double primaryStop200 = 1.25;
+  static const double primaryStop300 = 1.79;
+
+  static const double menuBackgroundStop100 = 0.0;
+  static const double menuBackgroundStop200 = 0.30;
+  static const double menuBackgroundStop300 = 1.0;
+
+  // button color
+  static const Color buttonPrimaryColor100 = Color(0xffEB8B76);
+
+  // hero cards colors gradient
+  static const Color primaryCardHeroColor100 = Color(0xffFDA57D);
+
+  // stops hero cards background colors
+  static const double primaryCardStop100 = 0.20;
+  static const double primaryCardStop200 = 0.72;
+
+  // hero cards colors gradient
+  static const Color secondaryCardHeroColor100 = Color(0xffFDA57D);
+
+  // stops hero cards background colors
+  static const double secondaryCardStop100 = 0.82;
+  static const double secondaryCardStop200 = 1.46;
+
+  // Text color
+  static const Color primaryColor = Color(0xffF5F5F5);
+  static const Color inactiveText = Color(0xff707882);
+  static const Color activeText = Color(0xff424649);
+
+  // Input line border
+  static const Color enableBorded = Color(0xff424649);
+  static const Color focuseBorder = Color(0xff707882);
+
+  static const Color patientAppBarColor100 = Color(0xff364F6B);
+  static const Color patientAppBarColor200 = Color(0xff74B49E);
+  static const Color patientAppBarColor300 = Color(0xffFDA57D);
+  static const Color familyAppBarColor100 = Color(0xff364F6B);
+  static const Color familyAppBarColor200 = Color(0xff74B49E);
+  static const Color familyAppBarColor300 = Color(0xff5E7B97);
+
+  // stops primary background colors
+  static const double patientAppBarStop100 = 0;
+  static const double patientAppBarStop200 = 0.3067;
+  static const double patientAppBarStop300 = 1.0;
+  static const double familyAppBarStop100 = 0;
+  static const double familyAppBarStop200 = 0.3762;
+  static const double familyAppBarStop300 = 1.0;
+
+  // Sing In background colors
+  static const Color singInPrimaryColor100 = Color(0xff364F6B);
+  static const Color singInPrimaryColor200 = Color(0xff74B49E);
+  static const Color singInPrimaryColor300 = Color(0xff93D2C2);
+  static const Color singInSecondaryColor100 = Color(0xffFDA57D);
+  static const Color singInSecondaryColor200 = Color(0xff62B7DC);
+  static const Color singInSecondaryColor300 = Color(0xff639890);
+
+  // Sing In background stops
+  static const double singInPrimaryStop100 = 0;
+  static const double singInPrimaryStop200 = 0.6757;
+  static const double singInPrimaryStop300 = 1.0;
+  static const double singInSecondaryStop100 = 0;
+  static const double singInSecondaryStop200 = 0.5479;
+  static const double singInSecondaryStop300 = 1.0;
+
+  // Family Connect background colors
+  static const Color familyConnectPrimaryColor100 = Color(0xff364F6B);
+  static const Color familyConnectPrimaryColor200 = Color(0xff74B49E);
+  static const Color familyConnectPrimaryColor300 = Color(0xffFDA57D);
+  static const Color familyConnectSecondaryColor100 = Color(0xff364F6B);
+  static const Color familyConnectSecondaryColor200 = Color(0xff74B49E);
+  static const Color familyConnectSecondaryColor300 = Color(0xff93D2C2);
+
+  // Family Connect background stops
+  static const double familyConnectPrimaryStop100 = 0;
+  static const double familyConnectPrimaryStop200 = 0.6757;
+  static const double familyConnectPrimaryStop300 = 1.0;
+  static const double familyConnectSecondaryStop100 = 0;
+  static const double familyConnectSecondaryStop200 = 0.5479;
+  static const double familyConnectSecondaryStop300 = 1.0;
+
+  // colors
+  static const Color lightGrey = Color(0xffF5F5F5);
+  static const Color lightest = Color(0xffFFFFFF);
+  static const Color green = Color(0xff28B3BB);
+  static const Color veryLightBlue = Color(0xffB1C3D7);
+  static const Color yellow = Color(0xffF9D620);
+  static const Color darkBlue = Color(0xff364F6B);
+  static const Color orange = Color(0xffEB8B76);
+  static const Color lightAndClear = Color(0xffF5F5F5);
+
+
+  // home heights
+  static double homeAppBarMaxHeight = 154.0;
+  static double homeAppBarMinHeight = 98.0;
+  static double homeCarouselContainerMaxHeight = 162.0;
+  static double homeCarouselContainerMinHeight = 82.0;
+  static double homeCarouselTitleContainerMaxHeight = 62.0;
+  static double homeCarouselTitleContainerMinHeight = 24.0;
+  static double homeCarouselCardMaxHeight = 130.0;
+  static double homeCarouselCardMinHeight = 50.0;
+  static double homeCarouselCardMaxWidth = 110.0;
+  static double homeCarouselCardMinWidth = 50.0;
+  static double homeCarouselCardMaxRadius = 100.0;
+  static double homeCarouselCardMinRadius = 10.0;
+  static double homeFeedTitleContainerMaxHeight = 62.0;
+  static double homeFeedTitleContainerMinHeight = 62.0;
+
+  static double homeExpandedMaxHeight = homeAppBarMaxHeight + homeCarouselContainerMaxHeight + homeCarouselTitleContainerMaxHeight + homeFeedTitleContainerMaxHeight;
+  static double homeExpandedMinHeight = homeAppBarMinHeight + homeCarouselContainerMinHeight + homeCarouselTitleContainerMinHeight + homeFeedTitleContainerMinHeight;
+
+}
+
+
+// Constants
+
+const String isFamily = 'isFamily';

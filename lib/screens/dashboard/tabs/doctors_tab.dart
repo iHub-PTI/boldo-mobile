@@ -33,7 +33,6 @@ class _DoctorsTabState extends State<DoctorsTab> {
 
   @override
   void initState() {
-    Provider.of<UtilsProvider>(context, listen: false).clearText();
     getDoctors();
     super.initState();
   }
@@ -316,11 +315,12 @@ class _DoctorCard extends StatelessWidget {
       final actualDay = DateTime.now();
       final parsedAvailability =
           DateTime.parse(doctor.nextAvailability!.availability!).toLocal();
-      int daysDifference = parsedAvailability.difference(actualDay).inDays;
+      // int daysDifference = parsedAvailability.difference(actualDay).inDays;
+      int daysDifference = daysBetween(actualDay,parsedAvailability);
 
-      if (actualDay.month == parsedAvailability.month) {
-        daysDifference = parsedAvailability.day - actualDay.day;
-      }
+      // if (actualDay.month == parsedAvailability.month) {
+      //   daysDifference = parsedAvailability.day - actualDay.day;
+      // }
       if (daysDifference == 0) {
         isToday = true;
       }
@@ -486,7 +486,7 @@ class _DoctorCard extends StatelessWidget {
                         );
                       },
                       child: const Text(
-                        'Reservar',
+                        'Agendar',
                         style: boldoHeadingTextStyle,
                       ),
                     ),

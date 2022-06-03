@@ -1,17 +1,17 @@
 import 'package:boldo/network/connection_status.dart';
+import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 
+import '../main.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/offline/offline_screen.dart';
 
 var dio = Dio();
 var dioHealthCore = Dio();
 void initDio({required GlobalKey<NavigatorState> navKey}) {
-  const storage = FlutterSecureStorage();
   String baseUrl = String.fromEnvironment('SERVER_ADDRESS',
       defaultValue: dotenv.env['SERVER_ADDRESS']!);
 
@@ -24,7 +24,7 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
   //setup interceptors
   dio.interceptors.add(QueuedInterceptorsWrapper(
     onRequest: (options, handler) async {
-      accessToken = (await storage.read(key: "access_token"))!;
+      accessToken = (await storage.read(key: "access_token")??'');
       options.headers["authorization"] = "bearer $accessToken";
 
       return handler.next(options);
@@ -46,9 +46,9 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
           print(e);
         }
       } else if (error.response?.statusCode == 401) {
+        print("401 DIO");
         if (accessToken == null) {
           await storage.deleteAll();
-
           return handle.next(error);
         }
 
@@ -97,8 +97,9 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
           dio.interceptors.errorLock.unlock();
           //retry request
           return handle
-              .resolve(await dio.request(options.path, options: optionsDio));
+              .resolve(await dio.request(options.path, data: options.data, options: optionsDio));
         } catch (e) {
+          print(e);
           dio.unlock();
           dio.interceptors.responseLock.unlock();
           dio.interceptors.errorLock.unlock();
@@ -107,7 +108,7 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
 
           navKey.currentState!.pushAndRemoveUntil(
             MaterialPageRoute(
-              builder: (context) => DashboardScreen(setLoggedOut: true),
+              builder: (context) => HeroScreenV2(),
             ),
             (route) => false,
           );
@@ -130,7 +131,6 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
 }
 
 void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
-  const storage = FlutterSecureStorage();
   String baseUrl = String.fromEnvironment('HEALTH_PTI_API',
       defaultValue: dotenv.env['HEALTH_PTI_API']!);
 
@@ -166,6 +166,7 @@ void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
           print(e);
         }
       } else if (error.response?.statusCode == 401) {
+        print("401 DIOHealtcore");
         if (accessToken == null) {
           await storage.deleteAll();
 
@@ -190,11 +191,11 @@ void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
             validateStatus: options.validateStatus);
         if ("bearer $accessToken" != options.headers["authorization"]) {
           options.headers["authorization"] = "bearer $accessToken";
-          handle.resolve(await dio.request(options.path, options: optionsDio));
+          handle.resolve(await dioHealthCore.request(options.path, options: optionsDio));
         }
-        dio.lock();
-        dio.interceptors.responseLock.lock();
-        dio.interceptors.errorLock.lock();
+        dioHealthCore.lock();
+        dioHealthCore.interceptors.responseLock.lock();
+        dioHealthCore.interceptors.errorLock.lock();
 
         String keycloakRealmAddress = String.fromEnvironment(
             'KEYCLOAK_REALM_ADDRESS',
@@ -211,15 +212,15 @@ void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
           await storage.write(key: "access_token", value: result!.accessToken);
           await storage.write(key: "refresh_token", value: result.refreshToken);
           accessToken = result.accessToken;
-          dio.unlock();
-          dio.interceptors.responseLock.unlock();
-          dio.interceptors.errorLock.unlock();
+          dioHealthCore.unlock();
+          dioHealthCore.interceptors.responseLock.unlock();
+          dioHealthCore.interceptors.errorLock.unlock();
           return handle
-              .resolve(await dio.request(options.path, options: optionsDio));
+              .resolve(await dioHealthCore.request(options.path,data: options.data, options: optionsDio));
         } catch (e) {
-          dio.unlock();
-          dio.interceptors.responseLock.unlock();
-          dio.interceptors.errorLock.unlock();
+          dioHealthCore.unlock();
+          dioHealthCore.interceptors.responseLock.unlock();
+          dioHealthCore.interceptors.errorLock.unlock();
           await storage.deleteAll();
           accessToken = null;
 

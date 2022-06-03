@@ -1,3 +1,4 @@
+import 'package:boldo/main.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -44,7 +45,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
             color: Constants.extraColor400,
           ),
           label: Text(
-            'Reservar',
+            'Agendar',
             style: boldoHeadingTextStyle.copyWith(fontSize: 20),
           ),
         ),
@@ -83,25 +84,59 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
             text: "Confirmar",
             loading: _loading,
             actionCallback: () async {
+              Response response;
               try {
                 setState(() {
                   _loading = true;
                   _error = "";
                 });
+                print("start: ${DateTime.parse(widget.bookingDate.availability!)
+                    .toLocal()
+                    .toIso8601String()}");
+                print("start: ${widget.doctor.id}");
+                print("start: ${widget.bookingDate.appointmentType}");
+                if(! prefs.getBool(isFamily)!)
+                  response = await dio.post("/profile/patient/appointments", data: {
+                    'start': DateTime.parse(widget.bookingDate.availability!)
+                        .toUtc()
+                        .toIso8601String(),
+                    "doctorId": widget.doctor.id,
+                    "appointmentType":widget.bookingDate.appointmentType
+                  });
+                else
+                  response = await dio.post("/profile/caretaker/dependent/${patient.id}/appointments", data: {
+                    'start': DateTime.parse(widget.bookingDate.availability!)
+                        .toUtc()
+                        .toIso8601String(),
+                    "doctorId": widget.doctor.id,
+                    "appointmentType":widget.bookingDate.appointmentType
+                  });
+                if(response.statusCode == 200) {
+                  setState(() {
+                    _loading = false;
+                    _error = "";
+                  });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => BookingFinalScreen()),
+                  );
+                }else {
+                  setState(() {
+                    _loading = false;
+                    _error = response.data['message'];
+                  });
+                }
 
-                await dio.post("/profile/patient/appointments", data: {
-                  'start': DateTime.parse(widget.bookingDate.availability!)
-                      .toUtc()
-                      .toIso8601String(),
-                  "doctorId": widget.doctor.id,
-                  "appointmentType":widget.bookingDate.appointmentType
+              } on DioError catch (exception) {
+                print(exception.response?.data['message']);
+                setState(() {
+                  _loading = false;
+                  _error = exception.response?.data['message'];
                 });
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => BookingFinalScreen()),
+                await Sentry.captureException(
+                  exception,
                 );
-              } on DioError catch (exception, stackTrace) {
+              } catch (exception) {
                 print(exception);
                 setState(() {
                   _loading = false;
@@ -109,17 +144,6 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                 });
                 await Sentry.captureException(
                   exception,
-                  stackTrace: stackTrace,
-                );
-              } catch (exception, stackTrace) {
-                print(exception);
-                setState(() {
-                  _loading = false;
-                  _error = "Intente nuevamente, por favor";
-                });
-                await Sentry.captureException(
-                  exception,
-                  stackTrace: stackTrace,
                 );
               }
             },
@@ -308,15 +332,12 @@ class _DoctorProfileWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.6,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Text(
+                          width: MediaQuery.of(context).size.width * 0.55,
+                          child: Text(
                               "${getDoctorPrefix(doctor.gender!)}${doctor.givenName} ${doctor.familyName}",
                               style: boldoHeadingTextStyle.copyWith(
                                   fontWeight: FontWeight.normal),
                             ),
-                          ),
                         ),
                         const SizedBox(
                           height: 5,
@@ -324,22 +345,20 @@ class _DoctorProfileWidget extends StatelessWidget {
                         if (doctor.specializations != null &&
                             doctor.specializations!.isNotEmpty)
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.6,
+                            width: MediaQuery.of(context).size.width * 0.55,
                             child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
+                              scrollDirection: Axis.vertical,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   for (int i = 0;
                                       i < doctor.specializations!.length;
                                       i++)
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: i == 0 ? 0 : 3.0),
-                                      child: Text(
-                                        "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
-                                        style: boldoSubTextStyle.copyWith(
-                                            color: Constants.otherColor100),
-                                      ),
+                                    Text(
+                                      "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
+                                      style: boldoSubTextStyle.copyWith(
+                                          color: Constants.otherColor100,fontSize: 12),
                                     ),
                                 ],
                               ),

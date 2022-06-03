@@ -1,12 +1,15 @@
+import 'package:boldo/main.dart';
+import 'package:boldo/models/Patient.dart';
 import 'package:boldo/widgets/custom_form_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../blocs/user_bloc/patient_bloc.dart';
 import './address_screen.dart';
 import './password_reset_screen.dart';
 import './components/profile_image.dart';
@@ -20,7 +23,6 @@ import '../../utils/form_utils.dart';
 
 import '../../provider/user_provider.dart';
 
-import '../../network/http.dart';
 import '../../constants.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -46,29 +48,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _fetchProfileData() async {
     try {
-      Response response = await dio.get("/profile/patient");
 
-      Provider.of<UserProvider>(context, listen: false).setUserData(
-        addressDescription: response.data["addressDescription"],
-        job: response.data["job"],
-        neighborhood: response.data["neighborhood"],
-        street: response.data["street"],
-        photoUrl: response.data["photoUrl"],
-        birthDate: response.data["birthDate"],
-        givenName: response.data["givenName"],
-        familyName: response.data["familyName"],
-        gender: response.data["gender"],
-        city: response.data["city"],
-        email: response.data["email"],
-        phone: response.data["phone"],
-        notify: true,
-      );
-      Provider.of<UserProvider>(context, listen: false)
-          .clearProfileFormMessages();
-
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString("profile_url", response.data["photoUrl"] ?? '');
-      await prefs.setString("gender", response.data["gender"]);
+      editingPatient = Patient.fromJson(patient.toJson());
       setState(() {
         _dataLoading = false;
         _dataLoaded = true;
@@ -122,277 +103,268 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    UserProvider userProvider = Provider.of<UserProvider>(context);
-    return CustomWrapper(children: [
-      const SizedBox(height: 24),
-      TextButton.icon(
-        onPressed: () {
-          Navigator.pop(context);
+    return Scaffold(
+      body: BlocListener<PatientBloc, PatientState>(
+        listener: (context, state){
+          if(state is Success) {
+            setState(() {
+
+            });
+          }else if(state is Failed){
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.response!),
+                backgroundColor: Colors.redAccent,
+              ),
+            );
+          }
         },
-        icon: const Icon(
-          Icons.chevron_left_rounded,
-          size: 25,
-          color: Constants.extraColor400,
-        ),
-        label: Text(
-          'Mi perfil',
-          style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-        ),
-      ),
-      if (_dataLoading)
-        const Center(
-          child: Padding(
-            padding: EdgeInsets.only(top: 48.0),
-            child: CircularProgressIndicator(
-              valueColor:
-                  AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-              backgroundColor: Constants.primaryColor600,
-            ),
-          ),
-        ),
-      if (!_dataLoading && !_dataLoaded)
-        const Center(
-          child: Text(
-            "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
-            style: TextStyle(
-              fontSize: 14,
-              color: Constants.otherColor100,
-            ),
-          ),
-        ),
-      if (!_dataLoading && _dataLoaded)
-        Column(
-          children: [
-            const SizedBox(height: 24),
-            const Center(child: ProfileImage()),
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Form(
-                autovalidateMode: _validate
-                    ? AutovalidateMode.always
-                    : AutovalidateMode.disabled,
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Selector<UserProvider, String>(
-                      builder: (_, data, __) {
-                        return CustomFormInput(
-                          initialValue: data,
-                          label: "Nombre",
-                          validator: (value) => valdiateFirstName(value!),
-                          onChanged: (String val) => userProvider.setUserData(
-                            givenName: val,
-                          ),
-                        );
-                      },
-                      selector: (buildContext, userProvider) =>
-                          userProvider.getGivenName ?? '',
-                    ),
-
-                    const SizedBox(height: 20),
-                    Selector<UserProvider, String>(
-                      builder: (_, data, __) {
-                        return CustomFormInput(
-                          initialValue: data,
-                          label: "Apellido",
-                          validator: (value) => valdiateLasttName(value!),
-                          onChanged: (String val) => userProvider.setUserData(
-                            familyName: val,
-                          ),
-                        );
-                      },
-                      selector: (buildContext, userProvider) =>
-                          userProvider.getFamilyName ?? '',
-                    ),
-
-                    //CustomDropdown(),
-                    const SizedBox(height: 20),
-                    Selector<UserProvider, String>(
-                      builder: (_, data, __) {
-                        return CustomFormInput(
-                          initialValue: data,
-                          secondaryLabel: "Opcional",
-                          label: "Ocupación",
-                          onChanged: (String val) =>
-                              userProvider.setUserData(job: val),
-                        );
-                      },
-                      selector: (buildContext, userProvider) =>
-                          userProvider.getJob ?? '',
-                    ),
-
-                    const SizedBox(height: 20),
-                    Selector<UserProvider, String>(
-                      builder: (_, data, __) {
-                        String selectedvalue = data;
-                        List<Map<String, String>> itemsList = [
-                          {"title": "Masculino", "value": 'male'},
-                          {"title": "Femenino", "value": 'female'},
-                          {"title": "Otro", "value": 'other'}
-                        ];
-                        if (selectedvalue == "unknown") {
-                          itemsList.add({
-                            "title": "Selecciona tu género",
-                            "value": 'unknown'
-                          });
-                        }
-                        return CustomDropdown(
-                          label: "Género",
-                          selectedValue: selectedvalue,
-                          itemsList: itemsList,
-                          onChanged: (String val) {
-                            userProvider.setUserData(gender: val, notify: true);
-                          },
-                        );
-                      },
-                      selector: (buildContext, userProvider) =>
-                          userProvider.getGender ?? '',
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    Selector<UserProvider, String>(
-                      builder: (_, data, __) {
-                        return CustomFormInput(
-                          label: "Fecha de nacimiento",
-                          initialValue: DateFormat('dd.MM.yyyy')
-                              .format(DateTime.parse(data)),
-                          // validator: null,
-                          isDateTime: true,
-                          onChanged: (String val) {
-                            var inputFormat = DateFormat("yyyy-MM-dd");
-                            var date1 = inputFormat.format(DateTime.parse(val));
-
-                            userProvider.setUserData(
-                              birthDate: date1,
-                            );
-                          },
-                        );
-                      },
-                      selector: (buildContext, userProvider) =>
-                          userProvider.getBirthDate ?? '',
-                    ),
-
-                    const SizedBox(height: 20),
-                    Selector<UserProvider, String>(
-                      builder: (_, data, __) {
-                        return CustomFormInput(
-                          initialValue: data,
-                          label: "Correo electrónico",
-                          validator: (value) => validateEmail(value!),
-                          onChanged: (String val) =>
-                              userProvider.setUserData(email: val),
-                        );
-                      },
-                      selector: (buildContext, userProvider) =>
-                          userProvider.getEmail!,
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    Selector<UserProvider, String>(
-                      builder: (_, data, __) {
-                        return CustomFormInput(
-                          initialValue: data,
-                          isPhoneNumber: true,
-                          secondaryLabel: "Opcional",
-                          label: "Número de teléfono",
-                          inputFormatters: [ValidatorInputFormatter()],
-                          onChanged: (String val) =>
-                              userProvider.setUserData(phone: val),
-                        );
-                      },
-                      selector: (buildContext, userProvider) =>
-                          userProvider.getPhone ?? '',
-                    ),
-
-                    const SizedBox(height: 20),
-                    ListTile(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AddressScreen(),
-                          ),
-                        );
-                      },
-                      leading: SizedBox(
-                        height: double.infinity,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icon/marker.svg',
-                            ),
-                            const SizedBox(width: 10),
-                            const Text('Dirección', style: boldoSubTextStyle)
-                          ],
-                        ),
-                      ),
-                      trailing: const Icon(Icons.chevron_right),
-                    ),
-                    ListTile(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PasswordResetScreen(),
-                          ),
-                        );
-                      },
-                      leading: SizedBox(
-                        height: double.infinity,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icon/key.svg',
-                            ),
-                            const SizedBox(width: 10),
-                            const Text('Contraseña', style: boldoSubTextStyle)
-                          ],
-                        ),
-                      ),
-                      trailing: const Icon(Icons.chevron_right),
-                    ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      child: Column(
-                        children: [
-                          if (userProvider.profileEditErrorMessage != null)
-                            Text(
-                              userProvider.profileEditErrorMessage!,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Constants.otherColor100,
-                              ),
-                            ),
-                          if (userProvider.profileEditSuccessMessage != null)
-                            Text(
-                              userProvider.profileEditSuccessMessage!,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Constants.primaryColor600,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    CustomFormButton(
-                      loading: loading,
-                      text: "Guardar",
-                      actionCallback: _updateProfile,
-                    ),
-
-                    const SizedBox(height: 30),
-                  ],
+        child: BlocBuilder<PatientBloc, PatientState>(
+          builder: (context, state) {
+            return CustomWrapper(children: [
+              const SizedBox(height: 24),
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(
+                  Icons.chevron_left_rounded,
+                  size: 25,
+                  color: Constants.extraColor400,
+                ),
+                label: Text(
+                  'Mi perfil',
+                  style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                 ),
               ),
-            ),
-          ],
-        )
-    ]);
+              if (_dataLoading)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 48.0),
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                      backgroundColor: Constants.primaryColor600,
+                    ),
+                  ),
+                ),
+              if (!_dataLoading && !_dataLoaded)
+                const Center(
+                  child: Text(
+                    "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Constants.otherColor100,
+                    ),
+                  ),
+                ),
+              if (!_dataLoading && _dataLoaded)
+                Column(
+                  children: [
+                    const SizedBox(height: 24),
+                    const Center(child: ProfileImageEdit()),
+                    const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Form(
+                        autovalidateMode: _validate
+                            ? AutovalidateMode.always
+                            : AutovalidateMode.disabled,
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            CustomFormInput(
+                              initialValue: editingPatient.givenName,
+                              label: "Nombre",
+                              validator: (value) => valdiateFirstName(value!),
+                              onChanged: (String val) => (editingPatient.givenName = val
+                              ),
+                            ),
+
+
+                            const SizedBox(height: 20),
+                            CustomFormInput(
+                              initialValue: editingPatient.familyName,
+                              label: "Apellido",
+                              validator: (value) => valdiateLasttName(value!),
+                              onChanged: (String val) => (
+                                editingPatient.familyName = val
+                              ),
+                            ),
+
+                            //CustomDropdown(),
+                            const SizedBox(height: 20),
+                            CustomFormInput(
+                              initialValue: editingPatient.job,
+                              secondaryLabel: "Opcional",
+                              label: "Ocupación",
+                              onChanged: (String val) => (editingPatient.job = val),
+                            ),
+
+                            const SizedBox(height: 20),
+                            Builder(
+                              builder: (context) {
+                                String selectedvalue = editingPatient.gender?? 'unknown';
+                                List<Map<String, String>> itemsList = [
+                                  {"title": "Masculino", "value": 'male'},
+                                  {"title": "Femenino", "value": 'female'}
+                                ];
+                                if (selectedvalue == "unknown") {
+                                  itemsList.add({
+                                    "title": "Selecciona tu género",
+                                    "value": 'unknown'
+                                  });
+                                }
+                                return CustomDropdown(
+                                  label: "Género",
+                                  selectedValue: selectedvalue,
+                                  itemsList: itemsList,
+                                  onChanged: (String val) =>
+                                    (editingPatient.gender = val),
+                                );
+                              },
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            TextFormField(
+                              initialValue: DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd').parse(editingPatient.birthDate!)),
+                              inputFormatters: [MaskTextInputFormatter(mask: "##/##/####")],
+                              keyboardType: TextInputType.number,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Ingrese la fecha de nacimiento';
+                                } else {
+                                  try {
+                                    var inputFormat = DateFormat('dd/MM/yyyy');
+                                    var outputFormat = DateFormat('yyyy-MM-dd');
+                                    var date1 = inputFormat
+                                        .parse(value.toString().trim());
+                                    var date2 = outputFormat.format(date1);
+                                    editingPatient.birthDate = date2;
+                                  } catch (e) {
+                                    return "El formato de la fecha debe ser (dd/MM/yyyy)";
+                                  }
+                                }
+                                return null;
+                              },
+                              decoration: const InputDecoration(
+                                hintText: "31/12/2020",
+                                labelText: "Fecha de nacimiento (dd/mm/yyyy)",
+                              )
+                            ),
+
+                            const SizedBox(height: 20),
+                            if(!prefs.getBool(isFamily)!)
+                              CustomFormInput(
+                                initialValue: editingPatient.email?? '',
+                                label: "Correo electrónico",
+                                validator: (value) => validateEmail(value!),
+                                onChanged: (String val) => (editingPatient.email = val),
+                              ),
+                            if(!prefs.getBool(isFamily)!)
+                              const SizedBox(height: 20),
+
+                            CustomFormInput(
+                              initialValue: editingPatient.phone,
+                              isPhoneNumber: true,
+                              secondaryLabel: "Opcional",
+                              label: "Número de teléfono",
+                              inputFormatters: [ValidatorInputFormatter()],
+                              onChanged: (String val) => (editingPatient.phone = val),
+                            ),
+                            const SizedBox(height: 20),
+                            ListTile(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddressScreen(),
+                                  ),
+                                );
+                              },
+                              leading: SizedBox(
+                                height: double.infinity,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icon/marker.svg',
+                                    ),
+                                    const SizedBox(width: 10),
+                                    const Text('Dirección', style: boldoSubTextStyle)
+                                  ],
+                                ),
+                              ),
+                              trailing: const Icon(Icons.chevron_right),
+                            ),
+                            //TODO: not implemented for dependents
+                            if(!prefs.getBool(isFamily)!)
+                            ListTile(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PasswordResetScreen(),
+                                  ),
+                                );
+                              },
+                              leading: SizedBox(
+                                height: double.infinity,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icon/key.svg',
+                                    ),
+                                    const SizedBox(width: 10),
+                                    const Text('Contraseña', style: boldoSubTextStyle)
+                                  ],
+                                ),
+                              ),
+                              trailing: const Icon(Icons.chevron_right),
+                            ),
+                            const SizedBox(height: 8),
+                            SizedBox(
+                              child: Column(
+                                children: [
+                                  if (state is Failed)
+                                    Text(
+                                      state.response?? '',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Constants.otherColor100,
+                                      ),
+                                    ),
+                                  if (state is Success)
+                                    const Text(
+                                      "Actualizado exitosamente",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Constants.primaryColor600,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            CustomFormButton(
+                              loading: loading,
+                              text: "Guardar",
+                              actionCallback: _updateProfile,
+                            ),
+
+                            const SizedBox(height: 30),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+            ]);
+          },
+        ),
+      ),
+    );
   }
 }
