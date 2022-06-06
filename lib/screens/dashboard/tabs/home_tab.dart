@@ -445,7 +445,7 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                     ],
                         body: _dataFetchError
-                            ? SliverToBoxAdapter(child :DataFetchErrorWidget(retryCallback: getAppointmentsData))
+                            ? Container(child :DataFetchErrorWidget(retryCallback: getAppointmentsData))
                             : _loading
                             ? Container(child: const Center(
                             child: CircularProgressIndicator(
@@ -455,7 +455,7 @@ class _HomeTabState extends State<HomeTab> {
                             )
                         ))
                             : allAppointmentsState.isEmpty
-                            ? const SliverToBoxAdapter(child: EmptyStateV2(
+                            ? const SingleChildScrollView(child: EmptyStateV2(
                           picture: "feed_empty.svg",
                           textTop: "Nada para mostrar",
                           textBottom: "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
