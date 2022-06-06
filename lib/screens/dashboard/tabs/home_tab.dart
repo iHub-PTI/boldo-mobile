@@ -31,7 +31,6 @@ class HomeTab extends StatefulWidget {
 class _HomeTabState extends State<HomeTab> {
   Isolate? _isolate;
   ReceivePort? _receivePort;
-  bool _isAppointments = false;
 
   List<Appointment> allAppointmentsState = [];
   List<Appointment> nextAppointments = [];
@@ -351,10 +350,6 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    Appointment firstPastAppointment = allAppointmentsState.firstWhere(
-        (element) => ["closed", "locked"].contains(element.status),
-        orElse: () => Appointment());
-
     return Scaffold(
       body: SafeArea(
         child: BlocListener<PatientBloc, PatientState>(
@@ -387,8 +382,8 @@ class _HomeTabState extends State<HomeTab> {
           },
           child: BlocBuilder<PatientBloc, PatientState>(
               builder: (context, state) {
-                return CustomScrollView(
-                    slivers: [
+                return NestedScrollView(
+                    headerSliverBuilder: (context, innerBoxScrolled) => [
                       SliverAppBar(
                         pinned: true,
                         floating: false,
@@ -448,85 +443,81 @@ class _HomeTabState extends State<HomeTab> {
                             }
                         ),
                       ),
-                      _dataFetchError
-                          ? SliverToBoxAdapter(child :DataFetchErrorWidget(retryCallback: getAppointmentsData))
-                          : _loading
-                          ? const SliverFillRemaining(child: Center(
-                          child: CircularProgressIndicator(
-                            valueColor:
-                            AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                            backgroundColor: Constants.primaryColor600,
-                          )
-                      ))
-                          : allAppointmentsState.isEmpty
-                          ? const SliverToBoxAdapter(child: EmptyStateV2(
-                        picture: "feed_empty.svg",
-                        textTop: "Nada para mostrar",
-                        textBottom: "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
-                      ),)
-                          :SliverFillRemaining(
-                        child: SmartRefresher(
-                          enablePullDown: true,
-                          enablePullUp: true,
-                          header: const MaterialClassicHeader(
-                            color: Constants.primaryColor800,
-                          ),
-                          controller: _refreshController!,
-                          onLoading: () {
-                            dateOffset =
-                                dateOffset.subtract(const Duration(days: 30));
-                            setState(() {});
-                            //getAppointmentsData(loadMore: true);
-                          },
-                          onRefresh: _onRefresh,
-                          footer: CustomFooter(
-                            height: 140,
-                            builder: (BuildContext context, LoadStatus? mode) {
-                              print(mode);
-                              Widget body = Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  /*Text(
+                    ],
+                        body: _dataFetchError
+                            ? Container(child :DataFetchErrorWidget(retryCallback: getAppointmentsData))
+                            : _loading
+                            ? Container(child: const Center(
+                            child: CircularProgressIndicator(
+                              valueColor:
+                              AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                              backgroundColor: Constants.primaryColor600,
+                            )
+                        ))
+                            : allAppointmentsState.isEmpty
+                            ? const SingleChildScrollView(child: EmptyStateV2(
+                          picture: "feed_empty.svg",
+                          textTop: "Nada para mostrar",
+                          textBottom: "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
+                        ),)
+                            :Container(
+                          child: SmartRefresher(
+                            enablePullDown: true,
+                            enablePullUp: true,
+                            header: const MaterialClassicHeader(
+                              color: Constants.primaryColor800,
+                            ),
+                            controller: _refreshController!,
+                            onLoading: () {
+                              dateOffset =
+                                  dateOffset.subtract(const Duration(days: 30));
+                              setState(() {});
+                              //getAppointmentsData(loadMore: true);
+                            },
+                            onRefresh: _onRefresh,
+                            footer: CustomFooter(
+                              height: 140,
+                              builder: (BuildContext context, LoadStatus? mode) {
+                                print(mode);
+                                Widget body = Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    /*Text(
                                     "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
                                     style: const TextStyle(
                                       color: Constants.primaryColor800,
                                     ),
                                   )*/
-                                ],
-                              );
-                              return Column(
-                                children: [
-                                  const SizedBox(height: 30),
-                                  Center(child: body),
-                                ],
-                              );
-                            },
-                          ),
-                          child: SingleChildScrollView(
-                            child: Column(
+                                  ],
+                                );
+                                return Column(
+                                  children: [
+                                    const SizedBox(height: 30),
+                                    Center(child: body),
+                                  ],
+                                );
+                              },
+                            ),
+                            child: SingleChildScrollView(
+                              child: Column(
 
-                              children: [
-                                for (int i = 0;
-                                i < appointments.length;
-                                i++)
-                                  _ListAppointments(appointment: appointments[i],
-                                  ),
-                              ],
+                                children: [
+                                  for (int i = 0;
+                                  i < appointments.length;
+                                  i++)
+                                    _ListAppointments(appointment: appointments[i],
+                                    ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ) ,
-                    ]
+                        ) ,
                 );
               }
           ),
         ),
       ),
     );
-  }
-
-  Widget _buildNews(int index){
-    return const Text("Appointment");
   }
 
   Widget _buildCarousel(BuildContext context, int carouselIndex){
