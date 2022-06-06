@@ -41,6 +41,14 @@ class UserRepository {
     "Face could not be validated",
   ];
 
+  final List<String> patientAndDependentAreTheSameErrors = [
+    'The dependent and the caretaker are the same'
+  ];
+
+  final List<String> relationshipWithDependentAlreadyExistErrors = [
+    'Relationship of dependence with the patient is already exists'
+  ];
+
   Future<None>? getPatient(String? id) async {
     try {
       Response response = id == null
@@ -146,9 +154,17 @@ class UserRepository {
       var data = isNew ? user.toJsonNewPatient() : user.toJsonExistPatient();
       print(data);
       Response response =
-          await dio.post("/profile/caretaker/dependent", data: data);
+      await dio.post("/profile/caretaker/dependent", data: data);
       if (response.statusCode == 200) {
         return const None();
+      }
+      throw Failure(genericError);
+    }on DioError catch (ex){
+      print(ex);
+      if(patientAndDependentAreTheSameErrors.contains(ex.response?.data['messages'].join())){
+        throw Failure("El familiar no puede ser el mismo que el principal");
+      }else if(relationshipWithDependentAlreadyExistErrors.contains(ex.response?.data['messages'].join())){
+        throw Failure("El familiar ya se encuentra asignado");
       }
       throw Failure(genericError);
     } catch (e) {
