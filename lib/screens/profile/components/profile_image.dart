@@ -4,11 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../main.dart';
 import '../../../network/http.dart';
@@ -80,11 +80,11 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
           child: GestureDetector(
             onTap: () async {
               try {
-                FilePickerResult? result =
-                    await FilePicker.platform.pickFiles(type: FileType.image);
+                XFile? result =
+                    await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: 500,maxHeight: 500, imageQuality: 50);
                 if (result != null) {
                   File? croppedFile = await ImageCropper().cropImage(
-                    sourcePath: result.files.first.path!,
+                    sourcePath: result.path,
                     aspectRatioPresets: Platform.isAndroid
                         ? [
                             CropAspectRatioPreset.square,
