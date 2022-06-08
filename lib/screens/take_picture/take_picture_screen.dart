@@ -133,6 +133,7 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
 
     controller = cameraController;
     controller?.setFocusMode(FocusMode.auto);
+    controller?.setFlashMode(FlashMode.off);
     // If the controller is updated then update the UI.
     cameraController.addListener(() {
       if (mounted) {
