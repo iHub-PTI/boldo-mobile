@@ -56,6 +56,7 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
       userImageSelected = XFile(path);
       BlocProvider.of<PatientRegisterBloc>(context).add(
           UploadPhoto(urlUploadType: photoStage, image: userImageSelected));
+      print(userImageSelected!.path);
     } else {
       return;
     }
@@ -63,7 +64,7 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
 
   void getImageFromGallery() async {
 
-    userImageSelected = await picker.pickImage(source: ImageSource.gallery);
+    userImageSelected = await picker.pickImage(source: ImageSource.gallery, maxWidth: 500,maxHeight: 500, imageQuality: 50);
 
     if (userImageSelected != null) {
       BlocProvider.of<PatientRegisterBloc>(context).add(
