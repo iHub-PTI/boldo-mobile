@@ -178,29 +178,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
 
                             const SizedBox(height: 20),
-                            Builder(
-                              builder: (context) {
-                                String selectedvalue = editingPatient.gender?? 'unknown';
-                                List<Map<String, String>> itemsList = [
-                                  {"title": "Masculino", "value": 'male'},
-                                  {"title": "Femenino", "value": 'female'}
-                                ];
-                                if (selectedvalue == "unknown") {
-                                  itemsList.add({
-                                    "title": "Selecciona tu género",
-                                    "value": 'unknown'
-                                  });
+                            DropdownButtonFormField<String>(
+                                value: editingPatient.gender,
+                                hint: Text(
+                                  "Género",
+                                  style: boldoSubTextMediumStyle.copyWith(
+                                      color: ConstantsV2.activeText
+                                  ),
+                                ),
+                                style: boldoSubTextMediumStyle.copyWith(color: Colors.black),
+                                onChanged: (value) {
+                                  editingPatient.gender = value!;
+                                },
+                                items: ['male', 'female']
+                                    .map((gender) => DropdownMenuItem<String>(
+                                  child: Text(gender== 'male' ? 'Masculino' : gender == 'female' ? "Femenino": "desconocido"),
+                                  value: gender,
+                                )).toList(),
+                                isExpanded: true,
+                                validator: (value){
+                                  if(value == null){
+                                    return "Selecciona un género";
+                                  }
                                 }
-                                return CustomDropdown(
-                                  label: "Género",
-                                  selectedValue: selectedvalue,
-                                  itemsList: itemsList,
-                                  onChanged: (String val) =>
-                                    (editingPatient.gender = val),
-                                );
-                              },
                             ),
-
                             const SizedBox(height: 20),
 
                             TextFormField(
