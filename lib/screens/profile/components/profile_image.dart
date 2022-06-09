@@ -81,10 +81,13 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
             onTap: () async {
               try {
                 XFile? result =
-                    await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: 500,maxHeight: 500, imageQuality: 50);
+                    await ImagePicker().pickImage(source: ImageSource.gallery);
                 if (result != null) {
                   File? croppedFile = await ImageCropper().cropImage(
                     sourcePath: result.path,
+                    maxHeight: 1000,
+                    maxWidth: 1000,
+                    compressQuality: 100,
                     aspectRatioPresets: Platform.isAndroid
                         ? [
                             CropAspectRatioPreset.square,
