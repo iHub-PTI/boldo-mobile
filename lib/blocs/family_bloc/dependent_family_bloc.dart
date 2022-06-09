@@ -1,4 +1,5 @@
 
+import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
@@ -101,6 +102,66 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
           emit(Failed(response: response));
         } else {
           emit(Success());
+        }
+      }
+      if(event is GetManagersList){
+        emit(Loading());
+        var _post;
+        await Task(() =>
+        _patientRepository.getManagements()!)
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        }
+        );
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(Failed(response: response));
+        } else {
+          List<Patient> caretakers = [];
+          _post.foldRight(
+              Patient, (a, previous) => caretakers = a);
+          emit(CaretakersObtained(caretakers: caretakers));
+          emit(Success());
+        }
+      }if(event is UnlinkCaretaker){
+        emit(Loading());
+        var _post;
+        await Task(() =>
+        _patientRepository.unlinkCaretaker(event.id)!)
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        }
+        );
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(Failed(response: response));
+        }else {
+          emit(Success());
+          await Task(() =>
+          _patientRepository.getManagements()!)
+              .attempt()
+              .run()
+              .then((value) {
+            _post = value;
+          }
+          );
+          var response;
+          if (_post.isLeft()) {
+            _post.leftMap((l) => response = l.message);
+            emit(Failed(response: response));
+          } else {
+            List<Patient> caretakers = [];
+            _post.foldRight(
+                Patient, (a, previous) => caretakers = a);
+            emit(CaretakersObtained(caretakers: caretakers));
+            emit(Success());
+          }
         }
       }
     }
