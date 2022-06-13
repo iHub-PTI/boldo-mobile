@@ -7,7 +7,6 @@ class DoctorInitial extends DoctorState {}
 
 class PatientLogoutSuccessfully extends DoctorState {}
 
-
 class Loading extends DoctorState {}
 
 class Failed extends DoctorState {
@@ -17,7 +16,10 @@ class Failed extends DoctorState {
 
 class Success extends DoctorState {}
 
-class ChangeFamily extends DoctorState {}
+class AvailabilitiesObtained extends DoctorState {
+  final List<NextAvailability> availabilities;
+  AvailabilitiesObtained({required this.availabilities});
+}
 
 class RedirectNextScreen extends DoctorState {}
 
