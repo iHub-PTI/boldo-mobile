@@ -187,6 +187,31 @@ class UserRepository {
     }
   }
 
+  Future<List<NextAvailability>>? getAvailabilities({required String id, required String startDate, required String endDate}) async {
+    try {
+      Response response = await dio
+          .get("/doctors/$id/availability", queryParameters: {
+        'start': startDate,
+        'end': endDate,
+      });
+      if (response.statusCode == 200) {
+        List<NextAvailability>? allAvailabilities = [];
+        response.data['availabilities'].forEach((v) {
+          allAvailabilities.add(NextAvailability.fromJson(v));
+        });
+        for ( NextAvailability availability in allAvailabilities){
+          availability.availability = DateTime.parse(availability.availability!).toLocal().toString();
+        }
+        return allAvailabilities;
+      } else if (response.statusCode == 204) {
+        throw Failure("El familiar ya fue borrado con anterioridad");
+      }
+      throw Failure(genericError);
+    } catch (e) {
+      throw Failure(genericError);
+    }
+  }
+
   Future<None>? sendUserPreliminaryProfile(BuildContext context) async {
     try {
       final String cellPhone = user.phone!;
