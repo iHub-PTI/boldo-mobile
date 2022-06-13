@@ -464,6 +464,21 @@ class UserRepository {
     }
   }
 
+  Future<Doctor>? getDoctor({required String id}) async {
+    try {
+      Response response = await dio
+          .get("/doctors/$id");
+      if (response.statusCode == 200) {
+        return Doctor.fromJson(response.data);
+      } else if (response.statusCode == 204) {
+        throw Failure("Doctor no encontrado");
+      }
+      throw Failure(genericError);
+    } catch (e) {
+      throw Failure(genericError);
+    }
+  }
+
   Future<List<Appointment>>? getPastAppointments(String date) async {
     Response responseAppointments;
     try {
