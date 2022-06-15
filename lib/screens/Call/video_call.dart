@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:dio/dio.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
+import 'package:wakelock/wakelock.dart';
 
 import '../../main.dart';
 import '../../network/http.dart';
@@ -45,6 +46,7 @@ class _VideoCallState extends State<VideoCall> {
   void initState() {
     super.initState();
     _getCallToken();
+    Wakelock.enable();
   }
 
   Future _getCallToken() async {
@@ -205,6 +207,7 @@ class _VideoCallState extends State<VideoCall> {
 
   @override
   void dispose() {
+    Wakelock.disable();
     //cleanup the socket
     if (socket != null) {
       socket!.clearListeners();
