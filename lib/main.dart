@@ -16,7 +16,6 @@ import 'package:boldo/screens/sing_in/sing_in_transition.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,6 +32,7 @@ import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/constants.dart';
 
+import 'blocs/doctor_bloc/doctor_bloc.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
 import 'models/MedicalRecord.dart';
 import 'models/Patient.dart';
@@ -122,7 +122,10 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<MedicalRecordBloc>(
             create: (BuildContext context) => MedicalRecordBloc(),
-          )
+          ),
+          BlocProvider<DoctorBloc>(
+              create: (BuildContext context) => DoctorBloc(),
+          ),
         ],
         child: MultiProvider(
           providers: [
