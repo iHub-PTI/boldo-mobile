@@ -56,6 +56,9 @@ class UserRepository {
           : await dio.get("/profile/caretaker/dependent/$id");
       if (response.statusCode == 200) {
         patient = Patient.fromJson(response.data);
+        // Update prefs in Principal Patient
+        if(!prefs.getBool(isFamily)!)
+          prefs.setString("profile_url", patient.photoUrl?? '');
         return const None();
       }
       throw Failure(genericError);
@@ -108,12 +111,27 @@ class UserRepository {
 
   Future<List<Patient>>? getManagements() async {
     try {
-      Response response = await dio.get("/profile/patient/caretaker");
+      Response response = await dio.get("/profile/patient/caretakers");
       if (response.statusCode == 200) {
         return List<Patient>.from(
             response.data.map((i) => Patient.fromJson(i)));
       } else if (response.statusCode == 204) {
         return List<Patient>.from([]);
+      }
+      throw Failure(genericError);
+    } catch (e) {
+      throw Failure(genericError);
+    }
+  }
+
+  Future<None>? unlinkCaretaker(String id) async {
+    try {
+      Response response =
+      await dio.put("/profile/patient/inactivate/caretaker/$id");
+      if (response.statusCode == 200) {
+        return const None();
+      } else if (response.statusCode == 204) {
+        throw Failure("El gestor ya fue borrado con anterioridad");
       }
       throw Failure(genericError);
     } catch (e) {
@@ -510,7 +528,6 @@ class UserRepository {
       String url =
           "${prefs.getBool(isFamily) == true ? '/profile/caretaker/dependent/${patient.id}/appointments/$appointmentId/encounter?includePrescriptions=true&includeSoep=true' :
            '/profile/patient/appointments/$appointmentId/encounter?includePrescriptions=true&includeSoep=true'}";
-      print("esta es $url");
       MedicalRecord medicalRecord;
       Response response = await dioHealthCore.get(url);
       if (response.statusCode == 200) {
