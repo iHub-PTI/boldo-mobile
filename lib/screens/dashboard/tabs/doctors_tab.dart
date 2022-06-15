@@ -29,6 +29,8 @@ class _DoctorsTabState extends State<DoctorsTab> {
       RefreshController(initialRefresh: false);
 
   List<Doctor> doctors = [];
+  int offset = 0;
+  int page = 20;
   bool _loading = true;
 
   @override
@@ -43,6 +45,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
   }
 
   void getDoctors({int offset = 0}) async {
+    this.offset = offset;
     try {
       if (!mounted) return;
       if (offset == 0) {
@@ -102,7 +105,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
         finalQueryString = "$finalQueryString&$appointmentType";
       }
       String queryStringOther =
-          Uri(queryParameters: {"offset": offset.toString(), "count": "20"})
+          Uri(queryParameters: {"offset": offset.toString(), "count": page.toString()})
               .query;
       finalQueryString = "$finalQueryString&$queryStringOther";
       Response response = await dio.get("/doctors?$finalQueryString");
@@ -282,10 +285,12 @@ class _DoctorsTabState extends State<DoctorsTab> {
                     ),
                     controller: _refreshController,
                     onLoading: () {
-                      getDoctors(offset: doctors.length);
+                      offset += page;
+                      getDoctors(offset: offset);
                     },
                     onRefresh: () {
-                      getDoctors(offset: 0);
+                      offset = 0;
+                      getDoctors(offset: offset);
                     },
                     child: ListView.builder(
                       itemCount: doctors.length,
