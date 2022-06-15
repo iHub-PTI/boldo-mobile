@@ -1,4 +1,5 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
@@ -149,6 +150,24 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           } else {
             emit(Success());
           }
+        }
+      }if(event is EditProfile) {
+        emit(Loading());
+        var _post;
+        await Task(() =>
+        _patientRepository.editProfile(event.editingPatient)!)
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        }
+        );
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(Failed(response: response));
+        } else {
+          emit(Success());
         }
       }
     }

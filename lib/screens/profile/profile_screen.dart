@@ -35,8 +35,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _validate = false;
   bool loading = false;
-  bool _dataLoaded = false;
-  bool _dataLoading = true;
+  bool _dataLoaded = true;
+  bool _dataLoading = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -47,34 +47,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _fetchProfileData() async {
-    try {
 
       editingPatient = Patient.fromJson(patient.toJson());
-      setState(() {
-        _dataLoading = false;
-        _dataLoaded = true;
-      });
-    } on DioError catch (exception, stackTrace) {
-      print(exception);
-      setState(() {
-        _dataLoading = false;
-        _dataLoaded = false;
-      });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-    } catch (exception, stackTrace) {
-      print(exception);
-      setState(() {
-        _dataLoading = false;
-        _dataLoaded = false;
-      });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-    }
+
   }
 
   Future<void> _updateProfile() async {
@@ -89,16 +64,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     Provider.of<UserProvider>(context, listen: false)
         .clearProfileFormMessages();
-    setState(() {
-      loading = true;
-    });
-    Map<String, String>? updateResponse = await updateProfile(context: context);
-    Provider.of<UserProvider>(context, listen: false).updateProfileEditMessages(
-        updateResponse["successMessage"]??'', updateResponse["errorMessage"]??'');
 
-    setState(() {
-      loading = false;
-    });
+    BlocProvider.of<PatientBloc>(context).add(EditProfile(editingPatient: editingPatient));
+
   }
 
   @override
@@ -106,11 +74,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       body: BlocListener<PatientBloc, PatientState>(
         listener: (context, state){
+          if(state is Loading){
+            _dataLoading = true;
+          }
           if(state is Success) {
-            setState(() {
-
-            });
+            _dataLoading = false;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Perfil actualizado!"),
+                backgroundColor: ConstantsV2.green,
+              ),
+            );
           }else if(state is Failed){
+            _dataLoading = false;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.response!),
@@ -202,29 +178,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
 
                             const SizedBox(height: 20),
-                            Builder(
-                              builder: (context) {
-                                String selectedvalue = editingPatient.gender?? 'unknown';
-                                List<Map<String, String>> itemsList = [
-                                  {"title": "Masculino", "value": 'male'},
-                                  {"title": "Femenino", "value": 'female'}
-                                ];
-                                if (selectedvalue == "unknown") {
-                                  itemsList.add({
-                                    "title": "Selecciona tu género",
-                                    "value": 'unknown'
-                                  });
+                            DropdownButtonFormField<String>(
+                                value: editingPatient.gender,
+                                hint: Text(
+                                  "Género",
+                                  style: boldoSubTextMediumStyle.copyWith(
+                                      color: ConstantsV2.activeText
+                                  ),
+                                ),
+                                style: boldoSubTextMediumStyle.copyWith(color: Colors.black),
+                                onChanged: (value) {
+                                  editingPatient.gender = value!;
+                                },
+                                items: ['male', 'female']
+                                    .map((gender) => DropdownMenuItem<String>(
+                                  child: Text(gender== 'male' ? 'Masculino' : gender == 'female' ? "Femenino": "desconocido"),
+                                  value: gender,
+                                )).toList(),
+                                isExpanded: true,
+                                validator: (value){
+                                  if(value == null){
+                                    return "Selecciona un género";
+                                  }
                                 }
-                                return CustomDropdown(
-                                  label: "Género",
-                                  selectedValue: selectedvalue,
-                                  itemsList: itemsList,
-                                  onChanged: (String val) =>
-                                    (editingPatient.gender = val),
-                                );
-                              },
                             ),
-
                             const SizedBox(height: 20),
 
                             TextFormField(
@@ -349,7 +326,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(height: 8),
                             CustomFormButton(
-                              loading: loading,
+                              loading: _dataLoading,
                               text: "Guardar",
                               actionCallback: _updateProfile,
                             ),

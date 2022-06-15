@@ -64,6 +64,25 @@ class UserRepository {
     }
   }
 
+  Future<None>? editProfile(Patient editingPatient) async {
+    try {
+      if(!prefs.getBool(isFamily)!)
+        await dio.post("/profile/patient", data: editingPatient.toJson());
+      else
+        await dio.put("/profile/caretaker/dependent/${patient.id}", data: editingPatient.toJson());
+
+      // Set new profile info
+      patient = Patient.fromJson(editingPatient.toJson());
+
+      // Update prefs in Principal Patient
+      if(!prefs.getBool(isFamily)!)
+        prefs.setString("profile_url", patient.photoUrl?? '');
+      return const None();
+    } catch (e) {
+      throw Failure("Ocurrio un error");
+    }
+  }
+
   Future<None>? getDependents() async {
     try {
       Response response = await dio.get("/profile/caretaker/dependents");
