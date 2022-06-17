@@ -1,7 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 class TakePictureScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -522,10 +521,10 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
   void onTakePictureButtonPressed() {
     takePicture().then((XFile? file) {
       if (mounted) {
-        setState(() {
+        setState(() async {
           imageFile = file;
           print(widget.path);
-          file!.saveTo(widget.path);
+          await file!.saveTo(widget.path);
           Navigator.pop(context);
         });
         if (file != null) {
