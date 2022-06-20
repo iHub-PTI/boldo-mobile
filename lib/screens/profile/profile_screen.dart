@@ -4,18 +4,14 @@ import 'package:boldo/widgets/custom_form_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:dio/dio.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../blocs/user_bloc/patient_bloc.dart';
 import './address_screen.dart';
 import './password_reset_screen.dart';
 import './components/profile_image.dart';
 
-import './actions/sharedActions.dart';
-import '../../widgets/custom_dropdown.dart';
 import '../../widgets/custom_form_input.dart';
 import '../../widgets/wrapper.dart';
 
@@ -80,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if(state is Success) {
             _dataLoading = false;
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
+              const SnackBar(
                 content: Text("Perfil actualizado!"),
                 backgroundColor: ConstantsV2.green,
               ),
@@ -179,7 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                             const SizedBox(height: 20),
                             DropdownButtonFormField<String>(
-                                value: editingPatient.gender,
+                                value: editingPatient.gender == 'unknown' ? null : editingPatient.gender,
                                 hint: Text(
                                   "Género",
                                   style: boldoSubTextMediumStyle.copyWith(
@@ -200,6 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   if(value == null){
                                     return "Selecciona un género";
                                   }
+                                  return null;
                                 }
                             ),
                             const SizedBox(height: 20),
