@@ -67,6 +67,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
         }else {
+          emit(DependentEliminated());
           emit(Success());
           await Task(() =>
           _patientRepository.getDependents()!)

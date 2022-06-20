@@ -46,10 +46,16 @@ class _FamilyScreenState extends State<FamilyScreen> {
             );
             _loading = false;
           }else if(state is Loading){
-            print("LOADING");
             setState(() {
               _loading = true;
             });
+          }else if(state is DependentEliminated){
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Familiar Desvinculado'),
+                backgroundColor: Colors.greenAccent,
+              ),
+            );
           }
       },
       child: BlocBuilder<FamilyBloc, FamilyState>(
