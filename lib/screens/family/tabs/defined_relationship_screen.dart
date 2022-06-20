@@ -37,7 +37,7 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
 
   Future _getFamiliesRelationship() async {
 
-    relationship =  relationTypes[0];
+    //relationship =  relationTypes[0];
     //response = await dio.get("/profile/patient");
   }
 
