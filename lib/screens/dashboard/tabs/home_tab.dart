@@ -45,7 +45,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   bool _loading = true;
   double _heightExpandedCarousel = ConstantsV2.homeExpandedMaxHeight;
   double _heightAppBarExpandable = ConstantsV2.homeAppBarMaxHeight;
-  double _heightCarouselTitleExpandable = ConstantsV2.homeCarouselTitleContainerMaxHeight;
+  double _heightCarouselTitleExpandable =
+      ConstantsV2.homeCarouselTitleContainerMaxHeight;
   double _heightCarouselExpandable = ConstantsV2.homeCarouselContainerMaxHeight;
 
   double _heightCarouselCard = ConstantsV2.homeCarouselCardMaxHeight;
@@ -105,11 +106,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     ),
   ];
 
-
   RefreshController? _refreshController =
       RefreshController(initialRefresh: false);
   RefreshController? _refreshControllerNews =
-    RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: false);
   DateTime dateOffset = DateTime.now().subtract(const Duration(days: 30));
   void _onRefresh() async {
     setState(() {
@@ -191,7 +191,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     );
     _receivePort?.listen(_handleWaitingRoomsListUpdate);
   }
- 
+
   Future<void> getAppointmentsData({bool loadMore = false}) async {
     if (!loadMore) {
       if (_isolate != null) {
@@ -209,11 +209,14 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       });
     }
     Response responseAppointments;
-    print(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).toUtc().toIso8601String());
+    print(
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
+            .toUtc()
+            .toIso8601String());
     try {
-      if(! prefs.getBool(isFamily)!)
+      if (!prefs.getBool(isFamily)!)
         responseAppointments = await dio.get(
-          "/profile/patient/appointments?start=${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).toUtc().toIso8601String()}");
+            "/profile/patient/appointments?start=${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).toUtc().toIso8601String()}");
       else
         responseAppointments = await dio.get(
             "/profile/caretaker/dependent/${patient.id}/appointments?start=${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).toUtc().toIso8601String()}");
@@ -253,15 +256,19 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
       // Appointments cancelled will be ignored
       List<Appointment> upcomingAppointmentsItems = allAppointmets
-          .where((element) => !["closed", "locked","cancelled"].contains(element.status))
+          .where((element) =>
+              !["closed", "locked", "cancelled"].contains(element.status))
           .toList();
-      allAppointmets = [...upcomingAppointmentsItems, /*...pastAppointmentsItems*/];
+      allAppointmets = [
+        ...upcomingAppointmentsItems, /*...pastAppointmentsItems*/
+      ];
 
       allAppointmets.sort((a, b) =>
           DateTime.parse(b.start!).compareTo(DateTime.parse(a.start!)));
 
       appointments = allAppointmets
-          .where((element) => !["closed", "locked","cancelled"].contains(element.status))
+          .where((element) =>
+              !["closed", "locked", "cancelled"].contains(element.status))
           .toList();
       appointments.sort((a, b) =>
           DateTime.parse(a.start!).compareTo(DateTime.parse(b.start!)));
@@ -318,11 +325,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         for (int i = 0; i < allAppointmentsState.length; i++) {
           if (firstPastAppointment.id != allAppointmentsState[i].id) {
             nextAppointments.add(allAppointmentsState[i]);
-          }else{
+          } else {
             break;
           }
         }
-       nextAppointments =  nextAppointments.reversed.toList();
+        nextAppointments = nextAppointments.reversed.toList();
       });
     } on DioError catch (exception, stackTrace) {
       print(exception);
@@ -361,9 +368,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     return Scaffold(
       body: SafeArea(
         child: BlocListener<PatientBloc, PatientState>(
-          listener: (context, state){
+          listener: (context, state) {
             setState(() {
-              if(state is Failed){
+              if (state is Failed) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(state.response!),
@@ -372,273 +379,349 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 );
                 _loading = false;
               }
-              if(state is Success){
-                setState((){
+              if (state is Success) {
+                setState(() {
                   _loading = true;
                   getAppointmentsData();
                   _loading = false;
                 });
               }
-              if(state is RedirectNextScreen){
+              if (state is RedirectNextScreen) {
                 // back to home
                 Navigator.pop(context);
               }
-              if(state is Loading){
+              if (state is Loading) {
                 _loading = true;
               }
             });
           },
-          child: BlocBuilder<PatientBloc, PatientState>(
-              builder: (context, state) {
-                return NestedScrollView(
-                    headerSliverBuilder: (context, innerBoxScrolled) => [
-                      SliverAppBar(
-                        pinned: true,
-                        floating: false,
-                        expandedHeight: ConstantsV2.homeExpandedMaxHeight,
-                        automaticallyImplyLeading: false,
-                        backgroundColor: Colors.white,
-                        leadingWidth: double.infinity,
-                        toolbarHeight: ConstantsV2.homeExpandedMinHeight,
-                        flexibleSpace: LayoutBuilder(
-                            builder: (BuildContext context, BoxConstraints constraints) {
-                              _heightExpandedCarousel = constraints.biggest.height;
-                              _heightAppBarExpandable = ConstantsV2.homeAppBarMaxHeight - (ConstantsV2.homeAppBarMaxHeight -ConstantsV2.homeAppBarMinHeight)*((ConstantsV2.homeExpandedMaxHeight- constraints.biggest.height)/(ConstantsV2.homeExpandedMaxHeight-ConstantsV2.homeExpandedMinHeight));
-                              _heightCarouselTitleExpandable = ConstantsV2.homeCarouselTitleContainerMaxHeight - (ConstantsV2.homeCarouselTitleContainerMaxHeight -ConstantsV2.homeCarouselTitleContainerMinHeight)*((ConstantsV2.homeExpandedMaxHeight- constraints.biggest.height)/(ConstantsV2.homeExpandedMaxHeight-ConstantsV2.homeExpandedMinHeight));
-                              _heightCarouselExpandable = ConstantsV2.homeCarouselContainerMaxHeight - (ConstantsV2.homeCarouselContainerMaxHeight -ConstantsV2.homeCarouselContainerMinHeight)*((ConstantsV2.homeExpandedMaxHeight- constraints.biggest.height)/(ConstantsV2.homeExpandedMaxHeight-ConstantsV2.homeExpandedMinHeight));
-                              _heightCarouselCard = ConstantsV2.homeCarouselCardMaxHeight - (ConstantsV2.homeCarouselCardMaxHeight -ConstantsV2.homeCarouselCardMinHeight)*((ConstantsV2.homeExpandedMaxHeight- constraints.biggest.height)/(ConstantsV2.homeExpandedMaxHeight-ConstantsV2.homeExpandedMinHeight));
-                              _widthCarouselCard = ConstantsV2.homeCarouselCardMaxWidth - (ConstantsV2.homeCarouselCardMaxWidth -ConstantsV2.homeCarouselCardMinWidth)*((ConstantsV2.homeExpandedMaxHeight- constraints.biggest.height)/(ConstantsV2.homeExpandedMaxHeight-ConstantsV2.homeExpandedMinHeight));
-                              _radiusCarouselCard = ConstantsV2.homeCarouselCardMinRadius + (ConstantsV2.homeCarouselCardMaxRadius -ConstantsV2.homeCarouselCardMinRadius)*((ConstantsV2.homeExpandedMaxHeight- constraints.biggest.height)/(ConstantsV2.homeExpandedMaxHeight-ConstantsV2.homeExpandedMinHeight));
+          child:
+              BlocBuilder<PatientBloc, PatientState>(builder: (context, state) {
+            return NestedScrollView(
+              headerSliverBuilder: (context, innerBoxScrolled) => [
+                SliverAppBar(
+                  pinned: true,
+                  floating: false,
+                  expandedHeight: ConstantsV2.homeExpandedMaxHeight,
+                  automaticallyImplyLeading: false,
+                  backgroundColor: Colors.white,
+                  leadingWidth: double.infinity,
+                  toolbarHeight: ConstantsV2.homeExpandedMinHeight,
+                  flexibleSpace: LayoutBuilder(builder:
+                      (BuildContext context, BoxConstraints constraints) {
+                    _heightExpandedCarousel = constraints.biggest.height;
+                    _heightAppBarExpandable = ConstantsV2.homeAppBarMaxHeight -
+                        (ConstantsV2.homeAppBarMaxHeight -
+                                ConstantsV2.homeAppBarMinHeight) *
+                            ((ConstantsV2.homeExpandedMaxHeight -
+                                    constraints.biggest.height) /
+                                (ConstantsV2.homeExpandedMaxHeight -
+                                    ConstantsV2.homeExpandedMinHeight));
+                    _heightCarouselTitleExpandable =
+                        ConstantsV2.homeCarouselTitleContainerMaxHeight -
+                            (ConstantsV2.homeCarouselTitleContainerMaxHeight -
+                                    ConstantsV2
+                                        .homeCarouselTitleContainerMinHeight) *
+                                ((ConstantsV2.homeExpandedMaxHeight -
+                                        constraints.biggest.height) /
+                                    (ConstantsV2.homeExpandedMaxHeight -
+                                        ConstantsV2.homeExpandedMinHeight));
+                    _heightCarouselExpandable = ConstantsV2
+                            .homeCarouselContainerMaxHeight -
+                        (ConstantsV2.homeCarouselContainerMaxHeight -
+                                ConstantsV2.homeCarouselContainerMinHeight) *
+                            ((ConstantsV2.homeExpandedMaxHeight -
+                                    constraints.biggest.height) /
+                                (ConstantsV2.homeExpandedMaxHeight -
+                                    ConstantsV2.homeExpandedMinHeight));
+                    _heightCarouselCard =
+                        ConstantsV2.homeCarouselCardMaxHeight -
+                            (ConstantsV2.homeCarouselCardMaxHeight -
+                                    ConstantsV2.homeCarouselCardMinHeight) *
+                                ((ConstantsV2.homeExpandedMaxHeight -
+                                        constraints.biggest.height) /
+                                    (ConstantsV2.homeExpandedMaxHeight -
+                                        ConstantsV2.homeExpandedMinHeight));
+                    _widthCarouselCard = ConstantsV2.homeCarouselCardMaxWidth -
+                        (ConstantsV2.homeCarouselCardMaxWidth -
+                                ConstantsV2.homeCarouselCardMinWidth) *
+                            ((ConstantsV2.homeExpandedMaxHeight -
+                                    constraints.biggest.height) /
+                                (ConstantsV2.homeExpandedMaxHeight -
+                                    ConstantsV2.homeExpandedMinHeight));
+                    _radiusCarouselCard =
+                        ConstantsV2.homeCarouselCardMinRadius +
+                            (ConstantsV2.homeCarouselCardMaxRadius -
+                                    ConstantsV2.homeCarouselCardMinRadius) *
+                                ((ConstantsV2.homeExpandedMaxHeight -
+                                        constraints.biggest.height) /
+                                    (ConstantsV2.homeExpandedMaxHeight -
+                                        ConstantsV2.homeExpandedMinHeight));
 
-                              return Column(
-                                  children: [
-                                    HomeTabAppBar(max: _heightAppBarExpandable),
-                                    DividerFeedSectionHome(text: "¿Qué desea hacer?", height: _heightCarouselTitleExpandable),
-                                    Container(
-                                      alignment: Alignment.centerLeft,
-                                      height: _heightCarouselExpandable,
-                                      child: Container(
-                                        height: _heightCarouselCard,
-                                        child: ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: items.length,
-                                          scrollDirection: Axis.horizontal,
-                                          itemBuilder: _buildCarousel,
-                                        ),
-                                      ),
-                                    ),SizedBox(
-                                      width: double.infinity,
-                                      child: Container(
-                                          width: double.maxFinite ,
-                                          height: ConstantsV2.homeFeedTitleContainerMaxHeight,
-                                          padding: const EdgeInsetsDirectional.all(16),
-                                          decoration: const BoxDecoration(
-                                            color: ConstantsV2.lightGrey,
-                                          ),
-                                          child:TabBar(
-                                            controller: _controller,
-                                            tabs: [
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    'Novedades${prefs.getBool(isFamily)?? false ? " de " : ''}',
-                                                    style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
-                                                  ),
-                                                  prefs.getBool(isFamily)?? false ? Text('${patient.relationshipDisplaySpan}', style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.green)) : Container(),
-                                                ],
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    'Citas',
-                                                    style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          )
-                                      ),
-                                    ),
-                                  ]
-                              );
-                            }
+                    return Column(children: [
+                      HomeTabAppBar(max: _heightAppBarExpandable),
+                      DividerFeedSectionHome(
+                          text: "¿Qué desea hacer?",
+                          height: _heightCarouselTitleExpandable),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        height: _heightCarouselExpandable,
+                        child: Container(
+                          height: _heightCarouselCard,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: items.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: _buildCarousel,
+                          ),
                         ),
                       ),
-                    ],
-                        body: TabBarView(
-                          controller: _controller,
-                          children: [
-                            _buildNews(),
-                            _buildAppointments(),
-                          ],
-                        ),
-                );
-              }
-          ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: Container(
+                            width: double.maxFinite,
+                            height: ConstantsV2.homeFeedTitleContainerMaxHeight,
+                            padding: const EdgeInsetsDirectional.all(16),
+                            decoration: const BoxDecoration(
+                              color: ConstantsV2.lightGrey,
+                            ),
+                            child: Stack(
+                              children: [
+                                Center(
+                                    child: SvgPicture.asset(
+                                  'assets/decorations/line_separator.svg',
+                                )),
+                                TabBar(
+                                  indicatorColor: Colors.transparent,
+                                  unselectedLabelColor:
+                                      const Color.fromRGBO(119, 119, 119, 1),
+                                  labelColor: Colors.black,
+                                  controller: _controller,
+                                  tabs: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Novedades${prefs.getBool(isFamily) ?? false ? " de " : ''}',
+                                        ),
+                                        prefs.getBool(isFamily) ?? false
+                                            ? Text(
+                                                '${patient.relationshipDisplaySpan}',
+                                                style: boldoCorpMediumTextStyle
+                                                    .copyWith(
+                                                        color:
+                                                            ConstantsV2.green))
+                                            : Container(),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Citas',
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )),
+                      ),
+                    ]);
+                  }),
+                ),
+              ],
+              body: TabBarView(
+                controller: _controller,
+                children: [
+                  _buildNews(),
+                  _buildAppointments(),
+                ],
+              ),
+            );
+          }),
         ),
       ),
     );
   }
 
-  Widget _buildCarousel(BuildContext context, int carouselIndex){
-    return CustomCardPage(carouselCardPage: items[carouselIndex], height: _heightCarouselCard, width: _widthCarouselCard, radius: _radiusCarouselCard, );
+  Widget _buildCarousel(BuildContext context, int carouselIndex) {
+    return CustomCardPage(
+      carouselCardPage: items[carouselIndex],
+      height: _heightCarouselCard,
+      width: _widthCarouselCard,
+      radius: _radiusCarouselCard,
+    );
   }
 
-  Widget _buildAppointments(){
+  Widget _individualTab() {
+    return Container(
+      height: 50 + MediaQuery.of(context).padding.bottom,
+      padding: EdgeInsets.all(0),
+      width: double.infinity,
+      decoration: BoxDecoration(
+          border: Border(
+              right: BorderSide(
+                  color: Colors.grey, width: 1, style: BorderStyle.solid))),
+      child: Tab(
+        // icon: ImageIcon(AssetImage(imagePath)),
+        child: Text('test'),
+      ),
+    );
+  }
+
+  Widget _buildAppointments() {
     return _dataFetchError
-        ? Container(child :DataFetchErrorWidget(retryCallback: getAppointmentsData))
+        ? Container(
+            child: DataFetchErrorWidget(retryCallback: getAppointmentsData))
         : _loading
-        ? Container(child: const Center(
-        child: CircularProgressIndicator(
-          valueColor:
-          AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-          backgroundColor: Constants.primaryColor600,
-        )
-    ))
-        :Container(
-      child: SmartRefresher(
-        enablePullDown: true,
-        enablePullUp: true,
-        header: const MaterialClassicHeader(
-          color: Constants.primaryColor800,
-        ),
-        controller: _refreshController!,
-        onLoading: () {
-          dateOffset =
-              dateOffset.subtract(const Duration(days: 30));
-          setState(() {});
-          //getAppointmentsData(loadMore: true);
-        },
-        onRefresh: _onRefresh,
-        footer: CustomFooter(
-          height: 140,
-          builder: (BuildContext context, LoadStatus? mode) {
-            print(mode);
-            Widget body = Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                /*Text(
+            ? Container(
+                child: const Center(
+                    child: CircularProgressIndicator(
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                backgroundColor: Constants.primaryColor600,
+              )))
+            : Container(
+                child: SmartRefresher(
+                  enablePullDown: true,
+                  enablePullUp: true,
+                  header: const MaterialClassicHeader(
+                    color: Constants.primaryColor800,
+                  ),
+                  controller: _refreshController!,
+                  onLoading: () {
+                    dateOffset = dateOffset.subtract(const Duration(days: 30));
+                    setState(() {});
+                    //getAppointmentsData(loadMore: true);
+                  },
+                  onRefresh: _onRefresh,
+                  footer: CustomFooter(
+                    height: 140,
+                    builder: (BuildContext context, LoadStatus? mode) {
+                      print(mode);
+                      Widget body = Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          /*Text(
                   "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
                   style: const TextStyle(
                     color: Constants.primaryColor800,
                   ),
                 )*/
-              ],
-            );
-            return Column(
-              children: [
-                const SizedBox(height: 30),
-                Center(child: body),
-              ],
-            );
-          },
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-
-            children: [
-              if(allAppointmentsState.isNotEmpty)
-                for (int i = 0;
-                i < appointments.length;
-                i++)
-                  _ListAppointments(appointment: appointments[i],
+                        ],
+                      );
+                      return Column(
+                        children: [
+                          const SizedBox(height: 30),
+                          Center(child: body),
+                        ],
+                      );
+                    },
                   ),
-              if(allAppointmentsState.isEmpty)
-                const EmptyStateV2(
-                  picture: "feed_empty.svg",
-                  textTop: "Nada para mostrar",
-                  textBottom: "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        if (allAppointmentsState.isNotEmpty)
+                          for (int i = 0; i < appointments.length; i++)
+                            _ListAppointments(
+                              appointment: appointments[i],
+                            ),
+                        if (allAppointmentsState.isEmpty)
+                          const EmptyStateV2(
+                            picture: "feed_empty.svg",
+                            textTop: "Nada para mostrar",
+                            textBottom:
+                                "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
-            ],
-          ),
-        ),
-      ),
-    ) ;
+              );
   }
 
-  Widget _buildNews(){
+  Widget _buildNews() {
     return _dataFetchError
-        ? Container(child :DataFetchErrorWidget(retryCallback: getAppointmentsData))
+        ? Container(
+            child: DataFetchErrorWidget(retryCallback: getAppointmentsData))
         : _loading
-        ? Container(child: const Center(
-        child: CircularProgressIndicator(
-          valueColor:
-          AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-          backgroundColor: Constants.primaryColor600,
-        )
-    ))
-        :Container(
-      child: SmartRefresher(
-        enablePullDown: true,
-        enablePullUp: true,
-        header: const MaterialClassicHeader(
-          color: Constants.primaryColor800,
-        ),
-        controller: _refreshControllerNews!,
-        onLoading: () {
-          dateOffset =
-              dateOffset.subtract(const Duration(days: 30));
-          setState(() {});
-          //getAppointmentsData(loadMore: true);
-        },
-        onRefresh: _onRefresh,
-        footer: CustomFooter(
-          height: 140,
-          builder: (BuildContext context, LoadStatus? mode) {
-            print(mode);
-            Widget body = Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                /*Text(
+            ? Container(
+                child: const Center(
+                    child: CircularProgressIndicator(
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                backgroundColor: Constants.primaryColor600,
+              )))
+            : Container(
+                child: SmartRefresher(
+                  enablePullDown: true,
+                  enablePullUp: true,
+                  header: const MaterialClassicHeader(
+                    color: Constants.primaryColor800,
+                  ),
+                  controller: _refreshControllerNews!,
+                  onLoading: () {
+                    dateOffset = dateOffset.subtract(const Duration(days: 30));
+                    setState(() {});
+                    //getAppointmentsData(loadMore: true);
+                  },
+                  onRefresh: _onRefresh,
+                  footer: CustomFooter(
+                    height: 140,
+                    builder: (BuildContext context, LoadStatus? mode) {
+                      print(mode);
+                      Widget body = Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          /*Text(
                   "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
                   style: const TextStyle(
                     color: Constants.primaryColor800,
                   ),
                 )*/
-              ],
-            );
-            return Column(
-              children: [
-                const SizedBox(height: 30),
-                Center(child: body),
-              ],
-            );
-          },
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-
-            children: [
-              if(news.isNotEmpty)
-                for (int i = 0;
-                i < news.length;
-                i++)
-                  _ListAppointments(appointment: news[i],
+                        ],
+                      );
+                      return Column(
+                        children: [
+                          const SizedBox(height: 30),
+                          Center(child: body),
+                        ],
+                      );
+                    },
                   ),
-              if(news.isEmpty)
-                const EmptyStateV2(
-                  picture: "feed_empty.svg",
-                  textTop: "Nada para mostrar",
-                  textBottom: "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        if (news.isNotEmpty)
+                          for (int i = 0; i < news.length; i++)
+                            _ListAppointments(
+                              appointment: news[i],
+                            ),
+                        if (news.isEmpty)
+                          const EmptyStateV2(
+                            picture: "feed_empty.svg",
+                            textTop: "Nada para mostrar",
+                            textBottom:
+                                "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
-            ],
-          ),
-        ),
-      ),
-    ) ;
+              );
   }
-
 }
 
 class _ListAppointments extends StatelessWidget {
   final Appointment appointment;
 
-  const _ListAppointments(
-      {Key? key,
-        required this.appointment,})
-      : super(key: key);
+  const _ListAppointments({
+    Key? key,
+    required this.appointment,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -649,12 +732,10 @@ class _ListAppointments extends StatelessWidget {
         showCancelOption: true,
       ),
     ]);
-
   }
 }
 
 class CustomCardPage extends StatefulWidget {
-
   final CarouselCardPages? carouselCardPage;
   final double height;
   final double width;
@@ -669,35 +750,40 @@ class CustomCardPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CustomCardPage> createState() => _CustomCardPageState(carouselCardPage: carouselCardPage);
+  State<CustomCardPage> createState() =>
+      _CustomCardPageState(carouselCardPage: carouselCardPage);
 }
 
-class _CustomCardPageState extends State<CustomCardPage>{
-
+class _CustomCardPageState extends State<CustomCardPage> {
   // text and image
   CarouselCardPages? carouselCardPage;
-  _CustomCardPageState({
-    required this.carouselCardPage
-  });
+  _CustomCardPageState({required this.carouselCardPage});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-
-      constraints: BoxConstraints(maxWidth: widget.width, maxHeight: widget.height, minHeight: widget.height, minWidth: widget.width),
+      constraints: BoxConstraints(
+          maxWidth: widget.width,
+          maxHeight: widget.height,
+          minHeight: widget.height,
+          minWidth: widget.width),
       child: Card(
         margin: const EdgeInsets.all(6),
         clipBehavior: Clip.antiAlias,
-        shape: widget.radius < 70 ? RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(widget.radius),
-        ) : const StadiumBorder(),
+        shape: widget.radius < 70
+            ? RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(widget.radius),
+              )
+            : const StadiumBorder(),
         child: InkWell(
-          onTap:  carouselCardPage!.appear ? () {
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) => carouselCardPage!.page!
-            )
-            ) ;
-          } : (){},
+          onTap: carouselCardPage!.appear
+              ? () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => carouselCardPage!.page!));
+                }
+              : () {},
           child: Container(
             child: Stack(
               children: [
@@ -706,55 +792,61 @@ class _CustomCardPageState extends State<CustomCardPage>{
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      colorFilter: carouselCardPage!.appear ? null : widget.radius < 70 ? null : const ColorFilter.mode(Colors.black, BlendMode.hue),
+                      colorFilter: carouselCardPage!.appear
+                          ? null
+                          : widget.radius < 70
+                              ? null
+                              : const ColorFilter.mode(
+                                  Colors.black, BlendMode.hue),
                       image: AssetImage(carouselCardPage!.image),
                     ),
                   ),
                 ),
                 Container(
-                  decoration: widget.radius < 70 ? BoxDecoration( // Background linear gradient
-                      gradient: LinearGradient(
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                          colors: <Color> [
-                            Colors.black,
-                            Colors.black.withOpacity(0.01),
-                          ],
-                          stops: <double> [
-                            -.0159,
-                            0.9034,
-                          ]
-                      )
-                  ) : null,
+                  decoration: widget.radius < 70
+                      ? BoxDecoration(
+                          // Background linear gradient
+                          gradient: LinearGradient(
+                              begin: Alignment.bottomLeft,
+                              end: Alignment.topRight,
+                              colors: <Color>[
+                              Colors.black,
+                              Colors.black.withOpacity(0.01),
+                            ],
+                              stops: <double>[
+                              -.0159,
+                              0.9034,
+                            ]))
+                      : null,
                 ),
                 // Container used for group text info
                 Container(
-                    padding: const EdgeInsets.only(left: 6, right: 6, bottom: 7, top: 7),
+                    padding: const EdgeInsets.only(
+                        left: 6, right: 6, bottom: 7, top: 7),
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          carouselCardPage!.appear ? const Text("")
+                          carouselCardPage!.appear
+                              ? const Text("")
                               : AnimatedOpacity(
-                            opacity: widget.radius < 70 ? 1 : 0,
-                            duration: const Duration(milliseconds: 1),
-                            child: widget.radius < 70 ? CardNotAvailable() : null,
-                          ),
+                                  opacity: widget.radius < 70 ? 1 : 0,
+                                  duration: const Duration(milliseconds: 1),
+                                  child: widget.radius < 70
+                                      ? CardNotAvailable()
+                                      : null,
+                                ),
                           Flexible(
-                            child:
-                            AnimatedOpacity(
+                            child: AnimatedOpacity(
                               opacity: widget.radius < 70 ? 1 : 0,
                               duration: const Duration(milliseconds: 300),
                               child: Text(
-                                carouselCardPage!.title ,
+                                carouselCardPage!.title,
                                 style: boldoCorpMediumBlackTextStyle,
                               ),
                             ),
                           ),
-                        ]
-                    )
-                ),
-
+                        ])),
               ],
             ),
           ),
@@ -765,7 +857,6 @@ class _CustomCardPageState extends State<CustomCardPage>{
 }
 
 class CardNotAvailable extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -883,7 +974,6 @@ class _ListRenderer extends StatelessWidget {
   }
 }*/
 
-
 class CarouselCardPages extends StatelessWidget {
   final String image;
   final int index;
@@ -907,5 +997,36 @@ class CarouselCardPages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SvgPicture.asset(image, fit: boxFit, alignment: alignment);
+  }
+}
+
+class TabWidget extends StatelessWidget {
+  final String label;
+  final bool rightDivider;
+
+  TabWidget({
+    required this.label,
+    required this.rightDivider,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 32 + MediaQuery.of(context).padding.bottom,
+      width: double.infinity,
+      padding: EdgeInsets.all(0),
+      decoration: (rightDivider)
+          ? BoxDecoration(
+              border: Border(
+                right: BorderSide(
+                  color: Colors.grey,
+                  width: 1,
+                  style: BorderStyle.solid,
+                ),
+              ),
+            )
+          : null,
+      child: Center(child: Text(label)),
+    );
   }
 }
