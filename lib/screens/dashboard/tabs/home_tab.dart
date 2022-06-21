@@ -39,6 +39,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   List<Appointment> waitingRoomAppointments = [];
   List<Appointment> appointments = [];
 
+  List<Appointment> news = [];
+
   bool _dataFetchError = false;
   bool _loading = true;
   double _heightExpandedCarousel = ConstantsV2.homeExpandedMaxHeight;
@@ -106,6 +108,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
   RefreshController? _refreshController =
       RefreshController(initialRefresh: false);
+  RefreshController? _refreshControllerNews =
+    RefreshController(initialRefresh: false);
   DateTime dateOffset = DateTime.now().subtract(const Duration(days: 30));
   void _onRefresh() async {
     setState(() {
@@ -189,7 +193,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   }
  
   Future<void> getAppointmentsData({bool loadMore = false}) async {
-
     if (!loadMore) {
       if (_isolate != null) {
         _isolate!.kill(priority: Isolate.immediate);
@@ -464,7 +467,13 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                         ),
                       ),
                     ],
-                        body: _buildAppointments(),
+                        body: TabBarView(
+                          controller: _controller,
+                          children: [
+                            _buildNews(),
+                            _buildAppointments(),
+                          ],
+                        ),
                 );
               }
           ),
@@ -537,6 +546,78 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                   _ListAppointments(appointment: appointments[i],
                   ),
               if(allAppointmentsState.isEmpty)
+                const EmptyStateV2(
+                  picture: "feed_empty.svg",
+                  textTop: "Nada para mostrar",
+                  textBottom: "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
+                ),
+            ],
+          ),
+        ),
+      ),
+    ) ;
+  }
+
+  Widget _buildNews(){
+    return _dataFetchError
+        ? Container(child :DataFetchErrorWidget(retryCallback: getAppointmentsData))
+        : _loading
+        ? Container(child: const Center(
+        child: CircularProgressIndicator(
+          valueColor:
+          AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+          backgroundColor: Constants.primaryColor600,
+        )
+    ))
+        :Container(
+      child: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: true,
+        header: const MaterialClassicHeader(
+          color: Constants.primaryColor800,
+        ),
+        controller: _refreshControllerNews!,
+        onLoading: () {
+          dateOffset =
+              dateOffset.subtract(const Duration(days: 30));
+          setState(() {});
+          //getAppointmentsData(loadMore: true);
+        },
+        onRefresh: _onRefresh,
+        footer: CustomFooter(
+          height: 140,
+          builder: (BuildContext context, LoadStatus? mode) {
+            print(mode);
+            Widget body = Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                /*Text(
+                  "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
+                  style: const TextStyle(
+                    color: Constants.primaryColor800,
+                  ),
+                )*/
+              ],
+            );
+            return Column(
+              children: [
+                const SizedBox(height: 30),
+                Center(child: body),
+              ],
+            );
+          },
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+
+            children: [
+              if(news.isNotEmpty)
+                for (int i = 0;
+                i < news.length;
+                i++)
+                  _ListAppointments(appointment: news[i],
+                  ),
+              if(news.isEmpty)
                 const EmptyStateV2(
                   picture: "feed_empty.svg",
                   textTop: "Nada para mostrar",
