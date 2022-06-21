@@ -28,9 +28,10 @@ class HomeTab extends StatefulWidget {
   _HomeTabState createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> {
+class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   Isolate? _isolate;
   ReceivePort? _receivePort;
+  late TabController _controller;
 
   List<Appointment> allAppointmentsState = [];
   List<Appointment> nextAppointments = [];
@@ -116,6 +117,10 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   void initState() {
+    _controller = TabController(
+      length: 2,
+      vsync: this,
+    );
     getAppointmentsData(loadMore: false);
     super.initState();
   }
@@ -427,13 +432,28 @@ class _HomeTabState extends State<HomeTab> {
                                           decoration: const BoxDecoration(
                                             color: ConstantsV2.lightGrey,
                                           ),
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                'Novedades${prefs.getBool(isFamily)?? false ? " de " : ''}',
-                                                style: boldoSubTextStyle,
+                                          child:TabBar(
+                                            controller: _controller,
+                                            tabs: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'Novedades${prefs.getBool(isFamily)?? false ? " de " : ''}',
+                                                    style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
+                                                  ),
+                                                  prefs.getBool(isFamily)?? false ? Text('${patient.relationshipDisplaySpan}', style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.green)) : Container(),
+                                                ],
                                               ),
-                                              prefs.getBool(isFamily)?? false ? Text('${patient.relationshipDisplaySpan}', style: boldoSubTextStyle.copyWith(color: ConstantsV2.green)) : Container(),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    'Citas',
+                                                    style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
+                                                  ),
+                                                ],
+                                              ),
                                             ],
                                           )
                                       ),
@@ -444,74 +464,7 @@ class _HomeTabState extends State<HomeTab> {
                         ),
                       ),
                     ],
-                        body: _dataFetchError
-                            ? Container(child :DataFetchErrorWidget(retryCallback: getAppointmentsData))
-                            : _loading
-                            ? Container(child: const Center(
-                            child: CircularProgressIndicator(
-                              valueColor:
-                              AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                              backgroundColor: Constants.primaryColor600,
-                            )
-                        ))
-                            : allAppointmentsState.isEmpty
-                            ? const SingleChildScrollView(child: EmptyStateV2(
-                          picture: "feed_empty.svg",
-                          textTop: "Nada para mostrar",
-                          textBottom: "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
-                        ),)
-                            :Container(
-                          child: SmartRefresher(
-                            enablePullDown: true,
-                            enablePullUp: true,
-                            header: const MaterialClassicHeader(
-                              color: Constants.primaryColor800,
-                            ),
-                            controller: _refreshController!,
-                            onLoading: () {
-                              dateOffset =
-                                  dateOffset.subtract(const Duration(days: 30));
-                              setState(() {});
-                              //getAppointmentsData(loadMore: true);
-                            },
-                            onRefresh: _onRefresh,
-                            footer: CustomFooter(
-                              height: 140,
-                              builder: (BuildContext context, LoadStatus? mode) {
-                                print(mode);
-                                Widget body = Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    /*Text(
-                                    "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
-                                    style: const TextStyle(
-                                      color: Constants.primaryColor800,
-                                    ),
-                                  )*/
-                                  ],
-                                );
-                                return Column(
-                                  children: [
-                                    const SizedBox(height: 30),
-                                    Center(child: body),
-                                  ],
-                                );
-                              },
-                            ),
-                            child: SingleChildScrollView(
-                              child: Column(
-
-                                children: [
-                                  for (int i = 0;
-                                  i < appointments.length;
-                                  i++)
-                                    _ListAppointments(appointment: appointments[i],
-                                    ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ) ,
+                        body: _buildAppointments(),
                 );
               }
           ),
@@ -524,7 +477,77 @@ class _HomeTabState extends State<HomeTab> {
     return CustomCardPage(carouselCardPage: items[carouselIndex], height: _heightCarouselCard, width: _widthCarouselCard, radius: _radiusCarouselCard, );
   }
 
+  Widget _buildAppointments(){
+    return _dataFetchError
+        ? Container(child :DataFetchErrorWidget(retryCallback: getAppointmentsData))
+        : _loading
+        ? Container(child: const Center(
+        child: CircularProgressIndicator(
+          valueColor:
+          AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+          backgroundColor: Constants.primaryColor600,
+        )
+    ))
+        : allAppointmentsState.isEmpty
+        ? const SingleChildScrollView(child: EmptyStateV2(
+      picture: "feed_empty.svg",
+      textTop: "Nada para mostrar",
+      textBottom: "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
+    ),)
+        :Container(
+      child: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: true,
+        header: const MaterialClassicHeader(
+          color: Constants.primaryColor800,
+        ),
+        controller: _refreshController!,
+        onLoading: () {
+          dateOffset =
+              dateOffset.subtract(const Duration(days: 30));
+          setState(() {});
+          //getAppointmentsData(loadMore: true);
+        },
+        onRefresh: _onRefresh,
+        footer: CustomFooter(
+          height: 140,
+          builder: (BuildContext context, LoadStatus? mode) {
+            print(mode);
+            Widget body = Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                /*Text(
+                  "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
+                  style: const TextStyle(
+                    color: Constants.primaryColor800,
+                  ),
+                )*/
+              ],
+            );
+            return Column(
+              children: [
+                const SizedBox(height: 30),
+                Center(child: body),
+              ],
+            );
+          },
+        ),
+        child: SingleChildScrollView(
+          child: Column(
 
+            children: [
+              if(allAppointmentsState.isNotEmpty)
+                for (int i = 0;
+                i < appointments.length;
+                i++)
+                  _ListAppointments(appointment: appointments[i],
+                  ),
+            ],
+          ),
+        ),
+      ),
+    ) ;
+  }
 
 }
 
