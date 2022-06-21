@@ -488,12 +488,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
           backgroundColor: Constants.primaryColor600,
         )
     ))
-        : allAppointmentsState.isEmpty
-        ? const SingleChildScrollView(child: EmptyStateV2(
-      picture: "feed_empty.svg",
-      textTop: "Nada para mostrar",
-      textBottom: "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
-    ),)
         :Container(
       child: SmartRefresher(
         enablePullDown: true,
@@ -542,6 +536,12 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 i++)
                   _ListAppointments(appointment: appointments[i],
                   ),
+              if(allAppointmentsState.isEmpty)
+                const EmptyStateV2(
+                  picture: "feed_empty.svg",
+                  textTop: "Nada para mostrar",
+                  textBottom: "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
+                ),
             ],
           ),
         ),
