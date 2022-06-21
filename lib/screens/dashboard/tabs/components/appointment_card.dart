@@ -1,4 +1,8 @@
+import 'dart:async';
+import 'dart:isolate';
+
 import 'package:boldo/network/http.dart';
+import 'package:boldo/screens/Call/video_call.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/details/appointment_details.dart';
 import 'package:boldo/utils/helpers.dart';
@@ -33,6 +37,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
   DateTime appointmentDay = DateTime.now();
   int daysDifference = 0;
   bool isToday = false;
+  int minutes = 0;
+  Timer? timer;
 
   @override
   void initState() {
@@ -40,12 +46,35 @@ class _AppointmentCardState extends State<AppointmentCard> {
     actualDay = DateTime.now();
     appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
     daysDifference = daysBetween(actualDay,appointmentDay);
-
+    minutes = appointmentDay.difference(actualDay).inMinutes + 1;
     setState(() {
       isToday = daysDifference == 0 &&
           !["closed", "locked"].contains(widget.appointment.status);
     });
     super.initState();
+    _updateWaitingRoom();
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    timer?.cancel();
+  }
+
+  // asynchronous task to update the remaining minutes to open the waiting room
+  void _updateWaitingRoom() async {
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      if(isCancelled){
+        timer.cancel();
+      }
+      actualDay = DateTime.now();
+      setState(() {
+        minutes = appointmentDay.difference(actualDay).inMinutes + 1;
+      });
+      // deactivate task once the room is open
+      if(minutes <= 0)
+        timer.cancel();
+    });
   }
 
   @override
@@ -122,37 +151,43 @@ class _AppointmentCardState extends State<AppointmentCard> {
                   ),
                   Row(
                     children: [
-                      ClipOval(
-                        child: SizedBox(
-                          width: 54,
-                          height: 54,
-                          child: widget.appointment.doctor?.photoUrl == null
-                              ? SvgPicture.asset(
-                              widget.appointment.doctor!.gender == "female"
-                                  ? 'assets/images/femaleDoctor.svg'
-                                  : 'assets/images/maleDoctor.svg',
-                              fit: BoxFit.cover)
-                              : CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            imageUrl: widget.appointment.doctor!.photoUrl??'',
-                            progressIndicatorBuilder:
-                                (context, url, downloadProgress) =>
-                                Padding(
-                                  padding: const EdgeInsets.all(26.0),
-                                  child: LinearProgressIndicator(
-                                    value: downloadProgress.progress,
-                                    valueColor:
-                                    const AlwaysStoppedAnimation<
-                                        Color>(
-                                        Constants.primaryColor400),
-                                    backgroundColor:
-                                    Constants.primaryColor600,
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 7),
+                        child: ClipOval(
+                          child: SizedBox(
+                            width: 54,
+                            height: 54,
+                            child: widget.appointment.doctor?.photoUrl == null
+                                ? SvgPicture.asset(
+                                widget.appointment.doctor!.gender == "female"
+                                    ? 'assets/images/femaleDoctor.svg'
+                                    : 'assets/images/maleDoctor.svg',
+                                fit: BoxFit.cover)
+                                : CachedNetworkImage(
+                              fit: BoxFit.cover,
+                              imageUrl: widget.appointment.doctor!.photoUrl??'',
+                              progressIndicatorBuilder:
+                                  (context, url, downloadProgress) =>
+                                  Padding(
+                                    padding: const EdgeInsets.all(26.0),
+                                    child: LinearProgressIndicator(
+                                      value: downloadProgress.progress,
+                                      valueColor:
+                                      const AlwaysStoppedAnimation<
+                                          Color>(
+                                          Constants.primaryColor400),
+                                      backgroundColor:
+                                      Constants.primaryColor600,
+                                    ),
                                   ),
-                                ),
-                            errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
+                              errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                            ),
                           ),
                         ),
+                      ),
+                      const SizedBox(
+                        width: 8,
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,18 +245,58 @@ class _AppointmentCardState extends State<AppointmentCard> {
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      hourContainer(),
-                      ShowAppoinmentTypeIcon(appointmentType: widget.appointment.appointmentType!),
-                      Text(
-                        widget.appointment.appointmentType == 'V' ? "Remoto" : "Presencial",
-                        style: TextStyle(
-                          color: widget.appointment.appointmentType == 'V' ? ConstantsV2.orange : ConstantsV2.green,
-                          fontSize: 12,
-                          // fontWeight: FontWeight.bold
-                        ),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          hourContainer(),
+                          ShowAppoinmentTypeIcon(appointmentType: widget.appointment.appointmentType!),
+                          Text(
+                            widget.appointment.appointmentType == 'V' ? "Remoto" : "Presencial",
+                            style: TextStyle(
+                              color: widget.appointment.appointmentType == 'V' ? ConstantsV2.orange : ConstantsV2.green,
+                              fontSize: 12,
+                              // fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ],
                       ),
+                      widget.appointment.appointmentType == 'V' && minutes <= 15 ?
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Container(
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            VideoCall(appointment: widget.appointment),
+                                      ),
+                                    );
+                                  },
+                                  child: Card(
+                                      margin: EdgeInsets.zero,
+                                      clipBehavior: Clip.antiAlias,
+                                      elevation: 0,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(topLeft: Radius.circular(5)),
+                                      ),
+                                      color: ConstantsV2.orange.withOpacity(0.10),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+                                        child: appointmentDay.compareTo(actualDay) <=0 ? Text("entrar"): Text("ingresar a sala de espera"),
+                                      )
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                      : Container(),
                     ],
                   )
                 ],
@@ -235,7 +310,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
 
   Widget hourContainer() {
     return Container(
-      width: 54,
+      width: 65,
       child: Card(
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
@@ -262,6 +337,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                     padding: const EdgeInsets.only(left: 6.5, right: 6.5, bottom: 2, top: 2),
                     color: ConstantsV2.orange,
                     child: const Text("dentro de",
+                      textAlign: TextAlign.center,
                     style: TextStyle(
                       color: ConstantsV2.lightGrey,
                       fontStyle: FontStyle.normal,
@@ -274,6 +350,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                 padding: const EdgeInsets.only(left: 6.5, right: 6.5, bottom: 2, top: 2),
                 color: ConstantsV2.green,
                 child: Text(isToday ? "hoy" : '${DateFormat('dd/MM').format(DateTime.parse(widget.appointment.start!).toLocal())}',
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: ConstantsV2.lightGrey,
                     fontStyle: FontStyle.normal,
@@ -284,8 +361,9 @@ class _AppointmentCardState extends State<AppointmentCard> {
               ),
               Container(
                 padding: const EdgeInsets.all(4),
-                child: isToday && appointmentDay.difference(actualDay).compareTo(const Duration(minutes: 15)) <= 0 ?
-                  Text("${appointmentDay.difference(actualDay).inMinutes} min",
+                child: isToday && minutes <= 15 ?
+                  Text("${minutes} min",
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: ConstantsV2.activeText,
                       fontStyle: FontStyle.normal,
@@ -295,6 +373,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                     ),
                   ) :
                   Text("${DateFormat('HH:mm').format(appointmentDay.toLocal())}",
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: ConstantsV2.activeText,
                       fontStyle: FontStyle.normal,
