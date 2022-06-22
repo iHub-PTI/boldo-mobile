@@ -1,5 +1,6 @@
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/constants.dart';
+import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/screens/appointments/pastAppointments_screen.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
@@ -15,6 +16,7 @@ import 'dart:async';
 import 'dart:isolate';
 import 'package:dio/dio.dart';
 import 'package:boldo/models/Appointment.dart';
+import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:boldo/network/http.dart';
@@ -38,6 +40,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   List<Appointment> upcomingWaitingRoomAppointments = [];
   List<Appointment> waitingRoomAppointments = [];
   List<Appointment> appointments = [];
+  List<DiagnosticReport> diagnosticReports = [];
 
   List<Appointment> news = [];
 
@@ -119,6 +122,14 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     await getAppointmentsData(loadMore: false);
   }
 
+  void _onRefreshNews() async {
+    setState(() {
+      dateOffset = DateTime.now().subtract(const Duration(days: 30));
+    });
+    // monitor network fetch
+    await getdiagnosticReport(loadMore: false);
+  }
+
   @override
   void initState() {
     _controller = TabController(
@@ -126,6 +137,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       vsync: this,
     );
     getAppointmentsData(loadMore: false);
+    getdiagnosticReport(loadMore: false);
     super.initState();
   }
 
@@ -209,10 +221,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       });
     }
     Response responseAppointments;
-    print(
-        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
-            .toUtc()
-            .toIso8601String());
     try {
       if (!prefs.getBool(isFamily)!)
         responseAppointments = await dio.get(
@@ -226,7 +234,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       List<Prescription> allPrescriptions = List<Prescription>.from(
           responsePrescriptions.data["prescriptions"]
               .map((i) => Prescription.fromJson(i)));*/
-      print(responseAppointments.data["appointments"]);
       List<Appointment> allAppointmets = List<Appointment>.from(
           responseAppointments.data["appointments"]
               .map((i) => Appointment.fromJson(i)));
@@ -359,6 +366,34 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       if (_refreshController != null) {
         _refreshController!.refreshCompleted();
         _refreshController!.loadComplete();
+      }
+    }
+  }
+
+  Future<void> getdiagnosticReport({bool loadMore = false}) async {
+
+    Response responseAppointments;
+    try {
+      if (!prefs.getBool(isFamily)!)
+        responseAppointments = await dio.get(
+            "/profile/patient/diagnosticReports");
+      else
+        responseAppointments = await dio.get(
+            "/profile/caretaker/dependent/${patient.id}/diagnosticReports");
+
+      List<DiagnosticReport> allDiagnosticReports = List<DiagnosticReport>.from(
+          responseAppointments.data
+              .map((i) => DiagnosticReport.fromJson(i)));
+      setState(() {
+        diagnosticReports = allDiagnosticReports.where((element) => element.sourceID != patient.id).toList();
+      });
+
+    }catch (e){
+
+    }finally {
+      if (_refreshControllerNews != null) {
+        _refreshControllerNews!.refreshCompleted();
+        _refreshControllerNews!.loadComplete();
       }
     }
   }
@@ -646,7 +681,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   Widget _buildNews() {
     return _dataFetchError
         ? Container(
-            child: DataFetchErrorWidget(retryCallback: getAppointmentsData))
+            child: DataFetchErrorWidget(retryCallback: getdiagnosticReport))
         : _loading
             ? Container(
                 child: const Center(
@@ -664,11 +699,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                   ),
                   controller: _refreshControllerNews!,
                   onLoading: () {
-                    dateOffset = dateOffset.subtract(const Duration(days: 30));
-                    setState(() {});
                     //getAppointmentsData(loadMore: true);
                   },
-                  onRefresh: _onRefresh,
+                  onRefresh: _onRefreshNews,
                   footer: CustomFooter(
                     height: 140,
                     builder: (BuildContext context, LoadStatus? mode) {
@@ -695,12 +728,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        if (news.isNotEmpty)
-                          for (int i = 0; i < news.length; i++)
-                            _ListAppointments(
-                              appointment: news[i],
+                        if (diagnosticReports.isNotEmpty)
+                          for (int i = 0; i < diagnosticReports.length; i++)
+                            _diagnosticReportCard(diagnosticReports[i],
                             ),
-                        if (news.isEmpty)
+                        if (diagnosticReports.isEmpty)
                           const EmptyStateV2(
                             picture: "feed_empty.svg",
                             textTop: "Nada para mostrar",
@@ -713,6 +745,155 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 ),
               );
   }
+
+  Widget _diagnosticReportCard(DiagnosticReport diagnosticReport){
+    return Column(
+      children: [
+        Card(
+          elevation: 4,
+          margin: const EdgeInsets.only(bottom: 4),
+          child: InkWell(
+            onTap: () {
+
+            },
+            child: Container(
+              padding: const EdgeInsets.only(top: 8, left: 8),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Estudio reciente",
+                        style: boldoCorpSmallTextStyle.copyWith(
+                            color: ConstantsV2.darkBlue
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        child: Text("${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport.effectiveDate!).toLocal())}",
+                            style: boldoCorpSmallTextStyle.copyWith(
+                            color: ConstantsV2.darkBlue
+                        ),
+                      ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 10,),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 7),
+                        child: ClipOval(
+                          child: SizedBox(
+                            width: 54,
+                            height: 54,
+                            child:SvgPicture.asset(
+                                diagnosticReport.type == "LABORATORY"
+                                    ? 'assets/icon/lab.svg'
+                                    : diagnosticReport.type == "IMAGE"
+                                    ? 'assets/icon/image.svg'
+                                    : diagnosticReport.type == "OTHER"
+                                    ? 'assets/icon/other.svg'
+                                    : 'assets/images/LogoIcon.svg',
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              // For a future Laboratory's Name
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 4,
+                          ),
+                          Text("${diagnosticReport.description}",
+                            style: boldoCorpMediumTextStyle.copyWith(
+                                color: ConstantsV2.inactiveText
+                            ),
+                          ),
+                          Text("Subido por ${diagnosticReport.source}",
+                            style: boldoCorpMediumTextStyle.copyWith(
+                                color: ConstantsV2.inactiveText
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 4,
+                          ),
+                          Container(
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/icon/attach-file.svg',
+                                ),
+                                Text("${diagnosticReport.attachmentNumber} ${diagnosticReport.attachmentNumber== "1" ? "archivo adjunto": "archivos adjuntos"}",
+                                  style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.darkBlue),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+
+                        ],
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          /*
+                          Container(
+                            child: GestureDetector(
+                              onTap: () {
+                                // TODO redirect to medical study page
+                              },
+                              child: Card(
+                                  margin: EdgeInsets.zero,
+                                  clipBehavior: Clip.antiAlias,
+                                  elevation: 0,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(5)),
+                                  ),
+                                  color: ConstantsV2.orange.withOpacity(0.10),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+                                    child: Text("ver archivo"),
+                                  )
+                              ),
+                            ),
+                          ),*/ const SizedBox(height: 14,),
+                        ],
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
 }
 
 class _ListAppointments extends StatelessWidget {
