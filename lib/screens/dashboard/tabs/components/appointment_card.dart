@@ -139,6 +139,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                     .contains('OK')) {
                                   setState(() {
                                     isCancelled = true;
+                                    widget.appointment.status="cancelled";
                                   });
                                 }
                               }
