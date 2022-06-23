@@ -146,6 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Column(
                           children: [
                             CustomFormInput(
+                              enable: false,
                               initialValue: editingPatient.givenName,
                               label: "Nombre",
                               validator: (value) => valdiateFirstName(value!),
@@ -156,6 +157,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                             const SizedBox(height: 20),
                             CustomFormInput(
+                              enable: false,
                               initialValue: editingPatient.familyName,
                               label: "Apellido",
                               validator: (value) => valdiateLasttName(value!),
@@ -183,9 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 ),
                                 style: boldoSubTextMediumStyle.copyWith(color: Colors.black),
-                                onChanged: (value) {
-                                  editingPatient.gender = value!;
-                                },
+                                onChanged: null,
                                 items: ['male', 'female']
                                     .map((gender) => DropdownMenuItem<String>(
                                   child: Text(gender== 'male' ? 'Masculino' : gender == 'female' ? "Femenino": "desconocido"),
@@ -202,6 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             const SizedBox(height: 20),
 
                             TextFormField(
+                              enabled: false,
                               initialValue: DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd').parse(editingPatient.birthDate!)),
                               inputFormatters: [MaskTextInputFormatter(mask: "##/##/####")],
                               keyboardType: TextInputType.number,
