@@ -43,9 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _fetchProfileData() async {
-
-      editingPatient = Patient.fromJson(patient.toJson());
-
+    editingPatient = Patient.fromJson(patient.toJson());
   }
 
   Future<void> _updateProfile() async {
@@ -61,19 +59,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Provider.of<UserProvider>(context, listen: false)
         .clearProfileFormMessages();
 
-    BlocProvider.of<PatientBloc>(context).add(EditProfile(editingPatient: editingPatient));
-
+    BlocProvider.of<PatientBloc>(context)
+        .add(EditProfile(editingPatient: editingPatient));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<PatientBloc, PatientState>(
-        listener: (context, state){
-          if(state is Loading){
+        listener: (context, state) {
+          if (state is Loading) {
             _dataLoading = true;
           }
-          if(state is Success) {
+          if (state is Success) {
             _dataLoading = false;
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -81,7 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 backgroundColor: ConstantsV2.green,
               ),
             );
-          }else if(state is Failed){
+          } else if (state is Failed) {
             _dataLoading = false;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -114,8 +112,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Padding(
                     padding: EdgeInsets.only(top: 48.0),
                     child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Constants.primaryColor400),
                       backgroundColor: Constants.primaryColor600,
                     ),
                   ),
@@ -144,24 +142,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             : AutovalidateMode.disabled,
                         key: _formKey,
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CustomFormInput(
+                              enable: false,
                               initialValue: editingPatient.givenName,
                               label: "Nombre",
                               validator: (value) => valdiateFirstName(value!),
-                              onChanged: (String val) => (editingPatient.givenName = val
-                              ),
+                              onChanged: (String val) =>
+                                  (editingPatient.givenName = val),
                             ),
-
 
                             const SizedBox(height: 20),
                             CustomFormInput(
+                              enable: false,
                               initialValue: editingPatient.familyName,
                               label: "Apellido",
                               validator: (value) => valdiateLasttName(value!),
-                              onChanged: (String val) => (
-                                editingPatient.familyName = val
-                              ),
+                              onChanged: (String val) =>
+                                  (editingPatient.familyName = val),
                             ),
 
                             //CustomDropdown(),
@@ -170,73 +170,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               initialValue: editingPatient.job,
                               secondaryLabel: "Opcional",
                               label: "Ocupación",
-                              onChanged: (String val) => (editingPatient.job = val),
+                              onChanged: (String val) =>
+                                  (editingPatient.job = val),
                             ),
 
                             const SizedBox(height: 20),
+                             const Text(
+                              'Sexo',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                                color: Constants.extraColor400,
+                              ),
+                            ),
                             DropdownButtonFormField<String>(
-                                value: editingPatient.gender == 'unknown' ? null : editingPatient.gender,
+                                value: editingPatient.gender == 'unknown'
+                                    ? null
+                                    : editingPatient.gender,
                                 hint: Text(
                                   "Género",
                                   style: boldoSubTextMediumStyle.copyWith(
-                                      color: ConstantsV2.activeText
-                                  ),
+                                      color: ConstantsV2.activeText),
                                 ),
-                                style: boldoSubTextMediumStyle.copyWith(color: Colors.black),
-                                onChanged: (value) {
-                                  editingPatient.gender = value!;
-                                },
+                                style: boldoSubTextMediumStyle.copyWith(
+                                    color: Colors.black),
+                                onChanged: null,
                                 items: ['male', 'female']
                                     .map((gender) => DropdownMenuItem<String>(
-                                  child: Text(gender== 'male' ? 'Masculino' : gender == 'female' ? "Femenino": "desconocido"),
-                                  value: gender,
-                                )).toList(),
+                                          child: Text(gender == 'male'
+                                              ? 'Masculino'
+                                              : gender == 'female'
+                                                  ? "Femenino"
+                                                  : "desconocido"),
+                                          value: gender,
+                                        ))
+                                    .toList(),
                                 isExpanded: true,
-                                validator: (value){
-                                  if(value == null){
+                                validator: (value) {
+                                  if (value == null) {
                                     return "Selecciona un género";
                                   }
                                   return null;
-                                }
-                            ),
+                                }),
                             const SizedBox(height: 20),
-
-                            TextFormField(
-                              initialValue: DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd').parse(editingPatient.birthDate!)),
-                              inputFormatters: [MaskTextInputFormatter(mask: "##/##/####")],
-                              keyboardType: TextInputType.number,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Ingrese la fecha de nacimiento';
-                                } else {
-                                  try {
-                                    var inputFormat = DateFormat('dd/MM/yyyy');
-                                    var outputFormat = DateFormat('yyyy-MM-dd');
-                                    var date1 = inputFormat
-                                        .parse(value.toString().trim());
-                                    var date2 = outputFormat.format(date1);
-                                    editingPatient.birthDate = date2;
-                                  } catch (e) {
-                                    return "El formato de la fecha debe ser (dd/MM/yyyy)";
-                                  }
-                                }
-                                return null;
-                              },
-                              decoration: const InputDecoration(
-                                hintText: "31/12/2020",
-                                labelText: "Fecha de nacimiento (dd/mm/yyyy)",
-                              )
+                            const Text(
+                              'Fecha de nacimiento (dd/mm/yyyy)',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                                color: Constants.extraColor400,
+                              ),
+                            ),
+                            const SizedBox(height: 7,),
+                             Text(
+                              '${ DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd').parse(editingPatient.birthDate!))}',
+                              style: const TextStyle(
+                                // fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                                color: Constants.extraColor300,
+                              ),
                             ),
 
                             const SizedBox(height: 20),
-                            if(!prefs.getBool(isFamily)!)
+                            if (!prefs.getBool(isFamily)!)
                               CustomFormInput(
-                                initialValue: editingPatient.email?? '',
+                                initialValue: editingPatient.email ?? '',
                                 label: "Correo electrónico",
                                 validator: (value) => validateEmail(value!),
-                                onChanged: (String val) => (editingPatient.email = val),
+                                onChanged: (String val) =>
+                                    (editingPatient.email = val),
                               ),
-                            if(!prefs.getBool(isFamily)!)
+                            if (!prefs.getBool(isFamily)!)
                               const SizedBox(height: 20),
 
                             CustomFormInput(
@@ -245,7 +249,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               secondaryLabel: "Opcional",
                               label: "Número de teléfono",
                               inputFormatters: [ValidatorInputFormatter()],
-                              onChanged: (String val) => (editingPatient.phone = val),
+                              onChanged: (String val) =>
+                                  (editingPatient.phone = val),
                             ),
                             const SizedBox(height: 20),
                             ListTile(
@@ -266,45 +271,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       'assets/icon/marker.svg',
                                     ),
                                     const SizedBox(width: 10),
-                                    const Text('Dirección', style: boldoSubTextStyle)
+                                    const Text('Dirección',
+                                        style: boldoSubTextStyle)
                                   ],
                                 ),
                               ),
                               trailing: const Icon(Icons.chevron_right),
                             ),
                             //TODO: not implemented for dependents
-                            if(!prefs.getBool(isFamily)!)
-                            ListTile(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PasswordResetScreen(),
-                                  ),
-                                );
-                              },
-                              leading: SizedBox(
-                                height: double.infinity,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icon/key.svg',
+                            if (!prefs.getBool(isFamily)!)
+                              ListTile(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PasswordResetScreen(),
                                     ),
-                                    const SizedBox(width: 10),
-                                    const Text('Contraseña', style: boldoSubTextStyle)
-                                  ],
+                                  );
+                                },
+                                leading: SizedBox(
+                                  height: double.infinity,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/icon/key.svg',
+                                      ),
+                                      const SizedBox(width: 10),
+                                      const Text('Contraseña',
+                                          style: boldoSubTextStyle)
+                                    ],
+                                  ),
                                 ),
+                                trailing: const Icon(Icons.chevron_right),
                               ),
-                              trailing: const Icon(Icons.chevron_right),
-                            ),
                             const SizedBox(height: 8),
                             SizedBox(
                               child: Column(
                                 children: [
                                   if (state is Failed)
                                     Text(
-                                      state.response?? '',
+                                      state.response ?? '',
                                       style: const TextStyle(
                                         fontSize: 14,
                                         color: Constants.otherColor100,

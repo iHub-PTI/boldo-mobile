@@ -20,6 +20,7 @@ class CustomFormInput extends StatefulWidget {
   final String? Function(String?)? validator;
   final  Function(String)? changeValueCallback;
   final bool obscureText;
+  final bool enable;
   final Function(String)? onChanged;
   final List<TextInputFormatter> inputFormatters;
   CustomFormInput(
@@ -36,6 +37,7 @@ class CustomFormInput extends StatefulWidget {
       this.initialValue,
       this.secondaryLabel,
       this.onChanged,
+      this.enable = true,
       this.obscureText = false})
       : super(key: key);
 
@@ -130,6 +132,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
               child: IgnorePointer(
                 ignoring: widget.isDateTime,
                 child: TextFormField(
+                  enabled: widget.enable,
                   maxLines: widget.maxLines,
                   inputFormatters: widget.inputFormatters,
                   keyboardType:
