@@ -61,10 +61,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
     appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
     daysDifference = daysBetween(actualDay,appointmentDay);
     minutes = appointmentDay.difference(actualDay).inMinutes + 1;
-    setState(() {
-      isToday = daysDifference == 0 &&
-          !["closed", "locked"].contains(widget.appointment.status);
-    });
+    isToday = daysDifference == 0 &&
+        !["closed", "locked"].contains(widget.appointment.status);
     super.initState();
     _updateWaitingRoom();
   }
