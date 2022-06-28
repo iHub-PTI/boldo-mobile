@@ -41,6 +41,20 @@ class _AppointmentCardState extends State<AppointmentCard> {
   Timer? timer;
 
   @override
+  void didUpdateWidget(AppointmentCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.appointment != oldWidget.appointment) {
+      isCancelled = widget.appointment.status!.contains('cancelled');
+      actualDay = DateTime.now();
+      appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
+      daysDifference = daysBetween(actualDay,appointmentDay);
+      minutes = appointmentDay.difference(actualDay).inMinutes + 1;
+      isToday = daysDifference == 0 &&
+          !["closed", "locked"].contains(widget.appointment.status);
+    }
+  }
+
+  @override
   void initState() {
     isCancelled = widget.appointment.status!.contains('cancelled');
     actualDay = DateTime.now();
