@@ -92,13 +92,6 @@ class _AppointmentCardState extends State<AppointmentCard> {
   @override
   Widget build(BuildContext context) {
 
-    String textItem = '';
-    if (widget.appointment.prescriptions != null) {
-      for (int i = 0; i < widget.appointment.prescriptions!.length; i++) {
-        textItem = textItem +
-            "${widget.appointment.prescriptions![i].medicationName}${widget.appointment.prescriptions!.length > 1 && i == 0 ? "," : ""}";
-      }
-    }
 
     return Column(
       children: [
