@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
+import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/Relationship.dart';
@@ -579,6 +580,65 @@ class UserRepository {
     } catch (e) {
       print("ERROR $e");
       throw Failure(genericError);
+    }
+  }
+
+  Future<List<Appointment>>? getAppointments() async {
+    Response responseAppointments;
+    try {
+      if (!prefs.getBool(isFamily)!)
+        responseAppointments = await dio.get(
+            "/profile/patient/appointments?start=${DateTime(DateTime
+                .now()
+                .year, DateTime
+                .now()
+                .month, DateTime
+                .now()
+                .day).toUtc().toIso8601String()}");
+      else
+        responseAppointments = await dio.get(
+            "/profile/caretaker/dependent/${patient
+                .id}/appointments?start=${DateTime(DateTime
+                .now()
+                .year, DateTime
+                .now()
+                .month, DateTime
+                .now()
+                .day).toUtc().toIso8601String()}");
+
+      if (responseAppointments.statusCode == 200) {
+        return List<Appointment>.from(
+            responseAppointments.data["appointments"]
+                .map((i) => Appointment.fromJson(i)));
+      } else {
+        throw Failure("Status ${responseAppointments.statusCode}");
+      }
+    } catch (e) {
+      throw Failure("Error al obtener las citas");
+    }
+  }
+
+  Future<List<DiagnosticReport>>? getDiagnosticRecords() async {
+    Response responseAppointments;
+    try {
+      if (!prefs.getBool(isFamily)!)
+        responseAppointments = await dio.get(
+            "/profile/patient/diagnosticReports");
+      else
+        responseAppointments = await dio.get(
+            "/profile/caretaker/dependent/${patient.id}/diagnosticReports");
+
+      if (responseAppointments.statusCode == 200) {
+        return List<DiagnosticReport>.from(
+            responseAppointments.data
+                .map((i) => DiagnosticReport.fromJson(i)));
+      } else if(responseAppointments.statusCode == 204) {
+        return [];
+      }else{
+        throw Failure("Status ${responseAppointments.statusCode}");
+      }
+    } catch (e) {
+      throw Failure("Error al obtener los estudios medicos");
     }
   }
 }
