@@ -135,18 +135,22 @@ class _AppointmentCardState extends State<AppointmentCard> {
                         child: CancelAppointmentWidget(
                           onTapCallback: (result) async {
                             if (result == 'Descartar') {
-                              final response = await dio.post(
-                                  !prefs.getBool(isFamily)! ?
+                              try{
+                                final response = await dio.post(
+                                    !prefs.getBool(isFamily)! ?
                                     "/profile/patient/appointments/cancel/${widget.appointment.id}"
-                                  : "/profile/caretaker/appointments/cancel/${widget.appointment.id}");
-                              if (response.statusMessage != null) {
-                                if (response.statusMessage!
-                                    .contains('OK')) {
-                                  setState(() {
-                                    isCancelled = true;
-                                    widget.appointment.status="cancelled";
-                                  });
+                                        : "/profile/caretaker/appointments/cancel/${widget.appointment.id}");
+                                if (response.statusMessage != null) {
+                                  if (response.statusMessage!
+                                      .contains('OK')) {
+                                    setState(() {
+                                      isCancelled = true;
+                                      widget.appointment.status="cancelled";
+                                    });
+                                  }
                                 }
+                              } catch (e){
+                                print(e);
                               }
                             }
                           },
