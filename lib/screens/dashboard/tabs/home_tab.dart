@@ -12,14 +12,10 @@ import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'dart:async';
 import 'dart:isolate';
-import 'package:dio/dio.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:boldo/network/http.dart';
 
 import '../../../main.dart';
 
@@ -128,8 +124,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     );
     BlocProvider.of<HomeBloc>(context).add(GetAppointments());
     BlocProvider.of<HomeBloc>(context).add(GetDiagnosticReports());
-    //getAppointmentsData(loadMore: false);
-    //getdiagnosticReport(loadMore: false);
     super.initState();
   }
 
@@ -145,110 +139,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     }
 
     super.dispose();
-  }
-
-  Future<void> getAppointmentsData({bool loadMore = false}) async {
-    if (!loadMore) {
-      if (_isolate != null) {
-        _isolate!.kill(priority: Isolate.immediate);
-        _isolate = null;
-      }
-      if (_receivePort != null) {
-        _receivePort!.close();
-        _receivePort = null;
-      }
-      if (!mounted) return;
-        _loading = true;
-    }
-    Response responseAppointments;
-    try {
-      if (!prefs.getBool(isFamily)!)
-        responseAppointments = await dio.get(
-            "/profile/patient/appointments?start=${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).toUtc().toIso8601String()}");
-      else
-        responseAppointments = await dio.get(
-            "/profile/caretaker/dependent/${patient.id}/appointments?start=${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).toUtc().toIso8601String()}");
-
-      List<Appointment> allAppointmets = List<Appointment>.from(
-          responseAppointments.data["appointments"]
-              .map((i) => Appointment.fromJson(i)));
-
-      if (!mounted) return;
-
-      // Appointments cancelled will be ignored
-      allAppointmets = allAppointmets
-          .where((element) =>
-              !["closed", "locked", "cancelled"].contains(element.status))
-          .toList();
-
-      allAppointmets.sort((a, b) =>
-          DateTime.parse(a.start!).compareTo(DateTime.parse(b.start!)));
-      appointments.clear();
-      appointments = allAppointmets
-          .where((element) =>
-              !["closed", "locked", "cancelled"].contains(element.status))
-          .toList();
-      _loading = false;
-
-
-
-    } on DioError catch (exception, stackTrace) {
-      print(exception);
-
-      if (!mounted) return;
-      setState(() {
-        _loading = false;
-        _dataFetchError = true;
-      });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-    } catch (exception, stackTrace) {
-      print(exception);
-
-      if (!mounted) return;
-      setState(() {
-        _loading = false;
-        _dataFetchError = false;
-      });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-    } finally {
-      if (_refreshController != null) {
-        _refreshController!.refreshCompleted();
-        _refreshController!.loadComplete();
-      }
-    }
-  }
-
-  Future<void> getdiagnosticReport({bool loadMore = false}) async {
-
-    Response responseAppointments;
-    try {
-      if (!prefs.getBool(isFamily)!)
-        responseAppointments = await dio.get(
-            "/profile/patient/diagnosticReports");
-      else
-        responseAppointments = await dio.get(
-            "/profile/caretaker/dependent/${patient.id}/diagnosticReports");
-
-      List<DiagnosticReport> allDiagnosticReports = List<DiagnosticReport>.from(
-          responseAppointments.data
-              .map((i) => DiagnosticReport.fromJson(i)));
-      diagnosticReports = allDiagnosticReports.where((element) => element.sourceID != patient.id).toList();
-
-
-    }catch (e){
-
-    }finally {
-      if (_refreshControllerNews != null) {
-        _refreshControllerNews!.refreshCompleted();
-        _refreshControllerNews!.loadComplete();
-      }
-    }
   }
 
   @override
@@ -456,13 +346,13 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   Widget _individualTab() {
     return Container(
       height: 50 + MediaQuery.of(context).padding.bottom,
-      padding: EdgeInsets.all(0),
+      padding: const EdgeInsets.all(0),
       width: double.infinity,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           border: Border(
               right: BorderSide(
                   color: Colors.grey, width: 1, style: BorderStyle.solid))),
-      child: Tab(
+      child: const Tab(
         // icon: ImageIcon(AssetImage(imagePath)),
         child: Text('test'),
       ),
@@ -472,7 +362,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   Widget _buildAppointments() {
     return _dataFetchError
         ? Container(
-            child: DataFetchErrorWidget(retryCallback: getAppointmentsData))
+            child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeBloc>(context).add(GetAppointments()) ) )
         : Container(
             child: SmartRefresher(
               enablePullDown: true,
@@ -483,7 +373,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
               controller: _refreshController!,
               onLoading: () {
                 dateOffset = dateOffset.subtract(const Duration(days: 30));
-                //getAppointmentsData(loadMore: true);
               },
               onRefresh: _onRefresh,
               footer: CustomFooter(
@@ -549,7 +438,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   Widget _buildNews() {
     return _dataFetchError
         ? Container(
-            child: DataFetchErrorWidget(retryCallback: getdiagnosticReport))
+            child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeBloc>(context).add(GetDiagnosticReports()) ) )
         : Container(
           child: SmartRefresher(
             enablePullDown: true,
@@ -559,7 +448,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             ),
             controller: _refreshControllerNews!,
             onLoading: () {
-              //getAppointmentsData(loadMore: true);
             },
             onRefresh: _onRefreshNews,
             footer: CustomFooter(
@@ -584,28 +472,45 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 );
               },
             ),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  if (diagnosticReports.isNotEmpty)
-                    for (int i = 0; i < diagnosticReports.length; i++)
-                      _diagnosticReportCard(diagnosticReports[i],
+            child: BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
+              if(state is Success){
+                return diagnosticReports.isNotEmpty
+                    ? ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: diagnosticReports.length,
+                  scrollDirection: Axis.vertical,
+                  itemBuilder: _diagnosticReportCard,
+                  physics: const ClampingScrollPhysics(),
+                )
+                    :SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const EmptyStateV2(
+                        picture: "feed_empty.svg",
+                        textTop: "Nada para mostrar",
+                        textBottom:
+                        "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
                       ),
-                  if (diagnosticReports.isEmpty)
-                    const EmptyStateV2(
-                      picture: "feed_empty.svg",
-                      textTop: "Nada para mostrar",
-                      textBottom:
-                          "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
-                    ),
-                ],
-              ),
-            ),
+                    ],
+                  ),
+                );
+              }else{
+                return Container(
+                    child: const Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                          AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                          backgroundColor: Constants.primaryColor600,
+                        )
+                    )
+                );
+              }
+            }),
           ),
         );
   }
 
-  Widget _diagnosticReportCard(DiagnosticReport diagnosticReport){
+  Widget _diagnosticReportCard(BuildContext context, int index){
     return Column(
       children: [
         Card(
@@ -632,7 +537,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                       ),
                       Container(
                         margin: const EdgeInsets.only(right: 8),
-                        child: Text("${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport.effectiveDate!).toLocal())}",
+                        child: Text("${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReports[index].effectiveDate!).toLocal())}",
                             style: boldoCorpSmallTextStyle.copyWith(
                             color: ConstantsV2.darkBlue
                         ),
@@ -650,11 +555,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                             width: 54,
                             height: 54,
                             child:SvgPicture.asset(
-                                diagnosticReport.type == "LABORATORY"
+                              diagnosticReports[index].type == "LABORATORY"
                                     ? 'assets/icon/lab.svg'
-                                    : diagnosticReport.type == "IMAGE"
+                                    : diagnosticReports[index].type == "IMAGE"
                                     ? 'assets/icon/image.svg'
-                                    : diagnosticReport.type == "OTHER"
+                                    : diagnosticReports[index].type == "OTHER"
                                     ? 'assets/icon/other.svg'
                                     : 'assets/images/LogoIcon.svg',
                             ),
@@ -675,12 +580,12 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                           const SizedBox(
                             height: 4,
                           ),
-                          Text("${diagnosticReport.description}",
+                          Text("${diagnosticReports[index].description}",
                             style: boldoCorpMediumTextStyle.copyWith(
                                 color: ConstantsV2.inactiveText
                             ),
                           ),
-                          Text("Subido por ${diagnosticReport.source}",
+                          Text("Subido por ${diagnosticReports[index].source}",
                             style: boldoCorpMediumTextStyle.copyWith(
                                 color: ConstantsV2.inactiveText
                             ),
@@ -694,7 +599,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                                 SvgPicture.asset(
                                   'assets/icon/attach-file.svg',
                                 ),
-                                Text("${diagnosticReport.attachmentNumber} ${diagnosticReport.attachmentNumber== "1" ? "archivo adjunto": "archivos adjuntos"}",
+                                Text("${diagnosticReports[index].attachmentNumber} ${diagnosticReports[index].attachmentNumber== "1" ? "archivo adjunto": "archivos adjuntos"}",
                                   style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.darkBlue),
                                 )
                               ],
