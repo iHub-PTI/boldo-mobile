@@ -64,7 +64,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
     isToday = daysDifference == 0 &&
         !["closed", "locked"].contains(widget.appointment.status);
     super.initState();
-    _updateWaitingRoom();
+    _updateWaitingRoom(1);
   }
 
   @override
@@ -74,8 +74,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
   }
 
   // asynchronous task to update the remaining minutes to open the waiting room
-  void _updateWaitingRoom() async {
-    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+  void _updateWaitingRoom(int seconds) async {
+    timer = Timer.periodic(Duration(seconds: seconds), (Timer timer) {
       if(isCancelled){
         timer.cancel();
       }
@@ -86,6 +86,18 @@ class _AppointmentCardState extends State<AppointmentCard> {
       // deactivate task once the room is open
       if(minutes <= 0)
         timer.cancel();
+      if(minutes > 60) {
+        timer.cancel();
+        _updateWaitingRoom(30*60); // half hour
+      }
+      if(minutes <= 60 && minutes > 15) {
+        timer.cancel();
+        _updateWaitingRoom(60); // one minute
+      }
+      if(minutes <= 15) {
+        timer.cancel();
+        _updateWaitingRoom(2); //two seconds
+      }
     });
   }
 
