@@ -219,6 +219,7 @@ class _VideoCallState extends State<VideoCall> {
     remoteRenderer.srcObject = null;
     localRenderer.dispose();
     remoteRenderer.dispose();
+    localStream?.dispose();
 
     //cleanup the peer connection
     if (peerConnection != null) peerConnection!.cleanup();
