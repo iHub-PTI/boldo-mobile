@@ -50,7 +50,6 @@ class _SingInTransitionState extends State<SingInTransition> {
     return Scaffold(
       body: BlocListener<PatientBloc, PatientState>(
         listener: (context, state){
-          setState(() {
             if(state is Failed){
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -64,6 +63,7 @@ class _SingInTransitionState extends State<SingInTransition> {
               UserRepository().logout(context);
             }
             if(state is Success){
+              _background = const Background(text: "SingIn_2");
               _dataLoading = false;
             }
             if(state is RedirectNextScreen){
@@ -73,86 +73,109 @@ class _SingInTransitionState extends State<SingInTransition> {
             if(state is Loading){
               _dataLoading = true;
             }
-          });
-        },
-        child : Stack(
-          children: [
-            _background,
-            SafeArea(
-              child: BlocBuilder<PatientBloc, PatientState>(
-                builder: (context, state){
-                  return Container(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                child :Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+          },
+        child : BlocBuilder<PatientBloc, PatientState>(
+          builder: (context, state){
+            if(state is ChangeFamily || state is RedirectNextScreen) {
+              return Stack(
+                children: [
+                  _background,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .center,
+                                    children: [
+                                      if(!_dataLoading) const ProfileImageView(
+                                          height: 170,
+                                          width: 170,
+                                          border: true),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 29,),
+                                  Container(
+                                    child: Column(
                                       children: [
-                                        if(!_dataLoading) const ProfileImageView(height: 170, width: 170, border: true),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .center,
+                                          children: [
+                                            _dataLoading ? Text('',
+                                              style: boldoSubTextStyle
+                                                  .copyWith(
+                                                  color: ConstantsV2
+                                                      .lightGrey
+                                              ),) : Text(
+                                              patient.gender == "unknown" ?
+                                              "Bienvenido/a" :
+                                              patient.gender == "male" ?
+                                              "Bienvenido" : "Bienvenida",
+                                              style: boldoSubTextStyle
+                                                  .copyWith(
+                                                  color: ConstantsV2
+                                                      .lightGrey
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 16,),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .center,
+                                          children: [
+                                            Text(
+                                              patient.givenName ?? '',
+                                              style: boldoBillboardTextStyleAlt
+                                                  .copyWith(
+                                                  color: ConstantsV2
+                                                      .lightGrey
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ],
                                     ),
-                                    const SizedBox(height: 29,),
-                                    Container(
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              _dataLoading ? Text('',style: boldoSubTextStyle.copyWith(
-                                                  color: ConstantsV2.lightGrey
-                                              ),) :Text(
-                                                patient.gender == "unknown" ?
-                                                "Bienvenido/a" :
-                                                patient.gender == "male" ?
-                                                "Bienvenido" : "Bienvenida",
-                                                style: boldoSubTextStyle.copyWith(
-                                                    color: ConstantsV2.lightGrey
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 16,),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                patient.givenName ?? '',
-                                                style: boldoBillboardTextStyleAlt.copyWith(
-                                                    color: ConstantsV2.lightGrey
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                    ],
+                  )
+                ],
+              );
+            }else if(state is Loading){
+              return
+                Stack(
+                  children: [
+                    _background,
+                    Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                            child: const LoadingHelper()
+                        )
                     ),
-                  );
-                },
-              ),
-            ),
-            if(_dataLoading)
-              Align(
-                alignment: Alignment.center,
-                child: Container(
-                  child: const LoadingHelper()
-                )
-              )
-          ]
+                  ],
+                );
+            }else{
+              return Stack(
+                children: [
+                  _background,
+                  Container(),
+                ],
+              );
+            }
+          },
         ),
       ),
     );
