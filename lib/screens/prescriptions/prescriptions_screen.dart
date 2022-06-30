@@ -219,6 +219,9 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                     }
                                   },
                                   child: Container(
+                                    width: MediaQuery.of(context)
+                                        .size
+                                        .width,
                                     child: Card(
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
@@ -308,6 +311,9 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                           ),
                                                   ),
                                                 ),
+                                                const SizedBox(
+                                                  width: 7,
+                                                ),
                                                 Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -317,14 +323,18 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .width -
-                                                              90,
+                                                              85,
                                                       child: Row(
                                                         crossAxisAlignment:
                                                             CrossAxisAlignment
                                                                 .start,
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: [
                                                           SizedBox(
-                                                            width: 150,
+                                                            width: (MediaQuery.of(context)
+                                                                .size
+                                                                .width -
+                                                                85)/2,
                                                             child: Flex(direction: Axis.horizontal,
                                                               children: [
                                                                 Flexible(
@@ -336,146 +346,150 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                               ],
                                                             ),
                                                           ),
-                                                          Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              if (allAppointments[
-                                                                          index]
-                                                                      .prescriptions![
-                                                                          0]
-                                                                      .encounter !=
-                                                                  null)
-                                                                Padding(
-                                                                  padding: const EdgeInsets
-                                                                          .only(
-                                                                      bottom:
-                                                                          4.0),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      SvgPicture
-                                                                          .asset(
-                                                                        'assets/icon/pill.svg',
-                                                                        color: const Color(
-                                                                            0xff707882),
-                                                                        // height: 8,
-                                                                        width:
-                                                                            15,
-                                                                      ),
-                                                                      const SizedBox(
+                                                          SizedBox(
+                                                            width: ((MediaQuery.of(context)
+                                                                .size
+                                                                .width -
+                                                                85)/2),
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                              children: [
+                                                                if (allAppointments[
+                                                                index]
+                                                                    .prescriptions![
+                                                                0]
+                                                                    .encounter !=
+                                                                    null)
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        bottom:
+                                                                        4.0),
+                                                                    child: Row(
+                                                                      children: [
+                                                                        SvgPicture
+                                                                            .asset(
+                                                                          'assets/icon/pill.svg',
+                                                                          color: const Color(
+                                                                              0xff707882),
+                                                                          // height: 8,
                                                                           width:
-                                                                              10),
-                                                                      Container(
-                                                                        width:
-                                                                            130,
-                                                                        child:
-                                                                            Text(
-                                                                          "${allAppointments[index].prescriptions![0].medicationName}",
-                                                                          style: boldoCorpMediumTextStyle.copyWith(
-                                                                              color: ConstantsV2.inactiveText,
-                                                                              fontSize: 10),
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
+                                                                          15,
                                                                         ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              if (allAppointments[
-                                                                          index]
-                                                                      .prescriptions!
-                                                                      .length >
-                                                                  1)
-                                                                Padding(
-                                                                  padding: const EdgeInsets
-                                                                          .only(
-                                                                      bottom:
-                                                                          4.0),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      SvgPicture
-                                                                          .asset(
-                                                                        'assets/icon/pill.svg',
-                                                                        color: const Color(
-                                                                            0xff707882),
-                                                                        // height: 8,
-                                                                        width:
-                                                                            15,
-                                                                      ),
-                                                                      const SizedBox(
-                                                                          width:
-                                                                              10),
-                                                                      Container(
-                                                                        width:
-                                                                            130,
-                                                                        child:
-                                                                            Text(
-                                                                          "${allAppointments[index].prescriptions![1].medicationName}",
-                                                                          style: boldoCorpMediumTextStyle.copyWith(
-                                                                              color: ConstantsV2.inactiveText,
-                                                                              fontSize: 10),
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                             
-                                                              if (allAppointments[
-                                                                          index]
-                                                                      .prescriptions!
-                                                                      .length >
-                                                                  2)
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    SvgPicture
-                                                                        .asset(
-                                                                      'assets/icon/add.svg',
-                                                                      color: const Color(
-                                                                          0xff707882),
-                                                                      // height: 8,
-                                                                      width: 15,
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        width:
+                                                                        const SizedBox(
+                                                                            width:
                                                                             10),
-                                                                    Text(
-                                                                      "${allAppointments[index].prescriptions!.length - 2}",
-                                                                      style: boldoCorpMediumTextStyle.copyWith(
-                                                                          color: ConstantsV2
-                                                                              .inactiveText,
-                                                                          fontSize:
-                                                                              10),
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
+                                                                        Container(
+                                                                          child:
+                                                                          Text(
+                                                                            "${allAppointments[index].prescriptions![0].medicationName}",
+                                                                            style: boldoCorpMediumTextStyle.copyWith(
+                                                                                color: ConstantsV2.inactiveText,
+                                                                                fontSize: 10),
+                                                                            overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                          ),
+                                                                        ),
+                                                                      ],
                                                                     ),
-                                                                    const SizedBox(
-                                                                      width: 4,
+                                                                  ),
+                                                                if (allAppointments[
+                                                                index]
+                                                                    .prescriptions!
+                                                                    .length >
+                                                                    1)
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        bottom:
+                                                                        4.0),
+                                                                    child: Row(
+                                                                      children: [
+                                                                        SvgPicture
+                                                                            .asset(
+                                                                          'assets/icon/pill.svg',
+                                                                          color: const Color(
+                                                                              0xff707882),
+                                                                          // height: 8,
+                                                                          width:
+                                                                          15,
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            width:
+                                                                            10),
+                                                                        Container(
+                                                                          width:
+                                                                          130,
+                                                                          child:
+                                                                          Text(
+                                                                            "${allAppointments[index].prescriptions![1].medicationName}",
+                                                                            style: boldoCorpMediumTextStyle.copyWith(
+                                                                                color: ConstantsV2.inactiveText,
+                                                                                fontSize: 10),
+                                                                            overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                          ),
+                                                                        ),
+                                                                      ],
                                                                     ),
-                                                                    Text(
-                                                                      "ver todo",
-                                                                      style: boldoCorpMediumTextStyle.copyWith(
-                                                                          color: ConstantsV2
-                                                                              .orange,
-                                                                          fontSize:
-                                                                              10),
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                            ],
-                                                          )
+                                                                  ),
+
+                                                                if (allAppointments[
+                                                                index]
+                                                                    .prescriptions!
+                                                                    .length >
+                                                                    2)
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                    children: [
+                                                                      SvgPicture
+                                                                          .asset(
+                                                                        'assets/icon/add.svg',
+                                                                        color: const Color(
+                                                                            0xff707882),
+                                                                        // height: 8,
+                                                                        width: 15,
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                          10),
+                                                                      Text(
+                                                                        "${allAppointments[index].prescriptions!.length - 2}",
+                                                                        style: boldoCorpMediumTextStyle.copyWith(
+                                                                            color: ConstantsV2
+                                                                                .inactiveText,
+                                                                            fontSize:
+                                                                            10),
+                                                                        overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        width: 4,
+                                                                      ),
+                                                                      Text(
+                                                                        "ver todo",
+                                                                        style: boldoCorpMediumTextStyle.copyWith(
+                                                                            color: ConstantsV2
+                                                                                .orange,
+                                                                            fontSize:
+                                                                            10),
+                                                                        overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                              ],
+                                                            ),
+                                                          ),
                                                         ],
                                                       ),
                                                     ),
