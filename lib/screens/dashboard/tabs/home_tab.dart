@@ -8,6 +8,7 @@ import 'package:boldo/screens/dashboard/tabs/components/divider_feed_secction_ho
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
+import 'package:boldo/screens/my_studies/my_studies_screen.dart';
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -104,8 +105,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       alignment: Alignment.bottomCenter,
       index: 4,
       title: 'Ver mis estudios',
-      appear: false,
-      page: DoctorsTab(),
+      appear: true,
+      page: MyStudies(),
     ),
   ];
 
