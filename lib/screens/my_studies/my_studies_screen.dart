@@ -1,4 +1,6 @@
+import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../constants.dart';
 
@@ -10,6 +12,12 @@ class MyStudies extends StatefulWidget {
 }
 
 class _MyStudiesState extends State<MyStudies> {
+  @override
+  void initState() {
+    BlocProvider.of<MyStudiesBloc>(context).add(GetPatientStudiesFromServer());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,12 +53,13 @@ class _MyStudiesState extends State<MyStudies> {
               'Subí y consultá resultados de estudios provenientes de varias fuentes.',
               style: boldoHeadingTextStyle.copyWith(fontSize: 12),
             ),
-
-            SizedBox(height: 30,),
-             Text(
-                'Mis estudios',
-                style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-              ),
+            SizedBox(
+              height: 30,
+            ),
+            Text(
+              'Mis estudios',
+              style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+            ),
           ],
         ),
       ),
