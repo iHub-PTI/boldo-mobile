@@ -12,6 +12,7 @@ import 'package:boldo/screens/family/tabs/family_change_transition.dart';
 import 'package:boldo/screens/family/tabs/family_register_account.dart';
 import 'package:boldo/screens/family/tabs/metods_add_family_screen.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
+import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/my_studies/my_studies_screen.dart';
 import 'package:boldo/screens/sing_in/sing_in_transition.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
@@ -126,6 +127,9 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<DoctorBloc>(
               create: (BuildContext context) => DoctorBloc(),
+          ),
+          BlocProvider<MyStudiesBloc>(
+              create: (BuildContext context) => MyStudiesBloc(),
           ),
         ],
         child: MultiProvider(
