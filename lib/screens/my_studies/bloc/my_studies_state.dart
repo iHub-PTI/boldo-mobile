@@ -6,9 +6,10 @@ abstract class MyStudiesState {}
 class MyStudiesInitial extends MyStudiesState {}
 
 class Success extends MyStudiesState {
-  final String nameOfStudies;
+  //final String nameOfStudies;
+  final List<String> studiesList;
 
-  Success({required this.nameOfStudies});
+  Success({required this.studiesList});
 }
 
 class Loading extends MyStudiesState {}
@@ -18,6 +19,3 @@ class Failed extends MyStudiesState {
 
   Failed({required this.msg});
 }
-
-
-

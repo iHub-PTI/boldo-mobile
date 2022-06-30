@@ -14,21 +14,18 @@ class MyStudiesBloc extends Bloc<MyStudiesEvent, MyStudiesState> {
         print('GetPatientStudiesFromServer capturado');
         emit(Loading());
         var _post;
-        await Task(() =>
-        _myStudiesRepository.getPatientStudies()!)
+        await Task(() => _myStudiesRepository.getPatientStudies()!)
             .attempt()
             .run()
             .then((value) {
           _post = value;
-        }
-        );
+        });
         var response;
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(msg: response));
-
-        }else{
-          emit(Success(nameOfStudies: "Resonancia"));
+        } else {
+          emit(Success(studiesList: _post.value));
         }
       }
     });

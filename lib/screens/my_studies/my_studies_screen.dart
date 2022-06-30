@@ -37,7 +37,8 @@ class _MyStudiesState extends State<MyStudies> {
               print('loading');
             }
             if (state is Success) {
-              print('success ${state.nameOfStudies}');
+              for (String studyName in state.studiesList)
+                print('success ${studyName}');
             }
 
             if (state is Failed) {
