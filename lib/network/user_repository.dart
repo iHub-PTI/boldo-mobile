@@ -5,6 +5,7 @@ import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/models/Prescription.dart';
 import 'package:boldo/models/Relationship.dart';
 import 'package:boldo/models/User.dart';
 import 'package:boldo/models/upload_url_model.dart';
@@ -638,9 +639,39 @@ class UserRepository {
         throw Failure("Status ${responseAppointments.statusCode}");
       }
     } catch (e) {
+      await Sentry.captureException(
+        e,
+      );
       throw Failure("Error al obtener los estudios medicos");
     }
   }
+
+  Future<List<Prescription>>? getPrescriptions() async {
+    try{
+      Response responsePrescriptions;
+      if (!prefs.getBool(isFamily)!)
+        responsePrescriptions = await dio.get("/profile/patient/prescriptions");
+      else
+      responsePrescriptions = await dio
+          .get("/profile/caretaker/dependent/${patient.id}/prescriptions");
+
+      if(responsePrescriptions.statusCode == 200) {
+        return List<Prescription>.from(
+            responsePrescriptions.data["prescriptions"]
+                .map((i) => Prescription.fromJson(i)));
+      }else if(responsePrescriptions.statusCode == 204){
+        return [];
+      }
+      throw Failure("Response code ${responsePrescriptions.statusCode}");
+    }catch (exception, stackTrace){
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure("No fue posible obtener las recetas");
+    }
+  }
+
 }
 
 Future<None> getMedicalRecords() async {
