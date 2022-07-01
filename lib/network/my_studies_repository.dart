@@ -13,6 +13,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:sentry_flutter/sentry_flutter.dart';
 import '../constants.dart';
+import '../models/DiagnosticReport.dart';
 import '../screens/my_studies/bloc/my_studies_bloc.dart';
 
 import 'http.dart';
@@ -39,6 +40,21 @@ class MyStudesRepository {
       //   return List<Patient>.from([]);
       // }
       // throw Failure(genericError);
+    } catch (e) {
+      throw Failure(genericError);
+    }
+  }
+
+  Future<List<DiagnosticReport>>? getDiagnosticReports() async {
+    try {
+      Response response = await dio.get("/profile/patient/diagnosticReports");
+      if (response.statusCode == 200) {
+        return List<DiagnosticReport>.from(
+            response.data.map((i) => Patient.fromJson(i)));
+      } else if (response.statusCode == 204) {
+        return List<DiagnosticReport>.from([]);
+      }
+      throw Failure(genericError);
     } catch (e) {
       throw Failure(genericError);
     }

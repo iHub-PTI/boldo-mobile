@@ -1,8 +1,10 @@
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../constants.dart';
+import '../../models/DiagnosticReport.dart';
 
 class MyStudies extends StatefulWidget {
   MyStudies({Key? key}) : super(key: key);
@@ -24,10 +26,11 @@ class _MyStudiesState extends State<MyStudies> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         leadingWidth: 200,
-        // leading: Padding(
-        //   padding: const EdgeInsets.only(left: 16.0),
-        //   child:
-        //       SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child:
+              SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -38,7 +41,7 @@ class _MyStudiesState extends State<MyStudies> {
             }
             if (state is Success) {
               for (String studyName in state.studiesList)
-                print('success ${studyName}');
+                print('success ${studyName.toString()}');
             }
 
             if (state is Failed) {
