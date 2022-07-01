@@ -5,11 +5,10 @@ abstract class MyStudiesState {}
 
 class MyStudiesInitial extends MyStudiesState {}
 
-class Success extends MyStudiesState {
-  //final String nameOfStudies;
-  final List<String> studiesList;
+class DiagnosticLoaded extends MyStudiesState {
+  final List<DiagnosticReport> studiesList;
 
-  Success({required this.studiesList});
+  DiagnosticLoaded({required this.studiesList});
 }
 
 class Loading extends MyStudiesState {}
