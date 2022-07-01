@@ -14,6 +14,7 @@ class MyStudies extends StatefulWidget {
 }
 
 class _MyStudiesState extends State<MyStudies> {
+  List<DiagnosticReport> diagnosticReport = [];
   @override
   void initState() {
     BlocProvider.of<MyStudiesBloc>(context).add(GetPatientStudiesFromServer());
@@ -39,9 +40,11 @@ class _MyStudiesState extends State<MyStudies> {
             if (state is Loading) {
               print('loading');
             }
-            if (state is Success) {
-              for (String studyName in state.studiesList)
-                print('success ${studyName.toString()}');
+            if (state is DiagnosticLoaded) {
+              print('success DiagnosticLoaded');
+              setState(() {
+                diagnosticReport = state.studiesList;
+              });
             }
 
             if (state is Failed) {
@@ -72,17 +75,31 @@ class _MyStudiesState extends State<MyStudies> {
                 'Subí y consultá resultados de estudios provenientes de varias fuentes.',
                 style: boldoHeadingTextStyle.copyWith(fontSize: 12),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               Text(
                 'Mis estudios',
                 style: boldoHeadingTextStyle.copyWith(fontSize: 20),
               ),
+              diagnosticReport.isEmpty ? showEmptyList() : showDiagnosticList()
             ],
           ),
         ),
       ),
     );
+  }
+
+  showEmptyList() {
+    return Column(
+      children: [
+        Text('Lista vacia'),
+        // SvgPicture.asset('assets/images/empty_studies.svg', fit: BoxFit.cover)
+      ],
+    );
+  }
+
+  showDiagnosticList() {
+    return Text('Lista vacia ${diagnosticReport.toString()}');
   }
 }
