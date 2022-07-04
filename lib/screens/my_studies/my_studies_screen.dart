@@ -93,13 +93,13 @@ class _MyStudiesState extends State<MyStudies> {
   showEmptyList() {
     return Column(
       children: [
-        Text('Lista vacia'),
-        // SvgPicture.asset('assets/images/empty_studies.svg', fit: BoxFit.cover)
+        SvgPicture.asset('assets/images/empty_studies.svg', fit: BoxFit.cover),
+        Text('Aun no tenés estudios para visualizar')
       ],
     );
   }
 
   showDiagnosticList() {
-    return Text('Lista vacia ${diagnosticReport.toString()}');
+    return Text('Lista de estudios ${diagnosticReport.toString()}');
   }
 }
