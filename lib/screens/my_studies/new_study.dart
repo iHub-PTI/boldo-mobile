@@ -155,7 +155,7 @@ class _NewStudyState extends State<NewStudy> {
                               var date1 = inputFormat
                                   .parse(value.toString().trim());
                               var date2 = outputFormat.format(date1);
-                              editingPatient.birthDate = date2;
+                              fecha = date2;
                             } catch (e) {
                               return "El formato de la fecha debe ser (dd/MM/yyyy)";
                             }
@@ -210,14 +210,14 @@ class _NewStudyState extends State<NewStudy> {
                                 patientNotes: notas,
                                 effectiveDate: fecha,
                                 type: type);
-                            /*Navigator.push(
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
                                       AttachFiles(
                                           diagnosticReport:
                                           newDiagnosticReport)),
-                            );*/
+                            );
                           }: null,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
