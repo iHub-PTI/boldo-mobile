@@ -59,6 +59,8 @@ class PrescriptionBloc extends Bloc<PrescriptionEvent, PrescriptionState> {
           late List<Appointment> appointments;
           _post.foldRight(
               Appointment, (a, previous) => appointments = a);
+          appointments.sort((a, b) =>
+              DateTime.parse(b.start!).compareTo(DateTime.parse(a.start!)));
           await Task(() =>
           _patientRepository.getPrescriptions()!)
               .attempt()
