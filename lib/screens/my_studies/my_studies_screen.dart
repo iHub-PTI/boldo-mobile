@@ -14,6 +14,7 @@ class MyStudies extends StatefulWidget {
 }
 
 class _MyStudiesState extends State<MyStudies> {
+  bool _loading = true;
   List<DiagnosticReport> diagnosticReport = [];
   @override
   void initState() {
@@ -38,10 +39,12 @@ class _MyStudiesState extends State<MyStudies> {
         child: BlocListener<MyStudiesBloc, MyStudiesState>(
           listener: (context, state) {
             if (state is Loading) {
+              _loading = true;
               print('loading');
             }
             if (state is DiagnosticLoaded) {
               print('success DiagnosticLoaded');
+              _loading = false;
               setState(() {
                 diagnosticReport = state.studiesList;
               });
@@ -49,6 +52,7 @@ class _MyStudiesState extends State<MyStudies> {
 
             if (state is Failed) {
               print('algo falló: ${state.msg}');
+              _loading = false;
               Scaffold.of(context).showSnackBar(
                   SnackBar(content: Text("Falló la obtención de estudios")));
             }
@@ -93,13 +97,21 @@ class _MyStudiesState extends State<MyStudies> {
   showEmptyList() {
     return Column(
       children: [
-        SvgPicture.asset('assets/images/empty_studies.svg', fit: BoxFit.cover),
-        Text('Aun no tenés estudios para visualizar')
+        if (_loading)
+          const Text('Cargando...')
+        else ...[
+          const Text('Aun no tenés estudios para visualizar'),
+          SvgPicture.asset('assets/images/empty_studies.svg', fit: BoxFit.cover)
+        ]
       ],
     );
   }
 
   showDiagnosticList() {
-    return Text('Lista de estudios ${diagnosticReport.toString()}');
+    return Column(
+      children: [Text('Lista de estudios ${diagnosticReport.toString()}')],
+      //diagnosticReport.forEach((element) => Text('Lista de estudios ${element}'),
+    );
+    //return Text('Lista de estudios ${diagnosticReport.toString()}');
   }
 }
