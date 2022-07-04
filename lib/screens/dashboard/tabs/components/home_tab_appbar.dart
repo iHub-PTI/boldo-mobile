@@ -159,7 +159,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                         color: ConstantsV2.lightest,
                       ),
                     ) : Container(),
-                    families.length != 0 ? Container(
+                    Container(
                       constraints: const BoxConstraints(
                           maxHeight: 33, maxWidth: 33),
                       margin: const EdgeInsets.all(16),
@@ -171,7 +171,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                         child: SvgPicture.asset('assets/icon/family.svg'),
                         elevation: 0,
                       ) ,
-                    ) : Container(),
+                    ) ,
                   ],
                 ),
               ],
@@ -342,16 +342,18 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                 ? InkWell(
                   onTap: () {
                     prefs.remove("idFamily");
+                    bool previous = prefs.getBool(isFamily)?? false ;
                     prefs.setBool(isFamily, false);
-                    Navigator.pushNamed(context, '/FamilyTransition');
+                    Navigator.pushNamed(context, '/FamilyTransition', arguments: {'isFamily': previous});
                   },
                   child:ProfileImageViewTypeForm(height: height, width: width, border: false, form: type,)
                 )
                 :InkWell(
                   onTap: () {
                     prefs.setString("idFamily", families[index-1].id!);
+                    bool previous = prefs.getBool(isFamily)?? false ;
                     prefs.setBool(isFamily, true);
-                    Navigator.pushNamed(context, '/FamilyTransition');
+                    Navigator.pushNamed(context, '/FamilyTransition', arguments: {'isFamily': previous});
                   },
                   child:ProfileImageViewTypeForm(height: height, width: width, border: false, patient: families[index-1], form: type,)
                 )
@@ -380,16 +382,18 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
             ? InkWell(
               onTap: () {
                 prefs.remove("idFamily");
+                bool previous = prefs.getBool(isFamily)?? false ;
                 prefs.setBool(isFamily, false);
-                Navigator.pushNamed(context, '/FamilyTransition');
+                Navigator.pushNamed(context, '/FamilyTransition', arguments: {'isFamily': previous});
               },
               child: ProfileImageViewTypeForm(height: height, width: width, border: false, form: type,)
             )
             :InkWell(
               onTap: () {
                 prefs.setString("idFamily", families[index-1].id!);
+                bool previous = prefs.getBool(isFamily)?? false ;
                 prefs.setBool(isFamily, true);
-                Navigator.pushNamed(context, '/FamilyTransition');
+                Navigator.pushNamed(context, '/FamilyTransition', arguments: {'isFamily': previous});
               },
               child: ProfileImageViewTypeForm(height: height, width: width, border: false, patient: families[index-1], form: type,)
             )
