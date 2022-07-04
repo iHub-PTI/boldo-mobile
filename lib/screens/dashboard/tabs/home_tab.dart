@@ -1,4 +1,5 @@
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
+import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/screens/appointments/pastAppointments_screen.dart';
@@ -286,23 +287,31 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                                   labelColor: Colors.black,
                                   controller: _controller,
                                   tabs: [
-                                    Row(
-                                      mainAxisAlignment:
+                                    BlocBuilder<patientBloc.PatientBloc, patientBloc.PatientState>(builder: (context, state) {
+                                      if(state is patientBloc.Success){
+                                        return Row(
+                                          mainAxisAlignment:
                                           MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Novedades${prefs.getBool(isFamily) ?? false ? " de " : ''}',
-                                        ),
-                                        prefs.getBool(isFamily) ?? false
-                                            ? Text(
+                                          children: [
+                                            Text(
+                                              'Novedades${prefs.getBool(isFamily) ?? false ? " de " : ''}',
+                                            ),
+                                            prefs.getBool(isFamily) ?? false
+                                                ? Text(
                                                 '${patient.relationshipDisplaySpan}',
                                                 style: boldoCorpMediumTextStyle
                                                     .copyWith(
-                                                        color:
-                                                            ConstantsV2.green))
-                                            : Container(),
-                                      ],
-                                    ),
+                                                    color:
+                                                    ConstantsV2.green))
+                                                : Container(),
+                                          ],
+                                        );
+                                      }else{
+                                        return const Text(
+                                          'Novedades',
+                                        );
+                                      }
+                                    }),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
