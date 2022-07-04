@@ -48,9 +48,9 @@ class _MyStudiesState extends State<MyStudies> {
             }
 
             if (state is Failed) {
-              print('failed: ${state.msg}');
-              Scaffold.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.msg)));
+              print('algo falló: ${state.msg}');
+              Scaffold.of(context).showSnackBar(
+                  SnackBar(content: Text("Falló la obtención de estudios")));
             }
           },
           child: Column(

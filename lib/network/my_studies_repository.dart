@@ -50,13 +50,15 @@ class MyStudesRepository {
       Response response = await dio.get("/profile/patient/diagnosticReports");
       if (response.statusCode == 200) {
         return List<DiagnosticReport>.from(
-            response.data.map((i) => Patient.fromJson(i)));
+            response.data.map((i) => DiagnosticReport.fromJson(i)));
       } else if (response.statusCode == 204) {
         return List<DiagnosticReport>.from([]);
+      } else {
+        throw Failure(
+            "Falló la obtención de los estudios: Error ${response.statusCode}");
       }
-      throw Failure(genericError);
     } catch (e) {
-      throw Failure(genericError);
+      throw Failure(e.toString());
     }
   }
 }
