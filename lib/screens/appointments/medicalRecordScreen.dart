@@ -1,6 +1,7 @@
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Soep.dart';
+import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,31 +35,17 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
   Widget build(BuildContext context) {
     return BlocListener<MedicalRecordBloc, MedicalRecordState>(
         listener: (context, state) {
-      if (state is Success) {
-        setState(() {
-          _dataLoading = false;
-          _dataLoaded = true;
-        });
-      } else if (state is Failed) {
+      if (state is Failed) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(state.response!),
             backgroundColor: Colors.redAccent,
           ),
         );
-        _dataLoading = false;
-        _dataLoaded = false;
-      } else if (state is Loading) {
-        setState(() {
-          _dataLoading = true;
-          _dataLoaded = false;
-        });
       } else if (state is MedicalRecordLoadedState) {
         medicalRecord = state.medicalRecord;
       }
-    }, child: BlocBuilder<MedicalRecordBloc, MedicalRecordState>(
-            builder: (context, state) {
-      return Scaffold(
+    }, child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
           leadingWidth: 200,
@@ -68,15 +55,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                 semanticsLabel: 'BOLDO Logo'),
           ),
         ),
-        body: _dataLoading == true
-            ? const Center(
-                child: CircularProgressIndicator(
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                  backgroundColor: Constants.primaryColor600,
-                ),
-              )
-            : Padding(
+        body: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -100,81 +79,86 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                         ],
                       ),
                     ),
-                    if (!_dataLoading && !_dataLoaded)
-                      const Padding(
-                        padding: EdgeInsets.only(top: 40.0),
-                        child: Center(
-                          child: Text(
-                            "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Constants.otherColor100,
+                    BlocBuilder<MedicalRecordBloc, MedicalRecordState>(
+                      builder: (context, state) {
+                        if(state is Loading){
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              valueColor:
+                              AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                              backgroundColor: Constants.primaryColor600,
                             ),
-                          ),
-                        ),
-                      ),
-                    if (!_dataLoading && _dataLoaded)
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.8,
-                        child: SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.only(top: 15.0),
-                                  child: Text("Motivo principal",
-                                      style: boldoSubTextStyle),
+                          );
+                        }else if(state is Success){
+                          return SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.8,
+                            child: SingleChildScrollView(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Padding(
+                                      padding: EdgeInsets.only(top: 15.0),
+                                      child: Text("Motivo principal",
+                                          style: boldoSubTextStyle),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Text(
+                                        medicalRecord?.mainReason ?? '',
+                                        style: boldoHeadingTextStyle.copyWith(
+                                            fontSize: 20,
+                                            color: Constants.primaryColor500),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    SoepAccordion(
+                                        title: Constants.subjective,
+                                        medicalRecord: medicalRecord!),
+                                    const Divider(
+                                      color: Constants.dividerAccordion,
+                                      thickness: 1,
+                                    ),
+                                    SoepAccordion(
+                                        title: Constants.objective,
+                                        medicalRecord: medicalRecord!),
+                                    const Divider(
+                                        color: Constants.dividerAccordion,
+                                        thickness: 1),
+                                    SoepAccordion(
+                                        title: Constants.evaluation,
+                                        medicalRecord: medicalRecord!),
+                                    const Divider(
+                                        color: Constants.dividerAccordion,
+                                        thickness: 1),
+                                    SoepAccordion(
+                                        title: Constants.plan,
+                                        medicalRecord: medicalRecord!),
+                                    const Divider(
+                                        color: Constants.dividerAccordion,
+                                        thickness: 1),
+                                  ],
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
-                                  child: Text(
-                                    medicalRecord?.mainReason ?? '',
-                                    style: boldoHeadingTextStyle.copyWith(
-                                        fontSize: 20,
-                                        color: Constants.primaryColor500),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                SoepAccordion(
-                                    title: Constants.subjective,
-                                    medicalRecord: medicalRecord!),
-                                const Divider(
-                                  color: Constants.dividerAccordion,
-                                  thickness: 1,
-                                ),
-                                SoepAccordion(
-                                    title: Constants.objective,
-                                    medicalRecord: medicalRecord!),
-                                const Divider(
-                                    color: Constants.dividerAccordion,
-                                    thickness: 1),
-                                SoepAccordion(
-                                    title: Constants.evaluation,
-                                    medicalRecord: medicalRecord!),
-                                const Divider(
-                                    color: Constants.dividerAccordion,
-                                    thickness: 1),
-                                SoepAccordion(
-                                    title: Constants.plan,
-                                    medicalRecord: medicalRecord!),
-                                const Divider(
-                                    color: Constants.dividerAccordion,
-                                    thickness: 1),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
+                          );
+                        }else if(state is Failed){
+                          return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<MedicalRecordBloc>(context)
+                              .add(GetMedicalRecord(appointmentId: widget.encounterId)));
+                        }else{
+                          return Container();
+                        }
+                      }
+                    ),
                   ],
                 ),
               ),
-      );
-    }));
+      )
+    );
   }
 }
 
