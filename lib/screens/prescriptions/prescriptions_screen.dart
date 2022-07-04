@@ -263,7 +263,11 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                       ],
                                                     ),
                                                   ),
-                                                  SizedBox(
+                                                  Container(
+                                                    constraints: BoxConstraints(maxWidth: ((MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                        85)/2),),
                                                     width: ((MediaQuery.of(context)
                                                         .size
                                                         .width -
@@ -285,6 +289,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                                 bottom:
                                                                 4.0),
                                                             child: Row(
+                                                              mainAxisSize: MainAxisSize.min,
                                                               children: [
                                                                 SvgPicture
                                                                     .asset(
@@ -300,14 +305,16 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                                     10),
                                                                 Container(
                                                                   child:
-                                                                  Text(
-                                                                    "${allAppointments[index].prescriptions![0].medicationName}",
-                                                                    style: boldoCorpMediumTextStyle.copyWith(
-                                                                        color: ConstantsV2.inactiveText,
-                                                                        fontSize: 10),
-                                                                    overflow:
-                                                                    TextOverflow.ellipsis,
-                                                                  ),
+                                                                    Flexible(
+                                                                      child: Text(
+                                                                        "${allAppointments[index].prescriptions![0].medicationName}",
+                                                                        style: boldoCorpMediumTextStyle.copyWith(
+                                                                            color: ConstantsV2.inactiveText,
+                                                                            fontSize: 10),
+                                                                        overflow:
+                                                                        TextOverflow.ellipsis,
+                                                                      ),
+                                                                    ),
                                                                 ),
                                                               ],
                                                             ),
@@ -337,16 +344,16 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                                     width:
                                                                     10),
                                                                 Container(
-                                                                  width:
-                                                                  130,
                                                                   child:
-                                                                  Text(
-                                                                    "${allAppointments[index].prescriptions![1].medicationName}",
-                                                                    style: boldoCorpMediumTextStyle.copyWith(
-                                                                        color: ConstantsV2.inactiveText,
-                                                                        fontSize: 10),
-                                                                    overflow:
-                                                                    TextOverflow.ellipsis,
+                                                                  Flexible(
+                                                                    child: Text(
+                                                                      "${allAppointments[index].prescriptions![1].medicationName}",
+                                                                      style: boldoCorpMediumTextStyle.copyWith(
+                                                                          color: ConstantsV2.inactiveText,
+                                                                          fontSize: 10),
+                                                                      overflow:
+                                                                      TextOverflow.ellipsis,
+                                                                    ),
                                                                   ),
                                                                 ),
                                                               ],
