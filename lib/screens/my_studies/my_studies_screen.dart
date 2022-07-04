@@ -108,10 +108,9 @@ class _MyStudiesState extends State<MyStudies> {
   }
 
   showDiagnosticList() {
-    return Column(
-      children: [Text('Lista de estudios ${diagnosticReport.toString()}')],
-      //diagnosticReport.forEach((element) => Text('Lista de estudios ${element}'),
-    );
-    //return Text('Lista de estudios ${diagnosticReport.toString()}');
+    return Row(
+        children: diagnosticReport
+            .map((item) => Text(' - ${item.description}'))
+            .toList());
   }
 }
