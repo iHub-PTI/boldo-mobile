@@ -107,10 +107,12 @@ class _MyStudiesState extends State<MyStudies> {
     );
   }
 
-  showDiagnosticList() {
-    return Row(
-        children: diagnosticReport
-            .map((item) => Text(' - ${item.description}'))
-            .toList());
+  Widget showDiagnosticList() {
+    return Column(children: diagnosticReport.map(showStudy).toList());
   }
+}
+
+Widget showStudy(DiagnosticReport diagnostic) {
+  return Text(' - ${diagnostic.description} (${diagnostic.effectiveDate})',
+      style: boldoHeadingTextStyle.copyWith(fontSize: 12));
 }
