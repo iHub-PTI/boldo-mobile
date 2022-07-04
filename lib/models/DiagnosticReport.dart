@@ -31,11 +31,8 @@ class DiagnosticReport {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['attachmentNumber'] = attachmentNumber;
     data['description'] = description;
     data['effectiveDate'] = effectiveDate;
-    data['source'] = source;
-    data['sourceID'] = sourceID;
     data['category'] = type;
     data['patientNotes'] = patientNotes;
     return data;
