@@ -35,24 +35,11 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           await Future.delayed(const Duration(seconds: 2));
           emit(RedirectBackScreen());
         }else{
-          await Task(() =>
-          _patientRepository.getDependents()!)
-              .attempt()
-              .run()
-              .then((value) {
-            _post = value;
-          }
-          );
-          var response;
-          if (_post.isLeft()) {
-            _post.leftMap((l) => response = l.message);
-            emit(Failed(response: response));
-          }else{
-            emit(Success());
-            emit(ChangeFamily());
-            await Future.delayed(const Duration(seconds: 2));
-            emit(RedirectNextScreen());
-          }
+          emit(Success());
+          emit(ChangeFamily());
+          await Future.delayed(const Duration(seconds: 2));
+          emit(RedirectNextScreen());
+          emit(Success());
         }
       }
       if(event is ValidateQr) {
@@ -78,6 +65,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           emit(Success());
           await Future.delayed(const Duration(seconds: 2));
           emit(RedirectNextScreen());
+          emit(Success());
         }
       }
       if(event is LinkFamily) {
@@ -112,6 +100,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           }else{
             emit(Success());
             emit(RedirectNextScreen());
+            emit(Success());
           }
         }
       }
