@@ -24,7 +24,7 @@ class DiagnosticReport {
     effectiveDate: json['effectiveDate'],
     source: json['source']!= null ? toLowerCase(json['source']!) : null,
     sourceID: json['sourceID'],
-    type: json['type'],
+    type: json['category'],
   );
 
   Map<String, dynamic> toJson() {
@@ -34,7 +34,7 @@ class DiagnosticReport {
     data['effectiveDate'] = effectiveDate;
     data['source'] = source;
     data['sourceID'] = sourceID;
-    data['type'] = type;
+    data['category'] = type;
     return data;
   }
 }
