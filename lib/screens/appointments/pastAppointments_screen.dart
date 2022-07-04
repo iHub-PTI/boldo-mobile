@@ -1,4 +1,5 @@
 import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
+import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart'as medical;
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
@@ -135,8 +136,8 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                                           .toLocal())
                                       .inDays;
                                   return GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
+                                    onTap: () async {
+                                      await Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
@@ -145,6 +146,8 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                                                         allAppointments[index]
                                                             .id)),
                                       );
+                                      BlocProvider.of<medical.MedicalRecordBloc>(context)
+                                          .add(medical.InitialEvent());
                                     },
                                     child: Container(
                                       child: Card(
