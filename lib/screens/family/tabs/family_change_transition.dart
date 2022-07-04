@@ -28,7 +28,6 @@ class _FamilyTransitionState extends State<FamilyTransition> {
   bool _dataLoading = true;
   Widget _background = const Background(text: "SingIn_1");
   FlutterAppAuth appAuth = FlutterAppAuth();
-
   GlobalKey scaffoldKey = GlobalKey();
 
   Future<void> timer() async {
@@ -41,8 +40,8 @@ class _FamilyTransitionState extends State<FamilyTransition> {
 
   @override
   void initState() {
-    timer();
     super.initState();
+    timer();
 
   }
 
@@ -59,6 +58,9 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                   backgroundColor: Colors.redAccent,
                 ),
               );
+              final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
+              //set previous value
+              prefs.setBool(isFamily, arguments[isFamily]);
               Navigator.pop(context);
               _dataLoading = false;
             }
