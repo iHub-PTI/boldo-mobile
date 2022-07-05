@@ -26,7 +26,7 @@ class AttachFiles extends StatefulWidget {
 
 class _AttachFilesState extends State<AttachFiles> {
 
-  List<File>? files;
+  List<File> files = [];
 
   @override
   void initState() {
@@ -111,7 +111,7 @@ class _AttachFilesState extends State<AttachFiles> {
 
               ),
             ),
-            files == null ? Expanded(
+            files.isEmpty ? Expanded(
                 child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0),
               child: Container(
@@ -184,7 +184,7 @@ class _AttachFilesState extends State<AttachFiles> {
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
                 itemBuilder: _fileElement,
-                itemCount: files?.length ?? 0,
+                itemCount: files.length,
               ),
             ),
             Padding(
@@ -192,15 +192,15 @@ class _AttachFilesState extends State<AttachFiles> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  files == null ? Container() :
+                  files.isEmpty ? Container() :
                   Container(
                     child: _offsetPopup(),
                   ),
                   ElevatedButton (
-                    onPressed: files != null ? () async {
+                    onPressed: files.isNotEmpty ? () async {
                       try{
                         List<Map<String, dynamic>> attachmentUrls = [];
-                        for(File file in files!){
+                        for(File file in files){
                           // TODO get url from server and put file
                           var value = {
                             "url": p.extension(file.path) == '.pdf'
@@ -287,8 +287,8 @@ class _AttachFilesState extends State<AttachFiles> {
     x = await ImagePicker.platform.getImage(source: ImageSource.camera);
     if(x != null){
       setState(() {
-        if(files!= null){
-          files = [...files!, File(x!.path)];
+        if(files.isNotEmpty){
+          files = [...files, File(x!.path)];
         }else{
           files = [File(x!.path)];
         }
@@ -305,8 +305,8 @@ class _AttachFilesState extends State<AttachFiles> {
     );
     if(result!= null){
       setState(() {
-        if(files!= null){
-          files = [...files!, ...result!.files.map((e) => File(e.path!)).toList()];
+        if(files.isNotEmpty){
+          files = [...files, ...result!.files.map((e) => File(e.path!)).toList()];
         }else{
           files = result!.files.map((e) => File(e.path!)).toList();
         }
@@ -376,7 +376,7 @@ class _AttachFilesState extends State<AttachFiles> {
   }
 
   Widget _fileElement(BuildContext context, int index){
-    File file = files![index];
+    File file = files[index];
     return Column(
       children: [
         Card(
@@ -405,7 +405,10 @@ class _AttachFilesState extends State<AttachFiles> {
                     ),
                     GestureDetector(
                       onTap: (){
+                        files.remove(file);
+                        setState(() {
 
+                        });
                       },
                       child: SvgPicture.asset(
                         'assets/icon/trash.svg',
