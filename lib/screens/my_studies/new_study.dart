@@ -205,19 +205,21 @@ class _NewStudyState extends State<NewStudy> {
                         width: 136,
                         child: ElevatedButton (
                           onPressed: enable && _formKey.currentState!.validate() ? () async {
-                            DiagnosticReport newDiagnosticReport = DiagnosticReport(
-                                description: nombre,
-                                patientNotes: notas,
-                                effectiveDate: fecha,
-                                type: type);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      AttachFiles(
-                                          diagnosticReport:
-                                          newDiagnosticReport)),
-                            );
+                            if(_formKey.currentState!.validate()){
+                              DiagnosticReport newDiagnosticReport = DiagnosticReport(
+                                  description: nombre,
+                                  patientNotes: notas,
+                                  effectiveDate: fecha,
+                                  type: type);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        AttachFiles(
+                                            diagnosticReport:
+                                            newDiagnosticReport)),
+                              );
+                            }
                           }: null,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
