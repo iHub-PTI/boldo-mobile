@@ -9,7 +9,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:path/path.dart' as p;
 
 import '../../constants.dart';
 import '../../models/DiagnosticReport.dart';
@@ -24,8 +26,7 @@ class AttachFiles extends StatefulWidget {
 
 class _AttachFilesState extends State<AttachFiles> {
 
-  FilePickerResult? result;
-  List<PlatformFile>? files;
+  List<File>? files;
 
   @override
   void initState() {
@@ -110,7 +111,7 @@ class _AttachFilesState extends State<AttachFiles> {
 
               ),
             ),
-            result == null ? Expanded(
+            files == null ? Expanded(
                 child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0),
               child: Container(
@@ -128,7 +129,7 @@ class _AttachFilesState extends State<AttachFiles> {
                                 borderRadius: BorderRadius.circular(100),
                               ),
                             ),
-                            onPressed: (){},
+                            onPressed: getFromCamera,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -155,18 +156,7 @@ class _AttachFilesState extends State<AttachFiles> {
                                 borderRadius: BorderRadius.circular(100),
                               ),
                             ),
-                            onPressed: () async {
-                              result = await FilePicker.platform.pickFiles(
-                                allowMultiple: true,
-                                type: FileType.custom,
-                                allowedExtensions: ['jpg', 'pdf', 'jpeg', 'png'],
-                              );
-                              if(result!= null){
-                                setState(() {
-                                  files = result!.files;
-                                });
-                              }
-                            },
+                            onPressed: getFromFiles,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -179,7 +169,7 @@ class _AttachFilesState extends State<AttachFiles> {
                                 ),
                                 SvgPicture.asset('assets/icon/attachment.svg'),
                               ],
-                            )
+                            ),
                         ),
                       ],
                     ),
@@ -202,48 +192,23 @@ class _AttachFilesState extends State<AttachFiles> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  result == null ? Container() :
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-                        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                        primary: ConstantsV2.lightest,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                      ),
-                      onPressed: () async {
-                        result = await FilePicker.platform.pickFiles(
-                          allowMultiple: true,
-                          type: FileType.custom,
-                          allowedExtensions: ['jpg', 'pdf', 'jpeg', 'png'],
-                        );
-                        if(result!= null){
-                          setState(() {
-                            files = result?.files;
-                          });
-                        }
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset('assets/icon/post-add.svg'),
-                        ],
-                      )
+                  files == null ? Container() :
+                  Container(
+                    child: _offsetPopup(),
                   ),
                   ElevatedButton (
-                    onPressed: result != null ? () async {
+                    onPressed: files != null ? () async {
                       try{
                         List<Map<String, dynamic>> attachmentUrls = [];
-                        for(PlatformFile file in files!){
+                        for(File file in files!){
                           // TODO get url from server and put file
                           var value = {
-                            "url": file.extension == 'pdf'
+                            "url": p.extension(file.path) == '.pdf'
                                 ? 'https://mipasaporte.boldo-dev.pti.org.py/healthPassport/vaccinationRegistry/d513dd8231a13a57637e8f6164e8abaa032fdd85109f83389ff54d44a3566357'
-                                : file.extension == 'png'
+                                : p.extension(file.path) == '.png'
                                 ? 'https://0f9951f887.clvaw-cdnwnd.com/8c1735b21af00e5f1943a9959fa2230e/200000080-6e4576e458/ADSCRIPCI%C3%93N%20PEEC%20LABORATORIO%20A%C3%91O%202021.png?ph=0f9951f887'
                                 : 'https://c8.alamy.com/compes/2c2thmn/formulario-de-laboratorio-para-rellenar-con-los-resultados-de-analisis-de-sangre-y-tubo-rojo-con-sangre-2c2thmn.jpg',
-                            "contentType": file.extension == 'pdf' ? 'application/pdf': file.extension == 'png' ? 'image/png' : 'image/jpeg',
+                            "contentType": p.extension(file.path) == '.pdf' ? 'application/pdf': p.extension(file.path) == '.png' ? 'image/png' : 'image/jpeg',
                           };
                           attachmentUrls.add(value);
                         }
@@ -267,10 +232,22 @@ class _AttachFilesState extends State<AttachFiles> {
                             }
                           ],
                         );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(ex.response?.data['message']),
+                            backgroundColor: Colors.redAccent,
+                          ),
+                        );
                       }catch (exception, stackTrace){
                         await Sentry.captureException(
                           exception,
                           stackTrace: stackTrace,
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Ocurrio un error indesperado"),
+                            backgroundColor: Colors.redAccent,
+                          ),
                         );
                       }
                     }: null,
@@ -305,8 +282,101 @@ class _AttachFilesState extends State<AttachFiles> {
     );
   }
 
+  getFromCamera() async {
+    XFile? x;
+    x = await ImagePicker.platform.getImage(source: ImageSource.camera);
+    if(x != null){
+      setState(() {
+        if(files!= null){
+          files = [...files!, File(x!.path)];
+        }else{
+          files = [File(x!.path)];
+        }
+      });
+    }
+  }
+
+  getFromFiles() async {
+    FilePickerResult? result;
+    result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'pdf', 'jpeg', 'png'],
+    );
+    if(result!= null){
+      setState(() {
+        if(files!= null){
+          files = [...files!, ...result!.files.map((e) => File(e.path!)).toList()];
+        }else{
+          files = result!.files.map((e) => File(e.path!)).toList();
+        }
+      });
+    }
+  }
+
+  Widget _offsetPopup() {
+    return PopupMenuButton<int>(
+    itemBuilder: (context) =>
+      [
+        PopupMenuItem(
+          value: 1,
+          onTap: getFromCamera,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Tomar foto',
+                style: boldoSubTextMediumStyle.copyWith(color: ConstantsV2.darkBlue),
+              ),
+              const SizedBox(
+                width: 4,
+              ),
+              SvgPicture.asset('assets/icon/camera2.svg'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 2,
+          onTap: getFromFiles,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'seleccionar archivo',
+                style: boldoSubTextMediumStyle.copyWith(color: ConstantsV2.darkBlue),
+              ),
+              const SizedBox(
+                width: 4,
+              ),
+              SvgPicture.asset('assets/icon/attachment.svg'),
+            ],
+          ),
+        ),
+      ],
+      child: Card(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+          side: const BorderSide(
+            color: ConstantsV2.orange,
+            width: 1,
+          )
+        ),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset('assets/icon/post-add.svg'),
+            ],
+          ),
+        )
+      )
+    );
+  }
+
   Widget _fileElement(BuildContext context, int index){
-    PlatformFile file = files![index];
+    File file = files![index];
     return Column(
       children: [
         Card(
@@ -326,9 +396,9 @@ class _AttachFilesState extends State<AttachFiles> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SvgPicture.asset(
-                        files![index].extension == 'pdf' ? 'assets/icon/picture-as-pdf.svg': 'assets/icon/crop-original.svg'
+                        p.extension(file.path) == '.pdf' ? 'assets/icon/picture-as-pdf.svg': 'assets/icon/crop-original.svg'
                     ),
-                    Text(files![index].name,
+                    Text(p.basename(file.path),
                       style: boldoCorpMediumBlackTextStyle.copyWith(
                           color: ConstantsV2.activeText
                       ),
