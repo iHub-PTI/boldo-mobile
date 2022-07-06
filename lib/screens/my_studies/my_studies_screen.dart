@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../constants.dart';
 import '../../models/DiagnosticReport.dart';
 import 'estudy_screen.dart';
+import 'new_study.dart';
 
 class MyStudies extends StatefulWidget {
   MyStudies({Key? key}) : super(key: key);
@@ -101,6 +102,26 @@ class _MyStudiesState extends State<MyStudies> {
               ],
             ),
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => NewStudy()));
+        },
+        backgroundColor: ConstantsV2.orange,
+        label: Container(
+            child: Row(
+              children: [
+                Text('nuevo estudio', style: boldoSubTextMediumStyle.copyWith(color: ConstantsV2.lightGrey),),
+                const SizedBox(
+                  width: 8,
+                ),
+                SvgPicture.asset('assets/icon/upload.svg',),
+              ],
+            )
         ),
       ),
     );
