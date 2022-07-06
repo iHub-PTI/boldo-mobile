@@ -1,8 +1,10 @@
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/utils/loading_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:native_device_orientation/native_device_orientation.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../main.dart';
@@ -23,6 +25,10 @@ class _QRScannerState extends State<QRScanner> {
 
   @override
   void initState() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     cameraController = MobileScannerController(
       facing: CameraFacing.back,
       torchEnabled: false,
@@ -33,6 +39,12 @@ class _QRScannerState extends State<QRScanner> {
   @override
   void dispose() {
     cameraController!.dispose();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     super.dispose();
   }
 
@@ -92,7 +104,33 @@ class _QRScannerState extends State<QRScanner> {
                   );
                   cameraController!.stop();
                   BlocProvider.of<PatientBloc>(context).add(ValidateQr(id: code?? ''));
-                  
+
+                },
+              ),
+              NativeDeviceOrientationReader(
+                useSensor: true, // --> [2]
+                builder: (ctx) {
+                  final orientation = NativeDeviceOrientationReader.orientation(ctx);
+                  int turns = 0;
+                  switch (orientation) {
+                    case NativeDeviceOrientation.portraitUp:
+                      turns = 0;
+                      break;
+                    case NativeDeviceOrientation.portraitDown:
+                      turns = 2;
+                      break;
+                    case NativeDeviceOrientation.landscapeLeft:
+                      turns = 1;
+                      break;
+                    case NativeDeviceOrientation.landscapeRight:
+                      turns = 3;
+                      break;
+                    case NativeDeviceOrientation.unknown:
+                      turns = 0;
+                      break;
+                  }
+                  // children with rotation
+                  return Container();
                 },
               ),
               if(_dataLoading)
