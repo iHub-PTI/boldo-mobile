@@ -201,8 +201,8 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                                 photoStage == UrlUploadType.selfie
                                     ? 'assets/images/selfie.png'
                                     : photoStage == UrlUploadType.frontal
-                                    ? 'assets/images/dni_front.png'
-                                    : 'assets/images/dni_back.png',
+                                    ? 'assets/images/CI_Illustration.png'
+                                    : 'assets/images/CI_Illustration_back.png',
                                 height: 250,
                                 width: MediaQuery.of(context).size.width,
                               ),
