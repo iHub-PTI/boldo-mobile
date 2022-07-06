@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 import '../../constants.dart';
 import '../../models/DiagnosticReport.dart';
+import 'estudy_screen.dart';
 
 class MyStudies extends StatefulWidget {
   MyStudies({Key? key}) : super(key: key);
@@ -140,7 +141,12 @@ Widget showStudy(BuildContext context, int index) {
     elevation: 4,
     margin: const EdgeInsets.only(bottom: 4),
     child: InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => Study(id: diagnosticReport[index].id?? '0',)));
+      },
       child: Container(
         padding: const EdgeInsets.only(top: 8, left: 8),
         child: Column(
@@ -234,47 +240,9 @@ Widget showStudy(BuildContext context, int index) {
                 ),
               ],
             ),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    /*
-                      Container(
-                        child: GestureDetector(
-                          onTap: () {
-                            // TODO redirect to medical study page
-                          },
-                          child: Card(
-                              margin: EdgeInsets.zero,
-                              clipBehavior: Clip.antiAlias,
-                              elevation: 0,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(topLeft: Radius.circular(5)),
-                              ),
-                              color: ConstantsV2.orange.withOpacity(0.10),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-                                child: Text("ver archivo"),
-                              )
-                          ),
-                        ),
-                      ),*/
-                    const SizedBox(
-                      height: 14,
-                    ),
-                  ],
-                ),
-              ],
-            )
+            const SizedBox(
+              height: 14,
+            ),
           ],
         ),
       ),
