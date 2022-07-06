@@ -24,3 +24,13 @@ class Failed extends MyStudiesState {
 
   Failed({required this.msg});
 }
+
+class FailedUpload extends MyStudiesState {
+  final String msg;
+
+  FailedUpload({required this.msg});
+}
+
+class Uploading extends MyStudiesState {}
+
+class Uploaded extends MyStudiesState {}
