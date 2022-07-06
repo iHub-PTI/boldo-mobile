@@ -7,7 +7,8 @@ class DiagnosticReport {
       effectiveDate,
       source,
       sourceID,
-      type;
+      type,
+      patientNotes;
 
   DiagnosticReport ({
     this.attachmentNumber,
@@ -16,6 +17,7 @@ class DiagnosticReport {
     this.source,
     this.sourceID,
     this.type,
+    this.patientNotes,
   });
 
   factory DiagnosticReport.fromJson(Map<String, dynamic> json,) => DiagnosticReport(
@@ -29,12 +31,10 @@ class DiagnosticReport {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['attachmentNumber'] = attachmentNumber;
     data['description'] = description;
     data['effectiveDate'] = effectiveDate;
-    data['source'] = source;
-    data['sourceID'] = sourceID;
     data['category'] = type;
+    data['patientNotes'] = patientNotes;
     return data;
   }
 }
