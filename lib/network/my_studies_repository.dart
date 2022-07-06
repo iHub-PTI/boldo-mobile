@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
+import 'package:boldo/main.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/repository_helper.dart';
@@ -14,7 +15,8 @@ import 'package:http/http.dart' as http;
 import 'package:sentry_flutter/sentry_flutter.dart';
 import '../constants.dart';
 import '../models/DiagnosticReport.dart';
-import '../screens/my_studies/bloc/my_studies_bloc.dart';
+import 'package:path/path.dart' as p;
+import 'package:http/http.dart' as http;
 
 import 'http.dart';
 
@@ -76,6 +78,61 @@ class MyStudesRepository {
       }
     } catch (e) {
       throw Failure(e.toString());
+    }
+  }
+
+  Future<None>? sendDiagnosticReport(DiagnosticReport diagnosticReport ,List<File> files) async {
+    try {
+      List<Map<String, dynamic>> attachmentUrls = [];
+      for (File file in files) {
+        // get url to upload file
+        Response url = await dio.get("/presigned");
+        var response2 = await http.put(Uri.parse(url.data["uploadUrl"]),
+            body: file.readAsBytesSync()
+        );
+        // if file is too large to upload
+        if (response2.statusCode == 413) {
+          throw Failure(
+              'El archivo ${p.basename(file.path)} es demasiado grande');
+        } else if (response2.statusCode == 201) {
+          var value = {
+            "url": url.data["location"],
+            "contentType": p.extension(file.path) == '.pdf'
+                ? 'application/pdf'
+                : p.extension(file.path) == '.png' ? 'image/png' : 'image/jpeg',
+          };
+          attachmentUrls.add(value);
+        }
+      }
+      Map<String, dynamic> diagnostic = diagnosticReport.toJson();
+      diagnostic['attachmentUrls'] = attachmentUrls;
+      if (prefs.getBool(isFamily) ?? false) {
+        await dio.post(
+            '/profile/caretaker/dependent/${patient.id}/diagnosticReport',
+            data: diagnostic);
+      } else {
+        await dio.post('/profile/patient/diagnosticReport', data: diagnostic);
+      }
+      return None();
+    } on DioError catch (ex) {
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response,
+          }
+        ],
+      );
+      throw Failure(ex.response?.data['message']);
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure('Ocurrio un error indesperado');
     }
   }
 }
