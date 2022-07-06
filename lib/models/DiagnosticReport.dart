@@ -28,7 +28,7 @@ class DiagnosticReport {
   factory DiagnosticReport.fromJson(Map<String, dynamic> json,) => DiagnosticReport(
     id: json['id'],
     attachmentNumber: json['attachmentNumber'],
-    description: json['description']!= null ? toLowerCase(json['description']!) : null,
+    description: json['description'],
     effectiveDate: json['effectiveDate'],
     source: json['source']!= null ? toLowerCase(json['source']!) : null,
     sourceID: json['sourceID'],
