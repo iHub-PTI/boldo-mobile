@@ -15,6 +15,7 @@ class MyStudies extends StatefulWidget {
 
 class _MyStudiesState extends State<MyStudies> {
   bool _loading = true;
+  bool _error = false;
   List<DiagnosticReport> diagnosticReport = [];
   @override
   void initState() {
@@ -40,11 +41,13 @@ class _MyStudiesState extends State<MyStudies> {
           listener: (context, state) {
             if (state is Loading) {
               _loading = true;
+              _error = false;
               print('loading');
             }
             if (state is DiagnosticLoaded) {
               print('success DiagnosticLoaded');
               _loading = false;
+              _error = false;
               setState(() {
                 diagnosticReport = state.studiesList;
               });
@@ -53,6 +56,8 @@ class _MyStudiesState extends State<MyStudies> {
             if (state is Failed) {
               print('algo falló: ${state.msg}');
               _loading = false;
+              _error = true;
+              setState(() {});
               Scaffold.of(context).showSnackBar(
                   SnackBar(content: Text("Falló la obtención de estudios")));
             }
@@ -99,6 +104,8 @@ class _MyStudiesState extends State<MyStudies> {
       children: [
         if (_loading)
           const Text('Cargando...')
+        else if (_error)
+          const Text('Error')
         else ...[
           const Text('Aun no tenés estudios para visualizar'),
           SvgPicture.asset('assets/images/empty_studies.svg', fit: BoxFit.cover)
