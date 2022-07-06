@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:boldo/network/my_studies_repository.dart';
 import 'package:dartz/dartz.dart';
@@ -47,6 +49,23 @@ class MyStudiesBloc extends Bloc<MyStudiesEvent, MyStudiesState> {
           emit(Failed(msg: response));
         } else {
           emit(DiagnosticStudyLoaded(study: _post.value));
+        }
+      }else if (event is SendStudyToServer) {
+        emit(Uploading());
+        var _post;
+        await Task(() =>
+        _myStudiesRepository.sendDiagnosticReport(event.diagnosticReport, event.files)!)
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        });
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(FailedUpload(msg: response));
+        } else {
+          emit(Uploaded());
         }
       }
     });
