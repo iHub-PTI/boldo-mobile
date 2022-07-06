@@ -11,6 +11,12 @@ class DiagnosticLoaded extends MyStudiesState {
   DiagnosticLoaded({required this.studiesList});
 }
 
+class DiagnosticStudyLoaded extends MyStudiesState {
+  final DiagnosticReport study;
+
+  DiagnosticStudyLoaded({required this.study});
+}
+
 class Loading extends MyStudiesState {}
 
 class Failed extends MyStudiesState {
