@@ -27,10 +27,11 @@ class AttachFiles extends StatefulWidget {
 
 class _AttachFilesState extends State<AttachFiles> {
 
-  List<File> files = [];
+    List<File> files = [];
 
   @override
   void initState() {
+
     super.initState();
   }
 
@@ -48,10 +49,17 @@ class _AttachFilesState extends State<AttachFiles> {
       ),
       body: BlocListener<MyStudiesBloc, MyStudiesState>(
         listener: (context, state) {
-          if (state is Loading) {
-            print('loading');
+          if (state is Uploaded) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Estudio subido!"),
+                backgroundColor: ConstantsV2.green,
+              ),
+            );
+            Navigator.of(context).popUntil(ModalRoute.withName("/home"));
+            BlocProvider.of<MyStudiesBloc>(context).add(GetPatientStudiesFromServer());
           }
-          if (state is Failed) {
+          if (state is FailedUpload) {
             print('failed: ${state.msg}');
             Scaffold.of(context)
                 .showSnackBar(SnackBar(content: Text(state.msg)));
@@ -180,12 +188,28 @@ class _AttachFilesState extends State<AttachFiles> {
             ),
             ) :
             Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                itemBuilder: _fileElement,
-                itemCount: files.length,
+              child: BlocBuilder<MyStudiesBloc, MyStudiesState>(
+                builder: (context, state) {
+                  if(state is Uploading){
+                    return Container(
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                          AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                          backgroundColor: Constants.primaryColor600,
+                        ),
+                      ),
+                    );
+                  }else{
+                    return ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemBuilder: _fileElement,
+                      itemCount: files.length,
+                    );
+                  }
+                },
               ),
             ),
             Padding(
@@ -199,69 +223,7 @@ class _AttachFilesState extends State<AttachFiles> {
                   ),
                   ElevatedButton (
                     onPressed: files.isNotEmpty ? () async {
-                      try{
-                        List<Map<String, dynamic>> attachmentUrls = [];
-                        for(File file in files){
-                          // get url to upload file
-                          Response url = await dio.get("/presigned");
-                          var response2  = await http.put(Uri.parse(url.data["uploadUrl"]),
-                            body: file.readAsBytesSync()
-                          );
-                          // if file is too large to upload
-                          if(response2.statusCode == 413){
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text("El archivo ${p.basename(file.path)}"),
-                                backgroundColor: Colors.redAccent,
-                              ),
-                            );
-                            return;
-                          }else if(response2.statusCode == 201){
-                            var value = {
-                              "url":url.data["location"],
-                              "contentType": p.extension(file.path) == '.pdf' ? 'application/pdf': p.extension(file.path) == '.png' ? 'image/png' : 'image/jpeg',
-                            };
-                            attachmentUrls.add(value);
-                          }
-                        }
-                        Map<String, dynamic> diagnostic = widget.diagnosticReport.toJson();
-                        diagnostic['attachmentUrls'] = attachmentUrls;
-                        if(prefs.getBool(isFamily)?? false){
-                          await dio.post('/profile/caretaker/dependent/${patient.id}/diagnosticReport', data: diagnostic);
-                        }else{
-                          await dio.post('/profile/patient/diagnosticReport', data: diagnostic);
-                        }
-                        Navigator.of(context).popUntil(ModalRoute.withName("/home"));
-                      }on DioError catch(ex){
-                        await Sentry.captureMessage(
-                          ex.toString(),
-                          params: [
-                            {
-                              "path": ex.requestOptions.path,
-                              "data": ex.requestOptions.data,
-                              "patient": patient.id,
-                              "responseError": ex.response,
-                            }
-                          ],
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(ex.response?.data['message']),
-                            backgroundColor: Colors.redAccent,
-                          ),
-                        );
-                      }catch (exception, stackTrace){
-                        await Sentry.captureException(
-                          exception,
-                          stackTrace: stackTrace,
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Ocurrio un error indesperado"),
-                            backgroundColor: Colors.redAccent,
-                          ),
-                        );
-                      }
+                      BlocProvider.of<MyStudiesBloc>(context).add(SendStudyToServer(diagnosticReport: widget.diagnosticReport, files: files));
                     }: null,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
