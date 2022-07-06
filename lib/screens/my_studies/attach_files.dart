@@ -12,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:path/path.dart' as p;
+import 'package:http/http.dart' as http;
 
 import '../../constants.dart';
 import '../../models/DiagnosticReport.dart';
@@ -201,16 +202,27 @@ class _AttachFilesState extends State<AttachFiles> {
                       try{
                         List<Map<String, dynamic>> attachmentUrls = [];
                         for(File file in files){
-                          // TODO get url from server and put file
-                          var value = {
-                            "url": p.extension(file.path) == '.pdf'
-                                ? 'https://mipasaporte.boldo-dev.pti.org.py/healthPassport/vaccinationRegistry/d513dd8231a13a57637e8f6164e8abaa032fdd85109f83389ff54d44a3566357'
-                                : p.extension(file.path) == '.png'
-                                ? 'https://0f9951f887.clvaw-cdnwnd.com/8c1735b21af00e5f1943a9959fa2230e/200000080-6e4576e458/ADSCRIPCI%C3%93N%20PEEC%20LABORATORIO%20A%C3%91O%202021.png?ph=0f9951f887'
-                                : 'https://c8.alamy.com/compes/2c2thmn/formulario-de-laboratorio-para-rellenar-con-los-resultados-de-analisis-de-sangre-y-tubo-rojo-con-sangre-2c2thmn.jpg',
-                            "contentType": p.extension(file.path) == '.pdf' ? 'application/pdf': p.extension(file.path) == '.png' ? 'image/png' : 'image/jpeg',
-                          };
-                          attachmentUrls.add(value);
+                          // get url to upload file
+                          Response url = await dio.get("/presigned");
+                          var response2  = await http.put(Uri.parse(url.data["uploadUrl"]),
+                            body: file.readAsBytesSync()
+                          );
+                          // if file is too large to upload
+                          if(response2.statusCode == 413){
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("El archivo ${p.basename(file.path)}"),
+                                backgroundColor: Colors.redAccent,
+                              ),
+                            );
+                            return;
+                          }else if(response2.statusCode == 201){
+                            var value = {
+                              "url":url.data["location"],
+                              "contentType": p.extension(file.path) == '.pdf' ? 'application/pdf': p.extension(file.path) == '.png' ? 'image/png' : 'image/jpeg',
+                            };
+                            attachmentUrls.add(value);
+                          }
                         }
                         Map<String, dynamic> diagnostic = widget.diagnosticReport.toJson();
                         diagnostic['attachmentUrls'] = attachmentUrls;
@@ -284,7 +296,7 @@ class _AttachFilesState extends State<AttachFiles> {
 
   getFromCamera() async {
     XFile? x;
-    x = await ImagePicker.platform.getImage(source: ImageSource.camera);
+    x = await ImagePicker.platform.getImage(source: ImageSource.camera, maxWidth: 1000, maxHeight: 1000);
     if(x != null){
       setState(() {
         if(files.isNotEmpty){
@@ -299,6 +311,7 @@ class _AttachFilesState extends State<AttachFiles> {
   getFromFiles() async {
     FilePickerResult? result;
     result = await FilePicker.platform.pickFiles(
+      withData: true,
       allowMultiple: true,
       type: FileType.custom,
       allowedExtensions: ['jpg', 'pdf', 'jpeg', 'png'],
