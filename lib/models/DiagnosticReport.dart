@@ -2,6 +2,7 @@ import 'package:boldo/utils/helpers.dart';
 
 class DiagnosticReport {
   String?
+  id,
   attachmentNumber,
       description,
       effectiveDate,
@@ -10,7 +11,10 @@ class DiagnosticReport {
       type,
       patientNotes;
 
+  List<dynamic>? attachmentUrls;
+
   DiagnosticReport ({
+    this.id,
     this.attachmentNumber,
     this.description,
     this.effectiveDate,
@@ -18,15 +22,18 @@ class DiagnosticReport {
     this.sourceID,
     this.type,
     this.patientNotes,
+    this.attachmentUrls,
   });
 
   factory DiagnosticReport.fromJson(Map<String, dynamic> json,) => DiagnosticReport(
+    id: json['id'],
     attachmentNumber: json['attachmentNumber'],
     description: json['description']!= null ? toLowerCase(json['description']!) : null,
     effectiveDate: json['effectiveDate'],
     source: json['source']!= null ? toLowerCase(json['source']!) : null,
     sourceID: json['sourceID'],
     type: json['category'],
+    attachmentUrls: json['attachmentUrls']?.map((e) => {'url': e['url'], 'contentType': e['contentType']}).toList(),
   );
 
   Map<String, dynamic> toJson() {
