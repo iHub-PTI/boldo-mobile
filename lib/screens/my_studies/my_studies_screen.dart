@@ -234,8 +234,8 @@ class _MyStudiesState extends State<MyStudies> {
                                 const SizedBox(width: 6),
                                 Text(
                                   "subido por usted",
-                                  style: boldoCorpMediumTextStyle.copyWith(
-                                      color: ConstantsV2.inactiveText),
+                                  style: boldoCorpSmallTextStyle.copyWith(
+                                      color: ConstantsV2.darkBlue),
                                 ),
                               ],
                             )
@@ -247,8 +247,8 @@ class _MyStudiesState extends State<MyStudies> {
                                 const SizedBox(width: 6),
                                 Text(
                                   "Boldo",
-                                  style: boldoCorpMediumTextStyle.copyWith(
-                                      color: ConstantsV2.inactiveText),
+                                  style: boldoCorpSmallTextStyle.copyWith(
+                                      color: ConstantsV2.darkBlue),
                                 ),
                               ],
                             ),
