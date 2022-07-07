@@ -1,3 +1,4 @@
+import 'package:boldo/main.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -175,8 +176,7 @@ class _MyStudiesState extends State<MyStudies> {
                       )));
         },
         child: Container(
-          
-          padding: const EdgeInsets.only(top: 8, left: 8),
+          padding: const EdgeInsets.all(8),
           child: Row(
             children: [
               Container(
@@ -209,77 +209,93 @@ class _MyStudiesState extends State<MyStudies> {
               const SizedBox(
                 width: 8,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Card(
-                        shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                        color: Constants.secondaryColor100,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 10.0, top: 2.0, bottom: 2.0, right: 8.0),
-                          child: Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/icon/cloud.svg',
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                "Boldo",
-                                style: boldoCorpMediumTextStyle.copyWith(
-                                    color: ConstantsV2.inactiveText),
-                              ),
-                            ],
+              Expanded(
+                child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          color: Constants.secondaryColor100,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 10.0, top: 2.0, bottom: 2.0, right: 8.0),
+                            child: diagnosticReport[index].sourceID == patient.id ? Row(
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/icon/cloud.svg',
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  "subido por usted",
+                                  style: boldoCorpMediumTextStyle.copyWith(
+                                      color: ConstantsV2.inactiveText),
+                                ),
+                              ],
+                            )
+                                : Row(
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/icon/inbox-in.svg',
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  "Boldo",
+                                  style: boldoCorpMediumTextStyle.copyWith(
+                                      color: ConstantsV2.inactiveText),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                     
-                      Text(
-                        "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport[index].effectiveDate!).toLocal())}",
-                        style: boldoCorpSmallTextStyle.copyWith(
-                            color: ConstantsV2.darkBlue),
-                      )
-                    ],
-                  ),
 
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    "${diagnosticReport[index].description}",
-                    style: boldoCorpMediumTextStyle.copyWith(
-                        color: ConstantsV2.inactiveText),
-                  ),
-                  // Text(
-                  //   "Subido por:\n${diagnosticReport[index].source}",
-                  //   style: boldoCorpMediumTextStyle.copyWith(
-                  //       color: ConstantsV2.inactiveText),
-                  // ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Container(
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icon/attach-file.svg',
-                        ),
                         Text(
-                          "${diagnosticReport[index].attachmentNumber} ${diagnosticReport[index].attachmentNumber == "1" ? "archivo adjunto" : "archivos adjuntos"}",
+                          "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport[index].effectiveDate!).toLocal())}",
                           style: boldoCorpSmallTextStyle.copyWith(
                               color: ConstantsV2.darkBlue),
                         )
                       ],
                     ),
-                  ),
-                ],
+
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      "${diagnosticReport[index].description}",
+                      style: boldoCorpMediumTextStyle.copyWith(
+                          color: ConstantsV2.inactiveText),
+                    ),
+                    // Text(
+                    //   "Subido por:\n${diagnosticReport[index].source}",
+                    //   style: boldoCorpMediumTextStyle.copyWith(
+                    //       color: ConstantsV2.inactiveText),
+                    // ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Container(
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icon/attach-file.svg',
+                          ),
+                          Text(
+                            "${diagnosticReport[index].attachmentNumber} ${diagnosticReport[index].attachmentNumber == "1" ? "archivo adjunto" : "archivos adjuntos"}",
+                            style: boldoCorpSmallTextStyle.copyWith(
+                                color: ConstantsV2.darkBlue),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               ),
             ],
           ),
