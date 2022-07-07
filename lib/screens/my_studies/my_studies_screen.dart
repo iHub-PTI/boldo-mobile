@@ -95,10 +95,12 @@ class _MyStudiesState extends State<MyStudies> {
                   'Mis estudios',
                   style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                 ),
-                 const SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
-                diagnosticReport.isEmpty ? showEmptyList() : showDiagnosticList()
+                diagnosticReport.isEmpty
+                    ? showEmptyList()
+                    : showDiagnosticList()
               ],
             ),
           ),
@@ -154,120 +156,154 @@ class _MyStudiesState extends State<MyStudies> {
     );
   }
 
-
-Widget showStudy(BuildContext context, int index) {
-  // return Text(' - ${diagnostic.descriptio coextn} (${diagnostic.effectiveDate})',
-  //     style: boldoHeadingTextStyle.copyWith(fontSize: 12));
-  return Card(
-    elevation: 4,
-    margin: const EdgeInsets.only(bottom: 4),
-    child: InkWell(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => Study(id: diagnosticReport[index].id?? '0',)));
-      },
-      child: Container(
-        padding: const EdgeInsets.only(top: 8, left: 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Estudio reciente",
-                  style: boldoCorpSmallTextStyle.copyWith(
-                      color: ConstantsV2.darkBlue),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(right: 8),
-                  child: Text(
-                    "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport[index].effectiveDate!).toLocal())}",
-                    style: boldoCorpSmallTextStyle.copyWith(
-                        color: ConstantsV2.darkBlue),
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7),
-                  child: ClipOval(
-                    child: SizedBox(
-                      width: 54,
-                      height: 54,
-                      child: SvgPicture.asset(
-                        diagnosticReport[index].type == "LABORATORY"
-                            ? 'assets/icon/lab.svg'
-                            : diagnosticReport[index].type == "IMAGE"
-                                ? 'assets/icon/image.svg'
-                                : diagnosticReport[index].type == "OTHER"
-                                    ? 'assets/icon/other.svg'
-                                    : 'assets/images/LogoIcon.svg',
-                      ),
+  Widget showStudy(BuildContext context, int index) {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.only(bottom: 4),
+      child: InkWell(
+        onTap: () {},
+        child: Container(
+          padding: const EdgeInsets.only(top: 8, left: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(""),
+                  Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    child: Text(
+                      "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport[index].effectiveDate!).toLocal())}",
+                      style: boldoCorpSmallTextStyle.copyWith(
+                          color: ConstantsV2.darkBlue),
                     ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+                  )
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7),
+                    child: ClipRect(
+                        child: Column(
                       children: [
-                        // For a future Laboratory's Name
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Text(
-                      "${diagnosticReport[index].description}",
-                      style: boldoCorpMediumTextStyle.copyWith(
-                          color: ConstantsV2.inactiveText),
-                    ),
-                    Text(
-                      "Subido por ${diagnosticReport[index].source}",
-                      style: boldoCorpMediumTextStyle.copyWith(
-                          color: ConstantsV2.inactiveText),
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Container(
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            'assets/icon/attach-file.svg',
+                        SizedBox(
+                          width: 34,
+                          height: 34,
+                          child: SvgPicture.asset(
+                            diagnosticReport[index].type == "LABORATORY"
+                                ? 'assets/icon/lab.svg'
+                                : diagnosticReport[index].type == "IMAGE"
+                                    ? 'assets/icon/image.svg'
+                                    : diagnosticReport[index].type == "OTHER"
+                                        ? 'assets/icon/other.svg'
+                                        : 'assets/images/LogoIcon.svg',
                           ),
-                          Text(
-                            "${diagnosticReport[index].attachmentNumber} ${diagnosticReport[index].attachmentNumber == "1" ? "archivo adjunto" : "archivos adjuntos"}",
-                            style: boldoCorpSmallTextStyle.copyWith(
-                                color: ConstantsV2.darkBlue),
-                          )
+                        ),
+                        Text(
+                          "${diagnosticReport[index].type}",
+                          style: boldoCorpSmallTextStyle.copyWith(
+                              color: ConstantsV2.darkBlue),
+                        ),
+                      ],
+                    )),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          // For a future Laboratory's Name
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 14,
-            ),
-          ],
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        "${diagnosticReport[index].description}",
+                        style: boldoCorpMediumTextStyle.copyWith(
+                            color: ConstantsV2.inactiveText),
+                      ),
+                      Text(
+                        "Subido por:\n${diagnosticReport[index].source}",
+                        style: boldoCorpMediumTextStyle.copyWith(
+                            color: ConstantsV2.inactiveText),
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Container(
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icon/attach-file.svg',
+                            ),
+                            Text(
+                              "${diagnosticReport[index].attachmentNumber} ${diagnosticReport[index].attachmentNumber == "1" ? "archivo adjunto" : "archivos adjuntos"}",
+                              style: boldoCorpSmallTextStyle.copyWith(
+                                  color: ConstantsV2.darkBlue),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      /*
+                      Container(
+                        child: GestureDetector(
+                          onTap: () {
+                            // TODO redirect to medical study page
+                          },
+                          child: Card(
+                              margin: EdgeInsets.zero,
+                              clipBehavior: Clip.antiAlias,
+                              elevation: 0,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(5)),
+                              ),
+                              color: ConstantsV2.orange.withOpacity(0.10),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+                                child: Text("ver archivo"),
+                              )
+                          ),
+                        ),
+                      ),*/
+                      const SizedBox(
+                        height: 14,
+                      ),
+                    ],
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
