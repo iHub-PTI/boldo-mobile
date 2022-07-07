@@ -71,7 +71,12 @@ class MyStudesRepository {
 
   Future<DiagnosticReport>? getDiagnosticReport(String id) async {
     try {
-      Response response = await dio.get("/profile/patient/diagnosticReport/$id");
+      Response response;
+      if (prefs.getBool(isFamily) ?? false) {
+        response = await dio.get("/profile/caretaker/dependent/${patient.id}/diagnosticReport/${id}");
+      } else {
+        response = await dio.get("/profile/patient/diagnosticReport/$id");
+      }
       if (response.statusCode == 200) {
         return DiagnosticReport.fromJson(
             response.data);
