@@ -49,7 +49,12 @@ class MyStudesRepository {
 
   Future<List<DiagnosticReport>>? getDiagnosticReports() async {
     try {
-      Response response = await dio.get("/profile/patient/diagnosticReports");
+      Response response;
+      if (prefs.getBool(isFamily) ?? false) {
+        response = await dio.get("/profile/caretaker/dependent/${patient.id}/diagnosticReports");
+      } else {
+        response = await dio.get("/profile/patient/diagnosticReports");
+      }
       if (response.statusCode == 200) {
         return List<DiagnosticReport>.from(
             response.data.map((i) => DiagnosticReport.fromJson(i)));
