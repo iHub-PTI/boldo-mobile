@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 import '../../constants.dart';
 import '../../models/DiagnosticReport.dart';
+import 'estudy_screen.dart';
 
 class MyStudies extends StatefulWidget {
   MyStudies({Key? key}) : super(key: key);

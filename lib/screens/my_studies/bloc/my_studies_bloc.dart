@@ -31,6 +31,23 @@ class MyStudiesBloc extends Bloc<MyStudiesEvent, MyStudiesState> {
         } else {
           emit(DiagnosticLoaded(studiesList: _post.value));
         }
+      }else if (event is GetPatientStudyFromServer) {
+        emit(Loading());
+        var _post;
+        await Task(() =>
+        _myStudiesRepository.getDiagnosticReport(event.id)!)
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        });
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(Failed(msg: response));
+        } else {
+          emit(DiagnosticStudyLoaded(study: _post.value));
+        }
       }
     });
   }

@@ -61,4 +61,21 @@ class MyStudesRepository {
       throw Failure(e.toString());
     }
   }
+
+  Future<DiagnosticReport>? getDiagnosticReport(String id) async {
+    try {
+      Response response = await dio.get("/profile/patient/diagnosticReport/$id");
+      if (response.statusCode == 200) {
+        return DiagnosticReport.fromJson(
+            response.data);
+      } else if (response.statusCode == 204) {
+        throw Failure('El dependiente ya no forma parte de su famila');
+      } else {
+        throw Failure(
+            "Falló la obtención de los estudios: Error ${response.statusCode}");
+      }
+    } catch (e) {
+      throw Failure(e.toString());
+    }
+  }
 }
