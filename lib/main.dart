@@ -88,7 +88,10 @@ Future<void> main() async {
     );
   }
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
+  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,]).then(
       (value) => runApp(
           MyApp(session: session??'')));
 }
