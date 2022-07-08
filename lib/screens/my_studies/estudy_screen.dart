@@ -3,6 +3,7 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/image_visor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -26,7 +27,8 @@ class _StudyState extends State<Study> {
   DiagnosticReport? diagnosticReport;
   @override
   void initState() {
-    BlocProvider.of<MyStudiesBloc>(context).add(GetPatientStudyFromServer(id: widget.id));
+    BlocProvider.of<MyStudiesBloc>(context)
+        .add(GetPatientStudyFromServer(id: widget.id));
     super.initState();
   }
 
@@ -39,7 +41,7 @@ class _StudyState extends State<Study> {
         leading: Padding(
           padding: const EdgeInsets.only(left: 16.0),
           child:
-          SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+              SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
         ),
       ),
       body: Padding(
@@ -88,87 +90,100 @@ class _StudyState extends State<Study> {
                     style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                   ),
                 ),
-                if(_loading)
+                if (_loading)
                   Container(
                     child: const Center(
                       child: CircularProgressIndicator(
-                        valueColor:
-                        AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            Constants.primaryColor400),
                         backgroundColor: Constants.primaryColor600,
                       ),
                     ),
                   ),
-                if(_error)
-                  DataFetchErrorWidget(retryCallback: () => BlocProvider.of<MyStudiesBloc>(context).add(GetPatientStudyFromServer(id: widget.id))),
-                if(!_loading && !_error)
+                if (_error)
+                  DataFetchErrorWidget(
+                      retryCallback: () =>
+                          BlocProvider.of<MyStudiesBloc>(context)
+                              .add(GetPatientStudyFromServer(id: widget.id))),
+                if (!_loading && !_error)
                   Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                          child: Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "${diagnosticReport?.description}",
-                                  style: boldoTitleBlackTextStyle.copyWith(
-                                      color: ConstantsV2.activeText),
-                                ),
-                              ],
-                            ),
-                          )
-                      ),
-                      ProfileImageView2(height: 54, width: 54, border: true, patient: patient, color: ConstantsV2.orange,),
-                    ],
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                            child: Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${diagnosticReport?.description}",
+                                style: boldoTitleBlackTextStyle.copyWith(
+                                    color: ConstantsV2.activeText),
+                              ),
+                            ],
+                          ),
+                        )),
+                        ProfileImageView2(
+                          height: 54,
+                          width: 54,
+                          border: true,
+                          patient: patient,
+                          color: ConstantsV2.orange,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                if(!_loading && !_error)
+                if (!_loading && !_error)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start  ,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               'fuente',
-                              style: boldoCorpSmallInterTextStyle.copyWith(color: ConstantsV2.activeText),
+                              style: boldoCorpSmallInterTextStyle.copyWith(
+                                  color: ConstantsV2.activeText),
                             ),
                             const SizedBox(
                               height: 10,
                             ),
                             Card(
-                              margin: EdgeInsets.zero,
-                              elevation: 0,
-                              color: ConstantsV2.lightest,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                child: SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo', height: 32,),
-                              )
-                            )
+                                margin: EdgeInsets.zero,
+                                elevation: 0,
+                                color: ConstantsV2.lightest,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  child: SvgPicture.asset(
+                                    'assets/Logo.svg',
+                                    semanticsLabel: 'BOLDO Logo',
+                                    height: 32,
+                                  ),
+                                ))
                           ],
                         ),
                       ),
                       Container(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start  ,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               'fecha de realización',
-                              style: boldoCorpSmallInterTextStyle.copyWith(color: ConstantsV2.activeText),
+                              style: boldoCorpSmallInterTextStyle.copyWith(
+                                  color: ConstantsV2.activeText),
                             ),
                             const SizedBox(
                               height: 10,
                             ),
                             Container(
                               child: Text(
-                                "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport?.effectiveDate?? "2000-01-01").toLocal())}",
+                                "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport?.effectiveDate ?? "2000-01-01").toLocal())}",
                                 style: boldoSubTextMediumStyle.copyWith(
                                     color: ConstantsV2.activeText),
                               ),
@@ -181,7 +196,9 @@ class _StudyState extends State<Study> {
                 const SizedBox(
                   height: 15,
                 ),
-                diagnosticReport == null ? showEmptyList() : showDiagnosticList()
+                diagnosticReport == null
+                    ? showEmptyList()
+                    : showDiagnosticList()
               ],
             ),
           ),
@@ -198,9 +215,9 @@ class _StudyState extends State<Study> {
         else if (_error)
           const Text('Error')
         else ...[
-            const Text('Aun no tenés estudios para visualizar'),
-            SvgPicture.asset('assets/images/empty_studies.svg', fit: BoxFit.cover)
-          ]
+          const Text('Aun no tenés estudios para visualizar'),
+          SvgPicture.asset('assets/images/empty_studies.svg', fit: BoxFit.cover)
+        ]
       ],
     );
   }
@@ -228,62 +245,66 @@ class _StudyState extends State<Study> {
     );
   }
 
-
   Widget showStudy(BuildContext context, int index) {
-    String type = getTypeFromContentType(diagnosticReport?.attachmentUrls?[index]['contentType'])?? '';
+    String type = getTypeFromContentType(
+            diagnosticReport?.attachmentUrls?[index]['contentType']) ??
+        '';
     return Card(
       elevation: 4,
       margin: const EdgeInsets.only(bottom: 4),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          if (type == 'jpeg' || type == 'png') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) =>  ImageVisor(url: diagnosticReport!.attachmentUrls![index]['url'],)),
+            );
+          }
+        },
         child: Container(
           padding: const EdgeInsets.only(top: 8, left: 8),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Row(
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7),
-                    child: ClipOval(
-                      child: SizedBox(
-                        width: 54,
-                        height: 54,
-                        child:
-                        SvgPicture.asset(
-                            type == 'pdf' ? 'assets/icon/picture-as-pdf.svg': (type == 'jpeg' || type == 'png') ? 'assets/icon/crop-original.svg' : 'assets/Logo.svg',
-                        ),
-                      ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7),
+                child: ClipOval(
+                  child: SizedBox(
+                    width: 54,
+                    height: 54,
+                    child: SvgPicture.asset(
+                      type == 'pdf'
+                          ? 'assets/icon/picture-as-pdf.svg'
+                          : (type == 'jpeg' || type == 'png')
+                              ? 'assets/icon/crop-original.svg'
+                              : 'assets/Logo.svg',
                     ),
                   ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                                margin: const EdgeInsets.only(right: 8),
-                                child: Flex(
-                                  mainAxisSize: MainAxisSize.min,
-                                  direction: Axis.horizontal,
-                                  children: [
-                                    Flexible(
-                                      child:Text(
-                                        "${p.basename(diagnosticReport?.attachmentUrls?[index]['url'])}",
-                                        style: boldoCorpMediumBlackTextStyle.copyWith(
-                                            color: ConstantsV2.activeText),
-                                      ),
-                                    ),
-                                  ]
-                                ),
-                          ),
-                      ],
+                ),
+              ),
+              const SizedBox(
+                width: 8,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      child: Flex(
+                          mainAxisSize: MainAxisSize.min,
+                          direction: Axis.horizontal,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                "${p.basename(diagnosticReport?.attachmentUrls?[index]['url'])}",
+                                style: boldoCorpMediumBlackTextStyle.copyWith(
+                                    color: ConstantsV2.activeText),
+                              ),
+                            ),
+                          ]),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
