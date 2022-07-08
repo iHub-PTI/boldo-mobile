@@ -51,6 +51,9 @@ class _StudyState extends State<Study> {
               _loading = true;
               _error = false;
               print('loading');
+              setState(() {
+                
+              });
             }
             if (state is DiagnosticStudyLoaded) {
               print('success DiagnosticLoaded');
@@ -58,6 +61,14 @@ class _StudyState extends State<Study> {
               _error = false;
               setState(() {
                 diagnosticReport = state.study;
+              });
+            }
+            if (state is Success) {
+              print('success DiagnosticLoaded');
+              _loading = false;
+              _error = false;
+              setState(() {
+               
               });
             }
 
@@ -210,7 +221,7 @@ class _StudyState extends State<Study> {
     return Column(
       children: [
         if (_loading)
-          const Text('Cargando...')
+          const Center(child:  Text('Cargando...'))
         else if (_error)
           const Text('Error')
         else ...[

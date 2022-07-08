@@ -34,3 +34,5 @@ class FailedUpload extends MyStudiesState {
 class Uploading extends MyStudiesState {}
 
 class Uploaded extends MyStudiesState {}
+
+class Success extends MyStudiesState {}

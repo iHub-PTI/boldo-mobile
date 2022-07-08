@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:boldo/network/my_studies_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 import 'package:path_provider/path_provider.dart';
@@ -67,11 +68,26 @@ class MyStudiesBloc extends Bloc<MyStudiesEvent, MyStudiesState> {
           emit(Uploaded());
         }
       } else if (event is GetUserPdfFromUrl) {
-        getUserPdfVisor(event.url);
+        emit(Loading());
+        var _post;
+        await Task(() => getUserPdfVisor(event.url)!)
+            .attempt()
+            .mapLeftToFailure()
+            .run()
+            .then((value) {
+          _post = value;
+        });
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(Failed(msg: response));
+        } else {
+          emit(Success());
+        }
       }
     });
   }
-  Future<void>? getUserPdfVisor(final url) async {
+  Future<None>? getUserPdfVisor(final url) async {
     var fileName = 'visor';
     try {
       var data = await http.get(Uri.parse(url));
@@ -80,7 +96,8 @@ class MyStudiesBloc extends Bloc<MyStudiesEvent, MyStudiesState> {
       File file = File("${dir.path}/" + fileName + ".pdf");
       print(dir.path);
       File urlFile = await file.writeAsBytes(bytes);
-       open.OpenFile.open(urlFile.path);
+      open.OpenFile.open(urlFile.path);
+       return const None();
     } catch (e) {
       throw Exception("Error opening url file");
     }
