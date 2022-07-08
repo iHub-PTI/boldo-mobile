@@ -54,6 +54,22 @@ class _MyStudiesState extends State<MyStudies> {
               _error = false;
               setState(() {
                 diagnosticReport = state.studiesList;
+
+                diagnosticReport.sort(((a, b) {
+                  if (a.effectiveDate == null || b.effectiveDate == null) {
+                    return 0;
+                  }
+
+                  try {
+                    DateTime dateA = DateTime.parse(a.effectiveDate as String);
+                    DateTime dateB = DateTime.parse(b.effectiveDate as String);
+
+                    return dateB.compareTo(dateA);
+                  } on FormatException catch (e) {
+                    print(e.toString());
+                    return 0;
+                  }
+                }));
               });
             }
 
@@ -62,8 +78,8 @@ class _MyStudiesState extends State<MyStudies> {
               _loading = false;
               _error = true;
               setState(() {});
-              Scaffold.of(context).showSnackBar(
-                  SnackBar(content: Text("Falló la obtención de estudios")));
+              Scaffold.of(context).showSnackBar(const SnackBar(
+                  content: Text("Falló la obtención de estudios")));
             }
           },
           child: SingleChildScrollView(
@@ -163,7 +179,6 @@ class _MyStudiesState extends State<MyStudies> {
 
   Widget showStudy(BuildContext context, int index) {
     return Card(
-      
       elevation: 4,
       margin: const EdgeInsets.only(bottom: 4),
       child: InkWell(
@@ -211,91 +226,97 @@ class _MyStudiesState extends State<MyStudies> {
               ),
               Expanded(
                 child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          color: Constants.secondaryColor100,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0, top: 2.0, bottom: 2.0, right: 8.0),
-                            child: diagnosticReport[index].sourceID == patient.id ? Row(
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/icon/cloud.svg',
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  "subido por usted",
-                                  style: boldoCorpSmallTextStyle.copyWith(
-                                      color: ConstantsV2.darkBlue),
-                                ),
-                              ],
-                            )
-                                : Row(
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/icon/inbox-in.svg',
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  "Boldo",
-                                  style: boldoCorpSmallTextStyle.copyWith(
-                                      color: ConstantsV2.darkBlue),
-                                ),
-                              ],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            color: Constants.secondaryColor100,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10.0,
+                                  top: 2.0,
+                                  bottom: 2.0,
+                                  right: 8.0),
+                              child: diagnosticReport[index].sourceID ==
+                                      patient.id
+                                  ? Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/icon/cloud.svg',
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          "subido por usted",
+                                          style:
+                                              boldoCorpSmallTextStyle.copyWith(
+                                                  color: ConstantsV2.darkBlue),
+                                        ),
+                                      ],
+                                    )
+                                  : Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/icon/inbox-in.svg',
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          "Boldo",
+                                          style:
+                                              boldoCorpSmallTextStyle.copyWith(
+                                                  color: ConstantsV2.darkBlue),
+                                        ),
+                                      ],
+                                    ),
                             ),
                           ),
-                        ),
-
-                        Text(
-                          "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport[index].effectiveDate!).toLocal())}",
-                          style: boldoCorpSmallTextStyle.copyWith(
-                              color: ConstantsV2.darkBlue),
-                        )
-                      ],
-                    ),
-
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Text(
-                      "${diagnosticReport[index].description}",
-                      style: boldoCorpMediumTextStyle.copyWith(
-                          color: ConstantsV2.inactiveText),
-                    ),
-                    // Text(
-                    //   "Subido por:\n${diagnosticReport[index].source}",
-                    //   style: boldoCorpMediumTextStyle.copyWith(
-                    //       color: ConstantsV2.inactiveText),
-                    // ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Container(
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            'assets/icon/attach-file.svg',
-                          ),
                           Text(
-                            "${diagnosticReport[index].attachmentNumber} ${diagnosticReport[index].attachmentNumber == "1" ? "archivo adjunto" : "archivos adjuntos"}",
+                            "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport[index].effectiveDate!).toLocal())}",
                             style: boldoCorpSmallTextStyle.copyWith(
                                 color: ConstantsV2.darkBlue),
                           )
                         ],
                       ),
-                    ),
-                  ],
+
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        "${diagnosticReport[index].description}",
+                        style: boldoCorpMediumTextStyle.copyWith(
+                            color: ConstantsV2.inactiveText),
+                      ),
+                      // Text(
+                      //   "Subido por:\n${diagnosticReport[index].source}",
+                      //   style: boldoCorpMediumTextStyle.copyWith(
+                      //       color: ConstantsV2.inactiveText),
+                      // ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Container(
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icon/attach-file.svg',
+                            ),
+                            Text(
+                              "${diagnosticReport[index].attachmentNumber} ${diagnosticReport[index].attachmentNumber == "1" ? "archivo adjunto" : "archivos adjuntos"}",
+                              style: boldoCorpSmallTextStyle.copyWith(
+                                  color: ConstantsV2.darkBlue),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
               ),
             ],
           ),
