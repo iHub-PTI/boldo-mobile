@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../constants.dart';
@@ -13,10 +14,10 @@ class ImageVisor extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'FULL PHOTO',
-        ),
+        backgroundColor: Colors.black,
         centerTitle: true,
+        title: SvgPicture.asset('assets/Logo.svg',
+            width: 100, semanticsLabel: 'BOLDO Logo'),
       ),
       body: ImageVisorScreen(url: url),
     );
@@ -41,9 +42,12 @@ class ImageVisorScreenState extends State<ImageVisorScreen> {
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-    return Container(child: PhotoView(imageProvider: CachedNetworkImageProvider(url),));
+    return Container(
+        child: PhotoView(
+      imageProvider: CachedNetworkImageProvider(url),
+    ));
   }
-
 }
