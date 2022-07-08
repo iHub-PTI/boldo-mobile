@@ -85,163 +85,169 @@ class _NewStudyState extends State<NewStudy> {
                   .showSnackBar(SnackBar(content: Text(state.msg)));
             }
           },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(
-                  Icons.chevron_left_rounded,
-                  size: 25,
-                  color: Constants.extraColor400,
+          child: SingleChildScrollView(
+            //  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.chevron_left_rounded,
+                    size: 25,
+                    color: Constants.extraColor400,
+                  ),
+                  label: Text(
+                    'Atras',
+                    style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                  ),
                 ),
-                label: Text(
-                  'Atras',
-                  style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                const SizedBox(
+                  height: 16,
                 ),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Nuevo estudio',
-                      style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                    ),
-                    ProfileImageView2(height: 54, width: 54, border: true, patient: patient, color: ConstantsV2.orange,),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextFormField(
-                        decoration: const InputDecoration(hintText: "Nombre del estudio"),
-                        onChanged: (value){
-                          nombre = value;
-                          setState(() {
-
-                          });
-                        },
-                        validator: (value){
-                          if(value == null || value.isEmpty){
-                            return "Ingrese un nombre";
-                          }
-                        },
+                      Text(
+                        'Nuevo estudio',
+                        style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        inputFormatters: [MaskTextInputFormatter(mask: "##/##/####")],
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Ingrese la fecha del estudio';
-                          } else {
-                            try {
-                              var inputFormat = DateFormat('dd/MM/yyyy');
-                              var outputFormat = DateFormat('yyyy-MM-dd');
-                              var date1 = inputFormat
-                                  .parse(value.toString().trim());
-                              var date2 = outputFormat.format(date1);
-                              fecha = date2;
-                            } catch (e) {
-                              return "El formato de la fecha debe ser (dd/MM/yyyy)";
-                            }
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                          hintText: "31/12/2020",
-                          suffixIcon: Align(
-                            widthFactor: 1.0,
-                            heightFactor: 1.0,
-                            child: SvgPicture.asset(
-                              'assets/icon/calendar.svg',
-                              color: ConstantsV2.inactiveText,
-                              height: 20,
-                            ),
-                          ),
-                          labelText: "Fecha de estudio (dd/mm/yyyy)",
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        decoration: const InputDecoration(hintText: "Notas (opcional)"),
-                        onChanged: (value){
-                          notas = value;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      Container(
-                        height: 76,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: items.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: _buildCarousel,
-                        ),
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                        width: 136,
-                        child: ElevatedButton (
-                          onPressed: enable && _formKey.currentState!.validate() ? () async {
-                            if(_formKey.currentState!.validate()){
-                              DiagnosticReport newDiagnosticReport = DiagnosticReport(
-                                  description: nombre,
-                                  patientNotes: notas,
-                                  effectiveDate: fecha,
-                                  type: type);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        AttachFiles(
-                                            diagnosticReport:
-                                            newDiagnosticReport)),
-                              );
-                            }
-                          }: null,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text('siguiente'),
-                              const Padding(
-                                padding: EdgeInsets.only(left: 8.0),
-                                child: Icon(
-                                  Icons.chevron_right,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                        ],
-                      )
+                      ProfileImageView2(height: 54, width: 54, border: true, patient: patient, color: ConstantsV2.orange,),
                     ],
                   ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          decoration: const InputDecoration(hintText: "Nombre del estudio"),
+                          onChanged: (value){
+                            nombre = value;
+                            setState(() {
+          
+                            });
+                          },
+                          validator: (value){
+                            if(value == null || value.isEmpty){
+                              return "Ingrese un nombre";
+                            }
+                          },
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        TextFormField(
+                          inputFormatters: [MaskTextInputFormatter(mask: "##/##/####")],
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Ingrese la fecha del estudio';
+                            } else {
+                              try {
+                                var inputFormat = DateFormat('dd/MM/yyyy');
+                                var outputFormat = DateFormat('yyyy-MM-dd');
+                                var date1 = inputFormat
+                                    .parse(value.toString().trim());
+                                var date2 = outputFormat.format(date1);
+                                fecha = date2;
+                              } catch (e) {
+                                return "El formato de la fecha debe ser (dd/MM/yyyy)";
+                              }
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            hintText: "31/12/2020",
+                            suffixIcon: Align(
+                              widthFactor: 1.0,
+                              heightFactor: 1.0,
+                              child: SvgPicture.asset(
+                                'assets/icon/calendar.svg',
+                                color: ConstantsV2.inactiveText,
+                                height: 20,
+                              ),
+                            ),
+                            labelText: "Fecha de estudio (dd/mm/yyyy)",
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        TextFormField(
+                          decoration: const InputDecoration(hintText: "Notas (opcional)"),
+                          onChanged: (value){
+                            notas = value;
+                          },
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        Container(
+                          height: 76,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: items.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: _buildCarousel,
+                          ),
+                        ),
+                         const SizedBox(
+                          height: 40,
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                          width: 136,
+                          child: ElevatedButton (
+                            onPressed: enable && _formKey.currentState!.validate() ? () async {
+                              if(_formKey.currentState!.validate()){
+                                DiagnosticReport newDiagnosticReport = DiagnosticReport(
+                                    description: nombre,
+                                    patientNotes: notas,
+                                    effectiveDate: fecha,
+                                    type: type);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          AttachFiles(
+                                              diagnosticReport:
+                                              newDiagnosticReport)),
+                                );
+                              }
+                            }: null,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text('siguiente'),
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 8.0),
+                                  child: Icon(
+                                    Icons.chevron_right,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
       ),
     );
