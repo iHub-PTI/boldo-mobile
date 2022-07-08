@@ -54,6 +54,22 @@ class _MyStudiesState extends State<MyStudies> {
               _error = false;
               setState(() {
                 diagnosticReport = state.studiesList;
+
+                diagnosticReport.sort(((a, b) {
+                  if (a.effectiveDate == null || b.effectiveDate == null) {
+                    return 0;
+                  }
+
+                  try {
+                    DateTime dateA = DateTime.parse(a.effectiveDate as String);
+                    DateTime dateB = DateTime.parse(b.effectiveDate as String);
+
+                    return dateB.compareTo(dateA);
+                  } on FormatException catch (e) {
+                    print(e.toString());
+                    return 0;
+                  }
+                }));
               });
             }
 
@@ -62,8 +78,8 @@ class _MyStudiesState extends State<MyStudies> {
               _loading = false;
               _error = true;
               setState(() {});
-              Scaffold.of(context).showSnackBar(
-                  SnackBar(content: Text("Falló la obtención de estudios")));
+              Scaffold.of(context).showSnackBar(const SnackBar(
+                  content: Text("Falló la obtención de estudios")));
             }
           },
           child: SingleChildScrollView(
@@ -265,7 +281,6 @@ class _MyStudiesState extends State<MyStudies> {
                                     ),
                             ),
                           ),
-
                           Text(
                             "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport[index].effectiveDate!).toLocal())}",
                             style: boldoCorpSmallTextStyle.copyWith(
