@@ -9,7 +9,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
-
 import '../../constants.dart';
 import '../../models/DiagnosticReport.dart';
 
@@ -257,8 +256,14 @@ class _StudyState extends State<Study> {
           if (type == 'jpeg' || type == 'png') {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) =>  ImageVisor(url: diagnosticReport!.attachmentUrls![index]['url'],)),
+              MaterialPageRoute(
+                  builder: (context) => ImageVisor(
+                        url: diagnosticReport!.attachmentUrls![index]['url'],
+                      )),
             );
+          } else if (type == 'pdf') {
+            BlocProvider.of<MyStudiesBloc>(context).add(GetUserPdfFromUrl(
+                url: diagnosticReport!.attachmentUrls![index]['url']));
           }
         },
         child: Container(

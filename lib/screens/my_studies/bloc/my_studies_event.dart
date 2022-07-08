@@ -15,3 +15,8 @@ class SendStudyToServer extends MyStudiesEvent {
   final DiagnosticReport diagnosticReport;
   SendStudyToServer({required this.diagnosticReport, required this.files});
 }
+
+class GetUserPdfFromUrl extends MyStudiesEvent {
+  final url;
+  GetUserPdfFromUrl({this.url});
+}

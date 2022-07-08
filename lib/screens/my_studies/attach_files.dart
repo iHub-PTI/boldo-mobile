@@ -98,7 +98,7 @@ class _AttachFilesState extends State<AttachFiles> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Ajuntos',
+                            'Adjuntos',
                             style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                           ),
                           Text(
