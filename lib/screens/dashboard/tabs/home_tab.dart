@@ -98,16 +98,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       appear: false,
       page: DoctorsTab(),
     ),
-    CarouselCardPages(
-      key: UniqueKey(),
-      image: 'assets/images/card_medicalInspection.png',
-      boxFit: BoxFit.contain,
-      alignment: Alignment.bottomCenter,
-      index: 4,
-      title: 'Ver mis estudios',
-      appear: true,
-      page: MyStudies(),
-    ),
   ];
 
   RefreshController? _refreshController =
@@ -960,10 +950,17 @@ class _CustomCardPageState extends State<CustomCardPage> {
         child: InkWell(
           onTap: carouselCardPage!.appear
               ? () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => carouselCardPage!.page!));
+                  if(carouselCardPage!.page != null) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => carouselCardPage!.page!));
+                  }
+                  else if(carouselCardPage!.pageRoute != null) {
+                    Navigator.pushNamed(
+                        context,
+                        '${carouselCardPage!.pageRoute!}');
+                  }
                 }
               : () {},
           child: Container(
@@ -1164,6 +1161,7 @@ class CarouselCardPages extends StatelessWidget {
   final String title;
   final bool appear;
   final Widget? page;
+  final String? pageRoute;
 
   const CarouselCardPages({
     Key? key,
@@ -1174,6 +1172,7 @@ class CarouselCardPages extends StatelessWidget {
     required this.title,
     required this.appear,
     this.page,
+    this.pageRoute,
   }) : super(key: key);
 
   @override
