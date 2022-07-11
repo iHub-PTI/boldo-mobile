@@ -90,6 +90,16 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     ),
     CarouselCardPages(
       key: UniqueKey(),
+      image: 'assets/images/card_medicalInspection.png',
+      boxFit: BoxFit.contain,
+      alignment: Alignment.bottomCenter,
+      index: 4,
+      title: 'Ver mis estudios',
+      appear: true,
+      pageRoute: '/my_studies',
+    ),
+    CarouselCardPages(
+      key: UniqueKey(),
       image: 'assets/images/card_healthPassport.png',
       boxFit: BoxFit.contain,
       alignment: Alignment.bottomCenter,
