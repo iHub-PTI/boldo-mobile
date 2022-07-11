@@ -1,3 +1,5 @@
+import 'package:sentry_flutter/sentry_flutter.dart';
+
 String getDoctorPrefix(String gender) {
   if (gender == "female") return "Dra. ";
   if (gender == "male") return 'Dr. ';
@@ -30,6 +32,19 @@ String? spanishGenderToEnglish(String? word){
   if(word.toLowerCase() == 'femenino')
     return 'female';
   return 'unknow';
+}
+
+String? getTypeFromContentType(String? content) {
+  try{
+    if(content == null){
+      return null;
+    }
+    var words = content.split("/");
+    return words[1];
+  }catch (e){
+    Sentry.captureException(e);
+    return null;
+  }
 }
 
 // set local date with format aaaa-mm-dd 00:00.000 for prevent days difference

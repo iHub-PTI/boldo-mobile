@@ -284,6 +284,7 @@ class ProfileImageView2 extends StatefulWidget {
   final double width;
   final bool border;
   final Patient? patient;
+  final Color? color;
 
   const ProfileImageView2({
     Key? key,
@@ -291,6 +292,7 @@ class ProfileImageView2 extends StatefulWidget {
     required this.width,
     required this.border,
     required this.patient,
+    this.color,
   }) : super(key: key);
 
   @override
@@ -346,9 +348,9 @@ class _ProfileImageViewState2 extends State<ProfileImageView2> {
 
             ),
             elevation: 4.0,
-            shape: widget.border ? const StadiumBorder(
+            shape: widget.border ? StadiumBorder(
                 side: BorderSide(
-                  color: Colors.white,
+                  color: widget.color?? Colors.white,
                   width: 3,
                 )
             ) : const CircleBorder(),

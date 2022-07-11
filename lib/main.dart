@@ -5,6 +5,8 @@ import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
+import 'package:boldo/screens/appointments/pastAppointments_screen.dart';
+import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/family/family_tab.dart';
 import 'package:boldo/screens/family/tabs/defined_relationship_screen.dart';
 import 'package:boldo/screens/family/tabs/familyConnectTransition.dart';
@@ -12,6 +14,9 @@ import 'package:boldo/screens/family/tabs/family_change_transition.dart';
 import 'package:boldo/screens/family/tabs/family_register_account.dart';
 import 'package:boldo/screens/family/tabs/metods_add_family_screen.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
+import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
+import 'package:boldo/screens/my_studies/my_studies_screen.dart';
+import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
 import 'package:boldo/screens/sing_in/sing_in_transition.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:camera/camera.dart';
@@ -129,6 +134,9 @@ class _MyAppState extends State<MyApp> {
           BlocProvider<DoctorBloc>(
               create: (BuildContext context) => DoctorBloc(),
           ),
+          BlocProvider<MyStudiesBloc>(
+              create: (BuildContext context) => MyStudiesBloc(),
+          ),
         ],
         child: MultiProvider(
           providers: [
@@ -172,6 +180,10 @@ class FullApp extends StatelessWidget {
         '/SignInSuccess' : (context) => SingInTransition(),
         '/FamilyTransition' : (context) => FamilyTransition(),
         '/familyDniRegister' : (context) => DniFamilyRegister(),
+        '/my_studies' : (context) => MyStudies(),
+        '/doctorsTab' : (context) => DoctorsTab(),
+        '/pastAppointmentsScreen' : (context) => const PastAppointmentsScreen(),
+        '/prescriptionsScreen' : (context) => const PrescriptionsScreen(),
       },
     );
   }

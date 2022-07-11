@@ -140,6 +140,14 @@ const boldoCorpSmallTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoCorpSmallInterTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 12,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
 const boldoBillboardTextStyleAlt = TextStyle(
   color: ConstantsV2.inactiveText,
   fontStyle: FontStyle.normal,
@@ -199,7 +207,7 @@ ThemeData boldoTheme = ThemeData(
     ),
   ),
   primaryColor: Colors.white,
-  scaffoldBackgroundColor: Colors.white,
+  scaffoldBackgroundColor: ConstantsV2.lightGrey,
   brightness: Brightness.light,
   visualDensity: VisualDensity.adaptivePlatformDensity,
 );
