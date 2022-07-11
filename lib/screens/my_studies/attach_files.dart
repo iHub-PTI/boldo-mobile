@@ -54,7 +54,7 @@ class _AttachFilesState extends State<AttachFiles> {
                 backgroundColor: ConstantsV2.green,
               ),
             );
-            Navigator.of(context).popUntil(ModalRoute.withName("/home"));
+            Navigator.of(context).popUntil(ModalRoute.withName("/my_studies"));
             BlocProvider.of<MyStudiesBloc>(context)
                 .add(GetPatientStudiesFromServer());
           }
