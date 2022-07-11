@@ -98,7 +98,7 @@ class _MyStudiesState extends State<MyStudies> {
                   ),
                   label: Text(
                     'Estudios',
-                    style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                    style: boldoTitleBlackTextStyle.copyWith(color: ConstantsV2.activeText),
                   ),
                 ),
                 Text(
@@ -110,7 +110,7 @@ class _MyStudiesState extends State<MyStudies> {
                 ),
                 Text(
                   'Mis estudios',
-                  style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                  style: boldoSubTextStyle.copyWith(color: ConstantsV2.inactiveText),
                 ),
                 const SizedBox(
                   height: 15,

@@ -115,7 +115,7 @@ class _NewStudyState extends State<NewStudy> {
                     children: [
                       Text(
                         'Nuevo estudio',
-                        style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                        style: boldoTitleBlackTextStyle.copyWith(color: ConstantsV2.activeText),
                       ),
                       ProfileImageView2(height: 54, width: 54, border: true, patient: patient, color: ConstantsV2.orange,),
                     ],

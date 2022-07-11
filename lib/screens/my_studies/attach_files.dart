@@ -98,7 +98,7 @@ class _AttachFilesState extends State<AttachFiles> {
                       children: [
                         Text(
                           'Adjuntos',
-                          style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                          style: boldoTitleBlackTextStyle.copyWith(color: ConstantsV2.activeText),
                         ),
                         Text(
                           "seleccioná los archivos o tomale fotos a los resultados de este estudio.",
