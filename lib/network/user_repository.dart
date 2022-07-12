@@ -914,6 +914,41 @@ class UserRepository {
     }
   }
 
+  Future<MedicalRecord>? getPrescription(String id) async {
+    try{
+      Response responsePrescriptions;
+      if (!prefs.getBool(isFamily)!)
+        responsePrescriptions = await dio.get('/profile/patient/appointments/$id/encounter');
+      else
+        responsePrescriptions = await dio
+            .get('/profile/caretaker/dependent/${patient.id}/appointments/$id/encounter');
+
+      if(responsePrescriptions.statusCode == 200) {
+        return MedicalRecord.fromJson(
+            responsePrescriptions.data['encounter']);
+      }
+      throw Failure("Response code ${responsePrescriptions.statusCode}");
+    }on DioError catch (exception){
+      await Sentry.captureMessage(exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": patient.id,
+            "responseError": exception.response?.data,
+          }
+        ],
+      );
+      throw Failure("No fue posible obtener la receta");
+    }catch (exception, stackTrace){
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace
+      );
+      throw Failure("No fue posible obtener la receta");
+    }
+  }
+
 }
 
 Future<None> getMedicalRecords() async {
