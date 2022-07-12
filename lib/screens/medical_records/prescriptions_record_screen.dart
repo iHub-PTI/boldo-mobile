@@ -52,34 +52,34 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
                 );
               }
             },
-            child: BlocBuilder<PrescriptionBloc, PrescriptionState>(builder: (context, state){
-              if( state is PrescriptionLoaded){
-                return SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 24,
-                      ),
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: const Icon(
-                          Icons.chevron_left_rounded,
-                          size: 25,
-                          color: Constants.extraColor400,
-                        ),
-                        label: Text(
-                          'Detalles de la receta',
-                          style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Padding(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  TextButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.chevron_left_rounded,
+                      size: 25,
+                      color: Constants.extraColor400,
+                    ),
+                    label: Text(
+                      'Detalles de la receta',
+                      style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  BlocBuilder<PrescriptionBloc, PrescriptionState>(builder: (context, state){
+                    if( state is PrescriptionLoaded){
+                      return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Align(
                           alignment: Alignment.centerLeft,
@@ -168,27 +168,27 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
                             ],
                           ),
                         ),
-                      ),
-                    ],
+                      );
+                    }else if(state is LoadingPrescription){
+                      return Container(
+                          child: const Center(
+                              child: CircularProgressIndicator(
+                                valueColor:
+                                AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                                backgroundColor: Constants.primaryColor600,
+                              )
+                          )
+                      );
+                    }else if(state is FailedLoadPrescription){
+                      return Container(
+                          child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<PrescriptionBloc>(context).add(GetPrescription(id: widget.medicalRecordId)) ) );
+                    }else{
+                      return Container();
+                    }
+                  }
                   ),
-                );
-              }else if(State is LoadingPrescription){
-                return Container(
-                    child: const Center(
-                        child: CircularProgressIndicator(
-                          valueColor:
-                          AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                          backgroundColor: Constants.primaryColor600,
-                        )
-                    )
-                );
-              }else if(state is FailedLoadPrescription){
-                return Container(
-                    child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<PrescriptionBloc>(context).add(GetPrescription(id: widget.medicalRecordId)) ) );
-              }else{
-                return Container();
-              }
-            }
+                ],
+              ),
             ),
           )
         ));
