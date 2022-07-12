@@ -9,13 +9,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 
-part 'prescriptionEvent.dart';
-part 'prescriptionState.dart';
+part 'prescriptionsEvent.dart';
+part 'prescriptionsState.dart';
 
-class PrescriptionBloc extends Bloc<PrescriptionEvent, PrescriptionState> {
+class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
   final UserRepository _patientRepository = UserRepository();
-  PrescriptionBloc() : super(PrescriptionBlocInitial()) {
-    on<PrescriptionEvent>((event, emit) async {
+  PrescriptionsBloc() : super(PrescriptionBlocInitial()) {
+    on<PrescriptionsEvent>((event, emit) async {
       if(event is GetPastAppointmentList){
         emit(Loading());
         var _post;
