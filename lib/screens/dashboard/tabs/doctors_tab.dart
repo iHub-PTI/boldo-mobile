@@ -123,7 +123,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
           if (b.nextAvailability == null || a.nextAvailability == null ) {
             return 1;
           }
-            return DateTime.parse(b.nextAvailability!.availability!).compareTo(DateTime.parse(a.nextAvailability!.availability!));
+            return DateTime.parse(a.nextAvailability!.availability!).compareTo(DateTime.parse(b.nextAvailability!.availability!));
         });
       }
     } on DioError catch (exception, stackTrace) {
