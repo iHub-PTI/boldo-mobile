@@ -9,6 +9,7 @@ import 'package:boldo/screens/dashboard/tabs/components/divider_feed_secction_ho
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
+import 'package:boldo/screens/my_studies/my_studies_screen.dart';
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -82,21 +83,21 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     ),
     CarouselCardPages(
       key: UniqueKey(),
-      image: 'assets/images/card_healthPassport.png',
-      boxFit: BoxFit.contain,
-      alignment: Alignment.bottomCenter,
-      index: 3,
-      title: 'Pasaporte de salud',
-      appear: false,
-      page: DoctorsTab(),
-    ),
-    CarouselCardPages(
-      key: UniqueKey(),
       image: 'assets/images/card_medicalInspection.png',
       boxFit: BoxFit.contain,
       alignment: Alignment.bottomCenter,
       index: 4,
       title: 'Ver mis estudios',
+      appear: true,
+      pageRoute: '/my_studies',
+    ),
+    CarouselCardPages(
+      key: UniqueKey(),
+      image: 'assets/images/card_healthPassport.png',
+      boxFit: BoxFit.contain,
+      alignment: Alignment.bottomCenter,
+      index: 3,
+      title: 'Pasaporte de salud',
       appear: false,
       page: DoctorsTab(),
     ),
@@ -721,10 +722,17 @@ class _CustomCardPageState extends State<CustomCardPage> {
         child: InkWell(
           onTap: carouselCardPage!.appear
               ? () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => carouselCardPage!.page!));
+                  if(carouselCardPage!.page != null) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => carouselCardPage!.page!));
+                  }
+                  else if(carouselCardPage!.pageRoute != null) {
+                    Navigator.pushNamed(
+                        context,
+                        '${carouselCardPage!.pageRoute!}');
+                  }
                 }
               : () {},
           child: Container(
@@ -832,6 +840,7 @@ class CarouselCardPages extends StatelessWidget {
   final String title;
   final bool appear;
   final Widget? page;
+  final String? pageRoute;
 
   const CarouselCardPages({
     Key? key,
@@ -842,6 +851,7 @@ class CarouselCardPages extends StatelessWidget {
     required this.title,
     required this.appear,
     this.page,
+    this.pageRoute,
   }) : super(key: key);
 
   @override

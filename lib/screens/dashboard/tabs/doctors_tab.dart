@@ -119,6 +119,12 @@ class _DoctorsTabState extends State<DoctorsTab> {
         } else {
           doctors = [...doctors, ...doctorsList];
         }
+        doctors.sort((a, b) {
+          if (b.nextAvailability == null || a.nextAvailability == null ) {
+            return 1;
+          }
+            return DateTime.parse(b.nextAvailability!.availability!).compareTo(DateTime.parse(a.nextAvailability!.availability!));
+        });
       }
     } on DioError catch (exception, stackTrace) {
       print(exception);

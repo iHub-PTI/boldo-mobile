@@ -24,7 +24,7 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
   //setup interceptors
   dio.interceptors.add(QueuedInterceptorsWrapper(
     onRequest: (options, handler) async {
-      accessToken = (await storage.read(key: "access_token")??'');
+      accessToken = (await storage.read(key: "access_token") ?? '');
       options.headers["authorization"] = "bearer $accessToken";
 
       return handler.next(options);
@@ -96,8 +96,8 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
           dio.interceptors.responseLock.unlock();
           dio.interceptors.errorLock.unlock();
           //retry request
-          return handle
-              .resolve(await dio.request(options.path, data: options.data, options: optionsDio));
+          return handle.resolve(await dio.request(options.path,
+              data: options.data, options: optionsDio));
         } catch (e) {
           print(e);
           dio.unlock();
@@ -191,7 +191,8 @@ void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
             validateStatus: options.validateStatus);
         if ("bearer $accessToken" != options.headers["authorization"]) {
           options.headers["authorization"] = "bearer $accessToken";
-          handle.resolve(await dioHealthCore.request(options.path, options: optionsDio));
+          handle.resolve(
+              await dioHealthCore.request(options.path, options: optionsDio));
         }
         dioHealthCore.lock();
         dioHealthCore.interceptors.responseLock.lock();
@@ -215,8 +216,8 @@ void initDioSecondaryAccess({required GlobalKey<NavigatorState> navKey}) {
           dioHealthCore.unlock();
           dioHealthCore.interceptors.responseLock.unlock();
           dioHealthCore.interceptors.errorLock.unlock();
-          return handle
-              .resolve(await dioHealthCore.request(options.path,data: options.data, options: optionsDio));
+          return handle.resolve(await dioHealthCore.request(options.path,
+              data: options.data, options: optionsDio));
         } catch (e) {
           dioHealthCore.unlock();
           dioHealthCore.interceptors.responseLock.unlock();
