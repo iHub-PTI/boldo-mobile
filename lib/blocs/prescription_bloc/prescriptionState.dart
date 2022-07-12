@@ -16,5 +16,3 @@ class PrescriptionLoaded extends PrescriptionState {
   final MedicalRecord prescription;
   PrescriptionLoaded({required this.prescription});
 }
-
-class Success extends PrescriptionState {}
