@@ -1,4 +1,5 @@
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
+import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Soep.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
@@ -295,14 +296,15 @@ class SoepScreen extends StatelessWidget {
                     // const Spacer(),
                     medicalRecord.prescription!.isNotEmpty
                         ? GestureDetector(
-                            onTap: () {
-                              Navigator.push(
+                            onTap: () async {
+                              await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         PrescriptionRecordScreen(
-                                            medicalRecord: medicalRecord)),
+                                            medicalRecordId: medicalRecord.appointmentId?? '')),
                               );
+                              BlocProvider.of<PrescriptionBloc>(context).add(InitialPrescriptionEvent());
                             },
                             child: SvgPicture.asset('assets/icon/pill.svg',
                                 fit: BoxFit.cover),

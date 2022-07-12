@@ -1,6 +1,6 @@
-import 'package:boldo/blocs/prescriptions_bloc/prescriptionBloc.dart';
+import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
+import 'package:boldo/blocs/prescriptions_bloc/prescriptionsBloc.dart';
 import 'package:boldo/constants.dart';
-import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
 
 import 'package:boldo/models/MedicalRecord.dart';
@@ -9,7 +9,6 @@ import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state
 import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -32,13 +31,13 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PrescriptionBloc>(context).add(GetPastAppointmentWithPrescriptionsList(date: DateTime(dateOffset.year, dateOffset.month, dateOffset.day).toUtc().toIso8601String()));
+    BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList(date: DateTime(dateOffset.year, dateOffset.month, dateOffset.day).toUtc().toIso8601String()));
   }
 
   void _onRefresh() async {
     dateOffset = DateTime.now().subtract(const Duration(days: 30));
     // monitor network fetch
-    BlocProvider.of<PrescriptionBloc>(context).add(GetPastAppointmentWithPrescriptionsList(date: DateTime(dateOffset.year, dateOffset.month, dateOffset.day).toUtc().toIso8601String()));
+    BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList(date: DateTime(dateOffset.year, dateOffset.month, dateOffset.day).toUtc().toIso8601String()));
   }
 
   @override
@@ -53,7 +52,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
               SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
         ),
       ),
-      body: BlocListener<PrescriptionBloc, PrescriptionState>(
+      body: BlocListener<PrescriptionsBloc, PrescriptionsState>(
           listener: (context, state) {
             if(state is AppointmentWithPrescriptionsLoadedState){
               allAppointments = state.appointments;
@@ -81,7 +80,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                   ),
                 ),
               ),
-              BlocBuilder<PrescriptionBloc, PrescriptionState>(builder: (context, state){
+              BlocBuilder<PrescriptionsBloc, PrescriptionsState>(builder: (context, state){
                 if(state is AppointmentWithPrescriptionsLoadedState){
                   if(allAppointments.isEmpty){
                     return const EmptyStateV2(
@@ -105,35 +104,16 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                             .inDays;
                         return GestureDetector(
                           onTap: () async {
-                            _dataLoading = true;
-                            try {
-                              String url =
-                              "${prefs.getBool(isFamily) == true ? '/profile/caretaker/dependent/${patient.id}/appointments/${allAppointments[index].id}/encounter' : ' /profile/patient/appointments/${allAppointments[index].id}/encounter?includePrescriptions=true&includeSoep=true'}".trim();
-                              MedicalRecord medicalRecord;
-                              Response response =
-                              await dioHealthCore.get(url);
-                              if (response.statusCode == 200) {
-                                print(response.data);
-                                medicalRecord = MedicalRecord.fromJson(
-                                    response.data);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          PrescriptionRecordScreen(
-                                              medicalRecord:
-                                              medicalRecord)),
-                                );
-                                _dataLoading = false;
-                              } else {
-                                _dataLoaded = false;
-                                _dataLoading = false;
-                              }
-                            } catch (e) {
-                              _dataLoaded = false;
-                              _dataLoading = false;
-                              print("ERROR $e");
-                            }
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      PrescriptionRecordScreen(
+                                          medicalRecordId:
+                                          allAppointments[index].id?? '')),
+                            );
+
+                            BlocProvider.of<PrescriptionBloc>(context).add(InitialPrescriptionEvent());
                           },
                           child: Container(
                             width: MediaQuery.of(context)
@@ -532,7 +512,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                         backgroundColor: Constants.primaryColor600,
                       ));
                 }else if(state is Failed){
-                  return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<PrescriptionBloc>(context).add(GetPastAppointmentWithPrescriptionsList(date: DateTime(dateOffset.year, dateOffset.month, dateOffset.day).toUtc().toIso8601String())) ) ;
+                  return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList(date: DateTime(dateOffset.year, dateOffset.month, dateOffset.day).toUtc().toIso8601String())) ) ;
                 }else{
                   return Container();
                 }
