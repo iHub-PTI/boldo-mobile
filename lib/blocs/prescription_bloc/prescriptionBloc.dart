@@ -34,7 +34,7 @@ class PrescriptionBloc extends Bloc<PrescriptionEvent, PrescriptionState> {
         } else {
           emit(PrescriptionLoaded(prescription: _post.value));
         }
-      }else if(event is InitialEvent){
+      }else if(event is InitialPrescriptionEvent){
         emit(PrescriptionBlocInitial());
       }
     }
