@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
@@ -110,7 +111,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   DateTime dateOffset = DateTime.now().subtract(const Duration(days: 30));
   void _onRefresh() async {
     // monitor network fetch
-    BlocProvider.of<HomeBloc>(context).add(GetAppointments());
+    BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
   }
 
   void _onRefreshNews() async {
@@ -124,7 +125,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       length: 2,
       vsync: this,
     );
-    BlocProvider.of<HomeBloc>(context).add(GetAppointments());
+    BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
     BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
     super.initState();
   }
@@ -147,35 +148,74 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: BlocListener<HomeBloc, HomeState>(
-          listener: (context, state) {
-            if (state is Failed) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.response!),
-                  backgroundColor: Colors.redAccent,
-                ),
-              );
-              _loading = false;
-              if (_refreshController != null) {
-                _refreshController!.refreshCompleted();
-                _refreshController!.loadComplete();
-              }
-            }
-            if (state is Success) {
-                _loading = false;
-                if (_refreshController != null) {
-                  _refreshController!.refreshCompleted();
-                  _refreshController!.loadComplete();
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener<HomeBloc, HomeState>(
+              listener: (context, state) {
+                if (state is Failed) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.response!),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
+                  _loading = false;
                 }
-            }
-            if (state is Loading) {
-              _loading = true;
-            }
-            if (state is AppointmentsLoaded) {
-              appointments = state.appointments;
-            }
-          },
+                if (state is Success) {
+                  _loading = false;
+                }
+                if (state is Loading) {
+                  _loading = true;
+                }
+              },
+            ),
+            BlocListener<HomeNewsBloc, HomeNewsState>(
+              listener: (context, state) {
+                if (state is FailedLoadedNews) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.response!),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
+                  if (_refreshControllerNews != null) {
+                    _refreshControllerNews!.refreshCompleted();
+                    _refreshControllerNews!.loadComplete();
+                  }
+                }
+                if (state is NewsLoaded) {
+                  diagnosticReports = state.diagnosticReports;
+                  if (_refreshControllerNews != null) {
+                    _refreshControllerNews!.refreshCompleted();
+                    _refreshControllerNews!.loadComplete();
+                  }
+                }
+              },
+            ),
+            BlocListener<HomeAppointmentsBloc, HomeAppointmentsState>(
+              listener: (context, state) {
+                if (state is FailedLoadedAppointments) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.response!),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
+                  if (_refreshController != null) {
+                    _refreshController!.refreshCompleted();
+                    _refreshController!.loadComplete();
+                  }
+                }
+                if (state is AppointmentsHomeLoaded) {
+                  appointments = state.appointments;
+                  if (_refreshController != null) {
+                    _refreshController!.refreshCompleted();
+                    _refreshController!.loadComplete();
+                  }
+                }
+              },
+            ),
+          ],
           child: NestedScrollView(
               headerSliverBuilder: (context, innerBoxScrolled) => [
                 SliverAppBar(
@@ -359,177 +399,156 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildAppointments() {
-    return _dataFetchError
-        ? Container(
-            child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeBloc>(context).add(GetAppointments()) ) )
-        : Container(
-            child: SmartRefresher(
-              enablePullDown: true,
-              enablePullUp: true,
-              header: const MaterialClassicHeader(
-                color: Constants.primaryColor800,
-              ),
-              controller: _refreshController!,
-              onLoading: () {
-                dateOffset = dateOffset.subtract(const Duration(days: 30));
-              },
-              onRefresh: _onRefresh,
-              footer: CustomFooter(
-                height: 140,
-                builder: (BuildContext context, LoadStatus? mode) {
-                  Widget body = Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      /*Text(
-              "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
-              style: const TextStyle(
-                color: Constants.primaryColor800,
-              ),
-            )*/
-                    ],
-                  );
-                  return Column(
-                    children: [
-                      const SizedBox(height: 30),
-                      Center(child: body),
-                    ],
-                  );
-                },
-              ),
-              child: BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
-                if(state is Success){
-                  return appointments.isNotEmpty
-                    ? ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: appointments.length,
-                      scrollDirection: Axis.vertical,
-                      itemBuilder: _ListAppointments,
-                      physics: const ClampingScrollPhysics(),
-                    )
-                    :SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          const EmptyStateV2(
-                            picture: "feed_empty.svg",
-                            textTop: "Nada para mostrar",
-                            textBottom:
-                            "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
-                          ),
-                        ],
-                      ),
-                    );
-                }else{
-                  return Container(
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        valueColor:
-                        AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                        backgroundColor: Constants.primaryColor600,
-                      )
-                    )
-                  );
-                }
-              }),
-            ),
-          );
-  }
-
-  Widget _buildNews() {
-    return BlocListener<HomeNewsBloc, HomeNewsState>(
-      listener: (context, state) {
-        if (state is FailedLoadedNews) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.response!),
-              backgroundColor: Colors.redAccent,
-            ),
-          );
-          if (_refreshControllerNews != null) {
-            _refreshControllerNews!.refreshCompleted();
-            _refreshControllerNews!.loadComplete();
-          }
-        }
-        if (state is NewsLoaded) {
-          diagnosticReports = state.diagnosticReports;
-          if (_refreshControllerNews != null) {
-            _refreshControllerNews!.refreshCompleted();
-            _refreshControllerNews!.loadComplete();
-          }
-        }
-      },
-      child: Container(
-        child: SmartRefresher(
-          enablePullDown: true,
-          enablePullUp: true,
-          header: const MaterialClassicHeader(
-            color: Constants.primaryColor800,
-          ),
-          controller: _refreshControllerNews!,
-          onLoading: () {
-          },
-          onRefresh: _onRefreshNews,
-          footer: CustomFooter(
-            height: 140,
-            builder: (BuildContext context, LoadStatus? mode) {
-              Widget body = Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  /*Text(
+    return Container(
+      child: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: true,
+        header: const MaterialClassicHeader(
+          color: Constants.primaryColor800,
+        ),
+        controller: _refreshController!,
+        onLoading: () {
+          dateOffset = dateOffset.subtract(const Duration(days: 30));
+        },
+        onRefresh: _onRefresh,
+        footer: CustomFooter(
+          height: 140,
+          builder: (BuildContext context, LoadStatus? mode) {
+            Widget body = Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                /*Text(
             "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
             style: const TextStyle(
               color: Constants.primaryColor800,
             ),
           )*/
-                ],
-              );
-              return Column(
-                children: [
-                  const SizedBox(height: 30),
-                  Center(child: body),
-                ],
-              );
-            },
-          ),
-          child: BlocBuilder<HomeNewsBloc, HomeNewsState>(builder: (context, state) {
-            if(state is NewsLoaded){
-              return diagnosticReports.isNotEmpty
-                  ? ListView.builder(
-                shrinkWrap: true,
-                itemCount: diagnosticReports.length,
-                scrollDirection: Axis.vertical,
-                itemBuilder: _diagnosticReportCard,
-                physics: const ClampingScrollPhysics(),
-              )
-                  :SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const EmptyStateV2(
-                      picture: "feed_empty.svg",
-                      textTop: "Nada para mostrar",
-                      textBottom:
-                      "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
-                    ),
-                  ],
-                ),
-              );
-            }else if (state is LoadingNews){
-              return Container(
-                  child: const Center(
-                      child: CircularProgressIndicator(
-                        valueColor:
-                        AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                        backgroundColor: Constants.primaryColor600,
-                      )
-                  )
-              );
-            }else if(state is FailedLoadedNews){
-              return Container(
-                  child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeNewsBloc>(context).add(GetNews()) ) );
-            }else{
-              return Container();
-            }
-          }),
+              ],
+            );
+            return Column(
+              children: [
+                const SizedBox(height: 30),
+                Center(child: body),
+              ],
+            );
+          },
         ),
+        child: BlocBuilder<HomeAppointmentsBloc, HomeAppointmentsState>(builder: (context, state) {
+          if(state is AppointmentsHomeLoaded){
+            return appointments.isNotEmpty
+                ? ListView.builder(
+              shrinkWrap: true,
+              itemCount: appointments.length,
+              scrollDirection: Axis.vertical,
+              itemBuilder: _ListAppointments,
+              physics: const ClampingScrollPhysics(),
+            )
+                :SingleChildScrollView(
+              child: Column(
+                children: [
+                  const EmptyStateV2(
+                    picture: "feed_empty.svg",
+                    textTop: "Nada para mostrar",
+                    textBottom:
+                    "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
+                  ),
+                ],
+              ),
+            );
+          }else if(state is LoadingAppointments){
+            return Container(
+              child: const Center(
+                child: CircularProgressIndicator(
+                  valueColor:
+                  AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                  backgroundColor: Constants.primaryColor600,
+                )
+              )
+            );
+          }else if(state is FailedLoadedAppointments){
+            return Container(
+                child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeBloc>(context).add(GetAppointments()) ) );
+          }else{
+            return Container();
+          }
+        }),
+      ),
+    );
+  }
+
+  Widget _buildNews() {
+    return Container(
+      child: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: true,
+        header: const MaterialClassicHeader(
+          color: Constants.primaryColor800,
+        ),
+        controller: _refreshControllerNews!,
+        onLoading: () {
+        },
+        onRefresh: _onRefreshNews,
+        footer: CustomFooter(
+          height: 140,
+          builder: (BuildContext context, LoadStatus? mode) {
+            Widget body = Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                /*Text(
+          "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
+          style: const TextStyle(
+            color: Constants.primaryColor800,
+          ),
+        )*/
+              ],
+            );
+            return Column(
+              children: [
+                const SizedBox(height: 30),
+                Center(child: body),
+              ],
+            );
+          },
+        ),
+        child: BlocBuilder<HomeNewsBloc, HomeNewsState>(builder: (context, state) {
+          if(state is NewsLoaded){
+            return diagnosticReports.isNotEmpty
+                ? ListView.builder(
+              shrinkWrap: true,
+              itemCount: diagnosticReports.length,
+              scrollDirection: Axis.vertical,
+              itemBuilder: _diagnosticReportCard,
+              physics: const ClampingScrollPhysics(),
+            )
+                :SingleChildScrollView(
+              child: Column(
+                children: [
+                  const EmptyStateV2(
+                    picture: "feed_empty.svg",
+                    textTop: "Nada para mostrar",
+                    textBottom:
+                    "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
+                  ),
+                ],
+              ),
+            );
+          }else if (state is LoadingNews){
+            return Container(
+              child: const Center(
+                child: CircularProgressIndicator(
+                  valueColor:
+                  AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                  backgroundColor: Constants.primaryColor600,
+                )
+              )
+            );
+          }else if(state is FailedLoadedNews){
+            return Container(
+                child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeNewsBloc>(context).add(GetNews()) ) );
+          }else{
+            return Container();
+          }
+        }),
       ),
     );
   }
