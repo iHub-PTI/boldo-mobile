@@ -1,4 +1,5 @@
-import 'package:boldo/blocs/home_bloc/home_bloc.dart' as HomeBloc;
+import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
+import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/loading_helper.dart';
@@ -66,8 +67,8 @@ class _FamilyTransitionState extends State<FamilyTransition> {
             }
             if(state is Success){
               _dataLoading = false;
-              BlocProvider.of<HomeBloc.HomeBloc>(context).add(HomeBloc.GetAppointments());
-              BlocProvider.of<HomeBloc.HomeBloc>(context).add(HomeBloc.GetDiagnosticReports());
+              BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
+              BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
             }
             if(state is RedirectNextScreen){
               // back to home
