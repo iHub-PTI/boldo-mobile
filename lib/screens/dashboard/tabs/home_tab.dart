@@ -467,7 +467,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             );
           }else if(state is FailedLoadedAppointments){
             return Container(
-                child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeBloc>(context).add(GetAppointments()) ) );
+                child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome()) ) );
           }else{
             return Container();
           }
