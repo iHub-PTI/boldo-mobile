@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
+import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/models/Prescription.dart';
 import 'package:boldo/models/Relationship.dart';
 import 'package:boldo/models/User.dart';
 import 'package:boldo/models/upload_url_model.dart';
@@ -62,6 +64,19 @@ class UserRepository {
         return const None();
       }
       throw Failure(genericError);
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response,
+          }
+        ],
+      );
+      throw Failure("No se puede obtener el usuario");
     } catch (e) {
       throw Failure("No se puede obtener el usuario");
     }
@@ -81,6 +96,19 @@ class UserRepository {
       if(!prefs.getBool(isFamily)!)
         prefs.setString("profile_url", patient.photoUrl?? '');
       return const None();
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se puede actualizar los datos");
     } catch (e) {
       throw Failure("Ocurrio un error");
     }
@@ -102,8 +130,20 @@ class UserRepository {
       }
       families = List<Patient>.from([]);
       throw Failure(genericError);
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response,
+          }
+        ],
+      );
+      throw Failure("No se puede obtener los familiares");
     } catch (e) {
-      print(e);
       families = List<Patient>.from([]);
       throw Failure(genericError);
     }
@@ -119,6 +159,19 @@ class UserRepository {
         return List<Patient>.from([]);
       }
       throw Failure(genericError);
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response,
+          }
+        ],
+      );
+      throw Failure("No se puede obtener los gestores");
     } catch (e) {
       throw Failure(genericError);
     }
@@ -134,6 +187,19 @@ class UserRepository {
         throw Failure("El gestor ya fue borrado con anterioridad");
       }
       throw Failure(genericError);
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se puede borrar el gestor");
     } catch (e) {
       throw Failure(genericError);
     }
@@ -151,8 +217,20 @@ class UserRepository {
       }
       print(response.statusCode);
       throw Failure(genericError);
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se puede obtener el paciente");
     } catch (e) {
-      print("ERROR $e inesperado");
       throw Failure(genericError);
     }
   }
@@ -164,6 +242,19 @@ class UserRepository {
     try {
       list = List<MedicalRecord>.from(
           response.data.map((x) => MedicalRecord.fromJson(x[0])));
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se puede obtener los registros medicos");
     } catch (e) {
       print("ERROR $e");
     }
@@ -181,6 +272,19 @@ class UserRepository {
         return const None();
       }
       throw Failure(genericError);
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se puede obtener las relaciones");
     } catch (e) {
       throw Failure(genericError);
     }
@@ -197,13 +301,23 @@ class UserRepository {
       }
       throw Failure(genericError);
     }on DioError catch (ex){
-      print(ex);
       if(patientAndDependentAreTheSameErrors.contains(ex.response?.data['messages'].join())){
         throw Failure("El familiar no puede ser el mismo que el principal");
       }else if(relationshipWithDependentAlreadyExistErrors.contains(ex.response?.data['messages'].join())){
         throw Failure("El familiar ya se encuentra asignado");
       }
-      throw Failure(genericError);
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("Error al asociar al familiar");
     } catch (e) {
       throw Failure(genericError);
     }
@@ -219,6 +333,20 @@ class UserRepository {
         throw Failure("El familiar ya fue borrado con anterioridad");
       }
       throw Failure(genericError);
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "dependentId": id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se pudo borrar al familiar");
     } catch (e) {
       throw Failure(genericError);
     }
@@ -241,9 +369,22 @@ class UserRepository {
         }
         return allAvailabilities;
       } else if (response.statusCode == 204) {
-        throw Failure("El familiar ya fue borrado con anterioridad");
+        throw Failure("No se encuentra disponible");
       }
       throw Failure(genericError);
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se puedo obtener la disponibilidad");
     } catch (e) {
       throw Failure(genericError);
     }
@@ -268,7 +409,6 @@ class UserRepository {
       print('getUrlFromServer');
       String? isLogged = await storage.read(key: "access_token");
       final hash = await storage.read(key: "hash");
-      print("hash $hash");
       String url = "";
       switch (urlUploadType) {
         case UrlUploadType.frontal:
@@ -289,15 +429,11 @@ class UserRepository {
         default:
       }
       Response response = await dio.get(url);
-      print("url $url");
-      print("response ${response.data} from url=$url");
       if (response.statusCode == 200) {
         switch (urlUploadType) {
           case UrlUploadType.frontal:
             frontDniUrl = uploadUrlFromJson(response.data);
-            print("${frontDniUrl.hash} url=${frontDniUrl.uploadUrl}");
             await storage.write(key: "hash", value: frontDniUrl.hash);
-            print("hash frontal ${frontDniUrl.hash}");
             break;
           case UrlUploadType.back:
             backDniUrl = uploadUrlFromJson(response.data);
@@ -311,6 +447,19 @@ class UserRepository {
         return const None();
       }
       throw Failure(genericError);
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se puede donde subir la foto");
     } catch (e) {
       throw Failure(genericError);
     }
@@ -333,9 +482,9 @@ class UserRepository {
 
   Future<None>? sendImagetoServer(
       UrlUploadType urlUploadType, XFile image) async {
+    String url = "";
     try {
       print("send image to server");
-      String url = "";
       switch (urlUploadType) {
         case UrlUploadType.frontal:
           url = frontDniUrl.uploadUrl!;
@@ -408,6 +557,18 @@ class UserRepository {
       }
       throw Failure(genericError);
     } on DioError catch (ex) {
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "photo": url,
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
       if (errorInFrontSide.contains(ex.response?.data['messages'].join())) {
         photoStage = UrlUploadType.frontal;
         throw Failure("Error al validar la parte frontal");
@@ -420,8 +581,11 @@ class UserRepository {
         throw Failure("Error al validar la selfie");
       }
       throw Failure(genericError);
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      await Sentry.captureException(
+        e,
+        stackTrace: stackTrace
+      );
       throw Failure('${e.toString().length > 60 ? '$genericError' : e}');
     }
   }
@@ -463,13 +627,19 @@ class UserRepository {
 
       Navigator.of(context).pushNamedAndRemoveUntil(
           '/onboarding', (Route<dynamic> route) => false);
-    } on DioError catch (exception, stackTrace) {
-      print(exception);
-
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
       );
+      throw Failure("No se puedo cerrar la sesion de forma adecuada");
     } catch (exception, stackTrace) {
       print(exception);
       await Sentry.captureException(
@@ -496,6 +666,19 @@ class UserRepository {
         return [];
       }
       throw Failure(genericError);
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se puede obtener la disponibilidad");
     } catch (e) {
       throw Failure(genericError);
     }
@@ -511,6 +694,19 @@ class UserRepository {
         throw Failure("Doctor no encontrado");
       }
       throw Failure(genericError);
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se puede obtener el doctor");
     } catch (e) {
       throw Failure(genericError);
     }
@@ -533,7 +729,7 @@ class UserRepository {
 
         // Past appointment
         allAppointmets = allAppointmets
-            .where((element) => ["closed", "locked"].contains(element.status))
+            .where((element) => ["closed", "locked","open"].contains(element.status))
             .toList();
 
         allAppointmets.sort((a, b) =>
@@ -543,16 +739,20 @@ class UserRepository {
       }
 
       throw Failure("Status deconocido ${responseAppointments.statusCode}");
-    } on DioError catch (exception, stackTrace) {
-      print(exception);
-
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
       );
-      throw Failure(genericError);
+      throw Failure("No se puede obtener las citas");
     } catch (exception, stackTrace) {
-      print(exception);
 
       await Sentry.captureException(
         exception,
@@ -576,11 +776,179 @@ class UserRepository {
         return medicalRecord;
       }
       throw Failure("Response status desconocido ${response.statusCode}");
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se puede obtener el registro médico");
     } catch (e) {
-      print("ERROR $e");
       throw Failure(genericError);
     }
   }
+
+  Future<List<Appointment>>? getAppointments() async {
+    Response responseAppointments;
+    try {
+      if (!prefs.getBool(isFamily)!)
+        responseAppointments = await dio.get(
+            "/profile/patient/appointments?start=${DateTime(DateTime
+                .now()
+                .year, DateTime
+                .now()
+                .month, DateTime
+                .now()
+                .day).toUtc().toIso8601String()}");
+      else
+        responseAppointments = await dio.get(
+            "/profile/caretaker/dependent/${patient
+                .id}/appointments?start=${DateTime(DateTime
+                .now()
+                .year, DateTime
+                .now()
+                .month, DateTime
+                .now()
+                .day).toUtc().toIso8601String()}");
+
+      if (responseAppointments.statusCode == 200) {
+        return List<Appointment>.from(
+            responseAppointments.data["appointments"]
+                .map((i) => Appointment.fromJson(i)));
+      } else {
+        throw Failure("Status ${responseAppointments.statusCode}");
+      }
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se puede obtener las citas");
+    } catch (e) {
+      throw Failure("Error al obtener las citas");
+    }
+  }
+
+  Future<List<DiagnosticReport>>? getDiagnosticRecords() async {
+    Response responseAppointments;
+    try {
+      if (!prefs.getBool(isFamily)!)
+        responseAppointments = await dio.get(
+            "/profile/patient/diagnosticReports");
+      else
+        responseAppointments = await dio.get(
+            "/profile/caretaker/dependent/${patient.id}/diagnosticReports");
+
+      if (responseAppointments.statusCode == 200) {
+        return List<DiagnosticReport>.from(
+            responseAppointments.data
+                .map((i) => DiagnosticReport.fromJson(i)));
+      } else if(responseAppointments.statusCode == 204) {
+        return [];
+      }else{
+        throw Failure("Status ${responseAppointments.statusCode}");
+      }
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se puedo obtener los estudios medicos");
+    } catch (e) {
+      await Sentry.captureException(
+        e,
+      );
+      throw Failure("Error al obtener los estudios medicos");
+    }
+  }
+
+  Future<List<Prescription>>? getPrescriptions() async {
+    try{
+      Response responsePrescriptions;
+      if (!prefs.getBool(isFamily)!)
+        responsePrescriptions = await dio.get("/profile/patient/prescriptions");
+      else
+      responsePrescriptions = await dio
+          .get("/profile/caretaker/dependent/${patient.id}/prescriptions");
+
+      if(responsePrescriptions.statusCode == 200) {
+        return List<Prescription>.from(
+            responsePrescriptions.data["prescriptions"]
+                .map((i) => Prescription.fromJson(i)));
+      }else if(responsePrescriptions.statusCode == 204){
+        return [];
+      }
+      throw Failure("Response code ${responsePrescriptions.statusCode}");
+    }on DioError catch (exception){
+      await Sentry.captureMessage(exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": patient.id,
+            "responseError": exception.response?.data,
+          }
+        ],
+      );
+      throw Failure("No fue posible obtener las recetas");
+    }
+  }
+
+  Future<MedicalRecord>? getPrescription(String id) async {
+    try{
+      Response responsePrescriptions;
+      if (!prefs.getBool(isFamily)!)
+        responsePrescriptions = await dio.get('/profile/patient/appointments/$id/encounter');
+      else
+        responsePrescriptions = await dio
+            .get('/profile/caretaker/dependent/${patient.id}/appointments/$id/encounter');
+
+      if(responsePrescriptions.statusCode == 200) {
+        return MedicalRecord.fromJson(
+            responsePrescriptions.data['encounter']);
+      }
+      throw Failure("Response code ${responsePrescriptions.statusCode}");
+    }on DioError catch (exception){
+      await Sentry.captureMessage(exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": patient.id,
+            "responseError": exception.response?.data,
+          }
+        ],
+      );
+      throw Failure("No fue posible obtener la receta");
+    }catch (exception, stackTrace){
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace
+      );
+      throw Failure("No fue posible obtener la receta");
+    }
+  }
+
 }
 
 Future<None> getMedicalRecords() async {

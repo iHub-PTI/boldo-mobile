@@ -41,18 +41,30 @@ class _AppointmentCardState extends State<AppointmentCard> {
   Timer? timer;
 
   @override
+  void didUpdateWidget(AppointmentCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.appointment != oldWidget.appointment) {
+      isCancelled = widget.appointment.status!.contains('cancelled');
+      actualDay = DateTime.now();
+      appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
+      daysDifference = daysBetween(actualDay,appointmentDay);
+      minutes = appointmentDay.difference(actualDay).inMinutes + 1;
+      isToday = daysDifference == 0 &&
+          !["closed", "locked"].contains(widget.appointment.status);
+    }
+  }
+
+  @override
   void initState() {
     isCancelled = widget.appointment.status!.contains('cancelled');
     actualDay = DateTime.now();
     appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
     daysDifference = daysBetween(actualDay,appointmentDay);
     minutes = appointmentDay.difference(actualDay).inMinutes + 1;
-    setState(() {
-      isToday = daysDifference == 0 &&
-          !["closed", "locked"].contains(widget.appointment.status);
-    });
+    isToday = daysDifference == 0 &&
+        !["closed", "locked"].contains(widget.appointment.status);
     super.initState();
-    _updateWaitingRoom();
+    _updateWaitingRoom(1);
   }
 
   @override
@@ -62,8 +74,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
   }
 
   // asynchronous task to update the remaining minutes to open the waiting room
-  void _updateWaitingRoom() async {
-    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+  void _updateWaitingRoom(int seconds) async {
+    timer = Timer.periodic(Duration(seconds: seconds), (Timer timer) {
       if(isCancelled){
         timer.cancel();
       }
@@ -74,19 +86,24 @@ class _AppointmentCardState extends State<AppointmentCard> {
       // deactivate task once the room is open
       if(minutes <= 0)
         timer.cancel();
+      if(minutes > 60) {
+        timer.cancel();
+        _updateWaitingRoom(30*60); // half hour
+      }
+      if(minutes <= 60 && minutes > 15) {
+        timer.cancel();
+        _updateWaitingRoom(60); // one minute
+      }
+      if(minutes <= 15) {
+        timer.cancel();
+        _updateWaitingRoom(2); //two seconds
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
 
-    String textItem = '';
-    if (widget.appointment.prescriptions != null) {
-      for (int i = 0; i < widget.appointment.prescriptions!.length; i++) {
-        textItem = textItem +
-            "${widget.appointment.prescriptions![i].medicationName}${widget.appointment.prescriptions!.length > 1 && i == 0 ? "," : ""}";
-      }
-    }
 
     return Column(
       children: [
@@ -130,18 +147,22 @@ class _AppointmentCardState extends State<AppointmentCard> {
                         child: CancelAppointmentWidget(
                           onTapCallback: (result) async {
                             if (result == 'Descartar') {
-                              final response = await dio.post(
-                                  !prefs.getBool(isFamily)! ?
+                              try{
+                                final response = await dio.post(
+                                    !prefs.getBool(isFamily)! ?
                                     "/profile/patient/appointments/cancel/${widget.appointment.id}"
-                                  : "/profile/caretaker/appointments/cancel/${widget.appointment.id}");
-                              if (response.statusMessage != null) {
-                                if (response.statusMessage!
-                                    .contains('OK')) {
-                                  setState(() {
-                                    isCancelled = true;
-                                    widget.appointment.status="cancelled";
-                                  });
+                                        : "/profile/caretaker/appointments/cancel/${widget.appointment.id}");
+                                if (response.statusMessage != null) {
+                                  if (response.statusMessage!
+                                      .contains('OK')) {
+                                    setState(() {
+                                      isCancelled = true;
+                                      widget.appointment.status="cancelled";
+                                    });
+                                  }
                                 }
+                              } catch (e){
+                                print(e);
                               }
                             }
                           },

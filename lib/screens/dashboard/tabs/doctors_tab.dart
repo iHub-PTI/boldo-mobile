@@ -175,8 +175,18 @@ class _DoctorsTabState extends State<DoctorsTab> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 16),
-                  child: Text("Médicos",
-                      style: boldoHeadingTextStyle.copyWith(fontSize: 20)),
+                  child: TextButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.chevron_left_rounded,
+                      size: 25,
+                      color: Constants.extraColor400,
+                    ),
+                    label: Text("Médicos",
+                        style: boldoHeadingTextStyle.copyWith(fontSize: 20)),
+                  ),
                 ),
                 Row(
                   children: [

@@ -25,7 +25,6 @@ class DoctorProfileScreen extends StatefulWidget{
 class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
   final List<String> popupRoutes = <String>["Remoto (on line)", "En persona"];
-  bool _loading = true;
   List<NextAvailability> availabilities = [];
 
   @override
@@ -41,9 +40,6 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         child: BlocListener<DoctorBloc, DoctorState>(
           listener: (context, state){
             if(state is Success) {
-              setState(() {
-                _loading = false;
-              });
             }else if(state is Failed){
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -51,11 +47,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                   backgroundColor: Colors.redAccent,
                 ),
               );
-              _loading = false;
             }else if(state is Loading){
-              setState(() {
-                _loading = true;
-              });
             }else if(state is AvailabilitiesObtained){
               //only first three elements
               availabilities = state.availabilities.take(3).toList();
@@ -166,67 +158,11 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                 ),
                               ],
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if(!_loading)
-                                Container(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => BookingScreen(
-                                            doctor: widget.doctor,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: Card(
-                                      elevation: 0.0,
-                                      color: ConstantsV2.lightAndClear.withOpacity(0.80),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      child: Container(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            if(availabilities.isNotEmpty)
-                                              if(DateTime(DateTime.parse(availabilities.first.availability!).year,
-                                                  DateTime.parse(availabilities.first.availability!).month,
-                                                  DateTime.parse(availabilities.first.availability!).day) ==
-                                                  DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day))
-                                                Text("Disponible hoy",
-                                                  style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),)
-                                              else
-                                                Text("Disponible el ${DateFormat('dd/MM').format(DateTime.parse(availabilities.first.availability!))}",
-                                                  style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),)
-                                            else
-                                              Text("No disponible en los proximos 30 dias",
-                                                style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),),
-                                            const Icon(
-                                              Icons.chevron_right,
-                                              color: ConstantsV2.orange,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),),
-                                ),
-                                if(!_loading)
-                                Container(
-                                  constraints: BoxConstraints(maxHeight: 45),
-                                  child: Row(
-                                    children: [
-                                      ListView.builder(
-                                          shrinkWrap: true,
-                                          padding: const EdgeInsets.only(right: 16),
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: availabilities.length,
-                                          itemBuilder: _availabilityHourCard
-                                      ),
+                            BlocBuilder<DoctorBloc, DoctorState>(builder: (context, state) {
+                              if(state is Success){
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
                                       Container(
                                         child: GestureDetector(
                                           onTap: () {
@@ -235,37 +171,107 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                               MaterialPageRoute(
                                                 builder: (context) => BookingScreen(
                                                   doctor: widget.doctor,
-                                                )
+                                                ),
                                               ),
                                             );
                                           },
                                           child: Card(
                                             elevation: 0.0,
-                                            color: ConstantsV2.lightGrey.withOpacity(0.80),
+                                            color: ConstantsV2.lightAndClear.withOpacity(0.80),
                                             shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(100),
-                                                side: const BorderSide(
-                                                  color: ConstantsV2.orange,
-                                                  width: 1.0,
-                                                )
+                                              borderRadius: BorderRadius.circular(16),
                                             ),
                                             child: Container(
                                               padding: const EdgeInsets.all(10),
                                               child: Row(
+                                                mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  Text("ver más",
-                                                    style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.orange),),
+                                                  if(availabilities.isNotEmpty)
+                                                    if(DateTime(DateTime.parse(availabilities.first.availability!).year,
+                                                        DateTime.parse(availabilities.first.availability!).month,
+                                                        DateTime.parse(availabilities.first.availability!).day) ==
+                                                        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day))
+                                                      Text("Disponible hoy",
+                                                        style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),)
+                                                    else
+                                                      Text("Disponible el ${DateFormat('dd/MM').format(DateTime.parse(availabilities.first.availability!))}",
+                                                        style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),)
+                                                  else
+                                                    Text("No disponible en los proximos 30 dias",
+                                                      style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),),
+                                                  const Icon(
+                                                    Icons.chevron_right,
+                                                    color: ConstantsV2.orange,
+                                                  )
                                                 ],
                                               ),
                                             ),
-                                          ),
+                                          ),),
+                                      ),
+                                      Container(
+                                        constraints: BoxConstraints(maxHeight: 45),
+                                        child: Row(
+                                          children: [
+                                            ListView.builder(
+                                                shrinkWrap: true,
+                                                padding: const EdgeInsets.only(right: 16),
+                                                scrollDirection: Axis.horizontal,
+                                                itemCount: availabilities.length,
+                                                itemBuilder: _availabilityHourCard
+                                            ),
+                                            Container(
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) => BookingScreen(
+                                                          doctor: widget.doctor,
+                                                        )
+                                                    ),
+                                                  );
+                                                },
+                                                child: Card(
+                                                  elevation: 0.0,
+                                                  color: ConstantsV2.lightGrey.withOpacity(0.80),
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(100),
+                                                      side: const BorderSide(
+                                                        color: ConstantsV2.orange,
+                                                        width: 1.0,
+                                                      )
+                                                  ),
+                                                  child: Container(
+                                                    padding: const EdgeInsets.all(10),
+                                                    child: Row(
+                                                      children: [
+                                                        Text("ver más",
+                                                          style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.orange),),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            )
+                                  ],
+                                );
+                              }else if(state is Loading){
+                                return Container(
+                                    child: const Center(
+                                        child: CircularProgressIndicator(
+                                          valueColor:
+                                          AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                                          backgroundColor: Constants.primaryColor600,
+                                        )
+                                    )
+                                );
+                              }else{
+                                return Container();
+                              }
+                            }),
                           ],
                       ),
                     ),

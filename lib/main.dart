@@ -1,6 +1,10 @@
 import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
+import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
+import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
+import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
+import 'package:boldo/blocs/prescriptions_bloc/prescriptionsBloc.dart';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/provider/user_provider.dart';
@@ -38,6 +42,7 @@ import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/constants.dart';
 
 import 'blocs/doctor_bloc/doctor_bloc.dart';
+import 'blocs/prescription_bloc/prescriptionBloc.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
 import 'models/MedicalRecord.dart';
 import 'models/Patient.dart';
@@ -134,8 +139,23 @@ class _MyAppState extends State<MyApp> {
           BlocProvider<DoctorBloc>(
               create: (BuildContext context) => DoctorBloc(),
           ),
+          BlocProvider<HomeBloc>(
+            create: (BuildContext context) => HomeBloc(),
+          ),
+          BlocProvider<PrescriptionsBloc>(
+            create: (BuildContext context) => PrescriptionsBloc(),
+          ),
+          BlocProvider<PrescriptionBloc>(
+            create: (BuildContext context) => PrescriptionBloc(),
+          ),
           BlocProvider<MyStudiesBloc>(
               create: (BuildContext context) => MyStudiesBloc(),
+          ),
+          BlocProvider<HomeNewsBloc>(
+            create: (BuildContext context) => HomeNewsBloc(),
+          ),
+          BlocProvider<HomeAppointmentsBloc>(
+            create: (BuildContext context) => HomeAppointmentsBloc(),
           ),
         ],
         child: MultiProvider(
