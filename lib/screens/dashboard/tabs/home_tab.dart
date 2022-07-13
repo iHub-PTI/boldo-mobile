@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
 import 'package:boldo/constants.dart';
@@ -9,7 +10,6 @@ import 'package:boldo/screens/dashboard/tabs/components/divider_feed_secction_ho
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
-import 'package:boldo/screens/my_studies/my_studies_screen.dart';
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -115,7 +115,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
   void _onRefreshNews() async {
     // monitor network fetch
-    BlocProvider.of<HomeBloc>(context).add(GetDiagnosticReports());
+    BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
   }
 
   @override
@@ -125,7 +125,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       vsync: this,
     );
     BlocProvider.of<HomeBloc>(context).add(GetAppointments());
-    BlocProvider.of<HomeBloc>(context).add(GetDiagnosticReports());
+    BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
     super.initState();
   }
 
@@ -161,10 +161,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 _refreshController!.refreshCompleted();
                 _refreshController!.loadComplete();
               }
-              if (_refreshControllerNews != null) {
-                _refreshControllerNews!.refreshCompleted();
-                _refreshControllerNews!.loadComplete();
-              }
             }
             if (state is Success) {
                 _loading = false;
@@ -172,19 +168,12 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                   _refreshController!.refreshCompleted();
                   _refreshController!.loadComplete();
                 }
-                if (_refreshControllerNews != null) {
-                  _refreshControllerNews!.refreshCompleted();
-                  _refreshControllerNews!.loadComplete();
-                }
             }
             if (state is Loading) {
               _loading = true;
             }
             if (state is AppointmentsLoaded) {
               appointments = state.appointments;
-            }
-            if (state is DiagnosticReportsLoaded) {
-              diagnosticReports = state.diagnosticReports;
             }
           },
           child: NestedScrollView(
@@ -317,7 +306,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Text(
+                                        const Text(
                                           'Citas',
                                         ),
                                       ],
@@ -446,78 +435,103 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildNews() {
-    return _dataFetchError
-        ? Container(
-            child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeBloc>(context).add(GetDiagnosticReports()) ) )
-        : Container(
-          child: SmartRefresher(
-            enablePullDown: true,
-            enablePullUp: true,
-            header: const MaterialClassicHeader(
-              color: Constants.primaryColor800,
+    return BlocListener<HomeNewsBloc, HomeNewsState>(
+      listener: (context, state) {
+        if (state is FailedLoadedNews) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.response!),
+              backgroundColor: Colors.redAccent,
             ),
-            controller: _refreshControllerNews!,
-            onLoading: () {
-            },
-            onRefresh: _onRefreshNews,
-            footer: CustomFooter(
-              height: 140,
-              builder: (BuildContext context, LoadStatus? mode) {
-                Widget body = Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    /*Text(
+          );
+          if (_refreshControllerNews != null) {
+            _refreshControllerNews!.refreshCompleted();
+            _refreshControllerNews!.loadComplete();
+          }
+        }
+        if (state is NewsLoaded) {
+          diagnosticReports = state.diagnosticReports;
+          if (_refreshControllerNews != null) {
+            _refreshControllerNews!.refreshCompleted();
+            _refreshControllerNews!.loadComplete();
+          }
+        }
+      },
+      child: Container(
+        child: SmartRefresher(
+          enablePullDown: true,
+          enablePullUp: true,
+          header: const MaterialClassicHeader(
+            color: Constants.primaryColor800,
+          ),
+          controller: _refreshControllerNews!,
+          onLoading: () {
+          },
+          onRefresh: _onRefreshNews,
+          footer: CustomFooter(
+            height: 140,
+            builder: (BuildContext context, LoadStatus? mode) {
+              Widget body = Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  /*Text(
             "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
             style: const TextStyle(
               color: Constants.primaryColor800,
             ),
           )*/
-                  ],
-                );
-                return Column(
-                  children: [
-                    const SizedBox(height: 30),
-                    Center(child: body),
-                  ],
-                );
-              },
-            ),
-            child: BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
-              if(state is Success){
-                return diagnosticReports.isNotEmpty
-                    ? ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: diagnosticReports.length,
-                  scrollDirection: Axis.vertical,
-                  itemBuilder: _diagnosticReportCard,
-                  physics: const ClampingScrollPhysics(),
-                )
-                    :SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const EmptyStateV2(
-                        picture: "feed_empty.svg",
-                        textTop: "Nada para mostrar",
-                        textBottom:
-                        "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
-                      ),
-                    ],
-                  ),
-                );
-              }else{
-                return Container(
-                    child: const Center(
-                        child: CircularProgressIndicator(
-                          valueColor:
-                          AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                          backgroundColor: Constants.primaryColor600,
-                        )
-                    )
-                );
-              }
-            }),
+                ],
+              );
+              return Column(
+                children: [
+                  const SizedBox(height: 30),
+                  Center(child: body),
+                ],
+              );
+            },
           ),
-        );
+          child: BlocBuilder<HomeNewsBloc, HomeNewsState>(builder: (context, state) {
+            if(state is NewsLoaded){
+              return diagnosticReports.isNotEmpty
+                  ? ListView.builder(
+                shrinkWrap: true,
+                itemCount: diagnosticReports.length,
+                scrollDirection: Axis.vertical,
+                itemBuilder: _diagnosticReportCard,
+                physics: const ClampingScrollPhysics(),
+              )
+                  :SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const EmptyStateV2(
+                      picture: "feed_empty.svg",
+                      textTop: "Nada para mostrar",
+                      textBottom:
+                      "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
+                    ),
+                  ],
+                ),
+              );
+            }else if (state is LoadingNews){
+              return Container(
+                  child: const Center(
+                      child: CircularProgressIndicator(
+                        valueColor:
+                        AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                        backgroundColor: Constants.primaryColor600,
+                      )
+                  )
+              );
+            }else if(state is FailedLoadedNews){
+              return Container(
+                  child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeNewsBloc>(context).add(GetNews()) ) );
+            }else{
+              return Container();
+            }
+          }),
+        ),
+      ),
+    );
   }
 
   Widget _diagnosticReportCard(BuildContext context, int index){
@@ -874,9 +888,9 @@ class TabWidget extends StatelessWidget {
     return Container(
       height: 32 + MediaQuery.of(context).padding.bottom,
       width: double.infinity,
-      padding: EdgeInsets.all(0),
+      padding: const EdgeInsets.all(0),
       decoration: (rightDivider)
-          ? BoxDecoration(
+          ? const BoxDecoration(
               border: Border(
                 right: BorderSide(
                   color: Colors.grey,
