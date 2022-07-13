@@ -1,5 +1,6 @@
 import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
+import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
@@ -152,6 +153,9 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<HomeNewsBloc>(
             create: (BuildContext context) => HomeNewsBloc(),
+          ),
+          BlocProvider<HomeAppointmentsBloc>(
+            create: (BuildContext context) => HomeAppointmentsBloc(),
           ),
         ],
         child: MultiProvider(
