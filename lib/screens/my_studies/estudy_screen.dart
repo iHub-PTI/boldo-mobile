@@ -171,7 +171,7 @@ class _StudyState extends State<Study> {
                                 child: Container(
                                   padding: const EdgeInsets.all(16),
                                   child: SvgPicture.asset(
-                                    'assets/Logo.svg',
+                                    diagnosticReport?.source?.toUpperCase().trim() == 'VENTRIX' ? 'assets/icon/boldo_idCM.svg' : 'assets/Logo.svg',
                                     semanticsLabel: 'BOLDO Logo',
                                     height: 32,
                                   ),
