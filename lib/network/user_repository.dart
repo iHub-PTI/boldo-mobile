@@ -624,6 +624,7 @@ class UserRepository {
       await storage.deleteAll();
       await prefs.clear();
       patient = Patient();
+      families = [];
 
       Navigator.of(context).pushNamedAndRemoveUntil(
           '/onboarding', (Route<dynamic> route) => false);
