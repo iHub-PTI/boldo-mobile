@@ -98,7 +98,7 @@ class HeroScreenV2 extends StatelessWidget {
                                       const SizedBox(width: 16),
                                       const Expanded(
                                         child: Text(
-                                          "Tu ecosistema integral de servicios integrales de salud",
+                                          "Tu ecosistema integral de servicios digitales de salud",
                                           textAlign: TextAlign.end,
                                           style: TextStyle(
                                             fontSize: 16.0,
