@@ -4,6 +4,7 @@ import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -21,6 +22,7 @@ class NewStudy extends StatefulWidget {
 class _NewStudyState extends State<NewStudy> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController dateTextController = TextEditingController();
   String nombre = '';
   String fecha = '';
   String notas = '';
@@ -60,6 +62,12 @@ class _NewStudyState extends State<NewStudy> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    dateTextController.dispose();
+    super.dispose();
   }
 
   @override
@@ -144,39 +152,82 @@ class _NewStudyState extends State<NewStudy> {
                         const SizedBox(
                           height: 20,
                         ),
-                        TextFormField(
-                          inputFormatters: [MaskTextInputFormatter(mask: "##/##/####")],
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Ingrese la fecha del estudio';
-                            } else {
-                              try {
-                                var inputFormat = DateFormat('dd/MM/yyyy');
-                                var outputFormat = DateFormat('yyyy-MM-dd');
-                                var date1 = inputFormat
-                                    .parse(value.toString().trim());
-                                var date2 = outputFormat.format(date1);
-                                fecha = date2;
-                              } catch (e) {
-                                return "El formato de la fecha debe ser (dd/MM/yyyy)";
-                              }
-                            }
-                            return null;
+                        GestureDetector(
+                          onTap: (){
+                            DatePicker.showDatePicker(context,
+                                showTitleActions: true,
+                                maxTime: DateTime.now(),
+                                onConfirm: (date) {
+                                  var inputFormat = DateFormat('dd/MM/yyyy');
+                                  var outputFormat = DateFormat('yyyy-MM-dd');
+                                  var date1 = outputFormat
+                                      .parse(date.toString().trim());
+                                  var date2 = inputFormat.format(date1);
+                                  setState(() {
+                                    fecha = date2;
+                                  });
+                                  dateTextController.text = fecha;
+                                },
+                                currentTime: fecha == '' ? DateTime.now() :
+                                DateFormat('yyyy-MM-dd')
+                                    .parse(fecha.toString().trim()),
+                                locale: LocaleType.es
+                            );
                           },
-                          decoration: InputDecoration(
-                            hintText: "31/12/2020",
-                            suffixIcon: Align(
-                              widthFactor: 1.0,
-                              heightFactor: 1.0,
-                              child: SvgPicture.asset(
-                                'assets/icon/calendar.svg',
-                                color: ConstantsV2.inactiveText,
-                                height: 20,
+                          child: Theme(
+                            data: boldoTheme.copyWith(disabledColor: Theme.of(context).hintColor),
+                            child: TextFormField(
+                              enabled: false,
+                              controller: dateTextController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Ingrese la fecha del estudio';
+                                } else {
+                                  try {
+                                    var inputFormat = DateFormat('dd/MM/yyyy');
+                                    var outputFormat = DateFormat('yyyy-MM-dd');
+                                    var date1 = inputFormat
+                                        .parse(value.toString().trim());
+                                    var date2 = outputFormat.format(date1);
+                                    fecha = date2;
+                                  } catch (e) {
+                                    return "El formato de la fecha debe ser (dd/MM/yyyy)";
+                                  }
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                disabledBorder: UnderlineInputBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                  borderSide: const BorderSide(
+                                    color: ConstantsV2.enableBorded,
+                                    width: 1.0,
+                                  ),
+                                ),
+                                errorStyle: TextStyle(
+                                  color: Theme.of(context).errorColor, // or any other color
+                                ),
+                                errorBorder: UnderlineInputBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                  borderSide: BorderSide(
+                                    color: Theme.of(context).errorColor,
+                                    width: 1.0,
+                                  ),
+                                ),
+                                hintText: "31/12/2020",
+                                suffixIcon: Align(
+                                  widthFactor: 1.0,
+                                  heightFactor: 1.0,
+                                  child: SvgPicture.asset(
+                                    'assets/icon/calendar.svg',
+                                    color: ConstantsV2.inactiveText,
+                                    height: 20,
+                                  ),
+                                ),
+                                labelText: "Fecha de estudio (dd/mm/yyyy)",
                               ),
                             ),
-                            labelText: "Fecha de estudio (dd/mm/yyyy)",
-                          ),
+                          )
                         ),
                         const SizedBox(
                           height: 20,
