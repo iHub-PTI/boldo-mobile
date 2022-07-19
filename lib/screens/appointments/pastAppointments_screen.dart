@@ -130,11 +130,9 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                               child: ListView.builder(
                                 itemCount: allAppointments.length,
                                 itemBuilder: (context, index) {
-                                  int daysDifference = DateTime.now()
-                                      .difference(DateTime.parse(
-                                              allAppointments[index].start!)
-                                          .toLocal())
-                                      .inDays;
+                                  int daysDifference = daysBetween(DateTime.now(),DateTime.parse(
+                                      allAppointments[index].start!)
+                                      .toLocal());
                                   return GestureDetector(
                                     onTap: () async {
                                       await Navigator.push(
