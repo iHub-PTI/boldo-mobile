@@ -23,6 +23,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   http: ^0.13.3
   sentry_flutter: ^6.2.2
   socket_io_client: ^1.0.2

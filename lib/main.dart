@@ -29,6 +29,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -69,9 +70,6 @@ late UploadUrl userSelfieUrl;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await initializeDateFormatting('es', null);
-  Intl.defaultLocale = "es";
   await dotenv.load(fileName: ".env");
   // await dotenv.load(fileName: '.env');
 
@@ -184,6 +182,15 @@ class FullApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en'),
+        const Locale('fr')
+      ],
       debugShowCheckedModeBanner: false,
       navigatorKey: navKey,
       title: 'Boldo',
