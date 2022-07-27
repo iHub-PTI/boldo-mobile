@@ -119,11 +119,29 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
           ConnectionStatusSingleton.getInstance();
       bool hasInternet = await connectionStatus.checkConnection();
       if (!hasInternet) {
-        navKey.currentState!.push(
+        await navKey.currentState!.push(
           MaterialPageRoute(
             builder: (context) => const OfflineScreen(),
           ),
         );
+        RequestOptions options = error.requestOptions;
+        Options optionsDio = Options(
+            contentType: options.contentType,
+            followRedirects: options.followRedirects,
+            extra: options.extra,
+            headers: options.headers,
+            listFormat: options.listFormat,
+            maxRedirects: options.maxRedirects,
+            method: options.method,
+            receiveDataWhenStatusError: options.receiveDataWhenStatusError,
+            receiveTimeout: options.receiveTimeout,
+            requestEncoder: options.requestEncoder,
+            responseDecoder: options.responseDecoder,
+            responseType: options.responseType,
+            sendTimeout: options.sendTimeout,
+            validateStatus: options.validateStatus);
+        return handle.resolve(await dio.request(options.path,
+            data: options.data, options: optionsDio));
       }
       return handle.next(error);
     },
