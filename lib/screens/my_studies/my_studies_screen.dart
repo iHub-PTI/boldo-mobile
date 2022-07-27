@@ -78,20 +78,18 @@ class _MyStudiesState extends State<MyStudies> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextButton.icon(
-                  onPressed: () {
+                GestureDetector(
+                  onTap: () {
                     Navigator.pop(context);
                   },
-                  icon: const Icon(
-                    Icons.chevron_left_rounded,
-                    size: 25,
-                    color: Constants.extraColor400,
-                  ),
-                  label: Text(
-                    'Estudios',
-                    style: boldoTitleBlackTextStyle.copyWith(color: ConstantsV2.activeText),
-                  ),
+                  child: SvgPicture.asset('assets/icon/chevron-left.svg'),
                 ),
+                const SizedBox(height: 21),
+                Text(
+                  'Estudios',
+                  style: boldoTitleBlackTextStyle.copyWith(color: ConstantsV2.activeText),
+                ),
+                const SizedBox(height: 10),
                 Text(
                   'Subí y consultá resultados de estudios provenientes de varias fuentes.',
                   style: boldoHeadingTextStyle.copyWith(fontSize: 12),
