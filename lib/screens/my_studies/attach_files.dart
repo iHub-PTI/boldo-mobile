@@ -36,16 +36,7 @@ class _AttachFilesState extends State<AttachFiles> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: ConstantsV2.lightGrey,
-        leadingWidth: 200,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child:
-              SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
-        ),
-      ),
-      body: BlocListener<MyStudiesBloc, MyStudiesState>(
+      body: SafeArea(child: BlocListener<MyStudiesBloc, MyStudiesState>(
         listener: (context, state) {
           if (state is Uploaded) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -68,46 +59,38 @@ class _AttachFilesState extends State<AttachFiles> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextButton.icon(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(
-                Icons.chevron_left_rounded,
-                size: 25,
-                color: Constants.extraColor400,
-              ),
-              label: Text(
-                'Atras',
-                style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-              ),
-            ),
-            const SizedBox(
-              height: 16,
+            GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16, top: 16),
+                  child: SvgPicture.asset('assets/icon/chevron-left.svg'),
+                )
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.all(16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                      child: Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Adjuntos',
-                          style: boldoTitleBlackTextStyle.copyWith(color: ConstantsV2.activeText),
-                        ),
-                        Text(
-                          "seleccioná los archivos o tomale fotos a los resultados de este estudio.",
-                          style: boldoCorpSmallTextStyle.copyWith(
-                              color: ConstantsV2.inactiveText),
-                        ),
-                      ],
-                    ),
-                  )),
+                    child: Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Adjuntos',
+                            style: boldoTitleBlackTextStyle.copyWith(color: ConstantsV2.activeText),
+                          ),
+                          Text(
+                            "seleccioná los archivos o tomale fotos a los resultados de este estudio.",
+                            style: boldoCorpSmallTextStyle.copyWith(
+                                color: ConstantsV2.inactiveText),
+                          ),
+                        ],
+                      ),
+                    )),
                   ProfileImageView2(
                     height: 54,
                     width: 54,
@@ -123,114 +106,114 @@ class _AttachFilesState extends State<AttachFiles> {
               child: Text(
                 widget.diagnosticReport.description ?? '',
                 style:
-                    boldoSubTextMediumStyle.copyWith(color: ConstantsV2.orange),
+                boldoSubTextMediumStyle.copyWith(color: ConstantsV2.orange),
               ),
             ),
             files.isEmpty
                 ? Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0),
-                      child: Container(
-                        child: Center(
-                          child: Container(
-                            width: 216,
-                            child: Column(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 0),
+                child: Container(
+                  child: Center(
+                    child: Container(
+                      width: 216,
+                      child: Column(
+                        children: [
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                textStyle: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 14, horizontal: 16),
+                                primary: ConstantsV2.lightest,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(100),
+                                ),
+                              ),
+                              onPressed: getFromCamera,
+                              child: Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Tomar foto',
+                                    style:
+                                    boldoSubTextMediumStyle.copyWith(
+                                        color: ConstantsV2.darkBlue),
+                                  ),
+                                  const SizedBox(
+                                    width: 4,
+                                  ),
+                                  SvgPicture.asset(
+                                      'assets/icon/camera2.svg'),
+                                ],
+                              )),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              textStyle: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 14, horizontal: 16),
+                              primary: ConstantsV2.lightest,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                            ),
+                            onPressed: getFromFiles,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      textStyle: const TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 16),
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 14, horizontal: 16),
-                                      primary: ConstantsV2.lightest,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                      ),
-                                    ),
-                                    onPressed: getFromCamera,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Tomar foto',
-                                          style:
-                                              boldoSubTextMediumStyle.copyWith(
-                                                  color: ConstantsV2.darkBlue),
-                                        ),
-                                        const SizedBox(
-                                          width: 4,
-                                        ),
-                                        SvgPicture.asset(
-                                            'assets/icon/camera2.svg'),
-                                      ],
-                                    )),
+                                Text(
+                                  'seleccionar archivo',
+                                  style: boldoSubTextMediumStyle.copyWith(
+                                      color: ConstantsV2.darkBlue),
+                                ),
                                 const SizedBox(
-                                  height: 16,
+                                  width: 4,
                                 ),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    textStyle: const TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 14, horizontal: 16),
-                                    primary: ConstantsV2.lightest,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(100),
-                                    ),
-                                  ),
-                                  onPressed: getFromFiles,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'seleccionar archivo',
-                                        style: boldoSubTextMediumStyle.copyWith(
-                                            color: ConstantsV2.darkBlue),
-                                      ),
-                                      const SizedBox(
-                                        width: 4,
-                                      ),
-                                      SvgPicture.asset(
-                                          'assets/icon/attachment.svg'),
-                                    ],
-                                  ),
-                                ),
+                                SvgPicture.asset(
+                                    'assets/icon/attachment.svg'),
                               ],
                             ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
-                  )
-                : Expanded(
-                    child: BlocBuilder<MyStudiesBloc, MyStudiesState>(
-                      builder: (context, state) {
-                        if (state is Uploading) {
-                          return Container(
-                            child: const Center(
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    Constants.primaryColor400),
-                                backgroundColor: Constants.primaryColor600,
-                              ),
-                            ),
-                          );
-                        } else {
-                          return ListView.builder(
-                            padding: EdgeInsets.zero,
-                            shrinkWrap: true,
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: _fileElement,
-                            itemCount: files.length,
-                          );
-                        }
-                      },
-                    ),
                   ),
+                ),
+              ),
+            )
+                : Expanded(
+              child: BlocBuilder<MyStudiesBloc, MyStudiesState>(
+                builder: (context, state) {
+                  if (state is Uploading) {
+                    return Container(
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Constants.primaryColor400),
+                          backgroundColor: Constants.primaryColor600,
+                        ),
+                      ),
+                    );
+                  } else {
+                    return ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemBuilder: _fileElement,
+                      itemCount: files.length,
+                    );
+                  }
+                },
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Row(
@@ -239,16 +222,16 @@ class _AttachFilesState extends State<AttachFiles> {
                   files.isEmpty
                       ? Container()
                       : Container(
-                          child: _offsetPopup(),
-                        ),
+                    child: _offsetPopup(),
+                  ),
                   ElevatedButton(
                     onPressed: files.isNotEmpty
                         ? () async {
-                            BlocProvider.of<MyStudiesBloc>(context).add(
-                                SendStudyToServer(
-                                    diagnosticReport: widget.diagnosticReport,
-                                    files: files));
-                          }
+                      BlocProvider.of<MyStudiesBloc>(context).add(
+                          SendStudyToServer(
+                              diagnosticReport: widget.diagnosticReport,
+                              files: files));
+                    }
                         : null,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -268,7 +251,7 @@ class _AttachFilesState extends State<AttachFiles> {
             )
           ],
         ),
-      ),
+      ),)
     );
   }
 
