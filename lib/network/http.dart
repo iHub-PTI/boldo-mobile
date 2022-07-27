@@ -1,5 +1,8 @@
 import 'package:boldo/network/connection_status.dart';
+import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
+import 'package:boldo/screens/pre_register_notify/pre_register_success_screen.dart';
+import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:dio/dio.dart';
@@ -98,6 +101,43 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
           //retry request
           return handle.resolve(await dio.request(options.path,
               data: options.data, options: optionsDio));
+        } on DioError catch(exception){
+          if (exception.response?.statusCode == 401){
+            final _result = await authenticateUser();
+            switch (_result) {
+              case 0:
+                //user canceled or generic error
+                navKey.currentState!.pushNamedAndRemoveUntil(
+                    "/onboarding",
+                    (route) => false,
+                );
+                break;
+              case 1:
+              //new user register
+                navKey.currentState!.pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const PreRegisterSuccess()),
+                    (route) => false,
+                );
+                break;
+
+              case 2:
+                return handle.resolve(await dio.request(options.path,
+                    data: options.data, options: optionsDio));
+                break;
+              default:
+            }
+          }
+          else{
+            accessToken = null;
+            UserRepository().logout(navKey.currentState!.context);
+            navKey.currentState!.pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => HeroScreenV2(),
+              ),
+                  (route) => false,
+            );
+            return handle.next(error);
+          }
         } catch (e) {
           print(e);
           dio.unlock();
@@ -140,7 +180,7 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
             responseType: options.responseType,
             sendTimeout: options.sendTimeout,
             validateStatus: options.validateStatus);
-        return handle.resolve(await dio.request(options.path,
+        return handle.resolve(await dioHealthCore.request(options.path,
             data: options.data, options: optionsDio));
       }
       return handle.next(error);
