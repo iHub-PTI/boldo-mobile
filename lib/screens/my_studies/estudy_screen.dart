@@ -34,16 +34,7 @@ class _StudyState extends State<Study> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leadingWidth: 200,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child:
-              SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
-        ),
-      ),
-      body: Padding(
+      body: SafeArea(child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: BlocListener<MyStudiesBloc, MyStudiesState>(
           listener: (context, state) {
@@ -52,7 +43,7 @@ class _StudyState extends State<Study> {
               _error = false;
               print('loading');
               setState(() {
-                
+
               });
             }
             if (state is DiagnosticStudyLoaded) {
@@ -68,7 +59,7 @@ class _StudyState extends State<Study> {
               _loading = false;
               _error = false;
               setState(() {
-               
+
               });
             }
 
@@ -86,19 +77,11 @@ class _StudyState extends State<Study> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextButton.icon(
-                  onPressed: () {
+                GestureDetector(
+                  onTap: () {
                     Navigator.pop(context);
                   },
-                  icon: const Icon(
-                    Icons.chevron_left_rounded,
-                    size: 25,
-                    color: Constants.extraColor400,
-                  ),
-                  label: Text(
-                    'Estudios',
-                    style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                  ),
+                  child: SvgPicture.asset('assets/icon/chevron-left.svg'),
                 ),
                 if (_loading)
                   Container(
@@ -117,24 +100,24 @@ class _StudyState extends State<Study> {
                               .add(GetPatientStudyFromServer(id: widget.id))),
                 if (!_loading && !_error)
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
                             child: Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${diagnosticReport?.description}",
-                                style: boldoTitleBlackTextStyle.copyWith(
-                                    color: ConstantsV2.activeText),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "${diagnosticReport?.description}",
+                                    style: boldoTitleBlackTextStyle.copyWith(
+                                        color: ConstantsV2.activeText),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        )),
+                            )),
                         ProfileImageView2(
                           height: 54,
                           width: 54,
@@ -213,7 +196,7 @@ class _StudyState extends State<Study> {
             ),
           ),
         ),
-      ),
+      ),),
     );
   }
 
