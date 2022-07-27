@@ -206,12 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ))
                                     .toList(),
                                 isExpanded: true,
-                                validator: (value) {
-                                  if (value == null) {
-                                    return "Selecciona un género";
-                                  }
-                                  return null;
-                                }),
+                                ),
                             const SizedBox(height: 20),
                             const Text(
                               'Fecha de nacimiento (dd/mm/yyyy)',
