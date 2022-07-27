@@ -628,7 +628,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                                 color: ConstantsV2.inactiveText
                             ),
                           ),
-                          Text("Subido por ${diagnosticReports[index].source}",
+                          Text("Subido por ${diagnosticReports[index].source?.toUpperCase().trim() ==
+                              'VENTRIX'
+                              ? "Boldo idCM": diagnosticReports[index].source}",
                             style: boldoCorpMediumTextStyle.copyWith(
                                 color: ConstantsV2.inactiveText
                             ),
