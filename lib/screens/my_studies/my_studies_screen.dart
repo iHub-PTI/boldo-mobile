@@ -132,10 +132,8 @@ class _MyStudiesState extends State<MyStudies> {
         label: Container(
             child: Row(
           children: [
-            Text(
+            const Text(
               'nuevo estudio',
-              style: boldoSubTextMediumStyle.copyWith(
-                  color: ConstantsV2.lightGrey),
             ),
             const SizedBox(
               width: 8,
