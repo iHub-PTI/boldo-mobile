@@ -59,8 +59,10 @@ class UserRepository {
       if (response.statusCode == 200) {
         patient = Patient.fromJson(response.data);
         // Update prefs in Principal Patient
-        if(!prefs.getBool(isFamily)!)
-          prefs.setString("profile_url", patient.photoUrl?? '');
+        if(!prefs.getBool(isFamily)!) {
+          prefs.setString("profile_url", patient.photoUrl ?? '');
+          prefs.setString("userId", patient.id ?? '');
+        }
         return const None();
       }
       throw Failure(genericError);
