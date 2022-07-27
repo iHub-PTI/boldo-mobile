@@ -73,16 +73,8 @@ class _NewStudyState extends State<NewStudy> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: ConstantsV2.lightGrey,
-        leadingWidth: 200,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child:
-          SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
-        ),
-      ),
-      body: BlocListener<MyStudiesBloc, MyStudiesState>(
+      body: SafeArea(
+        child: BlocListener<MyStudiesBloc, MyStudiesState>(
           listener: (context, state) {
             if (state is Loading) {
               print('loading');
@@ -99,25 +91,17 @@ class _NewStudyState extends State<NewStudy> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextButton.icon(
-                  onPressed: () {
+                GestureDetector(
+                  onTap: () {
                     Navigator.pop(context);
                   },
-                  icon: const Icon(
-                    Icons.chevron_left_rounded,
-                    size: 25,
-                    color: Constants.extraColor400,
-                  ),
-                  label: Text(
-                    'Atras',
-                    style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16, top: 16),
+                    child: SvgPicture.asset('assets/icon/chevron-left.svg'),
+                  )
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.all(16),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -141,7 +125,7 @@ class _NewStudyState extends State<NewStudy> {
                           onChanged: (value){
                             nombre = value;
                             setState(() {
-          
+
                             });
                           },
                           validator: (value){
@@ -236,7 +220,7 @@ class _NewStudyState extends State<NewStudy> {
                             itemBuilder: _buildCarousel,
                           ),
                         ),
-                         const SizedBox(
+                        const SizedBox(
                           height: 40,
                         ),
                         Row(
@@ -244,39 +228,39 @@ class _NewStudyState extends State<NewStudy> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Container(
-                          width: 136,
-                          child: ElevatedButton (
-                            onPressed: enable && _formKey.currentState!.validate() ? () async {
-                              if(_formKey.currentState!.validate()){
-                                DiagnosticReport newDiagnosticReport = DiagnosticReport(
-                                    description: nombre,
-                                    patientNotes: notas,
-                                    effectiveDate: fecha,
-                                    type: type);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          AttachFiles(
-                                              diagnosticReport:
-                                              newDiagnosticReport)),
-                                );
-                              }
-                            }: null,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text('siguiente'),
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 8.0),
-                                  child: Icon(
-                                    Icons.chevron_right,
-                                  ),
-                                )
-                              ],
+                              width: 136,
+                              child: ElevatedButton (
+                                onPressed: enable && _formKey.currentState!.validate() ? () async {
+                                  if(_formKey.currentState!.validate()){
+                                    DiagnosticReport newDiagnosticReport = DiagnosticReport(
+                                        description: nombre,
+                                        patientNotes: notas,
+                                        effectiveDate: fecha,
+                                        type: type);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              AttachFiles(
+                                                  diagnosticReport:
+                                                  newDiagnosticReport)),
+                                    );
+                                  }
+                                }: null,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Text('siguiente'),
+                                    const Padding(
+                                      padding: EdgeInsets.only(left: 8.0),
+                                      child: Icon(
+                                        Icons.chevron_right,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
                           ],
                         )
                       ],
@@ -286,7 +270,8 @@ class _NewStudyState extends State<NewStudy> {
               ],
             ),
           ),
-      ),
+        ),
+      )
     );
   }
 
