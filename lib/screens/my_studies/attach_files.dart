@@ -303,22 +303,27 @@ class _AttachFilesState extends State<AttachFiles> {
 
   Widget _offsetPopup() {
     return PopupMenuButton<int>(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        shape: RoundedRectangleBorder(
+          borderRadius:
+          BorderRadius.circular(8),
+        ),
         itemBuilder: (context) => [
               PopupMenuItem(
                 value: 1,
                 onTap: getFromCamera,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(
-                      'Tomar foto',
-                      style: boldoSubTextMediumStyle.copyWith(
-                          color: ConstantsV2.darkBlue),
-                    ),
+                    SvgPicture.asset('assets/icon/camera2.svg'),
                     const SizedBox(
                       width: 4,
                     ),
-                    SvgPicture.asset('assets/icon/camera2.svg'),
+                    Text(
+                      'tomar foto',
+                      style: boldoSubTextMediumStyle.copyWith(
+                          color: ConstantsV2.darkBlue),
+                    ),
                   ],
                 ),
               ),
@@ -326,17 +331,17 @@ class _AttachFilesState extends State<AttachFiles> {
                 value: 2,
                 onTap: getFromFiles,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    SvgPicture.asset('assets/icon/attachment.svg'),
+                    const SizedBox(
+                      width: 4,
+                    ),
                     Text(
                       'seleccionar archivo',
                       style: boldoSubTextMediumStyle.copyWith(
                           color: ConstantsV2.darkBlue),
                     ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    SvgPicture.asset('assets/icon/attachment.svg'),
                   ],
                 ),
               ),
