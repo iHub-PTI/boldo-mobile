@@ -264,7 +264,7 @@ class _MyStudiesState extends State<MyStudies> {
                                           diagnosticReport[index].source?.toUpperCase().trim() ==
                                               'VENTRIX'
                                                 ? "Boldo idCM"
-                                                : "${diagnosticReport[index].source?? 'Boldo'}",
+                                                : diagnosticReport[index].source != null ? "subido por ${diagnosticReport[index].source?.split(' ')[0]}": 'Boldo',
                                           style:
                                               boldoCorpSmallTextStyle.copyWith(
                                                   color: ConstantsV2.darkBlue),
