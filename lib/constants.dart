@@ -167,6 +167,14 @@ ThemeData boldoTheme = ThemeData(
       ),
     ),
   ),
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+    extendedTextStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+    extendedPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+    backgroundColor: ConstantsV2.orange,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(100),
+    ),
+  ),
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
