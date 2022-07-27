@@ -30,16 +30,7 @@ class _MyStudiesState extends State<MyStudies> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leadingWidth: 200,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child:
-              SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
-        ),
-      ),
-      body: Padding(
+      body: SafeArea(child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: BlocListener<MyStudiesBloc, MyStudiesState>(
           listener: (context, state) {
@@ -122,7 +113,7 @@ class _MyStudiesState extends State<MyStudies> {
             ),
           ),
         ),
-      ),
+      ),),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(context,
