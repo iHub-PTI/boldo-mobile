@@ -239,7 +239,7 @@ class _MyStudiesState extends State<MyStudies> {
                                   bottom: 2.0,
                                   right: 8.0),
                               child: diagnosticReport[index].sourceID ==
-                                      patient.id
+                                      (prefs.getString('userId')?? '')
                                   ? Row(
                                       children: [
                                         SvgPicture.asset(
@@ -261,7 +261,10 @@ class _MyStudiesState extends State<MyStudies> {
                                         ),
                                         const SizedBox(width: 6),
                                         Text(
-                                          "Boldo",
+                                          diagnosticReport[index].source?.toUpperCase().trim() ==
+                                              'VENTRIX'
+                                                ? "Boldo idCM"
+                                                : "${diagnosticReport[index].source?? 'Boldo'}",
                                           style:
                                               boldoCorpSmallTextStyle.copyWith(
                                                   color: ConstantsV2.darkBlue),
