@@ -13,7 +13,7 @@ import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/offline/offline_screen.dart';
 
 var dio = Dio();
-void initDio({required GlobalKey<NavigatorState> navKey}) {
+void initDio({required GlobalKey<NavigatorState> navKey, required Dio dio}) {
   String baseUrl = String.fromEnvironment('SERVER_ADDRESS',
       defaultValue: dotenv.env['SERVER_ADDRESS']!);
 
@@ -72,8 +72,12 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
             validateStatus: options.validateStatus);
         if ("bearer $accessToken" != options.headers["authorization"]) {
           options.headers["authorization"] = "bearer $accessToken";
-          handle.resolve(await dio.request(options.path, options: optionsDio));
-          // return handle.next(dio.request(options.path));
+          // New dio connection to handle new errors
+          Dio _dio = Dio();
+          initDio(navKey: navKey, dio: _dio);
+          //retry request
+          return handle.resolve(await _dio.request(options.path,
+              data: options.data, options: optionsDio));
         }
         dio.lock();
         dio.interceptors.responseLock.lock();
@@ -97,18 +101,21 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
           dio.unlock();
           dio.interceptors.responseLock.unlock();
           dio.interceptors.errorLock.unlock();
+          // New dio connection to handle new errors
+          Dio _dio = Dio();
+          initDio(navKey: navKey, dio: _dio);
           //retry request
-          return handle.resolve(await dio.request(options.path,
+          return handle.resolve(await _dio.request(options.path,
               data: options.data, options: optionsDio));
         } on DioError catch(exception){
           if (exception.response?.statusCode == 401){
             final _result = await authenticateUser(context: navKey.currentState!.context);
             switch (_result) {
               case 0:
-                //user canceled or generic error
+              //user canceled or generic error
                 navKey.currentState!.pushNamedAndRemoveUntil(
-                    "/onboarding",
-                    (route) => false,
+                  "/onboarding",
+                      (route) => false,
                 );
                 break;
               case 1:
@@ -120,7 +127,9 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
                 break;
 
               case 2:
-                return handle.resolve(await dio.request(options.path,
+                Dio _dio = Dio();
+                initDio(navKey: navKey, dio: _dio);
+                return handle.resolve(await _dio.request(options.path,
                     data: options.data, options: optionsDio));
                 break;
               default:
@@ -179,7 +188,9 @@ void initDio({required GlobalKey<NavigatorState> navKey}) {
             responseType: options.responseType,
             sendTimeout: options.sendTimeout,
             validateStatus: options.validateStatus);
-        return handle.resolve(await dio.request(options.path,
+        Dio _dio = Dio();
+        initDio(navKey: navKey, dio: _dio);
+        return handle.resolve(await _dio.request(options.path,
             data: options.data, options: optionsDio));
       }
       return handle.next(error);
