@@ -80,8 +80,7 @@ Future<void> main() async {
   prefs = await SharedPreferences.getInstance();
   prefs.setBool(isFamily, prefs.getBool(isFamily) ?? false);
 
-  initDio(navKey: navKey);
-  initDioSecondaryAccess(navKey: navKey);
+  initDio(navKey: navKey, dio: dio);
   const storage = FlutterSecureStorage();
   String? session = await storage.read(key: "access_token");
 
