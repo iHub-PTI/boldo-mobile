@@ -236,7 +236,7 @@ class UserRepository {
   }
 
   Future<List<MedicalRecord>> getMedicalRecords() async {
-    Response response = await dioHealthCore.get(
+    Response response = await dio.get(
         "/profile/patient/relatedEncounters?includePrescriptions=false&includeSoep=false&lastOnly=true");
     late List<MedicalRecord> list;
     try {
@@ -770,7 +770,7 @@ class UserRepository {
           "${prefs.getBool(isFamily) == true ? '/profile/caretaker/dependent/${patient.id}/appointments/$appointmentId/encounter?includePrescriptions=true&includeSoep=true' :
            '/profile/patient/appointments/$appointmentId/encounter?includePrescriptions=true&includeSoep=true'}";
       MedicalRecord medicalRecord;
-      Response response = await dioHealthCore.get(url);
+      Response response = await dio.get(url);
       if (response.statusCode == 200) {
         print(response.data);
         medicalRecord = MedicalRecord.fromJson(response.data);
@@ -958,7 +958,7 @@ Future<None> getMedicalRecords() async {
       "${prefs.getBool(isFamily) == true ? 'profile/takecare/dependent/${patient.id}/relatedEncounters?includePrescriptions=false&includeSoep=false&lastOnly=true' : '/profile/patient/relatedEncounters?includePrescriptions=false&includeSoep=false&lastOnly=true'}"
           .trim();
   print("esta es $url");
-  Response response = await dioHealthCore.get(url);
+  Response response = await dio.get(url);
   try {
     allMedicalData = List<MedicalRecord>.from(
         response.data.map((x) => MedicalRecord.fromJson(x[0])));
