@@ -302,28 +302,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 trailing: const Icon(Icons.chevron_right),
                               ),
                             const SizedBox(height: 8),
-                            SizedBox(
-                              child: Column(
-                                children: [
-                                  if (state is Failed)
-                                    Text(
-                                      state.response ?? '',
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Constants.otherColor100,
-                                      ),
-                                    ),
-                                  if (state is Success)
-                                    const Text(
-                                      "Actualizado exitosamente",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Constants.primaryColor600,
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ),
                             const SizedBox(height: 8),
                             CustomFormButton(
                               loading: _dataLoading,
