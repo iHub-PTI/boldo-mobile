@@ -294,6 +294,7 @@ class SoepScreen extends StatelessWidget {
                           )
                         : Container(),
                     // const Spacer(),
+                    if(medicalRecord.prescription != null)
                     medicalRecord.prescription!.isNotEmpty
                         ? GestureDetector(
                             onTap: () async {
@@ -312,6 +313,7 @@ class SoepScreen extends StatelessWidget {
                         : Container(),
                   ],
                 ),
+                if(medicalRecord.soep!= null)
                 soepDescription(medicalRecord.soep!)
               ],
             ),
