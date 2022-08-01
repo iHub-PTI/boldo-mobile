@@ -100,7 +100,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "${patient.givenName??''}${patient.familyName??''}",
+                                    "${patient.givenName??''} ${patient.familyName??''}",
                                     style: boldoTitleRegularTextStyle,
                                   ),
                                 ],

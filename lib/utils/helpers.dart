@@ -20,7 +20,7 @@ String toLowerCase(String word){
     if(a!= "")
     _result += "${a[0].toUpperCase()}${a.substring(1).toLowerCase()} ";
   }
-  return "$_result";
+  return "$_result".trimRight();
 }
 
 String? spanishGenderToEnglish(String? word){
