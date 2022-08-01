@@ -58,6 +58,7 @@ class _SingInTransitionState extends State<SingInTransition> {
                 ),
               );
               _dataLoading = false;
+              Navigator.of(context).pushNamedAndRemoveUntil('/onboarding', (Route<dynamic> route) => false);
             }
             if(state is RedirectBackScreen){
               UserRepository().logout(context);
@@ -68,7 +69,7 @@ class _SingInTransitionState extends State<SingInTransition> {
             }
             if(state is RedirectNextScreen){
               // go to home
-              Navigator.of(context).pushNamedAndRemoveUntil('/home', ModalRoute.withName('/onboarding'));
+              Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
             }
             if(state is Loading){
               _dataLoading = true;
