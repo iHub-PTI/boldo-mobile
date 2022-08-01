@@ -121,7 +121,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
         }
         doctors.sort((a, b) {
           if (b.nextAvailability == null || a.nextAvailability == null ) {
-            return 1;
+            return -1;
           }
             return DateTime.parse(a.nextAvailability!.availability!).compareTo(DateTime.parse(b.nextAvailability!.availability!));
         });
