@@ -188,8 +188,9 @@ class FullApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: [
+        const Locale("es", 'ES'),
         const Locale('en'),
-        const Locale('fr')
+        const Locale('fr'),
       ],
       debugShowCheckedModeBanner: false,
       navigatorKey: navKey,

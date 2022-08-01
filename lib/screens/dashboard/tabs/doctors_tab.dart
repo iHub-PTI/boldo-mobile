@@ -354,7 +354,7 @@ class _DoctorCard extends StatelessWidget {
         availabilityText = "Disponible Hoy!";
       } else if (daysDifference > 0) {
         availabilityText =
-            "Disponible ${DateFormat('EEEE, dd MMMM').format(parsedAvailability)}";
+            "Disponible ${DateFormat('EEEE, dd MMMM', Localizations.localeOf(context).languageCode).format(parsedAvailability)}";
       }
     }
 

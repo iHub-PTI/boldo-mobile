@@ -104,7 +104,7 @@ Future<bool?> callEndedPopup(
                           ),
                           const SizedBox(height: 4),
                           Text(
-                              DateFormat('EEEE, dd MMMM yyyy')
+                              DateFormat('EEEE, dd MMMM yyyy', Localizations.localeOf(context).languageCode)
                                   .format(DateTime.parse(appointment.start!)
                                       .toLocal())
                                   .capitalize(),
