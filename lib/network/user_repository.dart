@@ -10,6 +10,7 @@ import 'package:boldo/models/Relationship.dart';
 import 'package:boldo/models/User.dart';
 import 'package:boldo/models/upload_url_model.dart';
 import 'package:boldo/network/repository_helper.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:camera/camera.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
@@ -62,6 +63,8 @@ class UserRepository {
         if(!prefs.getBool(isFamily)!) {
           prefs.setString("profile_url", patient.photoUrl ?? '');
           prefs.setString("userId", patient.id ?? '');
+          await prefs.setString("name", response.data['givenName']!= null ? toLowerCase(response.data['givenName']!) : '');
+          await prefs.setString("lastName", response.data['familyName']!= null ? toLowerCase(response.data['familyName']!) : '');
         }
         return const None();
       }
