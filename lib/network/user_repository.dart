@@ -774,8 +774,7 @@ class UserRepository {
       MedicalRecord medicalRecord;
       Response response = await dio.get(url);
       if (response.statusCode == 200) {
-        print(response.data);
-        medicalRecord = MedicalRecord.fromJson(response.data);
+        medicalRecord = MedicalRecord.fromJson(response.data['encounter']);
         return medicalRecord;
       }
       throw Failure("Response status desconocido ${response.statusCode}");
