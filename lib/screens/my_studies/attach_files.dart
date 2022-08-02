@@ -42,227 +42,241 @@ class _AttachFilesState extends State<AttachFiles> {
           leadingWidth: 200,
           leading: Padding(
             padding: const EdgeInsets.only(left: 16.0),
-            child:
-            SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+            child: SvgPicture.asset('assets/Logo.svg',
+                semanticsLabel: 'BOLDO Logo'),
           ),
         ),
-      body: SafeArea(child: BlocListener<MyStudiesBloc, MyStudiesState>(
-        listener: (context, state) {
-          if (state is Uploaded) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Estudio subido!"),
-                backgroundColor: ConstantsV2.green,
-              ),
-            );
-            Navigator.of(context).popUntil(ModalRoute.withName("/my_studies"));
-            BlocProvider.of<MyStudiesBloc>(context)
-                .add(GetPatientStudiesFromServer());
-          }
-          if (state is FailedUpload) {
-            print('failed: ${state.msg}');
-            Scaffold.of(context)
-                .showSnackBar(SnackBar(content: Text(state.msg)));
-          }
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16, top: 16),
-                  child: SvgPicture.asset('assets/icon/chevron-left.svg'),
-                )
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    child: Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Adjuntos',
-                            style: boldoTitleBlackTextStyle.copyWith(color: ConstantsV2.activeText),
-                          ),
-                          Text(
-                            "seleccioná los archivos o tomale fotos a los resultados de este estudio.",
-                            style: boldoCorpSmallTextStyle.copyWith(
-                                color: ConstantsV2.inactiveText),
-                          ),
-                        ],
-                      ),
-                    )),
-                  ProfileImageView2(
-                    height: 54,
-                    width: 54,
-                    border: true,
-                    patient: patient,
-                    color: ConstantsV2.orange,
+        body: SafeArea(
+          child: BlocListener<MyStudiesBloc, MyStudiesState>(
+            listener: (context, state) {
+              if (state is Uploaded) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Estudio subido!"),
+                    backgroundColor: ConstantsV2.green,
                   ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                widget.diagnosticReport.description ?? '',
-                style:
-                boldoSubTextMediumStyle.copyWith(color: ConstantsV2.orange),
-              ),
-            ),
-            files.isEmpty
-                ? Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0),
-                child: Container(
-                  child: Center(
-                    child: Container(
-                      width: 216,
-                      child: Column(
-                        children: [
-                          ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                textStyle: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 14, horizontal: 16),
-                                primary: ConstantsV2.lightest,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(100),
-                                ),
-                              ),
-                              onPressed: getFromCamera,
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Tomar foto',
-                                    style:
-                                    boldoSubTextMediumStyle.copyWith(
-                                        color: ConstantsV2.darkBlue),
-                                  ),
-                                  const SizedBox(
-                                    width: 4,
-                                  ),
-                                  SvgPicture.asset(
-                                      'assets/icon/camera2.svg'),
-                                ],
-                              )),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              textStyle: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16),
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 14, horizontal: 16),
-                              primary: ConstantsV2.lightest,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                            ),
-                            onPressed: getFromFiles,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'seleccionar archivo',
-                                  style: boldoSubTextMediumStyle.copyWith(
-                                      color: ConstantsV2.darkBlue),
-                                ),
-                                const SizedBox(
-                                  width: 4,
-                                ),
-                                SvgPicture.asset(
-                                    'assets/icon/attachment.svg'),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                );
+                Navigator.of(context)
+                    .popUntil(ModalRoute.withName("/my_studies"));
+                BlocProvider.of<MyStudiesBloc>(context)
+                    .add(GetPatientStudiesFromServer());
+              }
+              if (state is FailedUpload) {
+                print('failed: ${state.msg}');
+                Scaffold.of(context)
+                    .showSnackBar(SnackBar(content: Text(state.msg)));
+              }
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.chevron_left_rounded,
+                    size: 25,
+                    color: Constants.extraColor400,
+                  ),
+                  label: Text(
+                    'Adjuntos',
+                    style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                   ),
                 ),
-              ),
-            )
-                : Expanded(
-              child: BlocBuilder<MyStudiesBloc, MyStudiesState>(
-                builder: (context, state) {
-                  if (state is Uploading) {
-                    return Container(
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              Constants.primaryColor400),
-                          backgroundColor: Constants.primaryColor600,
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                          child: Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Seleccioná los archivos o tomale fotos a los resultados de este estudio.",
+                              style: boldoCorpSmallTextStyle.copyWith(
+                                  color: ConstantsV2.inactiveText,
+                                  fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      )),
+                      ProfileImageView2(
+                        height: 54,
+                        width: 54,
+                        border: true,
+                        patient: patient,
+                        color: ConstantsV2.orange,
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    widget.diagnosticReport.description ?? '',
+                    style: boldoSubTextMediumStyle.copyWith(
+                        color: ConstantsV2.orange),
+                  ),
+                ),
+                files.isEmpty
+                    ? Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 0),
+                          child: Container(
+                            child: Center(
+                              child: Container(
+                                width: 216,
+                                child: Column(
+                                  children: [
+                                    ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          textStyle: const TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 14, horizontal: 16),
+                                          primary: ConstantsV2.lightest,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                        ),
+                                        onPressed: getFromCamera,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Tomar foto',
+                                              style: boldoSubTextMediumStyle
+                                                  .copyWith(
+                                                      color:
+                                                          ConstantsV2.darkBlue),
+                                            ),
+                                            const SizedBox(
+                                              width: 4,
+                                            ),
+                                            SvgPicture.asset(
+                                                'assets/icon/camera2.svg'),
+                                          ],
+                                        )),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 14, horizontal: 16),
+                                        primary: ConstantsV2.lightest,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(100),
+                                        ),
+                                      ),
+                                      onPressed: getFromFiles,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'seleccionar archivo',
+                                            style: boldoSubTextMediumStyle
+                                                .copyWith(
+                                                    color:
+                                                        ConstantsV2.darkBlue),
+                                          ),
+                                          const SizedBox(
+                                            width: 4,
+                                          ),
+                                          SvgPicture.asset(
+                                              'assets/icon/attachment.svg'),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : Expanded(
+                        child: BlocBuilder<MyStudiesBloc, MyStudiesState>(
+                          builder: (context, state) {
+                            if (state is Uploading) {
+                              return Container(
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Constants.primaryColor400),
+                                    backgroundColor: Constants.primaryColor600,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return ListView.builder(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                itemBuilder: _fileElement,
+                                itemCount: files.length,
+                              );
+                            }
+                          },
                         ),
                       ),
-                    );
-                  } else {
-                    return ListView.builder(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      itemBuilder: _fileElement,
-                      itemCount: files.length,
-                    );
-                  }
-                },
-              ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      files.isEmpty
+                          ? Container()
+                          : Container(
+                              child: _offsetPopup(),
+                            ),
+                      ElevatedButton(
+                        onPressed: files.isNotEmpty
+                            ? () async {
+                                BlocProvider.of<MyStudiesBloc>(context).add(
+                                    SendStudyToServer(
+                                        diagnosticReport:
+                                            widget.diagnosticReport,
+                                        files: files));
+                              }
+                            : null,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text('finalizar'),
+                            const Padding(
+                              padding: EdgeInsets.only(left: 8.0),
+                              child: Icon(
+                                Icons.chevron_right,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  files.isEmpty
-                      ? Container()
-                      : Container(
-                    child: _offsetPopup(),
-                  ),
-                  ElevatedButton(
-                    onPressed: files.isNotEmpty
-                        ? () async {
-                      BlocProvider.of<MyStudiesBloc>(context).add(
-                          SendStudyToServer(
-                              diagnosticReport: widget.diagnosticReport,
-                              files: files));
-                    }
-                        : null,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('finalizar'),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 8.0),
-                          child: Icon(
-                            Icons.chevron_right,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),)
-    );
+          ),
+        ));
   }
 
   showEmptyList() {
@@ -313,10 +327,9 @@ class _AttachFilesState extends State<AttachFiles> {
 
   Widget _offsetPopup() {
     return PopupMenuButton<int>(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         shape: RoundedRectangleBorder(
-          borderRadius:
-          BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(8),
         ),
         itemBuilder: (context) => [
               PopupMenuItem(
@@ -409,7 +422,6 @@ class _AttachFilesState extends State<AttachFiles> {
                             overflow: TextOverflow.ellipsis),
                       ),
                     ),
-                    
                     GestureDetector(
                       onTap: () {
                         files.remove(file);
