@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 
 import 'package:boldo/constants.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../../../main.dart';
 
@@ -66,6 +67,16 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        actions: [],
+        leadingWidth: 200,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child:
+          SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+        ),
+      ),
       body: Stack(
           children: [
             const Background(text: "linkFamily"),

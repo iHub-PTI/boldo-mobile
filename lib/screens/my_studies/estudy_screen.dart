@@ -4,6 +4,7 @@ import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/image_visor.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -34,6 +35,16 @@ class _StudyState extends State<Study> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        actions: [],
+        leadingWidth: 200,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child:
+          SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+        ),
+      ),
       body: SafeArea(child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: BlocListener<MyStudiesBloc, MyStudiesState>(
@@ -154,7 +165,7 @@ class _StudyState extends State<Study> {
                                 child: Container(
                                   padding: const EdgeInsets.all(16),
                                   child: SvgPicture.asset(
-                                    diagnosticReport?.source?.toUpperCase().trim() == 'VENTRIX' ? 'assets/icon/boldo_idCM.svg' : 'assets/Logo.svg',
+                                    diagnosticReport?.source?.toUpperCase().trim() == 'VENTRIX' ? 'assets/Logo.svg' : 'assets/Logo.svg',
                                     semanticsLabel: 'BOLDO Logo',
                                     height: 32,
                                   ),
@@ -295,7 +306,13 @@ class _StudyState extends State<Study> {
                           children: [
                             Flexible(
                               child: Text(
-                                "${p.basename(diagnosticReport?.attachmentUrls?[index]['url'])}",
+                                "${patient.identifier}-"
+                                    "${DateFormat('ddMMyy').format(DateTime.parse(diagnosticReport?.effectiveDate ?? DateTime.now().toString()).toLocal())}-"
+                                    "${formatDate(
+                                      DateTime.now(),
+                                      [HH, '', mm],
+                                      locale: const SpanishDateLocale(),
+                                    )}-${index}",
                                 style: boldoCorpMediumBlackTextStyle.copyWith(
                                     color: ConstantsV2.activeText),
                               ),

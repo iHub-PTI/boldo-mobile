@@ -30,6 +30,16 @@ class _MyStudiesState extends State<MyStudies> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        actions: [],
+        leadingWidth: 200,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child:
+          SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+        ),
+      ),
       body: SafeArea(child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: BlocListener<MyStudiesBloc, MyStudiesState>(
@@ -261,10 +271,7 @@ class _MyStudiesState extends State<MyStudies> {
                                         ),
                                         const SizedBox(width: 6),
                                         Text(
-                                          diagnosticReport[index].source?.toUpperCase().trim() ==
-                                              'VENTRIX'
-                                                ? "Boldo idCM"
-                                                : diagnosticReport[index].source != null ? "subido por ${diagnosticReport[index].source?.split(' ')[0]}": 'Boldo',
+                                          diagnosticReport[index].source != null ? "subido por ${diagnosticReport[index].source?.split(' ')[0]}": 'Boldo',
                                           style:
                                               boldoCorpSmallTextStyle.copyWith(
                                                   color: ConstantsV2.darkBlue),

@@ -73,6 +73,16 @@ class _NewStudyState extends State<NewStudy> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          actions: [],
+          leadingWidth: 200,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child:
+            SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+          ),
+        ),
       body: SafeArea(
         child: BlocListener<MyStudiesBloc, MyStudiesState>(
           listener: (context, state) {
