@@ -65,13 +65,13 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
                             Flexible(
                               child: widget.isDependent
                                   ? Text(
-                                "${widget.patient!.givenName}${widget.patient!.familyName}",
+                                "${widget.patient!.givenName} ${widget.patient!.familyName}",
                                 style: boldoSubTextMediumStyle.copyWith(
                                     color: ConstantsV2.activeText
                                 ),
                               )
                                   :Text(
-                                "${prefs.getString('name') ?? ''}${prefs.getString('lastName') ?? ''}",
+                                "${prefs.getString('name') ?? ''} ${prefs.getString('lastName') ?? ''}",
                                 style: boldoSubTextMediumStyle.copyWith(
                                     color: ConstantsV2.activeText
                                 ),

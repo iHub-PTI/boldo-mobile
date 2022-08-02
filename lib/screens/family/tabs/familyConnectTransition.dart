@@ -93,7 +93,7 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
                                               _dataLoading ? Text("", style: boldoBillboardTextStyleAlt.copyWith(
                                                   color: ConstantsV2.lightGrey
                                               )) :Flexible(child:Text(
-                                                "${user.givenName ?? ''}${user.familyName ?? ''}",
+                                                "${user.givenName ?? ''} ${user.familyName ?? ''}",
                                                 textAlign: TextAlign.center,
                                                 style: boldoBillboardTextStyleAlt.copyWith(
                                                     color: ConstantsV2.lightGrey,
