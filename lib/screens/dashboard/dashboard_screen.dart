@@ -55,16 +55,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
           return false;
         },
         child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            actions: [],
-            leadingWidth: 200,
-            leading: Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child:
-              SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
-            ),
-          ),
+          // appBar: AppBar(
+          //   backgroundColor: Colors.white,
+          //   actions: [],
+          //   leadingWidth: 200,
+          //   leading: Padding(
+          //     padding: const EdgeInsets.only(left: 16.0),
+          //     child:
+          //     SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+          //   ),
+          // ),
           key: scaffoldKey,
           body: getPage(selectedPageIndex),
           /*bottomNavigationBar: BottomNavigationBar(
