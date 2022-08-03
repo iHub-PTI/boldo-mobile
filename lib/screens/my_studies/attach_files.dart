@@ -395,7 +395,7 @@ class _AttachFilesState extends State<AttachFiles> {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SvgPicture.asset(p.extension(file.path) == '.pdf'
+                    SvgPicture.asset(p.extension(file.path).toLowerCase() == '.pdf'
                         ? 'assets/icon/picture-as-pdf.svg'
                         : 'assets/icon/crop-original.svg'),
                     Container(

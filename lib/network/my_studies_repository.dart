@@ -107,9 +107,9 @@ class MyStudesRepository {
         } else if (response2.statusCode == 201) {
           var value = {
             "url": url.data["location"],
-            "contentType": p.extension(file.path) == '.pdf'
+            "contentType": p.extension(file.path).toLowerCase() == '.pdf'
                 ? 'application/pdf'
-                : p.extension(file.path) == '.png' ? 'image/png' : 'image/jpeg',
+                : p.extension(file.path).toLowerCase() == '.png' ? 'image/png' : 'image/jpeg',
           };
           attachmentUrls.add(value);
         }
