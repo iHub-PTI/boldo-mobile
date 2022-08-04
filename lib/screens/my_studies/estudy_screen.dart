@@ -176,16 +176,8 @@ class _StudyState extends State<Study> {
                                   ),
                                   child: Container(
                                     padding: const EdgeInsets.all(16),
-                                    child: SvgPicture.asset(
-                                      diagnosticReport?.source
-                                                  ?.toUpperCase()
-                                                  .trim() ==
-                                              'VENTRIX'
-                                          ? 'assets/Logo.svg'
-                                          : 'assets/Logo.svg',
-                                      semanticsLabel: 'BOLDO Logo',
-                                      height: 32,
-                                    ),
+                                    child: sourceLogo(diagnosticReport?.source
+                                        ?.toUpperCase(), diagnosticReport?.sourceID),
                                   ))
                             ],
                           ),
@@ -346,4 +338,17 @@ class _StudyState extends State<Study> {
       ),
     );
   }
+
+  Widget sourceLogo (String? source, String? sourceID){
+    return Image.asset(
+      source == null?
+        'assets/images/Source=No_source.png':
+      source == 'VENTRIX'
+          ? 'assets/images/Source=Ventrix.png':
+      source == 'TESÂI'
+          ? 'assets/images/Source=Tesai.png':
+          'assets/images/Source=Paciente.png',
+    );
+  }
+
 }
