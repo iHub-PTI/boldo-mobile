@@ -101,25 +101,51 @@ class _NewStudyState extends State<NewStudy> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: () {
+               
+               const SizedBox(
+                  height: 10,
+                ),
+                TextButton.icon(
+                  onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16, top: 16),
-                    child: SvgPicture.asset('assets/icon/chevron-left.svg'),
-                  )
+                  icon: const Icon(
+                    Icons.chevron_left_rounded,
+                    size: 25,
+                    color: Constants.extraColor400,
+                  ),
+                  label: Text(
+                    'Nuevo estudio',
+                    style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'Nuevo estudio',
-                        style: boldoTitleBlackTextStyle.copyWith(color: ConstantsV2.activeText),
+                      Container(
+                          child: Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Cargá los siguientes datos básicos sobre el resultado de tu estudio.",
+                              style: boldoCorpSmallTextStyle.copyWith(
+                                  color: ConstantsV2.inactiveText,
+                                  fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      )),
+                      ProfileImageView2(
+                        height: 54,
+                        width: 54,
+                        border: true,
+                        patient: patient,
+                        color: ConstantsV2.orange,
                       ),
-                      ProfileImageView2(height: 54, width: 54, border: true, patient: patient, color: ConstantsV2.orange,),
                     ],
                   ),
                 ),

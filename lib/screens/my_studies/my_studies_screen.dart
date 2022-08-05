@@ -37,91 +37,119 @@ class _MyStudiesState extends State<MyStudies> {
         leading: Padding(
           padding: const EdgeInsets.only(left: 16.0),
           child:
-          SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+              SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
         ),
       ),
-      body: SafeArea(child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: BlocListener<MyStudiesBloc, MyStudiesState>(
-          listener: (context, state) {
-            if (state is Loading) {
-              _loading = true;
-              _error = false;
-              print('loading');
-            }
-            if (state is DiagnosticLoaded) {
-              print('success DiagnosticLoaded');
-              _loading = false;
-              _error = false;
-              setState(() {
-                diagnosticReport = state.studiesList;
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: BlocListener<MyStudiesBloc, MyStudiesState>(
+            listener: (context, state) {
+              if (state is Loading) {
+                _loading = true;
+                _error = false;
+                print('loading');
+              }
+              if (state is DiagnosticLoaded) {
+                print('success DiagnosticLoaded');
+                _loading = false;
+                _error = false;
+                setState(() {
+                  diagnosticReport = state.studiesList;
 
-                diagnosticReport.sort(((a, b) {
-                  if (a.effectiveDate == null || b.effectiveDate == null) {
-                    return 0;
-                  }
+                  diagnosticReport.sort(((a, b) {
+                    if (a.effectiveDate == null || b.effectiveDate == null) {
+                      return 0;
+                    }
 
-                  try {
-                    DateTime dateA = DateTime.parse(a.effectiveDate as String);
-                    DateTime dateB = DateTime.parse(b.effectiveDate as String);
+                    try {
+                      DateTime dateA =
+                          DateTime.parse(a.effectiveDate as String);
+                      DateTime dateB =
+                          DateTime.parse(b.effectiveDate as String);
 
-                    return dateB.compareTo(dateA);
-                  } on FormatException catch (e) {
-                    print(e.toString());
-                    return 0;
-                  }
-                }));
-              });
-            }
+                      return dateB.compareTo(dateA);
+                    } on FormatException catch (e) {
+                      print(e.toString());
+                      return 0;
+                    }
+                  }));
+                });
+              }
 
-            if (state is Failed) {
-              print('algo falló: ${state.msg}');
-              _loading = false;
-              _error = true;
-              setState(() {});
-              Scaffold.of(context).showSnackBar(const SnackBar(
-                  content: Text("Falló la obtención de estudios")));
-            }
-          },
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: SvgPicture.asset('assets/icon/chevron-left.svg'),
-                ),
-                const SizedBox(height: 21),
-                Text(
-                  'Estudios',
-                  style: boldoTitleBlackTextStyle.copyWith(color: ConstantsV2.activeText),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Subí y consultá resultados de estudios provenientes de varias fuentes.',
-                  style: boldoHeadingTextStyle.copyWith(fontSize: 12),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Text(
-                  'Mis estudios',
-                  style: boldoSubTextStyle.copyWith(color: ConstantsV2.inactiveText),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                diagnosticReport.isEmpty
-                    ? showEmptyList()
-                    : showDiagnosticList()
-              ],
+              if (state is Failed) {
+                print('algo falló: ${state.msg}');
+                _loading = false;
+                _error = true;
+                setState(() {});
+                Scaffold.of(context).showSnackBar(const SnackBar(
+                    content: Text("Falló la obtención de estudios")));
+              }
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                
+                  TextButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.chevron_left_rounded,
+                      size: 25,
+                      color: Constants.extraColor400,
+                    ),
+                    label: Text(
+                      'Mis Estudios',
+                      style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                    ),
+                  ),
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     Navigator.pop(context);
+                  //   },
+                  //   child: Row(
+                  //     children: [
+                  //       const Icon(
+                  //         Icons.chevron_left_rounded,
+                  //         size: 25,
+                  //         color: Constants.extraColor400,
+                  //       ),
+                  //       Text(
+                  //         'Estudios',
+                  //         style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+
+                  const SizedBox(height: 10),
+                  Text(
+                    'Subí y consultá resultados de estudios provenientes de varias fuentes.',
+                    style: boldoHeadingTextStyle.copyWith(fontSize: 12),
+                  ),
+                  // const SizedBox(
+                  //   height: 15,
+                  // ),
+                  // Text(
+                  //   'Mis estudios',
+                  //   style: boldoSubTextStyle.copyWith(
+                  //       color: ConstantsV2.inactiveText),
+                  // ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  diagnosticReport.isEmpty
+                      ? showEmptyList()
+                      : showDiagnosticList()
+                ],
+              ),
             ),
           ),
         ),
-      ),),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(context,
@@ -147,20 +175,25 @@ class _MyStudiesState extends State<MyStudies> {
   }
 
   showEmptyList() {
-    return Center(child: Column(
-      children: [
-        if (_loading)
-          const Text('Cargando...')
-        else if (_error)
-          const Text('Error')
-        else ...[
-            SvgPicture.asset('assets/images/empty_studies.svg', fit: BoxFit.cover),
-            Text('aún no tenés estudios para visualizar',
+    return Center(
+      child: Column(
+        children: [
+          if (_loading)
+            const Text('Cargando...')
+          else if (_error)
+            const Text('Error')
+          else ...[
+            SvgPicture.asset('assets/images/empty_studies.svg',
+                fit: BoxFit.cover),
+            Text(
+              'aún no tenés estudios para visualizar',
               textAlign: TextAlign.center,
-              style: boldoSubTextStyle.copyWith(color: ConstantsV2.orange),),
+              style: boldoSubTextStyle.copyWith(color: ConstantsV2.orange),
+            ),
           ]
-      ],
-    ),);
+        ],
+      ),
+    );
   }
 
   Widget showDiagnosticList() {
@@ -249,7 +282,7 @@ class _MyStudiesState extends State<MyStudies> {
                                   bottom: 2.0,
                                   right: 8.0),
                               child: diagnosticReport[index].sourceID ==
-                                      (prefs.getString('userId')?? '')
+                                      (prefs.getString('userId') ?? '')
                                   ? Row(
                                       children: [
                                         SvgPicture.asset(
@@ -271,7 +304,9 @@ class _MyStudiesState extends State<MyStudies> {
                                         ),
                                         const SizedBox(width: 6),
                                         Text(
-                                          diagnosticReport[index].source != null ? "subido por ${diagnosticReport[index].source?.split(' ')[0]}": 'Boldo',
+                                          diagnosticReport[index].source != null
+                                              ? "subido por ${diagnosticReport[index].source?.split(' ')[0]}"
+                                              : 'Boldo',
                                           style:
                                               boldoCorpSmallTextStyle.copyWith(
                                                   color: ConstantsV2.darkBlue),
