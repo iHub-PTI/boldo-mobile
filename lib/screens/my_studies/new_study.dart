@@ -131,7 +131,7 @@ class _NewStudyState extends State<NewStudy> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "En esta sección podés subir archivos y fotos de tus estudios médicos. ",
+                              "Cargá los siguientes datos básicos sobre el resultado de tu estudio.",
                               style: boldoCorpSmallTextStyle.copyWith(
                                   color: ConstantsV2.inactiveText,
                                   fontSize: 14),
