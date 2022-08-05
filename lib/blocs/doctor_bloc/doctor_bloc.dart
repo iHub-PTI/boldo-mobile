@@ -1,3 +1,4 @@
+import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
@@ -13,11 +14,11 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
   final UserRepository _patientRepository = UserRepository();
   DoctorBloc() : super(DoctorInitial()) {
     on<DoctorEvent>((event, emit) async {
-      if(event is ChangeUser) {
+      if(event is GetAvailability) {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.getPatient(event.id)!)
+        _patientRepository.getAvailabilities(id: event.id, startDate: event.startDate, endDate: event.endDate)!)
             .attempt()
             .run()
             .then((value) {
@@ -29,18 +30,17 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
         }else{
-          await _patientRepository.getDependents();
+          late List<NextAvailability> nextAvailability = [];
+          _post.foldRight(NextAvailability, (a, previous) => nextAvailability = a);
+          emit(AvailabilitiesObtained(availabilities: nextAvailability));
           emit(Success());
-          emit(ChangeFamily());
-          await Future.delayed(const Duration(seconds: 2));
-          emit(RedirectNextScreen());
         }
       }
-      if(event is ValidateQr) {
+      if(event is GetDoctor) {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.getDependent(event.id)!)
+        _patientRepository.getDoctor(id: event.id)!)
             .attempt()
             .run()
             .then((value) {
@@ -52,13 +52,8 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
 
-          await Future.delayed(const Duration(seconds: 2));
-          emit(RedirectBackScreen());
         }else{
-          user.isNew = false;
           emit(Success());
-          await Future.delayed(const Duration(seconds: 2));
-          emit(RedirectNextScreen());
         }
       }
       if(event is LinkFamily) {

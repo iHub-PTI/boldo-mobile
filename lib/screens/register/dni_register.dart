@@ -64,7 +64,7 @@ class _DniRegisterState extends State<DniRegister> {
 
   void getImageFromGallery() async {
 
-    userImageSelected = await picker.pickImage(source: ImageSource.gallery);
+    userImageSelected = await picker.pickImage(source: ImageSource.gallery,maxWidth: 500,maxHeight: 500, imageQuality: 50);
 
     if (userImageSelected != null) {
       BlocProvider.of<PatientRegisterBloc>(context).add(
@@ -79,7 +79,6 @@ class _DniRegisterState extends State<DniRegister> {
     firstCamera = cameras[0];
   }
 
-  var _image;
   bool _isFrontDni = true;
   bool _selfieRequest = false;
   @override

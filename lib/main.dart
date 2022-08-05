@@ -1,10 +1,16 @@
 import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
+import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
+import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
+import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
+import 'package:boldo/blocs/prescriptions_bloc/prescriptionsBloc.dart';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
+import 'package:boldo/screens/appointments/pastAppointments_screen.dart';
+import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/family/family_tab.dart';
 import 'package:boldo/screens/family/tabs/defined_relationship_screen.dart';
 import 'package:boldo/screens/family/tabs/familyConnectTransition.dart';
@@ -12,15 +18,18 @@ import 'package:boldo/screens/family/tabs/family_change_transition.dart';
 import 'package:boldo/screens/family/tabs/family_register_account.dart';
 import 'package:boldo/screens/family/tabs/metods_add_family_screen.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
+import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
+import 'package:boldo/screens/my_studies/my_studies_screen.dart';
+import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
 import 'package:boldo/screens/sing_in/sing_in_transition.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -33,6 +42,8 @@ import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/constants.dart';
 
+import 'blocs/doctor_bloc/doctor_bloc.dart';
+import 'blocs/prescription_bloc/prescriptionBloc.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
 import 'models/MedicalRecord.dart';
 import 'models/Patient.dart';
@@ -59,9 +70,6 @@ late UploadUrl userSelfieUrl;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await initializeDateFormatting('es', null);
-  Intl.defaultLocale = "es";
   await dotenv.load(fileName: ".env");
   // await dotenv.load(fileName: '.env');
 
@@ -72,8 +80,7 @@ Future<void> main() async {
   prefs = await SharedPreferences.getInstance();
   prefs.setBool(isFamily, prefs.getBool(isFamily) ?? false);
 
-  initDio(navKey: navKey);
-  initDioSecondaryAccess(navKey: navKey);
+  initDio(navKey: navKey, dio: dio);
   const storage = FlutterSecureStorage();
   String? session = await storage.read(key: "access_token");
 
@@ -88,7 +95,10 @@ Future<void> main() async {
     );
   }
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
+  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,]).then(
       (value) => runApp(
           MyApp(session: session??'')));
 }
@@ -122,7 +132,28 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<MedicalRecordBloc>(
             create: (BuildContext context) => MedicalRecordBloc(),
-          )
+          ),
+          BlocProvider<DoctorBloc>(
+              create: (BuildContext context) => DoctorBloc(),
+          ),
+          BlocProvider<HomeBloc>(
+            create: (BuildContext context) => HomeBloc(),
+          ),
+          BlocProvider<PrescriptionsBloc>(
+            create: (BuildContext context) => PrescriptionsBloc(),
+          ),
+          BlocProvider<PrescriptionBloc>(
+            create: (BuildContext context) => PrescriptionBloc(),
+          ),
+          BlocProvider<MyStudiesBloc>(
+              create: (BuildContext context) => MyStudiesBloc(),
+          ),
+          BlocProvider<HomeNewsBloc>(
+            create: (BuildContext context) => HomeNewsBloc(),
+          ),
+          BlocProvider<HomeAppointmentsBloc>(
+            create: (BuildContext context) => HomeAppointmentsBloc(),
+          ),
         ],
         child: MultiProvider(
           providers: [
@@ -150,6 +181,16 @@ class FullApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale("es", 'ES'),
+        const Locale('en'),
+        const Locale('fr'),
+      ],
       debugShowCheckedModeBanner: false,
       navigatorKey: navKey,
       title: 'Boldo',
@@ -166,6 +207,10 @@ class FullApp extends StatelessWidget {
         '/SignInSuccess' : (context) => SingInTransition(),
         '/FamilyTransition' : (context) => FamilyTransition(),
         '/familyDniRegister' : (context) => DniFamilyRegister(),
+        '/my_studies' : (context) => MyStudies(),
+        '/doctorsTab' : (context) => DoctorsTab(),
+        '/pastAppointmentsScreen' : (context) => const PastAppointmentsScreen(),
+        '/prescriptionsScreen' : (context) => const PrescriptionsScreen(),
       },
     );
   }

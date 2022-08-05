@@ -11,3 +11,10 @@ class UnlinkDependent extends FamilyEvent {
 }
 
 class GetFamilyList extends FamilyEvent {}
+
+class GetManagersList extends FamilyEvent {}
+
+class UnlinkCaretaker extends FamilyEvent {
+  final String id;
+  UnlinkCaretaker({required this.id});
+}

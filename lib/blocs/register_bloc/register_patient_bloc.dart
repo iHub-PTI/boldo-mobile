@@ -129,6 +129,10 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
               emit(Success());
               //show user screen confirmation
               await Future.delayed(const Duration(seconds: 3));
+              File(userImageSelected!.path).delete();
+              userImageSelected = null;
+              imageCache!.clearLiveImages();
+              imageCache!.clear();
               emit(SuccessPhotoUploaded(
                   actualPhotoStage: event.urlUploadType == UrlUploadType.frontal
                       ? UrlUploadType.back

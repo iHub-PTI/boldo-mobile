@@ -81,7 +81,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
 
           Center(
             child: Text(
-              'Politicas de privacidad',
+              'Políticas de privacidad',
               style: boldoHeadingTextStyle.copyWith(fontSize: 20),
             ),
           ),

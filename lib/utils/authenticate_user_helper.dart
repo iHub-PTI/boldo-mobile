@@ -43,7 +43,7 @@ class _LoginWebViewHelperState extends State<LoginWebViewHelper> {
         UserRepository().logout(context);
         //user canceled or generic error
         Navigator.of(context)
-            .popUntil(ModalRoute.withName("/onboarding"));
+            .pushNamedAndRemoveUntil("/onboarding", (Route<dynamic> route) => false);
         break;
       case 1:
         //new user register

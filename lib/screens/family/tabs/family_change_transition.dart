@@ -1,3 +1,5 @@
+import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
+import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/loading_helper.dart';
@@ -27,7 +29,6 @@ class _FamilyTransitionState extends State<FamilyTransition> {
   bool _dataLoading = true;
   Widget _background = const Background(text: "SingIn_1");
   FlutterAppAuth appAuth = FlutterAppAuth();
-
   GlobalKey scaffoldKey = GlobalKey();
 
   Future<void> timer() async {
@@ -40,8 +41,8 @@ class _FamilyTransitionState extends State<FamilyTransition> {
 
   @override
   void initState() {
-    timer();
     super.initState();
+    timer();
 
   }
 
@@ -58,15 +59,20 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                   backgroundColor: Colors.redAccent,
                 ),
               );
+              final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
+              //set previous value
+              prefs.setBool(isFamily, arguments[isFamily]);
               Navigator.pop(context);
               _dataLoading = false;
             }
             if(state is Success){
               _dataLoading = false;
+              BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
+              BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
             }
             if(state is RedirectNextScreen){
               // back to home
-              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+              Navigator.of(context).popUntil(ModalRoute.withName('/home'));
             }
             if(state is Loading){
               _dataLoading = true;
@@ -132,7 +138,7 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                                                 prefs.getBool(isFamily)?? false ?
                                                 Flexible(
                                                   child: Text(
-                                                    "${patient.givenName ?? ''}${patient.familyName ?? ''}",
+                                                    "${patient.givenName ?? ''} ${patient.familyName ?? ''}",
                                                     textAlign: TextAlign.center,
                                                     style: boldoBillboardTextStyleAlt.copyWith(
                                                         color: ConstantsV2.lightGrey

@@ -1,4 +1,4 @@
-import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
+import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/screens/family/tabs/my_managers_tab.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
@@ -62,23 +62,25 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            widget.isDependent
-                                ? Text(
-                              "${widget.patient!.givenName}${widget.patient!.familyName}",
-                              style: boldoSubTextMediumStyle.copyWith(
-                                  color: ConstantsV2.activeText
-                              ),
-                            )
-                                :Text(
-                              "${prefs.getString('name') ?? ''}${prefs.getString('lastName') ?? ''}",
-                              style: boldoSubTextMediumStyle.copyWith(
-                                  color: ConstantsV2.activeText
+                            Flexible(
+                              child: widget.isDependent
+                                  ? Text(
+                                "${widget.patient!.givenName} ${widget.patient!.familyName}",
+                                style: boldoSubTextMediumStyle.copyWith(
+                                    color: ConstantsV2.activeText
+                                ),
+                              )
+                                  :Text(
+                                "${prefs.getString('name') ?? ''} ${prefs.getString('lastName') ?? ''}",
+                                style: boldoSubTextMediumStyle.copyWith(
+                                    color: ConstantsV2.activeText
+                                ),
                               ),
                             ),
                             widget.isDependent && ! prefs.getBool(isFamily)! ? UnlinkFamilyWidget(
                               onTapCallback: (result) async {
                                 if (result == 'Desvincular') {
-                                  BlocProvider.of<PatientBloc>(context).add(UnlinkDependent(id: widget.patient!.id!));
+                                  BlocProvider.of<FamilyBloc>(context).add(UnlinkDependent(id: widget.patient!.id!));
                                 }
                               },
                             ): Container(),

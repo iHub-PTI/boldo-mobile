@@ -23,3 +23,8 @@ class UnlinkDependent extends PatientEvent {
 }
 
 class LogoutPatientPressed extends PatientEvent {}
+
+class EditProfile extends PatientEvent {
+  final Patient editingPatient;
+  EditProfile({required this.editingPatient});
+}

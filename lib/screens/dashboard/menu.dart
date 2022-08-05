@@ -31,12 +31,12 @@ class _MenuScreenState extends State<MenuScreen> {
     ),
     const ItemMenu(
       image: 'assets/icon/shield-check.svg',
-      title: 'Politicas de privacidad',
+      title: 'Polîticas de privacidad',
       page: PrivacyPolicy(),
     ),
     const ItemMenu(
       image: 'assets/icon/document-text.svg',
-      title: 'Terminos de servicio',
+      title: 'Términos de servicio',
       page: TermsOfServices(),
     ),
     // const ItemMenu(
@@ -100,7 +100,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "${patient.givenName??''}${patient.familyName??''}",
+                                    "${patient.givenName??''} ${patient.familyName??''}",
                                     style: boldoTitleRegularTextStyle,
                                   ),
                                 ],

@@ -31,6 +31,16 @@ class _FamilyScreenState extends State<FamilyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        actions: [],
+        leadingWidth: 200,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child:
+          SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+        ),
+      ),
       body: BlocListener<FamilyBloc, FamilyState>(
         listener: (context, state){
           if(state is Success) {
@@ -46,10 +56,16 @@ class _FamilyScreenState extends State<FamilyScreen> {
             );
             _loading = false;
           }else if(state is Loading){
-            print("LOADING");
             setState(() {
               _loading = true;
             });
+          }else if(state is DependentEliminated){
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Familiar Desvinculado'),
+                backgroundColor: Colors.greenAccent,
+              ),
+            );
           }
       },
       child: BlocBuilder<FamilyBloc, FamilyState>(

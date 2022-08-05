@@ -4,11 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../main.dart';
 import '../../../network/http.dart';
@@ -80,11 +80,14 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
           child: GestureDetector(
             onTap: () async {
               try {
-                FilePickerResult? result =
-                    await FilePicker.platform.pickFiles(type: FileType.image);
+                XFile? result =
+                    await ImagePicker().pickImage(source: ImageSource.gallery);
                 if (result != null) {
                   File? croppedFile = await ImageCropper().cropImage(
-                    sourcePath: result.files.first.path!,
+                    sourcePath: result.path,
+                    maxHeight: 1000,
+                    maxWidth: 1000,
+                    compressQuality: 100,
                     aspectRatioPresets: Platform.isAndroid
                         ? [
                             CropAspectRatioPreset.square,
@@ -123,10 +126,25 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
 
                       imageCache!.clear();
 
-                      editingPatient.photoUrl = response.data["location"];
-
-                      await http.put(Uri.parse(response.data["uploadUrl"]),
+                      var response2  = await http.put(Uri.parse(response.data["uploadUrl"]),
                           body: croppedFile.readAsBytesSync());
+                      if(response2.statusCode == 413){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                          content: Text("El tamaño de la foto es muy grande"),
+                          backgroundColor: Colors.redAccent,
+                          ),
+                        );
+                      }else if(response2.statusCode == 201){
+                        editingPatient.photoUrl = response.data["location"];
+                      }else{
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Ocurrio un error"),
+                            backgroundColor: Colors.redAccent,
+                          ),
+                        );
+                      }
                       setState(() {
                         _isLoading = false;
                       });
@@ -134,6 +152,12 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                       setState(() {
                         _isLoading = false;
                       });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Ocurrio un error"),
+                          backgroundColor: Colors.redAccent,
+                        ),
+                      );
                       print(exception);
                       await Sentry.captureException(
                         exception,
@@ -260,6 +284,7 @@ class ProfileImageView2 extends StatefulWidget {
   final double width;
   final bool border;
   final Patient? patient;
+  final Color? color;
 
   const ProfileImageView2({
     Key? key,
@@ -267,6 +292,7 @@ class ProfileImageView2 extends StatefulWidget {
     required this.width,
     required this.border,
     required this.patient,
+    this.color,
   }) : super(key: key);
 
   @override
@@ -322,9 +348,9 @@ class _ProfileImageViewState2 extends State<ProfileImageView2> {
 
             ),
             elevation: 4.0,
-            shape: widget.border ? const StadiumBorder(
+            shape: widget.border ? StadiumBorder(
                 side: BorderSide(
-                  color: Colors.white,
+                  color: widget.color?? Colors.white,
                   width: 3,
                 )
             ) : const CircleBorder(),

@@ -4,18 +4,14 @@ import 'package:boldo/widgets/custom_form_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:dio/dio.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../blocs/user_bloc/patient_bloc.dart';
 import './address_screen.dart';
 import './password_reset_screen.dart';
 import './components/profile_image.dart';
 
-import './actions/sharedActions.dart';
-import '../../widgets/custom_dropdown.dart';
 import '../../widgets/custom_form_input.dart';
 import '../../widgets/wrapper.dart';
 
@@ -35,8 +31,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _validate = false;
   bool loading = false;
-  bool _dataLoaded = false;
-  bool _dataLoading = true;
+  bool _dataLoaded = true;
+  bool _dataLoading = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -47,34 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _fetchProfileData() async {
-    try {
-
-      editingPatient = Patient.fromJson(patient.toJson());
-      setState(() {
-        _dataLoading = false;
-        _dataLoaded = true;
-      });
-    } on DioError catch (exception, stackTrace) {
-      print(exception);
-      setState(() {
-        _dataLoading = false;
-        _dataLoaded = false;
-      });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-    } catch (exception, stackTrace) {
-      print(exception);
-      setState(() {
-        _dataLoading = false;
-        _dataLoaded = false;
-      });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-    }
+    editingPatient = Patient.fromJson(patient.toJson());
   }
 
   Future<void> _updateProfile() async {
@@ -89,28 +58,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     Provider.of<UserProvider>(context, listen: false)
         .clearProfileFormMessages();
-    setState(() {
-      loading = true;
-    });
-    Map<String, String>? updateResponse = await updateProfile(context: context);
-    Provider.of<UserProvider>(context, listen: false).updateProfileEditMessages(
-        updateResponse["successMessage"]??'', updateResponse["errorMessage"]??'');
 
-    setState(() {
-      loading = false;
-    });
+    BlocProvider.of<PatientBloc>(context)
+        .add(EditProfile(editingPatient: editingPatient));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<PatientBloc, PatientState>(
-        listener: (context, state){
-          if(state is Success) {
-            setState(() {
-
-            });
-          }else if(state is Failed){
+        listener: (context, state) {
+          if (state is Loading) {
+            _dataLoading = true;
+          }
+          if (state is Success) {
+            _dataLoading = false;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Perfil actualizado!"),
+                backgroundColor: ConstantsV2.green,
+              ),
+            );
+          } else if (state is Failed) {
+            _dataLoading = false;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.response!),
@@ -142,8 +112,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Padding(
                     padding: EdgeInsets.only(top: 48.0),
                     child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          Constants.primaryColor400),
                       backgroundColor: Constants.primaryColor600,
                     ),
                   ),
@@ -172,24 +142,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             : AutovalidateMode.disabled,
                         key: _formKey,
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CustomFormInput(
+                              enable: false,
                               initialValue: editingPatient.givenName,
                               label: "Nombre",
                               validator: (value) => valdiateFirstName(value!),
-                              onChanged: (String val) => (editingPatient.givenName = val
-                              ),
+                              onChanged: (String val) =>
+                                  (editingPatient.givenName = val),
                             ),
-
 
                             const SizedBox(height: 20),
                             CustomFormInput(
+                              enable: false,
                               initialValue: editingPatient.familyName,
                               label: "Apellido",
                               validator: (value) => valdiateLasttName(value!),
-                              onChanged: (String val) => (
-                                editingPatient.familyName = val
-                              ),
+                              onChanged: (String val) =>
+                                  (editingPatient.familyName = val),
                             ),
 
                             //CustomDropdown(),
@@ -198,71 +170,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               initialValue: editingPatient.job,
                               secondaryLabel: "Opcional",
                               label: "Ocupación",
-                              onChanged: (String val) => (editingPatient.job = val),
+                              onChanged: (String val) =>
+                                  (editingPatient.job = val),
                             ),
 
                             const SizedBox(height: 20),
-                            Builder(
-                              builder: (context) {
-                                String selectedvalue = editingPatient.gender?? 'unknown';
-                                List<Map<String, String>> itemsList = [
-                                  {"title": "Masculino", "value": 'male'},
-                                  {"title": "Femenino", "value": 'female'}
-                                ];
-                                if (selectedvalue == "unknown") {
-                                  itemsList.add({
-                                    "title": "Selecciona tu género",
-                                    "value": 'unknown'
-                                  });
-                                }
-                                return CustomDropdown(
-                                  label: "Género",
-                                  selectedValue: selectedvalue,
-                                  itemsList: itemsList,
-                                  onChanged: (String val) =>
-                                    (editingPatient.gender = val),
-                                );
-                              },
+                             const Text(
+                              'Sexo',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                                color: Constants.extraColor400,
+                              ),
+                            ),
+                            DropdownButtonFormField<String>(
+                                value: editingPatient.gender == 'unknown'
+                                    ? null
+                                    : editingPatient.gender,
+                                hint: Text(
+                                  "Género",
+                                  style: boldoSubTextMediumStyle.copyWith(
+                                      color: ConstantsV2.activeText),
+                                ),
+                                style: boldoSubTextMediumStyle.copyWith(
+                                    color: Colors.black),
+                                onChanged: null,
+                                items: ['male', 'female']
+                                    .map((gender) => DropdownMenuItem<String>(
+                                          child: Text(gender == 'male'
+                                              ? 'Masculino'
+                                              : gender == 'female'
+                                                  ? "Femenino"
+                                                  : "desconocido"),
+                                          value: gender,
+                                        ))
+                                    .toList(),
+                                isExpanded: true,
+                                ),
+                            const SizedBox(height: 20),
+                            const Text(
+                              'Fecha de nacimiento (dd/mm/yyyy)',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                                color: Constants.extraColor400,
+                              ),
+                            ),
+                            const SizedBox(height: 7,),
+                             Text(
+                              '${ DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd').parse(editingPatient.birthDate!))}',
+                              style: const TextStyle(
+                                // fontWeight: FontWeight.w600,
+                                fontSize: 15,
+                                color: Constants.extraColor300,
+                              ),
                             ),
 
                             const SizedBox(height: 20),
-
-                            TextFormField(
-                              initialValue: DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd').parse(editingPatient.birthDate!)),
-                              inputFormatters: [MaskTextInputFormatter(mask: "##/##/####")],
-                              keyboardType: TextInputType.number,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Ingrese la fecha de nacimiento';
-                                } else {
-                                  try {
-                                    var inputFormat = DateFormat('dd/MM/yyyy');
-                                    var outputFormat = DateFormat('yyyy-MM-dd');
-                                    var date1 = inputFormat
-                                        .parse(value.toString().trim());
-                                    var date2 = outputFormat.format(date1);
-                                    editingPatient.birthDate = date2;
-                                  } catch (e) {
-                                    return "El formato de la fecha debe ser (dd/MM/yyyy)";
-                                  }
-                                }
-                                return null;
-                              },
-                              decoration: const InputDecoration(
-                                hintText: "31/12/2020",
-                                labelText: "Fecha de nacimiento (dd/mm/yyyy)",
-                              )
-                            ),
-
-                            const SizedBox(height: 20),
-                            if(!prefs.getBool(isFamily)!)
+                            if (!prefs.getBool(isFamily)!)
                               CustomFormInput(
-                                initialValue: editingPatient.email?? '',
+                                initialValue: editingPatient.email ?? '',
                                 label: "Correo electrónico",
                                 validator: (value) => validateEmail(value!),
-                                onChanged: (String val) => (editingPatient.email = val),
+                                onChanged: (String val) =>
+                                    (editingPatient.email = val),
                               ),
-                            if(!prefs.getBool(isFamily)!)
+                            if (!prefs.getBool(isFamily)!)
                               const SizedBox(height: 20),
 
                             CustomFormInput(
@@ -271,7 +244,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               secondaryLabel: "Opcional",
                               label: "Número de teléfono",
                               inputFormatters: [ValidatorInputFormatter()],
-                              onChanged: (String val) => (editingPatient.phone = val),
+                              onChanged: (String val) =>
+                                  (editingPatient.phone = val),
                             ),
                             const SizedBox(height: 20),
                             ListTile(
@@ -292,64 +266,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       'assets/icon/marker.svg',
                                     ),
                                     const SizedBox(width: 10),
-                                    const Text('Dirección', style: boldoSubTextStyle)
+                                    const Text('Dirección',
+                                        style: boldoSubTextStyle)
                                   ],
                                 ),
                               ),
                               trailing: const Icon(Icons.chevron_right),
                             ),
                             //TODO: not implemented for dependents
-                            if(!prefs.getBool(isFamily)!)
-                            ListTile(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => PasswordResetScreen(),
+                            if (!prefs.getBool(isFamily)!)
+                              ListTile(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PasswordResetScreen(),
+                                    ),
+                                  );
+                                },
+                                leading: SizedBox(
+                                  height: double.infinity,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SvgPicture.asset(
+                                        'assets/icon/key.svg',
+                                      ),
+                                      const SizedBox(width: 10),
+                                      const Text('Contraseña',
+                                          style: boldoSubTextStyle)
+                                    ],
                                   ),
-                                );
-                              },
-                              leading: SizedBox(
-                                height: double.infinity,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icon/key.svg',
-                                    ),
-                                    const SizedBox(width: 10),
-                                    const Text('Contraseña', style: boldoSubTextStyle)
-                                  ],
                                 ),
+                                trailing: const Icon(Icons.chevron_right),
                               ),
-                              trailing: const Icon(Icons.chevron_right),
-                            ),
                             const SizedBox(height: 8),
-                            SizedBox(
-                              child: Column(
-                                children: [
-                                  if (state is Failed)
-                                    Text(
-                                      state.response?? '',
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Constants.otherColor100,
-                                      ),
-                                    ),
-                                  if (state is Success)
-                                    const Text(
-                                      "Actualizado exitosamente",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Constants.primaryColor600,
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ),
                             const SizedBox(height: 8),
                             CustomFormButton(
-                              loading: loading,
+                              loading: _dataLoading,
                               text: "Guardar",
                               actionCallback: _updateProfile,
                             ),

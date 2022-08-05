@@ -1,4 +1,5 @@
 import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
+import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart'as medical;
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
@@ -128,15 +129,14 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                           : Expanded(
                               child: ListView.builder(
                                 itemCount: allAppointments.length,
+                                padding: const EdgeInsets.symmetric(vertical: 8),
                                 itemBuilder: (context, index) {
-                                  int daysDifference = DateTime.now()
-                                      .difference(DateTime.parse(
-                                              allAppointments[index].start!)
-                                          .toLocal())
-                                      .inDays;
+                                  int daysDifference = daysBetween(DateTime.now(),DateTime.parse(
+                                      allAppointments[index].start!)
+                                      .toLocal());
                                   return GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
+                                    onTap: () async {
+                                      await Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
@@ -145,6 +145,8 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                                                         allAppointments[index]
                                                             .id)),
                                       );
+                                      BlocProvider.of<medical.MedicalRecordBloc>(context)
+                                          .add(medical.InitialEvent());
                                     },
                                     child: Container(
                                       child: Card(
@@ -180,57 +182,60 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                                               ),
                                               Row(
                                                 children: [
-                                                  ClipOval(
-                                                    child: SizedBox(
-                                                      width: 54,
-                                                      height: 54,
-                                                      child: allAppointments[
-                                                                      index]
-                                                                  .doctor
-                                                                  ?.photoUrl ==
-                                                              null
-                                                          ? SvgPicture.asset(
-                                                              allAppointments[index]
-                                                                          .doctor!
-                                                                          .gender ==
-                                                                      "female"
-                                                                  ? 'assets/images/femaleDoctor.svg'
-                                                                  : 'assets/images/maleDoctor.svg',
-                                                              fit: BoxFit.cover)
-                                                          : CachedNetworkImage(
-                                                              fit: BoxFit.cover,
-                                                              imageUrl: allAppointments[
-                                                                          index]
-                                                                      .doctor!
-                                                                      .photoUrl ??
-                                                                  '',
-                                                              progressIndicatorBuilder:
-                                                                  (context, url,
-                                                                          downloadProgress) =>
-                                                                      Padding(
+                                                  Container(
+                                                    padding: EdgeInsets.only(right: 8),
+                                                    child: ClipOval(
+                                                      child: SizedBox(
+                                                        width: 54,
+                                                        height: 54,
+                                                        child: allAppointments[
+                                                        index]
+                                                            .doctor
+                                                            ?.photoUrl ==
+                                                            null
+                                                            ? SvgPicture.asset(
+                                                            allAppointments[index]
+                                                                .doctor!
+                                                                .gender ==
+                                                                "female"
+                                                                ? 'assets/images/femaleDoctor.svg'
+                                                                : 'assets/images/maleDoctor.svg',
+                                                            fit: BoxFit.cover)
+                                                            : CachedNetworkImage(
+                                                          fit: BoxFit.cover,
+                                                          imageUrl: allAppointments[
+                                                          index]
+                                                              .doctor!
+                                                              .photoUrl ??
+                                                              '',
+                                                          progressIndicatorBuilder:
+                                                              (context, url,
+                                                              downloadProgress) =>
+                                                              Padding(
                                                                 padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        26.0),
+                                                                const EdgeInsets
+                                                                    .all(
+                                                                    26.0),
                                                                 child:
-                                                                    LinearProgressIndicator(
+                                                                LinearProgressIndicator(
                                                                   value: downloadProgress
                                                                       .progress,
                                                                   valueColor: const AlwaysStoppedAnimation<
-                                                                          Color>(
+                                                                      Color>(
                                                                       Constants
                                                                           .primaryColor400),
                                                                   backgroundColor:
-                                                                      Constants
-                                                                          .primaryColor600,
+                                                                  Constants
+                                                                      .primaryColor600,
                                                                 ),
                                                               ),
-                                                              errorWidget: (context,
-                                                                      url,
-                                                                      error) =>
-                                                                  const Icon(Icons
-                                                                      .error),
-                                                            ),
+                                                          errorWidget: (context,
+                                                              url,
+                                                              error) =>
+                                                          const Icon(Icons
+                                                              .error),
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
                                                   Column(

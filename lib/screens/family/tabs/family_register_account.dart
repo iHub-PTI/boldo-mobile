@@ -38,22 +38,9 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
   }
 
   void getImageFromCamera() async {
-    final path = path_package.join(
-        (await getTemporaryDirectory()).path,
-        photoStage == UrlUploadType.frontal ? 'front.png' : photoStage == UrlUploadType.selfie ? 'selfie.png' : 'back.png');
+    userImageSelected = await picker.pickImage(source: ImageSource.camera, maxWidth: 500,maxHeight: 500, imageQuality: 50);
 
-    // Take a picture and save in path directory
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TakePictureScreen(cameras: cameras, path: path),
-      ),
-    );
-
-    bool isExist = await File(path).exists();
-    print("taked");
-    if (isExist) {
-      userImageSelected = XFile(path);
+    if (userImageSelected != null) {
       BlocProvider.of<PatientRegisterBloc>(context).add(
           UploadPhoto(urlUploadType: photoStage, image: userImageSelected));
     } else {
@@ -63,7 +50,7 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
 
   void getImageFromGallery() async {
 
-    userImageSelected = await picker.pickImage(source: ImageSource.gallery);
+    userImageSelected = await picker.pickImage(source: ImageSource.gallery, maxWidth: 500,maxHeight: 500, imageQuality: 50);
 
     if (userImageSelected != null) {
       BlocProvider.of<PatientRegisterBloc>(context).add(
@@ -200,8 +187,8 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                                 photoStage == UrlUploadType.selfie
                                     ? 'assets/images/selfie.png'
                                     : photoStage == UrlUploadType.frontal
-                                    ? 'assets/images/dni_front.png'
-                                    : 'assets/images/dni_back.png',
+                                    ? 'assets/images/CI_Illustration.png'
+                                    : 'assets/images/CI_Illustration_back.png',
                                 height: 250,
                                 width: MediaQuery.of(context).size.width,
                               ),

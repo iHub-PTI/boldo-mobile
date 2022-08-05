@@ -29,6 +29,8 @@ class _DoctorsTabState extends State<DoctorsTab> {
       RefreshController(initialRefresh: false);
 
   List<Doctor> doctors = [];
+  int offset = 0;
+  int page = 20;
   bool _loading = true;
 
   @override
@@ -43,6 +45,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
   }
 
   void getDoctors({int offset = 0}) async {
+    this.offset = offset;
     try {
       if (!mounted) return;
       if (offset == 0) {
@@ -102,7 +105,7 @@ class _DoctorsTabState extends State<DoctorsTab> {
         finalQueryString = "$finalQueryString&$appointmentType";
       }
       String queryStringOther =
-          Uri(queryParameters: {"offset": offset.toString(), "count": "20"})
+          Uri(queryParameters: {"offset": offset.toString(), "count": page.toString()})
               .query;
       finalQueryString = "$finalQueryString&$queryStringOther";
       Response response = await dio.get("/doctors?$finalQueryString");
@@ -116,6 +119,12 @@ class _DoctorsTabState extends State<DoctorsTab> {
         } else {
           doctors = [...doctors, ...doctorsList];
         }
+        doctors.sort((a, b) {
+          if (b.nextAvailability == null || a.nextAvailability == null ) {
+            return -1;
+          }
+            return DateTime.parse(a.nextAvailability!.availability!).compareTo(DateTime.parse(b.nextAvailability!.availability!));
+        });
       }
     } on DioError catch (exception, stackTrace) {
       print(exception);
@@ -145,156 +154,172 @@ class _DoctorsTabState extends State<DoctorsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        actions: [],
-        leadingWidth: 200,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child:
+    return GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            actions: [],
+            leadingWidth: 200,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child:
               SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
-        ),
-      ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Text("Médicos",
-                  style: boldoHeadingTextStyle.copyWith(fontSize: 20)),
             ),
-            Row(
+          ),
+          body: Container(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16, right: 16),
-                    child: CustomSearchBar(changeTextCallback: (text) {
-                      Provider.of<UtilsProvider>(context, listen: false)
-                          .setFilterText(text);
-                      getDoctors(offset: 0);
-                    }),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: TextButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.chevron_left_rounded,
+                      size: 25,
+                      color: Constants.extraColor400,
+                    ),
+                    label: Text("Médicos",
+                        style: boldoHeadingTextStyle.copyWith(fontSize: 20)),
                   ),
                 ),
-                GestureDetector(
-                  onTap: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const FilterScreen(),
+                Row(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16, right: 16),
+                        child: CustomSearchBar(changeTextCallback: (text) {
+                          Provider.of<UtilsProvider>(context, listen: false)
+                              .setFilterText(text);
+                          getDoctors(offset: 0);
+                        }),
                       ),
-                    );
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FilterScreen(),
+                          ),
+                        );
 
-                    getDoctors();
-                  },
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 15.0, left: 0.0),
-                        child: SvgPicture.asset(
-                          'assets/icon/filter.svg',
-                        ),
-                      ),
-                      Selector<UtilsProvider, bool>(
-                        selector: (buildContext, userProvider) =>
+                        getDoctors();
+                      },
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15.0, left: 0.0),
+                            child: SvgPicture.asset(
+                              'assets/icon/filter.svg',
+                            ),
+                          ),
+                          Selector<UtilsProvider, bool>(
+                            selector: (buildContext, userProvider) =>
                             userProvider.getFilterState,
-                        builder: (_, data, __) {
-                          if (data) {
-                            return Positioned(
-                              right: 13,
-                              top: 13,
-                              child: Container(
-                                padding: const EdgeInsets.all(1),
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                constraints: const BoxConstraints(
-                                  minWidth: 9,
-                                  minHeight: 9,
-                                ),
-                              ),
-                            );
-                          }
-                          return const SizedBox();
-                        },
+                            builder: (_, data, __) {
+                              if (data) {
+                                return Positioned(
+                                  right: 13,
+                                  top: 13,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(1),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    constraints: const BoxConstraints(
+                                      minWidth: 9,
+                                      minHeight: 9,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return const SizedBox();
+                            },
+                          ),
+                        ],
                       ),
-                    ],
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: _loading
+                      ? const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            Constants.primaryColor400),
+                        backgroundColor: Constants.primaryColor600,
+                      ))
+                      : doctors.isEmpty
+                      ? const Center(
+                      child: Text(
+                        "No se encontraron doctores",
+                      ))
+                      : SmartRefresher(
+                    enablePullDown: true,
+                    enablePullUp: true,
+                    footer: CustomFooter(
+                      builder: (BuildContext context, LoadStatus? mode) {
+                        Widget body = Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.arrow_upward,
+                              color: Constants.extraColor300,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            const Text(
+                              "Sube para cargar más",
+                              style: TextStyle(
+                                color: Constants.extraColor300,
+                              ),
+                            )
+                          ],
+                        );
+                        if (mode == LoadStatus.loading) {
+                          body = const CircularProgressIndicator();
+                        }
+                        return Container(
+                          height: 55.0,
+                          child: Center(child: body),
+                        );
+                      },
+                    ),
+                    header: const MaterialClassicHeader(
+                      color: Constants.primaryColor800,
+                    ),
+                    controller: _refreshController,
+                    onLoading: () {
+                      offset += page;
+                      getDoctors(offset: offset);
+                    },
+                    onRefresh: () {
+                      offset = 0;
+                      getDoctors(offset: offset);
+                    },
+                    child: ListView.builder(
+                      itemCount: doctors.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return _DoctorCard(doctor: doctors[index]);
+                      },
+                    ),
                   ),
                 )
               ],
             ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: _loading
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                          Constants.primaryColor400),
-                      backgroundColor: Constants.primaryColor600,
-                    ))
-                  : doctors.isEmpty
-                      ? const Center(
-                          child: Text(
-                          "No se encontraron doctores",
-                        ))
-                      : SmartRefresher(
-                          enablePullDown: true,
-                          enablePullUp: true,
-                          footer: CustomFooter(
-                            builder: (BuildContext context, LoadStatus? mode) {
-                              Widget body = Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.arrow_upward,
-                                    color: Constants.extraColor300,
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Text(
-                                    "Sube para cargar más",
-                                    style: TextStyle(
-                                      color: Constants.extraColor300,
-                                    ),
-                                  )
-                                ],
-                              );
-                              if (mode == LoadStatus.loading) {
-                                body = const CircularProgressIndicator();
-                              }
-                              return Container(
-                                height: 55.0,
-                                child: Center(child: body),
-                              );
-                            },
-                          ),
-                          header: const MaterialClassicHeader(
-                            color: Constants.primaryColor800,
-                          ),
-                          controller: _refreshController,
-                          onLoading: () {
-                            getDoctors(offset: doctors.length);
-                          },
-                          onRefresh: () {
-                            getDoctors(offset: 0);
-                          },
-                          child: ListView.builder(
-                            itemCount: doctors.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return _DoctorCard(doctor: doctors[index]);
-                            },
-                          ),
-                        ),
-            )
-          ],
-        ),
-      ),
+          ),
+        )
     );
   }
 }
@@ -329,7 +354,7 @@ class _DoctorCard extends StatelessWidget {
         availabilityText = "Disponible Hoy!";
       } else if (daysDifference > 0) {
         availabilityText =
-            "Disponible ${DateFormat('EEEE, dd MMMM').format(parsedAvailability)}";
+            "Disponible ${DateFormat('EEEE, dd MMMM', Localizations.localeOf(context).languageCode).format(parsedAvailability)}";
       }
     }
 
@@ -453,6 +478,7 @@ class _DoctorCard extends StatelessWidget {
                     height: 52,
                     child: TextButton(
                       onPressed: () async {
+                        FocusManager.instance.primaryFocus?.unfocus();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -478,6 +504,7 @@ class _DoctorCard extends StatelessWidget {
                     height: 52,
                     child: TextButton(
                       onPressed: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
                         Navigator.push(
                           context,
                           MaterialPageRoute(

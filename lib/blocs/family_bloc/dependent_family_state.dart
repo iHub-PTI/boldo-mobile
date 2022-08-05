@@ -15,3 +15,10 @@ class Failed extends FamilyState {
 class RedirectNextScreen extends FamilyState {}
 
 class Success extends FamilyState {}
+
+class DependentEliminated extends FamilyState {}
+
+class CaretakersObtained extends FamilyState {
+  final List<Patient> caretakers;
+  CaretakersObtained({required this.caretakers});
+}

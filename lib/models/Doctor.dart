@@ -132,7 +132,7 @@ class Specializations {
   Specializations({this.description, this.id});
 
   Specializations.fromJson(Map<String, dynamic> json) {
-    description = json['description'];
+    description = toLowerCase(json['description']!);
     id = json['id'];
   }
 

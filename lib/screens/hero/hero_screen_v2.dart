@@ -43,13 +43,6 @@ class HeroScreenV2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    dynamic _mediaQueryData = MediaQuery.of(context);
-    double screenWidth = _mediaQueryData.size.width;
-
-    double _safeAreaHorizontal =
-        _mediaQueryData.padding.left + _mediaQueryData.padding.right;
-
-    double safeBlockHorizontal = (screenWidth - _safeAreaHorizontal) / 100;
 
     return Scaffold(
       body: Stack(
@@ -83,99 +76,103 @@ class HeroScreenV2 extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            child: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container (
-                    margin: const EdgeInsets.all(16.0),
-                    child: Align(
-                        child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset('assets/icon/logo_text.svg'),
-                              const SizedBox(width: 16),
-                              const Expanded(
-                                child: Text(
-                                  "Tu ecosistema integral de servicios integrales de salud",
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.normal,
-                                    fontStyle: FontStyle.normal,
-                                    fontFamily: 'Montserrat',
-                                    color: Color(0xffF5F5F5),
-                                  ),
+          SafeArea(
+            child: Flex(
+              direction: Axis.vertical,
+              children: [
+                Expanded(
+                  child: Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container (
+                            margin: const EdgeInsets.all(16.0),
+                            child: Align(
+                                child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset('assets/icon/logo_text.svg', height: MediaQuery.of(context).size.height*0.15,),
+                                      const SizedBox(width: 16),
+                                      const Expanded(
+                                        child: Text(
+                                          "Tu ecosistema integral de servicios digitales de salud",
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.normal,
+                                            fontStyle: FontStyle.normal,
+                                            fontFamily: 'Montserrat',
+                                            color: Color(0xffF5F5F5),
+                                          ),
+                                        ),
+                                      )
+                                    ]
+                                )
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              height: MediaQuery.of(context).size.height*.50,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: items.length*2+1,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: _buildCarousel,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(right: 16, bottom: 16),
+                            alignment: Alignment.bottomRight,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: ConstantsV2.buttonPrimaryColor100,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(100),
                                 ),
-                              )
-                            ]
-                        )
-                    ),
-                  ),
-                  const Spacer(),
-                  Align(
-                    alignment: Alignment.center,
-                    child: AspectRatio(
-                      aspectRatio: 1.0,
-                      child: ListView.builder(
-                        itemCount: items.length*2+1,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: _buildCarousel,
+                              ),
+                              onPressed: () async {
+                                /*Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignUpPhoneInfo()),
+                      );*/
+                                Navigator.pushNamed(context, '/login');
+                              },
+                              child: Container(
+                                  constraints: const BoxConstraints(maxWidth: 142, maxHeight: 48),
+                                  child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Text(
+                                          "comenzar",
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.normal,
+                                            fontStyle: FontStyle.normal,
+                                            fontFamily: 'Montserrat',
+                                            color: ConstantsV2.primaryColor,
+                                          ),
+                                        ),
+                                        const Padding(padding: EdgeInsets.only(left: 10.0)),
+                                        SvgPicture.asset(
+                                          'assets/icon/arrow-right.svg',
+                                          semanticsLabel: 'Start icon',
+                                        ),
+                                      ]
+                                  )
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-
-                  const Spacer(),
-
-                  Container(
-                    margin: const EdgeInsets.only(right: 16, bottom: 16),
-                    alignment: Alignment.bottomRight,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: ConstantsV2.buttonPrimaryColor100,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                      ),
-                      onPressed: () async {
-                        /*Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SignUpPhoneInfo()),
-                        );*/
-                        Navigator.pushNamed(context, '/login');
-                      },
-                      child: Container(
-                          constraints: const BoxConstraints(maxWidth: 142, maxHeight: 48),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  "comenzar",
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.normal,
-                                    fontStyle: FontStyle.normal,
-                                    fontFamily: 'Montserrat',
-                                    color: ConstantsV2.primaryColor,
-                                  ),
-                                ),
-                                const Padding(padding: EdgeInsets.only(left: 10.0)),
-                                SvgPicture.asset(
-                                  'assets/icon/arrow-right.svg',
-                                  semanticsLabel: 'Start icon',
-                                ),
-                              ]
-                          )
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                  )
+                ),
+              ]
             ),
           )
         ]
@@ -311,130 +308,131 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated>{
               showInfoPlayer(animate!);
             });
         },
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 216, maxHeight: 319),
-          alignment: Alignment.bottomLeft,
-          child: Stack(
-            children: [
-              // Container that define the image background
-              Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage(carouselSlide!.image)
+        child: AspectRatio(
+          aspectRatio: 3/5,
+          child: Container(
+            child: Stack(
+              children: [
+                // Container that define the image background
+                Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: AssetImage(carouselSlide!.image)
+                    ),
                   ),
                 ),
-              ),
 
-              // Container that define the linear gradient background
-              Container(
-                decoration: BoxDecoration( // Back ground linear gradient
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: <Color> [
-                      color100!,
-                      color200!,
-                    ],
-                    stops: <double> [
-                      stopColor100!,
-                      stopColor200!,
-                    ]
+                // Container that define the linear gradient background
+                Container(
+                  decoration: BoxDecoration( // Back ground linear gradient
+                    gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: <Color> [
+                          color100!,
+                          color200!,
+                        ],
+                        stops: <double> [
+                          stopColor100!,
+                          stopColor200!,
+                        ]
+                    ),
                   ),
                 ),
-              ),
 
-              // Container used for group text info
-              Container(
-                margin: const EdgeInsets.only(left:16, right: 16, top: 16, bottom: 16),
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: AnimatedOpacity(
-                        opacity: textAppear! ? 0 : 1,
-                        duration: Duration(milliseconds: textAppear! ? 200 : 200),
-                        child:
-                        Text(
-                          carouselSlide!.title,
-                          style: const TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.normal,
-                            fontStyle: FontStyle.normal,
-                            fontFamily: 'Montserrat',
-                            color: Color(0xffF5F5F5),
+                // Container used for group text info
+                Container(
+                    margin: const EdgeInsets.only(left:16, right: 16, top: 16, bottom: 16),
+                    child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: AnimatedOpacity(
+                              opacity: textAppear! ? 0 : 1,
+                              duration: Duration(milliseconds: textAppear! ? 200 : 200),
+                              child:
+                              Text(
+                                carouselSlide!.title,
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.normal,
+                                  fontStyle: FontStyle.normal,
+                                  fontFamily: 'Montserrat',
+                                  color: Color(0xffF5F5F5),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                    Align(
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        child: AnimatedOpacity(
-                          opacity: textAppear! ? 1 : 0,
-                          duration: Duration(milliseconds: textAppear! ? 400 : 100),
-                          curve: Curves.easeOut,
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  carouselSlide!.title,
-                                  style: const TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.normal,
-                                    fontStyle: FontStyle.normal,
-                                    fontFamily: 'Montserrat',
-                                    color: Color(0xffF5F5F5),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  carouselSlide!.description,
-                                  style: const TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.normal,
-                                    fontStyle: FontStyle.normal,
-                                    fontFamily: 'Montserrat',
-                                    color: Color(0xffF5F5F5),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    elevation: 0.0,
-                                    primary: Constants.primaryColor500.withOpacity(0),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(6),
+                          Align(
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              child: AnimatedOpacity(
+                                opacity: textAppear! ? 1 : 0,
+                                duration: Duration(milliseconds: textAppear! ? 400 : 100),
+                                curve: Curves.easeOut,
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        carouselSlide!.title,
+                                        style: const TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.normal,
+                                          fontStyle: FontStyle.normal,
+                                          fontFamily: 'Montserrat',
+                                          color: Color(0xffF5F5F5),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  onPressed: () async {
+                                    Expanded(
+                                      child: Text(
+                                        carouselSlide!.description,
+                                        style: const TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.normal,
+                                          fontStyle: FontStyle.normal,
+                                          fontFamily: 'Montserrat',
+                                          color: Color(0xffF5F5F5),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          elevation: 0.0,
+                                          primary: Constants.primaryColor500.withOpacity(0),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                        ),
+                                        onPressed: () async {
 
-                                  },
-                                  child: Text(
-                                    carouselSlide!.secondaryText,
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.normal,
-                                      fontStyle: FontStyle.normal,
-                                      fontFamily: 'Montserrat',
-                                      color: Color(0xffF5F5F5),
+                                        },
+                                        child: Text(
+                                          carouselSlide!.secondaryText,
+                                          style: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.normal,
+                                            fontStyle: FontStyle.normal,
+                                            fontFamily: 'Montserrat',
+                                            color: Color(0xffF5F5F5),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ]
-                )
-              ),
+                        ]
+                    )
+                ),
 
-            ],
-          ),
+              ],
+            ),
+          )
         ),
       ),
     );
