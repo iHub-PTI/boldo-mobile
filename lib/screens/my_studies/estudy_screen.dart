@@ -175,7 +175,7 @@ class _StudyState extends State<Study> {
                                     borderRadius: BorderRadius.circular(16),
                                   ),
                                   child: Container(
-                                    padding: const EdgeInsets.all(16),
+                                    padding: const EdgeInsets.all(0),
                                     child: sourceLogo(diagnosticReport?.source
                                         ?.toUpperCase(), diagnosticReport?.sourceID),
                                   ))
