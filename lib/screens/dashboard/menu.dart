@@ -31,12 +31,12 @@ class _MenuScreenState extends State<MenuScreen> {
     ),
     const ItemMenu(
       image: 'assets/icon/shield-check.svg',
-      title: 'Politicas de privacidad',
+      title: 'Polîticas de privacidad',
       page: PrivacyPolicy(),
     ),
     const ItemMenu(
       image: 'assets/icon/document-text.svg',
-      title: 'Terminos de servicio',
+      title: 'Términos de servicio',
       page: TermsOfServices(),
     ),
     // const ItemMenu(
