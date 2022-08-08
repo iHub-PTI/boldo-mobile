@@ -14,6 +14,7 @@ part 'my_studies_state.dart';
 
 class MyStudiesBloc extends Bloc<MyStudiesEvent, MyStudiesState> {
   final MyStudesRepository _myStudiesRepository = MyStudesRepository();
+  List<File> files = [];
 
   MyStudiesBloc() : super(MyStudiesInitial()) {
     on<MyStudiesEvent>((event, emit) async {
@@ -84,6 +85,28 @@ class MyStudiesBloc extends Bloc<MyStudiesEvent, MyStudiesState> {
         } else {
           emit(Success());
         }
+      }else if(event is DeleteFiles){
+        files = [];
+      }else if(event is AddFiles){
+        if (files.isNotEmpty) {
+          files = [
+            ...files,
+            ...event.files
+          ];
+        } else {
+          files = event.files;
+        }
+      }else if(event is AddFile){
+        if (files.isNotEmpty) {
+          files = [
+            ...files,
+            event.file
+          ];
+        } else {
+          files = [event.file];
+        }
+      }else if(event is GetFiles){
+        emit(FilesObtained(files: files));
       }
     });
   }
