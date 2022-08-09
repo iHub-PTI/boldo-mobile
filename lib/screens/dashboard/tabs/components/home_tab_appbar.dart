@@ -165,7 +165,10 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                       margin: const EdgeInsets.all(16),
                       child: FloatingActionButton(
                         onPressed: () {
-                          _showFamilyBox();
+                          if(families.length > 0)
+                            _showFamilyBox();
+                          else
+                            Navigator.pushNamed(context, '/methods');
                         },
                         backgroundColor: ConstantsV2.orange,
                         child: SvgPicture.asset('assets/icon/family.svg'),
