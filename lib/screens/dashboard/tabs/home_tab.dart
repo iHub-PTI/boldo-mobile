@@ -446,11 +446,12 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 :SingleChildScrollView(
               child: Column(
                 children: [
-                  const EmptyStateV2(
-                    picture: "feed_empty.svg",
-                    textTop: "Nada para mostrar",
+                  EmptyStateV2(
                     textBottom:
-                    "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
+                    "${patient.gender == "unknown" ?
+                    "Bienvenido/a" :
+                    patient.gender == "male" ?
+                    "Bienvenido" : "Bienvenida"} a Boldo",
                   ),
                 ],
               ),
@@ -523,11 +524,12 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 :SingleChildScrollView(
               child: Column(
                 children: [
-                  const EmptyStateV2(
-                    picture: "feed_empty.svg",
-                    textTop: "Nada para mostrar",
+                  EmptyStateV2(
                     textBottom:
-                    "A medida que uses la app, las novedades se van a ir mostrando en esta sección",
+                    "${patient.gender == "unknown" ?
+                    "Bienvenido/a" :
+                    patient.gender == "male" ?
+                    "Bienvenido" : "Bienvenida"} a Boldo",
                   ),
                 ],
               ),
