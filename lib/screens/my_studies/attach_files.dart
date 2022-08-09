@@ -30,6 +30,7 @@ class _AttachFilesState extends State<AttachFiles> {
 
   @override
   void initState() {
+    BlocProvider.of<MyStudiesBloc>(context).add(GetFiles());
     super.initState();
   }
 
@@ -65,6 +66,12 @@ class _AttachFilesState extends State<AttachFiles> {
                 print('failed: ${state.msg}');
                 Scaffold.of(context)
                     .showSnackBar(SnackBar(content: Text(state.msg)));
+              }
+              if(state is FilesObtained){
+                files = state.files;
+                setState(() {
+
+                });
               }
             },
             child: Column(
@@ -295,9 +302,19 @@ class _AttachFilesState extends State<AttachFiles> {
     if (x != null) {
       setState(() {
         if (files.isNotEmpty) {
-          files = [...files, File(x!.path)];
+          BlocProvider.of<MyStudiesBloc>(context).add(
+              AddFiles(
+                  files: [File(x!.path)]
+              )
+          );
+          files = [...files, File(x.path)];
         } else {
-          files = [File(x!.path)];
+          BlocProvider.of<MyStudiesBloc>(context).add(
+              AddFiles(
+                  files: [File(x!.path)]
+              )
+          );
+          files = [File(x.path)];
         }
       });
     }
@@ -314,12 +331,22 @@ class _AttachFilesState extends State<AttachFiles> {
     if (result != null) {
       setState(() {
         if (files.isNotEmpty) {
+          BlocProvider.of<MyStudiesBloc>(context).add(
+              AddFiles(
+                  files: result!.files.map((e) => File(e.path!)).toList()
+              )
+          );
           files = [
             ...files,
-            ...result!.files.map((e) => File(e.path!)).toList()
+            ...result.files.map((e) => File(e.path!)).toList()
           ];
         } else {
-          files = result!.files.map((e) => File(e.path!)).toList();
+          BlocProvider.of<MyStudiesBloc>(context).add(
+              AddFiles(
+                  files: result!.files.map((e) => File(e.path!)).toList()
+              )
+          );
+          files = result.files.map((e) => File(e.path!)).toList();
         }
       });
     }
