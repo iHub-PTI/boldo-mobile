@@ -1,4 +1,5 @@
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
+import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart' as family;
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/loading_helper.dart';
@@ -31,6 +32,7 @@ class _SingInTransitionState extends State<SingInTransition> {
   GlobalKey scaffoldKey = GlobalKey();
 
   Future<void> timer() async {
+    BlocProvider.of<family.FamilyBloc>(context).add(family.GetFamilyList());
     if(prefs.getBool(isFamily)?? false)
       BlocProvider.of<PatientBloc>(context).add(ChangeUser(id: prefs.getString("idFamily")));
     else
