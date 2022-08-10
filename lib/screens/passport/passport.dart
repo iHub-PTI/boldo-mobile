@@ -51,7 +51,80 @@ class _PassportTabState extends State<PassportTab> {
                   style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                 )
               ),
-            )
+            ),
+            // label and options for download vaccination
+            Padding(
+              padding: const EdgeInsets.only(left: 32, right: 16,top: 10),
+              child: Row(
+                children: [
+                  // Inmunizaciones label
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          child: Text(
+                            'Inmunizaciones',
+                            style: boldoHeadingTextStyle.copyWith(
+                              fontSize: 20
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // get QR whit an alert
+                  GestureDetector(
+                    onTap: () {
+                      // show QR alert
+
+                    },
+                    child: Container(
+                      height: 44,
+                      width: 44,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(10)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: SvgPicture.asset(
+                          'assets/icon/qrcode.svg',
+                          color: Colors.grey[800],
+                          height: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  // pdf download
+                  GestureDetector(
+                    // add bloc code
+                    onTap: () {
+
+                    },
+                    child: Container(
+                      height: 44,
+                      width: 44,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(10)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: SvgPicture.asset(
+                          'assets/icon/document-text.svg',
+                          color: Colors.grey[800],
+                          height: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
