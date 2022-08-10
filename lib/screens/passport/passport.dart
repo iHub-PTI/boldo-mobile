@@ -15,6 +15,69 @@ class PassportTab extends StatefulWidget {
 
 // this class define the passport state
 class _PassportTabState extends State<PassportTab> {
+  // function for show qr alert
+  void showQrOptionsDialog(BuildContext context) {
+    showDialog(
+      barrierDismissible: true,
+      context: context,
+      builder: (BuildContext cxt) {
+        return Align(
+          alignment: Alignment.center,
+          child: Padding(
+            padding: MediaQuery.of(context).size.width > MediaQuery.of(context).size.height
+              ? const EdgeInsets.all(10)
+              : const EdgeInsets.all(16),
+            child: Material(
+              color: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              child: Padding(
+                padding: MediaQuery.of(context).size.width > MediaQuery.of(context).size.height
+                  ? const EdgeInsets.all(10)
+                  : const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                        //Navigator.pushNamed(context, '/user_qr_detail');
+                      },
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(color: Colors.white70, width: 1),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: SvgPicture.asset('assets/icon/select_all.svg'),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                        //Navigator.pushNamed(context, '/vaccine_filter');
+                      },
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(color: Colors.white70, width: 1),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child:
+                            SvgPicture.asset('assets/icon/select_to_show.svg'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+  
   // principal view
   @override
   Widget build(BuildContext context) {
@@ -75,10 +138,7 @@ class _PassportTabState extends State<PassportTab> {
                   ),
                   // get QR whit an alert
                   GestureDetector(
-                    onTap: () {
-                      // show QR alert
-
-                    },
+                    onTap: () => showQrOptionsDialog(context),
                     child: Container(
                       height: 44,
                       width: 44,
