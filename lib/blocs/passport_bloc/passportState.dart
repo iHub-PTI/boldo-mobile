@@ -1,6 +1,6 @@
 part of 'passportBloc.dart';
 
-
+@immutable
 abstract class PassportState {}
 
 class PassportInitial extends PassportState {}
