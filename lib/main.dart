@@ -49,6 +49,7 @@ import 'models/MedicalRecord.dart';
 import 'models/Patient.dart';
 import 'models/Relationship.dart';
 import 'models/User.dart';
+import 'models/VaccinationList.dart';
 import 'models/upload_url_model.dart';
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
@@ -59,6 +60,7 @@ User user = User();
 Patient patient = Patient();
 Patient editingPatient = Patient();
 late List<MedicalRecord> allMedicalData;
+List<UserVaccinate>? diseaseUserList;
 XFile? userImageSelected;
 int selectedPageIndex = 0;
 const storage = FlutterSecureStorage();

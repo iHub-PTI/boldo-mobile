@@ -10,7 +10,7 @@ import '../main.dart';
 import '../models/VaccinationList.dart';
 
 class PassportRepository {
-  Future<None>? geyUserDiseaseList() async {
+  Future<None>? getUserDiseaseList() async {
     try {
       print('get user Disease List');
       //fake json Covid
