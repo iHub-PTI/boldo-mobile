@@ -211,6 +211,42 @@ class _AttachFilesState extends State<AttachFiles> {
                                         ],
                                       ),
                                     ),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 14, horizontal: 16),
+                                        primary: ConstantsV2.lightest,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(100),
+                                        ),
+                                      ),
+                                      onPressed: getFromGallery,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'seleccionar imagen',
+                                            style: boldoSubTextMediumStyle
+                                                .copyWith(
+                                                color:
+                                                ConstantsV2.darkBlue),
+                                          ),
+                                          const SizedBox(
+                                            width: 4,
+                                          ),
+                                          SvgPicture.asset(
+                                              'assets/icon/image-search.svg'),
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -298,7 +334,7 @@ class _AttachFilesState extends State<AttachFiles> {
   getFromCamera() async {
     XFile? x;
     x = await ImagePicker.platform
-        .getImage(source: ImageSource.camera, maxWidth: 1000, maxHeight: 1000);
+        .getImage(source: ImageSource.camera);
     if (x != null) {
       setState(() {
         if (files.isNotEmpty) {
@@ -352,6 +388,31 @@ class _AttachFilesState extends State<AttachFiles> {
     }
   }
 
+  getFromGallery() async {
+    XFile? x;
+    x = await ImagePicker.platform
+        .getImage(source: ImageSource.gallery);
+    if (x != null) {
+      setState(() {
+        if (files.isNotEmpty) {
+          BlocProvider.of<MyStudiesBloc>(context).add(
+              AddFiles(
+                  files: [File(x!.path)]
+              )
+          );
+          files = [...files, File(x.path)];
+        } else {
+          BlocProvider.of<MyStudiesBloc>(context).add(
+              AddFiles(
+                  files: [File(x!.path)]
+              )
+          );
+          files = [File(x.path)];
+        }
+      });
+    }
+  }
+
   Widget _offsetPopup() {
     return PopupMenuButton<int>(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -389,6 +450,24 @@ class _AttachFilesState extends State<AttachFiles> {
                     ),
                     Text(
                       'seleccionar archivo',
+                      style: boldoSubTextMediumStyle.copyWith(
+                          color: ConstantsV2.darkBlue),
+                    ),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 4,
+                onTap: getFromGallery,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SvgPicture.asset('assets/icon/image-search.svg'),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      'seleccionar imagen',
                       style: boldoSubTextMediumStyle.copyWith(
                           color: ConstantsV2.darkBlue),
                     ),
