@@ -12,7 +12,7 @@ class CustomFormInput extends StatefulWidget {
   final int maxLines;
   final bool isPhoneNumber;
   final String label;
-  final Icon? customIcon;
+  final Widget? customIcon;
   final String? secondaryLabel;
   final String? initialValue;
   final String? customSVGIcon;
