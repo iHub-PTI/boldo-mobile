@@ -76,7 +76,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response,
           }
         ],
@@ -108,7 +108,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -142,7 +142,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response,
           }
         ],
@@ -171,7 +171,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response,
           }
         ],
@@ -199,7 +199,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -229,7 +229,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -254,7 +254,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -284,7 +284,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -317,7 +317,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -345,7 +345,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "dependentId": id,
             "responseError": ex.response?.data,
           }
@@ -384,7 +384,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -459,7 +459,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -569,7 +569,7 @@ class UserRepository {
             "photo": url,
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -640,7 +640,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -679,7 +679,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -707,7 +707,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -752,7 +752,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -788,7 +788,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -836,7 +836,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -873,7 +873,7 @@ class UserRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response?.data,
           }
         ],
@@ -910,7 +910,7 @@ class UserRepository {
           {
             "path": exception.requestOptions.path,
             "data": exception.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": exception.response?.data,
           }
         ],
@@ -939,7 +939,7 @@ class UserRepository {
           {
             "path": exception.requestOptions.path,
             "data": exception.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": exception.response?.data,
           }
         ],
