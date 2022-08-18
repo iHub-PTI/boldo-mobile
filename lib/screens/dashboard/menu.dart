@@ -39,6 +39,11 @@ class _MenuScreenState extends State<MenuScreen> {
       title: 'Términos de servicio',
       page: TermsOfServices(),
     ),
+    const ItemMenu(
+      image: 'assets/icon/share.svg',
+      title: 'Compartir',
+      page: null,
+    ),
     // const ItemMenu(
     //   image: 'assets/icon/adjustments.svg',
     //   title: 'Configuraciones',
@@ -128,7 +133,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       child: Align(
                         alignment: Alignment.bottomLeft,
                         child: Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.only(left: 8),
                           child: TextButton.icon(
                             onPressed: () {
                               UserRepository().logout(context);
