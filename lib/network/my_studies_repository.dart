@@ -64,8 +64,21 @@ class MyStudesRepository {
         throw Failure(
             "Falló la obtención de los estudios: Error ${response.statusCode}");
       }
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "responseError": ex.response,
+          }
+        ],
+      );
+      throw Failure("Falló la obtención de los estudios");
     } catch (e) {
-      throw Failure(e.toString());
+      throw Failure("Falló la obtención de los estudios");
     }
   }
 
@@ -86,8 +99,29 @@ class MyStudesRepository {
         throw Failure(
             "Falló la obtención de los estudios: Error ${response.statusCode}");
       }
-    } catch (e) {
-      throw Failure(e.toString());
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "responseError": ex.response,
+          }
+        ],
+      );
+      throw Failure("Falló la obtención del estudio");
+    } catch (ex) {
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "patient": prefs.getString("userId"),
+          }
+        ],
+      );
+      throw Failure("Falló la obtención del estudio");
     }
   }
 
