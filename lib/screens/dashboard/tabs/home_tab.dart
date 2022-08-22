@@ -446,12 +446,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 :SingleChildScrollView(
               child: Column(
                 children: [
-                  EmptyStateV2(
+                  const EmptyStateV2(
                     textBottom:
-                    "${patient.gender == "unknown" ?
-                    "Bienvenido/a" :
-                    patient.gender == "male" ?
-                    "Bienvenido" : "Bienvenida"} a Boldo",
+                    "A medida que uses la app, irás encontrando novedades tales como: "
+                        "próximas consultas, recetas y resultados de estudios.",
                   ),
                 ],
               ),
@@ -524,12 +522,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 :SingleChildScrollView(
               child: Column(
                 children: [
-                  EmptyStateV2(
+                  const EmptyStateV2(
                     textBottom:
-                    "${patient.gender == "unknown" ?
-                    "Bienvenido/a" :
-                    patient.gender == "male" ?
-                    "Bienvenido" : "Bienvenida"} a Boldo",
+                    "A medida que uses la app, irás encontrando novedades tales como: "
+                        "próximas consultas, recetas y resultados de estudios.",
                   ),
                 ],
               ),
