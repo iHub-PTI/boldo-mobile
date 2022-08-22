@@ -166,9 +166,12 @@ Future dialogPermission({
                 child: const Text('Rechazar'),
                 onPressed: () => Navigator.of(context).pop(),
               ),
-              const TextButton(
-                child: Text('Settings'),
-                onPressed: openAppSettings,
+              TextButton(
+                child: const Text('Settings'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  openAppSettings();
+                },
               ),
             ],
           );
@@ -182,9 +185,12 @@ Future dialogPermission({
               child: const Text('Rechazar'),
               onPressed: () => Navigator.of(context).pop(),
             ),
-            const CupertinoDialogAction(
-              child: Text('Settings'),
-              onPressed: openAppSettings,
+            CupertinoDialogAction(
+              child: const Text('Settings'),
+              onPressed: () {
+                Navigator.pop(context);
+                openAppSettings();
+              },
             ),
           ],
         );
