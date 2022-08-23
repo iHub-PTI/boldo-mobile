@@ -116,7 +116,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
                             const FamilyRectangleCard(isDependent: false)
                           ])),
                           Container(
-                            height: MediaQuery.of(context).size.height * 0.55,
+                            height: MediaQuery.of(context).size.height * 0.45,
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             alignment: Alignment.topLeft,
                             child: families.length > 0

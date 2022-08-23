@@ -61,6 +61,8 @@ class _NewStudyState extends State<NewStudy> {
 
   @override
   void initState() {
+    // Delete studies
+    BlocProvider.of<MyStudiesBloc>(context).add(DeleteFiles());
     super.initState();
   }
 

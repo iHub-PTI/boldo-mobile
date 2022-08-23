@@ -11,7 +11,7 @@ class DiagnosticReport {
       type,
       patientNotes;
 
-  List<dynamic>? attachmentUrls;
+  List<AttachmentUrl>? attachmentUrls;
 
   DiagnosticReport ({
     this.id,
@@ -33,7 +33,7 @@ class DiagnosticReport {
     source: json['source']!= null ? toLowerCase(json['source']!) : null,
     sourceID: json['sourceID'],
     type: json['category'],
-    attachmentUrls: json['attachmentUrls']?.map((e) => {'url': e['url'], 'contentType': e['contentType']}).toList(),
+    attachmentUrls: json['attachmentUrls']!= null ? List<AttachmentUrl>.from(json['attachmentUrls'].map((e) => AttachmentUrl.fromJson(e) )) : null,
   );
 
   Map<String, dynamic> toJson() {
@@ -44,4 +44,31 @@ class DiagnosticReport {
     data['patientNotes'] = patientNotes;
     return data;
   }
+}
+
+class AttachmentUrl {
+  String? url,
+      contentType,
+      title;
+
+  AttachmentUrl({
+    this.url,
+    this.contentType,
+    this.title,
+  });
+
+  factory AttachmentUrl.fromJson(Map<String, dynamic> json,) =>
+      AttachmentUrl(
+        url: json['url'],
+        contentType: json['contentType'],
+        title: json['title'],
+      );
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['url'] = url;
+    data['contentType'] = contentType;
+    return data;
+  }
+
 }

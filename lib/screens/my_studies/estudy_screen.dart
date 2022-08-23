@@ -261,7 +261,7 @@ class _StudyState extends State<Study> {
 
   Widget showStudy(BuildContext context, int index) {
     String type = getTypeFromContentType(
-            diagnosticReport?.attachmentUrls?[index]['contentType']) ??
+            diagnosticReport?.attachmentUrls?[index].contentType) ??
         '';
     return Card(
       elevation: 4,
@@ -273,12 +273,12 @@ class _StudyState extends State<Study> {
               context,
               MaterialPageRoute(
                   builder: (context) => ImageVisor(
-                        url: diagnosticReport!.attachmentUrls![index]['url'],
+                        url: diagnosticReport!.attachmentUrls![index].url?? '',
                       )),
             );
           } else if (type == 'pdf') {
             BlocProvider.of<MyStudiesBloc>(context).add(GetUserPdfFromUrl(
-                url: diagnosticReport!.attachmentUrls![index]['url']));
+                url: diagnosticReport!.attachmentUrls![index].url));
           }
         },
         child: Container(
@@ -316,13 +316,7 @@ class _StudyState extends State<Study> {
                           children: [
                             Flexible(
                               child: Text(
-                                "${patient.identifier}-"
-                                "${DateFormat('ddMMyy').format(DateTime.parse(diagnosticReport?.effectiveDate ?? DateTime.now().toString()).toLocal())}-"
-                                "${formatDate(
-                                  DateTime.now(),
-                                  [HH, '', mm],
-                                  locale: const SpanishDateLocale(),
-                                )}-${index}",
+                                "${diagnosticReport!.attachmentUrls![index].title}",
                                 style: boldoCorpMediumBlackTextStyle.copyWith(
                                     color: ConstantsV2.activeText),
                               ),
