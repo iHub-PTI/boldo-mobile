@@ -93,19 +93,19 @@ class _AppointmentCardState extends State<AppointmentCard> {
         // notify at home to delete this appointment
         BlocProvider.of<HomeAppointmentsBloc>(context).add(DeleteAppointmentHome(id: widget.appointment.id));
       }
-      if(minutes <= 0 && minutes >= -minutesToCloseAppointment) {
+      else if(minutes <= 0 && minutes > -minutesToCloseAppointment) {
         timer.cancel();
         _updateWaitingRoom(1*60); // check every minute
       }
-      if(minutes > 60) {
+      else if(minutes > 60) {
         timer.cancel();
         _updateWaitingRoom(30*60); // half hour
       }
-      if(minutes <= 60 && minutes > 15) {
+      else if(minutes <= 60 && minutes > 15) {
         timer.cancel();
         _updateWaitingRoom(60); // one minute
       }
-      if(minutes <= 15) {
+      else if(minutes <= 15 && minutes > 0) {
         timer.cancel();
         _updateWaitingRoom(2); //two seconds
       }
