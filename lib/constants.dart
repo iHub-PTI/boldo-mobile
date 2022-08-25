@@ -350,3 +350,4 @@ class ConstantsV2 {
 // Constants
 
 const String isFamily = 'isFamily';
+const int minutesToCloseAppointment = 120;
