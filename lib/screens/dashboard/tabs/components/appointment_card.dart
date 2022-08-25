@@ -54,6 +54,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
       isToday = daysDifference == 0 &&
           !["closed", "locked"].contains(widget.appointment.status);
     }
+    timer?.cancel();
+    _updateWaitingRoom(1);
   }
 
   @override
