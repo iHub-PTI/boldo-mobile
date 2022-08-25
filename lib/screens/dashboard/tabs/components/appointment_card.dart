@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:isolate';
 
+import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/Call/video_call.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
@@ -8,6 +9,7 @@ import 'package:boldo/screens/details/appointment_details.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
@@ -80,12 +82,21 @@ class _AppointmentCardState extends State<AppointmentCard> {
         timer.cancel();
       }
       actualDay = DateTime.now();
+      if(mounted)
       setState(() {
         minutes = appointmentDay.difference(actualDay).inMinutes + 1;
       });
-      // deactivate task once the room is open
-      if(minutes <= 0)
+      // deactivate task once the room is close
+      if(minutes <= -minutesToCloseAppointment) {
         timer.cancel();
+        widget.appointment.status="locked";
+        // notify at home to delete this appointment
+        BlocProvider.of<HomeAppointmentsBloc>(context).add(DeleteAppointmentHome(id: widget.appointment.id));
+      }
+      if(minutes <= 0 && minutes >= -minutesToCloseAppointment) {
+        timer.cancel();
+        _updateWaitingRoom(1*60); // check every minute
+      }
       if(minutes > 60) {
         timer.cancel();
         _updateWaitingRoom(30*60); // half hour
