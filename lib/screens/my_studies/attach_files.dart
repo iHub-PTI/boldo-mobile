@@ -4,6 +4,7 @@ import 'package:boldo/main.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -333,8 +334,11 @@ class _AttachFilesState extends State<AttachFiles> {
 
   getFromCamera() async {
     XFile? x;
-    x = await ImagePicker.platform
-        .getImage(source: ImageSource.camera);
+    x = await pickImage(
+        context: context,
+        source: ImageSource.camera,
+        permissionDescription: 'Se requiere acceso para tomar fotos'
+    );
     if (x != null) {
       setState(() {
         if (files.isNotEmpty) {
@@ -358,7 +362,8 @@ class _AttachFilesState extends State<AttachFiles> {
 
   getFromFiles() async {
     FilePickerResult? result;
-    result = await FilePicker.platform.pickFiles(
+    result = await pickFiles(
+      context: context,
       withData: true,
       allowMultiple: true,
       type: FileType.custom,
@@ -390,8 +395,10 @@ class _AttachFilesState extends State<AttachFiles> {
 
   getFromGallery() async {
     XFile? x;
-    x = await ImagePicker.platform
-        .getImage(source: ImageSource.gallery);
+    x = await pickImage(
+        context: context,
+        source: ImageSource.gallery,
+        permissionDescription: 'Se requiere acceso para subir fotos de la galeria');
     if (x != null) {
       setState(() {
         if (files.isNotEmpty) {
