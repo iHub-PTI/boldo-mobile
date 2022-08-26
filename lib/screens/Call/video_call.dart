@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'package:boldo/constants.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
@@ -97,6 +98,13 @@ class _VideoCallState extends State<VideoCall> {
   }
 
   Future<void> initCall() async {
+    // initialize the video renderers
+    await localRenderer.initialize();
+    await remoteRenderer.initialize();
+    if(!await checkMicrophonePermission(context: context) || ! await checkCameraPermission(context: context)){
+      Navigator.pop(context);
+      return;
+    }
     // FIXME: This will throw an error if permission is denied
     // Catch the error and show a smooth UI
     try {
@@ -109,14 +117,14 @@ class _VideoCallState extends State<VideoCall> {
       Navigator.of(context)
           .pop({"error": "You have to give access to your camera."});
     }
+    if(localStream == null){
+      return;
+    }
     if (localStream!.getAudioTracks() != null) {
       localStream!.getAudioTracks().forEach((track) {
         track.enableSpeakerphone(true);
       });
     }
-    // initialize the video renderers
-    await localRenderer.initialize();
-    await remoteRenderer.initialize();
     localRenderer.srcObject = localStream;
 
     void onRemoteStream(MediaStream stream) {
