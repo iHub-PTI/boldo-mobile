@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:boldo/main.dart';
 import 'package:camera/camera.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -107,8 +108,15 @@ async {
           imageQuality: imageQuality);
     }on PlatformException catch (e){
       // control permission to access camera
-
-      print(e);
+      await Sentry.captureMessage(
+        e.toString(),
+        params: [
+          {
+            "status": status,
+            "patient": prefs.getString("userId"),
+          }
+        ],
+      );
     }
     return image;
   }
@@ -124,25 +132,33 @@ Future<FilePickerResult?> pickFiles({
   String? permissionDescription})
 async {
   FilePickerResult? result;
-  try {
-    result = await FilePicker.platform.pickFiles(
-      withData: withData,
-      allowMultiple: allowMultiple,
-      type: type,
-      allowedExtensions: allowedExtensions,
-    );
-  }on PlatformException catch (e){
-    var x = await Permission.manageExternalStorage.status;
-    print("external status $x");
-    var y = await Permission.storage.status;
-    print("storage status $y");
-    // control permission to access files
-      if (await Permission.storage.isDenied)
-        dialogPermission(
-            context: context,
-            permissionTitle: 'Acesso a Archivos',
-            permissionDescription: permissionDescription?? 'Boldo requiere acceso a archivos');
-    print(e);
+  PermissionStatus status;
+  status = await Permission.storage.request();
+  if(status.isPermanentlyDenied){
+    dialogPermission(
+        context: context,
+        permissionTitle: 'Acesso a Archivos',
+        permissionDescription: permissionDescription?? 'Boldo requiere acceso a archivos');
+  }else if(status.isGranted){
+    try {
+      result = await FilePicker.platform.pickFiles(
+        withData: withData,
+        allowMultiple: allowMultiple,
+        type: type,
+        allowedExtensions: allowedExtensions,
+      );
+      return result;
+    }on PlatformException catch (ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "status": status,
+            "patient": prefs.getString("userId"),
+          }
+        ],
+      );
+    }
   }
   return result;
 
@@ -204,7 +220,7 @@ async {
   PermissionStatus status;
   status = await Permission.camera.request();
   print(status);
-  if(status.isPermanentlyDenied) {
+  if(status.isPermanentlyDenied || status.isDenied) {
     // control permission to access camera
     await dialogPermission(
         context: context,
@@ -218,5 +234,43 @@ async {
   }
   else
     return false;
+
+}
+
+Future<bool> checkCameraPermission({
+  required BuildContext context,
+  String? permissionDescription})
+async {
+  PermissionStatus status;
+  status = await Permission.camera.request();
+  if(!status.isGranted){
+    // control permission to access camera
+    await dialogPermission(
+        context: context,
+        permissionTitle: 'Acesso a Camara',
+        permissionDescription: permissionDescription?? 'Boldo requiere acceso a la camara');
+    return false;
+
+  }else
+    return true;
+
+}
+
+Future<bool> checkMicrophonePermission({
+  required BuildContext context,
+  String? permissionDescription})
+async {
+  PermissionStatus status;
+  status = await Permission.microphone.request();
+  if(!status.isGranted){
+    // control permission to access camera
+    await dialogPermission(
+        context: context,
+        permissionTitle: 'Acesso a Microfono',
+        permissionDescription: permissionDescription?? 'Boldo requiere acceso al microfono');
+    return false;
+
+  }else
+    return true;
 
 }
