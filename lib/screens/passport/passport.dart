@@ -1,5 +1,6 @@
 import 'package:boldo/blocs/passport_bloc/passportBloc.dart';
 import 'package:boldo/constants.dart';
+import 'package:boldo/screens/passport/passport_detail_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -325,13 +326,13 @@ class _VaccinatedCard extends State<VaccinateCard> {
             onTap: () {
               //Todo: replace for navigation route
 
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) => PassportDetail(
-              //             userVaccinate: diseaseUserList![indexInmunizacion],
-              //           )),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PassportDetail(
+                          userVaccinate: diseaseUserList![indexInmunizacion],
+                        )),
+              );
             },
             child: Container(
               width: MediaQuery.of(context).size.width,
