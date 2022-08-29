@@ -360,7 +360,7 @@ class _VaccinatedCard extends State<VaccinateCard> {
                                 Text(
                                     diseaseUserList![indexInmunizacion]
                                         .diseaseCode,
-                                    style: boldoTitleBlackTextStyle),
+                                    style: boldoSubTextStyle),
                                 const SizedBox(
                                   height: 20,
                                 ),
