@@ -95,7 +95,7 @@ class _PassportDetailState extends State<PassportDetail> {
                 : MediaQuery.of(context).size.width * 0.8,
             height: MediaQuery.of(context).size.height < 1200
                 ? MediaQuery.of(context).size.height < 800
-                    ? MediaQuery.of(context).size.height * 0.415
+                    ? MediaQuery.of(context).size.height * 0.416
                     : MediaQuery.of(context).size.height * 0.35
                 : MediaQuery.of(context).size.height * 0.4,
             child: Card(
