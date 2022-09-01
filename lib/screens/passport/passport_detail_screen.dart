@@ -1,6 +1,7 @@
 import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/VaccinationList.dart';
+import 'package:boldo/screens/passport/vaccine_card.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,13 +21,17 @@ class PassportDetail extends StatefulWidget {
 // implementation of the PassportDetail state
 class _PassportDetailState extends State<PassportDetail> {
   late PageController controller;
+  bool completeVaccineRecord = false;
   // initial state of the page
   @override
   void initState() {
     controller = PageController();
+    // so we calculate only once
+    completeVaccineRecord = _completeVaccineRecord();
     super.initState();
   }
 
+  // this function checks the schema
   bool _completeVaccineRecord() {
     // variable that we will return, false for default
     bool result = false;
@@ -72,6 +77,51 @@ class _PassportDetailState extends State<PassportDetail> {
     }
 
     return result;
+  }
+
+  Future _showMyDialog() async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Lista de vacunación'),
+          backgroundColor: Colors.white.withOpacity(0.8),
+          titlePadding: EdgeInsets.only(left: 28, top: 26),
+          actionsPadding: EdgeInsets.only(right: 6),
+          content: Container(
+            width: MediaQuery.of(context).size.width > 600
+                ? MediaQuery.of(context).size.width * 0.45
+                : MediaQuery.of(context).size.width * 0.8,
+            height: MediaQuery.of(context).size.height < 1200
+                ? MediaQuery.of(context).size.height < 800
+                    ? MediaQuery.of(context).size.height * 0.415
+                    : MediaQuery.of(context).size.height * 0.35
+                : MediaQuery.of(context).size.height * 0.4,
+            child: Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  side: BorderSide(width: 3, color: Constants.accordionbg)),
+              child: VaccinateCard(
+                userVaccinate: widget.userVaccinate,
+                completeVaccineRecord: completeVaccineRecord,
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'Listo',
+                style: TextStyle(color: Colors.black, fontSize: 16),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -133,7 +183,7 @@ class _PassportDetailState extends State<PassportDetail> {
                                 )),
                             // there is vaccination list
                             widget.userVaccinate!.vaccineApplicationList != null
-                                ? _completeVaccineRecord()
+                                ? completeVaccineRecord
                                     ? Align(
                                         alignment: Alignment.center,
                                         child: Row(
@@ -177,7 +227,7 @@ class _PassportDetailState extends State<PassportDetail> {
                                 alignment: Alignment.centerRight,
                                 child: GestureDetector(
                                   onTap: () {
-                                    //_showMyDialog();
+                                    _showMyDialog();
                                   },
                                   child: const Align(
                                     alignment: Alignment.center,
