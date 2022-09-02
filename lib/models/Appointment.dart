@@ -1,7 +1,10 @@
+import 'package:boldo/models/News.dart';
 import 'package:boldo/models/Prescription.dart';
+import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
+import 'package:flutter/widgets.dart';
 import './Doctor.dart';
 
-class Appointment {
+class Appointment extends News {
   String? status;
   String? id;
   String? start;
@@ -44,4 +47,14 @@ class Appointment {
     data["appointmentType"] = appointmentType;
     return data;
   }
+
+  @override
+  Widget show(){
+    return AppointmentCard(
+      appointment: this,
+      isInWaitingRoom: status == "open",
+      showCancelOption: true,
+    );
+  }
+
 }
