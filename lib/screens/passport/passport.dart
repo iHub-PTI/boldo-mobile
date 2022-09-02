@@ -1,6 +1,7 @@
 import 'package:boldo/blocs/passport_bloc/passportBloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/screens/passport/passport_detail_screen.dart';
+import 'package:boldo/screens/passport/vaccine_filter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,17 +35,19 @@ class _PassportTabState extends State<PassportTab> {
         return Align(
           alignment: Alignment.center,
           child: Padding(
-            padding: MediaQuery.of(context).size.width > MediaQuery.of(context).size.height
-              ? const EdgeInsets.all(10)
-              : const EdgeInsets.all(16),
+            padding: MediaQuery.of(context).size.width >
+                    MediaQuery.of(context).size.height
+                ? const EdgeInsets.all(10)
+                : const EdgeInsets.all(16),
             child: Material(
               color: Colors.transparent,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15)),
               child: Padding(
-                padding: MediaQuery.of(context).size.width > MediaQuery.of(context).size.height
-                  ? const EdgeInsets.all(10)
-                  : const EdgeInsets.all(16),
+                padding: MediaQuery.of(context).size.width >
+                        MediaQuery.of(context).size.height
+                    ? const EdgeInsets.all(10)
+                    : const EdgeInsets.all(16),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -55,7 +58,8 @@ class _PassportTabState extends State<PassportTab> {
                       },
                       child: Card(
                         shape: RoundedRectangleBorder(
-                          side: const BorderSide(color: Colors.white70, width: 1),
+                          side:
+                              const BorderSide(color: Colors.white70, width: 1),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: SvgPicture.asset('assets/icon/select_all.svg'),
@@ -67,11 +71,17 @@ class _PassportTabState extends State<PassportTab> {
                     GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
-                        //Navigator.pushNamed(context, '/vaccine_filter');
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  VaccineFilter(),
+                            ));
                       },
                       child: Card(
                         shape: RoundedRectangleBorder(
-                          side: const BorderSide(color: Colors.white70, width: 1),
+                          side:
+                              const BorderSide(color: Colors.white70, width: 1),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child:
@@ -87,7 +97,7 @@ class _PassportTabState extends State<PassportTab> {
       },
     );
   }
-  
+
   @override
   void initState() {
     BlocProvider.of<PassportBloc>(context).add(GetUserDiseaseList());
@@ -101,62 +111,61 @@ class _PassportTabState extends State<PassportTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leadingWidth: 200,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          leadingWidth: 200,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: SvgPicture.asset('assets/Logo.svg',
+                semanticsLabel: 'BOLDO Logo'),
+          ),
         ),
-      ),
-      body: BlocListener<PassportBloc, PassportState>(
-        listener: (context, state){
-          if (state is Failed || state is Success) {
-            if (state is Failed) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.response),
-                  backgroundColor: Colors.redAccent,
-                ),
-              );
-              _failedConectionCounter++;
-            } else {
-              _failedConectionCounter = 0;
+        body: BlocListener<PassportBloc, PassportState>(
+          listener: (context, state) {
+            if (state is Failed || state is Success) {
+              if (state is Failed) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.response),
+                    backgroundColor: Colors.redAccent,
+                  ),
+                );
+                _failedConectionCounter++;
+              } else {
+                _failedConectionCounter = 0;
+              }
+              setState(() {
+                _isloading = false;
+              });
             }
-            setState(() {
-              _isloading = false;
-            });
-          }
-          if (state is Loading) {
-            setState(() {
-              _isloading = true;
-            });
-          }
-        },
-        child: Stack(
-          children: [
+            if (state is Loading) {
+              setState(() {
+                _isloading = true;
+              });
+            }
+          },
+          child: Stack(children: [
             BlocBuilder<PassportBloc, PassportState>(
-              builder: (context, state){
+              builder: (context, state) {
                 if (state is Failed) {
                   return Align(
-                    alignment: Alignment.center,
-                    child: DataFetchErrorWidget(
-                      retryCallback: () async {
-                        if (_failedConectionCounter >= 3) {
-                          _failedConectionCounter = 0;
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DashboardScreen(),
-                              ),
-                              (route) => false);
-                        } else {
-                          BlocProvider.of<PassportBloc>(context)
-                              .add(GetUserDiseaseList());
-                        }
-                      },
-                    )
-                  );
+                      alignment: Alignment.center,
+                      child: DataFetchErrorWidget(
+                        retryCallback: () async {
+                          if (_failedConectionCounter >= 3) {
+                            _failedConectionCounter = 0;
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DashboardScreen(),
+                                ),
+                                (route) => false);
+                          } else {
+                            BlocProvider.of<PassportBloc>(context)
+                                .add(GetUserDiseaseList());
+                          }
+                        },
+                      ));
                 }
                 return SingleChildScrollView(
                   keyboardDismissBehavior:
@@ -172,23 +181,24 @@ class _PassportTabState extends State<PassportTab> {
                         Padding(
                           padding: const EdgeInsets.only(left: 16),
                           child: TextButton.icon(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(
-                              Icons.chevron_left_rounded,
-                              size: 25,
-                              color: Constants.extraColor400,
-                            ),
-                            label: Text(
-                              'Pasaporte',
-                              style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                            )
-                          ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              icon: const Icon(
+                                Icons.chevron_left_rounded,
+                                size: 25,
+                                color: Constants.extraColor400,
+                              ),
+                              label: Text(
+                                'Pasaporte',
+                                style: boldoHeadingTextStyle.copyWith(
+                                    fontSize: 20),
+                              )),
                         ),
                         // label and options for download vaccination
                         Padding(
-                          padding: const EdgeInsets.only(left: 32, right: 16,top: 10),
+                          padding: const EdgeInsets.only(
+                              left: 32, right: 16, top: 10),
                           child: Row(
                             children: [
                               // Inmunizaciones label
@@ -200,8 +210,7 @@ class _PassportTabState extends State<PassportTab> {
                                       child: Text(
                                         'Inmunizaciones',
                                         style: boldoHeadingTextStyle.copyWith(
-                                          fontSize: 20
-                                        ),
+                                            fontSize: 20),
                                       ),
                                     ),
                                   ],
@@ -232,9 +241,7 @@ class _PassportTabState extends State<PassportTab> {
                               // pdf download
                               GestureDetector(
                                 // add bloc code
-                                onTap: () {
-                              
-                                },
+                                onTap: () {},
                                 child: Container(
                                   height: 44,
                                   width: 44,
@@ -256,37 +263,38 @@ class _PassportTabState extends State<PassportTab> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 10,),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         // vaccine list
                         diseaseUserList != null
-                          ? VaccinateCard()
-                          : !_isloading
-                              ? Container(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                          'assets/images/empty-vaccination.png'),
-                                      const Text(
-                                        'usted no posee registro vacunatorio',
-                                        style: TextStyle(
-                                            color: Color.fromRGBO(
-                                                253, 165, 125, 1),
-                                            fontSize: 18),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : const Text('')
-                          
+                            ? VaccinateCard()
+                            : !_isloading
+                                ? Container(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                            'assets/images/empty-vaccination.png'),
+                                        const Text(
+                                          'usted no posee registro vacunatorio',
+                                          style: TextStyle(
+                                              color: Color.fromRGBO(
+                                                  253, 165, 125, 1),
+                                              fontSize: 18),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : const Text('')
                       ],
                     ),
                   ),
                 );
-            
-              },  
+              },
             ),
             if (_isloading)
               Align(
@@ -296,10 +304,8 @@ class _PassportTabState extends State<PassportTab> {
                       width: MediaQuery.of(context).size.width,
                       color: Colors.white.withOpacity(0.3),
                       child: const LoadingHelper()))
-          ]
-        ),
-      )
-    );
+          ]),
+        ));
   }
 }
 
@@ -375,9 +381,9 @@ class _VaccinatedCard extends State<VaccinateCard> {
                                   height: 2,
                                 ),
                                 Text(
-                                  MediaQuery.of(context).size.width > 410 
-                                    ? 'registro de vacunación\nelectrónico'
-                                    : 'registro de\nvacunación\nelectrónico',
+                                  MediaQuery.of(context).size.width > 410
+                                      ? 'registro de vacunación\nelectrónico'
+                                      : 'registro de\nvacunación\nelectrónico',
                                   style: boldoTitleBlackTextStyle.copyWith(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w300),
@@ -393,8 +399,8 @@ class _VaccinatedCard extends State<VaccinateCard> {
                                   width:
                                       MediaQuery.of(context).size.width * 0.2)
                               : MediaQuery.of(context).size.width < 410
-                                ? const SizedBox(width: 20)
-                                : const SizedBox(width: 0),
+                                  ? const SizedBox(width: 20)
+                                  : const SizedBox(width: 0),
                           dynamicDiseasesShow(
                               diseaseUserList![indexInmunizacion]
                                   .vaccineApplicationList!),
