@@ -155,6 +155,27 @@ const boldoBillboardTextStyleAlt = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoTabHeaderTextStyle = TextStyle(
+  fontStyle: FontStyle.normal,
+  fontSize: 19,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoTabHeaderSelectedTextStyle = TextStyle(
+  fontStyle: FontStyle.normal,
+  fontSize: 19,
+  fontWeight: FontWeight.w500,
+  fontFamily: 'Montserrat',
+);
+
+const boldoTabHeaderUnselectedTextStyle = TextStyle(
+  fontStyle: FontStyle.normal,
+  fontSize: 19,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
 ThemeData boldoTheme = ThemeData(
   fontFamily: 'Montserrat',
   elevatedButtonTheme: ElevatedButtonThemeData(
