@@ -84,6 +84,11 @@ class HomeNewsBloc extends Bloc<HomeNewsEvent, HomeNewsState> {
 
         // emit news
         emit(NewsLoaded(news: news));
+      }if(event is DeleteNews){
+
+        news = news.where((element) => element != event.news).toList();
+
+        emit(NewsLoaded(news: news));
       }
     });
   }
