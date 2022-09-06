@@ -308,7 +308,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                       ),
                       listStudiesDisplay(studiesOrders[index]),
                       Text(
-                        "${studiesOrders[index].diagnosis}",
+                        "${studiesOrders[index].notes?? ''}",
                         style: boldoCorpSmallTextStyle.copyWith(
                             color: ConstantsV2.inactiveText),
                       ),
