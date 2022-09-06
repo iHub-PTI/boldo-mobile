@@ -44,6 +44,7 @@ import 'package:boldo/constants.dart';
 
 import 'blocs/doctor_bloc/doctor_bloc.dart';
 import 'blocs/prescription_bloc/prescriptionBloc.dart';
+import 'blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
 import 'models/MedicalRecord.dart';
 import 'models/Patient.dart';
@@ -153,6 +154,9 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<HomeAppointmentsBloc>(
             create: (BuildContext context) => HomeAppointmentsBloc(),
+          ),
+          BlocProvider<StudyOrderBloc>(
+            create: (BuildContext context) => StudyOrderBloc(),
           ),
         ],
         child: MultiProvider(
