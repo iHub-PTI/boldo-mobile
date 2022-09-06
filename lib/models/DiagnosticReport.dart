@@ -41,7 +41,7 @@ class DiagnosticReport {
     data['description'] = description;
     data['effectiveDate'] = effectiveDate;
     data['category'] = type;
-    data['patientNotes'] = patientNotes;
+    data['PatientNotes'] = patientNotes;
     return data;
   }
 }
