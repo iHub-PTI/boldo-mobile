@@ -1,9 +1,11 @@
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
+import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Soep.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
+import 'package:boldo/screens/studies_orders/StudyOrderScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -142,6 +144,21 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                     const Divider(
                                         color: Constants.dividerAccordion,
                                         thickness: 1),
+                                    GestureDetector(
+                                      onTap: (){
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                StudyOrderScreen(encounterId: medicalRecord?.id?? "0")
+                                          ),
+                                        );
+                                      },
+                                      child: const Card(
+                                        color: Colors.orange,
+                                        child: Text("Ordenes"),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
