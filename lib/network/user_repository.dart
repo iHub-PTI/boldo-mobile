@@ -799,6 +799,37 @@ class UserRepository {
     }
   }
 
+  Future<MedicalRecord>? getMedicalRecordById(
+      String id) async {
+    try {
+      String url =
+          "${prefs.getBool(isFamily) == true ? '/profile/caretaker/dependent/${patient.id}/encounters/$id' :
+      '/profile/patient/encounters/$id'}";
+      MedicalRecord medicalRecord;
+      Response response = await dio.get(url);
+      if (response.statusCode == 200) {
+        medicalRecord = MedicalRecord.fromJson(response.data['encounter']);
+        return medicalRecord;
+      }
+      throw Failure("Response status desconocido ${response.statusCode}");
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se puede obtener el registro médico");
+    } catch (e) {
+      throw Failure(genericError);
+    }
+  }
+
   Future<List<Appointment>>? getAppointments() async {
     Response responseAppointments;
     try {
