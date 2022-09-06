@@ -35,6 +35,28 @@ class MedicalRecordBloc extends Bloc<MedicalRecordEvent, MedicalRecordState> {
           emit(MedicalRecordLoadedState(medicalRecord: medicalRecord));
           emit(Success());
         }
+      }else if (event is GetMedicalRecordById) {
+        emit(Loading());
+        var _post;
+        await Task(() =>
+        _patientRepository.getMedicalRecordById(event.id)!)
+            .attempt()
+            .mapLeftToFailure()
+            .run()
+            .then((value) {
+          _post = value;
+        }
+        );
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(Failed(response: response));
+        } else {
+          late MedicalRecord medicalRecord;
+          _post.foldRight(MedicalRecord, (a, previous) => medicalRecord = a);
+          emit(MedicalRecordLoadedState(medicalRecord: medicalRecord));
+          emit(Success());
+        }
       }else if(event is InitialEvent){
         emit(MedicalRecordInitial());
       }
