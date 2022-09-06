@@ -8,4 +8,10 @@ class GetMedicalRecord extends MedicalRecordEvent {
   GetMedicalRecord({required this.appointmentId});
 }
 
+class GetMedicalRecordById extends MedicalRecordEvent {
+  final String id;
+  GetMedicalRecordById({required this.id});
+}
+
+
 class InitialEvent extends MedicalRecordEvent {}
