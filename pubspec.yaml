@@ -144,6 +144,7 @@ flutter:
     - assets/images/
     - assets/decorations/
     - assets/fonts/
+    - assets/fake_studies_orders/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
