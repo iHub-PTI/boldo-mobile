@@ -141,9 +141,9 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 MedicalRecordsScreen(
-                                                    encounterId:
+                                                    appointment:
                                                         allAppointments[index]
-                                                            .id)),
+                                                            )),
                                       );
                                       BlocProvider.of<medical.MedicalRecordBloc>(context)
                                           .add(medical.InitialEvent());

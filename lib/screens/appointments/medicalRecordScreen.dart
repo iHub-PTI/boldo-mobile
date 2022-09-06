@@ -12,9 +12,9 @@ import 'package:intl/intl.dart';
 import '../../constants.dart';
 
 class MedicalRecordsScreen extends StatefulWidget {
-  final encounterId;
+  final Appointment appointment;
 
-  const MedicalRecordsScreen({@required this.encounterId});
+  const MedicalRecordsScreen({required this.appointment});
 
   @override
   _MedicalRecordsScreenState createState() => _MedicalRecordsScreenState();
@@ -29,7 +29,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
   void initState() {
     super.initState();
     BlocProvider.of<MedicalRecordBloc>(context)
-        .add(GetMedicalRecord(appointmentId: widget.encounterId));
+        .add(GetMedicalRecord(appointmentId: widget.appointment.id?? "0"));
   }
 
   @override
@@ -149,7 +149,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                           );
                         }else if(state is Failed){
                           return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<MedicalRecordBloc>(context)
-                              .add(GetMedicalRecord(appointmentId: widget.encounterId)));
+                              .add(GetMedicalRecord(appointmentId: widget.appointment.id?? "0")));
                         }else{
                           return Container();
                         }
