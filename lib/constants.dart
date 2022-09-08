@@ -124,6 +124,15 @@ const boldoCorpMediumTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoCorpMediumWithLineSeparationLargeTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 14,
+  height: 1.7,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
 const boldoCorpMediumBlackTextStyle = TextStyle(
   color: ConstantsV2.lightGrey,
   fontStyle: FontStyle.normal,
