@@ -9,7 +9,8 @@ class DiagnosticReport {
       source,
       sourceID,
       type,
-      patientNotes;
+      patientNotes,
+      serviceRequestId;
 
   List<AttachmentUrl>? attachmentUrls;
 
@@ -23,6 +24,7 @@ class DiagnosticReport {
     this.type,
     this.patientNotes,
     this.attachmentUrls,
+    this.serviceRequestId,
   });
 
   factory DiagnosticReport.fromJson(Map<String, dynamic> json,) => DiagnosticReport(
@@ -33,6 +35,7 @@ class DiagnosticReport {
     source: json['source']!= null ? toLowerCase(json['source']!) : null,
     sourceID: json['sourceID'],
     type: json['category'],
+    serviceRequestId: json['serviceRequestId'],
     attachmentUrls: json['attachmentUrls']!= null ? List<AttachmentUrl>.from(json['attachmentUrls'].map((e) => AttachmentUrl.fromJson(e) )) : null,
   );
 
@@ -42,6 +45,7 @@ class DiagnosticReport {
     data['effectiveDate'] = effectiveDate;
     data['category'] = type;
     data['PatientNotes'] = patientNotes;
+    data['serviceRequestId'] = serviceRequestId;
     return data;
   }
 }
