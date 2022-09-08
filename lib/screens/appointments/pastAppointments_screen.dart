@@ -123,8 +123,8 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> {
                     if (!_dataLoading && _dataLoaded)
                       allAppointments.isEmpty
                           ? const EmptyStateV2(
-                              picture: "feed_empty.svg",
-                              textTop: "Nada para mostrar",
+                              textBottom: "A medida que uses la aplicación podrás ir"
+                              " viendo el historial de citas médicas pasadas",
                             )
                           : Expanded(
                               child: ListView.builder(
