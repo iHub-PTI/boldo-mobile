@@ -22,16 +22,19 @@ class StudyOrderScreen extends StatefulWidget {
 class _StudyOrderScreenState extends State<StudyOrderScreen> {
   bool _loading = true;
   bool _error = false;
-  int _daysBetween =  0;
+  int _daysBetween = 0;
   MedicalRecord? encounter;
-  List<StudyOrder> studiesOrders = [];
+  List<ServiceRequest> studiesOrders = [];
   @override
   void initState() {
     BlocProvider.of<StudyOrderBloc>(context).add(GetNews());
     BlocProvider.of<MedicalRecordBloc>(context)
-        .add(GetMedicalRecordById(id: widget.encounterId?? "0"));
+        .add(GetMedicalRecordById(id: widget.encounterId ?? "0"));
     super.initState();
-    _daysBetween = daysBetween(DateTime.parse(encounter?.startTimeDate?? DateTime.now().toIso8601String()), DateTime.now());
+    _daysBetween = daysBetween(
+        DateTime.parse(
+            encounter?.startTimeDate ?? DateTime.now().toIso8601String()),
+        DateTime.now());
   }
 
   @override
@@ -44,7 +47,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
         leading: Padding(
           padding: const EdgeInsets.only(left: 16.0),
           child:
-          SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+              SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
         ),
       ),
       body: SafeArea(
@@ -55,7 +58,11 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
               BlocListener<StudyOrderBloc, StudyOrderState>(
                 listener: (context, state) {
                   if (state is StudiesLoaded) {
-                    studiesOrders = state.studiesOrder;
+                    for (var i = 0; i < state.studiesOrder.length; i++) {
+                      for (var j = 0; j < state.studiesOrder[i].serviceRequests!.length; j++){
+                        studiesOrders.add(state.studiesOrder[i].serviceRequests![j]);
+                      }
+                    }
                   }
 
                   if (state is FailedLoadedOrders) {
@@ -65,19 +72,22 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                 },
               ),
               BlocListener<MedicalRecordBloc, MedicalRecordState>(
-                  listener: (context, state) {
-                    if (state is Failed) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(state.response!),
-                          backgroundColor: Colors.redAccent,
-                        ),
-                      );
-                    } else if (state is MedicalRecordLoadedState) {
-                      encounter = state.medicalRecord;
-                      _daysBetween = daysBetween(DateTime.parse(encounter?.startTimeDate?? DateTime.now().toIso8601String()), DateTime.now());
-                    }
-                  },
+                listener: (context, state) {
+                  if (state is Failed) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.response!),
+                        backgroundColor: Colors.redAccent,
+                      ),
+                    );
+                  } else if (state is MedicalRecordLoadedState) {
+                    encounter = state.medicalRecord;
+                    _daysBetween = daysBetween(
+                        DateTime.parse(encounter?.startTimeDate ??
+                            DateTime.now().toIso8601String()),
+                        DateTime.now());
+                  }
+                },
               )
             ],
             child: SingleChildScrollView(
@@ -85,7 +95,6 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   TextButton.icon(
                     onPressed: () {
                       Navigator.pop(context);
@@ -102,49 +111,43 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                   ),
                   const SizedBox(height: 10),
                   BlocBuilder<StudyOrderBloc, StudyOrderState>(
-                  builder: (context, state) {
-                    if(state is StudiesLoaded){
+                      builder: (context, state) {
+                    if (state is StudiesLoaded) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           BlocBuilder<MedicalRecordBloc, MedicalRecordState>(
                               builder: (context, state) {
-                                if(state is Success){
-                                  return Text(
-                                    '${formatDate(
-                                      DateTime.parse(encounter?.startTimeDate?? DateTime.now().toIso8601String()),
-                                      [d, ' de ', MM, ' de ', yyyy],
-                                      locale: const SpanishDateLocale(),
-                                    )} (hace $_daysBetween ${_daysBetween == 1 ? "dia": "dias"})',
-                                    style: boldoCorpMediumTextStyle
-                                        .copyWith(
-                                        color: ConstantsV2
-                                            .darkBlue),
-                                  );
-                                }else if(state is Loading){
-                                  return Container(
-                                      child: const Center(
-                                          child: CircularProgressIndicator(
-                                            valueColor:
-                                            AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                                            backgroundColor: Constants.primaryColor600,
-                                          )
-                                      )
-                                  );
-                                }else if(state is Failed){
-                                  return Container(
-                                      child: DataFetchErrorWidget(
-                                          retryCallback: () =>
-                                              BlocProvider.of<MedicalRecordBloc>(context)
-                                                  .add(GetMedicalRecordById(
-                                                  id: widget.encounterId?? "0"
-                                              ))
-                                      )
-                                  );
-                                }else{
-                                  return Container();
-                                }
-                              }),
+                            if (state is Success) {
+                              return Text(
+                                '${formatDate(
+                                  DateTime.parse(encounter?.startTimeDate ??
+                                      DateTime.now().toIso8601String()),
+                                  [d, ' de ', MM, ' de ', yyyy],
+                                  locale: const SpanishDateLocale(),
+                                )} (hace $_daysBetween ${_daysBetween == 1 ? "dia" : "dias"})',
+                                style: boldoCorpMediumTextStyle.copyWith(
+                                    color: ConstantsV2.darkBlue),
+                              );
+                            } else if (state is Loading) {
+                              return Container(
+                                  child: const Center(
+                                      child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    Constants.primaryColor400),
+                                backgroundColor: Constants.primaryColor600,
+                              )));
+                            } else if (state is Failed) {
+                              return Container(
+                                  child: DataFetchErrorWidget(
+                                      retryCallback: () => BlocProvider.of<
+                                              MedicalRecordBloc>(context)
+                                          .add(GetMedicalRecordById(
+                                              id: widget.encounterId ?? "0"))));
+                            } else {
+                              return Container();
+                            }
+                          }),
                           const SizedBox(
                             height: 15,
                           ),
@@ -153,24 +156,21 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                               : showDiagnosticList()
                         ],
                       );
-                    }else if(state is LoadingOrders){
+                    } else if (state is LoadingOrders) {
                       return Container(
                           child: const Center(
                               child: CircularProgressIndicator(
-                                valueColor:
-                                AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                                backgroundColor: Constants.primaryColor600,
-                              )
-                          )
-                      );
-                    }else if(state is FailedLoadedOrders){
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            Constants.primaryColor400),
+                        backgroundColor: Constants.primaryColor600,
+                      )));
+                    } else if (state is FailedLoadedOrders) {
                       return Container(
                           child: DataFetchErrorWidget(
                               retryCallback: () =>
-                                  BlocProvider.of<StudyOrderBloc>(context).add(GetNews())
-                          )
-                      );
-                    }else{
+                                  BlocProvider.of<StudyOrderBloc>(context)
+                                      .add(GetNews())));
+                    } else {
                       return Container();
                     }
                   }),
@@ -185,15 +185,13 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
 
   showEmptyList() {
     return Center(
-      child: Column(
-        children: [
-          Text(
-            'no tienes órdenes de estudios para visualizar',
-            textAlign: TextAlign.center,
-            style: boldoSubTextStyle.copyWith(color: ConstantsV2.orange),
-          ),
-        ]
-      ),
+      child: Column(children: [
+        Text(
+          'no tienes órdenes de estudios para visualizar',
+          textAlign: TextAlign.center,
+          style: boldoSubTextStyle.copyWith(color: ConstantsV2.orange),
+        ),
+      ]),
     );
   }
 
@@ -237,58 +235,58 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                   children: [
                     ClipRect(
                         child: Row(
-                          children: [
-                            SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: SvgPicture.asset(
-                                studiesOrders[index].category == "LAB"
-                                    ? 'assets/icon/lab-dark.svg'
-                                    : studiesOrders[index].category == "IMG"
+                      children: [
+                        SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: SvgPicture.asset(
+                            studiesOrders[index].category == "LAB"
+                                ? 'assets/icon/lab-dark.svg'
+                                : studiesOrders[index].category == "IMG"
                                     ? 'assets/icon/image-dark.svg'
                                     : studiesOrders[index].category == "OTH"
-                                    ? 'assets/icon/other.svg'
-                                    : 'assets/images/LogoIcon.svg',
-                              ),
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              "${studiesOrders[index].category == "LAB" ? 'Laboratorio' : studiesOrders[index]. category == "IMG" ? 'Imágenes' : studiesOrders[index].category == "OTH" ? 'Otros' : 'Desconocido'}",
-                              style: boldoCorpSmallTextStyle.copyWith(
-                                  color: ConstantsV2.darkBlue),
-                            ),
-                          ],
-                        )),
+                                        ? 'assets/icon/other.svg'
+                                        : 'assets/images/LogoIcon.svg',
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          "${studiesOrders[index].category == "LAB" ? 'Laboratorio' : studiesOrders[index].category == "IMG" ? 'Imágenes' : studiesOrders[index].category == "OTH" ? 'Otros' : 'Desconocido'}",
+                          style: boldoCorpSmallTextStyle.copyWith(
+                              color: ConstantsV2.darkBlue),
+                        ),
+                      ],
+                    )),
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        studiesOrders[index].urgent?? false
-                        ? Card(
-                          elevation: 0,
-                          margin: EdgeInsets.zero,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0,
-                                top: 2.0,
-                                bottom: 2.0,
-                                right: 8.0),
-                            child: Row(
-                              children: [
-                                Text(
-                                  "urgente",
-                                  style:
-                                  boldoCorpSmallTextStyle.copyWith(
-                                      color: ConstantsV2.orange),
+                        studiesOrders[index].urgent ?? false
+                            ? Card(
+                                elevation: 0,
+                                margin: EdgeInsets.zero,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0,
+                                      top: 2.0,
+                                      bottom: 2.0,
+                                      right: 8.0),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "urgente",
+                                        style: boldoCorpSmallTextStyle.copyWith(
+                                            color: ConstantsV2.orange),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      SvgPicture.asset(
+                                        'assets/icon/warning.svg',
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                const SizedBox(width: 6),
-                                SvgPicture.asset(
-                                  'assets/icon/warning.svg',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ): Container(),
+                              )
+                            : Container(),
                       ],
                     ),
                   ],
@@ -308,7 +306,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                       ),
                       listStudiesDisplay(studiesOrders[index]),
                       Text(
-                        "${studiesOrders[index].notes?? ''}",
+                        "${studiesOrders[index].notes ?? ''}",
                         style: boldoCorpSmallTextStyle.copyWith(
                             color: ConstantsV2.inactiveText),
                       ),
@@ -349,17 +347,19 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
     );
   }
 
-  Widget listStudiesDisplay(StudyOrder studyOrder){
+  Widget listStudiesDisplay(ServiceRequest studyOrder) {
     return Row(
       children: [
-        if((studyOrder.studiesCodes?.length ?? 0 )> 0)
-          Text("${studyOrder.studiesCodes![0].display}"),
-        if((studyOrder.studiesCodes?.length ?? 0 )> 1)
-          Text(", ${studyOrder.studiesCodes![1].display}"),
-        if((studyOrder.studiesCodes?.length ?? 0 )> 2)
-          Text("... + ${(studyOrder.studiesCodes?.length ?? 0 )-2}"),
+        // if ((studyOrder.studiesCodes?.length ?? 0) > 0)
+        //   Text("${studyOrder.studiesCodes![0].display}"),
+        // if ((studyOrder.studiesCodes?.length ?? 0) > 1)
+        //   Text(", ${studyOrder.studiesCodes![1].display}"),
+        // if ((studyOrder.studiesCodes?.length ?? 0) > 2)
+        //   Text("... + ${(studyOrder.studiesCodes?.length ?? 0) - 2}"),
+        const Text(
+          'Estudios',
+          ),
       ],
     );
   }
-
 }
