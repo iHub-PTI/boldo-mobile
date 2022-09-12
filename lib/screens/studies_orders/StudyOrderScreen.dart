@@ -25,7 +25,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
   bool _error = false;
   int _daysBetween = 0;
   MedicalRecord? encounter;
-  List<ServiceRequest> studiesOrders = [];
+  StudyOrder? studiesOrders;
   @override
   void initState() {
     BlocProvider.of<StudyOrderBloc>(context).add(GetNewsId(encounter: widget.encounterId ?? "0"));
@@ -58,12 +58,8 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
             listeners: [
               BlocListener<StudyOrderBloc, StudyOrderState>(
                 listener: (context, state) {
-                  if (state is StudiesLoaded) {
-                    for (var i = 0; i < state.studiesOrder.length; i++) {
-                      for (var j = 0; j < state.studiesOrder[i].serviceRequests!.length; j++){
-                        studiesOrders.add(state.studiesOrder[i].serviceRequests![j]);
-                      }
-                    }
+                  if (state is StudyOrderLoaded) {
+                    studiesOrders = state.studyOrder;
                   }
 
                   if (state is FailedLoadedOrders) {
@@ -113,7 +109,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                   const SizedBox(height: 10),
                   BlocBuilder<StudyOrderBloc, StudyOrderState>(
                       builder: (context, state) {
-                    if (state is StudiesLoaded) {
+                    if (state is StudyOrderLoaded) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -152,7 +148,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                           const SizedBox(
                             height: 15,
                           ),
-                          studiesOrders.isEmpty
+                          studiesOrders?.serviceRequests?.isEmpty?? true
                               ? showEmptyList()
                               : showDiagnosticList()
                         ],
@@ -205,7 +201,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
           color: Colors.transparent,
           height: 5,
         ),
-        itemCount: studiesOrders.length,
+        itemCount: studiesOrders?.serviceRequests?.length?? 0,
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemBuilder: showStudy,
@@ -222,7 +218,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (BuildContext context) => AttachStudyByOrderScreen(studyOrder: studiesOrders[index],)));
+                  builder: (BuildContext context) => AttachStudyByOrderScreen(studyOrder: studiesOrders!.serviceRequests![index],)));
         },
         child: Container(
           padding: const EdgeInsets.all(8),
@@ -239,18 +235,18 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                           width: 18,
                           height: 18,
                           child: SvgPicture.asset(
-                            studiesOrders[index].category == "LAB"
+                            studiesOrders?.serviceRequests![index].category == "LAB"
                                 ? 'assets/icon/lab-dark.svg'
-                                : studiesOrders[index].category == "IMG"
+                                : studiesOrders?.serviceRequests![index].category == "IMG"
                                     ? 'assets/icon/image-dark.svg'
-                                    : studiesOrders[index].category == "OTH"
+                                    : studiesOrders?.serviceRequests![index].category == "OTH"
                                         ? 'assets/icon/other.svg'
                                         : 'assets/images/LogoIcon.svg',
                           ),
                         ),
                         const SizedBox(width: 5),
                         Text(
-                          "${studiesOrders[index].category == "LAB" ? 'Laboratorio' : studiesOrders[index].category == "IMG" ? 'Imágenes' : studiesOrders[index].category == "OTH" ? 'Otros' : 'Desconocido'}",
+                          "${studiesOrders?.serviceRequests![index].category == "LAB" ? 'Laboratorio' : studiesOrders?.serviceRequests![index].category == "IMG" ? 'Imágenes' : studiesOrders?.serviceRequests![index].category == "OTH" ? 'Otros' : 'Desconocido'}",
                           style: boldoCorpSmallTextStyle.copyWith(
                               color: ConstantsV2.darkBlue),
                         ),
@@ -260,7 +256,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        studiesOrders[index].urgent == false
+                        studiesOrders?.serviceRequests![index].urgent == false
                             ? Card(
                                 elevation: 0,
                                 margin: EdgeInsets.zero,
@@ -303,9 +299,9 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                       const SizedBox(
                         height: 4,
                       ),
-                      listStudiesDisplay(studiesOrders[index]),
+                      listStudiesDisplay(studiesOrders!.serviceRequests![index]),
                       Text(
-                        "${studiesOrders[index].notes ?? ''}",
+                        "${studiesOrders?.serviceRequests![index].notes ?? ''}",
                         style: boldoCorpSmallTextStyle.copyWith(
                             color: ConstantsV2.inactiveText),
                       ),
@@ -313,7 +309,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                         height: 8,
                       ),
                       Text(
-                        "Impresion diagnostica: ${studiesOrders[index].diagnosis}",
+                        "Impresion diagnostica: ${studiesOrders?.serviceRequests![index].diagnosis}",
                         style: boldoCorpSmallTextStyle.copyWith(
                             color: ConstantsV2.darkBlue),
                       ),

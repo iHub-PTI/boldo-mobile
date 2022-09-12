@@ -48,10 +48,10 @@ class StudyOrderBloc extends Bloc<StudyOrderEvent, StudyOrderState> {
           _post.leftMap((l) => response = l.message);
           emit(FailedLoadedOrders(response: response));
         }else{
-          late List<StudyOrder> studiesOrder = [];
+          late StudyOrder studiesOrder;
           _post.foldRight(StudyOrder, (a, previous) => studiesOrder = a);
 
-          emit(StudiesLoaded(studiesOrder: studiesOrder));
+          emit(StudyOrderLoaded(studyOrder: studiesOrder));
         }
       }
     });

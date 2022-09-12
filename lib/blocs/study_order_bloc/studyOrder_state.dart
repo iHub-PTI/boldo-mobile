@@ -16,3 +16,8 @@ class StudiesLoaded extends StudyOrderState {
   final List<StudyOrder> studiesOrder;
   StudiesLoaded({required this.studiesOrder});
 }
+
+class StudyOrderLoaded extends StudyOrderState {
+  final StudyOrder studyOrder;
+  StudyOrderLoaded({required this.studyOrder});
+}

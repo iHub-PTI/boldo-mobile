@@ -48,7 +48,7 @@ class StudiesOrdersRepository {
     }
   }
 
-  Future<List<StudyOrder>>? getStudiesOrdersId(String encounter) async {
+  Future<StudyOrder>? getStudiesOrdersId(String encounter) async {
     Response response;
 
     try {
@@ -56,12 +56,8 @@ class StudiesOrdersRepository {
       response = await dio.get('/profile/patient/encounter/${encounter}/serviceRequests');
       // there are study orders
       if (response.statusCode == 200) {
-        return studyOrderFromJson(response.data);
+        return StudyOrder.fromJson(response.data);
       } // no study orders
-      else if (response.statusCode == 204) {
-        // return empty list
-        return List<StudyOrder>.from([]);
-      }
       throw Failure(genericError);
     } on DioError catch (ex) {
       await Sentry.captureMessage(
