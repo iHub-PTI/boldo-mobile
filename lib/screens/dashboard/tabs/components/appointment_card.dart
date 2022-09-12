@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:isolate';
 
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
+import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/Call/video_call.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
@@ -94,6 +94,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
         widget.appointment.status="locked";
         // notify at home to delete this appointment
         BlocProvider.of<HomeAppointmentsBloc>(context).add(DeleteAppointmentHome(id: widget.appointment.id));
+        BlocProvider.of<HomeNewsBloc>(context).add(DeleteNews(news: widget.appointment));
       }
       else if(minutes <= 0 && minutes > -minutesToCloseAppointment) {
         timer.cancel();

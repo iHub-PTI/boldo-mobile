@@ -1,6 +1,9 @@
+import 'package:boldo/models/News.dart';
+import 'package:boldo/screens/dashboard/tabs/components/news_cards.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:flutter/material.dart';
 
-class DiagnosticReport {
+class DiagnosticReport extends News  {
   String?
   id,
   attachmentNumber,
@@ -48,6 +51,11 @@ class DiagnosticReport {
     data['serviceRequestId'] = serviceRequestId;
     return data;
   }
+
+  @override
+  Widget show() {
+    return DiagnosticReportCard(diagnosticReport: this);
+  }
 }
 
 class AttachmentUrl {
@@ -74,5 +82,7 @@ class AttachmentUrl {
     data['contentType'] = contentType;
     return data;
   }
+
+
 
 }
