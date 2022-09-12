@@ -8,18 +8,18 @@ String studyOrderToJson(List<StudyOrder> data) =>
 
 class StudyOrder {
   StudyOrder({
-    required this.authoredDate,
-    required this.doctor,
+    this.authoredDate,
+    this.doctor,
     this.encounterId,
     this.serviceRequests,
-    required this.serviceRequestsCount,
+    this.serviceRequestsCount,
   });
 
-  String authoredDate;
-  Doctor doctor;
+  String? authoredDate;
+  Doctor? doctor;
   String? encounterId;
   List<ServiceRequest>? serviceRequests;
-  int serviceRequestsCount;
+  int? serviceRequestsCount;
 
   factory StudyOrder.fromJson(Map<String, dynamic> json) => StudyOrder(
         authoredDate: json["authoredDate"],
@@ -34,7 +34,7 @@ class StudyOrder {
 
   Map<String, dynamic> toJson() => {
         "authoredDate": authoredDate,
-        "doctor": doctor.toJson(),
+        "doctor": doctor!.toJson(),
         "encounterId": encounterId,
         "serviceRequests": serviceRequests == null
             ? null
@@ -51,7 +51,7 @@ class Doctor {
     this.familyName,
     this.gender,
     this.givenName,
-    required this.id,
+    this.id,
     this.languages,
     this.phone,
     this.photoUrl,
@@ -65,7 +65,7 @@ class Doctor {
   String? familyName;
   String? gender;
   String? givenName;
-  String id;
+  String? id;
   List<Language>? languages;
   String? phone;
   String? photoUrl;
@@ -133,18 +133,18 @@ class Language {
 
 class ServiceRequest {
   ServiceRequest(
-      {required this.category,
-      required this.diagnosis,
+      {this.category,
+      this.diagnosis,
       this.encounterId,
-      required this.identifier,
-      required this.urgent,
+      this.identifier,
+      this.urgent,
       this.notes});
 
-  String category;
-  String diagnosis;
+  String? category;
+  String? diagnosis;
   String? encounterId;
-  String identifier;
-  bool urgent;
+  String? identifier;
+  bool? urgent;
   String? notes;
 
   factory ServiceRequest.fromJson(Map<String, dynamic> json) => ServiceRequest(
