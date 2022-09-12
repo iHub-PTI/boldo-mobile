@@ -418,9 +418,9 @@ class PastAppointmentCard extends StatelessWidget {
           MaterialPageRoute(
               builder: (context) =>
                   MedicalRecordsScreen(
-                      encounterId:
+                      appointment:
                       appointment
-                          .id)),
+                          )),
         );
         BlocProvider.of<medical.MedicalRecordBloc>(context)
             .add(medical.InitialEvent());
