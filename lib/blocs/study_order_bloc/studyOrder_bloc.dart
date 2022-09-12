@@ -12,27 +12,48 @@ class StudyOrderBloc extends Bloc<StudyOrderEvent, StudyOrderState> {
   StudyOrderBloc() : super(StudiesOrderInitial()) {
     on<StudyOrderEvent>((event, emit) async {
       if(event is GetNews){
-      emit(LoadingOrders());
-      var _post;
-      await Task(() =>
-      _ordersRepository.getStudiesOrders()!)
-          .attempt()
-          .run()
-          .then((value) {
-        _post = value;
-      }
-      );
-      var response;
-      if (_post.isLeft()) {
-        _post.leftMap((l) => response = l.message);
-        emit(FailedLoadedOrders(response: response));
-      }else{
-        late List<StudyOrder> studiesOrder = [];
-        _post.foldRight(StudyOrder, (a, previous) => studiesOrder = a);
+        emit(LoadingOrders());
+        var _post;
+        await Task(() =>
+        _ordersRepository.getStudiesOrders()!)
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        }
+        );
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(FailedLoadedOrders(response: response));
+        }else{
+          late List<StudyOrder> studiesOrder = [];
+          _post.foldRight(StudyOrder, (a, previous) => studiesOrder = a);
 
-        emit(StudiesLoaded(studiesOrder: studiesOrder));
+          emit(StudiesLoaded(studiesOrder: studiesOrder));
+        }
+      } else if(event is GetNewsId) {
+        emit(LoadingOrders());
+        var _post;
+        await Task(() =>
+        _ordersRepository.getStudiesOrdersId(event.encounter)!)
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        }
+        );
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(FailedLoadedOrders(response: response));
+        }else{
+          late List<StudyOrder> studiesOrder = [];
+          _post.foldRight(StudyOrder, (a, previous) => studiesOrder = a);
+
+          emit(StudiesLoaded(studiesOrder: studiesOrder));
+        }
       }
-    }
     });
   }
 }

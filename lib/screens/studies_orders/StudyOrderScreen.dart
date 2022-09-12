@@ -27,7 +27,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
   List<ServiceRequest> studiesOrders = [];
   @override
   void initState() {
-    BlocProvider.of<StudyOrderBloc>(context).add(GetNews());
+    BlocProvider.of<StudyOrderBloc>(context).add(GetNewsId(encounter: widget.encounterId ?? "0"));
     BlocProvider.of<MedicalRecordBloc>(context)
         .add(GetMedicalRecordById(id: widget.encounterId ?? "0"));
     super.initState();
