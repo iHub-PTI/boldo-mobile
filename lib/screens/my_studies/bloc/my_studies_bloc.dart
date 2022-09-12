@@ -5,8 +5,8 @@ import 'package:boldo/network/my_studies_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:open_file/open_file.dart' as open;
 import '../../../models/DiagnosticReport.dart';
 import 'package:http/http.dart' as http;
 part 'my_studies_event.dart';
@@ -119,7 +119,7 @@ class MyStudiesBloc extends Bloc<MyStudiesEvent, MyStudiesState> {
       File file = File("${dir.path}/" + fileName + ".pdf");
       print(dir.path);
       File urlFile = await file.writeAsBytes(bytes);
-      open.OpenFile.open(urlFile.path);
+      OpenFilex.open(urlFile.path);
        return const None();
     } catch (e) {
       throw Exception("Error opening url file");
