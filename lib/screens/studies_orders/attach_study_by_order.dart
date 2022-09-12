@@ -19,7 +19,7 @@ import '../../constants.dart';
 import '../../models/DiagnosticReport.dart';
 
 class AttachStudyByOrderScreen extends StatefulWidget {
-  final StudyOrder studyOrder;
+  final ServiceRequest studyOrder;
   AttachStudyByOrderScreen({Key? key, required this.studyOrder}) : super(key: key);
 
   @override
@@ -329,7 +329,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                               effectiveDate: DateTime.now().toIso8601String(),
                               sourceID: patient.id,
                               type: widget.studyOrder.category,
-                              serviceRequestId: widget.studyOrder.id,
+                              serviceRequestId: widget.studyOrder.identifier,
                             );
                             BlocProvider.of<AttachStudyOrderBloc>(context).add(
                                 SendStudyToServer(
