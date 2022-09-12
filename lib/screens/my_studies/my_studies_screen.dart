@@ -236,8 +236,8 @@ class _MyStudiesState extends State<MyStudies> {
                     child: Column(
                   children: [
                     SizedBox(
-                      width: 34,
-                      height: 34,
+                      width: 40,
+                      height: 40,
                       child: SvgPicture.asset(
                         diagnosticReport[index].type == "LABORATORY"
                             ? 'assets/icon/lab.svg'
@@ -339,22 +339,45 @@ class _MyStudiesState extends State<MyStudies> {
                       const SizedBox(
                         height: 8,
                       ),
-                      Container(
-                        child: Row(
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            SvgPicture.asset(
-                              'assets/icon/attach-file.svg',
+                            Row(
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/icon/attach-file.svg',
+                                ),
+                                const SizedBox(
+                                  width: 4,
+                                ),
+                                Text(
+                                  "${diagnosticReport[index].attachmentNumber} ${diagnosticReport[index].attachmentNumber == "1" ? "archivo adjunto" : "archivos adjuntos"}",
+                                  style: boldoCorpSmallTextStyle.copyWith(
+                                      color: ConstantsV2.darkBlue),
+                                )
+                              ],
                             ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              "${diagnosticReport[index].attachmentNumber} ${diagnosticReport[index].attachmentNumber == "1" ? "archivo adjunto" : "archivos adjuntos"}",
-                              style: boldoCorpSmallTextStyle.copyWith(
-                                  color: ConstantsV2.darkBlue),
-                            )
-                          ],
-                        ),
+                            diagnosticReport[index].serviceRequestId != null
+                                ? ElevatedButton(
+                                    child: const Text(
+                                      'ver orden',
+                                      style: TextStyle(
+                                          fontSize: 10,
+                                          fontFamily: 'Montserrat'),
+                                    ),
+                                    style: ButtonStyle(
+                                      shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(18.0),
+                                              side: const BorderSide(
+                                                  color: ConstantsV2.orange))),
+                                    ),
+                                    onPressed: () {},
+                                  )
+                                : Container()
+                          ]
                       ),
                     ],
                   ),
