@@ -3,6 +3,7 @@ import 'package:boldo/blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
+import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
@@ -216,14 +217,12 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
     return Card(
       elevation: 1,
       margin: const EdgeInsets.only(bottom: 4),
-      child: InkWell(
+      child: GestureDetector(
         onTap: () {
-          /*Navigator.push(
+          Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (BuildContext context) => Study(
-                    id: diagnosticReport[index].id ?? '0',
-                  )));*/
+                  builder: (BuildContext context) => AttachStudyByOrderScreen(studyOrder: studiesOrders[index],)));
         },
         child: Container(
           padding: const EdgeInsets.all(8),
@@ -261,7 +260,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        studiesOrders[index].urgent ?? false
+                        studiesOrders[index].urgent == false
                             ? Card(
                                 elevation: 0,
                                 margin: EdgeInsets.zero,
