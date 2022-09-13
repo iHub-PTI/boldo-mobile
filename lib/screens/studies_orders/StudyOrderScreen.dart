@@ -235,18 +235,18 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                           width: 18,
                           height: 18,
                           child: SvgPicture.asset(
-                            studiesOrders?.serviceRequests![index].category == "LAB"
+                            studiesOrders?.serviceRequests![index].category == "Laboratory"
                                 ? 'assets/icon/lab-dark.svg'
-                                : studiesOrders?.serviceRequests![index].category == "IMG"
+                                : studiesOrders?.serviceRequests![index].category == "Diagnostic Imaging"
                                     ? 'assets/icon/image-dark.svg'
-                                    : studiesOrders?.serviceRequests![index].category == "OTH"
+                                    : studiesOrders?.serviceRequests![index].category == "Other"
                                         ? 'assets/icon/other.svg'
                                         : 'assets/images/LogoIcon.svg',
                           ),
                         ),
                         const SizedBox(width: 5),
                         Text(
-                          "${studiesOrders?.serviceRequests![index].category == "LAB" ? 'Laboratorio' : studiesOrders?.serviceRequests![index].category == "IMG" ? 'Imágenes' : studiesOrders?.serviceRequests![index].category == "OTH" ? 'Otros' : 'Desconocido'}",
+                          "${studiesOrders?.serviceRequests![index].category == "Laboratory" ? 'Laboratorio' : studiesOrders?.serviceRequests![index].category == "Diagnostic Imaging" ? 'Imágenes' : studiesOrders?.serviceRequests![index].category == "Other" ? 'Otros' : 'Desconocido'}",
                           style: boldoCorpSmallTextStyle.copyWith(
                               color: ConstantsV2.darkBlue),
                         ),
@@ -256,7 +256,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        studiesOrders?.serviceRequests![index].urgent == false
+                        studiesOrders?.serviceRequests?[index].urgent ?? false
                             ? Card(
                                 elevation: 0,
                                 margin: EdgeInsets.zero,
