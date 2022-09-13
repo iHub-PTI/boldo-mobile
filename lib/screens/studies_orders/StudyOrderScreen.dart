@@ -118,8 +118,8 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                             if (state is Success) {
                               return Text(
                                 '${formatDate(
-                                  DateTime.parse(encounter?.startTimeDate ??
-                                      DateTime.now().toIso8601String()),
+                                  DateTime.parse(studiesOrders?.authoredDate ??
+                                      studiesOrders!.authoredDate!),
                                   [d, ' de ', MM, ' de ', yyyy],
                                   locale: const SpanishDateLocale(),
                                 )} (hace $_daysBetween ${_daysBetween == 1 ? "dia" : "dias"})',

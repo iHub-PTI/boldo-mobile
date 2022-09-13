@@ -48,7 +48,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
         );
       } else if (state is MedicalRecordLoadedState) {
         medicalRecord = state.medicalRecord;
-        _daysBetween = daysBetween(DateTime.parse(medicalRecord?.startTimeDate?? DateTime.now().toIso8601String()), DateTime.now());
+        _daysBetween = daysBetween(DateTime.parse(widget.appointment.start ?? DateTime.now().toIso8601String()), DateTime.now());
       }
     }, child: Scaffold(
         appBar: AppBar(
@@ -111,7 +111,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                         children: [
                                           Text(
                                             '${formatDate(
-                                              DateTime.parse(medicalRecord?.startTimeDate?? DateTime.now().toIso8601String()),
+                                              DateTime.parse(widget.appointment.start ?? DateTime.now().toIso8601String()),
                                               [d, ' de ', MM, ' de ', yyyy],
                                               locale: const SpanishDateLocale(),
                                             )} (hace $_daysBetween ${_daysBetween == 1 ? "dia": "dias"})',
