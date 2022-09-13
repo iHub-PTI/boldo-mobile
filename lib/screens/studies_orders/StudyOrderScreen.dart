@@ -1,8 +1,10 @@
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/blocs/study_order_bloc/studyOrder_bloc.dart';
+import 'package:boldo/main.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
+import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
 import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:date_format/date_format.dart';
@@ -148,6 +150,29 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                           const SizedBox(
                             height: 15,
                           ),
+                          // here show the profile views
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // doctor and patient profile
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    // doctor
+                                    ProfileDescription(doctor: studiesOrders!.doctor, type: "doctor"),
+                                    const SizedBox(height:20),
+                                    // patient
+                                    ProfileDescription(patient: patient, type: "patient"),
+                                  ],
+                                ),
+                                // here button to origin consult
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 10),
                           studiesOrders?.serviceRequests?.isEmpty?? true
                               ? showEmptyList()
                               : showDiagnosticList()
