@@ -48,26 +48,26 @@ class StudyOrder extends News {
 
   @override
   Widget show() {
-    return StudyOrderCard(studyOrder: this,);
+    return StudyOrderCard(
+      studyOrder: this,
+    );
   }
-
 }
 
 class Doctor {
-  Doctor({
-    this.biography,
-    this.birthDate,
-    this.email,
-    this.familyName,
-    this.gender,
-    this.givenName,
-    this.id,
-    this.languages,
-    this.phone,
-    this.photoUrl,
-    this.specializations,
-    this.license
-  });
+  Doctor(
+      {this.biography,
+      this.birthDate,
+      this.email,
+      this.familyName,
+      this.gender,
+      this.givenName,
+      this.id,
+      this.languages,
+      this.phone,
+      this.photoUrl,
+      this.specializations,
+      this.license});
 
   String? biography;
   DateTime? birthDate;
@@ -106,16 +106,22 @@ class Doctor {
       );
 
   Map<String, dynamic> toJson() => {
-        "birthDate": birthDate == null ? null : "${birthDate!.year.toString().padLeft(4, '0')}-${birthDate!.month.toString().padLeft(2, '0')}-${birthDate!.day.toString().padLeft(2, '0')}",
+        "birthDate": birthDate == null
+            ? null
+            : "${birthDate!.year.toString().padLeft(4, '0')}-${birthDate!.month.toString().padLeft(2, '0')}-${birthDate!.day.toString().padLeft(2, '0')}",
         "email": email == null ? null : email,
         "familyName": familyName == null ? null : familyName,
         "gender": gender == null ? null : gender,
         "givenName": givenName == null ? null : givenName,
         "id": id,
-        "languages": languages == null ? null : List<dynamic>.from(languages!.map((x) => x.toJson())),
+        "languages": languages == null
+            ? null
+            : List<dynamic>.from(languages!.map((x) => x.toJson())),
         "phone": phone == null ? null : phone,
         "photoUrl": photoUrl == null ? null : photoUrl,
-        "specializations": specializations == null ? null : List<dynamic>.from(specializations!.map((x) => x.toJson())),
+        "specializations": specializations == null
+            ? null
+            : List<dynamic>.from(specializations!.map((x) => x.toJson())),
         "biography": biography == null ? null : biography,
         "license": license == null ? null : license,
       };
@@ -142,33 +148,50 @@ class Language {
 }
 
 class ServiceRequest {
-  ServiceRequest(
-      {this.category,
-      this.diagnosis,
-      this.encounterId,
-      this.identifier,
-      this.urgent,
-      this.notes});
+  ServiceRequest({
+    this.authoredDate,
+    this.category,
+    this.description,
+    this.diagnosis,
+    this.diagnosticReportCount,
+    this.encounterId,
+    this.id,
+    this.identifier,
+    this.urgent,
+    this.notes,
+  });
 
+  String? id;
+  String? authoredDate;
   String? category;
+  String? description;
   String? diagnosis;
   String? encounterId;
   String? identifier;
   bool? urgent;
   String? notes;
+  int? diagnosticReportCount;
 
   factory ServiceRequest.fromJson(Map<String, dynamic> json) => ServiceRequest(
+      authoredDate: json["authoredDate"],
       category: json["category"],
+      description: json["description"],
       diagnosis: json["diagnosis"],
+      diagnosticReportCount: json["diagnosticReportCount"],
       encounterId: json["encounterId"] == null ? null : json["encounterId"],
+      id: json["id"],
       identifier: json["identifier"],
       urgent: json["urgent"],
       notes: json["notes"] == null ? '' : json["notes"]);
 
   Map<String, dynamic> toJson() => {
+        "authoredDate": authoredDate,
         "category": category,
+        "description": description,
         "diagnosis": diagnosis,
+        "diagnosticReportCount": diagnosticReportCount,
         "encounterId": encounterId == null ? null : encounterId,
+        "id": id,
         "identifier": identifier,
         "urgent": urgent,
         "notes": notes == null ? null : notes,
