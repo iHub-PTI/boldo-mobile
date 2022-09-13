@@ -301,6 +301,8 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
                         padding: const EdgeInsets.all(3),
                         child: SvgPicture.asset(
                           'assets/icon/lab-dark.svg',
+                          height: 18,
+                          width: 18,
                           color: ConstantsV2.veryLightBlue,
                         ),
                       ),
@@ -309,6 +311,8 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
                         padding: const EdgeInsets.all(3),
                         child: SvgPicture.asset(
                           'assets/icon/image-dark.svg',
+                          height: 18,
+                          width: 18,
                           color: ConstantsV2.veryLightBlue,
                         ),
                       ),
@@ -323,6 +327,8 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
                         padding: const EdgeInsets.all(3),
                         child: SvgPicture.asset(
                           'assets/icon/other.svg',
+                          height: 18,
+                          width: 18,
                           color: ConstantsV2.veryLightBlue,
                         ),
                       ),
