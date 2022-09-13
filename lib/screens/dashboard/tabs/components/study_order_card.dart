@@ -72,7 +72,7 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
         DateTime nextDay = DateTime.now().add(const Duration(days: 1));
         // remove hours, minutes and seconds
         nextDay = DateTime(nextDay.year, nextDay.month, nextDay.day);
-        minutesToUpdate = DateTime.now().difference(nextDay).inMinutes;
+        minutesToUpdate = nextDay.difference(DateTime.now()).inMinutes;
         timer.cancel();
         _updateWaitingRoom(minutesToUpdate);
       });
