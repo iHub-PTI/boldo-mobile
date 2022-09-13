@@ -1,12 +1,16 @@
 import 'dart:convert';
 
+import 'package:boldo/models/News.dart';
+import 'package:boldo/screens/dashboard/tabs/components/study_order_card.dart';
+import 'package:flutter/cupertino.dart';
+
 List<StudyOrder> studyOrderFromJson(dynamic str) =>
     List<StudyOrder>.from(str.map((x) => StudyOrder.fromJson(x)));
 
 String studyOrderToJson(List<StudyOrder> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class StudyOrder {
+class StudyOrder extends News {
   StudyOrder({
     this.authoredDate,
     this.doctor,
@@ -41,6 +45,12 @@ class StudyOrder {
             : List<dynamic>.from(serviceRequests!.map((x) => x.toJson())),
         "serviceRequestsCount": serviceRequestsCount,
       };
+
+  @override
+  Widget show() {
+    return StudyOrderCard(studyOrder: this,);
+  }
+
 }
 
 class Doctor {

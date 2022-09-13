@@ -1,6 +1,8 @@
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/News.dart';
+import 'package:boldo/models/StudyOrder.dart';
+import 'package:boldo/network/order_study_repository.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
@@ -14,6 +16,7 @@ part 'homeNews_state.dart';
 
 class HomeNewsBloc extends Bloc<HomeNewsEvent, HomeNewsState> {
   final UserRepository _patientRepository = UserRepository();
+  final StudiesOrdersRepository _ordersRepository = StudiesOrdersRepository();
   List<News> news = [];
 
   HomeNewsBloc() : super(HomeNewsInitial()) {
@@ -26,7 +29,7 @@ class HomeNewsBloc extends Bloc<HomeNewsEvent, HomeNewsState> {
 
         // get diagnostic reports
         await Task(() =>
-        _patientRepository.getDiagnosticRecords()!)
+        _ordersRepository.getStudiesOrders()!)
             .attempt()
             .run()
             .then((value) {
@@ -72,14 +75,11 @@ class HomeNewsBloc extends Bloc<HomeNewsEvent, HomeNewsState> {
           _post.leftMap((l) => response = l.message);
           emit(FailedLoadedNews(response: response));
         }else{
-          late List<DiagnosticReport> diagnosticReports = [];
-          _post.foldRight(DiagnosticReport, (a, previous) => diagnosticReports = a);
-          // add only diagnosticReport that were not uploaded by the patient
-          diagnosticReports = diagnosticReports
-              .where((element) => element.sourceID != patient.id).toList();
+          late List<StudyOrder> studiesOrders = [];
+          _post.foldRight(StudyOrder, (a, previous) => studiesOrders = a);
 
           // add diagnosticReport to news
-          news = [...news, ...diagnosticReports];
+          news = [...news, ...studiesOrders];
         }
 
         // emit news
