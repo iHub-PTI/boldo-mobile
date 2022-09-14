@@ -74,20 +74,20 @@ class ProfileDescription extends StatelessWidget {
                         ),
             ),
           ),
+          const SizedBox(height: 10,),
           // first name and last name
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(doctor != null
-                  ? doctor!.gender == 'female'
-                      ? 'Dra. ${toLowerCase(doctor!.givenName!).trim().split(RegExp(' +'))[0]} ${toLowerCase(doctor!.familyName!).trim().split(RegExp(' +'))[0]}'
-                      : 'Dr. ${toLowerCase(doctor!.givenName!).trim().split(RegExp(' +'))[0]} ${toLowerCase(doctor!.familyName!).trim().split(RegExp(' +'))[0]}'
-                  : patient != null
-                      ? '${toLowerCase(patient!.givenName!).trim().split(RegExp(' +'))[0]} ${toLowerCase(patient!.familyName!).trim().split(RegExp(' +'))[0]}'
-                      : '',
-                style: const TextStyle(
-                  fontFamily: 'Montserrat'
-                ),
+              Text(
+                doctor != null
+                    ? doctor!.gender == 'female'
+                        ? 'Dra. ${toLowerCase(doctor!.givenName!).trim().split(RegExp(' +'))[0]} ${toLowerCase(doctor!.familyName!).trim().split(RegExp(' +'))[0]}'
+                        : 'Dr. ${toLowerCase(doctor!.givenName!).trim().split(RegExp(' +'))[0]} ${toLowerCase(doctor!.familyName!).trim().split(RegExp(' +'))[0]}'
+                    : patient != null
+                        ? '${toLowerCase(patient!.givenName!).trim().split(RegExp(' +'))[0]} ${toLowerCase(patient!.familyName!).trim().split(RegExp(' +'))[0]}'
+                        : '',
+                style: const TextStyle(fontFamily: 'Montserrat'),
               ),
             ],
           ),
@@ -95,18 +95,17 @@ class ProfileDescription extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(doctor != null
-                  ? 'Médico'
-                  : patient != null
-                      ? 'Paciente'
-                      : '',
+              Text(
+                doctor != null
+                    ? 'Médico'
+                    : patient != null
+                        ? 'Paciente'
+                        : '',
                 style: const TextStyle(
-                  fontFamily: 'Montserrat',
-                  color: Constants.otherColor100
-                ),
+                    fontFamily: 'Montserrat', color: Constants.otherColor100),
               ),
             ],
-          )
+          ),
         ],
       ),
     );

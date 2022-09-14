@@ -16,7 +16,8 @@ import '../../constants.dart';
 
 class StudyOrderScreen extends StatefulWidget {
   final String? encounterId;
-  StudyOrderScreen({Key? key, required this.encounterId}) : super(key: key);
+  final bool callFromHome;
+  StudyOrderScreen({Key? key, required this.callFromHome, required this.encounterId}) : super(key: key);
 
   @override
   State<StudyOrderScreen> createState() => _StudyOrderScreenState();
@@ -30,7 +31,8 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
   StudyOrder? studiesOrders;
   @override
   void initState() {
-    BlocProvider.of<StudyOrderBloc>(context).add(GetNewsId(encounter: widget.encounterId ?? "0"));
+    BlocProvider.of<StudyOrderBloc>(context)
+        .add(GetNewsId(encounter: widget.encounterId ?? "0"));
     BlocProvider.of<MedicalRecordBloc>(context)
         .add(GetMedicalRecordById(id: widget.encounterId ?? "0"));
     super.initState();
@@ -161,18 +163,56 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     // doctor
-                                    ProfileDescription(doctor: studiesOrders!.doctor, type: "doctor"),
-                                    const SizedBox(height:20),
+                                    ProfileDescription(
+                                      doctor: studiesOrders!.doctor,
+                                      type: "doctor"
+                                    ),
+                                    const SizedBox(height: 20),
                                     // patient
-                                    ProfileDescription(patient: patient, type: "patient"),
+                                    ProfileDescription(
+                                      patient: patient,
+                                      type: "patient"
+                                    ),
                                   ],
                                 ),
-                                // here button to origin consult
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    // here button to origin consult
+                                    widget.callFromHome
+                                      ? Padding(
+                                        padding: const EdgeInsets.only(top: 30, right: 30, bottom: 30),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            
+                                          },
+                                          child: Row(
+                                            children: [
+                                              const Text(
+                                                'ver consulta de origen',
+                                                style: TextStyle(
+                                                  decoration: TextDecoration.underline,
+                                                  fontFamily: 'Montserrat',
+                                                  fontSize: 16
+                                                ),
+                                              ),
+                                              const SizedBox(width: 15,),
+                                              SvgPicture.asset(
+                                                'assets/icon/chevron-right.svg',
+                                                height: 12,
+                                              )
+                                            ],
+                                          )
+                                        ),
+                                      )
+                                      : Container()
+                                  ],
+                                )
                               ],
                             ),
                           ),
                           const SizedBox(height: 10),
-                          studiesOrders?.serviceRequests?.isEmpty?? true
+                          studiesOrders?.serviceRequests?.isEmpty ?? true
                               ? showEmptyList()
                               : showDiagnosticList()
                         ],
@@ -225,7 +265,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
           color: Colors.transparent,
           height: 5,
         ),
-        itemCount: studiesOrders?.serviceRequests?.length?? 0,
+        itemCount: studiesOrders?.serviceRequests?.length ?? 0,
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemBuilder: showStudy,
@@ -242,7 +282,9 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (BuildContext context) => AttachStudyByOrderScreen(studyOrder: studiesOrders!.serviceRequests![index],)));
+                  builder: (BuildContext context) => AttachStudyByOrderScreen(
+                        studyOrder: studiesOrders!.serviceRequests![index],
+                      )));
         },
         child: Container(
           padding: const EdgeInsets.all(8),
@@ -259,11 +301,16 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                           width: 18,
                           height: 18,
                           child: SvgPicture.asset(
-                            studiesOrders?.serviceRequests![index].category == "Laboratory"
+                            studiesOrders?.serviceRequests![index].category ==
+                                    "Laboratory"
                                 ? 'assets/icon/lab-dark.svg'
-                                : studiesOrders?.serviceRequests![index].category == "Diagnostic Imaging"
+                                : studiesOrders?.serviceRequests![index]
+                                            .category ==
+                                        "Diagnostic Imaging"
                                     ? 'assets/icon/image-dark.svg'
-                                    : studiesOrders?.serviceRequests![index].category == "Other"
+                                    : studiesOrders?.serviceRequests![index]
+                                                .category ==
+                                            "Other"
                                         ? 'assets/icon/other.svg'
                                         : 'assets/images/LogoIcon.svg',
                           ),
@@ -323,7 +370,8 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                       const SizedBox(
                         height: 4,
                       ),
-                      listStudiesDisplay(studiesOrders!.serviceRequests![index]),
+                      listStudiesDisplay(
+                          studiesOrders!.serviceRequests![index]),
                       Text(
                         "${studiesOrders?.serviceRequests![index].notes ?? ''}",
                         style: boldoCorpSmallTextStyle.copyWith(
@@ -377,7 +425,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
         //   Text("... + ${(studyOrder.studiesCodes?.length ?? 0) - 2}"),
         const Text(
           'Estudios',
-          ),
+        ),
       ],
     );
   }

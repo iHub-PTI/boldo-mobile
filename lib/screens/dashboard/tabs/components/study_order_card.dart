@@ -230,7 +230,7 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      StudyOrderScreen(encounterId: widget.studyOrder.encounterId),
+                                      StudyOrderScreen(callFromHome: true, encounterId: widget.studyOrder.encounterId),
                                 ),
                               );
                             },

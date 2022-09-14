@@ -218,7 +218,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                StudyOrderScreen(encounterId: medicalRecord?.id?? "0")
+                                                StudyOrderScreen(callFromHome: false, encounterId: medicalRecord?.id?? "0")
                                           ),
                                         );
                                       },
