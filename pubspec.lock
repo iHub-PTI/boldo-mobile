@@ -518,13 +518,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
-  open_file:
+  open_filex:
     dependency: "direct main"
     description:
-      name: open_file
+      name: open_filex
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.2.1"
+    version: "3.4.0"
   package_info_plus:
     dependency: transitive
     description:
