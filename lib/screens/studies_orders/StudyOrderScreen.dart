@@ -151,8 +151,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                             height: 15,
                           ),
                           // here show the profile views
-                          Container(
-                            width: MediaQuery.of(context).size.width,
+                          Card(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
