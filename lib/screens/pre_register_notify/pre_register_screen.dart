@@ -1,5 +1,6 @@
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -64,64 +65,77 @@ class _PreRegisterScreenState extends State<PreRegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomWrapper(children: [
-      const SizedBox(height: 24),
-      TextButton.icon(
+    return Scaffold(
+      body: CustomWrapper(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 24),
+                  TextButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.chevron_left_rounded,
+                      size: 25,
+                      color: Constants.extraColor400,
+                    ),
+                    label: Text(
+                      'Antes de continuar',
+                      style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: RichText(
+                      text: const TextSpan(
+                        text: 'Boldo se encuentra en un período de prueba controlado.\n\n'
+                            'Antes de registrarte, tenga en cuenta que por el momento, el servicio está disponible solamente para algunos pacientes en un conjunto de centros asistenciales.\n\n'
+                            'En breve, extenderemos el servicio a todo publico.\n\n',
+                        style: TextStyle(
+                          color: Color.fromRGBO(54, 65, 82, 1),
+                          fontFamily: 'PT Serif',
+                          fontSize: 17,
+                          letterSpacing: 0,
+                          fontWeight: FontWeight.normal,
+                          height: 1.5,
+                        ),
+                        children: <TextSpan>[
+                          TextSpan(
+                              text:
+                              'Siga con el proceso de registro solamente si recibió indicación de su médico.',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                ]),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.pop(context);
+          Navigator.pushNamed(context, '/login');
         },
-        icon: const Icon(
-          Icons.chevron_left_rounded,
-          size: 25,
-          color: Constants.extraColor400,
-        ),
-        label: Text(
-          'Antes de registrarte',
-          style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-        ),
+        backgroundColor: ConstantsV2.orange,
+        label: Container(
+            child: Row(
+              children: [
+                const Text(
+                  'continuar',
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                const Icon(
+                  Icons.arrow_forward_ios_sharp
+                ),
+              ],
+            )),
       ),
-      Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: RichText(
-          text: const TextSpan(
-            text: 'Boldo se encuentra en un período de prueba controlado.\n\n'
-                'Antes de coninuar, tenga en cuenta que por el momento, el servicio está disponible solamente para algunos pacientes en un conjunto de centros asistenciales.\n\n'
-                'En breve, extenderemos el servicio a todo publico.\n\n',
-            style: TextStyle(
-              color: Color.fromRGBO(54, 65, 82, 1),
-              fontFamily: 'PT Serif',
-              fontSize: 17,
-              letterSpacing: 0,
-              fontWeight: FontWeight.normal,
-              height: 1.5,
-            ),
-            children: <TextSpan>[
-              TextSpan(
-                  text:
-                      'Siga con el proceso de registro solamente si recibió indicación de su médico.',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-            ],
-          ),
-        ),
-      ),
-      const SizedBox(width: 16),
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          child: ElevatedButton(
-            onPressed: () async {
-              final SharedPreferences prefs =
-                  await SharedPreferences.getInstance();
-
-              await prefs.setBool("preRegisterNotify", true);
-
-              Navigator.pushNamed(context, '/login');
-            },
-            child: const Text("Siguiente"),
-          ),
-        ),
-      )
-    ]);
+    );
   }
 }
