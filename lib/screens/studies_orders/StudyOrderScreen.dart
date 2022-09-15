@@ -122,7 +122,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                           Text(
                             '${formatDate(
                               DateTime.parse(studiesOrders?.authoredDate ??
-                                  studiesOrders!.authoredDate!),
+                                  DateTime.now().toString()),
                               [d, ' de ', MM, ' de ', yyyy],
                               locale: const SpanishDateLocale(),
                             )} (hace $_daysBetween ${_daysBetween == 1 ? "dia" : "dias"})',
@@ -144,7 +144,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                                   children: [
                                     // doctor
                                     ProfileDescription(
-                                        doctor: studiesOrders!.doctor,
+                                        doctor: studiesOrders?.doctor,
                                         type: "doctor"),
                                     const SizedBox(height: 20),
                                     // patient

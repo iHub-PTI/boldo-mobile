@@ -29,9 +29,9 @@ class ProfileDescription extends StatelessWidget {
               width: 60,
               height: 60,
               child: type == "doctor"
-                  ? doctor!.photoUrl == null
+                  ? doctor?.photoUrl == null
                       ? SvgPicture.asset(
-                          doctor!.gender == "female"
+                          doctor?.gender == "female"
                               ? 'assets/images/femaleDoctor.svg'
                               : 'assets/images/maleDoctor.svg',
                           fit: BoxFit.cover)
@@ -51,9 +51,9 @@ class ProfileDescription extends StatelessWidget {
                           errorWidget: (context, url, error) =>
                               const Icon(Icons.error),
                         )
-                  : patient!.photoUrl == null
+                  : patient?.photoUrl == null
                       ? SvgPicture.asset(
-                          patient!.gender == "female"
+                          patient?.gender == "female"
                               ? 'assets/images/femalePatient.svg'
                               : 'assets/images/malePatient.svg',
                           fit: BoxFit.cover)
