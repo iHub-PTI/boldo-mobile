@@ -68,6 +68,10 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                 listener: (context, state) async {
                   if (state is StudyOrderLoaded) {
                     studiesOrders = state.studyOrder;
+                    _daysBetween = daysBetween(
+                      DateTime.parse(
+                          studiesOrders?.authoredDate ?? DateTime.now().toIso8601String()),
+                      DateTime.now());
                   }
 
                   if (state is FailedLoadedOrders) {
