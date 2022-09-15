@@ -49,6 +49,7 @@ class DiagnosticReport extends News  {
     data['category'] = type;
     data['PatientNotes'] = patientNotes;
     data['serviceRequestId'] = serviceRequestId;
+    data['attachmentUrls'] = attachmentUrls?.map((e) => e.toJson()).toList();
     return data;
   }
 
