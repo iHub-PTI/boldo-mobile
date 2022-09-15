@@ -1,3 +1,4 @@
+import 'package:boldo/screens/pre_register_notify/pre_register_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
@@ -141,7 +142,11 @@ class HeroScreenV2 extends StatelessWidget {
                         MaterialPageRoute(
                             builder: (context) => const SignUpPhoneInfo()),
                       );*/
-                                Navigator.pushNamed(context, '/login');
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const PreRegisterScreen()),
+                                );
                               },
                               child: Container(
                                   constraints: const BoxConstraints(maxWidth: 142, maxHeight: 48),
