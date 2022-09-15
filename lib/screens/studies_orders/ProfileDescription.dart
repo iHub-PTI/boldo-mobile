@@ -1,6 +1,7 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Patient.dart';
-import 'package:boldo/models/StudyOrder.dart';
+
 import 'package:boldo/utils/helpers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';

@@ -115,7 +115,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                   const SizedBox(height: 10),
                   BlocBuilder<StudyOrderBloc, StudyOrderState>(
                       builder: (context, state) {
-                    if (state is StudyOrderLoaded) {
+                    if (state is StudyOrderLoaded || state is AppointmentLoaded) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

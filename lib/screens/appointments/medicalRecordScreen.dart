@@ -1,11 +1,13 @@
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
+import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/PresciptionMedicalRecord.dart';
 import 'package:boldo/models/Soep.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
+import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
 import 'package:boldo/screens/studies_orders/StudyOrderScreen.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:date_format/date_format.dart';
@@ -125,6 +127,28 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                             child: Text(medicalRecord?.mainReason ?? '',
                                                 style: boldoCorpMediumBlackTextStyle
                                                     .copyWith(color: ConstantsV2.darkBlue)),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Card(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          // doctor and patient profile
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              // doctor
+                                              ProfileDescription(
+                                                  doctor: widget.appointment.doctor,
+                                                  type: "doctor"),
+                                              const SizedBox(height: 20),
+                                              // patient
+                                              ProfileDescription(
+                                                  patient: patient, type: "patient"),
+                                            ],
                                           ),
                                         ],
                                       ),
