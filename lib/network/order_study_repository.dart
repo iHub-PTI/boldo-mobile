@@ -60,11 +60,11 @@ class StudiesOrdersRepository {
     try {
       // the query is made
       if (prefs.getBool('isFamily') ?? false) {
-        response = await dio
-            .get('/profile/patient/encounter/${encounter}/serviceRequests');
-      } else {
         response = await dio.get(
             '/profile/caretaker/dependent/${patient.id}/encounter/${encounter}/serviceRequests');
+      } else {
+        response = await dio
+            .get('/profile/patient/encounter/${encounter}/serviceRequests');
       }
       // there are study orders
       if (response.statusCode == 200) {
