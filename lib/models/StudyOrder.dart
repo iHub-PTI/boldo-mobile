@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/News.dart';
 import 'package:boldo/screens/dashboard/tabs/components/study_order_card.dart';
 import 'package:flutter/cupertino.dart';
@@ -159,6 +160,8 @@ class ServiceRequest {
     this.identifier,
     this.urgent,
     this.notes,
+    this.studiesCodes,
+    this.diagnosticReports,
   });
 
   String? id;
@@ -172,6 +175,9 @@ class ServiceRequest {
   String? notes;
   int? diagnosticReportCount;
 
+  List<DiagnosticReport>? diagnosticReports;
+  List<StudiesCodes>? studiesCodes;
+
   factory ServiceRequest.fromJson(Map<String, dynamic> json) => ServiceRequest(
       authoredDate: json["authoredDate"],
       category: json["category"],
@@ -182,7 +188,16 @@ class ServiceRequest {
       id: json["id"],
       identifier: json["identifier"],
       urgent: json["urgent"],
-      notes: json["notes"] == null ? '' : json["notes"]);
+      notes: json["notes"] == null ? '' : json["notes"],
+      studiesCodes: json['studiesCodes'] != null
+        ? List<StudiesCodes>.from(json["studiesCodes"]
+          .map((x) => StudiesCodes.fromJson(x)))
+          : null,
+      diagnosticReports: json['diagnosticReports'] != null
+        ? List<DiagnosticReport>.from(json["diagnosticReports"]
+          .map((x) => DiagnosticReport.fromJson(x)))
+          : null,
+      );
 
   Map<String, dynamic> toJson() => {
         "authoredDate": authoredDate,
@@ -196,4 +211,31 @@ class ServiceRequest {
         "urgent": urgent,
         "notes": notes == null ? null : notes,
       };
+}
+
+class StudiesCodes {
+  String? code,
+      display,
+      note;
+
+  StudiesCodes({
+    this.code,
+    this.display,
+    this.note,
+  });
+
+  factory StudiesCodes.fromJson(Map<String, dynamic> json,) =>
+      StudiesCodes(
+        code: json['code'],
+        display: json['display'],
+        note: json['notes'],
+      );
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['notes'] = note;
+    data['display'] = display;
+    return data;
+  }
+
 }
