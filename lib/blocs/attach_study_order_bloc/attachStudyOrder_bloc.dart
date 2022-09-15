@@ -18,8 +18,7 @@ class AttachStudyOrderBloc extends Bloc<AttachStudyOrderEvent, AttachStudyOrderS
         emit(UploadingStudy());
         var _post;
         await Task(() =>
-        _ordersRepository.sendDiagnosticReport(
-            event.diagnosticReport)!)
+        _ordersRepository.sendFiles(event.files)!)
             .attempt()
             .run()
             .then((value) {
@@ -31,8 +30,13 @@ class AttachStudyOrderBloc extends Bloc<AttachStudyOrderEvent, AttachStudyOrderS
           emit(FailedUploadFiles(response: response));
         } else {
           var _post2;
+          late List<AttachmentUrl> attachmentUrls;
+          _post.foldRight(AttachmentUrl, (a, previous) => attachmentUrls = a);
+          DiagnosticReport diagnosticReport = event.diagnosticReport;
+          diagnosticReport.attachmentUrls = attachmentUrls;
           await Task(() =>
-          _ordersRepository.sendFiles(event.files)!)
+          _ordersRepository.sendDiagnosticReport(
+              diagnosticReport)!)
               .attempt()
               .run()
               .then((value) {
@@ -44,6 +48,25 @@ class AttachStudyOrderBloc extends Bloc<AttachStudyOrderEvent, AttachStudyOrderS
           } else {
             emit(SendSuccess());
           }
+        }
+      }else if(event is GetStudyFromServer){
+        emit(UploadingStudy());
+        var _post;
+        await Task(() =>
+        _ordersRepository.getServiceRequestId(event.serviceRequestId)!)
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        });
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(FailedUploadFiles(response: response));
+        } else {
+          late ServiceRequest serviceRequest;
+          _post.foldRight(ServiceRequest, (a, previous) => serviceRequest = a);
+          emit(StudyObtained(serviceRequest: serviceRequest));
         }
       }
     });

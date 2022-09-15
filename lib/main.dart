@@ -42,6 +42,7 @@ import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/constants.dart';
 
+import 'blocs/attach_study_order_bloc/attachStudyOrder_bloc.dart';
 import 'blocs/doctor_bloc/doctor_bloc.dart';
 import 'blocs/prescription_bloc/prescriptionBloc.dart';
 import 'blocs/study_order_bloc/studyOrder_bloc.dart';
@@ -157,6 +158,9 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<StudyOrderBloc>(
             create: (BuildContext context) => StudyOrderBloc(),
+          ),
+          BlocProvider<AttachStudyOrderBloc>(
+            create: (BuildContext context) => AttachStudyOrderBloc(),
           ),
         ],
         child: MultiProvider(

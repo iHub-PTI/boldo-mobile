@@ -13,3 +13,8 @@ class FailedUploadFiles extends AttachStudyOrderState {
 }
 
 class SendSuccess extends AttachStudyOrderState {}
+
+class StudyObtained extends AttachStudyOrderState {
+  final ServiceRequest? serviceRequest;
+  StudyObtained({required this.serviceRequest,});
+}

@@ -8,3 +8,8 @@ class SendStudyToServer extends AttachStudyOrderEvent {
   final List<File> files;
   SendStudyToServer({required this.diagnosticReport, required this.files});
 }
+
+class GetStudyFromServer extends AttachStudyOrderEvent {
+  final String serviceRequestId;
+  GetStudyFromServer({required this.serviceRequestId,});
+}
