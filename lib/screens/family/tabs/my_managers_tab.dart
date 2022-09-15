@@ -89,15 +89,7 @@ class _MyManagersTabState extends State<MyManagersTab> {
                                   'assets/icon/chevron-left.svg',
                                   color: ConstantsV2.activeText,
                                 ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.all( 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
+                              ),
                               const Text(
                                 "Mis gestores",
                                 style: boldoTitleBlackTextStyle,
