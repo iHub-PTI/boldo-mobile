@@ -32,6 +32,7 @@ class AttachStudyByOrderScreen extends StatefulWidget {
 class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
   List<File> files = [];
   ServiceRequest? serviceRequest;
+  String? notes;
 
   @override
   void initState() {
@@ -77,158 +78,154 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                 });
               }
             },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                TextButton.icon(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(
-                    Icons.chevron_left_rounded,
-                    size: 25,
-                    color: Constants.extraColor400,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 10,
                   ),
-                  label: Text(
-                    'Detalles de la orden',
-                    style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                  TextButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.chevron_left_rounded,
+                      size: 25,
+                      color: Constants.extraColor400,
+                    ),
+                    label: Text(
+                      'Detalles de la orden',
+                      style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                          child: Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                serviceRequest?.urgent ?? false
-                                    ? Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(100),
-                                  ),
-                                  elevation: 0,
-                                  color: ConstantsV2.orange ,
-                                  margin: EdgeInsets.zero,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 6.0,
-                                        top: 2.0,
-                                        bottom: 2.0,
-                                        right: 6.0),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/icon/warning-white.svg',
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          "urgente",
-                                          style:
-                                          boldoCorpSmallTextStyle.copyWith(
-                                              color: ConstantsV2.lightGrey),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ): Container(),
-                                Text(
-                                  serviceRequest?.diagnosis ?? 'Sin diagnostico presuntivo',
-                                  style: boldoCorpSmallTextStyle.copyWith(
-                                      color: ConstantsV2.inactiveText,
-                                      fontSize: 14),
-                                ),
-                              ],
-                            ),
-                          )),
-                      ProfileImageView2(
-                        height: 54,
-                        width: 54,
-                        border: true,
-                        patient: patient,
-                        color: ConstantsV2.orange,
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    serviceRequest?.diagnosis ?? '',
-                    style: boldoSubTextMediumStyle.copyWith(
-                        color: ConstantsV2.orange),
-                  ),
-                ),
-                Container(
-                  child: SingleChildScrollView(
-                    child: Column(
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        serviceRequest?.diagnosticReports?.isEmpty?? true
-                            ? filesDiagnosticReport()
-                            :  ListView.builder(
-                          padding: EdgeInsets.zero,
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          itemBuilder: _fileServerElement,
-                          itemCount: serviceRequest?.diagnosticReports?.length,
-                        ),
-                        serviceRequest?.diagnosticReports?.isEmpty?? true ?
-                        Padding(
-                          padding:
-                          const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              ElevatedButton(
-                                onPressed: files.isNotEmpty
-                                    ? () async {
-                                  DiagnosticReport diagnosticReport = DiagnosticReport(
-                                    effectiveDate: DateFormat('yyyy-MM-dd').format(DateTime(
-                                      DateTime.now().year,
-                                      DateTime.now().month,
-                                      DateTime.now().day,
-                                    )),
-                                    description: widget.studyOrder.description,
-                                    sourceID: patient.id,
-                                    type: changeCategory(widget.studyOrder.category),
-                                    serviceRequestId: widget.studyOrder.id,
-                                  );
-                                  BlocProvider.of<AttachStudyOrderBloc>(context).add(
-                                      SendStudyToServer(
-                                          diagnosticReport:
-                                          diagnosticReport,
-                                          files: files));
-                                }
-                                    : null,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text('finalizar'),
-                                    const Padding(
-                                      padding: EdgeInsets.only(left: 8.0),
-                                      child: Icon(
-                                        Icons.chevron_right,
+                        Container(
+                            child: Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  serviceRequest?.urgent ?? false
+                                      ? Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(100),
+                                    ),
+                                    elevation: 0,
+                                    color: ConstantsV2.orange ,
+                                    margin: EdgeInsets.zero,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 6.0,
+                                          top: 2.0,
+                                          bottom: 2.0,
+                                          right: 6.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          SvgPicture.asset(
+                                            'assets/icon/warning-white.svg',
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            "urgente",
+                                            style:
+                                            boldoCorpSmallTextStyle.copyWith(
+                                                color: ConstantsV2.lightGrey),
+                                          ),
+                                        ],
                                       ),
-                                    )
-                                  ],
-                                ),
+                                    ),
+                                  ): Container(),
+                                  Text(
+                                    serviceRequest?.diagnosis ?? 'Sin diagnostico presuntivo',
+                                    style: boldoCorpSmallTextStyle.copyWith(
+                                        color: ConstantsV2.inactiveText,
+                                        fontSize: 14),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ) : Container()
+                            )),
+                        ProfileImageView2(
+                          height: 54,
+                          width: 54,
+                          border: true,
+                          patient: patient,
+                          color: ConstantsV2.orange,
+                        ),
                       ],
                     ),
                   ),
-                )
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      serviceRequest?.diagnosis ?? '',
+                      style: boldoSubTextMediumStyle.copyWith(
+                          color: ConstantsV2.orange),
+                    ),
+                  ),
+                  Container(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          filesDiagnosticReport(),
+                          notesDiagnosticReport(),
+                          serviceRequest?.diagnosticReports?.isEmpty?? true ?
+                          Padding(
+                            padding:
+                            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: files.isNotEmpty
+                                      ? () async {
+                                    DiagnosticReport diagnosticReport = DiagnosticReport(
+                                      effectiveDate: DateFormat('yyyy-MM-dd').format(DateTime(
+                                        DateTime.now().year,
+                                        DateTime.now().month,
+                                        DateTime.now().day,
+                                      )),
+                                      description: widget.studyOrder.description,
+                                      sourceID: patient.id,
+                                      patientNotes: notes,
+                                      type: changeCategory(widget.studyOrder.category),
+                                      serviceRequestId: widget.studyOrder.id,
+                                    );
+                                    BlocProvider.of<AttachStudyOrderBloc>(context).add(
+                                        SendStudyToServer(
+                                            diagnosticReport:
+                                            diagnosticReport,
+                                            files: files));
+                                  }
+                                      : null,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text('finalizar'),
+                                      const Padding(
+                                        padding: EdgeInsets.only(left: 8.0),
+                                        child: Icon(
+                                          Icons.chevron_right,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ) : Container()
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ));
@@ -267,13 +264,13 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                     ],
                   ),
                 ),
-                Container(
+                serviceRequest?.diagnosticReports?.isEmpty?? true ? Container(
                   child: _offsetPopup(),
-                ),
+                ) : Container(),
               ],
             ),
           ),
-          Container(
+          serviceRequest?.diagnosticReports?.isEmpty?? true ? Container(
             width: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             color: ConstantsV2.lightest,
@@ -290,6 +287,83 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
               itemBuilder: _fileElement,
               itemCount: files.length,
             ),
+          ) : ListView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            itemBuilder: _fileServerElement,
+            itemCount: serviceRequest?.diagnosticReports?.length,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget notesDiagnosticReport(){
+    return Container(
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  child: Row(
+                    children: [
+                      Text(
+                        'Comentario',
+                        style: boldoSubTextStyle.copyWith(
+                            color: ConstantsV2.activeText),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          serviceRequest?.diagnosticReports?.isEmpty?? true ? Container(
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            color: ConstantsV2.lightest,
+            child: notes?.isEmpty?? true ? Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Container(
+                child: GestureDetector(
+                  onTap: () async {
+                    _noteBox(notes);
+                    },
+                  child: Row(
+                    children: [
+                      Text(
+                        'agregar un comentario',
+                        style: boldoSubTextMediumStyle.copyWith(decoration: TextDecoration.underline,),
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      SvgPicture.asset('assets/icon/pencil-alt.svg'),
+                    ],
+                  ),
+                ),
+              ),
+            ): GestureDetector(
+              onTap: () async {
+                _noteBox(notes);
+              },
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                color: ConstantsV2.lightest,
+                child: Text("$notes"),
+              ),
+            ),
+          ) : ListView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            itemBuilder: _notesServerElement,
+            itemCount: serviceRequest?.diagnosticReports?.length,
           ),
         ],
       ),
@@ -446,6 +520,75 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _notesServerElement(BuildContext context, int index){
+    return Column(
+      children: [
+        Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+          ),
+          elevation: 1,
+          margin: const EdgeInsets.only(bottom: 4),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            color: ConstantsV2.lightest,
+            child: Container(
+              child: Text("${ (serviceRequest?.diagnosticReports?.length?? 0) > 1 ?"Notas del estudio ${index + 1} (${serviceRequest?.diagnosticReports?[index].effectiveDate?? "Sin fecha"} ):" : ''}  ${serviceRequest?.diagnosticReports?[index].patientNotes?? "Sin notas"}"),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future _noteBox(String? notes){
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            contentPadding: const EdgeInsetsDirectional.all(0),
+            scrollable: true,
+            backgroundColor: ConstantsV2.lightest,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            content: Container(
+              width: MediaQuery.of(context).size.width*0.5,
+              height: MediaQuery.of(context).size.height*0.4,
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    initialValue: notes,
+                    keyboardType: TextInputType.multiline,
+                    minLines: 14,
+                    maxLines: 14,
+                    decoration: InputDecoration(
+                      hintText: "Ingrese un comentario sobre el estudio",
+                      filled: true,
+                      fillColor: ConstantsV2.lightGrey,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(
+                        ),
+                      ),
+                    ),
+                    style: boldoCorpMediumTextStyle.copyWith(
+                        color: ConstantsV2.activeText
+                    ),
+                    onChanged: (value) => this.notes = value.trimRight().trimLeft(),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
     );
   }
 

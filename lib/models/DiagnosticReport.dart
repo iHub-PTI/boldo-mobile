@@ -38,6 +38,7 @@ class DiagnosticReport extends News  {
     source: json['source']!= null ? toLowerCase(json['source']!) : null,
     sourceID: json['sourceID'],
     type: json['category'],
+    patientNotes: json['patientNotes'],
     serviceRequestId: json['serviceRequestId'],
     attachmentUrls: json['attachmentUrls']!= null ? List<AttachmentUrl>.from(json['attachmentUrls'].map((e) => AttachmentUrl.fromJson(e) )) : null,
   );
@@ -47,7 +48,7 @@ class DiagnosticReport extends News  {
     data['description'] = description;
     data['effectiveDate'] = effectiveDate;
     data['category'] = type;
-    data['PatientNotes'] = patientNotes;
+    data['patientNotes'] = patientNotes;
     data['serviceRequestId'] = serviceRequestId;
     data['attachmentUrls'] = attachmentUrls?.map((e) => e.toJson()).toList();
     return data;
