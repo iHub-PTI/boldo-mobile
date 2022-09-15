@@ -97,8 +97,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                             ),
                           );
                         }else if(state is Success){
-                          return SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.8,
+                          return Expanded(
                             child: SingleChildScrollView(
                               child: Padding(
                                 padding: const EdgeInsets.only(top: 16),
