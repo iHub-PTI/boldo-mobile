@@ -173,4 +173,33 @@ class StudiesOrdersRepository {
       throw Failure(e.toString());
     }
   }
+
+  Future<ServiceRequest>? getServiceRequestId(String serviceRequestId) async {
+    Response response;
+
+    try {
+      // the query is made
+      response = await dio.get('/profile/patient/serviceRequest/${serviceRequestId}');
+      // there are study orders
+      if (response.statusCode == 200) {
+        return ServiceRequest.fromJson(response.data);
+      } // no study orders
+      throw Failure(genericError);
+    } on DioError catch (ex) {
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": patient.id,
+            "responseError": ex.response,
+          }
+        ],
+      );
+      throw Failure("No se pueden obtener las órdenes de estudio");
+    } catch (e) {
+      throw Failure(e.toString());
+    }
+  }
 }
