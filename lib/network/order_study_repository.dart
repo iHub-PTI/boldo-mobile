@@ -20,8 +20,13 @@ class StudiesOrdersRepository {
     Response response;
 
     try {
-      // the query is made
-      response = await dio.get('/profile/patient/serviceRequests');
+      if (prefs.getBool('isFamily') ?? false) {
+        response = await dio
+            .get('/profile/caretaker/dependent/${patient.id}/serviceRequests');
+      } else {
+        // the query is made
+        response = await dio.get('/profile/patient/serviceRequests');
+      }
       // there are study orders
       if (response.statusCode == 200) {
         return studyOrderFromJson(response.data);
@@ -54,8 +59,13 @@ class StudiesOrdersRepository {
 
     try {
       // the query is made
-      response = await dio
-          .get('/profile/patient/encounter/${encounter}/serviceRequests');
+      if (prefs.getBool('isFamily') ?? false) {
+        response = await dio
+            .get('/profile/patient/encounter/${encounter}/serviceRequests');
+      } else {
+        response = await dio.get(
+            '/profile/caretaker/dependent/${patient.id}/encounter/${encounter}/serviceRequests');
+      }
       // there are study orders
       if (response.statusCode == 200) {
         return StudyOrder.fromJson(response.data);
@@ -179,7 +189,8 @@ class StudiesOrdersRepository {
 
     try {
       // the query is made
-      response = await dio.get('/profile/patient/serviceRequest/${serviceRequestId}');
+      response =
+          await dio.get('/profile/patient/serviceRequest/${serviceRequestId}');
       // there are study orders
       if (response.statusCode == 200) {
         return ServiceRequest.fromJson(response.data);
