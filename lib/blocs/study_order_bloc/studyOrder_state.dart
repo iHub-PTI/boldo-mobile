@@ -1,7 +1,7 @@
 part of 'studyOrder_bloc.dart';
 
 @immutable
-abstract class StudyOrderState{}
+abstract class StudyOrderState {}
 
 class StudiesOrderInitial extends StudyOrderState {}
 
@@ -20,4 +20,15 @@ class StudiesLoaded extends StudyOrderState {
 class StudyOrderLoaded extends StudyOrderState {
   final StudyOrder studyOrder;
   StudyOrderLoaded({required this.studyOrder});
+}
+
+// appointment loaded succefuly
+class AppointmentLoaded extends StudyOrderState {
+  final Appointment appointment;
+  AppointmentLoaded({required this.appointment});
+}
+
+class FailedLoadAppointment extends StudyOrderState {
+  final response;
+  FailedLoadAppointment({required this.response});
 }

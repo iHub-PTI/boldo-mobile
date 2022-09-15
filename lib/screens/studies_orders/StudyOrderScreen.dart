@@ -1,8 +1,10 @@
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'package:boldo/main.dart';
+import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/StudyOrder.dart';
+import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
 import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
@@ -17,7 +19,9 @@ import '../../constants.dart';
 class StudyOrderScreen extends StatefulWidget {
   final String? encounterId;
   final bool callFromHome;
-  StudyOrderScreen({Key? key, required this.callFromHome, required this.encounterId}) : super(key: key);
+  StudyOrderScreen(
+      {Key? key, required this.callFromHome, required this.encounterId})
+      : super(key: key);
 
   @override
   State<StudyOrderScreen> createState() => _StudyOrderScreenState();
@@ -29,12 +33,12 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
   int _daysBetween = 0;
   MedicalRecord? encounter;
   StudyOrder? studiesOrders;
+  Appointment? appointment;
   @override
   void initState() {
     BlocProvider.of<StudyOrderBloc>(context)
         .add(GetNewsId(encounter: widget.encounterId ?? "0"));
-    BlocProvider.of<MedicalRecordBloc>(context)
-        .add(GetMedicalRecordById(id: widget.encounterId ?? "0"));
+
     super.initState();
     _daysBetween = daysBetween(
         DateTime.parse(
@@ -61,7 +65,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
           child: MultiBlocListener(
             listeners: [
               BlocListener<StudyOrderBloc, StudyOrderState>(
-                listener: (context, state) {
+                listener: (context, state) async {
                   if (state is StudyOrderLoaded) {
                     studiesOrders = state.studyOrder;
                   }
@@ -70,26 +74,24 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                     Scaffold.of(context).showSnackBar(const SnackBar(
                         content: Text("Falló la obtención de estudios")));
                   }
-                },
-              ),
-              BlocListener<MedicalRecordBloc, MedicalRecordState>(
-                listener: (context, state) {
-                  if (state is Failed) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.response!),
-                        backgroundColor: Colors.redAccent,
-                      ),
+
+                  if (state is AppointmentLoaded) {
+                    appointment = state.appointment;
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              MedicalRecordsScreen(appointment: appointment!)),
                     );
-                  } else if (state is MedicalRecordLoadedState) {
-                    encounter = state.medicalRecord;
-                    _daysBetween = daysBetween(
-                        DateTime.parse(encounter?.startTimeDate ??
-                            DateTime.now().toIso8601String()),
-                        DateTime.now());
+                    BlocProvider.of<MedicalRecordBloc>(context).add(InitialEvent());
+                  }
+
+                  if (state is FailedLoadAppointment) {
+                    Scaffold.of(context).showSnackBar(const SnackBar(
+                        content: Text("Falló la obtención de la cita")));
                   }
                 },
-              )
+              ),
             ],
             child: SingleChildScrollView(
               child: Column(
@@ -117,38 +119,16 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          BlocBuilder<MedicalRecordBloc, MedicalRecordState>(
-                              builder: (context, state) {
-                            if (state is Success) {
-                              return Text(
-                                '${formatDate(
-                                  DateTime.parse(studiesOrders?.authoredDate ??
-                                      studiesOrders!.authoredDate!),
-                                  [d, ' de ', MM, ' de ', yyyy],
-                                  locale: const SpanishDateLocale(),
-                                )} (hace $_daysBetween ${_daysBetween == 1 ? "dia" : "dias"})',
-                                style: boldoCorpMediumTextStyle.copyWith(
-                                    color: ConstantsV2.darkBlue),
-                              );
-                            } else if (state is Loading) {
-                              return Container(
-                                  child: const Center(
-                                      child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    Constants.primaryColor400),
-                                backgroundColor: Constants.primaryColor600,
-                              )));
-                            } else if (state is Failed) {
-                              return Container(
-                                  child: DataFetchErrorWidget(
-                                      retryCallback: () => BlocProvider.of<
-                                              MedicalRecordBloc>(context)
-                                          .add(GetMedicalRecordById(
-                                              id: widget.encounterId ?? "0"))));
-                            } else {
-                              return Container();
-                            }
-                          }),
+                          Text(
+                            '${formatDate(
+                              DateTime.parse(studiesOrders?.authoredDate ??
+                                  studiesOrders!.authoredDate!),
+                              [d, ' de ', MM, ' de ', yyyy],
+                              locale: const SpanishDateLocale(),
+                            )} (hace $_daysBetween ${_daysBetween == 1 ? "dia" : "dias"})',
+                            style: boldoCorpMediumTextStyle.copyWith(
+                                color: ConstantsV2.darkBlue),
+                          ),
                           const SizedBox(
                             height: 15,
                           ),
@@ -164,15 +144,12 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                                   children: [
                                     // doctor
                                     ProfileDescription(
-                                      doctor: studiesOrders!.doctor,
-                                      type: "doctor"
-                                    ),
+                                        doctor: studiesOrders!.doctor,
+                                        type: "doctor"),
                                     const SizedBox(height: 20),
                                     // patient
                                     ProfileDescription(
-                                      patient: patient,
-                                      type: "patient"
-                                    ),
+                                        patient: patient, type: "patient"),
                                   ],
                                 ),
                                 Row(
@@ -180,32 +157,41 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                                   children: [
                                     // here button to origin consult
                                     widget.callFromHome
-                                      ? Padding(
-                                        padding: const EdgeInsets.only(top: 30, right: 30, bottom: 30),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            
-                                          },
-                                          child: Row(
-                                            children: [
-                                              const Text(
-                                                'ver consulta de origen',
-                                                style: TextStyle(
-                                                  decoration: TextDecoration.underline,
-                                                  fontFamily: 'Montserrat',
-                                                  fontSize: 16
-                                                ),
-                                              ),
-                                              const SizedBox(width: 15,),
-                                              SvgPicture.asset(
-                                                'assets/icon/chevron-right.svg',
-                                                height: 12,
-                                              )
-                                            ],
+                                        ? Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 30, right: 30, bottom: 30),
+                                            child: GestureDetector(
+                                                onTap: () async {
+                                                  BlocProvider.of<
+                                                              StudyOrderBloc>(
+                                                          context)
+                                                      .add(GetAppointment(
+                                                          encounter: widget
+                                                              .encounterId!));
+                                                },
+                                                child: Row(
+                                                  children: [
+                                                    const Text(
+                                                      'ver consulta de origen',
+                                                      style: TextStyle(
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .underline,
+                                                          fontFamily:
+                                                              'Montserrat',
+                                                          fontSize: 16),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 15,
+                                                    ),
+                                                    SvgPicture.asset(
+                                                      'assets/icon/chevron-right.svg',
+                                                      height: 12,
+                                                    )
+                                                  ],
+                                                )),
                                           )
-                                        ),
-                                      )
-                                      : Container()
+                                        : Container()
                                   ],
                                 )
                               ],
