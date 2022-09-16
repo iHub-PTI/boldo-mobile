@@ -7,9 +7,16 @@ class StudiesOrderInitial extends AttachStudyOrderState {}
 
 class UploadingStudy extends AttachStudyOrderState {}
 
+class LoadingStudies extends AttachStudyOrderState {}
+
 class FailedUploadFiles extends AttachStudyOrderState {
   final response;
   FailedUploadFiles({required this.response});
+}
+
+class FailedLoadedStudies extends AttachStudyOrderState {
+  final response;
+  FailedLoadedStudies({required this.response});
 }
 
 class SendSuccess extends AttachStudyOrderState {}

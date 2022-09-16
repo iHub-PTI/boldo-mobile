@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:boldo/blocs/attach_study_order_bloc/attachStudyOrder_bloc.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/StudyOrder.dart';
+import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart' as study_bloc;
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
@@ -67,11 +68,12 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                     .pop();
               }
               else if (state is FailedUploadFiles) {
-                print('failed: ${state.response}');
                 Scaffold.of(context)
                     .showSnackBar(SnackBar(content: Text(state.response)));
-              }
-              if(state is StudyObtained){
+              } else if (state is FailedLoadedStudies) {
+                Scaffold.of(context)
+                    .showSnackBar(SnackBar(content: Text(state.response)));
+              }if(state is StudyObtained){
                 serviceRequest = state.serviceRequest;
                 setState(() {
 
@@ -161,69 +163,109 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(
-                      serviceRequest?.diagnosis ?? '',
-                      style: boldoSubTextMediumStyle.copyWith(
-                          color: ConstantsV2.orange),
-                    ),
-                  ),
-                  Container(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          filesDiagnosticReport(),
-                          notesDiagnosticReport(),
-                          serviceRequest?.diagnosticReports?.isEmpty?? true ?
-                          Padding(
-                            padding:
-                            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                  BlocBuilder<AttachStudyOrderBloc, AttachStudyOrderState>(
+                    builder: (context, state) {
+                      // show only if not loading or failed
+                      if(!(state is FailedLoadedStudies) && !(state is LoadingStudies)){
+                        return Container(
+                          child: SingleChildScrollView(
+                            child: Column(
                               children: [
-                                ElevatedButton(
-                                  onPressed: files.isNotEmpty
-                                      ? () async {
-                                    DiagnosticReport diagnosticReport = DiagnosticReport(
-                                      effectiveDate: DateFormat('yyyy-MM-dd').format(DateTime(
-                                        DateTime.now().year,
-                                        DateTime.now().month,
-                                        DateTime.now().day,
-                                      )),
-                                      description: widget.studyOrder.description,
-                                      sourceID: patient.id,
-                                      patientNotes: notes,
-                                      type: changeCategory(widget.studyOrder.category),
-                                      serviceRequestId: widget.studyOrder.id,
-                                    );
-                                    BlocProvider.of<AttachStudyOrderBloc>(context).add(
-                                        SendStudyToServer(
-                                            diagnosticReport:
-                                            diagnosticReport,
-                                            files: files));
-                                  }
-                                      : null,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text('finalizar'),
-                                      const Padding(
-                                        padding: EdgeInsets.only(left: 8.0),
-                                        child: Icon(
-                                          Icons.chevron_right,
-                                        ),
-                                      )
-                                    ],
+                                filesDiagnosticReport(),
+                                notesDiagnosticReport(),
+                                serviceRequest?.diagnosticReports?.isEmpty?? true ?
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                  child: BlocBuilder<AttachStudyOrderBloc, AttachStudyOrderState>(
+                                    builder: (context, state) {
+                                      // show only if not loading or failed
+                                      if (state is UploadingStudy) {
+                                        return Container(
+                                          child: const Center(
+                                            child: CircularProgressIndicator(
+                                              valueColor: AlwaysStoppedAnimation<Color>(
+                                                  Constants.primaryColor400),
+                                              backgroundColor: Constants.primaryColor600,
+                                            )
+                                          )
+                                        );
+                                      } else{
+                                        return Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            ElevatedButton(
+                                              onPressed: files.isNotEmpty
+                                                  ? () async {
+                                                DiagnosticReport diagnosticReport = DiagnosticReport(
+                                                  effectiveDate: DateFormat('yyyy-MM-dd').format(DateTime(
+                                                    DateTime.now().year,
+                                                    DateTime.now().month,
+                                                    DateTime.now().day,
+                                                  )),
+                                                  description: widget.studyOrder.description,
+                                                  sourceID: patient.id,
+                                                  patientNotes: notes,
+                                                  type: changeCategory(widget.studyOrder.category),
+                                                  serviceRequestId: widget.studyOrder.id,
+                                                );
+                                                BlocProvider.of<AttachStudyOrderBloc>(context).add(
+                                                    SendStudyToServer(
+                                                        diagnosticReport:
+                                                        diagnosticReport,
+                                                        files: files));
+                                              }
+                                                  : null,
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  const Text('finalizar'),
+                                                  const Padding(
+                                                    padding: EdgeInsets.only(left: 8.0),
+                                                    child: Icon(
+                                                      Icons.chevron_right,
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }
+                                    }
                                   ),
-                                ),
+                                ) : Container()
                               ],
                             ),
-                          ) : Container()
-                        ],
-                      ),
-                    ),
-                  )
+                          ),
+                        );
+                      }else if(state is LoadingStudies){
+                        return Container(
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  Constants.primaryColor400),
+                              backgroundColor: Constants.primaryColor600,
+                            )
+                          )
+                        );
+                      }else if (state is FailedLoadedStudies) {
+                        return Container(
+                          child: DataFetchErrorWidget(
+                            retryCallback: () =>
+                              BlocProvider.of<AttachStudyOrderBloc>(context).add(
+                                GetStudyFromServer(
+                                  serviceRequestId: widget.studyOrder.id ?? "0"
+                                )
+                              )
+                          )
+                        );
+                      }else {
+                        return Container();
+                      }
+                    }
+                  ),
+
                 ],
               ),
             ),

@@ -50,7 +50,7 @@ class AttachStudyOrderBloc extends Bloc<AttachStudyOrderEvent, AttachStudyOrderS
           }
         }
       }else if(event is GetStudyFromServer){
-        emit(UploadingStudy());
+        emit(LoadingStudies());
         var _post;
         await Task(() =>
         _ordersRepository.getServiceRequestId(event.serviceRequestId)!)
@@ -62,7 +62,7 @@ class AttachStudyOrderBloc extends Bloc<AttachStudyOrderEvent, AttachStudyOrderS
         var response;
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
-          emit(FailedUploadFiles(response: response));
+          emit(FailedLoadedStudies(response: response));
         } else {
           late ServiceRequest serviceRequest;
           _post.foldRight(ServiceRequest, (a, previous) => serviceRequest = a);
