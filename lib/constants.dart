@@ -149,6 +149,14 @@ const boldoCorpSmallTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoCorpSmallSTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 12,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
 const boldoCorpSmallInterTextStyle = TextStyle(
   color: ConstantsV2.lightGrey,
   fontStyle: FontStyle.normal,
