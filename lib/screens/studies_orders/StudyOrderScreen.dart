@@ -400,12 +400,11 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                             const SizedBox(
                               width: 4,
                             ),
-                            // TODO count of attachment files
-                            /*Text(
-                              "${studiesOrders[index].studiesCodes![0].display} ${studiesOrders[index].studiesCodes?.length == 1 ? "archivo adjunto" : "archivos adjuntos"}",
+                            Text(
+                              "${(studiesOrders?.serviceRequests?[index].diagnosticReportCount?? 0)} ${(studiesOrders?.serviceRequests?[index].diagnosticReportCount?? 0) == 1? "archivo adjunto" : "archivos adjuntos"}",
                               style: boldoCorpSmallTextStyle.copyWith(
                                   color: ConstantsV2.darkBlue),
-                            )*/
+                            )
                           ],
                         ),
                       ),
