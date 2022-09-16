@@ -1,5 +1,7 @@
 import 'package:boldo/main.dart';
+import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
+import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -21,6 +23,7 @@ class _MyStudiesState extends State<MyStudies> {
   bool _loading = true;
   bool _error = false;
   List<DiagnosticReport> diagnosticReport = [];
+  ServiceRequest? serviceRequest;
   @override
   void initState() {
     BlocProvider.of<MyStudiesBloc>(context).add(GetPatientStudiesFromServer());
@@ -85,13 +88,23 @@ class _MyStudiesState extends State<MyStudies> {
                 Scaffold.of(context).showSnackBar(const SnackBar(
                     content: Text("Falló la obtención de estudios")));
               }
+
+              if (state is ServiceRequestLoaded) {
+                serviceRequest = state.serviceRequest;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          AttachStudyByOrderScreen(
+                            studyOrder: serviceRequest == null ? ServiceRequest() : serviceRequest!,
+                          )));
+              }
             },
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                
                   TextButton.icon(
                     onPressed: () {
                       Navigator.pop(context);
@@ -374,11 +387,14 @@ class _MyStudiesState extends State<MyStudies> {
                                               side: const BorderSide(
                                                   color: ConstantsV2.orange))),
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      BlocProvider.of<MyStudiesBloc>(context)
+                                          .add(GetServiceRequests(serviceRequestId: diagnosticReport[index]
+                                                            .serviceRequestId!));
+                                    },
                                   )
                                 : Container()
-                          ]
-                      ),
+                          ]),
                     ],
                   ),
                 ),
