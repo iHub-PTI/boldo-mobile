@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:boldo/blocs/attach_study_order_bloc/attachStudyOrder_bloc.dart';
+import 'package:boldo/blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
@@ -65,6 +66,8 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                     backgroundColor: ConstantsV2.green,
                   ),
                 );
+                BlocProvider.of<StudyOrderBloc>(context)
+                    .add(GetNewsId(encounter: widget.studyOrder.encounterId ?? "0"));
                 Navigator.of(context)
                     .pop();
               }
