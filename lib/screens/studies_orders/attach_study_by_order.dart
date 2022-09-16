@@ -112,6 +112,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                       child: Column(
                         children: [
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             mainAxisSize: MainAxisSize.min,
                             children: [
