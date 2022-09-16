@@ -7,6 +7,8 @@ class StudiesOrderInitial extends StudyOrderState {}
 
 class LoadingOrders extends StudyOrderState {}
 
+class LoadingAppointment extends StudyOrderState {}
+
 class FailedLoadedOrders extends StudyOrderState {
   final response;
   FailedLoadedOrders({required this.response});

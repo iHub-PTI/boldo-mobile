@@ -119,7 +119,8 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                   const SizedBox(height: 10),
                   BlocBuilder<StudyOrderBloc, StudyOrderState>(
                       builder: (context, state) {
-                    if (state is StudyOrderLoaded || state is AppointmentLoaded) {
+                    if (state is StudyOrderLoaded || state is AppointmentLoaded
+                    || state is LoadingAppointment) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -173,27 +174,42 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                                                           encounter: widget
                                                               .encounterId!));
                                                 },
-                                                child: Row(
-                                                  children: [
-                                                    const Text(
-                                                      'ver consulta de origen',
-                                                      style: TextStyle(
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .underline,
-                                                          fontFamily:
-                                                              'Montserrat',
-                                                          fontSize: 16),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 15,
-                                                    ),
-                                                    SvgPicture.asset(
-                                                      'assets/icon/chevron-right.svg',
-                                                      height: 12,
-                                                    )
-                                                  ],
-                                                )),
+                                                child: BlocBuilder<StudyOrderBloc, StudyOrderState>(
+                                                  builder: (context, state) {
+                                                    if (state is LoadingAppointment) {
+                                                      return Container(
+                                                          child: const Center(
+                                                              child: CircularProgressIndicator(
+                                                                valueColor: AlwaysStoppedAnimation<Color>(
+                                                                    Constants.primaryColor400),
+                                                                backgroundColor: Constants.primaryColor600,
+                                                              )));
+                                                    } else {
+                                                      return Row(
+                                                        children: [
+                                                          const Text(
+                                                            'ver consulta de origen',
+                                                            style: TextStyle(
+                                                                decoration:
+                                                                TextDecoration
+                                                                    .underline,
+                                                                fontFamily:
+                                                                'Montserrat',
+                                                                fontSize: 16),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 15,
+                                                          ),
+                                                          SvgPicture.asset(
+                                                            'assets/icon/chevron-right.svg',
+                                                            height: 12,
+                                                          )
+                                                        ],
+                                                      );
+                                                    }
+                                                  }
+                                                ),
+                                            )
                                           )
                                         : Container()
                                   ],
