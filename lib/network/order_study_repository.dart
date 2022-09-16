@@ -160,16 +160,39 @@ class StudiesOrdersRepository {
 
   Future<Appointment> getAppointment(String encounter) async {
     try {
-      Response response1 =
-          await dio.get('/profile/patient/encounters/${encounter}');
+      Response response1;
+      if(prefs.getBool(isFamily) ?? false) {
+        response1 =
+        await dio.get('/profile/caretaker/dependent/${patient.id}/encounters/${encounter}');
+      }else{
+        response1 =
+        await dio.get('/profile/patient/encounters/${encounter}');
+      }
       if (response1.statusCode == 200) {
         if (response1.data["encounter"]["appointmentId"] != null) {
           String appointmentId = response1.data["encounter"]["appointmentId"];
-          Response response2 =
-              await dio.get('/profile/patient/appointments/${appointmentId}');
+          Response response2;
+          if(prefs.getBool(isFamily) ?? false) {
+            response2 =
+            await dio.get('/profile/caretaker/dependent/${patient.id}appointments/${appointmentId}');
+          }else{
+            response2 =
+            await dio.get('/profile/patient/appointments/${appointmentId}');
+          }
           if (response2.statusCode == 200) {
             return Appointment.fromJson(response2.data);
           } else {
+            await Sentry.captureMessage(
+              "Status code unknown",
+              params: [
+                {
+                  "path": '',
+                  "data":'', //ex.requestOptions.data,
+                  "patient": patient.id,
+                  "responseError":''// ex.response,
+                }
+              ],
+            );
             throw Failure('No fue posible obtener la cita');
           }
         } else {
@@ -189,8 +212,13 @@ class StudiesOrdersRepository {
 
     try {
       // the query is made
-      response =
-          await dio.get('/profile/patient/serviceRequest/${serviceRequestId}');
+      if(prefs.getBool(isFamily) ?? false) {
+        response =
+        await dio.get('/profile/caretaker/dependent/${patient.id}/serviceRequest/${serviceRequestId}');
+      }else{
+        response =
+        await dio.get('/profile/patient/serviceRequest/${serviceRequestId}');
+      }
       // there are study orders
       if (response.statusCode == 200) {
         return ServiceRequest.fromJson(response.data);
