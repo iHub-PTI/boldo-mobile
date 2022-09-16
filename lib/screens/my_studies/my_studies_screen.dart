@@ -353,48 +353,54 @@ class _MyStudiesState extends State<MyStudies> {
                         height: 8,
                       ),
                       Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/icon/attach-file.svg',
+                              ),
+                              const SizedBox(
+                                width: 4,
+                              ),
+                              Text(
+                                "${diagnosticReport[index].attachmentNumber} ${diagnosticReport[index].attachmentNumber == "1" ? "archivo adjunto" : "archivos adjuntos"}",
+                                style: boldoCorpSmallTextStyle.copyWith(
+                                    color: ConstantsV2.darkBlue),
+                              )
+                            ],
+                          ),
+                        ]
+                      ),
+                      diagnosticReport[index].serviceRequestId != null
+                        ? Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Row(
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/icon/attach-file.svg',
-                                ),
-                                const SizedBox(
-                                  width: 4,
-                                ),
-                                Text(
-                                  "${diagnosticReport[index].attachmentNumber} ${diagnosticReport[index].attachmentNumber == "1" ? "archivo adjunto" : "archivos adjuntos"}",
-                                  style: boldoCorpSmallTextStyle.copyWith(
-                                      color: ConstantsV2.darkBlue),
-                                )
-                              ],
+                            Container(
+                              child: GestureDetector(
+                                onTap: (){
+                                  BlocProvider.of<MyStudiesBloc>(context)
+                                        .add(GetServiceRequests(serviceRequestId: diagnosticReport[index]
+                                                          .serviceRequestId!));
+                                },
+                                child: Card(
+                                    margin: EdgeInsets.zero,
+                                    clipBehavior: Clip.antiAlias,
+                                    elevation: 0,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(5)),
+                                    ),
+                                    color: ConstantsV2.orange.withOpacity(0.10),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+                                      child: const Text("ver orden"),
+                                    )),
+                              ),
                             ),
-                            diagnosticReport[index].serviceRequestId != null
-                                ? ElevatedButton(
-                                    child: const Text(
-                                      'ver orden',
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          fontFamily: 'Montserrat'),
-                                    ),
-                                    style: ButtonStyle(
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(18.0),
-                                              side: const BorderSide(
-                                                  color: ConstantsV2.orange))),
-                                    ),
-                                    onPressed: () {
-                                      BlocProvider.of<MyStudiesBloc>(context)
-                                          .add(GetServiceRequests(serviceRequestId: diagnosticReport[index]
-                                                            .serviceRequestId!));
-                                    },
-                                  )
-                                : Container()
-                          ]),
+                          ],
+                        )
+                        : Container()
                     ],
                   ),
                 ),
