@@ -43,7 +43,7 @@ class StudiesOrdersRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response,
           }
         ],
@@ -78,7 +78,7 @@ class StudiesOrdersRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response,
           }
         ],
@@ -115,6 +115,17 @@ class StudiesOrdersRepository {
       }
       return attachmentUrls;
     } on DioError catch (ex) {
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "responseError": ex.response,
+          }
+        ],
+      );
       throw Failure(ex.response?.data['message']);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
@@ -143,7 +154,7 @@ class StudiesOrdersRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response,
           }
         ],
@@ -158,7 +169,7 @@ class StudiesOrdersRepository {
     }
   }
 
-  Future<Appointment> getAppointment(String encounter) async {
+  Future<Appointment?>? getAppointment(String encounter) async {
     try {
       Response response1;
       if(prefs.getBool(isFamily) ?? false) {
@@ -174,36 +185,68 @@ class StudiesOrdersRepository {
           Response response2;
           if(prefs.getBool(isFamily) ?? false) {
             response2 =
-            await dio.get('/profile/caretaker/dependent/${patient.id}appointments/${appointmentId}');
+            await dio.get('/profile/caretaker/dependent/${patient.id}/appointments/${appointmentId}');
           }else{
             response2 =
             await dio.get('/profile/patient/appointments/${appointmentId}');
           }
           if (response2.statusCode == 200) {
             return Appointment.fromJson(response2.data);
-          } else {
-            await Sentry.captureMessage(
-              "Status code unknown",
-              params: [
-                {
-                  "path": '',
-                  "data":'', //ex.requestOptions.data,
-                  "patient": patient.id,
-                  "responseError":''// ex.response,
-                }
-              ],
-            );
-            throw Failure('No fue posible obtener la cita');
           }
-        } else {
+          await Sentry.captureMessage(
+            "Status code unknown",
+            params: [
+              {
+                "path": response2.requestOptions.path,
+                "data": response2.data, //ex.requestOptions.data,
+                "patient": prefs.getString("userId"),
+              }
+            ],
+          );
           throw Failure('No fue posible obtener la cita');
         }
-        return Appointment();
-      } else {
+        await Sentry.captureMessage(
+          "Cant get encounter",
+          params: [
+            {
+              "path": response1.requestOptions.path,
+              "data": response1.data, //ex.requestOptions.data,
+              "patient": prefs.getString("userId"),
+            }
+          ],
+        );
         throw Failure('No fue posible obtener la cita');
       }
-    } catch (e) {
-      throw Failure(e.toString());
+      await Sentry.captureMessage(
+        "Status code unknown",
+        params: [
+          {
+            "path": response1.requestOptions.path,
+            "data": response1.data, //ex.requestOptions.data,
+            "patient": prefs.getString("userId"),
+          }
+        ],
+      );
+      throw Failure('No fue posible obtener la cita');
+    } on DioError catch(ex) {
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "responseError": ex.response,
+          }
+        ],
+      );
+      throw Failure('No fue posible obtener la cita');
+    }catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -223,6 +266,16 @@ class StudiesOrdersRepository {
       if (response.statusCode == 200) {
         return ServiceRequest.fromJson(response.data);
       } // no study orders
+      await Sentry.captureMessage(
+        "Status code unknown",
+        params: [
+          {
+            "path": response.requestOptions.path,
+            "data": response.data, //ex.requestOptions.data,
+            "patient": prefs.getString("userId"),
+          }
+        ],
+      );
       throw Failure(genericError);
     } on DioError catch (ex) {
       await Sentry.captureMessage(
@@ -231,14 +284,18 @@ class StudiesOrdersRepository {
           {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
-            "patient": patient.id,
+            "patient": prefs.getString("userId"),
             "responseError": ex.response,
           }
         ],
       );
-      throw Failure("No se pueden obtener las órdenes de estudio");
-    } catch (e) {
-      throw Failure(e.toString());
+      throw Failure("No se pueden obtener la órden de estudio");
+    }catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 }
