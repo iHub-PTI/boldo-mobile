@@ -67,7 +67,6 @@ class _FamilyTransitionState extends State<FamilyTransition> {
             }
             if(state is Success){
               _dataLoading = false;
-              BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
               BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
             }
             if(state is RedirectNextScreen){

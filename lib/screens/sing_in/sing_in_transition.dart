@@ -65,7 +65,7 @@ class _SingInTransitionState extends State<SingInTransition> {
             if(state is RedirectBackScreen){
               UserRepository().logout(context);
             }
-            if(state is Success){
+            if(state is ChangeFamily){
               _background = const Background(text: "SingIn_2");
               _dataLoading = false;
             }
