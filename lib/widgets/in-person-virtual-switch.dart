@@ -70,7 +70,7 @@ class _VirtualInPersonSwitchState extends State<VirtualInPersonSwitch> {
                 });
               },
               child: Align(
-                alignment: Alignment(-1, 0),
+                alignment: const Alignment(-1, 0),
                 child: Container(
                   width: width * 0.5,
                   color: Colors.transparent,

@@ -15,7 +15,6 @@ class FilterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Provider.of<UtilsProvider>(context, listen: false).clearFilters();
         return true;
       },
       child: CustomWrapper(

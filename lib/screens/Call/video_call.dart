@@ -1,10 +1,13 @@
 import 'dart:core';
+import 'package:boldo/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:dio/dio.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
+import 'package:wakelock/wakelock.dart';
 
+import '../../main.dart';
 import '../../network/http.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/screens/Call/components/call.dart';
@@ -43,12 +46,18 @@ class _VideoCallState extends State<VideoCall> {
   void initState() {
     super.initState();
     _getCallToken();
+    Wakelock.enable();
   }
 
   Future _getCallToken() async {
     try {
-      Response response = await dio
-          .get("/profile/patient/appointments/${widget.appointment.id}");
+      Response response;
+      if(! prefs.getBool(isFamily)!)
+        response = await dio
+            .get("/profile/patient/appointments/${widget.appointment.id}");
+      else
+        response = await dio.get(
+            "/profile/caretaker/dependent/${patient.id}/appointments/${widget.appointment.id}");
 
       if (response.data["token"] == null ||
           response.data["token"] == "" ||
@@ -164,19 +173,21 @@ class _VideoCallState extends State<VideoCall> {
 
       if (peerConnection != null) peerConnection!.cleanup();
 
-      //initialize the peer connection
-      peerConnection = PeerConnection(
-          localStream: localStream!,
-          room: widget.appointment.id!,
-          socket: socket!,
-          token: token!);
+      if (localStream != null && socket != null && token != null) {
+        //initialize the peer connection
+        peerConnection = PeerConnection(
+            localStream: localStream!,
+            room: widget.appointment.id!,
+            socket: socket!,
+            token: token!);
 
-      peerConnection!.onRemoteStream = onRemoteStream;
-      peerConnection!.onStateChange = onStateChange;
+        peerConnection!.onRemoteStream = onRemoteStream;
+        peerConnection!.onStateChange = onStateChange;
 
-      await peerConnection!.init();
-      print('setting description');
-      await peerConnection!.setSdpOffer(message);
+        await peerConnection!.init();
+        print('setting description');
+        await peerConnection!.setSdpOffer(message);
+      }
     });
 
     // Inform Doctor that we are ready.
@@ -196,23 +207,26 @@ class _VideoCallState extends State<VideoCall> {
 
   @override
   void dispose() {
+    Wakelock.disable();
     //cleanup the socket
     if (socket != null) {
       socket!.clearListeners();
       socket!.dispose();
       socket = null;
     }
-
     // cleanup the video renderers
+    localRenderer.srcObject = null;
+    remoteRenderer.srcObject = null;
     localRenderer.dispose();
     remoteRenderer.dispose();
+    localStream?.dispose();
 
     //cleanup the peer connection
     if (peerConnection != null) peerConnection!.cleanup();
     super.dispose();
   }
 
-  void hangUp() {
+  Future<void> hangUp() async {
     socket!.emit('end call', {"room": widget.appointment.id, "token": token});
     Navigator.of(context).pop();
   }

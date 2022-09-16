@@ -1,3 +1,4 @@
+import 'package:boldo/main.dart';
 import 'package:boldo/screens/profile/actions/sharedActions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -74,62 +75,38 @@ class _AddressScreenState extends State<AddressScreen> {
             key: _formKey,
             child: Column(
               children: [
-                Selector<UserProvider, String>(
-                  builder: (_, data, __) {
-                    return CustomFormInput(
-                      initialValue: data,
-                      label: "Calle",
-                      secondaryLabel: "Opcional",
-                      onChanged: (String val) =>
-                          userProvider.setUserData(street: val),
-                    );
-                  },
-                  selector: (buildContext, userProvider) =>
-                      userProvider.getStreet??'',
+                CustomFormInput(
+                  initialValue: editingPatient.street,
+                  label: "Calle",
+                  secondaryLabel: "Opcional",
+                  onChanged: (String val) =>
+                    editingPatient.street = val,
                 ),
                 const SizedBox(height: 20),
-                Selector<UserProvider, String>(
-                  builder: (_, data, __) {
-                    return CustomFormInput(
-                      initialValue: data,
-                      label: "Barrio",
-                      secondaryLabel: "Opcional",
-                      onChanged: (String val) =>
-                          userProvider.setUserData(neighborhood: val),
-                    );
-                  },
-                  selector: (buildContext, userProvider) =>
-                      userProvider.getNeighborhood??'',
+                CustomFormInput(
+                  initialValue: editingPatient.neighborhood,
+                  label: "Barrio",
+                  secondaryLabel: "Opcional",
+                  onChanged: (String val) =>
+                    editingPatient.neighborhood = val,
                 ),
                 const SizedBox(height: 20),
-                Selector<UserProvider, String>(
-                  builder: (_, data, __) {
-                    return CustomFormInput(
-                      initialValue: data,
+                CustomFormInput(
+                      initialValue: editingPatient.city,
                       label: "Ciudad",
                       secondaryLabel: "Opcional",
                       onChanged: (String val) =>
-                          userProvider.setUserData(city: val),
-                    );
-                  },
-                  selector: (buildContext, userProvider) =>
-                      userProvider.getCity??'',
-                ),
+                        editingPatient.city = val,
+                    ),
                 const SizedBox(height: 20),
-                Selector<UserProvider, String>(
-                  builder: (_, data, __) {
-                    return CustomFormInput(
-                      initialValue: data,
+                CustomFormInput(
+                      initialValue: editingPatient.addressDescription,
                       maxLines: 6,
                       label: "Referencia",
                       secondaryLabel: "Opcional",
                       onChanged: (String val) =>
-                          userProvider.setUserData(addressDescription: val),
-                    );
-                  },
-                  selector: (buildContext, userProvider) =>
-                      userProvider.getAddressDescription??'',
-                ),
+                        editingPatient.addressDescription = val,
+                    ),
                 const SizedBox(height: 26),
                 SizedBox(
                   child: Column(

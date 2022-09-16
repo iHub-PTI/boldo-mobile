@@ -1,10 +1,19 @@
+import 'dart:convert';
+
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Specialization.dart';
 import 'package:boldo/network/http.dart';
+import 'package:boldo/provider/user_provider.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
+import 'auth_provider.dart';
 
 class UtilsProvider with ChangeNotifier {
   List<Specialization> _selectedSpecializations = [];
@@ -139,4 +148,55 @@ class UtilsProvider with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void logout(BuildContext context) async {
+    try {
+      String baseUrlKeyCloack = String.fromEnvironment(
+          'KEYCLOAK_REALM_ADDRESS',
+          defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
+
+      const storage = FlutterSecureStorage();
+      final SharedPreferences prefs =
+      await SharedPreferences.getInstance();
+      String? refreshToken =
+      await storage.read(key: "refresh_token");
+      Map<String, dynamic> body = {
+        "refresh_token": refreshToken??'',
+        "client_id": "boldo-patient"
+      };
+      var url = Uri.parse(
+          "$baseUrlKeyCloack/protocol/openid-connect/logout");
+      await http.post(url,
+          body: body,
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          encoding: Encoding.getByName("utf-8"));
+      Provider.of<AuthProvider>(context, listen: false)
+          .setIsFamily(isFamily: false);
+      Provider.of<AuthProvider>(context, listen: false)
+          .setAuthenticated(isAuthenticated: false);
+      Provider.of<UserProvider>(context, listen: false)
+          .clearProvider();
+      await prefs.setBool("onboardingCompleted", false);
+      await storage.deleteAll();
+      await prefs.clear();
+
+      Navigator.of(context).pushNamedAndRemoveUntil('/onboarding', (Route<dynamic> route) => false);
+    } on DioError catch (exception, stackTrace) {
+      print(exception);
+
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+    } catch (exception, stackTrace) {
+      print(exception);
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
 }

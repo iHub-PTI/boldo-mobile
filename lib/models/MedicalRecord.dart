@@ -1,6 +1,8 @@
 import 'package:boldo/models/PresciptionMedicalRecord.dart';
 import 'package:boldo/models/Soep.dart';
 
+//List<MedicalRecord> patientMedicalRecordFromJson(dynamic str) => List<MedicalRecord>.from(str.map((x) => MedicalRecord.fromJson(x)));
+
 class MedicalRecord {
   String? id;
   String? appointmentId;

@@ -1,4 +1,6 @@
+import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
@@ -69,8 +71,9 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                         onPressed: () {
                           Provider.of<UtilsProvider>(context, listen: false)
                               .setSelectedPageIndex(pageIndex: 0);
-                          Navigator.of(context)
-                              .popUntil(ModalRoute.withName("/home"));
+                          BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
+                          Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+
                         },
 
                         child: Text(

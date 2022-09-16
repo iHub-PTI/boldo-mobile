@@ -193,7 +193,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                          DateFormat('EEEE, dd MMMM yyyy')
+                          DateFormat('EEEE, dd MMMM yyyy', Localizations.localeOf(context).languageCode)
                               .format(
                                   DateTime.parse(appointment.start!).toLocal())
                               .capitalize(),
@@ -251,7 +251,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
                   child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                          "${appointment.appointmentType == 'V' ?'La sala de espera se abrirá a las: ${DateFormat('HH:mm').format(DateTime.parse(appointment.start!).toLocal()).capitalize()} hs, ${DateFormat(' dd MMMM yyyy').format(DateTime.parse(appointment.start!).toLocal()).capitalize()}':'Tiene agendada una consulta presencial en el Hospital Los Ángeles'} ")),
+                          "${appointment.appointmentType == 'V' ?'La sala de espera se abrirá a las: ${DateFormat('HH:mm').format(DateTime.parse(appointment.start!).toLocal().subtract(const Duration(minutes: 15))).capitalize()} hs, ${DateFormat(' dd MMMM yyyy', Localizations.localeOf(context).languageCode).format(DateTime.parse(appointment.start!).toLocal()).capitalize()}':'Tiene agendada una consulta presencial en el Hospital Los Ángeles'} ")),
                 ),
               const SizedBox(height: 64),
             ],

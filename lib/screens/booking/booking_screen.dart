@@ -1,6 +1,5 @@
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/widgets/in-person-virtual-switch.dart';
-import 'package:boldo/widgets/in-person-virtual-alert.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -103,8 +102,8 @@ class _BookingScreenState extends State<BookingScreen> {
     try {
       Response response = await dio
           .get("/doctors/${widget.doctor.id}/availability", queryParameters: {
-        'start': date.toUtc().toIso8601String(),
-        'end': DateTime(date.year, date.month + 1, 1).toUtc().toIso8601String(),
+        'start': date.toLocal().toIso8601String(),
+        'end': DateTime(date.year, date.month + 1, 1).toLocal().toIso8601String(),
       });
 
       List<NextAvailability>? allAvailabilities = [];
@@ -189,7 +188,7 @@ class _BookingScreenState extends State<BookingScreen> {
             color: Constants.extraColor400,
           ),
           label: Text(
-            'Reservar',
+            'Agendar',
             style: boldoHeadingTextStyle.copyWith(fontSize: 20),
           ),
         ),
@@ -264,7 +263,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       Column(children: [
                         Center(
                           child: Text(
-                            DateFormat('dd MMMM yyyy').format(selectedDate),
+                            DateFormat('dd MMMM yyyy', Localizations.localeOf(context).languageCode).format(selectedDate),
                             style: boldoHeadingTextStyle.copyWith(
                                 fontWeight: FontWeight.normal, fontSize: 14),
                           ),
@@ -534,11 +533,12 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
     final actualDay = DateTime.now();
     final parsedAvailability =
         DateTime.parse(widget.nextAvailability).toLocal();
-    int daysDifference = parsedAvailability.difference(actualDay).inDays;
+    // int daysDifference = parsedAvailability.difference(actualDay).inDays;
+      int daysDifference = daysBetween(actualDay,parsedAvailability);
 
-    if (actualDay.month == parsedAvailability.month) {
-      daysDifference = parsedAvailability.day - actualDay.day;
-    }
+    // if (actualDay.month == parsedAvailability.month) {
+    //   daysDifference = parsedAvailability.day - actualDay.day;
+    // }
     if (daysDifference == 0) {
       isToday = true;
     }
@@ -547,7 +547,7 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
       availabilityText = "Disponible Hoy!";
     } else if (daysDifference > 0) {
       availabilityText =
-          "Disponible ${DateFormat('EEEE, dd MMMM').format(parsedAvailability)}";
+          "Disponible ${DateFormat('EEEE, dd MMMM', Localizations.localeOf(context).languageCode).format(parsedAvailability)}";
     }
 
     return Card(
@@ -600,7 +600,7 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                           height: 4,
                         ),
                         Text(
-                          DateFormat('EEEE, dd MMMM')
+                          DateFormat('EEEE, dd MMMM', Localizations.localeOf(context).languageCode)
                               .format(parsedAvailability)
                               .capitalize(),
                           style: boldoSubTextStyle,
@@ -636,9 +636,7 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                     final chooseOption =
                         await _showPopupMenu(details.globalPosition);
                     if (chooseOption != null) {
-                      DateTime parsedAvailability = DateTime.parse(
-                              widget.doctor.nextAvailability!.availability!)
-                          .toLocal();
+                      DateTime parsedAvailability = DateTime.parse(widget.nextAvailability).toLocal();
                       if (chooseOption == 'En persona') {
                         widget.handleBookingHour(
                           NextAvailability(
@@ -662,7 +660,7 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                 },
                 child: Container(
                   child: Text(
-                    'Reservar ahora',
+                    'Agendar ahora',
                     style: boldoHeadingTextStyle.copyWith(
                         color: Constants.primaryColor500),
                   ),
