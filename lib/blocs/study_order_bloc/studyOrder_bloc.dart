@@ -51,7 +51,7 @@ class StudyOrderBloc extends Bloc<StudyOrderEvent, StudyOrderState> {
           emit(StudyOrderLoaded(studyOrder: studiesOrder));
         }
       } else if (event is GetAppointment) {
-        // in this case dont emit load
+        emit(LoadingAppointment());
         var _post;
         await Task(() => _ordersRepository.getAppointment(event.encounter))
             .attempt()
