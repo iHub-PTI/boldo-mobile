@@ -31,7 +31,6 @@ class MedicalRecordsScreen extends StatefulWidget {
 
 class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
   MedicalRecord? medicalRecord;
-  StudyOrder? studiesOrder;
   int _daysBetween = 0;
   @override
   void initState() {
@@ -57,13 +56,6 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                 DateTime.parse(widget.appointment.start ??
                     DateTime.now().toIso8601String()),
                 DateTime.now());
-            if (medicalRecord != null) {
-              BlocProvider.of<MedicalRecordBloc>(context)
-                  .add(GetStudiesOrderById(encounterId: medicalRecord!.id!));
-            }
-          }
-          if (state is StudiesOrderLoaded) {
-            studiesOrder = state.studiesOrder;
           }
         },
         child: Scaffold(
@@ -288,44 +280,60 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                       ListView.builder(
                                         scrollDirection: Axis.vertical,
                                         shrinkWrap: true,
-                                        itemCount: studiesOrder?.serviceRequests!.length,
+                                        itemCount: medicalRecord?.serviceRequests!.length,
                                         itemBuilder: (BuildContext context, int index) {
                                           return ShowStudy(
-                                              context, studiesOrder?.serviceRequests![index] ??  ServiceRequest());
+                                              context, medicalRecord?.serviceRequests![index] ??  ServiceRequest());
                                         }
                                       ),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          Container(
-                                            child: GestureDetector(
-                                              onTap: (){
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        StudyOrderScreen(callFromHome: false, encounterId: medicalRecord?.id?? "0")
-                                                  ),
-                                                );
-                                              },
-                                              child: Card(
-                                                  margin: EdgeInsets.zero,
-                                                  clipBehavior: Clip.antiAlias,
-                                                  elevation: 0,
-                                                  shape: const RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.only(
-                                                        topLeft: Radius.circular(5)),
-                                                  ),
-                                                  color: ConstantsV2.orange.withOpacity(0.10),
-                                                  child: Container(
-                                                    padding: const EdgeInsets.symmetric(
-                                                        horizontal: 15, vertical: 7),
-                                                    child: const Text("ver ordenes"),
-                                                  )),
+                                      medicalRecord?.serviceRequests != null
+                                        ? medicalRecord!.serviceRequests!.length > 0
+                                          ? Container()
+                                          : Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              'No posee órdenes de estudios',
+                                              style: boldoCorpMediumTextStyle.copyWith(
+                                                  color: ConstantsV2.darkBlue),
                                             ),
-                                          ),
-                                        ],
-                                      ),
+                                          )
+                                        : Container(),
+                                      medicalRecord?.serviceRequests != null
+                                        ? medicalRecord!.serviceRequests!.length > 0
+                                          ? Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              Container(
+                                                child: GestureDetector(
+                                                  onTap: (){
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            StudyOrderScreen(callFromHome: false, encounterId: medicalRecord?.id?? "0")
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Card(
+                                                      margin: EdgeInsets.zero,
+                                                      clipBehavior: Clip.antiAlias,
+                                                      elevation: 0,
+                                                      shape: const RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.only(
+                                                            topLeft: Radius.circular(5)),
+                                                      ),
+                                                      color: ConstantsV2.orange.withOpacity(0.10),
+                                                      child: Container(
+                                                        padding: const EdgeInsets.symmetric(
+                                                            horizontal: 15, vertical: 7),
+                                                        child: const Text("ver ordenes"),
+                                                      )),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                          : Container()
+                                        : Container(),
                                       const SizedBox(height: 10,)
                                     ],
                                   ),
