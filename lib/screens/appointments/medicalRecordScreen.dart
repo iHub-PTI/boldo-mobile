@@ -8,6 +8,7 @@ import 'package:boldo/models/Soep.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
+import 'package:boldo/screens/my_studies/estudy_screen.dart';
 import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
 import 'package:boldo/screens/studies_orders/StudyOrderScreen.dart';
 import 'package:boldo/utils/helpers.dart';
@@ -57,7 +58,8 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                     DateTime.now().toIso8601String()),
                 DateTime.now());
             if (medicalRecord != null) {
-              BlocProvider.of<MedicalRecordBloc>(context).add(GetStudiesOrderById(encounterId: medicalRecord!.id!));
+              BlocProvider.of<MedicalRecordBloc>(context)
+                  .add(GetStudiesOrderById(encounterId: medicalRecord!.id!));
             }
           }
           if (state is StudiesOrderLoaded) {
@@ -258,29 +260,6 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                   ),
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => StudyOrderScreen(
-                                            callFromHome: false,
-                                            encounterId:
-                                                medicalRecord?.id ?? "0")),
-                                  );
-                                },
-                                child: Card(
-                                  color: ConstantsV2.lightest,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(16),
-                                    child: Text("Ordenes"),
-                                  ),
-                                ),
-                              ),
                               Container(
                                 child: Card(
                                   shape: RoundedRectangleBorder(
@@ -300,12 +279,54 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                               'assets/icon/test-tube 1.svg',
                                               height: 12,
                                               width: 12,
+                                              color: const Color.fromRGBO(54, 79, 107, 1),
                                             ),
                                             const Text('Ordenes de estudio')
                                           ],
                                         ),
                                       ),
-                                      //ListView.builder(itemBuilder: ShowStudy)
+                                      ListView.builder(
+                                        scrollDirection: Axis.vertical,
+                                        shrinkWrap: true,
+                                        itemCount: studiesOrder?.serviceRequests!.length,
+                                        itemBuilder: (BuildContext context, int index) {
+                                          return ShowStudy(
+                                              context, studiesOrder?.serviceRequests![index] ??  ServiceRequest());
+                                        }
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Container(
+                                            child: GestureDetector(
+                                              onTap: (){
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        StudyOrderScreen(callFromHome: false, encounterId: medicalRecord?.id?? "0")
+                                                  ),
+                                                );
+                                              },
+                                              child: Card(
+                                                  margin: EdgeInsets.zero,
+                                                  clipBehavior: Clip.antiAlias,
+                                                  elevation: 0,
+                                                  shape: const RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.only(
+                                                        topLeft: Radius.circular(5)),
+                                                  ),
+                                                  color: ConstantsV2.orange.withOpacity(0.10),
+                                                  child: Container(
+                                                    padding: const EdgeInsets.symmetric(
+                                                        horizontal: 15, vertical: 7),
+                                                    child: const Text("ver ordenes"),
+                                                  )),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10,)
                                     ],
                                   ),
                                 ),
@@ -333,15 +354,85 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
   }
 }
 
-class ShowStudy extends StatelessWidget {
-  final StudyOrder study;
-  ShowStudy({required this.study});
 
-  @override
-  Widget build(BuildContext context) {
-    return Column();
-  }
+Widget ShowStudy(BuildContext context, ServiceRequest study) {
+  return Column(
+    children: [
+      Row(
+        children: [
+          // the orange circle
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              height: 8,
+              width: 8,
+              decoration: const BoxDecoration(
+                  color: ConstantsV2.orange, shape: BoxShape.circle),
+            ),
+          ),
+          // type of the study
+          Text(
+            study.category != null
+                ? study.category == 'Laboratory'
+                    ? 'Laboratorio'
+                    : study.category == 'Diagnostic Imaging'
+                        ? 'Imágenes'
+                        : 'Otros'
+                : 'Desconocido',
+            style: const TextStyle(fontFamily: 'Montserrat', fontSize: 14),
+          ),
+          const SizedBox(width: 10,),
+          study.urgent ?? false
+              ? Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  elevation: 0,
+                  color: ConstantsV2.orange,
+                  margin: EdgeInsets.zero,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 6.0, top: 2.0, bottom: 2.0, right: 6.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/icon/warning-white.svg',
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          "urgente",
+                          style: boldoCorpSmallTextStyle.copyWith(
+                              color: ConstantsV2.lightGrey),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : Container(),
+        ],
+      ),
+      const SizedBox(height: 5),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 24.0),
+            child: Text(
+              study.description != null ? '${study.description}' : '',
+              style: const TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 10,
+                  color: ConstantsV2.inactiveText),
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 10),
+    ],
+  );
 }
+
 
 class SoepAccordion extends StatefulWidget {
   final String title;
