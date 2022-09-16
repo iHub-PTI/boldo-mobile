@@ -8,6 +8,7 @@ import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart' as study_blo
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/image_visor.dart';
+import 'package:date_format/date_format.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -104,64 +105,107 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                            child: Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  serviceRequest?.urgent ?? false
-                                      ? Card(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(100),
+                    child: Container(
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                  child: Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        serviceRequest?.urgent ?? false
+                                            ? Card(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(100),
+                                          ),
+                                          elevation: 0,
+                                          color: ConstantsV2.orange ,
+                                          margin: EdgeInsets.zero,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 6.0,
+                                                top: 2.0,
+                                                bottom: 2.0,
+                                                right: 6.0),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                SvgPicture.asset(
+                                                  'assets/icon/warning-white.svg',
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Text(
+                                                  "urgente",
+                                                  style:
+                                                  boldoCorpSmallTextStyle.copyWith(
+                                                      color: ConstantsV2.lightGrey),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ): Container(),
+                                      ],
                                     ),
-                                    elevation: 0,
-                                    color: ConstantsV2.orange ,
-                                    margin: EdgeInsets.zero,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 6.0,
-                                          top: 2.0,
-                                          bottom: 2.0,
-                                          right: 6.0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/icon/warning-white.svg',
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Text(
-                                            "urgente",
-                                            style:
-                                            boldoCorpSmallTextStyle.copyWith(
-                                                color: ConstantsV2.lightGrey),
-                                          ),
-                                        ],
+                                  )),
+                              ProfileImageView2(
+                                height: 54,
+                                width: 54,
+                                border: true,
+                                patient: patient,
+                                color: ConstantsV2.orange,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                  child: Expanded(
+                                    child: Text(
+                                      serviceRequest?.diagnosis ?? 'Sin diagnostico presuntivo',
+                                      style: boldoCorpSmallTextStyle.copyWith(
+                                          color: ConstantsV2.inactiveText,
+                                          fontSize: 14),
+                                    ),
+                                  )),
+                              Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                      child: Text(
+                                        "Emitido el",
+                                        style: boldoCorpSmallSTextStyle.copyWith(
+                                          color: ConstantsV2.inactiveText
+                                        ),
                                       ),
                                     ),
-                                  ): Container(),
-                                  Text(
-                                    serviceRequest?.diagnosis ?? 'Sin diagnostico presuntivo',
-                                    style: boldoCorpSmallTextStyle.copyWith(
-                                        color: ConstantsV2.inactiveText,
-                                        fontSize: 14),
-                                  ),
-                                ],
-                              ),
-                            )),
-                        ProfileImageView2(
-                          height: 54,
-                          width: 54,
-                          border: true,
-                          patient: patient,
-                          color: ConstantsV2.orange,
-                        ),
-                      ],
-                    ),
+                                    Container(
+                                      child: Text(
+                                          '${formatDate(
+                                            DateTime.parse(serviceRequest?.authoredDate ??
+                                                DateTime.now().toString()),
+                                            [d, '/', m, '/', yyyy],
+                                          )}',
+                                        style: boldoSubTextMediumStyle.copyWith(
+                                            color: ConstantsV2.inactiveText
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
                   ),
                   BlocBuilder<AttachStudyOrderBloc, AttachStudyOrderState>(
                     builder: (context, state) {
