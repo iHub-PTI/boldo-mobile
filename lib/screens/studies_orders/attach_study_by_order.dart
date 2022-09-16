@@ -171,6 +171,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                           child: SingleChildScrollView(
                             child: Column(
                               children: [
+                                studiesDescription(),
                                 filesDiagnosticReport(),
                                 notesDiagnosticReport(),
                                 serviceRequest?.diagnosticReports?.isEmpty?? true ?
@@ -336,6 +337,65 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
             itemBuilder: _fileServerElement,
             itemCount: serviceRequest?.diagnosticReports?.length,
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget studiesDescription(){
+    return Container(
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  child: Row(
+                    children: [
+                      Text(
+                        'Estudios',
+                        style: boldoSubTextStyle.copyWith(
+                            color: ConstantsV2.activeText),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            color: ConstantsV2.lightest,
+            child: serviceRequest?.studiesCodes?.isEmpty?? true ? Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Container(
+                child: GestureDetector(
+                  onTap: () async {
+                    _noteBox(notes);
+                  },
+                  child: Row(
+                    children: [
+                      Text(
+                        'Sin descripción de la orden',
+                        style: boldoSubTextMediumStyle.copyWith(decoration: TextDecoration.underline,),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ): ListView.builder(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              itemBuilder: (BuildContext context, int index) {
+                return showStudyDescription(context, index, serviceRequest?.studiesCodes?[index]?? StudiesCodes());
+              },
+              itemCount: serviceRequest?.studiesCodes?.length,
+            ),
+          )
         ],
       ),
     );
@@ -780,6 +840,52 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget showStudyDescription(BuildContext context, int index, StudiesCodes studiesCodes) {
+    return Card(
+      elevation: 0,
+      margin: const EdgeInsets.only(bottom: 4),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              // the orange circle
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: 2,
+                  width: 2,
+                  decoration: const BoxDecoration(
+                      color: ConstantsV2.activeText, shape: BoxShape.circle),
+                ),
+              ),
+              Text(
+                studiesCodes.display?? '',
+                style: const TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 14,
+                    color: ConstantsV2.inactiveText),
+              ),
+            ],
+          ),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(
+                  studiesCodes.note?? '',
+                  style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText)
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+        ],
+      )
     );
   }
 
