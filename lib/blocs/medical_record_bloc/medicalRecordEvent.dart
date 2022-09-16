@@ -13,5 +13,9 @@ class GetMedicalRecordById extends MedicalRecordEvent {
   GetMedicalRecordById({required this.id});
 }
 
+class GetStudiesOrderById extends MedicalRecordEvent {
+  final String encounterId;
+  GetStudiesOrderById({required this.encounterId});
+}
 
 class InitialEvent extends MedicalRecordEvent {}
