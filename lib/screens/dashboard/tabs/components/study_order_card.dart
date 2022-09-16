@@ -260,7 +260,7 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 15, vertical: 7),
-                                    child: const Text("Ver"),
+                                    child: const Text("ver"),
                                   )),
                             ),
                           ),
