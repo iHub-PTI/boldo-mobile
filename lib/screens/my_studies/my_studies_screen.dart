@@ -156,7 +156,7 @@ class _MyStudiesState extends State<MyStudies> {
                   ),
                   diagnosticReport.isEmpty
                       ? showEmptyList()
-                      : showDiagnosticList()
+                      : showDiagnosticList(),
                 ],
               ),
             ),
@@ -211,7 +211,7 @@ class _MyStudiesState extends State<MyStudies> {
 
   Widget showDiagnosticList() {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.7,
+      height: MediaQuery.of(context).size.height - 200,
       // width: 300,
       child: ListView.separated(
         separatorBuilder: (BuildContext context, int index) => const Divider(
