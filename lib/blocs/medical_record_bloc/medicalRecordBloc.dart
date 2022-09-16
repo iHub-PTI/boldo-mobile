@@ -62,28 +62,6 @@ class MedicalRecordBloc extends Bloc<MedicalRecordEvent, MedicalRecordState> {
         }
       }else if(event is InitialEvent){
         emit(MedicalRecordInitial());
-      }else if (event is GetStudiesOrderById) {
-        emit(Loading());
-        var _post;
-        await Task(() =>
-        _ordersRepository.getStudiesOrdersId(event.encounterId)!)
-            .attempt()
-            .mapLeftToFailure()
-            .run()
-            .then((value) {
-          _post = value;
-        }
-        );
-        var response;
-        if (_post.isLeft()) {
-          _post.leftMap((l) => response = l.message);
-          emit(Failed(response: response));
-        } else {
-          late StudyOrder studiesOrder;
-          _post.foldRight(StudyOrder, (a, previous) => studiesOrder = a);
-          emit(StudiesOrderLoaded(studiesOrder: studiesOrder));
-          emit(Success());
-        }
       }
     }
 

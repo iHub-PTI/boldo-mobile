@@ -17,9 +17,4 @@ class MedicalRecordLoadedState extends MedicalRecordState {
   MedicalRecordLoadedState({required this.medicalRecord});
 }
 
-class StudiesOrderLoaded extends MedicalRecordState {
-  final StudyOrder studiesOrder;
-  StudiesOrderLoaded({required this.studiesOrder});
-}
-
 class Success extends MedicalRecordState {}
