@@ -30,6 +30,23 @@ class PassportBloc extends Bloc<PassportEvent, PassportState> {
         } else {
           emit(Success());
         }
+      } else if (event is GetUserDiseaseListSync) {
+          emit(Loading());
+          var _post;
+          await Task(() => _passportRepository.getUserDiseaseList(true)!)
+              .attempt()
+              .mapLeftToFailure()
+              .run()
+              .then((value) {
+            _post = value;
+          });
+          var response;
+          if (_post.isLeft()) {
+            _post.leftMap((l) => response = l.message);
+            emit(Failed(response: response));
+          } else {
+            emit(Success());
+          }
       }
     });
   }
