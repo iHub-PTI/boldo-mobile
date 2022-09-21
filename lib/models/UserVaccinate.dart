@@ -1,5 +1,6 @@
 
-UserVaccinate userVaccinateFromJson(dynamic str) => UserVaccinate.fromJson(str);
+List<UserVaccinate> userVaccinateFromJson(dynamic str) =>
+    List<UserVaccinate>.from(str.map((x) => UserVaccinate.fromJson(x)));
 
 class UserVaccinate {
     UserVaccinate({
