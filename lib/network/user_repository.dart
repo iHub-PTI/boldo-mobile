@@ -768,6 +768,58 @@ class UserRepository {
     }
   }
 
+  Future<List<Appointment>>? getPastAppointmentsBetweenDates(DateTime? date1, DateTime? date2) async {
+    String firstDate = date1!= null? "?start=${DateTime(date1.year, date1.month, date1.day).toUtc().toIso8601String()}" : "?start=${DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).toIso8601String()}";
+    String lastDate = date2!= null? "&end=${DateTime(date2.year, date2.month, date2.day).add(const Duration(days: 1)).toUtc().toIso8601String()}" : "";
+    Response responseAppointments;
+    try {
+      if (!prefs.getBool(isFamily)!)
+        responseAppointments =
+        await dio.get("/profile/patient/appointments$firstDate$lastDate");
+      else
+        responseAppointments = await dio.get(
+            "/profile/caretaker/dependent/${patient.id}/appointments$firstDate$lastDate");
+
+      if (responseAppointments.statusCode == 200) {
+        List<Appointment> allAppointmets = List<Appointment>.from(
+            responseAppointments.data["appointments"]
+                .map((i) => Appointment.fromJson(i)));
+
+        // Past appointment
+        allAppointmets = allAppointmets
+            .where((element) => ["closed", "locked","open"].contains(element.status))
+            .toList();
+
+        allAppointmets.sort((a, b) =>
+            DateTime.parse(b.start!).compareTo(DateTime.parse(a.start!)));
+
+        return allAppointmets;
+      }
+
+      throw Failure("Status deconocido ${responseAppointments.statusCode}");
+    }on DioError catch(ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se puede obtener las citas");
+    } catch (exception, stackTrace) {
+
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    }
+  }
+
   Future<MedicalRecord>? getMedicalRecordByAppointment(
       String appointmentId) async {
     try {
