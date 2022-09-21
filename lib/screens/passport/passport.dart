@@ -241,7 +241,10 @@ class _PassportTabState extends State<PassportTab> {
                               // pdf download
                               GestureDetector(
                                 // add bloc code
-                                onTap: () {},
+                                onTap: () {
+                                  BlocProvider.of<PassportBloc>(context)
+                                    .add(GetUserVaccinationPdfPressed(pdfFromHome: true));
+                                },
                                 child: Container(
                                   height: 44,
                                   width: 44,
