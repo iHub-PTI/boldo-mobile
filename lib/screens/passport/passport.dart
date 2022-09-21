@@ -260,6 +260,30 @@ class _PassportTabState extends State<PassportTab> {
                                   ),
                                 ),
                               ),
+                              const SizedBox(width: 4),
+                              GestureDetector(
+                                onTap: () {
+                                  BlocProvider.of<PassportBloc>(context)
+                                      .add(GetUserDiseaseListSync());
+                                },
+                                child: Container(
+                                  height: 44,
+                                  width: 44,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.only(
+                                        bottomRight: Radius.circular(10)),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: SvgPicture.asset(
+                                      'assets/icon/refresh.svg',
+                                      color: Colors.grey[800],
+                                      height: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
