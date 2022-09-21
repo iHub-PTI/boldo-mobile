@@ -13,9 +13,19 @@ import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/offline/offline_screen.dart';
 
 var dio = Dio();
-void initDio({required GlobalKey<NavigatorState> navKey, required Dio dio}) {
-  String baseUrl = String.fromEnvironment('SERVER_ADDRESS',
-      defaultValue: dotenv.env['SERVER_ADDRESS']!);
+var dioPassport = Dio();
+void initDio(
+    {required GlobalKey<NavigatorState> navKey,
+    required Dio dio,
+    required bool passport}) {
+  String baseUrl = "";
+  if (passport) {
+    baseUrl = String.fromEnvironment('SERVER_ADDRESS_PASSPORT',
+        defaultValue: dotenv.env['SERVER_ADDRESS_PASSPORT']!);
+  } else {
+    baseUrl = String.fromEnvironment('SERVER_ADDRESS',
+        defaultValue: dotenv.env['SERVER_ADDRESS']!);
+  }
 
   dio.options.baseUrl = baseUrl;
   dio.options.headers['content-Type'] = 'application/json';
@@ -74,7 +84,7 @@ void initDio({required GlobalKey<NavigatorState> navKey, required Dio dio}) {
           options.headers["authorization"] = "bearer $accessToken";
           // New dio connection to handle new errors
           Dio _dio = Dio();
-          initDio(navKey: navKey, dio: _dio);
+          initDio(navKey: navKey, dio: _dio, passport: passport);
           //retry request
           return handle.resolve(await _dio.request(options.path,
               data: options.data, options: optionsDio));
@@ -103,46 +113,47 @@ void initDio({required GlobalKey<NavigatorState> navKey, required Dio dio}) {
           dio.interceptors.errorLock.unlock();
           // New dio connection to handle new errors
           Dio _dio = Dio();
-          initDio(navKey: navKey, dio: _dio);
+          initDio(navKey: navKey, dio: _dio, passport: passport);
           //retry request
           return handle.resolve(await _dio.request(options.path,
               data: options.data, options: optionsDio));
-        } on DioError catch(exception){
-          if (exception.response?.statusCode == 401){
-            final _result = await authenticateUser(context: navKey.currentState!.context);
+        } on DioError catch (exception) {
+          if (exception.response?.statusCode == 401) {
+            final _result =
+                await authenticateUser(context: navKey.currentState!.context);
             switch (_result) {
               case 0:
-              //user canceled or generic error
+                //user canceled or generic error
                 navKey.currentState!.pushNamedAndRemoveUntil(
                   "/onboarding",
-                      (route) => false,
+                  (route) => false,
                 );
                 break;
               case 1:
-              //new user register
+                //new user register
                 navKey.currentState!.pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const PreRegisterSuccess()),
-                    (route) => false,
+                  MaterialPageRoute(
+                      builder: (context) => const PreRegisterSuccess()),
+                  (route) => false,
                 );
                 break;
 
               case 2:
                 Dio _dio = Dio();
-                initDio(navKey: navKey, dio: _dio);
+                initDio(navKey: navKey, dio: _dio, passport: passport);
                 return handle.resolve(await _dio.request(options.path,
                     data: options.data, options: optionsDio));
                 break;
               default:
             }
-          }
-          else{
+          } else {
             accessToken = null;
             UserRepository().logout(navKey.currentState!.context);
             navKey.currentState!.pushAndRemoveUntil(
               MaterialPageRoute(
                 builder: (context) => HeroScreenV2(),
               ),
-                  (route) => false,
+              (route) => false,
             );
             return handle.next(error);
           }
@@ -189,7 +200,7 @@ void initDio({required GlobalKey<NavigatorState> navKey, required Dio dio}) {
             sendTimeout: options.sendTimeout,
             validateStatus: options.validateStatus);
         Dio _dio = Dio();
-        initDio(navKey: navKey, dio: _dio);
+        initDio(navKey: navKey, dio: _dio, passport: passport);
         return handle.resolve(await _dio.request(options.path,
             data: options.data, options: optionsDio));
       }
