@@ -267,7 +267,7 @@ class _PassportTabState extends State<PassportTab> {
                           height: 10,
                         ),
                         // vaccine list
-                        diseaseUserList != null
+                        diseaseUserList != null && !diseaseUserList!.isEmpty
                             ? VaccinateCard()
                             : !_isloading
                                 ? Container(
@@ -277,14 +277,19 @@ class _PassportTabState extends State<PassportTab> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        Image.asset(
-                                            'assets/images/empty-vaccination.png'),
-                                        const Text(
-                                          'usted no posee registro vacunatorio',
-                                          style: TextStyle(
+                                        SvgPicture.asset(
+                                            'assets/images/empty_studies.svg'),
+                                        const Padding(
+                                          padding: EdgeInsets.all(16.0),
+                                          child: Text(
+                                            'No poseemos registro suyo, puede sincronizar sus datos con los del MSPyBS arriba.',
+                                            style: TextStyle(
                                               color: Color.fromRGBO(
                                                   253, 165, 125, 1),
-                                              fontSize: 18),
+                                              fontSize: 18,
+                                              fontFamily: 'Montserrat'
+                                            ),
+                                          ),
                                         ),
                                       ],
                                     ),
