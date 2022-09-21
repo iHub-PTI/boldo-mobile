@@ -85,6 +85,7 @@ Future<void> main() async {
 
   initDio(navKey: navKey, dio: dio, passport: false);
   initDio(navKey: navKey, dio: dioPassport, passport: true);
+  dioByteInstance();
   const storage = FlutterSecureStorage();
   String? session = await storage.read(key: "access_token");
 
