@@ -1,6 +1,6 @@
 import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
-import 'package:boldo/models/VaccinationList.dart';
+import 'package:boldo/models/UserVaccinate.dart';
 import 'package:boldo/screens/passport/vaccine_card.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:cached_network_image/cached_network_image.dart';

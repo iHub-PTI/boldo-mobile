@@ -13,9 +13,9 @@ class UserVaccinate {
     int version;
 
     factory UserVaccinate.fromJson(Map<String, dynamic> json) => UserVaccinate(
-        diseaseCode: json["diseaseCode"] == null ? null : json["diseaseCode"],
-        vaccineApplicationList: json["vaccineApplicationList"] == null ? null : List<VaccineApplicationList>.from(json["vaccineApplicationList"].map((x) => VaccineApplicationList.fromJson(x))),
-        version: json["version"] == null ? null : json["version"],
+        diseaseCode: json["diseaseCode"],
+        vaccineApplicationList: List<VaccineApplicationList>.from(json["vaccineApplicationList"].map((x) => VaccineApplicationList.fromJson(x))),
+        version: json["version"],
     );
 }
 

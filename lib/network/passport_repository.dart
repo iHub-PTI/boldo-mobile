@@ -7,7 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 
 import '../main.dart';
-import '../models/VaccinationList.dart';
+import '../models/UserVaccinate.dart';
 
 class PassportRepository {
   Future<None>? getUserDiseaseList() async {

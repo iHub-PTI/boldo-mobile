@@ -50,7 +50,7 @@ import 'models/MedicalRecord.dart';
 import 'models/Patient.dart';
 import 'models/Relationship.dart';
 import 'models/User.dart';
-import 'models/VaccinationList.dart';
+import 'models/UserVaccinate.dart';
 import 'models/upload_url_model.dart';
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();

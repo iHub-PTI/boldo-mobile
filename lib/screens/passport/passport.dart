@@ -9,7 +9,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
 import '../../main.dart';
-import '../../models/VaccinationList.dart';
+import '../../models/UserVaccinate.dart';
 import '../../utils/loading_helper.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../dashboard/tabs/components/data_fetch_error.dart';
