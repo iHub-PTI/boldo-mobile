@@ -16,7 +16,7 @@ class PassportBloc extends Bloc<PassportEvent, PassportState> {
       if (event is GetUserDiseaseList) {
         emit(Loading());
         var _post;
-        await Task(() => _passportRepository.getUserDiseaseList()!)
+        await Task(() => _passportRepository.getUserDiseaseList(false)!)
             .attempt()
             .mapLeftToFailure()
             .run()
