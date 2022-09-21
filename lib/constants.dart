@@ -197,7 +197,9 @@ ThemeData boldoTheme = ThemeData(
   fontFamily: 'Montserrat',
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+      textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16,
+        color: ConstantsV2.lightGrey
+      ),
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
       primary: ConstantsV2.orange,
       shape: RoundedRectangleBorder(
