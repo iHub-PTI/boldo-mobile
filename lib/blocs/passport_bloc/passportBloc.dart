@@ -47,6 +47,23 @@ class PassportBloc extends Bloc<PassportEvent, PassportState> {
           } else {
             emit(Success());
           }
+      } else if (event is GetUserVaccinationPdfPressed) {
+        emit(Loading());
+        var _post;
+        await Task(() => _passportRepository.downloadVacinnationPdf(event.pdfFromHome)!)
+            .attempt()
+            .mapLeftToFailure()
+            .run()
+            .then((value) {
+          _post = value;
+        });
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(Failed(response: response));
+        } else {
+          emit(Success());
+        }
       }
     });
   }
