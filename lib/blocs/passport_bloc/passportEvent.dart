@@ -8,6 +8,8 @@ class GetUserDiseaseList extends PassportEvent {}
 class GetUserDiseaseListSync extends PassportEvent {}
 
 class GetUserVaccinationPdfPressed extends PassportEvent {
-  bool pdfFromHome;
+  final bool pdfFromHome;
   GetUserVaccinationPdfPressed({required this.pdfFromHome});
 }
+
+class GetUserQrCode extends PassportEvent{}

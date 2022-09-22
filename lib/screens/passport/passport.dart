@@ -54,7 +54,13 @@ class _PassportTabState extends State<PassportTab> {
                     GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
-                        //Navigator.pushNamed(context, '/user_qr_detail');
+                        // this to make sure it's empty
+                        vaccineListQR!.clear();
+                        for (var i = 0; i < diseaseUserList!.length; i++) {
+                          // and then, add all elements
+                          vaccineListQR!.add(diseaseUserList![i]);
+                        }
+                        Navigator.pushNamed(context, '/user_qr_detail');
                       },
                       child: Card(
                         shape: RoundedRectangleBorder(
@@ -363,7 +369,10 @@ class _VaccinatedCard extends State<VaccinateCard> {
           return GestureDetector(
             onTap: () {
               //Todo: replace for navigation route
-
+              // this to make sure it's empty
+              vaccineListQR!.clear();
+              // here we add vaccination to generate the QR url for one selection
+              vaccineListQR!.add(diseaseUserList![indexInmunizacion]);
               Navigator.push(
                 context,
                 MaterialPageRoute(

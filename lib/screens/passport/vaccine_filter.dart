@@ -174,23 +174,21 @@ class _VaccineFilterState extends State<VaccineFilter> {
                   svgPath: 'check_white',
                   onTapAction: () {
                     print(vaccineFinded);
-                    // this to make sure it's empty
-                    // vaccineListQR!.clear();
-                    // vaccineListPDF!.clear();
-                    // // for each vaccine in filter, we search matches with diseaseUserList
-                    // for (var i = 0; i < vaccineFinded.length; i++) {
-                    //   // to choose only those that are marked in the filter screen
-                    //   if (vaccineFinded[i].status) {
-                    //     for (var j = 0; j < diseaseUserList!.length; j++) {
-                    //       if (vaccineFinded[i].name ==
-                    //           diseaseUserList![j].diseaseCode) {
-                    //         vaccineListQR!.add(diseaseUserList![j]);
-                    //         vaccineListPDF!.add(diseaseUserList![j]);
-                    //       }
-                    //     }
-                    //   }
-                    // }
-                    //Navigator.pushNamed(context, '/user_qr_detail');
+                    //this to make sure it's empty
+                    vaccineListQR!.clear();
+                    // for each vaccine in filter, we search matches with diseaseUserList
+                    for (var i = 0; i < vaccineFinded.length; i++) {
+                      // to choose only those that are marked in the filter screen
+                      if (vaccineFinded[i].status) {
+                        for (var j = 0; j < diseaseUserList!.length; j++) {
+                          if (vaccineFinded[i].name ==
+                              diseaseUserList![j].diseaseCode) {
+                            vaccineListQR!.add(diseaseUserList![j]);
+                          }
+                        }
+                      }
+                    }
+                    Navigator.pushNamed(context, '/user_qr_detail');
                   },
                 )),
           ),

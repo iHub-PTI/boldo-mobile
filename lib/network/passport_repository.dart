@@ -61,7 +61,7 @@ class PassportRepository {
       if (pdfFromHome == true) {
         vaccine = diseaseUserList;
       } else if (pdfFromHome == false) {
-        //vaccine = vaccineListQR;
+        vaccine = vaccineListQR;
       }
 
       // in this case the path is easier
@@ -107,4 +107,41 @@ class PassportRepository {
       throw Failure('Ocurrio un error indesperado');
     }
   }
+
+  Future<String>? postVerificationCode(
+      bool allVaccination, dynamic dataToPass) async {
+    String verificationCode;
+    try {
+      print("post verification code");
+      Response response = await dioPassport.post(
+          "profile/citizen/vaccinationRegistry/create?all=$allVaccination",
+          data: dataToPass);
+      if (response.statusCode == 200) {
+        verificationCode = response.data;
+      } else {
+        throw Failure('Ocurrió un error inesperado');
+      }
+    } on DioError catch (e) {
+      await Sentry.captureMessage(
+        e.toString(),
+        params: [
+          {
+            "path": e.requestOptions.path,
+            "data": e.requestOptions.data,
+            "patient": patient.id,
+            "responseError": e.response,
+          }
+        ],
+      );
+      throw Failure(e.response?.data['message']);
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure('Ocurrio un error indesperado');
+    }
+    return verificationCode;
+  }
+
 }
