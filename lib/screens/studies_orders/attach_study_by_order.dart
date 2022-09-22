@@ -367,9 +367,11 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
             color: ConstantsV2.lightest,
             child: files.isEmpty ? Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              child: Text(
-                'adjuntar un archivo',
-                style: boldoSubTextMediumStyle.copyWith(decoration: TextDecoration.underline,),
+              child: _offsetPopup(
+                child: Text(
+                  'adjuntar un archivo',
+                  style: boldoSubTextMediumStyle.copyWith(decoration: TextDecoration.underline,),
+                ),
               ),
             ): ListView.builder(
               padding: EdgeInsets.zero,
@@ -572,7 +574,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
     }
   }
 
-  Widget _offsetPopup() {
+  Widget _offsetPopup({Widget? child}) {
     return PopupMenuButton<int>(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         shape: RoundedRectangleBorder(
@@ -634,7 +636,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                 ),
               ),
             ],
-        child: Card(
+        child: child?? Card(
           child: Container(
             padding: const EdgeInsets.all(10),
             child: SvgPicture.asset('assets/icon/add-outline.svg'),
