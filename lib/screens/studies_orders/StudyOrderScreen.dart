@@ -275,6 +275,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemBuilder: showStudy,
+        physics: const ClampingScrollPhysics(),
       ),
     );
   }
