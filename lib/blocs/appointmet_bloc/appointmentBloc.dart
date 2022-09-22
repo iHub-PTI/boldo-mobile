@@ -16,6 +16,15 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
   DateTime _initialDate = DateTime.now().subtract(const Duration(days: 30));
   DateTime? _finalDate = DateTime.now();
 
+  // remote type
+  bool _filterVirtual = true;
+
+  // in person type
+  bool _filterInPerson = true;
+
+  bool getVirtualStatus() => _filterVirtual;
+  bool getInPersonStatus() => _filterInPerson;
+
   DateTime getInitialDate() => _initialDate;
   DateTime? getFinalDate() => _finalDate;
 
@@ -25,6 +34,14 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
 
   void setFinalDate(DateTime? finalDate) {
     _finalDate = finalDate;
+  }
+
+  void setVirtualStatus(bool virtualStatus) {
+    _filterVirtual = virtualStatus;
+  }
+
+  void setInPersonStatus(bool inPersonStatus) {
+    _filterInPerson = inPersonStatus;
   }
 
   AppointmentBloc() : super(AppointmentInitial()) {
@@ -72,6 +89,20 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
           late List<Appointment> appointments;
           _post.foldRight(
               Appointment, (a, previous) => appointments = a);
+
+          // filter appointmentType
+          appointments = appointments
+              .where(
+                (element) {
+                  if(_filterVirtual && element.appointmentType == "V"){
+                      return true;
+                  }
+                  else if(_filterInPerson && element.appointmentType == "A"){
+                    return true;
+                  }
+                  return false;
+                })
+              .toList();
           emit(AppointmentLoadedState(appointments: appointments));
           emit(Success());
         }

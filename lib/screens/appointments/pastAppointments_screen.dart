@@ -58,10 +58,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
     BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
 
     // get past appointments
-    BlocProvider.of<AppointmentBloc>(context).add(GetPastAppointmentList(
-        date: DateTime(dateOffset.year, dateOffset.month, dateOffset.day)
-            .toUtc()
-            .toIso8601String()));
+    BlocProvider.of<AppointmentBloc>(context).add(GetPastAppointmentBetweenDatesList());
     super.initState();
   }
 
@@ -83,10 +80,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
       dateOffset = DateTime.now().subtract(const Duration(days: 30));
     });
     // monitor network fetch
-    BlocProvider.of<AppointmentBloc>(context).add(GetPastAppointmentList(
-        date: DateTime(dateOffset.year, dateOffset.month, dateOffset.day)
-            .toUtc()
-            .toIso8601String()));
+    BlocProvider.of<AppointmentBloc>(context).add(GetPastAppointmentBetweenDatesList());
   }
 
   @override
@@ -403,12 +397,9 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
           }else if(state is Failed){
             return Container(
               child: DataFetchErrorWidget(
-                retryCallback: () => BlocProvider.of<AppointmentBloc>(context).add(
-                  GetPastAppointmentList(
-                    date: DateTime(dateOffset.year, dateOffset.month, dateOffset.day)
-                    .toUtc()
-                    .toIso8601String()
-                  )
+                retryCallback: () => BlocProvider.of<AppointmentBloc>(context)
+                  .add(
+                  GetPastAppointmentBetweenDatesList()
                 )
               )
             );
@@ -443,6 +434,9 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
         var outputFormat = DateFormat('yyyy-MM-dd');
         DateTime date1 = BlocProvider.of<AppointmentBloc>(context).getInitialDate();
         DateTime? date2 = BlocProvider.of<AppointmentBloc>(context).getFinalDate();
+        bool virtual = BlocProvider.of<AppointmentBloc>(context).getVirtualStatus();
+        bool inPerson = BlocProvider.of<AppointmentBloc>(context).getInPersonStatus();
+
         dateTextController.text = inputFormat.format(date1);
         date2TextController.text = date2 != null? inputFormat.format(date2) :'';
         return StatefulBuilder(
@@ -496,6 +490,68 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Card(
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero,
+                                  ),
+                                  color: ConstantsV2.lightest,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(vertical: 10),
+                                          child: Text('Modalidad',
+                                            style: boldoCorpSmallSTextStyle.copyWith(
+                                                color: ConstantsV2.activeText
+                                            ),
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Checkbox(
+                                              value: inPerson,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  inPerson = value!;
+                                                });
+                                              }
+                                            ),
+                                            Container(
+                                              child: Text(
+                                                "Presencial",
+                                                style: boldoCorpMediumTextStyle.copyWith(
+                                                    color: ConstantsV2.activeText
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Checkbox(
+                                              value: virtual,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  virtual = value!;
+                                                });
+                                              }
+                                            ),
+                                            Container(
+                                              child: Text(
+                                                "Remoto",
+                                                style: boldoCorpMediumTextStyle.copyWith(
+                                                    color: ConstantsV2.activeText
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                              ),
                               Card(
                                   shape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.zero,
@@ -623,6 +679,8 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                               onPressed:() {
                                 BlocProvider.of<AppointmentBloc>(context).setInitialDate(date1);
                                 BlocProvider.of<AppointmentBloc>(context).setFinalDate(date2);
+                                BlocProvider.of<AppointmentBloc>(context).setInPersonStatus(inPerson);
+                                BlocProvider.of<AppointmentBloc>(context).setVirtualStatus(virtual);
                                 BlocProvider.of<AppointmentBloc>(context).add(GetPastAppointmentBetweenDatesList());
                                 Navigator.pop(context);
                               },
