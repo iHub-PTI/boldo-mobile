@@ -263,20 +263,12 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
   }
 
   Widget showDiagnosticList() {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.7,
-      // width: 300,
-      child: ListView.separated(
-        separatorBuilder: (BuildContext context, int index) => const Divider(
-          color: Colors.transparent,
-          height: 5,
-        ),
-        itemCount: studiesOrders?.serviceRequests?.length ?? 0,
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemBuilder: showStudy,
-        physics: const ClampingScrollPhysics(),
-      ),
+    return ListView.builder(
+      itemCount: studiesOrders?.serviceRequests?.length ?? 0,
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemBuilder: showStudy,
+      physics: const ClampingScrollPhysics(),
     );
   }
 
