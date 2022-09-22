@@ -27,6 +27,7 @@ class PastAppointmentsScreen extends StatefulWidget {
 class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with SingleTickerProviderStateMixin {
   bool _dataLoading = true;
   bool _dataLoaded = false;
+  int _selectedIndex = 0;
   late TabController _tabController;
   late List<Appointment> allAppointments = [];
   late List<Appointment> futureAppointments = [];
@@ -44,7 +45,19 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
       length: 2,
       vsync: this,
     );
+
+
+    _tabController.addListener(() {
+      // to show specific icons according to tab selected
+      setState(() {
+        _selectedIndex = _tabController.index;
+      });
+    });
+
+    // get future appointments
     BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
+
+    // get past appointments
     BlocProvider.of<AppointmentBloc>(context).add(GetPastAppointmentList(
         date: DateTime(dateOffset.year, dateOffset.month, dateOffset.day)
             .toUtc()
@@ -55,6 +68,14 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
   void _onRefreshFutureAppointments() async {
     // monitor network fetch
     BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
+  }
+
+  @override
+  void dispose(){
+    _tabController.dispose();
+    _refreshFutureAppointmentController?.dispose();
+    _refreshPastAppointmentController?.dispose();
+    super.dispose();
   }
 
   void _onRefresh() async {
@@ -199,9 +220,25 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                               const Text(
                                 'Próximas',
                               ),
-                              const Text(
-                                'Anteriores',
-                              ),
+                              Row(
+                                children: [
+                                  const Text(
+                                    'Anteriores',
+                                  ),
+                                  if(_selectedIndex == 1)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 6.0),
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        await _filterBox();
+                                      },
+                                      child: SvgPicture.asset(
+                                        'assets/icon/filter-list.svg',
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
                             ],
                           ),
                         ],
@@ -394,6 +431,226 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
   Widget _pastAppointment(BuildContext context, int index) {
     return PastAppointmentCard(
       appointment: allAppointments[index],
+    );
+  }
+  Future _filterBox(){
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        TextEditingController dateTextController = TextEditingController();
+        TextEditingController date2TextController = TextEditingController();
+        var inputFormat = DateFormat('dd/MM/yyyy');
+        var outputFormat = DateFormat('yyyy-MM-dd');
+        DateTime date1 = BlocProvider.of<AppointmentBloc>(context).getInitialDate();
+        DateTime? date2 = BlocProvider.of<AppointmentBloc>(context).getFinalDate();
+        dateTextController.text = inputFormat.format(date1);
+        date2TextController.text = date2 != null? inputFormat.format(date2) :'';
+        return StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                contentPadding: const EdgeInsetsDirectional.all(0),
+                scrollable: true,
+                backgroundColor: ConstantsV2.lightGrey,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                content: Container(
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.9,
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height * 0.7,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Filtrar citas',
+                              style: boldoTitleBlackTextStyle.copyWith(
+                                  color: ConstantsV2.activeText
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                Navigator.pop(context);
+                              },
+                              child: SvgPicture.asset(
+                                'assets/icon/close.svg',
+                                color: ConstantsV2.inactiveText,
+                                height: 20,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Card(
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero,
+                                  ),
+                                  color: ConstantsV2.lightest,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(vertical: 10),
+                                          child: Text('Filtrar por fecha',
+                                            style: boldoCorpSmallSTextStyle.copyWith(
+                                                color: ConstantsV2.activeText
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(vertical: 8),
+                                          child: Row(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () async {
+                                                  DateTime? newDate = await showDatePicker(
+                                                    context: context,
+                                                    initialEntryMode: DatePickerEntryMode
+                                                        .calendarOnly,
+                                                    initialDatePickerMode: DatePickerMode.day,
+                                                    initialDate: date1 ?? DateTime.now(),
+                                                    firstDate: DateTime(1900),
+                                                    lastDate: date2?? DateTime.now(),
+                                                    locale: const Locale("es", "ES"),
+                                                  );
+                                                  if (newDate == null) {
+                                                    return;
+                                                  } else {
+                                                    setState(() {
+                                                      var outputFormat = DateFormat('yyyy-MM-dd');
+                                                      var inputFormat = DateFormat('dd/MM/yyyy');
+                                                      var _date1 =
+                                                      outputFormat.parse(newDate.toString().trim());
+                                                      var _date2 = inputFormat.format(_date1);
+                                                      dateTextController.text = _date2;
+                                                      date1 = _date1;
+                                                    });
+                                                  }
+                                                },
+                                                child: SvgPicture.asset(
+                                                  'assets/icon/calendar.svg',
+                                                  color: ConstantsV2.orange,
+                                                  height: 20,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 6,),
+                                              Text('Desde: ${inputFormat.format(date1)}',
+                                                style: boldoCorpSmallSTextStyle.copyWith(
+                                                    color: ConstantsV2.activeText
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(vertical: 8),
+                                          child: Row(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () async {
+                                                  DateTime? newDate = await showDatePicker(
+                                                    context: context,
+                                                    initialEntryMode: DatePickerEntryMode
+                                                        .calendarOnly,
+                                                    initialDatePickerMode: DatePickerMode.day,
+                                                    initialDate: date2 ?? date1,
+                                                    firstDate: date1,
+                                                    lastDate: DateTime.now(),
+                                                    locale: const Locale("es", "ES"),
+                                                  );
+                                                  if (newDate == null) {
+                                                    return;
+                                                  } else {
+                                                    setState(() {
+                                                      var outputFormat = DateFormat('yyyy-MM-dd');
+                                                      var inputFormat = DateFormat('dd/MM/yyyy');
+                                                      var _date1 =
+                                                      outputFormat.parse(newDate.toString().trim());
+                                                      var _date2 = inputFormat.format(_date1);
+                                                      date2TextController.text = _date2;
+                                                      date2 = _date1;
+                                                    });
+                                                  }
+                                                },
+                                                child: SvgPicture.asset(
+                                                  'assets/icon/calendar.svg',
+                                                  color: ConstantsV2.orange,
+                                                  height: 20,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 6,),
+                                              Text('Hasta: ${date2 != null ? inputFormat.format(
+                                                  date2!) : 'indefinido'}',
+                                                style: boldoCorpSmallSTextStyle.copyWith(
+                                                    color: ConstantsV2.activeText
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                              onPressed:() {
+                                BlocProvider.of<AppointmentBloc>(context).setInitialDate(date1);
+                                BlocProvider.of<AppointmentBloc>(context).setFinalDate(date2);
+                                BlocProvider.of<AppointmentBloc>(context).add(GetPastAppointmentBetweenDatesList());
+                                Navigator.pop(context);
+                              },
+                              child: Row(
+                                children: [
+                                  Text('Aplicar',
+                                    style: boldoCorpSmallSTextStyle.copyWith(
+                                        color: ConstantsV2.lightGrey
+                                    ),
+                                  ),
+                                  SvgPicture.asset(
+                                    'assets/icon/done.svg',
+                                    color: ConstantsV2.lightGrey,
+                                    height: 20,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+        );
+      },
     );
   }
 
