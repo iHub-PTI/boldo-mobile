@@ -27,11 +27,11 @@ void initDio(
   } else {
     baseUrl = String.fromEnvironment('SERVER_ADDRESS',
         defaultValue: dotenv.env['SERVER_ADDRESS']!);
+        dio.options.headers['content-Type'] = 'application/json';
+        dio.options.headers['accept'] = 'application/json';
   }
 
   dio.options.baseUrl = baseUrl;
-  dio.options.headers['content-Type'] = 'application/json';
-  dio.options.headers['accept'] = 'application/json';
 
   String? accessToken;
   FlutterAppAuth appAuth = FlutterAppAuth();
