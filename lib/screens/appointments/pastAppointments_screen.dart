@@ -585,6 +585,16 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                                                     firstDate: DateTime(1900),
                                                     lastDate: date2?? DateTime.now(),
                                                     locale: const Locale("es", "ES"),
+                                                    builder: (context, child){
+                                                      return Theme(
+                                                        data: Theme.of(context).copyWith(
+                                                          colorScheme: const ColorScheme.light(
+                                                            primary: ConstantsV2.orange
+                                                          )
+                                                        ),
+                                                        child: child!,
+                                                      );
+                                                    }
                                                   );
                                                   if (newDate == null) {
                                                     return;
@@ -600,16 +610,20 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                                                     });
                                                   }
                                                 },
-                                                child: SvgPicture.asset(
-                                                  'assets/icon/calendar.svg',
-                                                  color: ConstantsV2.orange,
-                                                  height: 20,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 6,),
-                                              Text('Desde: ${inputFormat.format(date1)}',
-                                                style: boldoCorpSmallSTextStyle.copyWith(
-                                                    color: ConstantsV2.activeText
+                                                child: Row(
+                                                  children: [
+                                                    SvgPicture.asset(
+                                                      'assets/icon/calendar.svg',
+                                                      color: ConstantsV2.orange,
+                                                      height: 20,
+                                                    ),
+                                                    const SizedBox(width: 6,),
+                                                    Text('Desde: ${inputFormat.format(date1)}',
+                                                      style: boldoCorpSmallSTextStyle.copyWith(
+                                                          color: ConstantsV2.activeText
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ],
@@ -630,6 +644,16 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                                                     firstDate: date1,
                                                     lastDate: DateTime.now(),
                                                     locale: const Locale("es", "ES"),
+                                                    builder: (context, child){
+                                                      return Theme(
+                                                        data: Theme.of(context).copyWith(
+                                                            colorScheme: const ColorScheme.light(
+                                                                primary: ConstantsV2.orange
+                                                            )
+                                                        ),
+                                                        child: child!,
+                                                      );
+                                                    }
                                                   );
                                                   if (newDate == null) {
                                                     return;
@@ -645,17 +669,21 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                                                     });
                                                   }
                                                 },
-                                                child: SvgPicture.asset(
-                                                  'assets/icon/calendar.svg',
-                                                  color: ConstantsV2.orange,
-                                                  height: 20,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 6,),
-                                              Text('Hasta: ${date2 != null ? inputFormat.format(
-                                                  date2!) : 'indefinido'}',
-                                                style: boldoCorpSmallSTextStyle.copyWith(
-                                                    color: ConstantsV2.activeText
+                                                child: Row(
+                                                  children: [
+                                                    SvgPicture.asset(
+                                                      'assets/icon/calendar.svg',
+                                                      color: ConstantsV2.orange,
+                                                      height: 20,
+                                                    ),
+                                                    const SizedBox(width: 6,),
+                                                    Text('Hasta: ${date2 != null ? inputFormat.format(
+                                                        date2!) : 'indefinido'}',
+                                                      style: boldoCorpSmallSTextStyle.copyWith(
+                                                          color: ConstantsV2.activeText
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ],
