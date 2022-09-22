@@ -379,6 +379,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
               scrollDirection: Axis.vertical,
               itemBuilder: _fileElement,
               itemCount: files.length,
+              physics: const ClampingScrollPhysics(),
             ),
           ) : ListView.builder(
             padding: EdgeInsets.zero,
@@ -386,6 +387,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
             scrollDirection: Axis.vertical,
             itemBuilder: _fileServerElement,
             itemCount: serviceRequest?.diagnosticReports?.length,
+            physics: const ClampingScrollPhysics(),
           ),
         ],
       ),
@@ -444,6 +446,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                 return showStudyDescription(context, index, serviceRequest?.studiesCodes?[index]?? StudiesCodes());
               },
               itemCount: serviceRequest?.studiesCodes?.length,
+              physics: const ClampingScrollPhysics(),
             ),
           )
         ],
@@ -535,6 +538,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
             scrollDirection: Axis.vertical,
             itemBuilder: _notesServerElement,
             itemCount: serviceRequest?.diagnosticReports?.length,
+            physics: const ClampingScrollPhysics(),
           ),
         ],
       ),
@@ -687,6 +691,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                 return showStudy(context, index2, serviceRequest?.diagnosticReports?[index]?? DiagnosticReport());
                 },
               itemCount: serviceRequest?.diagnosticReports?[index].attachmentUrls?.length,
+              physics: const ClampingScrollPhysics(),
             ),
           ),
         ),
