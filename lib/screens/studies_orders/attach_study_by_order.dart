@@ -499,17 +499,36 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                   ),
                 ),
               ),
-            ): GestureDetector(
-              onTap: () async {
-                _noteBox(notes);
-              },
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                color: ConstantsV2.lightest,
-                child: Text("$notes"),
-              ),
-            ),
+            ): Column(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                  color: ConstantsV2.lightest,
+                  child: Text("$notes"),
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    _noteBox(notes);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    child: Row(
+                      children: [
+                        Text(
+                          'editar comentario',
+                          style: boldoSubTextMediumStyle.copyWith(decoration: TextDecoration.underline,),
+                        ),
+                        const SizedBox(
+                          width: 4,
+                        ),
+                        SvgPicture.asset('assets/icon/pencil-alt.svg'),
+                      ],
+                    ),
+                  )
+                ),
+              ],
+            )
           ) : ListView.builder(
             padding: EdgeInsets.zero,
             shrinkWrap: true,
