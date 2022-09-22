@@ -91,7 +91,8 @@ Future<void> main() async {
         defaultValue: dotenv.env['SENTRY_DSN']!);
     await SentryFlutter.init(
       (options) {
-        options.environment = "production";
+        options.environment = String.fromEnvironment('SENTRY_ENV',
+            defaultValue: dotenv.env['SENTRY_ENV']!);
         options.dsn = sentryDSN;
       },
     );
