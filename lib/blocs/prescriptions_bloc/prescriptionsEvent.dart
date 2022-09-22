@@ -15,7 +15,4 @@ class GetPastAppointmentList extends PrescriptionsEvent {
   GetPastAppointmentList({required this.date});
 }
 
-class GetPastAppointmentWithPrescriptionsList extends PrescriptionsEvent {
-  final String date;
-  GetPastAppointmentWithPrescriptionsList({required this.date});
-}
+class GetPastAppointmentWithPrescriptionsList extends PrescriptionsEvent {}
