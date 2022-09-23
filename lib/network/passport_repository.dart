@@ -25,9 +25,15 @@ class PassportRepository {
           '/profile/citizen/vaccinationRegistry/list?all=true&sync=$needSync&groupByDisease=false');
       if (response.statusCode == 200) {
         diseaseUserList = userVaccinateFromJson(response.data);
+      } else if (response.statusCode == 404) {
+        diseaseUserList = [];
       }
       return None();
     } on DioError catch (e) {
+      if (e.response!.statusCode == 404) {
+        diseaseUserList = [];
+        return None();
+      }
       await Sentry.captureMessage(
         e.toString(),
         params: [
@@ -118,6 +124,8 @@ class PassportRepository {
           data: dataToPass);
       if (response.statusCode == 200) {
         verificationCode = response.data;
+      } else if (response.statusCode == 404) {
+        throw Failure('Usuario sin registro vacunatorio');
       } else {
         throw Failure('Ocurrió un error inesperado');
       }
@@ -143,5 +151,4 @@ class PassportRepository {
     }
     return verificationCode;
   }
-
 }

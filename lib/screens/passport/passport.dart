@@ -223,52 +223,56 @@ class _PassportTabState extends State<PassportTab> {
                                 ),
                               ),
                               // get QR whit an alert
-                              GestureDetector(
-                                onTap: () => showQrOptionsDialog(context),
-                                child: Container(
-                                  height: 44,
-                                  width: 44,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                        bottomRight: Radius.circular(10)),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: SvgPicture.asset(
-                                      'assets/icon/qrcode.svg',
-                                      color: Colors.grey[800],
-                                      height: 14,
+                              diseaseUserList != null && !diseaseUserList!.isEmpty
+                                ? GestureDetector(
+                                  onTap: () => showQrOptionsDialog(context),
+                                  child: Container(
+                                    height: 44,
+                                    width: 44,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                          bottomRight: Radius.circular(10)),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: SvgPicture.asset(
+                                        'assets/icon/qrcode.svg',
+                                        color: Colors.grey[800],
+                                        height: 14,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
+                                )
+                                : Container(),
                               const SizedBox(width: 4),
                               // pdf download
-                              GestureDetector(
-                                // add bloc code
-                                onTap: () {
-                                  BlocProvider.of<PassportBloc>(context)
-                                    .add(GetUserVaccinationPdfPressed(pdfFromHome: true));
-                                },
-                                child: Container(
-                                  height: 44,
-                                  width: 44,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                        bottomRight: Radius.circular(10)),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: SvgPicture.asset(
-                                      'assets/icon/document-text.svg',
-                                      color: Colors.grey[800],
-                                      height: 14,
+                              diseaseUserList != null && !diseaseUserList!.isEmpty
+                                ? GestureDetector(
+                                  // add bloc code
+                                  onTap: () {
+                                    BlocProvider.of<PassportBloc>(context)
+                                      .add(GetUserVaccinationPdfPressed(pdfFromHome: true));
+                                  },
+                                  child: Container(
+                                    height: 44,
+                                    width: 44,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                          bottomRight: Radius.circular(10)),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: SvgPicture.asset(
+                                        'assets/icon/document-text.svg',
+                                        color: Colors.grey[800],
+                                        height: 14,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
+                                )
+                                : Container(),
                               const SizedBox(width: 4),
                               GestureDetector(
                                 onTap: () {
@@ -300,8 +304,35 @@ class _PassportTabState extends State<PassportTab> {
                           height: 10,
                         ),
                         // vaccine list
-                        diseaseUserList != null && !diseaseUserList!.isEmpty
-                            ? VaccinateCard()
+                        diseaseUserList != null
+                            ? !diseaseUserList!.isEmpty
+                              ? VaccinateCard()
+                              : !_isloading
+                                  ? Container(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        SvgPicture.asset(
+                                            'assets/images/empty_studies.svg'),
+                                        const Padding(
+                                          padding: EdgeInsets.all(16.0),
+                                          child: Text(
+                                            'No existee registro vacunatorio suyo.',
+                                            style: TextStyle(
+                                              color: Color.fromRGBO(
+                                                  253, 165, 125, 1),
+                                              fontSize: 18,
+                                              fontFamily: 'Montserrat'
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                  : Text('')
                             : !_isloading
                                 ? Container(
                                     child: Column(
