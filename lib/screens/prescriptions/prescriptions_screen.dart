@@ -586,14 +586,24 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                             GestureDetector(
                                               onTap: () async {
                                                 DateTime? newDate = await showDatePicker(
-                                                  context: context,
-                                                  initialEntryMode: DatePickerEntryMode
-                                                      .calendarOnly,
-                                                  initialDatePickerMode: DatePickerMode.day,
-                                                  initialDate: date1 ?? DateTime.now(),
-                                                  firstDate: DateTime(1900),
-                                                  lastDate: date2?? DateTime.now(),
-                                                  locale: const Locale("es", "ES"),
+                                                    context: context,
+                                                    initialEntryMode: DatePickerEntryMode
+                                                        .calendarOnly,
+                                                    initialDatePickerMode: DatePickerMode.day,
+                                                    initialDate: date1 ?? DateTime.now(),
+                                                    firstDate: DateTime(1900),
+                                                    lastDate: date2?? DateTime.now(),
+                                                    locale: const Locale("es", "ES"),
+                                                    builder: (context, child){
+                                                      return Theme(
+                                                        data: Theme.of(context).copyWith(
+                                                            colorScheme: const ColorScheme.light(
+                                                                primary: ConstantsV2.orange
+                                                            )
+                                                        ),
+                                                        child: child!,
+                                                      );
+                                                    }
                                                 );
                                                 if (newDate == null) {
                                                   return;
@@ -609,16 +619,20 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                   });
                                                 }
                                               },
-                                              child: SvgPicture.asset(
-                                                'assets/icon/calendar.svg',
-                                                color: ConstantsV2.orange,
-                                                height: 20,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 6,),
-                                            Text('Desde: ${inputFormat.format(date1)}',
-                                              style: boldoCorpSmallSTextStyle.copyWith(
-                                                  color: ConstantsV2.activeText
+                                              child: Row(
+                                                children: [
+                                                  SvgPicture.asset(
+                                                    'assets/icon/calendar.svg',
+                                                    color: ConstantsV2.orange,
+                                                    height: 20,
+                                                  ),
+                                                  const SizedBox(width: 6,),
+                                                  Text('Desde: ${inputFormat.format(date1)}',
+                                                    style: boldoCorpSmallSTextStyle.copyWith(
+                                                        color: ConstantsV2.activeText
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],
@@ -631,14 +645,24 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                             GestureDetector(
                                               onTap: () async {
                                                 DateTime? newDate = await showDatePicker(
-                                                  context: context,
-                                                  initialEntryMode: DatePickerEntryMode
-                                                      .calendarOnly,
-                                                  initialDatePickerMode: DatePickerMode.day,
-                                                  initialDate: date2 ?? date1,
-                                                  firstDate: date1,
-                                                  lastDate: DateTime.now(),
-                                                  locale: const Locale("es", "ES"),
+                                                    context: context,
+                                                    initialEntryMode: DatePickerEntryMode
+                                                        .calendarOnly,
+                                                    initialDatePickerMode: DatePickerMode.day,
+                                                    initialDate: date2 ?? date1,
+                                                    firstDate: date1,
+                                                    lastDate: DateTime.now(),
+                                                    locale: const Locale("es", "ES"),
+                                                    builder: (context, child){
+                                                      return Theme(
+                                                        data: Theme.of(context).copyWith(
+                                                            colorScheme: const ColorScheme.light(
+                                                                primary: ConstantsV2.orange
+                                                            )
+                                                        ),
+                                                        child: child!,
+                                                      );
+                                                    }
                                                 );
                                                 if (newDate == null) {
                                                   return;
@@ -654,17 +678,21 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                   });
                                                 }
                                               },
-                                              child: SvgPicture.asset(
-                                                'assets/icon/calendar.svg',
-                                                color: ConstantsV2.orange,
-                                                height: 20,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 6,),
-                                            Text('Hasta: ${date2 != null ? inputFormat.format(
-                                                date2!) : 'indefinido'}',
-                                              style: boldoCorpSmallSTextStyle.copyWith(
-                                                  color: ConstantsV2.activeText
+                                              child: Row(
+                                                children: [
+                                                  SvgPicture.asset(
+                                                    'assets/icon/calendar.svg',
+                                                    color: ConstantsV2.orange,
+                                                    height: 20,
+                                                  ),
+                                                  const SizedBox(width: 6,),
+                                                  Text('Hasta: ${date2 != null ? inputFormat.format(
+                                                      date2!) : 'indefinido'}',
+                                                    style: boldoCorpSmallSTextStyle.copyWith(
+                                                        color: ConstantsV2.activeText
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],
