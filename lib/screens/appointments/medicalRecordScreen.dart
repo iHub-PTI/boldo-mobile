@@ -242,12 +242,66 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                           ],
                                         ),
                                       ),
-                                      PrescriptionPreview(
-                                        prescriptionList:
-                                            medicalRecord?.prescription,
-                                        appointmentId:
-                                            medicalRecord?.appointmentId,
-                                      )
+                                      medicalRecord != null
+                                        ? medicalRecord!.prescription!.length > 0
+                                          ? ListView.builder(
+                                              scrollDirection: Axis.vertical,
+                                              shrinkWrap: true,
+                                              itemCount: medicalRecord!.prescription!.length > 3 ? 3 : medicalRecord!.prescription!.length,
+                                              itemBuilder: (BuildContext context, int index) {
+                                                return ShowPrescription(
+                                                  context, medicalRecord!.prescription![index]
+                                                );
+                                              }
+                                          )
+                                          : Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'No posee medicamentos recetados',
+                                                style: boldoCorpMediumTextStyle.copyWith(
+                                                    color: ConstantsV2.darkBlue),
+                                              ),
+                                            )
+                                        : Container(),
+                                      medicalRecord != null
+                                        ? Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children:[
+                                              Container(
+                                                child: GestureDetector(
+                                                  onTap: medicalRecord!.prescription!.length > 0
+                                                    ? () async {
+                                                        await Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) => PrescriptionRecordScreen(
+                                                                  medicalRecordId: medicalRecord?.appointmentId ?? '')),
+                                                        );
+                                                        BlocProvider.of<PrescriptionBloc>(context)
+                                                            .add(InitialPrescriptionEvent());
+                                                      }
+                                                    : null,
+                                                  child: Card(
+                                                    margin: EdgeInsets.zero,
+                                                    clipBehavior: Clip.antiAlias,
+                                                    elevation: 0,
+                                                    shape: const RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.only(
+                                                          topLeft: Radius.circular(5)),
+                                                    ),
+                                                    color: ConstantsV2.orange.withOpacity(0.10),
+                                                    child: Container(
+                                                      padding: const EdgeInsets.symmetric(
+                                                          horizontal: 15, vertical: 7),
+                                                      child: const Text("ver receta"),
+                                                    )
+                                                  ),
+                                                ),
+                                              )
+                                            ]
+                                          )
+                                        : Container(),
+                                      
                                     ],
                                   ),
                                 ),
@@ -334,7 +388,6 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                           )
                                           : Container()
                                         : Container(),
-                                      const SizedBox(height: 10,)
                                     ],
                                   ),
                                 ),
@@ -441,6 +494,51 @@ Widget ShowStudy(BuildContext context, ServiceRequest study) {
   );
 }
 
+Widget ShowPrescription (BuildContext context, PrescriptionMedicalRecord prescription) {
+  return Column(
+    children: [
+      Row(
+        children: [
+          // the orange circle
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              height: 8,
+              width: 8,
+              decoration: const BoxDecoration(
+                  color: ConstantsV2.orange, shape: BoxShape.circle),
+            ),
+          ),
+          // name of the medicine
+          Text(
+            prescription.medicationName != null
+              ? prescription.medicationName!
+              : 'Nombre desconocido',
+            style: const TextStyle(fontFamily: 'Montserrat', fontSize: 14),
+          ),
+        ],
+      ),
+      const SizedBox(height: 5),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 24),
+            child: Text(
+              prescription.instructions != null ? prescription.instructions! : 'Este medicamento no posee instrucciones',
+              style: const TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 10,
+                color: ConstantsV2.inactiveText
+              ),
+            ),
+          )
+        ],
+      ),
+      const SizedBox(height: 10,)
+    ],
+  );
+}
 
 class SoepAccordion extends StatefulWidget {
   final String title;
