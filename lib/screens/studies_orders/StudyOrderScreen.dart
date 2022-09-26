@@ -276,7 +276,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
     return Card(
       elevation: 1,
       margin: const EdgeInsets.only(bottom: 4),
-      child: GestureDetector(
+      child: InkWell(
         onTap: () {
           Navigator.push(
               context,
