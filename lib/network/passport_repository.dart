@@ -11,7 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:open_file/open_file.dart' as open;
+import 'package:open_filex/open_filex.dart' as open;
 
 import '../main.dart';
 import '../models/UserVaccinate.dart';
@@ -90,7 +90,7 @@ class PassportRepository {
       raf.writeFromSync(response.data);
       await raf.close();
 
-      open.OpenFile.open(file.path);
+      open.OpenFilex.open(file.path);
       return None();
     } on DioError catch (e) {
       await Sentry.captureMessage(
