@@ -242,7 +242,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                           ],
                                         ),
                                       ),
-                                      medicalRecord != null
+                                      medicalRecord?.prescription != null
                                         ? medicalRecord!.prescription!.length > 0
                                           ? ListView.builder(
                                               scrollDirection: Axis.vertical,
@@ -262,9 +262,17 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                                     color: ConstantsV2.darkBlue),
                                               ),
                                             )
-                                        : Container(),
-                                      medicalRecord != null
-                                        ? Row(
+                                        : Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'No posee medicamentos recetados',
+                                                style: boldoCorpMediumTextStyle.copyWith(
+                                                    color: ConstantsV2.darkBlue),
+                                              ),
+                                            ),
+                                      medicalRecord?.prescription != null
+                                        ? medicalRecord!.prescription!.length > 0
+                                          ? Row(
                                             mainAxisAlignment: MainAxisAlignment.end,
                                             children:[
                                               Container(
@@ -300,6 +308,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                               )
                                             ]
                                           )
+                                          : Container()
                                         : Container(),
                                       
                                     ],
