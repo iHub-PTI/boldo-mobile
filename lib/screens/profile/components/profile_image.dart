@@ -464,3 +464,82 @@ class _ProfileImageViewTypeForm extends State<ProfileImageViewTypeForm> {
     );
   }
 }
+
+/// Image profile form url, [gender] define an default profile image if [photoUrl]
+/// is null.
+/// The forms accepted are "rounded" and "square", by default is "rounded"
+class ImageViewTypeForm extends StatefulWidget {
+
+  final double height;
+  final double width;
+  final bool border;
+  final String? photoUrl;
+  final String? gender;
+  final String form;
+
+  const ImageViewTypeForm({
+    Key? key,
+    required this.height,
+    required this.width,
+    required this.border,
+    this.photoUrl,
+    this.gender,
+    this.form = "rounded"
+  }) : super(key: key);
+
+  @override
+  _ImageViewTypeForm createState() => _ImageViewTypeForm();
+}
+
+class _ImageViewTypeForm extends State<ImageViewTypeForm> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        SizedBox(
+          height: widget.height,
+          width: widget.width,
+          child: Card(
+            child: widget.photoUrl == null ?
+            SvgPicture.asset(
+              widget.gender == 'male'
+                  ? 'assets/images/malePatient.svg'
+                  : prefs.getString('gender') == "female"
+                  ? 'assets/images/femalePatient.svg'
+                  : 'assets/images/LogoIcon.svg',
+            ) : CachedNetworkImage(
+              fit: BoxFit.cover,
+              imageUrl: widget.photoUrl?? '',
+              progressIndicatorBuilder:
+                  (context, url, downloadProgress) => Padding(
+                padding: const EdgeInsets.all(26.0),
+                child: CircularProgressIndicator(
+                  value: downloadProgress.progress,
+                  valueColor:
+                  const AlwaysStoppedAnimation<Color>(
+                      Constants.primaryColor400),
+                  backgroundColor: Constants.primaryColor600,
+                ),
+              ),
+              errorWidget: (context, url, error) =>
+              const Icon(Icons.error),
+            ),
+            shape: widget.form == "rounded" ? StadiumBorder(
+              side: widget.border ? const BorderSide(
+                color: Colors.white,
+                width: 3,
+              ) : BorderSide.none,
+            ) : widget.form == "square" ? RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(3)) : const CircleBorder(),
+            clipBehavior: Clip.antiAlias,
+          ),
+        ),
+      ],
+    );
+  }
+}
