@@ -593,7 +593,7 @@ class PrescriptionPreview extends StatelessWidget {
                           prescriptionIndividual(prescriptionList![0]),
                         if (prescriptionList!.length > 2)
                           prescriptionIndividual(prescriptionList![1]),
-                        if (prescriptionList!.length > 2) const Text('ver mas'),
+                        if (prescriptionList!.length > 2) const Text('ver más'),
                       ],
                     )
                   : Text(
