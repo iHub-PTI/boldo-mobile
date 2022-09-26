@@ -741,6 +741,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextFormField(
+                    textCapitalization: TextCapitalization.sentences,
                     initialValue: notes,
                     keyboardType: TextInputType.multiline,
                     minLines: 14,
