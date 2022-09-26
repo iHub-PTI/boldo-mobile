@@ -399,3 +399,4 @@ class ConstantsV2 {
 
 const String isFamily = 'isFamily';
 const int minutesToCloseAppointment = 120;
+const String uploadedStudySuccessfullyMessage = "¡Estudio subido!";

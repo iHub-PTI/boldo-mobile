@@ -62,7 +62,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
               if (state is SendSuccess) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text("Estudio subido!"),
+                    content: Text(uploadedStudySuccessfullyMessage),
                     backgroundColor: ConstantsV2.green,
                   ),
                 );

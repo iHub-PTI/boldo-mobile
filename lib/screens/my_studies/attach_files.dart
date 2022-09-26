@@ -53,7 +53,7 @@ class _AttachFilesState extends State<AttachFiles> {
               if (state is Uploaded) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text("Estudio subido!"),
+                    content: Text(uploadedStudySuccessfullyMessage),
                     backgroundColor: ConstantsV2.green,
                   ),
                 );
