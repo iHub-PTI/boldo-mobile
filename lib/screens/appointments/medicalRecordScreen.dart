@@ -273,7 +273,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                               width: 12,
                                               color: const Color.fromRGBO(54, 79, 107, 1),
                                             ),
-                                            const Text('Ordenes de estudio')
+                                            const Text('Órdenes de estudio')
                                           ],
                                         ),
                                       ),
@@ -326,7 +326,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                                       child: Container(
                                                         padding: const EdgeInsets.symmetric(
                                                             horizontal: 15, vertical: 7),
-                                                        child: const Text("ver ordenes"),
+                                                        child: const Text("ver órdenes"),
                                                       )),
                                                 ),
                                               ),

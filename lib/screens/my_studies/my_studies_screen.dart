@@ -394,7 +394,7 @@ class _MyStudiesState extends State<MyStudies> {
                                     color: ConstantsV2.orange.withOpacity(0.10),
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-                                      child: const Text("ver orden"),
+                                      child: const Text("ver órden"),
                                     )),
                               ),
                             ),

@@ -302,7 +302,7 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
                         "${widget.studyOrder.serviceRequests?.length ?? 0}"),
                   )),
               Text(
-                "ordenes",
+                "órdenes",
                 style: boldoCorpMediumTextStyle.copyWith(
                     color: ConstantsV2.darkBlue),
               ),

@@ -102,7 +102,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                       color: Constants.extraColor400,
                     ),
                     label: Text(
-                      'Detalles de la orden',
+                      'Detalles de la órden',
                       style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                     ),
                   ),
@@ -431,7 +431,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                   child: Row(
                     children: [
                       Text(
-                        'Sin descripción de la orden',
+                        'Sin descripción de la órden',
                         style: boldoSubTextMediumStyle.copyWith(decoration: TextDecoration.underline,),
                       ),
                     ],
