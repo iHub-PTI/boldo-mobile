@@ -172,7 +172,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                               Container(
                                   child: Expanded(
                                     child: Text(
-                                      serviceRequest?.diagnosis ?? 'Sin diagnostico presuntivo',
+                                      serviceRequest?.diagnosis ?? 'Sin diagnóstico presuntivo',
                                       style: boldoCorpSmallTextStyle.copyWith(
                                           color: ConstantsV2.inactiveText,
                                           fontSize: 14),

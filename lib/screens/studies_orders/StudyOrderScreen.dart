@@ -380,7 +380,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                         height: 8,
                       ),
                       Text(
-                        "Impresion diagnostica: ${studiesOrders?.serviceRequests![index].diagnosis}",
+                        "Impresión diagnóstica: ${studiesOrders?.serviceRequests![index].diagnosis}",
                         style: boldoCorpSmallTextStyle.copyWith(
                             color: ConstantsV2.darkBlue),
                       ),
