@@ -71,19 +71,19 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                               children: [
                                 BounceInUp(
                                   from: 200,
-                                  duration: Duration(seconds: 1),
+                                  duration: const Duration(seconds: 1),
                                   child: ElasticInLeft(
-                                    duration: Duration(seconds: 1),
+                                    duration: const Duration(seconds: 1),
                                     child: Spin(
                                       spins: 0.05,
-                                      duration: Duration(seconds: 0),
+                                      duration: const Duration(seconds: 0),
                                       child: Spin(
-                                        delay: Duration(milliseconds: 300),
-                                        duration: Duration(milliseconds: 300),
+                                        delay: const Duration(milliseconds: 300),
+                                        duration: const Duration(milliseconds: 300),
                                         spins: -0.07,
                                         child: Spin(
-                                          delay: Duration(milliseconds: 700),
-                                          duration: Duration(milliseconds: 300),
+                                          delay: const Duration(milliseconds: 700),
+                                          duration: const Duration(milliseconds: 300),
                                           spins: 0.03,
                                           child: ImageViewTypeForm(
                                             height: 170,
@@ -99,19 +99,19 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                 ),
                                 BounceInUp(
                                   from: 200,
-                                  duration: Duration(seconds: 1),
+                                  duration: const Duration(seconds: 1),
                                   child: ElasticInRight(
-                                    duration: Duration(seconds: 1),
+                                    duration: const Duration(seconds: 1),
                                     child: Spin(
                                       spins: -0.05,
-                                      duration: Duration(milliseconds: 500),
+                                      duration: const Duration(milliseconds: 500),
                                       child: Spin(
-                                        delay: Duration(milliseconds: 500),
-                                        duration: Duration(milliseconds: 500),
+                                        delay: const Duration(milliseconds: 500),
+                                        duration: const Duration(milliseconds: 500),
                                         spins: 0.1,
                                         child: Spin(
-                                          delay: Duration(milliseconds: 1000),
-                                          duration: Duration(milliseconds: 500),
+                                          delay: const Duration(milliseconds: 1000),
+                                          duration: const Duration(milliseconds: 500),
                                           spins: -0.05,
                                           child: ImageViewTypeForm(
                                             height: 170,
@@ -134,7 +134,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         child: AnimatedOpacity(
                           opacity: 1,
-                          duration: Duration(milliseconds: 3000),
+                          duration: const Duration(milliseconds: 3000),
                           child: Column(
                             children: [
                               Card(
@@ -195,7 +195,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                             ),
                                             const SizedBox(height: 16,),
                                             Row(
-                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisSize: MainAxisSize.max,
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 SvgPicture.asset(
@@ -243,32 +243,23 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Row(
-                                                    mainAxisSize: MainAxisSize.min,
+                                                    mainAxisSize: MainAxisSize.max,
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
                                                       ShowAppoinmentTypeIcon(appointmentType: widget.bookingDate.appointmentType?? 'A'),
                                                       const SizedBox(width: 8,),
                                                       Container(
-                                                        child: Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            // TODO : change localization of appointment
-                                                            Container(
-                                                              child: Container(
-                                                                width: MediaQuery.of(context).size.width*0.4,
-                                                                child:  Text(
-                                                                    (widget.bookingDate.appointmentType?? 'A') == 'A'?
-                                                                    "Esta consulta será realizada en persona en el Hospital Los Ángeles."
-                                                                        : "Esta consulta será realizada de forma remota a través de esta aplicación.",
-                                                                    style: boldoCorpMediumTextStyle.copyWith(
-                                                                        color: ConstantsV2.activeText
-                                                                    )
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
+                                                        child: Expanded(
+                                                          child:  Text(
+                                                              (widget.bookingDate.appointmentType?? 'A') == 'A'?
+                                                              "Esta consulta será realizada en persona en el Hospital Los Ángeles."
+                                                                  : "Esta consulta será realizada de forma remota a través de esta aplicación.",
+                                                              style: boldoCorpMediumTextStyle.copyWith(
+                                                                  color: ConstantsV2.activeText
+                                                              )
+                                                          ),
                                                         ),
-                                                      )
+                                                      ),
                                                     ],
                                                   ),
                                                 ],
@@ -304,23 +295,28 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.only(left: 16, right: 16),
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          //  style: style1,
-                          onPressed: () {
-                            Provider.of<UtilsProvider>(context, listen: false)
-                                .setSelectedPageIndex(pageIndex: 0);
-                            BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
-                            Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // TODO: button to edit the appointment reservation
+                            Container(),
+                            ElevatedButton(
+                              //  style: style1,
+                              onPressed: () {
+                                Provider.of<UtilsProvider>(context, listen: false)
+                                    .setSelectedPageIndex(pageIndex: 0);
+                                BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
+                                Navigator.of(context).popUntil(ModalRoute.withName('/home'));
 
-                          },
+                              },
 
-                          child: Text(
-                            'Ir a Inicio',
-                            style: boldoHeadingTextStyle.copyWith(fontSize: 14),
-                          ),
-                        ),
+                              child: SvgPicture.asset(
+                                'assets/icon/home.svg',
+                                height: 20,
+                              ),
+                            ),
+                          ],
+                        )
                       ),
                     ],
                   ),
