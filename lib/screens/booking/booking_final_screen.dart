@@ -134,8 +134,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            child: AnimatedOpacity(
-                                opacity: 1,
+                            child: FadeIn(
                                 duration: const Duration(milliseconds: 3000),
                                 child: Column(
                                   children: [
