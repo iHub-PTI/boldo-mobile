@@ -178,7 +178,16 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                           ? medicalRecord!.prescription!.length > 0
                                             ? GestureDetector(
                                               // show complete prescription
-                                              onTap: () {},
+                                              onTap: () async {
+                                                await Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) => PrescriptionRecordScreen(
+                                                                  medicalRecordId: medicalRecord?.appointmentId ?? '')),
+                                                        );
+                                                        BlocProvider.of<PrescriptionBloc>(context)
+                                                            .add(InitialPrescriptionEvent());
+                                              },
                                               child: Padding(
                                                 padding: const EdgeInsets.only(right: 16, top: 16, bottom: 16),
                                                 child: SvgPicture.asset('assets/icon/icon-prescriptions-orange.svg'),
