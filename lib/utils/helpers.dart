@@ -1,3 +1,15 @@
+import 'dart:io';
+
+import 'package:boldo/main.dart';
+import 'package:camera/camera.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 String getDoctorPrefix(String gender) {
@@ -57,3 +69,208 @@ String? getTypeFromContentType(String? content) {
      print(to.difference(from).inHours);
    return (to.difference(from).inHours / 24).round();
   }
+
+Future<XFile?> pickImage({
+  required BuildContext context,
+  required ImageSource source,
+  double? maxWidth,
+  double? maxHeight,
+  int? imageQuality,
+  String? permissionDescription})
+async {
+  PermissionStatus status;
+  if(source.index == 0) // camera source
+    status = await Permission.camera.request();
+  else
+    status = await Permission.photos.request();
+  print(status);
+  if(status.isPermanentlyDenied) {
+    // control permission to access camera
+    if(source.index == 0)
+      dialogPermission(
+          context: context,
+          permissionTitle: 'Acesso a Camara',
+          permissionDescription: permissionDescription?? 'Boldo requiere acceso a la camara');
+
+    // control permission to access gallery
+    if(source.index == 1)
+      dialogPermission(
+          context: context,
+          permissionTitle: 'Acesso a Galería',
+          permissionDescription: permissionDescription?? 'Boldo requiere acceso a la galería');
+    return null;
+  }else if(status.isGranted){
+    XFile? image;
+    try {
+      image = await ImagePicker().pickImage(source: source,
+          maxWidth: maxWidth,
+          maxHeight: maxHeight,
+          imageQuality: imageQuality);
+    }on PlatformException catch (e){
+      // control permission to access camera
+      await Sentry.captureMessage(
+        e.toString(),
+        params: [
+          {
+            "status": status,
+            "patient": prefs.getString("userId"),
+          }
+        ],
+      );
+    }
+    return image;
+  }
+
+}
+
+Future<FilePickerResult?> pickFiles({
+  required BuildContext context,
+  bool allowMultiple = false,
+  bool withData = false,
+  FileType type = FileType.any,
+  List<String>? allowedExtensions,
+  String? permissionDescription})
+async {
+  FilePickerResult? result;
+  PermissionStatus status;
+  status = await Permission.storage.request();
+  if(status.isPermanentlyDenied){
+    dialogPermission(
+        context: context,
+        permissionTitle: 'Acesso a Archivos',
+        permissionDescription: permissionDescription?? 'Boldo requiere acceso a archivos');
+  }else if(status.isGranted){
+    try {
+      result = await FilePicker.platform.pickFiles(
+        withData: withData,
+        allowMultiple: allowMultiple,
+        type: type,
+        allowedExtensions: allowedExtensions,
+      );
+      return result;
+    }on PlatformException catch (ex){
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "status": status,
+            "patient": prefs.getString("userId"),
+          }
+        ],
+      );
+    }
+  }
+  return result;
+
+}
+
+Future dialogPermission({
+  required BuildContext context,
+  required String permissionTitle,
+  required String permissionDescription
+  }){
+  return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        if (Platform.isAndroid) {
+          // Android-specific code
+          return AlertDialog(
+            title: Text(permissionTitle),
+            content: Text(permissionDescription),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Rechazar'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              TextButton(
+                child: const Text('Settings'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  openAppSettings();
+                },
+              ),
+            ],
+          );
+        } else
+          // iOS-specific code
+          return CupertinoAlertDialog(
+          title: Text(permissionTitle),
+          content: Text(permissionDescription),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              child: const Text('Rechazar'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            CupertinoDialogAction(
+              child: const Text('Settings'),
+              onPressed: () {
+                Navigator.pop(context);
+                openAppSettings();
+              },
+            ),
+          ],
+        );
+      } );
+}
+
+Future<bool> checkQRPermission({
+  required BuildContext context,
+  String? permissionDescription})
+async {
+  PermissionStatus status;
+  status = await Permission.camera.request();
+  print(status);
+  if(status.isPermanentlyDenied || status.isDenied) {
+    // control permission to access camera
+    await dialogPermission(
+        context: context,
+        permissionTitle: 'Acesso a Camara',
+        permissionDescription: permissionDescription?? 'Boldo requiere acceso a la camara');
+    return false;
+
+
+  }else if(status.isGranted){
+    return true;
+  }
+  else
+    return false;
+
+}
+
+Future<bool> checkCameraPermission({
+  required BuildContext context,
+  String? permissionDescription})
+async {
+  PermissionStatus status;
+  status = await Permission.camera.request();
+  if(!status.isGranted){
+    // control permission to access camera
+    await dialogPermission(
+        context: context,
+        permissionTitle: 'Acesso a Camara',
+        permissionDescription: permissionDescription?? 'Boldo requiere acceso a la camara');
+    return false;
+
+  }else
+    return true;
+
+}
+
+Future<bool> checkMicrophonePermission({
+  required BuildContext context,
+  String? permissionDescription})
+async {
+  PermissionStatus status;
+  status = await Permission.microphone.request();
+  if(!status.isGranted){
+    // control permission to access camera
+    await dialogPermission(
+        context: context,
+        permissionTitle: 'Acesso a Microfono',
+        permissionDescription: permissionDescription?? 'Boldo requiere acceso al microfono');
+    return false;
+
+  }else
+    return true;
+
+}

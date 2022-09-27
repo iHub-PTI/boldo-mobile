@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/screens/take_picture/take_picture_screen.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/loading_helper.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,6 +13,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path_package;
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../constants.dart';
 import '../../../main.dart';
@@ -39,7 +42,14 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
   }
 
   void getImageFromCamera() async {
-    userImageSelected = await picker.pickImage(source: ImageSource.camera, maxWidth: 1000,maxHeight: 1000, imageQuality: 100);
+    userImageSelected = await pickImage(
+        context: context,
+        source: ImageSource.camera,
+        maxWidth: 1000,
+        maxHeight: 1000,
+        imageQuality: 100,
+        permissionDescription: 'Se requiere acceso para tomar fotos'
+    );
     if (userImageSelected != null) {
       File? croppedFile = await ImageCropper().cropImage(
         sourcePath: userImageSelected!.path,
@@ -86,8 +96,14 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
 
   void getImageFromGallery() async {
 
-    userImageSelected = await picker.pickImage(source: ImageSource.gallery, maxWidth: 500,maxHeight: 500, imageQuality: 50);
-
+    userImageSelected = await pickImage(
+        context: context,
+        source: ImageSource.gallery,
+        maxWidth: 500,
+        maxHeight: 500,
+        imageQuality: 50,
+        permissionDescription: 'Se requiere acceso para seleccionar una foto'
+    );
     if (userImageSelected != null) {
       BlocProvider.of<PatientRegisterBloc>(context).add(
           UploadPhoto(urlUploadType: photoStage, image: userImageSelected));
