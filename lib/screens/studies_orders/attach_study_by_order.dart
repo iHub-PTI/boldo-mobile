@@ -486,7 +486,10 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
               child: Container(
                 child: GestureDetector(
                   onTap: () async {
-                    _noteBox(notes);
+                    await _noteBox(notes);
+                    setState(() {
+
+                    });
                     },
                   child: Row(
                     children: [
@@ -512,7 +515,10 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                 ),
                 GestureDetector(
                   onTap: () async {
-                    _noteBox(notes);
+                    await _noteBox(notes);
+                    setState(() {
+
+                    });
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -725,45 +731,111 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            contentPadding: const EdgeInsetsDirectional.all(0),
-            scrollable: true,
-            backgroundColor: ConstantsV2.lightest,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            content: Container(
-              width: MediaQuery.of(context).size.width*0.5,
-              height: MediaQuery.of(context).size.height*0.4,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    textCapitalization: TextCapitalization.sentences,
-                    initialValue: notes,
-                    keyboardType: TextInputType.multiline,
-                    minLines: 14,
-                    maxLines: 14,
-                    decoration: InputDecoration(
-                      hintText: "Ingrese un comentario sobre el estudio",
-                      filled: true,
-                      fillColor: ConstantsV2.lightGrey,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        borderSide: BorderSide(
+          String? note;
+          return StatefulBuilder(
+            builder: (context, setState){
+              return AlertDialog(
+                contentPadding: const EdgeInsetsDirectional.all(0),
+                scrollable: true,
+                backgroundColor: ConstantsV2.lightest,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                content: Container(
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width * 0.5,
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height * 0.5,
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        textCapitalization: TextCapitalization.sentences,
+                        initialValue: notes,
+                        keyboardType: TextInputType.multiline,
+                        minLines: 14,
+                        maxLines: 14,
+                        decoration: InputDecoration(
+                          hintText: "Ingrese un comentario sobre el estudio",
+                          filled: true,
+                          fillColor: ConstantsV2.lightGrey,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
                         ),
+                        style: boldoCorpMediumTextStyle.copyWith(
+                            color: ConstantsV2.activeText
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            note = value.trimRight().trimLeft();
+                          });
+                        },
                       ),
-                    ),
-                    style: boldoCorpMediumTextStyle.copyWith(
-                        color: ConstantsV2.activeText
-                    ),
-                    onChanged: (value) => this.notes = value.trimRight().trimLeft(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            child: InkWell(
+                              onTap: () async {
+                                Navigator.pop(context);
+                              },
+                              child: Card(
+                                  margin: EdgeInsets.zero,
+                                  clipBehavior: Clip.antiAlias,
+                                  elevation: 0,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(16)),
+                                  ),
+                                  color: ConstantsV2.orange.withOpacity(0.10),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15, vertical: 7),
+                                    child: const Text("cancelar"),
+                                  )
+                              ),
+                            ),
+                          ),
+                          Container(
+                            child: InkWell(
+                              onTap: () async {
+                                setState(() {
+                                  print(note);
+                                  this.notes = note?.trimRight().trimLeft();
+                                  Navigator.pop(context);
+                                });
+                              },
+                              child: Card(
+                                  margin: EdgeInsets.zero,
+                                  clipBehavior: Clip.antiAlias,
+                                  elevation: 0,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(16)),
+                                  ),
+                                  color: ConstantsV2.orange.withOpacity(0.10),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15, vertical: 7),
+                                    child: const Text("guardar"),
+                                  )
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            }
           );
         },
     );

@@ -124,7 +124,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                             DateTime.now().toIso8601String()),
                                         [d, ' de ', MM, ' de ', yyyy],
                                         locale: const SpanishDateLocale(),
-                                      )} (hace $_daysBetween ${_daysBetween == 1 ? "dia" : "dias"})',
+                                      )} (hace $_daysBetween ${_daysBetween == 1 ? "día" : "días"})',
                                       style: boldoCorpMediumTextStyle.copyWith(
                                           color: ConstantsV2.darkBlue),
                                     ),
