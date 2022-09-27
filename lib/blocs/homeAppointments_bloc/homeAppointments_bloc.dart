@@ -10,6 +10,7 @@ part 'homeAppointments_state.dart';
 
 class HomeAppointmentsBloc extends Bloc<HomeAppointmentsEvent, HomeAppointmentsState> {
   final UserRepository _patientRepository = UserRepository();
+  late List<Appointment> appointments = [];
   HomeAppointmentsBloc() : super(HomeAppointmentsInitial()) {
     on<HomeAppointmentsEvent>((event, emit) async {
       if(event is GetAppointmentsHome){
@@ -28,7 +29,6 @@ class HomeAppointmentsBloc extends Bloc<HomeAppointmentsEvent, HomeAppointmentsS
         _post.leftMap((l) => response = l.message);
         emit(FailedLoadedAppointments(response: response));
       }else{
-        late List<Appointment> appointments = [];
         _post.foldRight(Appointment, (a, previous) => appointments = a);
         appointments.sort((a, b) =>
             DateTime.parse(a.start!).compareTo(DateTime.parse(b.start!)));
@@ -39,7 +39,12 @@ class HomeAppointmentsBloc extends Bloc<HomeAppointmentsEvent, HomeAppointmentsS
             .toList();
         emit(AppointmentsHomeLoaded(appointments: appointments));
       }
-    }
+      }if(event is DeleteAppointmentHome){
+        
+        appointments = appointments.where((element) => element.id != event.id).toList();
+        
+        emit(AppointmentsHomeLoaded(appointments: appointments));
+      }
     });
   }
 }

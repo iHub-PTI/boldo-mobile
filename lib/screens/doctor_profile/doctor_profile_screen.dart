@@ -13,8 +13,10 @@ import '../../constants.dart';
 import '../../utils/helpers.dart';
 
 class DoctorProfileScreen extends StatefulWidget{
-  const DoctorProfileScreen({Key? key, required this.doctor}) : super(key: key);
+  /// make [showAvailability] true if go to this page to make a reservation
+  const DoctorProfileScreen({Key? key, required this.doctor, this.showAvailability= false}) : super(key: key);
   final Doctor doctor;
+  final bool showAvailability;
 
   @override
   State<StatefulWidget> createState() =>
@@ -29,6 +31,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
   @override
   void initState() {
+    // get availabilities only if it should be displayed
+    if(widget.showAvailability)
     BlocProvider.of<DoctorBloc>(context).add(GetAvailability(id: widget.doctor.id?? '', startDate: DateTime.now().toUtc().toIso8601String(), endDate: DateTime.now().add(const Duration(days: 30)).toUtc().toIso8601String()));
     super.initState();
   }
@@ -168,6 +172,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                 ),
                               ],
                             ),
+                            // show Availability only if go to this page to make a reservation
+                            if(widget.showAvailability)
                             BlocBuilder<DoctorBloc, DoctorState>(builder: (context, state) {
                               if(state is Success){
                                 return Column(

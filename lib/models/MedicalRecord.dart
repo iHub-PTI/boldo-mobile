@@ -1,5 +1,6 @@
 import 'package:boldo/models/PresciptionMedicalRecord.dart';
 import 'package:boldo/models/Soep.dart';
+import 'package:boldo/models/StudyOrder.dart';
 
 //List<MedicalRecord> patientMedicalRecordFromJson(dynamic str) => List<MedicalRecord>.from(str.map((x) => MedicalRecord.fromJson(x)));
 
@@ -16,12 +17,14 @@ class MedicalRecord {
   String? startTimeDate;
   String? status;
   List<PrescriptionMedicalRecord>? prescription;
+  List<ServiceRequest>? serviceRequests;
   
   MedicalRecord({
     this.appointmentId,
     this.diagnosis,
     this.instructions,
-    this.prescription
+    this.prescription,
+    this.serviceRequests
   });
 
   MedicalRecord.fromJson(Map<String, dynamic> json) {
@@ -39,6 +42,10 @@ class MedicalRecord {
         ? List<PrescriptionMedicalRecord>.from(json["prescriptions"]
             .map((x) => PrescriptionMedicalRecord.fromJson(x)))
         : null;
+    serviceRequests = json["serviceRequests"] == null
+            ? List<ServiceRequest>.from([])
+            : List<ServiceRequest>.from(
+                json["serviceRequests"].map((x) => ServiceRequest.fromJson(x)));
   }
 
   Map<String, dynamic> toJson() {

@@ -4,6 +4,7 @@ import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
+import 'package:boldo/models/News.dart';
 import 'package:boldo/screens/appointments/pastAppointments_screen.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
@@ -37,7 +38,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   List<Appointment> appointments = [];
   List<DiagnosticReport> diagnosticReports = [];
 
-  List<Appointment> news = [];
+  List<News> news = [];
 
   bool _dataFetchError = false;
   bool _loading = true;
@@ -116,16 +117,17 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
   void _onRefreshNews() async {
     // monitor network fetch
+    news = [];
     BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
   }
 
   @override
   void initState() {
     _controller = TabController(
-      length: 2,
+      length: 1,
       vsync: this,
     );
-    BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
+    //BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
     BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
     super.initState();
   }
@@ -184,7 +186,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                   }
                 }
                 if (state is NewsLoaded) {
-                  diagnosticReports = state.diagnosticReports;
+                  //diagnosticReports = state.news;
+                  news = state.news;
                   if (_refreshControllerNews != null) {
                     _refreshControllerNews!.refreshCompleted();
                     _refreshControllerNews!.loadComplete();
@@ -192,7 +195,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 }
               },
             ),
-            BlocListener<HomeAppointmentsBloc, HomeAppointmentsState>(
+            /*BlocListener<HomeAppointmentsBloc, HomeAppointmentsState>(
               listener: (context, state) {
                 if (state is FailedLoadedAppointments) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -208,13 +211,14 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 }
                 if (state is AppointmentsHomeLoaded) {
                   appointments = state.appointments;
+                  news = [...news,...state.appointments];
                   if (_refreshController != null) {
                     _refreshController!.refreshCompleted();
                     _refreshController!.loadComplete();
                   }
                 }
               },
-            ),
+            ),*/
           ],
           child: NestedScrollView(
               headerSliverBuilder: (context, innerBoxScrolled) => [
@@ -304,56 +308,35 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                             decoration: const BoxDecoration(
                               color: ConstantsV2.lightGrey,
                             ),
-                            child: Stack(
-                              children: [
-                                Center(
-                                    child: SvgPicture.asset(
-                                  'assets/decorations/line_separator.svg',
-                                )),
-                                TabBar(
-                                  indicatorColor: Colors.transparent,
-                                  unselectedLabelColor:
-                                      const Color.fromRGBO(119, 119, 119, 1),
-                                  labelColor: Colors.black,
-                                  controller: _controller,
-                                  tabs: [
-                                    BlocBuilder<patientBloc.PatientBloc, patientBloc.PatientState>(builder: (context, state) {
-                                      if(state is patientBloc.Success){
-                                        return Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              'Novedades${prefs.getBool(isFamily) ?? false ? " de " : ''}',
-                                            ),
-                                            prefs.getBool(isFamily) ?? false
-                                                ? Text(
-                                                '${patient.relationshipDisplaySpan}',
-                                                style: boldoCorpMediumTextStyle
-                                                    .copyWith(
-                                                    color:
-                                                    ConstantsV2.green))
-                                                : Container(),
-                                          ],
-                                        );
-                                      }else{
-                                        return const Text(
-                                          'Novedades',
-                                        );
-                                      }
-                                    }),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const Text(
-                                          'Citas',
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
+                            child: Container(
+                              child:
+                              BlocBuilder<patientBloc.PatientBloc, patientBloc.PatientState>(builder: (context, state) {
+                                if(state is patientBloc.Success){
+                                  return Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Novedades${prefs.getBool(isFamily) ?? false ? " de " : ''}',
+                                        style: boldoSubTextStyle.copyWith(color: ConstantsV2.inactiveText),
+                                      ),
+                                      prefs.getBool(isFamily) ?? false
+                                          ? Text(
+                                          '${patient.relationshipDisplaySpan}',
+                                          style: boldoCorpMediumTextStyle
+                                              .copyWith(
+                                              color:
+                                              ConstantsV2.green))
+                                          : Container(),
+                                    ],
+                                  );
+                                }else{
+                                  return Text(
+                                    'Novedades',
+                                    style: boldoSubTextStyle.copyWith(color: ConstantsV2.inactiveText),
+                                  );
+                                }
+                              }),
                             )),
                       ),
                     ]);
@@ -364,7 +347,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 controller: _controller,
                 children: [
                   _buildNews(),
-                  _buildAppointments(),
                 ],
               ),
             ),
@@ -446,12 +428,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 :SingleChildScrollView(
               child: Column(
                 children: [
-                  EmptyStateV2(
+                  const EmptyStateV2(
                     textBottom:
-                    "${patient.gender == "unknown" ?
-                    "Bienvenido/a" :
-                    patient.gender == "male" ?
-                    "Bienvenido" : "Bienvenida"} a Boldo",
+                    "A medida que uses la app, irás encontrando novedades tales como: "
+                        "próximas consultas, recetas y resultados de estudios.",
                   ),
                 ],
               ),
@@ -513,23 +493,21 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         ),
         child: BlocBuilder<HomeNewsBloc, HomeNewsState>(builder: (context, state) {
           if(state is NewsLoaded){
-            return diagnosticReports.isNotEmpty
+            return news.isNotEmpty
                 ? ListView.builder(
               shrinkWrap: true,
-              itemCount: diagnosticReports.length,
+              itemCount: news.length,
               scrollDirection: Axis.vertical,
-              itemBuilder: _diagnosticReportCard,
+              itemBuilder: _newsCard,
               physics: const ClampingScrollPhysics(),
             )
                 :SingleChildScrollView(
               child: Column(
                 children: [
-                  EmptyStateV2(
+                  const EmptyStateV2(
                     textBottom:
-                    "${patient.gender == "unknown" ?
-                    "Bienvenido/a" :
-                    patient.gender == "male" ?
-                    "Bienvenido" : "Bienvenida"} a Boldo",
+                    "A medida que uses la app, irás encontrando novedades tales como: "
+                        "próximas consultas, recetas y resultados de estudios.",
                   ),
                 ],
               ),
@@ -555,152 +533,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _diagnosticReportCard(BuildContext context, int index){
-    return Column(
-      children: [
-        Card(
-          elevation: 4,
-          margin: const EdgeInsets.only(bottom: 4),
-          child: InkWell(
-            onTap: () {
-
-            },
-            child: Container(
-              padding: const EdgeInsets.only(top: 8, left: 8),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Estudio reciente",
-                        style: boldoCorpSmallTextStyle.copyWith(
-                            color: ConstantsV2.darkBlue
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        child: Text("${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReports[index].effectiveDate!).toLocal())}",
-                            style: boldoCorpSmallTextStyle.copyWith(
-                            color: ConstantsV2.darkBlue
-                        ),
-                      ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 10,),
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 7),
-                        child: ClipOval(
-                          child: SizedBox(
-                            width: 54,
-                            height: 54,
-                            child:SvgPicture.asset(
-                              diagnosticReports[index].type == "LABORATORY"
-                                    ? 'assets/icon/lab.svg'
-                                    : diagnosticReports[index].type == "IMAGE"
-                                    ? 'assets/icon/image.svg'
-                                    : diagnosticReports[index].type == "OTHER"
-                                    ? 'assets/icon/other.svg'
-                                    : 'assets/images/LogoIcon.svg',
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              // For a future Laboratory's Name
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          Text("${diagnosticReports[index].description}",
-                            style: boldoCorpMediumTextStyle.copyWith(
-                                color: ConstantsV2.inactiveText
-                            ),
-                          ),
-                          Text("Subido por ${diagnosticReports[index].source}",
-                            style: boldoCorpMediumTextStyle.copyWith(
-                                color: ConstantsV2.inactiveText
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          Container(
-                            child: Row(
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/icon/attach-file.svg',
-                                ),
-                                Text("${diagnosticReports[index].attachmentNumber} ${diagnosticReports[index].attachmentNumber== "1" ? "archivo adjunto": "archivos adjuntos"}",
-                                  style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.darkBlue),
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          /*
-                          Container(
-                            child: GestureDetector(
-                              onTap: () {
-                                // TODO redirect to medical study page
-                              },
-                              child: Card(
-                                  margin: EdgeInsets.zero,
-                                  clipBehavior: Clip.antiAlias,
-                                  elevation: 0,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(5)),
-                                  ),
-                                  color: ConstantsV2.orange.withOpacity(0.10),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-                                    child: Text("ver archivo"),
-                                  )
-                              ),
-                            ),
-                          ),*/ const SizedBox(height: 14,),
-                        ],
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+  Widget _newsCard(BuildContext context, int index){
+    return news[index].show();
   }
 
   Widget _ListAppointments(BuildContext context, int index) {

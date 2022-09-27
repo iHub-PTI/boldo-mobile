@@ -483,7 +483,7 @@ class _DoctorCard extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                DoctorProfileScreen(doctor: doctor),
+                                DoctorProfileScreen(doctor: doctor, showAvailability: true,),
                           ),
                         );
                       },

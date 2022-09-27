@@ -41,3 +41,8 @@ class FilesObtained extends MyStudiesState {
   final List<File> files;
   FilesObtained({required this.files});
 }
+
+class ServiceRequestLoaded extends MyStudiesState {
+  final ServiceRequest serviceRequest;
+  ServiceRequestLoaded({required this.serviceRequest});
+}

@@ -124,6 +124,15 @@ const boldoCorpMediumTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoCorpMediumWithLineSeparationLargeTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 14,
+  height: 1.7,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
 const boldoCorpMediumBlackTextStyle = TextStyle(
   color: ConstantsV2.lightGrey,
   fontStyle: FontStyle.normal,
@@ -136,6 +145,14 @@ const boldoCorpSmallTextStyle = TextStyle(
   color: ConstantsV2.lightGrey,
   fontStyle: FontStyle.normal,
   fontSize: 10,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoCorpSmallSTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 12,
   fontWeight: FontWeight.w300,
   fontFamily: 'Montserrat',
 );
@@ -155,11 +172,34 @@ const boldoBillboardTextStyleAlt = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoTabHeaderTextStyle = TextStyle(
+  fontStyle: FontStyle.normal,
+  fontSize: 19,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoTabHeaderSelectedTextStyle = TextStyle(
+  fontStyle: FontStyle.normal,
+  fontSize: 19,
+  fontWeight: FontWeight.w500,
+  fontFamily: 'Montserrat',
+);
+
+const boldoTabHeaderUnselectedTextStyle = TextStyle(
+  fontStyle: FontStyle.normal,
+  fontSize: 19,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
 ThemeData boldoTheme = ThemeData(
   fontFamily: 'Montserrat',
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+      textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16,
+        color: ConstantsV2.lightGrey
+      ),
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
       primary: ConstantsV2.orange,
       shape: RoundedRectangleBorder(
@@ -167,6 +207,14 @@ ThemeData boldoTheme = ThemeData(
       ),
     ),
   ),
+  toggleableActiveColor: ConstantsV2.orange,
+  checkboxTheme: CheckboxThemeData(
+    shape: RoundedRectangleBorder(
+      side: const BorderSide(color: ConstantsV2.orange, width: 5),
+      borderRadius: BorderRadius.circular(4),
+    ),
+  ),
+  unselectedWidgetColor: ConstantsV2.orange,
   floatingActionButtonTheme: FloatingActionButtonThemeData(
     extendedTextStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
     extendedPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
@@ -350,3 +398,5 @@ class ConstantsV2 {
 // Constants
 
 const String isFamily = 'isFamily';
+const int minutesToCloseAppointment = 120;
+const String uploadedStudySuccessfullyMessage = "¡Estudio subido!";

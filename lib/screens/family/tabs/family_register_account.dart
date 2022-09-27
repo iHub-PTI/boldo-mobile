@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path_package;
 import 'package:path_provider/path_provider.dart';
@@ -44,11 +45,47 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
     userImageSelected = await pickImage(
         context: context,
         source: ImageSource.camera,
-        maxWidth: 500,
-        maxHeight: 500,
-        imageQuality: 50,
+        maxWidth: 1000,
+        maxHeight: 1000,
+        imageQuality: 100,
         permissionDescription: 'Se requiere acceso para tomar fotos'
     );
+    if (userImageSelected != null) {
+      File? croppedFile = await ImageCropper().cropImage(
+        sourcePath: userImageSelected!.path,
+        maxHeight: 1000,
+        maxWidth: 1000,
+        compressQuality: 100,
+        aspectRatioPresets: Platform.isAndroid
+            ? [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ]
+            : [
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio5x3,
+          CropAspectRatioPreset.ratio5x4,
+          CropAspectRatioPreset.ratio7x5,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        androidUiSettings: const AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: const IOSUiSettings(
+          title: 'Cropper',
+        ),
+      );
+      userImageSelected = croppedFile != null ? XFile(croppedFile.path) : null;
+    }
     if (userImageSelected != null) {
       BlocProvider.of<PatientRegisterBloc>(context).add(
           UploadPhoto(urlUploadType: photoStage, image: userImageSelected));

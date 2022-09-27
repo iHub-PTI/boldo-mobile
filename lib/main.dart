@@ -42,8 +42,10 @@ import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/constants.dart';
 
+import 'blocs/attach_study_order_bloc/attachStudyOrder_bloc.dart';
 import 'blocs/doctor_bloc/doctor_bloc.dart';
 import 'blocs/prescription_bloc/prescriptionBloc.dart';
+import 'blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
 import 'models/MedicalRecord.dart';
 import 'models/Patient.dart';
@@ -82,32 +84,36 @@ Future<void> main() async {
 
   initDio(navKey: navKey, dio: dio);
   const storage = FlutterSecureStorage();
-  String? session = await storage.read(key: "access_token");
+  String? session;
+  try {
+    session = await storage.read(key: "access_token");
+  } catch (e) {
+    storage.deleteAll();
+  }
 
   if (kReleaseMode) {
     String sentryDSN = String.fromEnvironment('SENTRY_DSN',
         defaultValue: dotenv.env['SENTRY_DSN']!);
     await SentryFlutter.init(
       (options) {
-        options.environment = "production";
+        options.environment = String.fromEnvironment('SENTRY_ENV',
+            defaultValue: dotenv.env['SENTRY_ENV']!);
         options.dsn = sentryDSN;
       },
     );
   }
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight,
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeRight,
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,]).then(
-      (value) => runApp(
-          MyApp(session: session??'')));
+    DeviceOrientation.portraitDown,
+  ]).then((value) => runApp(MyApp(session: session ?? '')));
 }
 
 class MyApp extends StatefulWidget {
   final String session;
-  const MyApp(
-      {Key? key, required this.session})
-      : super(key: key);
+  const MyApp({Key? key, required this.session}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -134,7 +140,7 @@ class _MyAppState extends State<MyApp> {
             create: (BuildContext context) => MedicalRecordBloc(),
           ),
           BlocProvider<DoctorBloc>(
-              create: (BuildContext context) => DoctorBloc(),
+            create: (BuildContext context) => DoctorBloc(),
           ),
           BlocProvider<HomeBloc>(
             create: (BuildContext context) => HomeBloc(),
@@ -146,13 +152,19 @@ class _MyAppState extends State<MyApp> {
             create: (BuildContext context) => PrescriptionBloc(),
           ),
           BlocProvider<MyStudiesBloc>(
-              create: (BuildContext context) => MyStudiesBloc(),
+            create: (BuildContext context) => MyStudiesBloc(),
           ),
           BlocProvider<HomeNewsBloc>(
             create: (BuildContext context) => HomeNewsBloc(),
           ),
           BlocProvider<HomeAppointmentsBloc>(
             create: (BuildContext context) => HomeAppointmentsBloc(),
+          ),
+          BlocProvider<StudyOrderBloc>(
+            create: (BuildContext context) => StudyOrderBloc(),
+          ),
+          BlocProvider<AttachStudyOrderBloc>(
+            create: (BuildContext context) => AttachStudyOrderBloc(),
           ),
         ],
         child: MultiProvider(
@@ -195,22 +207,23 @@ class FullApp extends StatelessWidget {
       navigatorKey: navKey,
       title: 'Boldo',
       theme: boldoTheme,
-      initialRoute: onboardingCompleted!='' ? '/SignInSuccess' : "/onboarding",
+      initialRoute:
+          onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
       routes: {
         '/onboarding': (context) => HeroScreenV2(),
         '/home': (context) => DashboardScreen(),
         '/login': (context) => const LoginWebViewHelper(),
-        '/methods' : (context) => const FamilyMetodsAdd(),
-        '/familyScreen' : (context) => FamilyScreen(),
-        '/defineRelationship' : (context) => DefinedRelationshipScreen(),
-        '/familyTransition' : (context) => FamilyConnectTransition(),
-        '/SignInSuccess' : (context) => SingInTransition(),
-        '/FamilyTransition' : (context) => FamilyTransition(),
-        '/familyDniRegister' : (context) => DniFamilyRegister(),
-        '/my_studies' : (context) => MyStudies(),
-        '/doctorsTab' : (context) => DoctorsTab(),
-        '/pastAppointmentsScreen' : (context) => const PastAppointmentsScreen(),
-        '/prescriptionsScreen' : (context) => const PrescriptionsScreen(),
+        '/methods': (context) => const FamilyMetodsAdd(),
+        '/familyScreen': (context) => FamilyScreen(),
+        '/defineRelationship': (context) => DefinedRelationshipScreen(),
+        '/familyTransition': (context) => FamilyConnectTransition(),
+        '/SignInSuccess': (context) => SingInTransition(),
+        '/FamilyTransition': (context) => FamilyTransition(),
+        '/familyDniRegister': (context) => DniFamilyRegister(),
+        '/my_studies': (context) => MyStudies(),
+        '/doctorsTab': (context) => DoctorsTab(),
+        '/pastAppointmentsScreen': (context) => const PastAppointmentsScreen(),
+        '/prescriptionsScreen': (context) => const PrescriptionsScreen(),
       },
     );
   }
