@@ -190,7 +190,15 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                           ? medicalRecord!.serviceRequests!.length > 0
                                             ? GestureDetector(
                                               // show complete studies order
-                                              onTap: () {},
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        StudyOrderScreen(callFromHome: false, encounterId: medicalRecord?.id?? "0")
+                                                  ),
+                                                );
+                                              },
                                               child: Padding(
                                                 padding: const EdgeInsets.only(right: 16, top: 16, bottom: 16),
                                                 child: SvgPicture.asset('assets/icon/icon-study-order-orange.svg'),
