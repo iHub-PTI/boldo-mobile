@@ -50,277 +50,281 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
           body: Stack(
             children: [
               const Background(text: "linkFamily",),
-              SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "turno marcado",
-                              style: boldoTitleRegularTextStyle.copyWith(color: ConstantsV2.lightest),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+              CustomScrollView(
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                BounceInUp(
-                                  from: 200,
-                                  duration: const Duration(seconds: 1),
-                                  child: ElasticInLeft(
-                                    duration: const Duration(seconds: 1),
-                                    child: Spin(
-                                      spins: 0.05,
-                                      duration: const Duration(seconds: 0),
-                                      child: Spin(
-                                        delay: const Duration(milliseconds: 300),
-                                        duration: const Duration(milliseconds: 300),
-                                        spins: -0.07,
-                                        child: Spin(
-                                          delay: const Duration(milliseconds: 700),
-                                          duration: const Duration(milliseconds: 300),
-                                          spins: 0.03,
-                                          child: ImageViewTypeForm(
-                                            height: 170,
-                                            width: 170,
-                                            border: true,
-                                            photoUrl: patient.photoUrl,
-                                            gender: patient.gender,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                Text(
+                                  "turno marcado",
+                                  style: boldoTitleRegularTextStyle.copyWith(color: ConstantsV2.lightest),
                                 ),
-                                BounceInUp(
-                                  from: 200,
-                                  duration: const Duration(seconds: 1),
-                                  child: ElasticInRight(
-                                    duration: const Duration(seconds: 1),
-                                    child: Spin(
-                                      spins: -0.05,
-                                      duration: const Duration(milliseconds: 500),
-                                      child: Spin(
-                                        delay: const Duration(milliseconds: 500),
-                                        duration: const Duration(milliseconds: 500),
-                                        spins: 0.1,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    BounceInUp(
+                                      from: 200,
+                                      duration: const Duration(seconds: 1),
+                                      child: ElasticInLeft(
+                                        duration: const Duration(seconds: 1),
                                         child: Spin(
-                                          delay: const Duration(milliseconds: 1000),
-                                          duration: const Duration(milliseconds: 500),
-                                          spins: -0.05,
-                                          child: ImageViewTypeForm(
-                                            height: 170,
-                                            width: 170,
-                                            border: true,
-                                            photoUrl: widget.doctor.photoUrl,
-                                            gender: widget.doctor.gender,
+                                          spins: 0.05,
+                                          duration: const Duration(seconds: 0),
+                                          child: Spin(
+                                            delay: const Duration(milliseconds: 500),
+                                            duration: const Duration(milliseconds: 500),
+                                            spins: -0.1,
+                                            child: Spin(
+                                              delay: const Duration(milliseconds: 1000),
+                                              duration: const Duration(milliseconds: 500),
+                                              spins: 0.05,
+                                              child: ImageViewTypeForm(
+                                                height: 170,
+                                                width: 170,
+                                                border: true,
+                                                photoUrl: patient.photoUrl,
+                                                gender: patient.gender,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
+                                    BounceInUp(
+                                      from: 200,
+                                      duration: const Duration(seconds: 1),
+                                      child: ElasticInRight(
+                                        duration: const Duration(seconds: 1),
+                                        child: Spin(
+                                          spins: -0.05,
+                                          duration: const Duration(milliseconds: 500),
+                                          child: Spin(
+                                            delay: const Duration(milliseconds: 500),
+                                            duration: const Duration(milliseconds: 500),
+                                            spins: 0.1,
+                                            child: Spin(
+                                              delay: const Duration(milliseconds: 1000),
+                                              duration: const Duration(milliseconds: 500),
+                                              spins: -0.05,
+                                              child: ImageViewTypeForm(
+                                                height: 170,
+                                                width: 170,
+                                                border: true,
+                                                photoUrl: widget.doctor.photoUrl,
+                                                gender: widget.doctor.gender,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: AnimatedOpacity(
-                          opacity: 1,
-                          duration: const Duration(milliseconds: 3000),
-                          child: Column(
-                            children: [
-                              Card(
-                                margin: EdgeInsets.zero,
-                                elevation: 0,
-                                color: ConstantsV2.lightest.withOpacity(.5),
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(16)
-                                  ),
-                                ),
-                                clipBehavior: Clip.antiAlias,
-                                child: Container(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(16),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                SvgPicture.asset(
-                                                  'assets/icon/calendar.svg',
-                                                  color: ConstantsV2.inactiveText,
-                                                  height: 20,
-                                                ),
-                                                const SizedBox(width: 6,),
-                                                Container(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                          "Tu consulta se marcó para el",
-                                                          style: boldoCorpMediumTextStyle.copyWith(
-                                                              color: ConstantsV2.activeText
-                                                          )
-                                                      ),
-                                                      Text(
-                                                        formatDate(
-                                                          DateTime.parse(
-                                                              widget.bookingDate.availability?? DateTime.now().toString()
-                                                          ),
-                                                          [d, ' de ', MM, ' a las ', hh, ':',nn, ' ', am],
-                                                          locale: const SpanishDateLocale(),
-                                                        ),
-                                                        style: boldoCorpMediumBlackTextStyle.copyWith(
-                                                            color: ConstantsV2.activeText
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                            const SizedBox(height: 16,),
-                                            Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                SvgPicture.asset(
-                                                  'assets/icon/stethoscope.svg',
-                                                  color: ConstantsV2.inactiveText,
-                                                  height: 20,
-                                                ),
-                                                const SizedBox(width: 6,),
-                                                Container(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                        widget.doctor.gender == 'female'
-                                                            ? "Con la doctora"
-                                                            : "Con el doctor",
-                                                        style: boldoCorpMediumTextStyle.copyWith(
-                                                            color: ConstantsV2.activeText
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        "${widget.doctor.givenName?.split(' ')[0]?? ''} "
-                                                            "${widget.doctor.familyName?.split(' ')[0]?? ''}, "
-                                                            "${widget.doctor.specializations?.first.description?? ''}",
-                                                        style: boldoCorpMediumBlackTextStyle.copyWith(
-                                                            color: ConstantsV2.activeText
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            child: AnimatedOpacity(
+                                opacity: 1,
+                                duration: const Duration(milliseconds: 3000),
+                                child: Column(
+                                  children: [
+                                    Card(
+                                      margin: EdgeInsets.zero,
+                                      elevation: 0,
+                                      color: ConstantsV2.lightest.withOpacity(.5),
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(16)
                                         ),
                                       ),
-                                      Container(
-                                        color: ConstantsV2.lightest.withOpacity(.9),
-                                        padding: const EdgeInsets.all(16),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    mainAxisSize: MainAxisSize.max,
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      ShowAppoinmentTypeIcon(appointmentType: widget.bookingDate.appointmentType?? 'A'),
-                                                      const SizedBox(width: 8,),
-                                                      Container(
-                                                        child: Expanded(
-                                                          child:  Text(
-                                                              (widget.bookingDate.appointmentType?? 'A') == 'A'?
-                                                              "Esta consulta será realizada en persona en el Hospital Los Ángeles."
-                                                                  : "Esta consulta será realizada de forma remota a través de esta aplicación.",
-                                                              style: boldoCorpMediumTextStyle.copyWith(
-                                                                  color: ConstantsV2.activeText
+                                      clipBehavior: Clip.antiAlias,
+                                      child: Container(
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                padding: const EdgeInsets.all(16),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        SvgPicture.asset(
+                                                          'assets/icon/calendar.svg',
+                                                          color: ConstantsV2.inactiveText,
+                                                          height: 20,
+                                                        ),
+                                                        const SizedBox(width: 6,),
+                                                        Container(
+                                                          child: Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Text(
+                                                                  "Tu consulta se marcó para el",
+                                                                  style: boldoCorpMediumTextStyle.copyWith(
+                                                                      color: ConstantsV2.activeText
+                                                                  )
+                                                              ),
+                                                              Text(
+                                                                formatDate(
+                                                                  DateTime.parse(
+                                                                      widget.bookingDate.availability?? DateTime.now().toString()
+                                                                  ),
+                                                                  [d, ' de ', MM, ' a las ', hh, ':',nn, ' ', am],
+                                                                  locale: const SpanishDateLocale(),
+                                                                ),
+                                                                style: boldoCorpMediumBlackTextStyle.copyWith(
+                                                                    color: ConstantsV2.activeText
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    const SizedBox(height: 16,),
+                                                    Row(
+                                                      mainAxisSize: MainAxisSize.max,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        SvgPicture.asset(
+                                                          'assets/icon/stethoscope.svg',
+                                                          color: ConstantsV2.inactiveText,
+                                                          height: 20,
+                                                        ),
+                                                        const SizedBox(width: 6,),
+                                                        Container(
+                                                          child: Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Text(
+                                                                widget.doctor.gender == 'female'
+                                                                    ? "Con la doctora"
+                                                                    : "Con el doctor",
+                                                                style: boldoCorpMediumTextStyle.copyWith(
+                                                                    color: ConstantsV2.activeText
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                "${widget.doctor.givenName?.split(' ')[0]?? ''} "
+                                                                    "${widget.doctor.familyName?.split(' ')[0]?? ''}, "
+                                                                    "${widget.doctor.specializations?.first.description?? ''}",
+                                                                style: boldoCorpMediumBlackTextStyle.copyWith(
+                                                                    color: ConstantsV2.activeText
+                                                                ),
                                                               )
+                                                            ],
                                                           ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                              Container(
+                                                color: ConstantsV2.lightest.withOpacity(.9),
+                                                padding: const EdgeInsets.all(16),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Row(
+                                                            mainAxisSize: MainAxisSize.max,
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              ShowAppoinmentTypeIcon(appointmentType: widget.bookingDate.appointmentType?? 'A'),
+                                                              const SizedBox(width: 8,),
+                                                              Container(
+                                                                child: Expanded(
+                                                                  child:  Text(
+                                                                      (widget.bookingDate.appointmentType?? 'A') == 'A'?
+                                                                      "Esta consulta será realizada en persona en el Hospital Los Ángeles."
+                                                                          : "Esta consulta será realizada de forma remota a través de esta aplicación.",
+                                                                      style: boldoCorpMediumTextStyle.copyWith(
+                                                                          color: ConstantsV2.activeText
+                                                                      )
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                      ),
+                                    ),
+                                    Card(
+                                      margin: EdgeInsets.zero,
+                                      elevation: 0,
+                                      color: ConstantsV2.lightest.withOpacity(.9),
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                            bottom: Radius.circular(16)
                                         ),
                                       ),
-                                    ],
-                                  )
-                                ),
-                              ),
-                              Card(
-                                margin: EdgeInsets.zero,
-                                elevation: 0,
-                                color: ConstantsV2.lightest.withOpacity(.9),
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(
-                                      bottom: Radius.circular(16)
-                                  ),
-                                ),
-                                clipBehavior: Clip.antiAlias,
-                                child: Container(
-                                    child: Column(
-                                      children: [
+                                      clipBehavior: Clip.antiAlias,
+                                      child: Container(
+                                          child: Column(
+                                            children: [
 
-                                      ],
-                                    )
-                                ),
-                              ),
-                            ],
-                          )
-                        ),
-                      ),
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            // TODO: button to edit the appointment reservation
-                            Container(),
-                            ElevatedButton(
-                              //  style: style1,
-                              onPressed: () {
-                                Provider.of<UtilsProvider>(context, listen: false)
-                                    .setSelectedPageIndex(pageIndex: 0);
-                                BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
-                                Navigator.of(context).popUntil(ModalRoute.withName('/home'));
-
-                              },
-
-                              child: SvgPicture.asset(
-                                'assets/icon/home.svg',
-                                height: 20,
-                              ),
+                                            ],
+                                          )
+                                      ),
+                                    ),
+                                  ],
+                                )
                             ),
-                          ],
-                        )
+                          ),
+                          Container(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  // TODO: button to edit the appointment reservation
+                                  Container(),
+                                  ElevatedButton(
+                                    //  style: style1,
+                                    onPressed: () {
+                                      Provider.of<UtilsProvider>(context, listen: false)
+                                          .setSelectedPageIndex(pageIndex: 0);
+                                      BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
+                                      Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+
+                                    },
+
+                                    child: SvgPicture.asset(
+                                      'assets/icon/home.svg',
+                                      height: 20,
+                                    ),
+                                  ),
+                                ],
+                              )
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
