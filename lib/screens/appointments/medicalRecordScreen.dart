@@ -145,10 +145,10 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
+                                  // show past appointments
                                   medicalRecord != null 
                                     ? medicalRecord!.serviceRequests != null
-                                      ? // show past appointments
-                                        GestureDetector(
+                                      ? GestureDetector(
                                           onTap: () {},
                                           child: Padding(
                                             padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16),
@@ -156,8 +156,51 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                           )
                                         )
                                       : Container()
-                                    : Container()
-                                  
+                                    : Container(),
+                                  medicalRecord != null
+                                  // show other buttons
+                                    ? Row(
+                                      children: [
+                                        // show notes button
+                                        medicalRecord!.soep != null
+                                          ? medicalRecord!.soep!.plan != null
+                                            ? GestureDetector(
+                                                // show complete soep
+                                                onTap: () {},
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(right: 16, top: 16, bottom: 16),
+                                                  child: SvgPicture.asset('assets/icon/icon-notes-orange.svg'),
+                                                )
+                                              )
+                                            : Container()
+                                          : Container(),
+                                        medicalRecord!.prescription != null
+                                          ? medicalRecord!.prescription!.length > 0
+                                            ? GestureDetector(
+                                              // show complete prescription
+                                              onTap: () {},
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(right: 16, top: 16, bottom: 16),
+                                                child: SvgPicture.asset('assets/icon/icon-prescriptions-orange.svg'),
+                                              )
+                                            )
+                                            : Container()
+                                          : Container(),
+                                        medicalRecord!.serviceRequests != null
+                                          ? medicalRecord!.serviceRequests!.length > 0
+                                            ? GestureDetector(
+                                              // show complete studies order
+                                              onTap: () {},
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(right: 16, top: 16, bottom: 16),
+                                                child: SvgPicture.asset('assets/icon/icon-study-order-orange.svg'),
+                                              )
+                                            )
+                                            : Container()
+                                          : Container(),
+                                      ],
+                                    )
+                                    : Container(),
                                 ],
                               ),
                               Card(
