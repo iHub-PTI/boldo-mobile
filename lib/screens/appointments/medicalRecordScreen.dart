@@ -128,16 +128,37 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                       style: boldoCorpMediumTextStyle.copyWith(
                                           color: ConstantsV2.darkBlue),
                                     ),
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 15.0),
-                                      child: Text(
-                                          medicalRecord?.mainReason ?? '',
-                                          style: boldoCorpMediumBlackTextStyle
-                                              .copyWith(
-                                                  color: ConstantsV2.darkBlue)),
-                                    ),
+                                    medicalRecord?.mainReason != null
+                                      ? Padding(
+                                          padding: const EdgeInsets.only(top: 15.0),
+                                          child: Text(
+                                              medicalRecord!.mainReason!,
+                                              style: boldoCorpMediumBlackTextStyle
+                                                  .copyWith(
+                                                      color: ConstantsV2.darkBlue)),
+                                        )
+                                      : Container(),
                                   ],
                                 ),
+                              ),
+                              // buttons for navigate
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  medicalRecord != null 
+                                    ? medicalRecord!.serviceRequests != null
+                                      ? // show past appointments
+                                        GestureDetector(
+                                          onTap: () {},
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left: 16, top: 16, bottom: 16),
+                                            child: SvgPicture.asset('assets/icon/icon-show-appointments-orange.svg'),
+                                          )
+                                        )
+                                      : Container()
+                                    : Container()
+                                  
+                                ],
                               ),
                               Card(
                                 child: Column(
