@@ -130,7 +130,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                                   DateTime.now().toString()),
                               [d, ' de ', MM, ' de ', yyyy],
                               locale: const SpanishDateLocale(),
-                            )} (hace $_daysBetween ${_daysBetween == 1 ? "dia" : "dias"})',
+                            )} (hace $_daysBetween ${_daysBetween == 1 ? "día" : "días"})',
                             style: boldoCorpMediumTextStyle.copyWith(
                                 color: ConstantsV2.darkBlue),
                           ),
