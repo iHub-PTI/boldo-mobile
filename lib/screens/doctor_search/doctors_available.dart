@@ -254,7 +254,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                               boldoCorpMediumWithLineSeparationLargeTextStyle
                                                   .copyWith(
                                                       color: ConstantsV2
-                                                          .buttonPrimaryColor100),
+                                                          .buttonPrimaryColor100, fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                   ],
