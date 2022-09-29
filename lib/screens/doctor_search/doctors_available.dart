@@ -108,7 +108,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                           gridDelegate:
                               const SliverGridDelegateWithMaxCrossAxisExtent(
                                   maxCrossAxisExtent: 200,
-                                  childAspectRatio: 2 / 3,
+                                  childAspectRatio: 3/4,
                                   crossAxisSpacing: 20,
                                   mainAxisSpacing: 20),
                           itemCount: doctors.length,
@@ -167,21 +167,22 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                           fit: BoxFit.cover)),
                 )
               : Card(
-                  semanticContainer: true,
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  child: doctors[index].gender == 'female'
-                      ? SvgPicture.asset(
-                          'assets/images/femaleDoctor.svg',
-                          fit: BoxFit.cover,
-                        )
-                      : SvgPicture.asset(
-                          'assets/images/maleDoctor.svg',
-                          fit: BoxFit.cover,
-                        ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32.0),
-                  ),
+                margin: EdgeInsets.all(0),
+                semanticContainer: true,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                child: doctors[index].gender == 'female'
+                    ? SvgPicture.asset(
+                        'assets/images/femaleDoctor.svg',
+                        fit: BoxFit.cover,
+                      )
+                    : SvgPicture.asset(
+                        'assets/images/maleDoctor.svg',
+                        fit: BoxFit.cover,
+                      ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32.0),
                 ),
+              ),
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(32),
@@ -281,9 +282,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                   ),
                 ),
               ),
-              doctors[index].photoUrl == null
-                  ? const SizedBox(height: 16)
-                  : const SizedBox(height: 4),
+              const SizedBox(height: 4)
             ],
           ),
         ],
