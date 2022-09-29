@@ -1,10 +1,12 @@
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Doctor.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 // PRINCIPAL CLASS
 class DoctorsAvailable extends StatefulWidget {
@@ -120,6 +122,24 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
     );
   }
 
+  String availableText(NextAvailability nextAvailability) {
+    String available = 'Sin disponibilidad en los próximos 30 días';
+    bool isToday = false;
+    final today = DateTime.now();
+    final parsedAvailability =
+        DateTime.parse(nextAvailability.availability!).toLocal();
+    int daysDifference = daysBetween(today, parsedAvailability);
+    if (daysDifference == 0) {
+      isToday = true;
+    }
+    if (isToday) {
+      available = 'Disponible Hoy!';
+    } else if (daysDifference > 0) {
+      available = 'Disponible ${DateFormat('EEEE, dd MMMM', Localizations.localeOf(context).languageCode).format(parsedAvailability)}';
+    }
+    return available;
+  }
+
   Widget doctorItem(BuildContext context, index) {
     return Stack(
       children: <Widget>[
@@ -129,8 +149,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(32),
                     image: DecorationImage(
-                      image: NetworkImage(doctors[index].photoUrl!),
-                      fit: BoxFit.cover)),
+                        image: NetworkImage(doctors[index].photoUrl!),
+                        fit: BoxFit.cover)),
               )
             : Card(
                 semanticContainer: true,
@@ -161,15 +181,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                     child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 24.0, bottom: 4),
+                      padding: const EdgeInsets.only(left: 24.0, right: 16, bottom: 2),
                       child: Text(
-                        '${doctors[index].gender=='female' ? 'Dra.' : 'Dr.'} ${doctors[index].givenName!.split(" ")[0] } ${doctors[index].familyName!.split(" ")[0]}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'Montserrat',
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        '${doctors[index].gender == 'female' ? 'Dra.' : 'Dr.'} ${doctors[index].givenName!.split(" ")[0]} ${doctors[index].familyName!.split(" ")[0]}',
+                        style: boldoCardHeadingTextStyle,
                       ),
                     ),
                   ],
@@ -178,43 +193,63 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
             ),
             // specializations
             doctors[index].specializations != null
-              ? doctors[index].specializations!.length > 0
-                ? Container(
-                  // 52 is the sum of left and right padding plus the space between columns
-                  width: MediaQuery.of(context).size.width/2 - 52,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 24.0, bottom: 8,),
-                      child: Row(
-                        children: [
-                          for (int i = 0;
-                            i < doctors[index].specializations!.length;
-                            i++)
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  left: i == 0 ? 0 : 3.0, bottom: 8),
-                              child: Text(
-                                "${doctors[index].specializations![i].description}${doctors[index].specializations!.length > 1 && i == 0 ? "," : ""}",
-                                style: const TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromRGBO(235, 139, 118, 1)
-                                ),
-                              ),
+                ? doctors[index].specializations!.length > 0
+                    ? Container(
+                        // 52 is the sum of left and right padding plus the space between columns
+                        width: MediaQuery.of(context).size.width / 2 - 52,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: 24.0,
                             ),
-                        ],
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                for (int i = 0;
+                                    i <
+                                        doctors[index]
+                                            .specializations!
+                                            .length;
+                                    i++)
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: i == 0 ? 0 : 3.0, bottom: 8),
+                                    child: Text(
+                                      "${doctors[index].specializations![i].description}${doctors[index].specializations!.length > 1 && i == 0 ? "," : ""}",
+                                      style: boldoCorpMediumWithLineSeparationLargeTextStyle.copyWith(color: ConstantsV2.buttonPrimaryColor100),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          )
+                        ),
+                      )
+                    : Container()
+                : Container(),
+            Container(
+              width: MediaQuery.of(context).size.width / 2 - 52,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 24.0, bottom: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        availableText(doctors[index].nextAvailability!),
+                        style: boldoCorpSmallInterTextStyle.copyWith(fontWeight: FontWeight.bold),
                       ),
-                    )
+                    ],
                   ),
-                )
-                : Container()
-              : Container(),
-
+                ),
+              ),
+            ),
+            doctors[index].photoUrl == null
+            ? const SizedBox(height: 16)
+            : const SizedBox(height: 4),
           ],
         ),
-      
       ],
     );
   }
