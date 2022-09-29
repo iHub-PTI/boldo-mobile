@@ -53,7 +53,9 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                 _loading = false;
               });
             } else if (state is DoctorsLoaded) {
-              doctors = state.doctors;
+              setState(() {
+                doctors = state.doctors;
+              });
             }
           },
           child: SingleChildScrollView(
@@ -94,12 +96,58 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                 ),
                 _loading
                     ? const Center(child: CircularProgressIndicator())
-                    : Container()
+                    : Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: GridView.builder(
+                          physics: ScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          gridDelegate:
+                              const SliverGridDelegateWithMaxCrossAxisExtent(
+                                  maxCrossAxisExtent: 200,
+                                  childAspectRatio: 2 / 3,
+                                  crossAxisSpacing: 20,
+                                  mainAxisSpacing: 20),
+                          itemCount: doctors.length,
+                          itemBuilder: doctorItem,
+                        ),
+                      )
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget doctorItem(BuildContext context, index) {
+    return Stack(
+      children: [
+        doctors[index].photoUrl != null
+          ? Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(32),
+                  image: DecorationImage(
+                      image: NetworkImage(doctors[index].photoUrl!),
+                      fit: BoxFit.cover)),
+            )
+          : Card(
+            semanticContainer: true,
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            child: doctors[index].gender == 'female'
+              ? SvgPicture.asset(
+                'assets/images/femaleDoctor.svg',
+                fit: BoxFit.cover,
+              )
+              : SvgPicture.asset(
+                'assets/images/maleDoctor.svg',
+                fit: BoxFit.cover,
+              ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32.0),
+            ),
+          )
+      ],
     );
   }
 }
