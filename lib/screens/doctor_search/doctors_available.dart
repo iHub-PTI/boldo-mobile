@@ -20,6 +20,14 @@ class DoctorsAvailable extends StatefulWidget {
 // STATE CLASS
 class _DoctorsAvailableState extends State<DoctorsAvailable> {
   bool _loading = true;
+  List<Doctor> doctors = [];
+  @override
+  void initState() {
+    // trigger event
+    BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorsAvailable());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,6 +48,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
               _loading = true;
             } else if (state is Success) {
               _loading = false;
+            } else if (state is DoctorsLoaded) {
+              doctors = state.doctors;
             }
           },
           child: SingleChildScrollView(
@@ -54,12 +64,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                     children: [
                       TextButton.icon(
                         onPressed: () {
-                          if(widget.callFromHome) {
+                          if (widget.callFromHome) {
                             // in this case we don't need do anything
                             Navigator.pop(context);
-                          } else {
-
-                          }
+                          } else {}
                         },
                         icon: const Icon(
                           Icons.chevron_left_rounded,
@@ -69,14 +77,14 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                         label: Text(
                           'Médicos disponibles',
                           style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                        ), 
+                        ),
                       ),
                       const SizedBox(width: 8),
                       // go to filter
                       GestureDetector(
-                        onTap: () {},
-                        child: SvgPicture.asset('assets/icon/change-filter.svg')
-                      )
+                          onTap: () {},
+                          child:
+                              SvgPicture.asset('assets/icon/change-filter.svg'))
                     ],
                   ),
                 )
