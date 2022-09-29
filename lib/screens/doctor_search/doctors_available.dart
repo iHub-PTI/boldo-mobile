@@ -129,8 +129,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(32),
                     image: DecorationImage(
-                        image: NetworkImage(doctors[index].photoUrl!),
-                        fit: BoxFit.cover)),
+                      image: NetworkImage(doctors[index].photoUrl!),
+                      fit: BoxFit.cover)),
               )
             : Card(
                 semanticContainer: true,
@@ -161,20 +161,57 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                     child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(24.0),
+                      padding: const EdgeInsets.only(left: 24.0, bottom: 4),
                       child: Text(
                         '${doctors[index].gender=='female' ? 'Dra.' : 'Dr.'} ${doctors[index].givenName!.split(" ")[0] } ${doctors[index].familyName!.split(" ")[0]}',
                         style: const TextStyle(
                           color: Colors.white,
                           fontFamily: 'Montserrat',
-                          fontSize: 18
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ],
                 ))
               ],
-            )
+            ),
+            // specializations
+            doctors[index].specializations != null
+              ? doctors[index].specializations!.length > 0
+                ? Container(
+                  // 52 is the sum of left and right padding plus the space between columns
+                  width: MediaQuery.of(context).size.width/2 - 52,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 24.0, bottom: 8,),
+                      child: Row(
+                        children: [
+                          for (int i = 0;
+                            i < doctors[index].specializations!.length;
+                            i++)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: i == 0 ? 0 : 3.0, bottom: 8),
+                              child: Text(
+                                "${doctors[index].specializations![i].description}${doctors[index].specializations!.length > 1 && i == 0 ? "," : ""}",
+                                style: const TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromRGBO(235, 139, 118, 1)
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    )
+                  ),
+                )
+                : Container()
+              : Container(),
+
           ],
         ),
       
