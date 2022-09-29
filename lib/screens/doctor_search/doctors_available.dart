@@ -2,6 +2,7 @@ import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/screens/doctor_profile/doctor_profile_screen.dart';
+import 'package:boldo/screens/doctor_search/doctor_filter.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +92,14 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                       const SizedBox(width: 8),
                       // go to filter
                       GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DoctorFilter(),
+                              ),
+                            );
+                          },
                           child:
                               SvgPicture.asset('assets/icon/change-filter.svg'))
                     ],
@@ -272,11 +280,13 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          availableText(doctors[index].nextAvailability!),
-                          style: boldoCorpSmallInterTextStyle.copyWith(
-                              fontWeight: FontWeight.bold),
-                        ),
+                        doctors[index].nextAvailability != null
+                          ? Text(
+                              availableText(doctors[index].nextAvailability!),
+                              style: boldoCorpSmallInterTextStyle.copyWith(
+                                  fontWeight: FontWeight.bold),
+                            )
+                          : Container(),
                       ],
                     ),
                   ),
