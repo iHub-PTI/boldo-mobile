@@ -122,31 +122,62 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
 
   Widget doctorItem(BuildContext context, index) {
     return Stack(
-      children: [
+      children: <Widget>[
+        // the first item in stack is the doctor profile photo
         doctors[index].photoUrl != null
-          ? Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(32),
-                  image: DecorationImage(
-                      image: NetworkImage(doctors[index].photoUrl!),
-                      fit: BoxFit.cover)),
-            )
-          : Card(
-            semanticContainer: true,
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            child: doctors[index].gender == 'female'
-              ? SvgPicture.asset(
-                'assets/images/femaleDoctor.svg',
-                fit: BoxFit.cover,
+            ? Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(32),
+                    image: DecorationImage(
+                        image: NetworkImage(doctors[index].photoUrl!),
+                        fit: BoxFit.cover)),
               )
-              : SvgPicture.asset(
-                'assets/images/maleDoctor.svg',
-                fit: BoxFit.cover,
+            : Card(
+                semanticContainer: true,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                child: doctors[index].gender == 'female'
+                    ? SvgPicture.asset(
+                        'assets/images/femaleDoctor.svg',
+                        fit: BoxFit.cover,
+                      )
+                    : SvgPicture.asset(
+                        'assets/images/maleDoctor.svg',
+                        fit: BoxFit.cover,
+                      ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32.0),
+                ),
               ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(32.0),
-            ),
-          )
+        // the second item in stack is the column of details
+        Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // name of the doctor
+            Row(
+              children: [
+                // this for jump if there is overflow
+                Flexible(
+                    child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Text(
+                        '${doctors[index].gender=='female' ? 'Dra.' : 'Dr.'} ${doctors[index].givenName!.split(" ")[0] } ${doctors[index].familyName!.split(" ")[0]}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Montserrat',
+                          fontSize: 18
+                        ),
+                      ),
+                    ),
+                  ],
+                ))
+              ],
+            )
+          ],
+        ),
+      
       ],
     );
   }
