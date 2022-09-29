@@ -45,9 +45,13 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
         child: BlocListener<DoctorsAvailableBloc, DoctorsAvailableState>(
           listener: (context, state) {
             if (state is Loading) {
-              _loading = true;
+              setState(() {
+                _loading = true;
+              });
             } else if (state is Success) {
-              _loading = false;
+              setState(() {
+                _loading = false;
+              });
             } else if (state is DoctorsLoaded) {
               doctors = state.doctors;
             }
@@ -87,7 +91,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                               SvgPicture.asset('assets/icon/change-filter.svg'))
                     ],
                   ),
-                )
+                ),
+                _loading
+                    ? const Center(child: CircularProgressIndicator())
+                    : Container()
               ],
             ),
           ),
