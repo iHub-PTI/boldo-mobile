@@ -182,6 +182,23 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                     borderRadius: BorderRadius.circular(32.0),
                   ),
                 ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(32),
+              gradient: const RadialGradient(
+                radius: 4,
+                center: Alignment(
+                  1.80,
+                  0.77,
+                ),
+                //center: Alignment.center,
+                colors: [
+                  Color.fromRGBO(0, 0, 0, 0),
+                  Color.fromRGBO(0, 0, 0, 1),
+                ]
+              ),
+            ),
+          ),
           // the second item in stack is the column of details
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
