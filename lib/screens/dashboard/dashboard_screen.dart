@@ -1,3 +1,4 @@
+import 'package:boldo/screens/doctor_search/doctors_available.dart';
 import 'package:boldo/screens/medical_records/medical_records_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
@@ -26,18 +27,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-
   }
 
   Widget getPage(int index) {
-
-
-
     if (index == 0) {
       return HomeTab();
     }
     if (index == 1) {
-      return DoctorsTab();
+      //return DoctorsTab();
+      return DoctorsAvailable(callFromHome: true,);
     }
     if (index == 2) {
       return MedicalRecordScreen();
@@ -51,23 +49,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: () async {
-          return false;
-        },
-        child: Scaffold(
-          // appBar: AppBar(
-          //   backgroundColor: Colors.white,
-          //   actions: [],
-          //   leadingWidth: 200,
-          //   leading: Padding(
-          //     padding: const EdgeInsets.only(left: 16.0),
-          //     child:
-          //     SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
-          //   ),
-          // ),
-          key: scaffoldKey,
-          body: getPage(selectedPageIndex),
-          /*bottomNavigationBar: BottomNavigationBar(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        // appBar: AppBar(
+        //   backgroundColor: Colors.white,
+        //   actions: [],
+        //   leadingWidth: 200,
+        //   leading: Padding(
+        //     padding: const EdgeInsets.only(left: 16.0),
+        //     child:
+        //     SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+        //   ),
+        // ),
+        key: scaffoldKey,
+        body: getPage(selectedPageIndex),
+        /*bottomNavigationBar: BottomNavigationBar(
             showUnselectedLabels: false,
             items: <BottomNavigationBarItem>
               [
@@ -117,7 +115,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 onTap: (index) {
                   selectedPageIndex = index;
                 })*/
-          ),
-        );
+      ),
+    );
   }
 }

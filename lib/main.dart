@@ -1,4 +1,5 @@
 import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
+import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/appointments/pastAppointments_screen.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
+import 'package:boldo/screens/doctor_search/doctors_available.dart';
 import 'package:boldo/screens/family/family_tab.dart';
 import 'package:boldo/screens/family/tabs/defined_relationship_screen.dart';
 import 'package:boldo/screens/family/tabs/familyConnectTransition.dart';
@@ -165,6 +167,9 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<AttachStudyOrderBloc>(
             create: (BuildContext context) => AttachStudyOrderBloc(),
+          ),
+          BlocProvider<DoctorsAvailableBloc>(
+            create: (BuildContext context) => DoctorsAvailableBloc(),
           ),
         ],
         child: MultiProvider(
