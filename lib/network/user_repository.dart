@@ -631,8 +631,15 @@ class UserRepository {
       patient = Patient();
       families = [];
 
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          '/onboarding', (Route<dynamic> route) => false);
+      // this will be failed if the user change environment
+      // the context was removed in the dio handle error
+      try{
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            '/onboarding', (Route<dynamic> route) => false);
+      }catch (e){
+        // nothing to do
+      }
+
     }on DioError catch(ex){
       await Sentry.captureMessage(
         ex.toString(),
