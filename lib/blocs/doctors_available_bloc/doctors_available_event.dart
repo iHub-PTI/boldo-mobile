@@ -5,4 +5,5 @@ abstract class DoctorsAvailableEvent {}
 
 
 class GetDoctorsAvailable extends DoctorsAvailableEvent {}
+class GetSpecializations extends DoctorsAvailableEvent {}
 class ReloadDoctorsAvailable extends DoctorsAvailableEvent {}
