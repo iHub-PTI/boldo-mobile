@@ -117,7 +117,128 @@ class _DoctorFilterState extends State<DoctorFilter> {
                       ],
                     ),
                   ),
-                  Text('end of horizontal scrollbar')
+                  const SizedBox(height: 8),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 168,
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 16),
+                        Row(
+                          // this for put the elements to the ends
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 20, right: 14, ),
+                                  child: SvgPicture.asset(
+                                    'assets/icon/person.svg',
+                                    color: true ? ConstantsV2.inactiveText : ConstantsV2.green,
+                                  ),
+                                ),
+                                Text(
+                                  'Presencial',
+                                  style: boldoSubTextMediumStyle,
+                                ),
+                              ],
+                            ),
+                            false 
+                            // the circle
+                            ? Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Container(
+                                height: 36,
+                                width: 36,
+                                decoration: const BoxDecoration(
+                                    color: ConstantsV2.lightGreen, shape: BoxShape.circle),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SvgPicture.asset(
+                                    'assets/icon/check-green.svg',
+                                  ),
+                                ),
+                              ),
+                            ) 
+                            : Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Container(
+                                height: 36,
+                                width: 36,
+                                decoration: const BoxDecoration(
+                                    color: Colors.white, shape: BoxShape.circle),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SvgPicture.asset(
+                                    'assets/icon/minus.svg',
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          // this for put the elements to the ends
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 20, right: 14, ),
+                                  child: SvgPicture.asset(
+                                    'assets/icon/videocam.svg',
+                                    color: true ? ConstantsV2.inactiveText : ConstantsV2.green,
+                                  ),
+                                ),
+                                Text(
+                                  'Telemedicina',
+                                  style: boldoSubTextMediumStyle,
+                                ),
+                              ],
+                            ),
+                            false 
+                            // the circle
+                            ? Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Container(
+                                height: 36,
+                                width: 36,
+                                decoration: const BoxDecoration(
+                                    color: ConstantsV2.lightGreen, shape: BoxShape.circle),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SvgPicture.asset(
+                                    'assets/icon/check-green.svg',
+                                  ),
+                                ),
+                              ),
+                            ) 
+                            : Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Container(
+                                height: 36,
+                                width: 36,
+                                decoration: const BoxDecoration(
+                                    color: Colors.white, shape: BoxShape.circle),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SvgPicture.asset(
+                                    'assets/icon/minus.svg',
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16)
+                      ],
+                    ),
+                  ),
               ],
             ),
         ),
