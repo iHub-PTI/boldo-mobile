@@ -56,10 +56,8 @@ class _DoctorFilterState extends State<DoctorFilter> {
               });
             }
           },
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 // button to go to back
                 Padding(
@@ -88,12 +86,75 @@ class _DoctorFilterState extends State<DoctorFilter> {
                   // loading 
                   ? const Center(child: CircularProgressIndicator()) 
                   // list of specializations
-                  : Card()
+                  : specializations != null
+                    ? Container(
+                      color: Colors.white,
+                      height: 200,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: specializations!.length > 4 ? 4 : specializations!.length,
+                          itemBuilder: _specialization
+                      ),
+                    )
+                    : Container(),
+                  Container(
+                    height: 44,
+                    color: Colors.white,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            // show popup
+                          },
+                          child: Container(
+                            width: 100,
+                            color: ConstantsV2.rightBottonNavigaton,
+                            child: Center(child: Text('ver todos'))
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Text('end of horizontal scrollbar')
               ],
             ),
-          ),
         ),
       ),
     );
   }
+
+  Widget _specialization(BuildContext context, index) {
+    return Padding(
+      padding: const EdgeInsets.only(top:26.0, bottom: 26, left: 16, right: 16),
+      child: Container(
+        width: 100,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              'assets/icon/filter.svg',
+              height: 36,
+              //color: Colors.black,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Flexible(
+                  child: Column(
+                    children: [
+                      Text('${specializations![index].description != null ? specializations![index].description! : 'Sin descripción'}')
+                    ],
+                  )
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
 }
