@@ -20,10 +20,15 @@ import 'package:intl/intl.dart';
 
 import '../../constants.dart';
 
+/// Show annotations in SOEP, prescriptions and StudyOrders emitted in an encounter
+/// The encounter will be got by the id of the [appointment]
 class MedicalRecordsScreen extends StatefulWidget {
+  /// make [fromOrderStudy] true if call this screen from a StudyOrder to disable
+  /// button to go at the StudyOrder again
+  final bool fromOrderStudy;
   final Appointment appointment;
 
-  const MedicalRecordsScreen({required this.appointment});
+  const MedicalRecordsScreen({required this.appointment, this.fromOrderStudy = false});
 
   @override
   _MedicalRecordsScreenState createState() => _MedicalRecordsScreenState();
@@ -362,7 +367,10 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                           )
                                         : Container(),
                                       medicalRecord?.serviceRequests != null
-                                        ? medicalRecord!.serviceRequests!.length > 0
+                                      // show button to go at the order screen if
+                                      // contains elements and is not coming
+                                      // from a study order screen
+                                        ? medicalRecord!.serviceRequests!.length > 0 && !widget.fromOrderStudy
                                           ? Row(
                                             mainAxisAlignment: MainAxisAlignment.end,
                                             children: [
