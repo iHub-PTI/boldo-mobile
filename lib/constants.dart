@@ -367,6 +367,7 @@ class ConstantsV2 {
   static const Color lightGrey = Color(0xffF5F5F5);
   static const Color lightest = Color(0xffFFFFFF);
   static const Color green = Color(0xff28B3BB);
+  static const Color lightGreen = Color.fromRGBO(40, 179, 187, 0.13);
   static const Color veryLightBlue = Color(0xffB1C3D7);
   static const Color yellow = Color(0xffF9D620);
   static const Color darkBlue = Color(0xff364F6B);
