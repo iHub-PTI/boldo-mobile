@@ -17,4 +17,17 @@ class DoctorRepository {
       throw Failure('No se pudo obtener la lista de médicos');
     }
   }
+
+  Future<List<Specializations>>? getAllSpecializations() async {
+    try {
+      Response response = await dio.get('/specializations');
+      if (response.statusCode == 200) {
+        return List<Specializations>.from(
+            response.data.map((i) => Specializations.fromJson(i)));
+      }
+      throw Failure('No fue posible obtener las especializaciones');
+    } catch (e) {
+      throw Failure('No fue posible obtener las especializaciones');
+    }
+  }
 }
