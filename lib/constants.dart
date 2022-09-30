@@ -56,13 +56,11 @@ class Constants {
   static const Color accordionbg = Color(0xfff3FAF7);
   static const Color dividerAccordion = Color(0x40F08F77);
 
- 
   // SOEP final string
   static const String objective = "Objetivo";
   static const String subjective = "Subjetivo";
   static const String evaluation = "Evaluación";
   static const String plan = "Plan";
-  
 }
 
 const String genericError = "Algo salió mal, vuelve a intentarlo más tarde";
@@ -93,11 +91,11 @@ const boldoTitleBlackTextStyle = TextStyle(
 );
 
 const boldoSubTextStyle = TextStyle(
-    color: ConstantsV2.inactiveText,
-    fontStyle: FontStyle.normal,
-    fontSize: 18,
-    fontWeight: FontWeight.w400,
-    fontFamily: 'Montserrat',
+  color: ConstantsV2.inactiveText,
+  fontStyle: FontStyle.normal,
+  fontSize: 18,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
 );
 
 const boldoSubTextMediumStyle = TextStyle(
@@ -197,9 +195,10 @@ ThemeData boldoTheme = ThemeData(
   fontFamily: 'Montserrat',
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16,
-        color: ConstantsV2.lightGrey
-      ),
+      textStyle: const TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 16,
+          color: ConstantsV2.lightGrey),
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
       primary: ConstantsV2.orange,
       shape: RoundedRectangleBorder(
@@ -216,7 +215,8 @@ ThemeData boldoTheme = ThemeData(
   ),
   unselectedWidgetColor: ConstantsV2.orange,
   floatingActionButtonTheme: FloatingActionButtonThemeData(
-    extendedTextStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+    extendedTextStyle:
+        const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
     extendedPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
     backgroundColor: ConstantsV2.orange,
     shape: RoundedRectangleBorder(
@@ -226,7 +226,8 @@ ThemeData boldoTheme = ThemeData(
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-      textStyle: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: ConstantsV2.orange),
+      textStyle: const TextStyle(
+          fontWeight: FontWeight.w400, fontSize: 16, color: ConstantsV2.orange),
       primary: ConstantsV2.orange,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(100),
@@ -268,7 +269,6 @@ ThemeData boldoTheme = ThemeData(
   visualDensity: VisualDensity.adaptivePlatformDensity,
 );
 
-
 // Colors Boldo V2
 class ConstantsV2 {
   // background colors palette
@@ -291,6 +291,7 @@ class ConstantsV2 {
 
   // button color
   static const Color buttonPrimaryColor100 = Color(0xffEB8B76);
+  static const Color rightBottonNavigaton = Color.fromRGBO(255, 139, 118, 0.1);
 
   // hero cards colors gradient
   static const Color primaryCardHeroColor100 = Color(0xffFDA57D);
@@ -372,7 +373,6 @@ class ConstantsV2 {
   static const Color orange = Color(0xffEB8B76);
   static const Color lightAndClear = Color(0xffF5F5F5);
 
-
   // home heights
   static double homeAppBarMaxHeight = 154.0;
   static double homeAppBarMinHeight = 98.0;
@@ -389,11 +389,15 @@ class ConstantsV2 {
   static double homeFeedTitleContainerMaxHeight = 62.0;
   static double homeFeedTitleContainerMinHeight = 62.0;
 
-  static double homeExpandedMaxHeight = homeAppBarMaxHeight + homeCarouselContainerMaxHeight + homeCarouselTitleContainerMaxHeight + homeFeedTitleContainerMaxHeight;
-  static double homeExpandedMinHeight = homeAppBarMinHeight + homeCarouselContainerMinHeight + homeCarouselTitleContainerMinHeight + homeFeedTitleContainerMinHeight;
-
+  static double homeExpandedMaxHeight = homeAppBarMaxHeight +
+      homeCarouselContainerMaxHeight +
+      homeCarouselTitleContainerMaxHeight +
+      homeFeedTitleContainerMaxHeight;
+  static double homeExpandedMinHeight = homeAppBarMinHeight +
+      homeCarouselContainerMinHeight +
+      homeCarouselTitleContainerMinHeight +
+      homeFeedTitleContainerMinHeight;
 }
-
 
 // Constants
 
