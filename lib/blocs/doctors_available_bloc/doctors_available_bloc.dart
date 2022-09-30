@@ -33,7 +33,30 @@ class DoctorsAvailableBloc
           emit(DoctorsLoaded(doctors: doctors));
           emit(Success());
         }
-      } else if (event is ReloadDoctorsAvailable) {}
+      } else if (event is ReloadDoctorsAvailable) {
+
+      } else if (event is GetSpecializations) {
+        emit(Loading());
+        var _post;
+        await Task(() =>
+        _doctorRepository.getAllSpecializations()!)
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        }
+        );
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(Failed(response: response));
+        }else{
+          late List<Specializations> specializations = [];
+          _post.foldRight(Specializations, (a, previous) => specializations = a);
+          emit(SpecializationsLoaded(specializations: specializations));
+          emit(Success());
+        }
+      }
     });
   }
 }
