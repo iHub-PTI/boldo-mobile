@@ -85,7 +85,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              MedicalRecordsScreen(appointment: appointment!)),
+                              MedicalRecordsScreen(appointment: appointment!, fromOrderStudy: true,)),
                     );
                     BlocProvider.of<MedicalRecordBloc>(context).add(InitialEvent());
                   }
