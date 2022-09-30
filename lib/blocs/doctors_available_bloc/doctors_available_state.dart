@@ -10,6 +10,16 @@ class DoctorsLoaded extends DoctorsAvailableState {
   DoctorsLoaded({required this.doctors});
 }
 
+class FilterLoaded extends DoctorsAvailableState {
+  List<Doctor> doctors;
+  FilterLoaded({required this.doctors});
+}
+
+class SpecializationsLoaded extends DoctorsAvailableState {
+  List<Specializations> specializations;
+  SpecializationsLoaded({required this.specializations});
+}
+
 class Loading extends DoctorsAvailableState {}
 
 class Success extends DoctorsAvailableState {}
