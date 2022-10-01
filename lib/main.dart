@@ -8,6 +8,7 @@ import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/blocs/prescriptions_bloc/prescriptionsBloc.dart';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/provider/auth_provider.dart';
+import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/appointments/pastAppointments_screen.dart';
@@ -181,6 +182,7 @@ class _MyAppState extends State<MyApp> {
                 // ignore: unnecessary_null_comparison
                 create: (_) =>
                     AuthProvider(widget.session != null ? true : false)),
+            ChangeNotifierProvider<DoctorFilterProvider>(create: (_) => DoctorFilterProvider())
           ],
           child: FullApp(onboardingCompleted: widget.session),
         ));
