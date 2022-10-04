@@ -393,6 +393,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                     radius: const Radius.circular(8),
                     thickness: 6,
                     isAlwaysShown: true,
+                    thumbColor: ConstantsV2.buttonPrimaryColor100,
                     child: ListView.builder(
                     itemCount: specializations!.length,
                     itemBuilder: (BuildContext context, int index) {
