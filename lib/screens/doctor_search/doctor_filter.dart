@@ -390,95 +390,97 @@ class _DoctorFilterState extends State<DoctorFilter> {
                   height: MediaQuery.of(context).size.height * 0.6,
                   width: MediaQuery.of(context).size.height * 0.8,
                   child: Scrollbar(
-                      isAlwaysShown: true,
-                      child: ListView.builder(
-                          itemCount: specializations!.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 8, right: 16),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(Radius.circular(16)),
-                                  color: specializationsSelected!
-                                          .contains(specializations![index])
-                                      ? ConstantsV2.buttonPrimaryColor100.withOpacity(0.1)
-                                      : Colors.white,
-                                ),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      if (specializationsSelected!
-                                          .contains(specializations![index])) {
-                                        // delete item from specialization selected list
-                                        Provider.of<DoctorFilterProvider>(context,
-                                                listen: false)
-                                            .removeSpecialization(
-                                                specializationId:
-                                                    specializations![index].id!);
-                                        // get the update list
-                                        specializationsSelected =
-                                            Provider.of<DoctorFilterProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .getSpecializations;
-                                      } else {
-                                        Provider.of<DoctorFilterProvider>(context,
-                                                listen: false)
-                                            .addSpecializations(
-                                                specialization:
-                                                    specializations![index]);
-                                        // get the update list
-                                        specializationsSelected =
-                                            Provider.of<DoctorFilterProvider>(
-                                                context,
-                                                listen: false)
-                                                .getSpecializations;
-                                      }
-                                    });
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/icon/filter.svg',
-                                          height: 36,
-                                          color: specializationsSelected!
-                                                  .contains(specializations![index])
-                                              ? ConstantsV2.buttonPrimaryColor100
-                                              : ConstantsV2.inactiveText,
-                                          //color: Colors.black,
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Container(
-                                          width: MediaQuery.of(context).size.width *
-                                              0.4,
-                                          child: SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Text(
-                                                '${specializations![index].description}',
-                                                style: boldoTitleBlackTextStyle
-                                                    .copyWith(
-                                                  fontSize: 16,
-                                                  color: specializationsSelected!
-                                                          .contains(
-                                                              specializations![
-                                                                  index])
-                                                      ? ConstantsV2
-                                                          .buttonPrimaryColor100
-                                                      : ConstantsV2.inactiveText,
-                                                ),
-                                              )),
-                                        )
-                                      ],
-                                    ),
+                    radius: const Radius.circular(8),
+                    isAlwaysShown: true,
+                    child: ListView.builder(
+                    itemCount: specializations!.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8, right: 16),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(Radius.circular(16)),
+                            color: specializationsSelected!
+                                    .contains(specializations![index])
+                                ? ConstantsV2.buttonPrimaryColor100.withOpacity(0.1)
+                                : Colors.white,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (specializationsSelected!
+                                    .contains(specializations![index])) {
+                                  // delete item from specialization selected list
+                                  Provider.of<DoctorFilterProvider>(context,
+                                          listen: false)
+                                      .removeSpecialization(
+                                          specializationId:
+                                              specializations![index].id!);
+                                  // get the update list
+                                  specializationsSelected =
+                                      Provider.of<DoctorFilterProvider>(
+                                              context,
+                                              listen: false)
+                                          .getSpecializations;
+                                } else {
+                                  Provider.of<DoctorFilterProvider>(context,
+                                          listen: false)
+                                      .addSpecializations(
+                                          specialization:
+                                              specializations![index]);
+                                  // get the update list
+                                  specializationsSelected =
+                                      Provider.of<DoctorFilterProvider>(
+                                          context,
+                                          listen: false)
+                                          .getSpecializations;
+                                }
+                              });
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/icon/filter.svg',
+                                    height: 36,
+                                    color: specializationsSelected!
+                                            .contains(specializations![index])
+                                        ? ConstantsV2.buttonPrimaryColor100
+                                        : ConstantsV2.inactiveText,
+                                    //color: Colors.black,
                                   ),
-                                ),
+                                  const SizedBox(width: 10),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.4,
+                                    child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Text(
+                                          '${specializations![index].description}',
+                                          style: boldoTitleBlackTextStyle
+                                              .copyWith(
+                                            fontSize: 16,
+                                            color: specializationsSelected!
+                                                    .contains(
+                                                        specializations![
+                                                            index])
+                                                ? ConstantsV2
+                                                    .buttonPrimaryColor100
+                                                : ConstantsV2.inactiveText,
+                                          ),
+                                        )),
+                                  )
+                                ],
                               ),
-                            );
-                          })),
+                            ),
+                          ),
+                        ),
+                      );
+                    })
+                  ),
                 ),
               );
             },
