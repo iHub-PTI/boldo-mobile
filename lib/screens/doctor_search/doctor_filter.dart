@@ -328,6 +328,12 @@ class _DoctorFilterState extends State<DoctorFilter> {
             } else {
               Provider.of<DoctorFilterProvider>(context, listen: false)
                   .addSpecializations(specialization: specializations![index]);
+              // get the update list
+              specializationsSelected =
+                  Provider.of<DoctorFilterProvider>(
+                      context,
+                      listen: false)
+                      .getSpecializations;
             }
           });
         },
@@ -408,6 +414,12 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                         .addSpecializations(
                                             specialization:
                                                 specializations![index]);
+                                    // get the update list
+                                    specializationsSelected =
+                                        Provider.of<DoctorFilterProvider>(
+                                            context,
+                                            listen: false)
+                                            .getSpecializations;
                                   }
                                 });
                               },
