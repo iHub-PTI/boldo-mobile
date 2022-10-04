@@ -115,9 +115,12 @@ class _DoctorFilterState extends State<DoctorFilter> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               // show popup
-                              _showSpecializations();
+                              await _showSpecializations();
+                              setState(() {
+
+                              });
                             },
                             child: Container(
                                 width: 100,
