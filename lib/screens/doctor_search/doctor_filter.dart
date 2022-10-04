@@ -19,8 +19,12 @@ class _DoctorFilterState extends State<DoctorFilter> {
   bool? virtualAppointment;
   List<Doctor>? doctors;
   List<Specializations>? specializations;
+  List<Specializations>? specializationsSelected;
   @override
   void initState() {
+    specializationsSelected =
+        Provider.of<DoctorFilterProvider>(context, listen: false)
+            .getSpecializations;
     BlocProvider.of<DoctorsAvailableBloc>(context).add(GetSpecializations());
     super.initState();
   }
@@ -103,28 +107,28 @@ class _DoctorFilterState extends State<DoctorFilter> {
                         )
                       : Container(),
               _loading
-                ? Container()
-                : Container(
-                  height: 44,
-                  color: Colors.white,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          // show popup
-                        },
-                        child: Container(
-                            width: 100,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: ConstantsV2.rightBottonNavigaton,
-                            ),
-                            child: Center(child: Text('ver todos'))),
-                      )
-                    ],
-                  ),
-                ),
+                  ? Container()
+                  : Container(
+                      height: 44,
+                      color: Colors.white,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              // show popup
+                            },
+                            child: Container(
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: ConstantsV2.rightBottonNavigaton,
+                                ),
+                                child: Center(child: Text('ver todos'))),
+                          )
+                        ],
+                      ),
+                    ),
               const SizedBox(height: 8),
               Container(
                 width: MediaQuery.of(context).size.width,
@@ -138,8 +142,8 @@ class _DoctorFilterState extends State<DoctorFilter> {
                       onTap: () {
                         setState(() {
                           Provider.of<DoctorFilterProvider>(context,
-                                listen: false)
-                            .setInPersonAppointment();
+                                  listen: false)
+                              .setInPersonAppointment();
                         });
                       },
                       child: Row(
@@ -218,8 +222,8 @@ class _DoctorFilterState extends State<DoctorFilter> {
                       onTap: () {
                         setState(() {
                           Provider.of<DoctorFilterProvider>(context,
-                                listen: false)
-                            .setVirtualAppointment();
+                                  listen: false)
+                              .setVirtualAppointment();
                         });
                       },
                       child: Row(
@@ -308,31 +312,53 @@ class _DoctorFilterState extends State<DoctorFilter> {
     return Padding(
       padding:
           const EdgeInsets.only(top: 26.0, bottom: 26, left: 16, right: 16),
-      child: Container(
-        width: 100,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              'assets/icon/filter.svg',
-              height: 36,
-              color: true ? ConstantsV2.buttonPrimaryColor100 : ConstantsV2.inactiveText,
-              //color: Colors.black,
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Flexible(
-                    child: Column(
-                  children: [
-                    Text(
-                        '${specializations![index].description != null ? specializations![index].description! : 'Sin descripción'}')
-                  ],
-                ))
-              ],
-            )
-          ],
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            if (specializationsSelected!.contains(specializations![index])) {
+              // delete item from specialization selected list
+              Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .removeSpecialization(
+                      specializationId: specializations![index].id!);
+              // get the update list
+              specializationsSelected =
+                  Provider.of<DoctorFilterProvider>(context, listen: false)
+                      .getSpecializations;
+            } else {
+              Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .addSpecializations(specialization: specializations![index]);
+            }
+          });
+        },
+        child: Container(
+          width: 100,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                'assets/icon/filter.svg',
+                height: 36,
+                color:
+                    specializationsSelected!.contains(specializations![index])
+                        ? ConstantsV2.buttonPrimaryColor100
+                        : ConstantsV2.inactiveText,
+                //color: Colors.black,
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Flexible(
+                      child: Column(
+                    children: [
+                      Text(
+                          '${specializations![index].description != null ? specializations![index].description! : 'Sin descripción'}')
+                    ],
+                  ))
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
