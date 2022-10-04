@@ -386,6 +386,38 @@ class _DoctorFilterState extends State<DoctorFilter> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
+                actionsAlignment: MainAxisAlignment.end,
+                actionsPadding: const EdgeInsets.only(right: 16.0, bottom: 16),
+                actions: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context, 'OK');
+                    },
+                    child: Container(
+                      width: 115,
+                      decoration: BoxDecoration(
+                        color: ConstantsV2.buttonPrimaryColor100,
+                        borderRadius: BorderRadius.circular(100)
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          children: [
+                            Text(
+                              'aplicar',
+                              style: boldoCorpMediumBlackTextStyle.copyWith(fontSize: 16),
+                            ),
+                            const SizedBox(width: 8),
+                            SvgPicture.asset(
+                              'assets/icon/check-green.svg',
+                              color: Colors.white,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
                 content: Container(
                   height: MediaQuery.of(context).size.height * 0.6,
                   width: MediaQuery.of(context).size.height * 0.8,
