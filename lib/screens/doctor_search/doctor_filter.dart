@@ -392,6 +392,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                   child: Scrollbar(
                     radius: const Radius.circular(8),
                     thickness: 6,
+                    trackVisibility: true,
                     isAlwaysShown: true,
                     child: ListView.builder(
                     itemCount: specializations!.length,
