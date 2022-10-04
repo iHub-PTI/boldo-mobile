@@ -117,6 +117,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                           GestureDetector(
                             onTap: () {
                               // show popup
+                              _showSpecializations();
                             },
                             child: Container(
                                 width: 100,
@@ -363,4 +364,99 @@ class _DoctorFilterState extends State<DoctorFilter> {
       ),
     );
   }
+
+  // show all specializations popup
+  Future<void> _showSpecializations() async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, setState) {
+              return AlertDialog(
+                title: const Text("Seleccione las especialidades"),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                content: Container(
+                  height: MediaQuery.of(context).size.height * 0.6,
+                  width: MediaQuery.of(context).size.height * 0.8,
+                  child: Scrollbar(
+                      isAlwaysShown: true,
+                      child: ListView.builder(
+                          itemCount: specializations!.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (specializationsSelected!
+                                      .contains(specializations![index])) {
+                                    // delete item from specialization selected list
+                                    Provider.of<DoctorFilterProvider>(context,
+                                            listen: false)
+                                        .removeSpecialization(
+                                            specializationId:
+                                                specializations![index].id!);
+                                    // get the update list
+                                    specializationsSelected =
+                                        Provider.of<DoctorFilterProvider>(
+                                                context,
+                                                listen: false)
+                                            .getSpecializations;
+                                  } else {
+                                    Provider.of<DoctorFilterProvider>(context,
+                                            listen: false)
+                                        .addSpecializations(
+                                            specialization:
+                                                specializations![index]);
+                                  }
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icon/filter.svg',
+                                      height: 36,
+                                      color: specializationsSelected!
+                                              .contains(specializations![index])
+                                          ? ConstantsV2.buttonPrimaryColor100
+                                          : ConstantsV2.inactiveText,
+                                      //color: Colors.black,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.4,
+                                      child: SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: Text(
+                                            '${specializations![index].description}',
+                                            style: boldoTitleBlackTextStyle
+                                                .copyWith(
+                                              fontSize: 16,
+                                              color: specializationsSelected!
+                                                      .contains(
+                                                          specializations![
+                                                              index])
+                                                  ? ConstantsV2
+                                                      .buttonPrimaryColor100
+                                                  : ConstantsV2.inactiveText,
+                                            ),
+                                          )),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          })),
+                ),
+              );
+            },
+          );
+        });
+  }
+
 }
