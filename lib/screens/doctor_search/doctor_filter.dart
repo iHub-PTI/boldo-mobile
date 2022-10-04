@@ -389,10 +389,9 @@ class _DoctorFilterState extends State<DoctorFilter> {
                 content: Container(
                   height: MediaQuery.of(context).size.height * 0.6,
                   width: MediaQuery.of(context).size.height * 0.8,
-                  child: Scrollbar(
+                  child: RawScrollbar(
                     radius: const Radius.circular(8),
                     thickness: 6,
-                    trackVisibility: true,
                     isAlwaysShown: true,
                     child: ListView.builder(
                     itemCount: specializations!.length,
