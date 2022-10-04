@@ -19,10 +19,9 @@ class DoctorFilterProvider with ChangeNotifier {
   // get specializations
   List<Specializations> get getSpecializations => _selectedSpecializations;
 
-  // set list of specializations
-  void setListOfSpecializations(
-      {required List<Specializations> selectedFilters}) {
-    _selectedSpecializations = selectedFilters;
+  // add specializations
+  void addSpecializations({required Specializations specialization}) {
+    _selectedSpecializations.add(specialization);
     // call bloc event
 
     notifyListeners();
