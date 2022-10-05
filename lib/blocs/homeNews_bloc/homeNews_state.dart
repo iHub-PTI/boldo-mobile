@@ -13,6 +13,6 @@ class FailedLoadedNews extends HomeNewsState {
 }
 
 class NewsLoaded extends HomeNewsState {
-  final List<DiagnosticReport> diagnosticReports;
-  NewsLoaded({required this.diagnosticReports});
+  final List<News> news;
+  NewsLoaded({required this.news});
 }

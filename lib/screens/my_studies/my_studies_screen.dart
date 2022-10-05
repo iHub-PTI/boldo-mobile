@@ -1,5 +1,7 @@
 import 'package:boldo/main.dart';
+import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
+import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -21,6 +23,7 @@ class _MyStudiesState extends State<MyStudies> {
   bool _loading = true;
   bool _error = false;
   List<DiagnosticReport> diagnosticReport = [];
+  ServiceRequest? serviceRequest;
   @override
   void initState() {
     BlocProvider.of<MyStudiesBloc>(context).add(GetPatientStudiesFromServer());
@@ -85,13 +88,23 @@ class _MyStudiesState extends State<MyStudies> {
                 Scaffold.of(context).showSnackBar(const SnackBar(
                     content: Text("Falló la obtención de estudios")));
               }
+
+              if (state is ServiceRequestLoaded) {
+                serviceRequest = state.serviceRequest;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          AttachStudyByOrderScreen(
+                            studyOrder: serviceRequest == null ? ServiceRequest() : serviceRequest!,
+                          )));
+              }
             },
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                
                   TextButton.icon(
                     onPressed: () {
                       Navigator.pop(context);
@@ -143,7 +156,7 @@ class _MyStudiesState extends State<MyStudies> {
                   ),
                   diagnosticReport.isEmpty
                       ? showEmptyList()
-                      : showDiagnosticList()
+                      : showDiagnosticList(),
                 ],
               ),
             ),
@@ -198,7 +211,7 @@ class _MyStudiesState extends State<MyStudies> {
 
   Widget showDiagnosticList() {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.7,
+      height: MediaQuery.of(context).size.height - 200,
       // width: 300,
       child: ListView.separated(
         separatorBuilder: (BuildContext context, int index) => const Divider(
@@ -236,8 +249,8 @@ class _MyStudiesState extends State<MyStudies> {
                     child: Column(
                   children: [
                     SizedBox(
-                      width: 34,
-                      height: 34,
+                      width: 40,
+                      height: 40,
                       child: SvgPicture.asset(
                         diagnosticReport[index].type == "LABORATORY"
                             ? 'assets/icon/lab.svg'
@@ -339,23 +352,55 @@ class _MyStudiesState extends State<MyStudies> {
                       const SizedBox(
                         height: 8,
                       ),
-                      Container(
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icon/attach-file.svg',
-                            ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              "${diagnosticReport[index].attachmentNumber} ${diagnosticReport[index].attachmentNumber == "1" ? "archivo adjunto" : "archivos adjuntos"}",
-                              style: boldoCorpSmallTextStyle.copyWith(
-                                  color: ConstantsV2.darkBlue),
-                            )
-                          ],
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/icon/attach-file.svg',
+                              ),
+                              const SizedBox(
+                                width: 4,
+                              ),
+                              Text(
+                                "${diagnosticReport[index].attachmentNumber} ${diagnosticReport[index].attachmentNumber == "1" ? "archivo adjunto" : "archivos adjuntos"}",
+                                style: boldoCorpSmallTextStyle.copyWith(
+                                    color: ConstantsV2.darkBlue),
+                              )
+                            ],
+                          ),
+                        ]
                       ),
+                      diagnosticReport[index].serviceRequestId != null
+                        ? Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              child: GestureDetector(
+                                onTap: (){
+                                  BlocProvider.of<MyStudiesBloc>(context)
+                                        .add(GetServiceRequests(serviceRequestId: diagnosticReport[index]
+                                                          .serviceRequestId!));
+                                },
+                                child: Card(
+                                    margin: EdgeInsets.zero,
+                                    clipBehavior: Clip.antiAlias,
+                                    elevation: 0,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(5)),
+                                    ),
+                                    color: ConstantsV2.orange.withOpacity(0.10),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+                                      child: const Text("ver orden"),
+                                    )),
+                              ),
+                            ),
+                          ],
+                        )
+                        : Container()
                     ],
                   ),
                 ),

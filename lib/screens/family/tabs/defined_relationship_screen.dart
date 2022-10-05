@@ -67,16 +67,6 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        actions: [],
-        leadingWidth: 200,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child:
-          SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
-        ),
-      ),
       body: Stack(
           children: [
             const Background(text: "linkFamily"),
