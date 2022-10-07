@@ -32,6 +32,8 @@
 	<string>$(PRODUCT_NAME) Microphone Usage!</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Upload a profile picture</string>
+	<key>UIActivityViewController</key>
+	<string>Share app url to download</string>
 	<key>NSAppleMusicUsageDescription</key>
     <string>Search files into mobile to upload</string>
 	<key>UILaunchStoryboardName</key>
