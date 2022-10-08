@@ -22,7 +22,11 @@ class SpecializationsLoaded extends DoctorsAvailableState {
 
 class Loading extends DoctorsAvailableState {}
 
+class FilterLoading extends DoctorsAvailableState {}
+
 class Success extends DoctorsAvailableState {}
+
+class FilterSucces extends DoctorsAvailableState {}
 
 class Failed extends DoctorsAvailableState {
   final response;
