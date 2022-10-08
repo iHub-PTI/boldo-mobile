@@ -18,6 +18,28 @@ class DoctorRepository {
     }
   }
 
+  Future<List<Doctor>> getDoctorsFilter(List<Specializations> specializations,
+      bool virtualAppointment, bool inPersonAppointment) async {
+    try {
+      // 173 is the complete list of specializations
+      Response response;
+      if ( (specializations.isEmpty &&
+          !virtualAppointment &&
+          !inPersonAppointment) || (specializations.length == 173 &&
+          virtualAppointment &&
+          inPersonAppointment)) {
+        response = await dio.get('/doctors');
+        if (response.statusCode == 200) {
+          return List<Doctor>.from(
+            response.data['items'].map((i) => Doctor.fromJson(i)));
+        }
+      }
+      throw Failure('No se pudo obtener la lista de médicos');
+    } catch (e) {
+      throw Failure('No se pudo obtener la lista de médicos');
+    }
+  }
+
   Future<List<Specializations>>? getAllSpecializations() async {
     try {
       Response response = await dio.get('/specializations');
