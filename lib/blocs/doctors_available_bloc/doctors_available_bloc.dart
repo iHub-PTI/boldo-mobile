@@ -56,6 +56,31 @@ class DoctorsAvailableBloc
           emit(SpecializationsLoaded(specializations: specializations));
           emit(Success());
         }
+      } else if (event is GetDoctorFilter) {
+        emit(FilterLoading());
+        var _post;
+        await Task(() =>
+          _doctorRepository.getDoctorsFilter(
+            event.specializations,
+            event.virtualAppointment,
+            event.inPersonAppointment
+        ))
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        }
+        );
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(Failed(response: response));
+        }else{
+          late List<Doctor> doctors = [];
+          _post.foldRight(Doctor, (a, previous) => doctors = a);
+          emit(FilterLoaded(doctors: doctors));
+          emit(FilterSucces());
+        }
       }
     });
   }
