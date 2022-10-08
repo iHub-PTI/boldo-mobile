@@ -16,7 +16,9 @@ class DoctorFilter extends StatefulWidget {
 
 class _DoctorFilterState extends State<DoctorFilter> {
   bool _loading = true;
+  bool _loadingFilter = true;
   bool? virtualAppointment;
+  bool? inPersonAppointment;
   List<Doctor>? doctors;
   List<Specializations>? specializations;
   List<Specializations>? specializationsSelected;
@@ -25,6 +27,12 @@ class _DoctorFilterState extends State<DoctorFilter> {
     specializationsSelected =
         Provider.of<DoctorFilterProvider>(context, listen: false)
             .getSpecializations;
+    virtualAppointment =
+        Provider.of<DoctorFilterProvider>(context, listen: false)
+            .getVirtualAppointment;
+    inPersonAppointment =
+        Provider.of<DoctorFilterProvider>(context, listen: false)
+            .getInPersonAppointment;
     BlocProvider.of<DoctorsAvailableBloc>(context).add(GetSpecializations());
     super.initState();
   }
@@ -49,9 +57,17 @@ class _DoctorFilterState extends State<DoctorFilter> {
               setState(() {
                 _loading = true;
               });
+            } else if (state is FilterLoading) {
+              setState(() {
+                _loadingFilter = true;
+              });
             } else if (state is Success) {
               setState(() {
                 _loading = false;
+              });
+            } else if (state is FilterSucces) {
+              setState(() {
+                _loadingFilter = false;
               });
             } else if (state is FilterLoaded) {
               setState(() {
@@ -61,6 +77,10 @@ class _DoctorFilterState extends State<DoctorFilter> {
               setState(() {
                 specializations = state.specializations;
               });
+              BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
+                specializations: specializationsSelected!,
+                virtualAppointment: virtualAppointment!,
+                inPersonAppointment: inPersonAppointment!));
             }
           },
           child: Column(
@@ -122,9 +142,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                 onTap: () async {
                                   // show popup
                                   await _showSpecializations();
-                                  setState(() {
-
-                                  });
+                                  setState(() {});
                                 },
                                 child: Container(
                                     width: 100,
@@ -151,7 +169,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                             setState(() {
                               Provider.of<DoctorFilterProvider>(context,
                                       listen: false)
-                                  .setInPersonAppointment();
+                                  .setInPersonAppointment(context: context);
                             });
                           },
                           child: Row(
@@ -231,7 +249,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                             setState(() {
                               Provider.of<DoctorFilterProvider>(context,
                                       listen: false)
-                                  .setVirtualAppointment();
+                                  .setVirtualAppointment(context: context);
                             });
                           },
                           child: Row(
@@ -317,31 +335,31 @@ class _DoctorFilterState extends State<DoctorFilter> {
                   Padding(
                     padding: const EdgeInsets.only(right: 16, bottom: 16),
                     child: GestureDetector(
-                      onTap: () {
-                        
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: ConstantsV2.buttonPrimaryColor100,
-                          borderRadius: BorderRadius.circular(100)
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                'ver x coincidencia/s',
-                                style: boldoCorpMediumBlackTextStyle.copyWith(fontSize: 16),
+                      onTap: () {},
+                      child: _loadingFilter
+                          ? const Center(child: CircularProgressIndicator())
+                          : Container(
+                              decoration: BoxDecoration(
+                                  color: ConstantsV2.buttonPrimaryColor100,
+                                  borderRadius: BorderRadius.circular(100)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'ver ${doctors!.length} ${doctors!.length > 1 ? 'coincidencias' : 'coincidencia'}',
+                                      style: boldoCorpMediumBlackTextStyle
+                                          .copyWith(fontSize: 16),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    SvgPicture.asset(
+                                      'assets/icon/chevron-right.svg',
+                                      color: Colors.white,
+                                    )
+                                  ],
+                                ),
                               ),
-                              const SizedBox(width: 8),
-                              SvgPicture.asset(
-                                'assets/icon/chevron-right.svg',
-                                color: Colors.white,
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
+                            ),
                     ),
                   ),
                 ],
@@ -364,19 +382,20 @@ class _DoctorFilterState extends State<DoctorFilter> {
               // delete item from specialization selected list
               Provider.of<DoctorFilterProvider>(context, listen: false)
                   .removeSpecialization(
-                      specializationId: specializations![index].id!);
+                      specializationId: specializations![index].id!,
+                      context: context);
               // get the update list
               specializationsSelected =
                   Provider.of<DoctorFilterProvider>(context, listen: false)
                       .getSpecializations;
             } else {
               Provider.of<DoctorFilterProvider>(context, listen: false)
-                  .addSpecializations(specialization: specializations![index]);
+                  .addSpecializations(
+                      specialization: specializations![index],
+                      context: context);
               // get the update list
               specializationsSelected =
-                  Provider.of<DoctorFilterProvider>(
-                      context,
-                      listen: false)
+                  Provider.of<DoctorFilterProvider>(context, listen: false)
                       .getSpecializations;
             }
           });
@@ -437,16 +456,16 @@ class _DoctorFilterState extends State<DoctorFilter> {
                     child: Container(
                       width: 115,
                       decoration: BoxDecoration(
-                        color: ConstantsV2.buttonPrimaryColor100,
-                        borderRadius: BorderRadius.circular(100)
-                      ),
+                          color: ConstantsV2.buttonPrimaryColor100,
+                          borderRadius: BorderRadius.circular(100)),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Row(
                           children: [
                             Text(
                               'aplicar',
-                              style: boldoCorpMediumBlackTextStyle.copyWith(fontSize: 16),
+                              style: boldoCorpMediumBlackTextStyle.copyWith(
+                                  fontSize: 16),
                             ),
                             const SizedBox(width: 8),
                             SvgPicture.asset(
@@ -463,104 +482,116 @@ class _DoctorFilterState extends State<DoctorFilter> {
                   height: MediaQuery.of(context).size.height * 0.6,
                   width: MediaQuery.of(context).size.height * 0.8,
                   child: RawScrollbar(
-                    radius: const Radius.circular(8),
-                    thickness: 6,
-                    isAlwaysShown: true,
-                    thumbColor: ConstantsV2.buttonPrimaryColor100,
-                    child: ListView.builder(
-                    itemCount: specializations!.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8, right: 16),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.all(Radius.circular(16)),
-                            color: specializationsSelected!
-                                    .contains(specializations![index])
-                                ? ConstantsV2.buttonPrimaryColor100.withOpacity(0.1)
-                                : Colors.white,
-                          ),
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                if (specializationsSelected!
-                                    .contains(specializations![index])) {
-                                  // delete item from specialization selected list
-                                  Provider.of<DoctorFilterProvider>(context,
-                                          listen: false)
-                                      .removeSpecialization(
-                                          specializationId:
-                                              specializations![index].id!);
-                                  // get the update list
-                                  specializationsSelected =
-                                      Provider.of<DoctorFilterProvider>(
-                                              context,
-                                              listen: false)
-                                          .getSpecializations;
-                                } else {
-                                  Provider.of<DoctorFilterProvider>(context,
-                                          listen: false)
-                                      .addSpecializations(
-                                          specialization:
-                                              specializations![index]);
-                                  // get the update list
-                                  specializationsSelected =
-                                      Provider.of<DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getSpecializations;
-                                }
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/icon/filter.svg',
-                                    height: 36,
-                                    color: specializationsSelected!
-                                            .contains(specializations![index])
-                                        ? ConstantsV2.buttonPrimaryColor100
-                                        : ConstantsV2.inactiveText,
-                                    //color: Colors.black,
+                      radius: const Radius.circular(8),
+                      thickness: 6,
+                      isAlwaysShown: true,
+                      thumbColor: ConstantsV2.buttonPrimaryColor100,
+                      child: ListView.builder(
+                          itemCount: specializations!.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.only(bottom: 8, right: 16),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(16)),
+                                  color: specializationsSelected!
+                                          .contains(specializations![index])
+                                      ? ConstantsV2.buttonPrimaryColor100
+                                          .withOpacity(0.1)
+                                      : Colors.white,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      if (specializationsSelected!
+                                          .contains(specializations![index])) {
+                                        // delete item from specialization selected list
+                                        Provider.of<DoctorFilterProvider>(
+                                                context,
+                                                listen: false)
+                                            .removeSpecialization(
+                                                specializationId:
+                                                    specializations![index].id!,
+                                                context: context);
+                                        // get the update list
+                                        specializationsSelected =
+                                            Provider.of<DoctorFilterProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .getSpecializations;
+                                      } else {
+                                        Provider.of<DoctorFilterProvider>(
+                                                context,
+                                                listen: false)
+                                            .addSpecializations(
+                                                specialization:
+                                                    specializations![index],
+                                                context: context);
+                                        // get the update list
+                                        specializationsSelected =
+                                            Provider.of<DoctorFilterProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .getSpecializations;
+                                      }
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/icon/filter.svg',
+                                          height: 36,
+                                          color: specializationsSelected!
+                                                  .contains(
+                                                      specializations![index])
+                                              ? ConstantsV2
+                                                  .buttonPrimaryColor100
+                                              : ConstantsV2.inactiveText,
+                                          //color: Colors.black,
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.4,
+                                          child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Text(
+                                                '${specializations![index].description}',
+                                                style: boldoTitleBlackTextStyle
+                                                    .copyWith(
+                                                  fontSize: 16,
+                                                  color: specializationsSelected!
+                                                          .contains(
+                                                              specializations![
+                                                                  index])
+                                                      ? ConstantsV2
+                                                          .buttonPrimaryColor100
+                                                      : ConstantsV2
+                                                          .inactiveText,
+                                                ),
+                                              )),
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                  const SizedBox(width: 10),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.4,
-                                    child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Text(
-                                          '${specializations![index].description}',
-                                          style: boldoTitleBlackTextStyle
-                                              .copyWith(
-                                            fontSize: 16,
-                                            color: specializationsSelected!
-                                                    .contains(
-                                                        specializations![
-                                                            index])
-                                                ? ConstantsV2
-                                                    .buttonPrimaryColor100
-                                                : ConstantsV2.inactiveText,
-                                          ),
-                                        )),
-                                  )
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-                      );
-                    })
-                  ),
+                            );
+                          })),
                 ),
               );
             },
           );
         });
   }
-
 }
