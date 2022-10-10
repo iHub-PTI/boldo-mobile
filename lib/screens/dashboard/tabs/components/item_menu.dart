@@ -6,15 +6,13 @@ import '../../../../constants.dart';
 class ItemMenu extends StatelessWidget {
   final String image;
   final String title;
-  final Widget? page;
-  final String? route;
+  final Function()? action;
 
   const ItemMenu({
     Key? key,
     required this.image,
     required this.title,
-    this.page,
-    this.route,
+    this.action,
   }) : super(key: key);
 
   @override
@@ -24,15 +22,7 @@ class ItemMenu extends StatelessWidget {
       constraints: const BoxConstraints(minWidth: 136, minHeight: 40),
       padding: const EdgeInsets.all(8),
       child: TextButton.icon(
-        onPressed: page == null && route == null ? () {  } : route == null ? () {
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) => page!
-            ),
-          );
-        } :
-            () {
-              Navigator.pushNamed(context, route!);
-        } ,
+        onPressed: action,
         icon: SvgPicture.asset(
           image,
           color: ConstantsV2.lightest,
