@@ -590,7 +590,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                     initialEntryMode: DatePickerEntryMode
                                                         .calendarOnly,
                                                     initialDatePickerMode: DatePickerMode.day,
-                                                    initialDate: date1 ?? DateTime.now(),
+                                                    initialDate: date1,
                                                     firstDate: DateTime(1900),
                                                     lastDate: date2?? DateTime.now(),
                                                     locale: const Locale("es", "ES"),
