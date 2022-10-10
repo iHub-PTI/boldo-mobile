@@ -1,14 +1,18 @@
+import 'dart:io';
+
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
 import 'package:boldo/screens/privacy_policy/privacy_policy.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 
 import 'package:boldo/constants.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../main.dart';
 
@@ -23,26 +27,51 @@ class MenuScreen extends StatefulWidget {
 
 class _MenuScreenState extends State<MenuScreen> {
 
-  final List<ItemMenu> items = [
-    const ItemMenu(
+  final List<Widget> items = [
+    ItemMenu(
+      image: 'assets/icon/share.svg',
+      title: 'Recomendar Boldo',
+      action: () async {
+        // TODO: share message with image
+        // TODO: change url with a
+        File imageFile = await getImageFileFromAssets('share_picture.jpeg');
+        final box = navKey.currentState!.context.findRenderObject() as RenderBox?;
+        await Share.share(
+          "Estoy usando Boldo, el ecosistema de productos digitales de salud del Paraguay. "
+              "Descargalo gratis en: "
+              "https://boldo-dev.pti.org.py/download",
+          subject: 'Recomendar Boldo a un amigo',
+          sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+        );
+      },
+    ),
+    ItemMenu(
       image: 'assets/icon/family.svg',
       title: 'Mi Familia',
-      route: '/familyScreen',
+      action: () {
+        Navigator.pushNamed(navKey.currentState!.context, '/familyScreen');
+      },
     ),
-    const ItemMenu(
+    ItemMenu(
       image: 'assets/icon/shield-check.svg',
       title: 'Polîticas de privacidad',
-      page: PrivacyPolicy(),
+      action: (){
+        Navigator.push(navKey.currentState!.context, MaterialPageRoute(
+            builder: (context) => PrivacyPolicy()
+        ),
+        );
+      },
     ),
-    const ItemMenu(
+    ItemMenu(
       image: 'assets/icon/document-text.svg',
       title: 'Términos de servicio',
-      page: TermsOfServices(),
-    ),
-    const ItemMenu(
-      image: 'assets/icon/share.svg',
-      title: 'Compartir',
-      page: null,
+      action: (){
+        Navigator.push(navKey.currentState!.context, MaterialPageRoute(
+            builder: (context) => TermsOfServices(),
+        ),
+        );
+      },
+
     ),
     // const ItemMenu(
     //   image: 'assets/icon/adjustments.svg',
