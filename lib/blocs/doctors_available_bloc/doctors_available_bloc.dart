@@ -15,67 +15,61 @@ class DoctorsAvailableBloc
       if (event is GetDoctorsAvailable) {
         emit(Loading());
         var _post;
-        await Task(() =>
-        _doctorRepository.getAllDoctors()!)
+        await Task(() => _doctorRepository.getAllDoctors()!)
             .attempt()
             .run()
             .then((value) {
           _post = value;
-        }
-        );
+        });
         var response;
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
-        }else{
+        } else {
           late List<Doctor> doctors = [];
           _post.foldRight(Doctor, (a, previous) => doctors = a);
           emit(DoctorsLoaded(doctors: doctors));
           emit(Success());
         }
       } else if (event is ReloadDoctorsAvailable) {
-
+        emit(FilterLoading());
+        await Future.delayed(const Duration(seconds: 1));
+        emit(FilterLoaded(doctors: []));
+        emit(FilterSucces());
       } else if (event is GetSpecializations) {
         emit(Loading());
         var _post;
-        await Task(() =>
-        _doctorRepository.getAllSpecializations()!)
+        await Task(() => _doctorRepository.getAllSpecializations()!)
             .attempt()
             .run()
             .then((value) {
           _post = value;
-        }
-        );
+        });
         var response;
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
-        }else{
+        } else {
           late List<Specializations> specializations = [];
-          _post.foldRight(Specializations, (a, previous) => specializations = a);
+          _post.foldRight(
+              Specializations, (a, previous) => specializations = a);
           emit(SpecializationsLoaded(specializations: specializations));
           emit(Success());
         }
       } else if (event is GetDoctorFilter) {
         emit(FilterLoading());
         var _post;
-        await Task(() =>
-          _doctorRepository.getDoctorsFilter(
+        await Task(() => _doctorRepository.getDoctorsFilter(
             event.specializations,
             event.virtualAppointment,
-            event.inPersonAppointment
-        ))
-            .attempt()
-            .run()
-            .then((value) {
+            event.inPersonAppointment)).attempt().run().then((value) {
           _post = value;
-        }
-        );
+        });
         var response;
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
-        }else{
+        } else {
           late List<Doctor> doctors = [];
           _post.foldRight(Doctor, (a, previous) => doctors = a);
           emit(FilterLoaded(doctors: doctors));
