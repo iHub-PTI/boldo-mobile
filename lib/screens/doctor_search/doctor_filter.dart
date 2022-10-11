@@ -618,7 +618,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                           .withOpacity(0.1)
                                       : Colors.white,
                                 ),
-                                child: InkWell(
+                                child: GestureDetector(
                                   onTap: () {
                                     setState(() {
                                       if (specializationsSelectedCopy!.any((element) => element.id == specializations![index].id)) {
