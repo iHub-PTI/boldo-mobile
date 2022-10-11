@@ -1,8 +1,11 @@
+import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/network/doctor_repository.dart';
+import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 part 'doctors_available_event.dart';
 part 'doctors_available_state.dart';
@@ -34,7 +37,8 @@ class DoctorsAvailableBloc
       } else if (event is ReloadDoctorsAvailable) {
         emit(FilterLoading());
         await Future.delayed(const Duration(seconds: 1));
-        emit(FilterLoaded(doctors: []));
+        emit(FilterLoaded(doctors: Provider.of<DoctorFilterProvider>(navKey.currentState!.context, listen: false)
+            .getDoctorsSaved));
         emit(FilterSucces());
       } else if (event is GetSpecializations) {
         emit(Loading());

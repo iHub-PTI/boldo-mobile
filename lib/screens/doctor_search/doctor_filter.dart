@@ -86,12 +86,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
               });
             } else if (state is FilterLoaded) {
               setState(() {
-                if (state.doctors.isEmpty && !_firstTime!) {
-                  doctors = Provider.of<DoctorFilterProvider>(context, listen: false)
-                      .getDoctorsSaved;
-                } else {
-                  doctors = state.doctors;
-                }
+                doctors = state.doctors;
               });
             } else if (state is SpecializationsLoaded) {
               setState(() {
@@ -623,7 +618,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                           .withOpacity(0.1)
                                       : Colors.white,
                                 ),
-                                child: GestureDetector(
+                                child: InkWell(
                                   onTap: () {
                                     setState(() {
                                       if (specializationsSelectedCopy!.any((element) => element.id == specializations![index].id)) {
