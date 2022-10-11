@@ -23,15 +23,56 @@ class DoctorRepository {
     try {
       // 173 is the complete list of specializations
       Response response;
-      if ( (specializations.isEmpty &&
-          !virtualAppointment &&
-          !inPersonAppointment) || (specializations.length == 173 &&
+      if (specializations.length == 173 &&
           virtualAppointment &&
-          inPersonAppointment)) {
+          inPersonAppointment) {
         response = await dio.get('/doctors');
         if (response.statusCode == 200) {
           return List<Doctor>.from(
-            response.data['items'].map((i) => Doctor.fromJson(i)));
+              response.data['items'].map((i) => Doctor.fromJson(i)));
+        }
+      } else if (specializations.length != 0 && specializations.length != 173) {
+        // list of IDs
+        List<String> listOfSpecializations =
+            specializations.map((e) => e.id!).toList();
+        String appointmentType = "";
+        if (virtualAppointment && inPersonAppointment) {
+          appointmentType = "AV";
+        } else if (virtualAppointment) {
+          appointmentType = "V";
+        } else if (inPersonAppointment) {
+          appointmentType = "A";
+        }
+
+        if (appointmentType != "") {
+          response = await dio.get('/doctors?${appointmentType}',
+              queryParameters: {"specialtyIds": listOfSpecializations});
+          if (response.statusCode == 200) {
+            return List<Doctor>.from(
+                response.data['items'].map((i) => Doctor.fromJson(i)));
+          }
+        } else {
+          response = await dio.get('/doctors',
+              queryParameters: {"specialtyIds": listOfSpecializations});
+          if (response.statusCode == 200) {
+            return List<Doctor>.from(
+                response.data['items'].map((i) => Doctor.fromJson(i)));
+          }
+        }
+      } else if (specializations.isEmpty &&
+          (virtualAppointment || inPersonAppointment)) {
+        String appointmentType = "";
+        if (virtualAppointment && inPersonAppointment) {
+          appointmentType = "AV";
+        } else if (virtualAppointment) {
+          appointmentType = "V";
+        } else if (inPersonAppointment) {
+          appointmentType = "A";
+        }
+        response = await dio.get('/doctors?${appointmentType}');
+        if (response.statusCode == 200) {
+          return List<Doctor>.from(
+                response.data['items'].map((i) => Doctor.fromJson(i)));
         }
       }
       throw Failure('No se pudo obtener la lista de médicos');
