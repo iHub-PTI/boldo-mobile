@@ -45,8 +45,10 @@ class DoctorRepository {
         }
 
         if (appointmentType != "") {
-          response = await dio.get('/doctors?${appointmentType}',
-              queryParameters: {"specialtyIds": listOfSpecializations});
+          response = await dio.get('/doctors', queryParameters: {
+            "appointmentType": appointmentType,
+            "specialtyIds": listOfSpecializations
+          });
           if (response.statusCode == 200) {
             return List<Doctor>.from(
                 response.data['items'].map((i) => Doctor.fromJson(i)));
@@ -69,10 +71,12 @@ class DoctorRepository {
         } else if (inPersonAppointment) {
           appointmentType = "A";
         }
-        response = await dio.get('/doctors?${appointmentType}');
+        response = await dio.get('/doctors', queryParameters: {
+          "appointmentType": appointmentType
+        });
         if (response.statusCode == 200) {
           return List<Doctor>.from(
-                response.data['items'].map((i) => Doctor.fromJson(i)));
+              response.data['items'].map((i) => Doctor.fromJson(i)));
         }
       }
       throw Failure('No se pudo obtener la lista de médicos');
