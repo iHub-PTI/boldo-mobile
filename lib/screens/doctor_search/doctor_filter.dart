@@ -397,17 +397,21 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                       color: _firstTime!
                                           ? ConstantsV2.buttonPrimaryColor100
                                               .withOpacity(0.5)
-                                          : ConstantsV2.buttonPrimaryColor100,
+                                          : doctors!.length > 0
+                                            ? ConstantsV2.buttonPrimaryColor100
+                                            : ConstantsV2.buttonPrimaryColor100
+                                              .withOpacity(0.5),
                                       borderRadius: BorderRadius.circular(100)),
                                   child: Padding(
                                     padding: const EdgeInsets.all(16.0),
                                     child: _firstTime!
                                         ? Text(
-                                            'Aplique algún filtro',
+                                            'aplique algún filtro',
                                             style: boldoCorpMediumBlackTextStyle
                                                 .copyWith(fontSize: 16),
                                           )
-                                        : Row(
+                                        : doctors!.length > 0
+                                          ? Row(
                                             children: [
                                               Text(
                                                 'ver ${doctors!.length} ${doctors!.length == 1 ? 'coincidencia' : 'coincidencias'}',
@@ -421,7 +425,13 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                                 color: Colors.white,
                                               )
                                             ],
-                                          ),
+                                          )
+                                          : Text(
+                                                'sin coincidencias',
+                                                style:
+                                                    boldoCorpMediumBlackTextStyle
+                                                        .copyWith(fontSize: 16),
+                                              ),
                                   ),
                                 )
                               : Container(),
