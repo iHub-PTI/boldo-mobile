@@ -742,41 +742,48 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 content: Container(
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width * 0.5,
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.5,
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery
+                        .of(context)
+                        .size
+                        .height * 0.5,
+                    maxWidth: MediaQuery
+                        .of(context)
+                        .size
+                        .width * 0.5,
+                  ),
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      TextFormField(
-                        textCapitalization: TextCapitalization.sentences,
-                        initialValue: notes,
-                        keyboardType: TextInputType.multiline,
-                        minLines: 14,
-                        maxLines: 14,
-                        decoration: InputDecoration(
-                          hintText: "Ingrese un comentario sobre el estudio",
-                          filled: true,
-                          fillColor: ConstantsV2.lightGrey,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: TextFormField(
+                            textCapitalization: TextCapitalization.sentences,
+                            initialValue: notes,
+                            keyboardType: TextInputType.multiline,
+                            expands: true,
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              hintMaxLines: 10,
+                              hintText: "Ingrese un comentario sobre el estudio",
+                              fillColor: ConstantsV2.lightAndClear,
+                              filled: true,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            style: boldoCorpMediumTextStyle.copyWith(
+                                color: ConstantsV2.activeText
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                note = value.trimRight().trimLeft();
+                              });
+                            },
                           ),
                         ),
-                        style: boldoCorpMediumTextStyle.copyWith(
-                            color: ConstantsV2.activeText
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            note = value.trimRight().trimLeft();
-                          });
-                        },
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
