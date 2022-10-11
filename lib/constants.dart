@@ -371,6 +371,7 @@ class ConstantsV2 {
   static const Color darkBlue = Color(0xff364F6B);
   static const Color orange = Color(0xffEB8B76);
   static const Color lightAndClear = Color(0xffF5F5F5);
+  static const Color gray = Color(0xffCFCFCF);
 
 
   // home heights
