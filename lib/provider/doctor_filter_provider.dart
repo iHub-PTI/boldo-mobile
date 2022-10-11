@@ -7,9 +7,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class DoctorFilterProvider with ChangeNotifier {
   // this is a list of specializations was selected in filter
   List<Specializations> _selectedSpecializations = [];
+  List<Doctor> _doctorsSaved = [];
   // these are a boolean variables to check the type of appointment
   bool virtualAppointment = false;
   bool inPersonAppointment = false;
+  // first time in filter
+  bool firstTime = true;
 
   // functions to get the variables
 
@@ -22,59 +25,124 @@ class DoctorFilterProvider with ChangeNotifier {
   // get specializations
   List<Specializations> get getSpecializations => _selectedSpecializations;
 
-  // add specializations
-  void addSpecializations({required Specializations specialization, required context}) {
-    _selectedSpecializations.add(specialization);
-    // call bloc event
-    BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
-      specializations: _selectedSpecializations,
-      virtualAppointment: virtualAppointment,
-      inPersonAppointment: inPersonAppointment
-    ));
-    notifyListeners();
-  }
+  // get doctors
+  List<Doctor> get getDoctorsSaved => _doctorsSaved;
 
-  // delete specializations
-  void removeSpecialization({required String specializationId, required context}) {
-    _selectedSpecializations = _selectedSpecializations
-        .where((element) => element.id != specializationId)
-        .toList();
-    // call bloc event
-    BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
-      specializations: _selectedSpecializations,
-      virtualAppointment: virtualAppointment,
-      inPersonAppointment: inPersonAppointment
-    ));
-    notifyListeners();
-  }
+  // get if first time in filter
+  bool get getFirstTime => firstTime;
 
   // get true if the appointment is virtual
   bool get getVirtualAppointment => virtualAppointment;
 
-  // set true or false the virtual appointment
-  void setVirtualAppointment({required context}) {
-    virtualAppointment = !virtualAppointment;
+  // get true if the appointment is in person
+  bool get getInPersonAppointment => inPersonAppointment;
+
+  // add specializations
+  void addSpecializations(
+      {required Specializations specialization, required context}) {
+    _selectedSpecializations.add(specialization);
+    firstTime = false;
     // call bloc event
     BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
-      specializations: _selectedSpecializations,
-      virtualAppointment: virtualAppointment,
-      inPersonAppointment: inPersonAppointment
-    ));
+        specializations: _selectedSpecializations,
+        virtualAppointment: virtualAppointment,
+        inPersonAppointment: inPersonAppointment));
     notifyListeners();
   }
 
-  // get true if the appointment is in person
-  bool get getInPersonAppointment => inPersonAppointment;
+  // delete specializations
+  void removeSpecialization(
+      {required String specializationId, required context}) {
+    _selectedSpecializations = _selectedSpecializations
+        .where((element) => element.id != specializationId)
+        .toList();
+    if (_selectedSpecializations.length == 0 &&
+        !virtualAppointment &&
+        !inPersonAppointment) {
+      firstTime = true;
+      BlocProvider.of<DoctorsAvailableBloc>(context)
+          .add(ReloadDoctorsAvailable());
+    } else {
+      // if virtualAppointment and inPersonAppointment are not checked then the event should not be called
+      firstTime = false;
+      // call bloc event
+      BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
+          specializations: _selectedSpecializations,
+          virtualAppointment: virtualAppointment,
+          inPersonAppointment: inPersonAppointment));
+    }
+    notifyListeners();
+  }
+
+  void setSpecializations(
+      {required List<Specializations> specializationsSelectedCopy,
+      required context}) {
+    _selectedSpecializations = specializationsSelectedCopy;
+    if (_selectedSpecializations.isEmpty &&
+        !virtualAppointment &&
+        !inPersonAppointment) {
+      firstTime = true;
+      BlocProvider.of<DoctorsAvailableBloc>(context)
+          .add(ReloadDoctorsAvailable());
+    } else {
+      firstTime = false;
+      // call bloc event
+      BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
+          specializations: _selectedSpecializations,
+          virtualAppointment: virtualAppointment,
+          inPersonAppointment: inPersonAppointment));
+    }
+    notifyListeners();
+  }
+
+  void setSpecializationsWithoutEvent(
+      {required List<Specializations> specializationsSelected}) {
+    _selectedSpecializations = specializationsSelected;
+  }
+
+  // set true or false the virtual appointment
+  void setVirtualAppointment({required context}) {
+    virtualAppointment = !virtualAppointment;
+    if (_selectedSpecializations.length == 0 &&
+        !virtualAppointment &&
+        !inPersonAppointment) {
+      firstTime = true;
+      BlocProvider.of<DoctorsAvailableBloc>(context)
+          .add(ReloadDoctorsAvailable());
+    } else {
+      firstTime = false;
+      // call bloc event
+      BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
+          specializations: _selectedSpecializations,
+          virtualAppointment: virtualAppointment,
+          inPersonAppointment: inPersonAppointment));
+    }
+
+    notifyListeners();
+  }
 
   // set true or false the in person appointment
   void setInPersonAppointment({required context}) {
     inPersonAppointment = !inPersonAppointment;
-    // call bloc event
-    BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
-      specializations: _selectedSpecializations,
-      virtualAppointment: virtualAppointment,
-      inPersonAppointment: inPersonAppointment
-    ));
+    if (_selectedSpecializations.length == 0 &&
+        !virtualAppointment &&
+        !inPersonAppointment) {
+      firstTime = true;
+      BlocProvider.of<DoctorsAvailableBloc>(context)
+          .add(ReloadDoctorsAvailable());
+    } else {
+      firstTime = false;
+      // call bloc event
+      BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
+          specializations: _selectedSpecializations,
+          virtualAppointment: virtualAppointment,
+          inPersonAppointment: inPersonAppointment));
+    }
+    notifyListeners();
+  }
+
+  void setDoctors({required List<Doctor> doctors}) {
+    _doctorsSaved = doctors;
     notifyListeners();
   }
 }
