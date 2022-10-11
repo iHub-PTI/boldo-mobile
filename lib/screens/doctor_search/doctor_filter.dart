@@ -86,7 +86,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
               });
             } else if (state is FilterLoaded) {
               setState(() {
-                if (state.doctors.isEmpty && _firstTime!) {
+                if (state.doctors.isEmpty && !_firstTime!) {
                   doctors = Provider.of<DoctorFilterProvider>(context, listen: false)
                       .getDoctorsSaved;
                 } else {
