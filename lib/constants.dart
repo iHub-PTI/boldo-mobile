@@ -363,7 +363,7 @@ class ConstantsV2 {
   static const double familyConnectSecondaryStop300 = 1.0;
 
   // colors
-  static const Color lightGrey = Color(0xffF5F5F5);
+  static const Color lightGrey = Color(0xffF8F8F8);
   static const Color lightest = Color(0xffFFFFFF);
   static const Color green = Color(0xff28B3BB);
   static const Color veryLightBlue = Color(0xffB1C3D7);
