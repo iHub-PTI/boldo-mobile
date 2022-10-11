@@ -618,7 +618,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                 decoration: BoxDecoration(
                                   borderRadius: const BorderRadius.all(
                                       Radius.circular(16)),
-                                  color: specializationsSelected!.any((element) => element.id == specializations![index].id)
+                                  color: specializationsSelectedCopy!.any((element) => element.id == specializations![index].id)
                                       ? ConstantsV2.buttonPrimaryColor100
                                           .withOpacity(0.1)
                                       : Colors.white,
@@ -626,7 +626,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                 child: GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      if (specializationsSelected!.any((element) => element.id == specializations![index].id)) {
+                                      if (specializationsSelectedCopy!.any((element) => element.id == specializations![index].id)) {
                                         // delete item from specialization selected copy
                                         specializationsSelectedCopy =
                                             specializationsSelectedCopy!
@@ -651,7 +651,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                         SvgPicture.asset(
                                           'assets/icon/filter.svg',
                                           height: 36,
-                                          color: specializationsSelected!.any((element) => element.id == specializations![index].id)
+                                          color: specializationsSelectedCopy!.any((element) => element.id == specializations![index].id)
                                               ? ConstantsV2
                                                   .buttonPrimaryColor100
                                               : ConstantsV2.inactiveText,
@@ -670,7 +670,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                                 style: boldoTitleBlackTextStyle
                                                     .copyWith(
                                                   fontSize: 16,
-                                                  color: specializationsSelected!.any((element) => element.id == specializations![index].id)
+                                                  color: specializationsSelectedCopy!.any((element) => element.id == specializations![index].id)
                                                       ? ConstantsV2
                                                           .buttonPrimaryColor100
                                                       : ConstantsV2
