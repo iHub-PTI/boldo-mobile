@@ -731,7 +731,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
-          String? note;
+          String? note = notes;
           return StatefulBuilder(
             builder: (context, setState){
               return AlertDialog(
@@ -807,7 +807,6 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                             child: InkWell(
                               onTap: () async {
                                 setState(() {
-                                  print(note);
                                   this.notes = note?.trimRight().trimLeft();
                                   Navigator.pop(context);
                                 });
