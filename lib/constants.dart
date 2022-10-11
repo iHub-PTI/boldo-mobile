@@ -364,7 +364,7 @@ class ConstantsV2 {
   static const double familyConnectSecondaryStop300 = 1.0;
 
   // colors
-  static const Color lightGrey = Color(0xffF5F5F5);
+  static const Color lightGrey = Color(0xffF8F8F8);
   static const Color lightest = Color(0xffFFFFFF);
   static const Color green = Color(0xff28B3BB);
   static const Color lightGreen = Color.fromRGBO(40, 179, 187, 0.13);
@@ -373,6 +373,7 @@ class ConstantsV2 {
   static const Color darkBlue = Color(0xff364F6B);
   static const Color orange = Color(0xffEB8B76);
   static const Color lightAndClear = Color(0xffF5F5F5);
+  static const Color gray = Color(0xffCFCFCF);
 
   // home heights
   static double homeAppBarMaxHeight = 154.0;

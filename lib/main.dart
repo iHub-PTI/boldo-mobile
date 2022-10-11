@@ -24,6 +24,7 @@ import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/my_studies/my_studies_screen.dart';
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
+import 'package:boldo/screens/profile/profile_screen.dart';
 import 'package:boldo/screens/sing_in/sing_in_transition.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:camera/camera.dart';
@@ -231,6 +232,7 @@ class FullApp extends StatelessWidget {
         '/doctorsTab': (context) => DoctorsTab(),
         '/pastAppointmentsScreen': (context) => const PastAppointmentsScreen(),
         '/prescriptionsScreen': (context) => const PrescriptionsScreen(),
+        '/profileScreen': (context) => const ProfileScreen(),
       },
     );
   }

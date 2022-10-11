@@ -289,7 +289,7 @@ class StudiesOrdersRepository {
           }
         ],
       );
-      throw Failure("No se pueden obtener la órden de estudio");
+      throw Failure("No se pueden obtener la orden de estudio");
     }catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
