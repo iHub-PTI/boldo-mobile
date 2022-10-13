@@ -32,3 +32,8 @@ class Failed extends DoctorsAvailableState {
   final response;
   Failed({required this.response});
 }
+
+class FilterFailed extends DoctorsAvailableState {
+  final response;
+  FilterFailed({required this.response});
+}
