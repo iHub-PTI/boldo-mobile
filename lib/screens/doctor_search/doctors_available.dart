@@ -34,9 +34,19 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
       RefreshController(initialRefresh: false);
   @override
   void initState() {
-    // trigger event
-    BlocProvider.of<DoctorsAvailableBloc>(context)
-        .add(GetDoctorsAvailable(offset: offset));
+    if (widget.callFromHome) {
+      // trigger event
+      BlocProvider.of<DoctorsAvailableBloc>(context)
+          .add(GetDoctorsAvailable(offset: offset));
+    } else if (widget.doctors != null) {
+      // in this point effectively the variable will not be null
+      doctors = widget.doctors!;
+      _loading = false;
+    } else {
+      // this is needed to build the screen
+      doctors = [];
+      _loading = false;
+    }
     super.initState();
   }
 
@@ -94,7 +104,13 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                           if (widget.callFromHome) {
                             // in this case we don't need do anything
                             Navigator.pop(context);
-                          } else {}
+                          } else {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/home',
+                              (route) => false
+                            );
+                          }
                         },
                         icon: const Icon(
                           Icons.chevron_left_rounded,
@@ -185,9 +201,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                     BlocProvider.of<DoctorsAvailableBloc>(
                                             context)
                                         .add(GetDoctorsAvailable(offset: 0));
-                                  } else {
-                                    
-                                  }
+                                  } else {}
                                 },
                                 // this for load more doctors
                                 onLoading: () {
@@ -198,9 +212,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                             context)
                                         .add(GetMoreDoctorsAvailable(
                                             offset: offset));
-                                  } else {
-                                    
-                                  }
+                                  } else {}
                                 },
                               ),
                             ),
