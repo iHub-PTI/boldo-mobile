@@ -410,7 +410,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                       child: _loadingFilter
                           ? const Center(child: CircularProgressIndicator())
                           : _firstTime != null
-                              ? doctors != null
+                            ? doctors != null
                                 ? Container(
                                   decoration: BoxDecoration(
                                     color: _firstTime!
