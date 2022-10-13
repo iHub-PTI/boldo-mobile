@@ -2,6 +2,7 @@ import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
+import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +18,7 @@ class DoctorFilter extends StatefulWidget {
 class _DoctorFilterState extends State<DoctorFilter> {
   bool _loading = true;
   bool _loadingFilter = false;
+  bool _specializationsFailed = false;
   bool? _firstTime;
   bool? virtualAppointment;
   bool? inPersonAppointment;
@@ -96,6 +98,15 @@ class _DoctorFilterState extends State<DoctorFilter> {
                 BlocProvider.of<DoctorsAvailableBloc>(context)
                     .add(ReloadDoctorsAvailable());
               }
+            } else if (state is Failed) {
+              setState(() {
+                _loading = false;
+                _specializationsFailed = true;
+              });
+            } else if (state is FilterFailed) {
+              setState(() {
+                _loadingFilter = false;
+              });
             }
           },
           child: Column(
@@ -115,12 +126,13 @@ class _DoctorFilterState extends State<DoctorFilter> {
                           onPressed: () {
                             if (!_firstTime!) {
                               Provider.of<DoctorFilterProvider>(context,
-                                    listen: false)
-                                .setDoctors(doctors: doctors!);
-                              Provider.of<DoctorFilterProvider>(context, listen: false)
-                                .setSpecializationsWithoutEvent(
-                                    specializationsSelected:
-                                        specializationsSelected!);
+                                      listen: false)
+                                  .setDoctors(doctors: doctors!);
+                              Provider.of<DoctorFilterProvider>(context,
+                                      listen: false)
+                                  .setSpecializationsWithoutEvent(
+                                      specializationsSelected:
+                                          specializationsSelected!);
                             }
                             Navigator.pop(context);
                           },
@@ -156,7 +168,9 @@ class _DoctorFilterState extends State<DoctorFilter> {
                           : Container(),
                   _loading
                       ? Container()
-                      : Container(
+                      : _specializationsFailed
+                        ? DataFetchErrorWidget(retryCallback: () => BlocProvider.of<DoctorsAvailableBloc>(context).add(GetSpecializations()))
+                        : Container(
                           height: 44,
                           color: Colors.white,
                           child: Row(
@@ -392,18 +406,19 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                     color: _firstTime!
                                         ? ConstantsV2.gray
                                         : doctors!.length > 0
-                                          ? ConstantsV2.buttonPrimaryColor100
-                                          : ConstantsV2.gray,
+                                            ? ConstantsV2.buttonPrimaryColor100
+                                            : ConstantsV2.gray,
                                     borderRadius: BorderRadius.circular(100),
                                     boxShadow: _firstTime!
-                                      ? [
-                                          const BoxShadow(
-                                            color: Color(0x00000000),
-                                            blurRadius: 4,
-                                            offset: Offset(0, 2), // changes position of shadow
-                                          ),
-                                        ]
-                                      : [],
+                                        ? [
+                                            const BoxShadow(
+                                              color: Color(0x00000000),
+                                              blurRadius: 4,
+                                              offset: Offset(0,
+                                                  2), // changes position of shadow
+                                            ),
+                                          ]
+                                        : [],
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(16.0),
@@ -411,29 +426,36 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                         ? Text(
                                             'aplique algún filtro',
                                             style: boldoCorpMediumBlackTextStyle
-                                                .copyWith(fontSize: 16,color: ConstantsV2.inactiveText),
+                                                .copyWith(
+                                                    fontSize: 16,
+                                                    color: ConstantsV2
+                                                        .inactiveText),
                                           )
                                         : doctors!.length > 0
-                                          ? Row(
-                                            children: [
-                                              Text(
-                                                'ver ${doctors!.length} ${doctors!.length == 1 ? 'coincidencia' : 'coincidencias'}',
-                                                style:
-                                                    boldoCorpMediumBlackTextStyle
-                                                        .copyWith(fontSize: 16),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              SvgPicture.asset(
-                                                'assets/icon/chevron-right.svg',
-                                                color: Colors.white,
+                                            ? Row(
+                                                children: [
+                                                  Text(
+                                                    'ver ${doctors!.length} ${doctors!.length == 1 ? 'coincidencia' : 'coincidencias'}',
+                                                    style:
+                                                        boldoCorpMediumBlackTextStyle
+                                                            .copyWith(
+                                                                fontSize: 16),
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  SvgPicture.asset(
+                                                    'assets/icon/chevron-right.svg',
+                                                    color: Colors.white,
+                                                  )
+                                                ],
                                               )
-                                            ],
-                                          )
-                                          : Text(
+                                            : Text(
                                                 'sin coincidencias',
                                                 style:
                                                     boldoCorpMediumBlackTextStyle
-                                                        .copyWith(fontSize: 16,color: ConstantsV2.inactiveText),
+                                                        .copyWith(
+                                                            fontSize: 16,
+                                                            color: ConstantsV2
+                                                                .inactiveText),
                                               ),
                                   ),
                                 )
@@ -456,7 +478,8 @@ class _DoctorFilterState extends State<DoctorFilter> {
       child: GestureDetector(
         onTap: () {
           setState(() {
-            if (specializationsSelected!.any((element) => element.id == specializations![index].id)) {
+            if (specializationsSelected!
+                .any((element) => element.id == specializations![index].id)) {
               // delete item from specialization selected list
               Provider.of<DoctorFilterProvider>(context, listen: false)
                   .removeSpecialization(
@@ -493,10 +516,10 @@ class _DoctorFilterState extends State<DoctorFilter> {
               SvgPicture.asset(
                 'assets/icon/filter.svg',
                 height: 36,
-                color:
-                    specializationsSelected!.any((element) => element.id == specializations![index].id)
-                        ? ConstantsV2.buttonPrimaryColor100
-                        : ConstantsV2.inactiveText,
+                color: specializationsSelected!.any(
+                        (element) => element.id == specializations![index].id)
+                    ? ConstantsV2.buttonPrimaryColor100
+                    : ConstantsV2.inactiveText,
                 //color: Colors.black,
               ),
               const SizedBox(height: 16),
@@ -613,7 +636,10 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                 decoration: BoxDecoration(
                                   borderRadius: const BorderRadius.all(
                                       Radius.circular(16)),
-                                  color: specializationsSelectedCopy!.any((element) => element.id == specializations![index].id)
+                                  color: specializationsSelectedCopy!.any(
+                                          (element) =>
+                                              element.id ==
+                                              specializations![index].id)
                                       ? ConstantsV2.buttonPrimaryColor100
                                           .withOpacity(0.1)
                                       : Colors.white,
@@ -621,7 +647,10 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                 child: InkWell(
                                   onTap: () {
                                     setState(() {
-                                      if (specializationsSelectedCopy!.any((element) => element.id == specializations![index].id)) {
+                                      if (specializationsSelectedCopy!.any(
+                                          (element) =>
+                                              element.id ==
+                                              specializations![index].id)) {
                                         // delete item from specialization selected copy
                                         specializationsSelectedCopy =
                                             specializationsSelectedCopy!
@@ -646,7 +675,11 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                         SvgPicture.asset(
                                           'assets/icon/filter.svg',
                                           height: 36,
-                                          color: specializationsSelectedCopy!.any((element) => element.id == specializations![index].id)
+                                          color: specializationsSelectedCopy!
+                                                  .any((element) =>
+                                                      element.id ==
+                                                      specializations![index]
+                                                          .id)
                                               ? ConstantsV2
                                                   .buttonPrimaryColor100
                                               : ConstantsV2.inactiveText,
@@ -665,7 +698,12 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                                 style: boldoTitleBlackTextStyle
                                                     .copyWith(
                                                   fontSize: 16,
-                                                  color: specializationsSelectedCopy!.any((element) => element.id == specializations![index].id)
+                                                  color: specializationsSelectedCopy!
+                                                          .any((element) =>
+                                                              element.id ==
+                                                              specializations![
+                                                                      index]
+                                                                  .id)
                                                       ? ConstantsV2
                                                           .buttonPrimaryColor100
                                                       : ConstantsV2
