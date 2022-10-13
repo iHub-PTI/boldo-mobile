@@ -14,6 +14,11 @@ class DoctorFilterProvider with ChangeNotifier {
   // first time in filter
   bool firstTime = true;
 
+  // variables containing the last applied filter
+  List<Specializations>? _specializationsApplied;
+  bool? _virtualAppointmentApplied;
+  bool? _inPersonAppointmentApplied;
+
   // functions to get the variables
 
   // get filter state
@@ -24,6 +29,11 @@ class DoctorFilterProvider with ChangeNotifier {
 
   // get specializations
   List<Specializations> get getSpecializations => _selectedSpecializations;
+
+  // get the last specializations applied. This can be return null value
+  List<Specializations>? get getLastSpecializations => _specializationsApplied;
+  bool? get getLastVirtualAppointmentApplied => _virtualAppointmentApplied;
+  bool? get getLastInPersonAppointmentApplied => _inPersonAppointmentApplied;
 
   // get doctors
   List<Doctor> get getDoctorsSaved => _doctorsSaved;
@@ -144,5 +154,14 @@ class DoctorFilterProvider with ChangeNotifier {
   void setDoctors({required List<Doctor> doctors}) {
     _doctorsSaved = doctors;
     notifyListeners();
+  }
+
+  void filterApplied(
+      {required List<Specializations> specializationsApplied,
+      required bool virtualAppointmentApplied,
+      required bool inPersonAppointmentApplied}) {
+    _specializationsApplied = specializationsApplied;
+    _virtualAppointmentApplied = virtualAppointmentApplied;
+    _inPersonAppointmentApplied = inPersonAppointmentApplied;
   }
 }
