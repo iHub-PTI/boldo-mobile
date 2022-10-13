@@ -1,6 +1,7 @@
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Doctor.dart';
+import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/doctor_profile/doctor_profile_screen.dart';
 import 'package:boldo/screens/doctor_search/doctor_filter.dart';
 import 'package:boldo/utils/helpers.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 // PRINCIPAL CLASS
@@ -28,11 +30,13 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
   List<Doctor> doctors = [];
   // initial value
   int offset = 0;
-  RefreshController _refreshController = RefreshController();
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   @override
   void initState() {
     // trigger event
-    BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorsAvailable());
+    BlocProvider.of<DoctorsAvailableBloc>(context)
+        .add(GetDoctorsAvailable(offset: offset));
     super.initState();
   }
 
@@ -64,6 +68,14 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
               setState(() {
                 doctors = state.doctors;
               });
+            } else if (state is MoreDoctorsLoaded) {
+              if (mounted) {
+                _refreshController.refreshCompleted();
+                _refreshController.loadComplete();
+                setState(() {
+                  doctors = [...doctors, ...state.doctors];
+                });
+              }
             }
           },
           child: Container(
@@ -116,11 +128,9 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                     ? const Center(child: CircularProgressIndicator())
                     : doctors.isNotEmpty
                         ? Expanded(
-                          child: Padding(
-                              padding: const EdgeInsets.only(
-                                right: 16,
-                                left: 16
-                              ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 16, left: 16),
                               child: SmartRefresher(
                                 controller: _refreshController,
                                 enablePullUp: true,
@@ -139,9 +149,11 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                   itemBuilder: doctorItem,
                                 ),
                                 footer: CustomFooter(
-                                  builder: (BuildContext context, LoadStatus? mode) {
+                                  builder:
+                                      (BuildContext context, LoadStatus? mode) {
                                     Widget body = Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         const Icon(
                                           Icons.arrow_upward,
@@ -167,9 +179,32 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                     );
                                   },
                                 ),
+                                // this for refresh all data
+                                onRefresh: () {
+                                  if (widget.callFromHome) {
+                                    BlocProvider.of<DoctorsAvailableBloc>(
+                                            context)
+                                        .add(GetDoctorsAvailable(offset: 0));
+                                  } else {
+                                    
+                                  }
+                                },
+                                // this for load more doctors
+                                onLoading: () {
+                                  if (widget.callFromHome) {
+                                    offset = offset + 20;
+                                    // new event for get more available doctor
+                                    BlocProvider.of<DoctorsAvailableBloc>(
+                                            context)
+                                        .add(GetMoreDoctorsAvailable(
+                                            offset: offset));
+                                  } else {
+                                    
+                                  }
+                                },
                               ),
                             ),
-                        )
+                          )
                         : const Center(
                             child: Text('No se encontraron doctores'),
                           )
