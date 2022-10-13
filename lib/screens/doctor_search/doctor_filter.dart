@@ -3,6 +3,7 @@ import 'package:boldo/constants.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
+import 'package:boldo/screens/doctor_search/doctors_available.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -405,95 +406,122 @@ class _DoctorFilterState extends State<DoctorFilter> {
                     padding: const EdgeInsets.only(right: 16, bottom: 16),
                     child: GestureDetector(
                       onTap: () {
-                        // TODO: save doctors to go to doctors list
+                        if (doctors != null && doctors!.length > 0) {
+                          // save the last filter applied
+                          Provider.of<DoctorFilterProvider>(context,
+                                  listen: false)
+                              .filterApplied(
+                                  specializationsApplied:
+                                      specializationsSelected!,
+                                  virtualAppointmentApplied:
+                                      virtualAppointment!,
+                                  inPersonAppointmentApplied:
+                                      inPersonAppointment!);
+                          // TODO: call doctor list page
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DoctorsAvailable(
+                                callFromHome: false, doctors: doctors
+                              )
+                            ),
+                            (route) => false,
+                          );
+                        }
                       },
                       child: _loadingFilter
                           ? const Center(child: CircularProgressIndicator())
                           : _firstTime != null
-                            ? doctors != null
-                                ? Container(
-                                  decoration: BoxDecoration(
-                                    color: _firstTime!
-                                        ? ConstantsV2.gray
-                                        : doctors!.length > 0
-                                            ? ConstantsV2.buttonPrimaryColor100
-                                            : ConstantsV2.gray,
-                                    borderRadius: BorderRadius.circular(100),
-                                    boxShadow: _firstTime!
-                                        ? [
-                                            const BoxShadow(
-                                              color: Color(0x00000000),
-                                              blurRadius: 4,
-                                              offset: Offset(0,
-                                                  2), // changes position of shadow
-                                            ),
-                                          ]
-                                        : [],
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: _firstTime!
-                                        ? Text(
-                                            'aplique algún filtro',
-                                            style: boldoCorpMediumBlackTextStyle
-                                                .copyWith(
-                                                    fontSize: 16,
-                                                    color: ConstantsV2
-                                                        .inactiveText),
-                                          )
-                                        : doctors!.length > 0
-                                            ? Row(
-                                                children: [
-                                                  Text(
-                                                    'ver ${doctors!.length} ${doctors!.length == 1 ? 'coincidencia' : 'coincidencias'}',
-                                                    style:
-                                                        boldoCorpMediumBlackTextStyle
-                                                            .copyWith(
-                                                                fontSize: 16),
-                                                  ),
-                                                  const SizedBox(width: 8),
-                                                  SvgPicture.asset(
-                                                    'assets/icon/chevron-right.svg',
-                                                    color: Colors.white,
-                                                  )
-                                                ],
-                                              )
-                                            : Text(
-                                                'sin coincidencias',
-                                                style:
-                                                    boldoCorpMediumBlackTextStyle
+                              ? doctors != null
+                                  ? _loading
+                                      ? const CircularProgressIndicator()
+                                      : Container(
+                                          decoration: BoxDecoration(
+                                            color: _firstTime!
+                                                ? ConstantsV2.gray
+                                                : doctors!.length > 0
+                                                    ? ConstantsV2
+                                                        .buttonPrimaryColor100
+                                                    : ConstantsV2.gray,
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                            boxShadow: _firstTime!
+                                                ? [
+                                                    const BoxShadow(
+                                                      color: Color(0x00000000),
+                                                      blurRadius: 4,
+                                                      offset: Offset(0,
+                                                          2), // changes position of shadow
+                                                    ),
+                                                  ]
+                                                : [],
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: _firstTime!
+                                                ? Text(
+                                                    'aplique algún filtro',
+                                                    style: boldoCorpMediumBlackTextStyle
                                                         .copyWith(
                                                             fontSize: 16,
                                                             color: ConstantsV2
                                                                 .inactiveText),
-                                              ),
-                                  ),
-                                )
-                                : Container(
-                                    decoration: BoxDecoration(
-                                      color: ConstantsV2.gray,
-                                      borderRadius: BorderRadius.circular(100),
-                                      boxShadow: [
-                                        const BoxShadow(
-                                          color: Color(0x00000000),
-                                          blurRadius: 4,
-                                          offset: Offset(0,
-                                              2), // changes position of shadow
-                                        ),
-                                      ],
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Text(
-                                        'aplique algún filtro',
-                                        style: boldoCorpMediumBlackTextStyle
-                                            .copyWith(
-                                                fontSize: 16,
-                                                color: ConstantsV2
-                                                    .inactiveText),
+                                                  )
+                                                : doctors!.length > 0
+                                                    ? Row(
+                                                        children: [
+                                                          Text(
+                                                            'ver ${doctors!.length} ${doctors!.length == 1 ? 'coincidencia' : 'coincidencias'}',
+                                                            style:
+                                                                boldoCorpMediumBlackTextStyle
+                                                                    .copyWith(
+                                                                        fontSize:
+                                                                            16),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 8),
+                                                          SvgPicture.asset(
+                                                            'assets/icon/chevron-right.svg',
+                                                            color: Colors.white,
+                                                          )
+                                                        ],
+                                                      )
+                                                    : Text(
+                                                        'sin coincidencias',
+                                                        style: boldoCorpMediumBlackTextStyle
+                                                            .copyWith(
+                                                                fontSize: 16,
+                                                                color: ConstantsV2
+                                                                    .inactiveText),
+                                                      ),
+                                          ),
+                                        )
+                                  : Container(
+                                      decoration: BoxDecoration(
+                                        color: ConstantsV2.gray,
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        boxShadow: [
+                                          const BoxShadow(
+                                            color: Color(0x00000000),
+                                            blurRadius: 4,
+                                            offset: Offset(0,
+                                                2), // changes position of shadow
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                )
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Text(
+                                          'aplique algún filtro',
+                                          style: boldoCorpMediumBlackTextStyle
+                                              .copyWith(
+                                                  fontSize: 16,
+                                                  color:
+                                                      ConstantsV2.inactiveText),
+                                        ),
+                                      ),
+                                    )
                               : Container(),
                     ),
                   ),
