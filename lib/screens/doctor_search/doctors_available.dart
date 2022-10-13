@@ -90,18 +90,20 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      // go to filter
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DoctorFilter(),
-                              ),
-                            );
-                          },
-                          child:
-                              SvgPicture.asset('assets/icon/change-filter.svg'))
+                      _loading
+                        ? Container()
+                        : // go to filter
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DoctorFilter(),
+                                ),
+                              );
+                            },
+                            child:
+                                SvgPicture.asset('assets/icon/change-filter.svg'))
                     ],
                   ),
                 ),
