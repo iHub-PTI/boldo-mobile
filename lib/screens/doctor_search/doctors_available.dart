@@ -108,23 +108,27 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                   ),
                 ),
                 _loading
-                    ? const Center(child: CircularProgressIndicator())
-                    : Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: GridView.builder(
-                          physics: ScrollPhysics(),
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          gridDelegate:
-                              const SliverGridDelegateWithMaxCrossAxisExtent(
-                                  maxCrossAxisExtent: 200,
-                                  childAspectRatio: 3/4,
-                                  crossAxisSpacing: 20,
-                                  mainAxisSpacing: 20),
-                          itemCount: doctors.length,
-                          itemBuilder: doctorItem,
-                        ),
-                      )
+                  ? const Center(child: CircularProgressIndicator())
+                  : doctors.isNotEmpty
+                    ? Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: GridView.builder(
+                        physics: ScrollPhysics(),
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 200,
+                                childAspectRatio: 3/4,
+                                crossAxisSpacing: 20,
+                                mainAxisSpacing: 20),
+                        itemCount: doctors.length,
+                        itemBuilder: doctorItem,
+                      ),
+                    )
+                    : const Center(
+                      child: Text('No se encontraron doctores'),
+                    )
               ],
             ),
           ),
