@@ -790,9 +790,7 @@ class PastAppointmentCard extends StatelessWidget {
                     // ),
                     const Spacer(),
                     Text(
-                      daysDifference == 0
-                          ? "hoy"
-                          : '${DateFormat('dd/MM/yy').format(DateTime.parse(appointment.start!).toLocal())}',
+                      passedDays(daysDifference),
                       style: boldoCorpSmallTextStyle
                           .copyWith(
                           color: ConstantsV2

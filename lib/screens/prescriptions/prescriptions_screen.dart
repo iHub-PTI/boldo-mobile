@@ -158,9 +158,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                         // ),
                                         const Spacer(),
                                         Text(
-                                          daysDifference == 0
-                                              ? "hoy"
-                                              : '${DateFormat('dd/MM/yy').format(DateTime.parse(allAppointments[index].start!).toLocal())}',
+                                          passedDays(daysDifference),
                                           style: boldoCorpSmallTextStyle
                                               .copyWith(
                                               color: ConstantsV2
