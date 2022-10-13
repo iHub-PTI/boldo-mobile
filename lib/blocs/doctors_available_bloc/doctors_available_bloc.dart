@@ -72,7 +72,7 @@ class DoctorsAvailableBloc
         var response;
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
-          emit(Failed(response: response));
+          emit(FilterFailed(response: response));
         } else {
           late List<Doctor> doctors = [];
           _post.foldRight(Doctor, (a, previous) => doctors = a);
