@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 // PRINCIPAL CLASS
 class DoctorsAvailable extends StatefulWidget {
@@ -25,6 +26,9 @@ class DoctorsAvailable extends StatefulWidget {
 class _DoctorsAvailableState extends State<DoctorsAvailable> {
   bool _loading = true;
   List<Doctor> doctors = [];
+  // initial value
+  int offset = 0;
+  RefreshController _refreshController = RefreshController();
   @override
   void initState() {
     // trigger event
@@ -62,7 +66,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
               });
             }
           },
-          child: SingleChildScrollView(
+          child: Container(
+            height: MediaQuery.of(context).size.height,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,44 +96,83 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                       ),
                       const SizedBox(width: 8),
                       _loading
-                        ? Container()
-                        : // go to filter
+                          ? Container()
+                          : // go to filter
                           GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DoctorFilter(),
-                                ),
-                              );
-                            },
-                            child:
-                                SvgPicture.asset('assets/icon/change-filter.svg'))
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DoctorFilter(),
+                                  ),
+                                );
+                              },
+                              child: SvgPicture.asset(
+                                  'assets/icon/change-filter.svg'))
                     ],
                   ),
                 ),
                 _loading
-                  ? const Center(child: CircularProgressIndicator())
-                  : doctors.isNotEmpty
-                    ? Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: GridView.builder(
-                        physics: ScrollPhysics(),
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        gridDelegate:
-                            const SliverGridDelegateWithMaxCrossAxisExtent(
-                                maxCrossAxisExtent: 200,
-                                childAspectRatio: 3/4,
-                                crossAxisSpacing: 20,
-                                mainAxisSpacing: 20),
-                        itemCount: doctors.length,
-                        itemBuilder: doctorItem,
-                      ),
-                    )
-                    : const Center(
-                      child: Text('No se encontraron doctores'),
-                    )
+                    ? const Center(child: CircularProgressIndicator())
+                    : doctors.isNotEmpty
+                        ? Expanded(
+                          child: Padding(
+                              padding: const EdgeInsets.only(
+                                right: 16,
+                                left: 16
+                              ),
+                              child: SmartRefresher(
+                                controller: _refreshController,
+                                enablePullUp: true,
+                                enablePullDown: true,
+                                child: GridView.builder(
+                                  physics: ScrollPhysics(),
+                                  scrollDirection: Axis.vertical,
+                                  shrinkWrap: true,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithMaxCrossAxisExtent(
+                                          maxCrossAxisExtent: 200,
+                                          childAspectRatio: 3 / 4,
+                                          crossAxisSpacing: 20,
+                                          mainAxisSpacing: 20),
+                                  itemCount: doctors.length,
+                                  itemBuilder: doctorItem,
+                                ),
+                                footer: CustomFooter(
+                                  builder: (BuildContext context, LoadStatus? mode) {
+                                    Widget body = Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(
+                                          Icons.arrow_upward,
+                                          color: Constants.extraColor300,
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        const Text(
+                                          "Sube para cargar más",
+                                          style: TextStyle(
+                                            color: Constants.extraColor300,
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                    if (mode == LoadStatus.loading) {
+                                      body = const CircularProgressIndicator();
+                                    }
+                                    return Container(
+                                      height: 55.0,
+                                      child: Center(child: body),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                        )
+                        : const Center(
+                            child: Text('No se encontraron doctores'),
+                          )
               ],
             ),
           ),
@@ -181,37 +225,36 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                           fit: BoxFit.cover)),
                 )
               : Card(
-                margin: EdgeInsets.all(0),
-                semanticContainer: true,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                child: doctors[index].gender == 'female'
-                    ? SvgPicture.asset(
-                        'assets/images/femaleDoctor.svg',
-                        fit: BoxFit.cover,
-                      )
-                    : SvgPicture.asset(
-                        'assets/images/maleDoctor.svg',
-                        fit: BoxFit.cover,
-                      ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(32.0),
+                  margin: EdgeInsets.all(0),
+                  semanticContainer: true,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  child: doctors[index].gender == 'female'
+                      ? SvgPicture.asset(
+                          'assets/images/femaleDoctor.svg',
+                          fit: BoxFit.cover,
+                        )
+                      : SvgPicture.asset(
+                          'assets/images/maleDoctor.svg',
+                          fit: BoxFit.cover,
+                        ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(32.0),
+                  ),
                 ),
-              ),
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(32),
               gradient: const RadialGradient(
-                radius: 4,
-                center: Alignment(
-                  1.80,
-                  0.77,
-                ),
-                //center: Alignment.center,
-                colors: [
-                  Color.fromRGBO(0, 0, 0, 0),
-                  Color.fromRGBO(0, 0, 0, 1),
-                ]
-              ),
+                  radius: 4,
+                  center: Alignment(
+                    1.80,
+                    0.77,
+                  ),
+                  //center: Alignment.center,
+                  colors: [
+                    Color.fromRGBO(0, 0, 0, 0),
+                    Color.fromRGBO(0, 0, 0, 1),
+                  ]),
             ),
           ),
           // the second item in stack is the column of details
@@ -264,11 +307,11 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                             left: i == 0 ? 0 : 3.0, bottom: 8),
                                         child: Text(
                                           "${doctors[index].specializations![i].description}${doctors[index].specializations!.length > 1 && i == 0 ? "," : ""}",
-                                          style:
-                                              boldoCorpMediumWithLineSeparationLargeTextStyle
-                                                  .copyWith(
-                                                      color: ConstantsV2
-                                                          .buttonPrimaryColor100, fontWeight: FontWeight.bold),
+                                          style: boldoCorpMediumWithLineSeparationLargeTextStyle
+                                              .copyWith(
+                                                  color: ConstantsV2
+                                                      .buttonPrimaryColor100,
+                                                  fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                   ],
@@ -287,12 +330,12 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         doctors[index].nextAvailability != null
-                          ? Text(
-                              availableText(doctors[index].nextAvailability!),
-                              style: boldoCorpSmallInterTextStyle.copyWith(
-                                  fontWeight: FontWeight.bold),
-                            )
-                          : Container(),
+                            ? Text(
+                                availableText(doctors[index].nextAvailability!),
+                                style: boldoCorpSmallInterTextStyle.copyWith(
+                                    fontWeight: FontWeight.bold),
+                              )
+                            : Container(),
                       ],
                     ),
                   ),
