@@ -8,9 +8,14 @@ import 'package:dio/dio.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 class DoctorRepository {
-  Future<List<Doctor>>? getAllDoctors() async {
+  Future<List<Doctor>>? getAllDoctors(int offset) async {
     try {
-      Response response = await dio.get('/doctors');
+      Response response = await dio.get('/doctors',
+        queryParameters: {
+          "offset": offset,
+          "count": offset + 20
+        }
+      );
       if (response.statusCode == 200) {
         return List<Doctor>.from(
             response.data['items'].map((i) => Doctor.fromJson(i)));
