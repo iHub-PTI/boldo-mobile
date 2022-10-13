@@ -19,6 +19,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
   bool _loading = true;
   bool _loadingFilter = false;
   bool _specializationsFailed = false;
+  String _filterFailed = "Hubo un fallo durante la aplicación del filtro.";
   bool? _firstTime;
   bool? virtualAppointment;
   bool? inPersonAppointment;
@@ -106,6 +107,8 @@ class _DoctorFilterState extends State<DoctorFilter> {
             } else if (state is FilterFailed) {
               setState(() {
                 _loadingFilter = false;
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(_filterFailed)));
               });
             }
           },
@@ -169,44 +172,50 @@ class _DoctorFilterState extends State<DoctorFilter> {
                   _loading
                       ? Container()
                       : _specializationsFailed
-                        ? DataFetchErrorWidget(retryCallback: () => BlocProvider.of<DoctorsAvailableBloc>(context).add(GetSpecializations()))
-                        : Container(
-                          height: 44,
-                          color: Colors.white,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              GestureDetector(
-                                onTap: () async {
-                                  // because the direct assignment only references
-                                  specializationsSelectedCopy =
-                                      specializationsSelected!.toList();
-                                  // show popup
-                                  await _showSpecializations();
-                                  setState(() {
-                                    specializationsSelected =
-                                        Provider.of<DoctorFilterProvider>(
-                                                context,
-                                                listen: false)
-                                            .getSpecializations;
-                                    _firstTime =
-                                        Provider.of<DoctorFilterProvider>(
-                                                context,
-                                                listen: false)
-                                            .getFirstTime;
-                                  });
-                                },
-                                child: Container(
-                                    width: 100,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: ConstantsV2.rightBottonNavigaton,
-                                    ),
-                                    child: Center(child: Text('ver todos'))),
-                              )
-                            ],
-                          ),
-                        ),
+                          ? DataFetchErrorWidget(
+                              retryCallback: () =>
+                                  BlocProvider.of<DoctorsAvailableBloc>(context)
+                                      .add(GetSpecializations()))
+                          : Container(
+                              height: 44,
+                              color: Colors.white,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      // because the direct assignment only references
+                                      specializationsSelectedCopy =
+                                          specializationsSelected!.toList();
+                                      // show popup
+                                      await _showSpecializations();
+                                      setState(() {
+                                        specializationsSelected =
+                                            Provider.of<DoctorFilterProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .getSpecializations;
+                                        _firstTime =
+                                            Provider.of<DoctorFilterProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .getFirstTime;
+                                      });
+                                    },
+                                    child: Container(
+                                        width: 100,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          color:
+                                              ConstantsV2.rightBottonNavigaton,
+                                        ),
+                                        child:
+                                            Center(child: Text('ver todos'))),
+                                  )
+                                ],
+                              ),
+                            ),
                   const SizedBox(height: 8),
                   Container(
                     width: MediaQuery.of(context).size.width,
@@ -401,7 +410,8 @@ class _DoctorFilterState extends State<DoctorFilter> {
                       child: _loadingFilter
                           ? const Center(child: CircularProgressIndicator())
                           : _firstTime != null
-                              ? Container(
+                              ? doctors != null
+                                ? Container(
                                   decoration: BoxDecoration(
                                     color: _firstTime!
                                         ? ConstantsV2.gray
@@ -458,6 +468,31 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                                                 .inactiveText),
                                               ),
                                   ),
+                                )
+                                : Container(
+                                    decoration: BoxDecoration(
+                                      color: ConstantsV2.gray,
+                                      borderRadius: BorderRadius.circular(100),
+                                      boxShadow: [
+                                        const BoxShadow(
+                                          color: Color(0x00000000),
+                                          blurRadius: 4,
+                                          offset: Offset(0,
+                                              2), // changes position of shadow
+                                        ),
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Text(
+                                        'aplique algún filtro',
+                                        style: boldoCorpMediumBlackTextStyle
+                                            .copyWith(
+                                                fontSize: 16,
+                                                color: ConstantsV2
+                                                    .inactiveText),
+                                      ),
+                                    ),
                                 )
                               : Container(),
                     ),
