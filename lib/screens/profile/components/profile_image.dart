@@ -1,5 +1,7 @@
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/utils/photos_helpers.dart';
 import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -81,41 +83,13 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
             onTap: () async {
               try {
                 XFile? result =
-                    await ImagePicker().pickImage(source: ImageSource.gallery);
+                    await pickImage(
+                      context: context,
+                      source: ImageSource.gallery,
+                      permissionDescription: 'Se requiere acceso para seleccionar fotos'
+                    );
                 if (result != null) {
-                  File? croppedFile = await ImageCropper().cropImage(
-                    sourcePath: result.path,
-                    maxHeight: 1000,
-                    maxWidth: 1000,
-                    compressQuality: 100,
-                    aspectRatioPresets: Platform.isAndroid
-                        ? [
-                            CropAspectRatioPreset.square,
-                            CropAspectRatioPreset.ratio3x2,
-                            CropAspectRatioPreset.original,
-                            CropAspectRatioPreset.ratio4x3,
-                            CropAspectRatioPreset.ratio16x9
-                          ]
-                        : [
-                            CropAspectRatioPreset.original,
-                            CropAspectRatioPreset.square,
-                            CropAspectRatioPreset.ratio3x2,
-                            CropAspectRatioPreset.ratio4x3,
-                            CropAspectRatioPreset.ratio5x3,
-                            CropAspectRatioPreset.ratio5x4,
-                            CropAspectRatioPreset.ratio7x5,
-                            CropAspectRatioPreset.ratio16x9
-                          ],
-                    androidUiSettings: const AndroidUiSettings(
-                        toolbarTitle: 'Cropper',
-                        toolbarColor: Colors.deepOrange,
-                        toolbarWidgetColor: Colors.white,
-                        initAspectRatio: CropAspectRatioPreset.original,
-                        lockAspectRatio: false),
-                    iosUiSettings: const IOSUiSettings(
-                      title: 'Cropper',
-                    ),
-                  );
+                  File? croppedFile = await cropPhoto(file: result);
 
                   if (croppedFile != null) {
                     try {
