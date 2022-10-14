@@ -5,6 +5,7 @@ import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/utils/photos_helpers.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -333,30 +334,33 @@ class _AttachFilesState extends State<AttachFiles> {
   }
 
   getFromCamera() async {
-    XFile? x;
-    x = await pickImage(
+    XFile? image;
+    image = await pickImage(
         context: context,
         source: ImageSource.camera,
         permissionDescription: 'Se requiere acceso para tomar fotos'
     );
-    if (x != null) {
-      setState(() {
-        if (files.isNotEmpty) {
-          BlocProvider.of<MyStudiesBloc>(context).add(
-              AddFiles(
-                  files: [File(x!.path)]
-              )
-          );
-          files = [...files, File(x.path)];
-        } else {
-          BlocProvider.of<MyStudiesBloc>(context).add(
-              AddFiles(
-                  files: [File(x!.path)]
-              )
-          );
-          files = [File(x.path)];
-        }
-      });
+    if(image != null) {
+      File? x = await cropPhoto(file: image);
+      if (x != null) {
+        setState(() {
+          if (files.isNotEmpty) {
+            BlocProvider.of<MyStudiesBloc>(context).add(
+                AddFiles(
+                    files: [File(x!.path)]
+                )
+            );
+            files = [...files, File(x.path)];
+          } else {
+            BlocProvider.of<MyStudiesBloc>(context).add(
+                AddFiles(
+                    files: [File(x!.path)]
+                )
+            );
+            files = [File(x.path)];
+          }
+        });
+      }
     }
   }
 
@@ -394,29 +398,32 @@ class _AttachFilesState extends State<AttachFiles> {
   }
 
   getFromGallery() async {
-    XFile? x;
-    x = await pickImage(
+    XFile? image;
+    image = await pickImage(
         context: context,
         source: ImageSource.gallery,
         permissionDescription: 'Se requiere acceso para subir fotos de la galeria');
-    if (x != null) {
-      setState(() {
-        if (files.isNotEmpty) {
-          BlocProvider.of<MyStudiesBloc>(context).add(
-              AddFiles(
-                  files: [File(x!.path)]
-              )
-          );
-          files = [...files, File(x.path)];
-        } else {
-          BlocProvider.of<MyStudiesBloc>(context).add(
-              AddFiles(
-                  files: [File(x!.path)]
-              )
-          );
-          files = [File(x.path)];
-        }
-      });
+    if(image != null) {
+      File? x = await cropPhoto(file: image);
+      if (x != null) {
+        setState(() {
+          if (files.isNotEmpty) {
+            BlocProvider.of<MyStudiesBloc>(context).add(
+                AddFiles(
+                    files: [File(x.path)]
+                )
+            );
+            files = [...files, File(x.path)];
+          } else {
+            BlocProvider.of<MyStudiesBloc>(context).add(
+                AddFiles(
+                    files: [File(x.path)]
+                )
+            );
+            files = [File(x.path)];
+          }
+        });
+      }
     }
   }
 
