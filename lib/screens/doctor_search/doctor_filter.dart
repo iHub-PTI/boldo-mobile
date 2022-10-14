@@ -90,6 +90,12 @@ class _DoctorFilterState extends State<DoctorFilter> {
               });
             } else if (state is FilterLoaded) {
               setState(() {
+                virtualAppointment =
+                    Provider.of<DoctorFilterProvider>(context, listen: false)
+                        .getVirtualAppointment;
+                inPersonAppointment =
+                    Provider.of<DoctorFilterProvider>(context, listen: false)
+                        .getInPersonAppointment;
                 doctors = state.doctors;
               });
             } else if (state is SpecializationsLoaded) {
@@ -406,27 +412,33 @@ class _DoctorFilterState extends State<DoctorFilter> {
                     padding: const EdgeInsets.only(right: 16, bottom: 16),
                     child: GestureDetector(
                       onTap: () {
+                        // to disable the button
                         if (doctors != null && doctors!.length > 0) {
-                          // save the last filter applied
-                          Provider.of<DoctorFilterProvider>(context,
-                                  listen: false)
-                              .filterApplied(
-                                  specializationsApplied:
-                                      specializationsSelected!,
-                                  virtualAppointmentApplied:
-                                      virtualAppointment!,
-                                  inPersonAppointmentApplied:
-                                      inPersonAppointment!);
-                          // TODO: call doctor list page
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DoctorsAvailable(
-                                callFromHome: false, doctors: doctors
-                              )
-                            ),
-                            (route) => false,
-                          );
+                          if (_firstTime != null) { 
+                            if (!_firstTime!) {
+                              // save the last filter applied
+                              Provider.of<DoctorFilterProvider>(context,
+                                      listen: false)
+                                  .filterApplied(
+                                      specializationsApplied:
+                                          specializationsSelected!,
+                                      virtualAppointmentApplied:
+                                          virtualAppointment!,
+                                      inPersonAppointmentApplied:
+                                          inPersonAppointment!);
+                              Provider.of<DoctorFilterProvider>(context,
+                                      listen: false)
+                                  .setDoctors(doctors: doctors!);
+                              // call doctor list page
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DoctorsAvailable(
+                                        callFromHome: false, doctors: doctors)),
+                                (route) => false,
+                              );
+                            }
+                          }
                         }
                       },
                       child: _loadingFilter
