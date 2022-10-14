@@ -31,7 +31,7 @@ class DoctorFilterProvider with ChangeNotifier {
   List<Specializations> get getSpecializations => _selectedSpecializations;
 
   // get the last specializations applied. This can be return null value
-  List<Specializations>? get getLastSpecializations => _specializationsApplied;
+  List<Specializations>? get getSpecializationsApplied => _specializationsApplied;
   bool? get getLastVirtualAppointmentApplied => _virtualAppointmentApplied;
   bool? get getLastInPersonAppointmentApplied => _inPersonAppointmentApplied;
 
@@ -163,5 +163,6 @@ class DoctorFilterProvider with ChangeNotifier {
     _specializationsApplied = specializationsApplied;
     _virtualAppointmentApplied = virtualAppointmentApplied;
     _inPersonAppointmentApplied = inPersonAppointmentApplied;
+    notifyListeners();
   }
 }
