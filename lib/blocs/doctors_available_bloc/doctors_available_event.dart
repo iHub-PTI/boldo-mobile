@@ -17,8 +17,32 @@ class GetDoctorFilter extends DoctorsAvailableEvent {
   final List<Specializations> specializations;
   final bool virtualAppointment;
   final bool inPersonAppointment;
-  GetDoctorFilter(
-      {required this.specializations,
+  GetDoctorFilter({
+    required this.specializations,
+    required this.virtualAppointment,
+    required this.inPersonAppointment,
+  });
+}
+
+class GetDoctorFilterInDoctorList extends DoctorsAvailableEvent {
+  final List<Specializations> specializations;
+  final bool virtualAppointment;
+  final bool inPersonAppointment;
+  GetDoctorFilterInDoctorList({
+    required this.specializations,
+    required this.virtualAppointment,
+    required this.inPersonAppointment
+  });
+}
+
+class GetMoreFilterDoctor extends DoctorsAvailableEvent {
+  final int offset;
+  final List<Specializations> specializations;
+  final bool virtualAppointment;
+  final bool inPersonAppointment;
+  GetMoreFilterDoctor(
+      {required this.offset,
+      required this.specializations,
       required this.virtualAppointment,
       required this.inPersonAppointment});
 }

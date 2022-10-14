@@ -51,7 +51,28 @@ class DoctorsAvailableBloc
           _post.foldRight(Doctor, (a, previous) => doctors = a);
           emit(MoreDoctorsLoaded(doctors: doctors));
         }
-      } else if (event is ReloadDoctorsAvailable) {
+      } else if(event is GetMoreFilterDoctor) {
+        var _post;
+        await Task(() => _doctorRepository.getDoctorsFilter(
+          event.offset,
+          event.specializations,
+          event.virtualAppointment,
+          event.inPersonAppointment))
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        });
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(Failed(response: response));
+        } else {
+          late List<Doctor> doctors = [];
+          _post.foldRight(Doctor, (a, previous) => doctors = a);
+          emit(MoreDoctorsLoaded(doctors: doctors));
+        }
+      }else if (event is ReloadDoctorsAvailable) {
         emit(FilterLoading());
         await Future.delayed(const Duration(seconds: 1));
         emit(FilterLoaded(doctors: Provider.of<DoctorFilterProvider>(navKey.currentState!.context, listen: false)
@@ -81,6 +102,7 @@ class DoctorsAvailableBloc
         emit(FilterLoading());
         var _post;
         await Task(() => _doctorRepository.getDoctorsFilter(
+            0,
             event.specializations,
             event.virtualAppointment,
             event.inPersonAppointment)).attempt().run().then((value) {
@@ -95,6 +117,26 @@ class DoctorsAvailableBloc
           _post.foldRight(Doctor, (a, previous) => doctors = a);
           emit(FilterLoaded(doctors: doctors));
           emit(FilterSucces());
+        }
+      } else if (event is GetDoctorFilterInDoctorList) {
+        emit(FilterLoadingInDoctorList());
+        var _post;
+        await Task(() => _doctorRepository.getDoctorsFilter(
+            0,
+            event.specializations,
+            event.virtualAppointment,
+            event.inPersonAppointment)).attempt().run().then((value) {
+          _post = value;
+        });
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(FilterFailedInDoctorList(response: response));
+        } else {
+          late List<Doctor> doctors = [];
+          _post.foldRight(Doctor, (a, previous) => doctors = a);
+          emit(FilterLoadedInDoctorList(doctors: doctors));
+          emit(FilterSuccesInDoctorList());
         }
       }
     });
