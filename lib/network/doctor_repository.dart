@@ -26,7 +26,7 @@ class DoctorRepository {
     }
   }
 
-  Future<List<Doctor>> getDoctorsFilter(List<Specializations> specializations,
+  Future<List<Doctor>> getDoctorsFilter(int offset, List<Specializations> specializations,
       bool virtualAppointment, bool inPersonAppointment) async {
     try {
       // list of IDs
@@ -44,7 +44,9 @@ class DoctorRepository {
       Response response = await dio.get('/doctors',
         queryParameters: {
           "appointmentType": appointmentType,
-          "specialtyIds": listOfSpecializations
+          "specialtyIds": listOfSpecializations,
+          "offset": offset,
+          "count": offset + 20
         }
       );
       if (response.statusCode == 200) {
