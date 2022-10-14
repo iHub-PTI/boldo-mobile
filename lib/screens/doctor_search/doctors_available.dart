@@ -30,14 +30,38 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
   List<Doctor> doctors = [];
   // initial value
   int offset = 0;
-  RefreshController _refreshController =
+  RefreshController _refreshDoctorController =
       RefreshController(initialRefresh: false);
+  bool _getDoctorsFailed = false;
+  bool _getFilterDoctorsFailed = false;
+  List<Doctor>? doctorsSaved;
   @override
   void initState() {
     if (widget.callFromHome) {
-      // trigger event
-      BlocProvider.of<DoctorsAvailableBloc>(context)
-          .add(GetDoctorsAvailable(offset: offset));
+      // if there is filter applied
+      if (Provider.of<DoctorFilterProvider>(context, listen: false).getSpecializationsApplied != null) {
+        BlocProvider.of<DoctorsAvailableBloc>(context)
+          .add(GetDoctorFilterInDoctorList(
+              specializations:
+                  Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                      .getSpecializationsApplied!,
+              virtualAppointment: Provider.of<
+                          DoctorFilterProvider>(
+                      context,
+                      listen: false)
+                  .getLastVirtualAppointmentApplied!,
+              inPersonAppointment:
+                  Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                      .getLastInPersonAppointmentApplied!));
+      } else {
+        // trigger event
+        BlocProvider.of<DoctorsAvailableBloc>(context)
+            .add(GetDoctorsAvailable(offset: offset));
+      }
     } else if (widget.doctors != null) {
       // in this point effectively the variable will not be null
       doctors = widget.doctors!;
@@ -70,7 +94,15 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
               setState(() {
                 _loading = true;
               });
+            } else if (state is FilterLoadingInDoctorList) {
+              setState(() {
+                _loading = true;
+              });
             } else if (state is Success) {
+              setState(() {
+                _loading = false;
+              });
+            } else if (state is FilterSuccesInDoctorList) {
               setState(() {
                 _loading = false;
               });
@@ -80,12 +112,24 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
               });
             } else if (state is MoreDoctorsLoaded) {
               if (mounted) {
-                _refreshController.refreshCompleted();
-                _refreshController.loadComplete();
+                _refreshDoctorController.refreshCompleted();
+                _refreshDoctorController.loadComplete();
                 setState(() {
                   doctors = [...doctors, ...state.doctors];
                 });
               }
+            } else if (state is FilterLoadedInDoctorList) {
+              setState(() {
+                doctors = state.doctors;
+              });
+            } else if (state is FilterFailedInDoctorList) {
+              setState(() {
+                _getFilterDoctorsFailed = true;
+              });
+            } else if (state is Failed) {
+              setState(() {
+                _getDoctorsFailed = true;
+              });
             }
           },
           child: Container(
@@ -106,10 +150,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                             Navigator.pop(context);
                           } else {
                             Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              '/home',
-                              (route) => false
-                            );
+                                context, '/home', (route) => false);
                           }
                         },
                         icon: const Icon(
@@ -148,7 +189,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                               padding:
                                   const EdgeInsets.only(right: 16, left: 16),
                               child: SmartRefresher(
-                                controller: _refreshController,
+                                controller: _refreshDoctorController,
                                 enablePullUp: true,
                                 enablePullDown: true,
                                 child: GridView.builder(
@@ -197,22 +238,60 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                 ),
                                 // this for refresh all data
                                 onRefresh: () {
-                                  if (widget.callFromHome) {
+                                  offset = 0;
+                                  if (Provider.of<DoctorFilterProvider>(context, listen: false).getSpecializationsApplied == null) {
                                     BlocProvider.of<DoctorsAvailableBloc>(
                                             context)
                                         .add(GetDoctorsAvailable(offset: 0));
-                                  } else {}
+                                  } else {
+                                    BlocProvider.of<DoctorsAvailableBloc>(context)
+                                        .add(GetDoctorFilterInDoctorList(
+                                            specializations:
+                                                Provider.of<DoctorFilterProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .getSpecializationsApplied!,
+                                            virtualAppointment: Provider.of<
+                                                        DoctorFilterProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .getLastVirtualAppointmentApplied!,
+                                            inPersonAppointment:
+                                                Provider.of<DoctorFilterProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .getLastInPersonAppointmentApplied!));
+                                  }
                                 },
                                 // this for load more doctors
                                 onLoading: () {
-                                  if (widget.callFromHome) {
-                                    offset = offset + 20;
+                                  offset = offset + 20;
+                                  if (Provider.of<DoctorFilterProvider>(context, listen: false).getSpecializationsApplied == null) {
                                     // new event for get more available doctor
                                     BlocProvider.of<DoctorsAvailableBloc>(
                                             context)
                                         .add(GetMoreDoctorsAvailable(
                                             offset: offset));
-                                  } else {}
+                                  } else {
+                                    BlocProvider.of<DoctorsAvailableBloc>(context)
+                                        .add(GetMoreFilterDoctor(
+                                            offset: offset,
+                                            specializations:
+                                                Provider.of<DoctorFilterProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .getSpecializationsApplied!,
+                                            virtualAppointment: Provider.of<
+                                                        DoctorFilterProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .getLastVirtualAppointmentApplied!,
+                                            inPersonAppointment:
+                                                Provider.of<DoctorFilterProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .getLastInPersonAppointmentApplied!));
+                                  }
                                 },
                               ),
                             ),
