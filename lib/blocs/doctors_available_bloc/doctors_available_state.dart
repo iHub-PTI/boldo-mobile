@@ -20,6 +20,11 @@ class FilterLoaded extends DoctorsAvailableState {
   FilterLoaded({required this.doctors});
 }
 
+class FilterLoadedInDoctorList extends DoctorsAvailableState {
+  List<Doctor> doctors;
+  FilterLoadedInDoctorList({required this.doctors});
+}
+
 class SpecializationsLoaded extends DoctorsAvailableState {
   List<Specializations> specializations;
   SpecializationsLoaded({required this.specializations});
@@ -29,9 +34,13 @@ class Loading extends DoctorsAvailableState {}
 
 class FilterLoading extends DoctorsAvailableState {}
 
+class FilterLoadingInDoctorList extends DoctorsAvailableState {}
+
 class Success extends DoctorsAvailableState {}
 
 class FilterSucces extends DoctorsAvailableState {}
+
+class FilterSuccesInDoctorList extends DoctorsAvailableState {}
 
 class Failed extends DoctorsAvailableState {
   final response;
@@ -41,4 +50,9 @@ class Failed extends DoctorsAvailableState {
 class FilterFailed extends DoctorsAvailableState {
   final response;
   FilterFailed({required this.response});
+}
+
+class FilterFailedInDoctorList extends DoctorsAvailableState {
+  final response;
+  FilterFailedInDoctorList({required this.response});
 }
