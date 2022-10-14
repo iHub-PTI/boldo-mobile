@@ -113,11 +113,12 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                         color: Colors.transparent,
                       ),
                       itemBuilder: (context, index) {
-                        int daysDifference = DateTime.now()
-                            .difference(DateTime.parse(
-                            allAppointments[index].start!)
-                            .toLocal())
-                            .inDays;
+                        //calculate days difference
+                        int daysDifference = daysBetween(DateTime.parse(
+                          allAppointments[index].start?? DateTime.now()
+                              .toString()),
+                          DateTime.now()
+                        );
                         return GestureDetector(
                           onTap: () async {
                             await Navigator.push(
