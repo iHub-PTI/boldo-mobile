@@ -105,13 +105,9 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                     );
                   }else{
                     return Expanded(
-                    child: ListView.separated(
+                    child: ListView.builder(
                       itemCount: allAppointments.length,
                       shrinkWrap: true,
-                      separatorBuilder: (context, index) =>
-                      const Divider(
-                        color: Colors.transparent,
-                      ),
                       itemBuilder: (context, index) {
                         int daysDifference = DateTime.now()
                             .difference(DateTime.parse(
