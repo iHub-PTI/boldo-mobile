@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -59,16 +60,46 @@ String? getTypeFromContentType(String? content) {
   }
 }
 
-// set local date with format aaaa-mm-dd 00:00.000 for prevent days difference
-// get a bug, e.g: 30/06 21:00hs difference with 01/07 18:00, days difference
-// is calculated whit hours differences resulting <24:hs -> days = 0, therefore
-// this is presented like the same day
- int daysBetween(DateTime from, DateTime to) {
-     from = DateTime(from.year, from.month, from.day);
-     to = DateTime(to.year, to.month, to.day);
-     print(to.difference(from).inHours);
-   return (to.difference(from).inHours / 24).round();
+/// set local date with format aaaa-mm-dd 00:00.000 for prevent days difference
+/// get a bug, e.g: 30/06 21:00hs difference with 01/07 18:00, days difference
+/// is calculated whit hours differences resulting <24:hs -> days = 0, therefore
+/// this is presented like the same day
+int daysBetween(DateTime from, DateTime to) {
+   from = DateTime(from.year, from.month, from.day);
+   to = DateTime(to.year, to.month, to.day);
+ return (to.difference(from).inHours / 24).round();
+}
+
+/// return a String that represent the days in a past time
+///
+/// if [days] < 0 return 'día inválido'
+///
+/// if [days]== 0 return 'hoy'
+///
+/// if 0<[days]<=7 return 'hace [days] días'
+///
+/// if [showDateFormat] is true and [days] > 7 return a date in the format dd/mm/aaaa calculate [DateTime.now] - [days]
+///
+/// if [showDateFormat] is false and [days] > 7 return 'hace [days] días'
+String passedDays(int days, {bool showDateFormat = true}) {
+  if(days <0) {
+    return 'día inválido';
+  }else if( days == 0){
+    return 'hoy';
+  }else if( days == 1){
+    return 'ayer';
+  }else if( days <= 7){
+    return 'hace $days días';
+  }else{
+    if(showDateFormat) {
+      var outputFormat = DateFormat('dd/MM/yyyy');
+      return outputFormat.format(DateTime.now().subtract(Duration(days: days)))
+          .toString();
+    }
+    return 'hace $days días';
   }
+}
+
 
 Future<XFile?> pickImage({
   required BuildContext context,
