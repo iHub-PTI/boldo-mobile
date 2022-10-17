@@ -5,6 +5,7 @@ import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/doctor_profile/doctor_profile_screen.dart';
 import 'package:boldo/screens/doctor_search/doctor_filter.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/go_to_top.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,6 +33,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
   int offset = 0;
   RefreshController _refreshDoctorController =
       RefreshController(initialRefresh: false);
+  // scroll controller
+  ScrollController scrollDoctorList = ScrollController();
+  // flag for show or not the scroll button
+  bool showAnimatedButton = false;
   bool _getDoctorsFailed = false;
   bool _getFilterDoctorsFailed = false;
   List<Doctor>? doctorsSaved;
@@ -39,24 +44,20 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
   void initState() {
     if (widget.callFromHome) {
       // if there is filter applied
-      if (Provider.of<DoctorFilterProvider>(context, listen: false).getSpecializationsApplied != null) {
-        BlocProvider.of<DoctorsAvailableBloc>(context)
-          .add(GetDoctorFilterInDoctorList(
-              specializations:
-                  Provider.of<DoctorFilterProvider>(
-                          context,
-                          listen: false)
-                      .getSpecializationsApplied!,
-              virtualAppointment: Provider.of<
-                          DoctorFilterProvider>(
-                      context,
-                      listen: false)
-                  .getLastVirtualAppointmentApplied!,
-              inPersonAppointment:
-                  Provider.of<DoctorFilterProvider>(
-                          context,
-                          listen: false)
-                      .getLastInPersonAppointmentApplied!));
+      if (Provider.of<DoctorFilterProvider>(context, listen: false)
+              .getSpecializationsApplied !=
+          null) {
+        BlocProvider.of<DoctorsAvailableBloc>(context).add(
+            GetDoctorFilterInDoctorList(
+                specializations:
+                    Provider.of<DoctorFilterProvider>(context, listen: false)
+                        .getSpecializationsApplied!,
+                virtualAppointment:
+                    Provider.of<DoctorFilterProvider>(context, listen: false)
+                        .getLastVirtualAppointmentApplied!,
+                inPersonAppointment:
+                    Provider.of<DoctorFilterProvider>(context, listen: false)
+                        .getLastInPersonAppointmentApplied!));
       } else {
         // trigger event
         BlocProvider.of<DoctorsAvailableBloc>(context)
@@ -71,6 +72,21 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
       doctors = [];
       _loading = false;
     }
+    scrollDoctorList.addListener(() {
+    double offset = 10.0; // or the value you want
+    if (scrollDoctorList.offset > offset){
+      showAnimatedButton = true;
+      // this we use to get update the state
+      setState((){
+
+      });
+    } else {
+      showAnimatedButton = false;
+      setState((){
+
+      });
+    }
+  });
     super.initState();
   }
 
@@ -87,6 +103,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
               SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
         ),
       ),
+      floatingActionButton: buttonGoTop(scrollDoctorList, 1000, 500, showAnimatedButton),
       body: SafeArea(
         child: BlocListener<DoctorsAvailableBloc, DoctorsAvailableState>(
           listener: (context, state) {
@@ -196,6 +213,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                   physics: ScrollPhysics(),
                                   scrollDirection: Axis.vertical,
                                   shrinkWrap: true,
+                                  controller: scrollDoctorList,
                                   gridDelegate:
                                       const SliverGridDelegateWithMaxCrossAxisExtent(
                                           maxCrossAxisExtent: 200,
@@ -239,7 +257,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                 // this for refresh all data
                                 onRefresh: () {
                                   offset = 0;
-                                  if (Provider.of<DoctorFilterProvider>(context, listen: false).getSpecializationsApplied == null) {
+                                  if (Provider.of<DoctorFilterProvider>(context,
+                                              listen: false)
+                                          .getSpecializationsApplied ==
+                                      null) {
                                     BlocProvider.of<DoctorsAvailableBloc>(
                                             context)
                                         .add(GetDoctorsAvailable(offset: 0));
@@ -266,7 +287,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                 // this for load more doctors
                                 onLoading: () {
                                   offset = offset + 20;
-                                  if (Provider.of<DoctorFilterProvider>(context, listen: false).getSpecializationsApplied == null) {
+                                  if (Provider.of<DoctorFilterProvider>(context,
+                                              listen: false)
+                                          .getSpecializationsApplied ==
+                                      null) {
                                     // new event for get more available doctor
                                     BlocProvider.of<DoctorsAvailableBloc>(
                                             context)
