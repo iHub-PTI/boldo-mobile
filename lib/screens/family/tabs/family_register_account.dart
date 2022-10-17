@@ -4,6 +4,7 @@ import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/screens/take_picture/take_picture_screen.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/loading_helper.dart';
+import 'package:boldo/utils/photos_helpers.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -51,39 +52,7 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
         permissionDescription: 'Se requiere acceso para tomar fotos'
     );
     if (userImageSelected != null) {
-      File? croppedFile = await ImageCropper().cropImage(
-        sourcePath: userImageSelected!.path,
-        maxHeight: 1000,
-        maxWidth: 1000,
-        compressQuality: 100,
-        aspectRatioPresets: Platform.isAndroid
-            ? [
-          CropAspectRatioPreset.square,
-          CropAspectRatioPreset.ratio3x2,
-          CropAspectRatioPreset.original,
-          CropAspectRatioPreset.ratio4x3,
-          CropAspectRatioPreset.ratio16x9
-        ]
-            : [
-          CropAspectRatioPreset.original,
-          CropAspectRatioPreset.square,
-          CropAspectRatioPreset.ratio3x2,
-          CropAspectRatioPreset.ratio4x3,
-          CropAspectRatioPreset.ratio5x3,
-          CropAspectRatioPreset.ratio5x4,
-          CropAspectRatioPreset.ratio7x5,
-          CropAspectRatioPreset.ratio16x9
-        ],
-        androidUiSettings: const AndroidUiSettings(
-            toolbarTitle: 'Cropper',
-            toolbarColor: Colors.deepOrange,
-            toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.original,
-            lockAspectRatio: false),
-        iosUiSettings: const IOSUiSettings(
-          title: 'Cropper',
-        ),
-      );
+      File? croppedFile = await cropPhoto(file: userImageSelected!);
       userImageSelected = croppedFile != null ? XFile(croppedFile.path) : null;
     }
     if (userImageSelected != null) {

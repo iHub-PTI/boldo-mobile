@@ -111,9 +111,7 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
                                 color: ConstantsV2.darkBlue),
                           ),
                           Text(
-                            daysDifference == 0
-                                ? "Hoy"
-                                : "${daysDifference > 2 ? "Hace $daysDifference días" : 'ayer'} ",
+                            passedDays(daysDifference),
                             style: boldoCorpSmallTextStyle.copyWith(
                                 color: ConstantsV2.veryLightBlue),
                           ),

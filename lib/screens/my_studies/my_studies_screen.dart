@@ -163,14 +163,14 @@ class _MyStudiesState extends State<MyStudies> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: ElevatedButton(
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) => NewStudy()));
         },
-        backgroundColor: ConstantsV2.orange,
-        label: Container(
+        child: Container(
             child: Row(
+              mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
               'nuevo estudio',

@@ -194,15 +194,25 @@ const boldoTabHeaderUnselectedTextStyle = TextStyle(
 ThemeData boldoTheme = ThemeData(
   fontFamily: 'Montserrat',
   elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      textStyle: const TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: 16,
-          color: ConstantsV2.lightGrey),
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-      primary: ConstantsV2.orange,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(100),
+    style: ButtonStyle(
+      textStyle: MaterialStateProperty.all(
+        const TextStyle(fontWeight: FontWeight.w500, fontSize: 16,
+            color: ConstantsV2.lightGrey
+        ),
+      ),
+      padding: MaterialStateProperty.all(
+        const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      ),
+      backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+        if (states.contains(MaterialState.disabled)) {
+          return ConstantsV2.gray; // Disabled color
+        }
+        return ConstantsV2.orange; // Regular color
+      }),
+      shape: MaterialStateProperty.all(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
       ),
     ),
   ),

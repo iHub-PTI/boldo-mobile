@@ -105,19 +105,16 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                     );
                   }else{
                     return Expanded(
-                    child: ListView.separated(
+                    child: ListView.builder(
                       itemCount: allAppointments.length,
                       shrinkWrap: true,
-                      separatorBuilder: (context, index) =>
-                      const Divider(
-                        color: Colors.transparent,
-                      ),
                       itemBuilder: (context, index) {
-                        int daysDifference = DateTime.now()
-                            .difference(DateTime.parse(
-                            allAppointments[index].start!)
-                            .toLocal())
-                            .inDays;
+                        //calculate days difference
+                        int daysDifference = daysBetween(DateTime.parse(
+                          allAppointments[index].start?? DateTime.now()
+                              .toString()),
+                          DateTime.now()
+                        );
                         return GestureDetector(
                           onTap: () async {
                             await Navigator.push(
@@ -158,9 +155,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                         // ),
                                         const Spacer(),
                                         Text(
-                                          daysDifference == 0
-                                              ? "hoy"
-                                              : '${DateFormat('dd/MM/yy').format(DateTime.parse(allAppointments[index].start!).toLocal())}',
+                                          passedDays(daysDifference),
                                           style: boldoCorpSmallTextStyle
                                               .copyWith(
                                               color: ConstantsV2

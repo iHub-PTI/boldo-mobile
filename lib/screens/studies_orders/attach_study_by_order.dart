@@ -8,6 +8,7 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart' as study_bloc;
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/utils/photos_helpers.dart';
 import 'package:boldo/widgets/image_visor.dart';
 import 'package:date_format/date_format.dart';
 import 'package:dio/dio.dart';
@@ -552,17 +553,20 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
   }
 
   getFromCamera() async {
-    XFile? x;
-    x = await ImagePicker.platform
+    XFile? image;
+    image = await ImagePicker.platform
         .getImage(source: ImageSource.camera);
-    if (x != null) {
-      setState(() {
-        if (files.isNotEmpty) {
-          files = [...files, File(x!.path)];
-        } else {
-          files = [File(x!.path)];
-        }
-      });
+    if(image != null) {
+      File? x = await cropPhoto(file: image);
+      if (x != null) {
+        setState(() {
+          if (files.isNotEmpty) {
+            files = [...files, File(x.path)];
+          } else {
+            files = [File(x.path)];
+          }
+        });
+      }
     }
   }
 
@@ -589,17 +593,20 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
   }
 
   getFromGallery() async {
-    XFile? x;
-    x = await ImagePicker.platform
+    XFile? image;
+    image = await ImagePicker.platform
         .getImage(source: ImageSource.gallery);
-    if (x != null) {
-      setState(() {
-        if (files.isNotEmpty) {
-          files = [...files, File(x!.path)];
-        } else {
-          files = [File(x!.path)];
-        }
-      });
+    if(image != null) {
+      File? x = await cropPhoto(file: image);
+      if (x != null) {
+        setState(() {
+          if (files.isNotEmpty) {
+            files = [...files, File(x.path)];
+          } else {
+            files = [File(x.path)];
+          }
+        });
+      }
     }
   }
 
