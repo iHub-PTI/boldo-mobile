@@ -463,13 +463,15 @@ class Background extends StatelessWidget {
                   (context, url, downloadProgress) =>
                   Padding(
                     padding: const EdgeInsets.all(26.0),
-                    child: CircularProgressIndicator(
-                      value: downloadProgress.progress,
-                      valueColor:
-                      const AlwaysStoppedAnimation<Color>(
-                          Constants.primaryColor400),
-                      backgroundColor:
-                      Constants.primaryColor600,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        value: downloadProgress.progress,
+                        valueColor:
+                        const AlwaysStoppedAnimation<Color>(
+                            Constants.primaryColor400),
+                        backgroundColor:
+                        Constants.primaryColor600,
+                      ),
                     ),
                   ),
               errorWidget: (context, url, error) =>
