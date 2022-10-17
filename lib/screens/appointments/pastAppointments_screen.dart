@@ -751,9 +751,8 @@ class PastAppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int daysDifference = daysBetween(DateTime.now(),DateTime.parse(
-        appointment.start!)
-        .toLocal());
+    int daysDifference = daysBetween(DateTime.parse(
+        appointment.start!).toLocal(),DateTime.now());
     return GestureDetector(
       onTap: () async {
         await Navigator.push(
