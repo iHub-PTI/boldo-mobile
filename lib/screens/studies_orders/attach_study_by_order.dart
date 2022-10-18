@@ -171,14 +171,32 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
-                                  child: Expanded(
-                                    child: Text(
-                                      serviceRequest?.diagnosis ?? 'Sin diagnóstico presuntivo',
-                                      style: boldoCorpSmallTextStyle.copyWith(
-                                          color: ConstantsV2.inactiveText,
-                                          fontSize: 14),
-                                    ),
-                                  )),
+                                child: Expanded(
+                                  child: BlocBuilder<AttachStudyOrderBloc, AttachStudyOrderState>(
+                                    builder: (context, state) {
+                                      // in case of loading data
+                                      if(state is LoadingStudies){
+                                        return Text(
+                                          'Cargando',
+                                          style: boldoCorpSmallTextStyle.copyWith(
+                                              color: ConstantsV2.inactiveText,
+                                              fontSize: 14),
+                                        );
+                                      }else {
+                                        // show if not loading
+                                        return Text(
+                                          serviceRequest?.diagnosis ??
+                                              'Sin diagnóstico presuntivo',
+                                          style: boldoCorpSmallTextStyle
+                                              .copyWith(
+                                              color: ConstantsV2.inactiveText,
+                                              fontSize: 14),
+                                        );
+                                      }
+                                    }
+                                  )
+                                )
+                              ),
                               Container(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
