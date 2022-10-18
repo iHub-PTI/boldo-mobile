@@ -183,12 +183,37 @@ class _DoctorFilterState extends State<DoctorFilter> {
                               retryCallback: () =>
                                   BlocProvider.of<DoctorsAvailableBloc>(context)
                                       .add(GetSpecializations()))
-                          : Container(
-                              height: 44,
-                              color: Colors.white,
-                              child: Row(
+                          : Stack(
+                            children: [
+                              Container(
+                                height: 44,
+                                width: MediaQuery.of(context).size.width,
+                                color: Colors.white,
+                              ),
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
+                                  specializationsSelected != null
+                                    ? specializationsSelected!.length > 0
+                                      ? _loadingFilter
+                                        ? const Center(child: CircularProgressIndicator())
+                                        : Card(
+                                          clipBehavior: Clip.antiAlias,
+                                          color: ConstantsV2.orange,
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(100),
+                                          ),
+                                          child: Container(
+                                            padding:
+                                                const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                                            child: Text(
+                                                "${specializationsSelected!.length}"),
+                                          )
+                                        )
+                                      : Container()
+                                    : Container(),
+                                  const SizedBox(width: 5),
                                   GestureDetector(
                                     onTap: () async {
                                       // because the direct assignment only references
@@ -210,19 +235,23 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                       });
                                     },
                                     child: Container(
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          color:
-                                              ConstantsV2.rightBottonNavigaton,
-                                        ),
-                                        child:
-                                            Center(child: Text('ver todos'))),
+                                      width: 100,
+                                      height: 44,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(6),
+                                        color:
+                                            ConstantsV2.rightBottonNavigaton,
+                                      ),
+                                      child: const Center(
+                                        child: Text('ver todos')
+                                      )
+                                    ),
                                   )
                                 ],
-                              ),
-                            ),
+                              )
+                            ],
+                          ),
                   const SizedBox(height: 8),
                   Container(
                     width: MediaQuery.of(context).size.width,
