@@ -45,6 +45,30 @@ class _BookingScreenState extends State<BookingScreen> {
     fetchData(DateTime.now());
   }
 
+  // this is a function to show us an alert when exist other with the same date and hour
+  Future<void> _existingSchedule(Doctor doctor) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Atención!'),
+            content: Text(
+                'Recuerde que usted ya tiene agendada una consulta con ${doctor.gender == 'female' ? 'la Dra.' : 'el Dr.'} ${doctor.givenName?.split(' ')[0] ?? ''} ${doctor.familyName?.split(' ')[0] ?? ''} en el horario seleccionado.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'OK'),
+                child: const Text(
+                  'Entiendo',
+                  style: TextStyle(
+                    color: Constants.primaryColor500
+                  ),
+                )
+              )
+            ],
+          );
+        });
+  }
+
   Future<void> handleBookingHour({NextAvailability? bookingHour}) async {
     final UserRepository _patientRepository = UserRepository();
     bool isAuthenticated =
