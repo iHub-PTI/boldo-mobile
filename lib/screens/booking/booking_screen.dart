@@ -46,6 +46,7 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   Future<void> handleBookingHour({NextAvailability? bookingHour}) async {
+    final UserRepository _patientRepository = UserRepository();
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
     if (!isAuthenticated) {
@@ -53,16 +54,54 @@ class _BookingScreenState extends State<BookingScreen> {
 
       return;
     }
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BookingConfirmScreen(
-          bookingDate: bookingHour ?? _selectedBookingHour!,
-          doctor: widget.doctor,
+    List<Appointment>? appointments =
+        await _patientRepository.getAppointments();
+    // the selected time must not coincide with another pre-scheduled appointment
+    if (bookingHour == null) {
+      if (appointments != null) {
+        if (appointments.any((element) =>
+            DateTime.parse(element.start!).toLocal() ==
+                DateTime.parse(_selectedBookingHour!.availability!).toLocal() &&
+            element.status == 'upcoming')) {
+          // show pop up whit the doctor information
+          // there will always be only one element
+          _existingSchedule(appointments.where((element) =>
+            DateTime.parse(element.start!).toLocal() ==
+                DateTime.parse(_selectedBookingHour!.availability!).toLocal() &&
+            element.status == 'upcoming').first.doctor!);
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BookingConfirmScreen(
+                bookingDate: _selectedBookingHour!,
+                doctor: widget.doctor,
+              ),
+            ),
+          );
+        }
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BookingConfirmScreen(
+              bookingDate: _selectedBookingHour!,
+              doctor: widget.doctor,
+            ),
+          ),
+        );
+      }
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BookingConfirmScreen(
+            bookingDate: bookingHour,
+            doctor: widget.doctor,
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   List<AppoinmentWithDateAndType> findAvailabilitesForDay(
