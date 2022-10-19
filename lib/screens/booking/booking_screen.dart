@@ -1,3 +1,5 @@
+import 'package:boldo/models/Appointment.dart';
+import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/widgets/in-person-virtual-switch.dart';
 import 'package:dio/dio.dart';
@@ -166,7 +168,8 @@ class _BookingScreenState extends State<BookingScreen> {
       Response response = await dio
           .get("/doctors/${widget.doctor.id}/availability", queryParameters: {
         'start': date.toLocal().toIso8601String(),
-        'end': DateTime(date.year, date.month + 1, 1).toLocal().toIso8601String(),
+        'end':
+            DateTime(date.year, date.month + 1, 1).toLocal().toIso8601String(),
       });
 
       List<NextAvailability>? allAvailabilities = [];
@@ -326,7 +329,11 @@ class _BookingScreenState extends State<BookingScreen> {
                       Column(children: [
                         Center(
                           child: Text(
-                            DateFormat('dd MMMM yyyy', Localizations.localeOf(context).languageCode).format(selectedDate),
+                            DateFormat(
+                                    'dd MMMM yyyy',
+                                    Localizations.localeOf(context)
+                                        .languageCode)
+                                .format(selectedDate),
                             style: boldoHeadingTextStyle.copyWith(
                                 fontWeight: FontWeight.normal, fontSize: 14),
                           ),
@@ -597,7 +604,7 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
     final parsedAvailability =
         DateTime.parse(widget.nextAvailability).toLocal();
     // int daysDifference = parsedAvailability.difference(actualDay).inDays;
-      int daysDifference = daysBetween(actualDay,parsedAvailability);
+    int daysDifference = daysBetween(actualDay, parsedAvailability);
 
     // if (actualDay.month == parsedAvailability.month) {
     //   daysDifference = parsedAvailability.day - actualDay.day;
@@ -652,18 +659,18 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                               ),
                             ),
                             const Spacer(),
-                            if(widget
-                                    .doctor.nextAvailability != null)
-                            ShowDoctorAvailabilityIcon(
-                                filter: widget
-                                    .doctor.nextAvailability!.appointmentType!)
+                            if (widget.doctor.nextAvailability != null)
+                              ShowDoctorAvailabilityIcon(
+                                  filter: widget.doctor.nextAvailability!
+                                      .appointmentType!)
                           ],
                         ),
                         const SizedBox(
                           height: 4,
                         ),
                         Text(
-                          DateFormat('EEEE, dd MMMM', Localizations.localeOf(context).languageCode)
+                          DateFormat('EEEE, dd MMMM',
+                                  Localizations.localeOf(context).languageCode)
                               .format(parsedAvailability)
                               .capitalize(),
                           style: boldoSubTextStyle,
@@ -699,7 +706,8 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                     final chooseOption =
                         await _showPopupMenu(details.globalPosition);
                     if (chooseOption != null) {
-                      DateTime parsedAvailability = DateTime.parse(widget.nextAvailability).toLocal();
+                      DateTime parsedAvailability =
+                          DateTime.parse(widget.nextAvailability).toLocal();
                       if (chooseOption == 'En persona') {
                         widget.handleBookingHour(
                           NextAvailability(
