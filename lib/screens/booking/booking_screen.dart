@@ -40,6 +40,7 @@ class _BookingScreenState extends State<BookingScreen> {
   List<AppoinmentWithDateAndType> _availabilitiesForDay = [];
   String _errorMessage = "";
   DateTime selectedDate = DateTime.now();
+  final UserRepository _patientRepository = UserRepository();
 
   @override
   void initState() {
