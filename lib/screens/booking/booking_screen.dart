@@ -172,6 +172,9 @@ class _BookingScreenState extends State<BookingScreen> {
             DateTime(date.year, date.month + 1, 1).toLocal().toIso8601String(),
       });
 
+      List<Appointment>? appointments =
+          await _patientRepository.getAppointments();
+
       List<NextAvailability>? allAvailabilities = [];
       response.data['availabilities'].forEach((v) {
         allAvailabilities.add(NextAvailability.fromJson(v));
