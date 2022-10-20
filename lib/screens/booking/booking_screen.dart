@@ -225,9 +225,12 @@ class _BookingScreenState extends State<BookingScreen> {
             ? []
             : findAvailabilitesForDay(allAvailabilitesDateTime, firstDay);
         _availabilities = allAvailabilitesDateTime;
-        if (response.data['nextAvailability'] != null) {
-          nextAvailability =
-              NextAvailability.fromJson(response.data["nextAvailability"]);
+        if (allAvailabilities.isNotEmpty) {
+          nextAvailability = nextAvailability == null ?
+              NextAvailability(
+                availability: allAvailabilities.first.availability,
+                appointmentType: allAvailabilities.first.appointmentType
+              ) : nextAvailability;
         }
         selectedDate = firstDay;
         _loading = false;
