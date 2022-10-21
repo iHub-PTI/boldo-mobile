@@ -90,15 +90,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
                               'assets/icon/chevron-left.svg',
                               color: ConstantsV2.activeText,
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all(16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
+                          ),
                           const Text(
                             "Mi Familia",
                             style: boldoTitleBlackTextStyle,

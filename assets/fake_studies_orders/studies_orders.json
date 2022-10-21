@@ -1,0 +1,43 @@
+[
+  {
+    "id": "12345",
+    "category": "IMG",
+    "diagnosis": "Posible sinusitis",
+    "urgent":  true,
+    "encounterId": "123",
+    "studiesCodes": [
+      {
+        "code": "12",
+        "display": "Hemograma"
+      },
+      {
+        "code": "13",
+        "display": "FT4"
+      },
+      {
+        "display": "Radiografia torax"
+      }
+    ],
+    "notes": "Tomar muestras en ayunas"
+  },
+  {
+    "id": "12346",
+    "category": "LAB",
+    "diagnosis": "Posible sinusitis",
+    "urgent":  false,
+    "encounterId": "123",
+    "studiesCodes": [
+      {
+        "code": "12",
+        "display": "Hemograma"
+      },
+      {
+        "code": "13",
+        "display": "FT4"
+      },
+      {
+        "display": "Radiografia torax"
+      }
+    ]
+  }
+]

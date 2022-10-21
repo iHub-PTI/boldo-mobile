@@ -31,13 +31,13 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList(date: DateTime(dateOffset.year, dateOffset.month, dateOffset.day).toUtc().toIso8601String()));
+    BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList());
   }
 
   void _onRefresh() async {
     dateOffset = DateTime.now().subtract(const Duration(days: 30));
     // monitor network fetch
-    BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList(date: DateTime(dateOffset.year, dateOffset.month, dateOffset.day).toUtc().toIso8601String()));
+    BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList());
   }
 
   @override
@@ -63,29 +63,45 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextButton.icon(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(
-                    Icons.chevron_left_rounded,
-                    size: 25,
-                    color: Constants.extraColor400,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(
+                        Icons.chevron_left_rounded,
+                        size: 25,
+                        color: Constants.extraColor400,
+                      ),
+                      label: Text(
+                        'Mis Recetas',
+                        style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                      ),
+                    ),
                   ),
-                  label: Text(
-                    'Mis Recetas',
-                    style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GestureDetector(
+                      onTap: () async {
+                        await _noteBox();
+                      },
+                      child: SvgPicture.asset(
+                        'assets/icon/filter-list.svg',
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
               BlocBuilder<PrescriptionsBloc, PrescriptionsState>(builder: (context, state){
                 if(state is AppointmentWithPrescriptionsLoadedState){
                   if(allAppointments.isEmpty){
                     return const EmptyStateV2(
-                      picture: "feed_empty.svg",
-                      textTop: "Nada para mostrar",
+                      textBottom: "A medida que uses la aplicación podrás ir"
+                          " viendo los medicamentos que te sean recetados",
                     );
                   }else{
                     return Expanded(
@@ -450,48 +466,6 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                               ),
                                           ],
                                         ),
-
-                                        // SizedBox(
-                                        //   width: 124,
-                                        //   height: 42,
-                                        //   child: Column(
-                                        //     children: [
-
-                                        //       // for (int i = 0;
-                                        //       //     i <
-                                        //       //         allAppointments[
-                                        //       //                 index]
-                                        //       //             .prescriptions!
-                                        //       //             .length;
-                                        //       //     i++)
-                                        //       //   Row(
-                                        //       //     children: [
-                                        //       //       SvgPicture.asset(
-                                        //       //         'assets/icon/pill.svg',
-                                        //       //         color: Color(
-                                        //       //             0xff707882),
-                                        //       //         // height: 8,
-                                        //       //         width: 15,
-                                        //       //       ),
-                                        //       //       const SizedBox(width: 10),
-                                        //       //       Flexible(
-                                        //       //         child: Text(
-                                        //       //           "${allAppointments[index].prescriptions![i].medicationName}",
-                                        //       //           style: boldoCorpMediumTextStyle.copyWith(
-                                        //       //               color: ConstantsV2
-                                        //       //                   .inactiveText,
-                                        //       //               fontSize:
-                                        //       //                   10),
-                                        //       //           overflow:
-                                        //       //               TextOverflow
-                                        //       //                   .ellipsis,
-                                        //       //         ),
-                                        //       //       ),
-                                        //       //     ],
-                                        //       //   ),
-                                        //     ],
-                                        //   ),
-                                        // ),
                                       ],
                                     ),
                                   ],
@@ -512,7 +486,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                         backgroundColor: Constants.primaryColor600,
                       ));
                 }else if(state is Failed){
-                  return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList(date: DateTime(dateOffset.year, dateOffset.month, dateOffset.day).toUtc().toIso8601String())) ) ;
+                  return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList()) ) ;
                 }else{
                   return Container();
                 }
@@ -523,6 +497,256 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
       )
     );
   }
+
+  Future _noteBox(){
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        TextEditingController dateTextController = TextEditingController();
+        TextEditingController date2TextController = TextEditingController();
+        var inputFormat = DateFormat('dd/MM/yyyy');
+        var outputFormat = DateFormat('yyyy-MM-dd');
+        DateTime date1 = BlocProvider.of<PrescriptionsBloc>(context).getInitialDate();
+        DateTime? date2 = BlocProvider.of<PrescriptionsBloc>(context).getFinalDate();
+        dateTextController.text = inputFormat.format(date1);
+        date2TextController.text = date2 != null? inputFormat.format(date2) :'';
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              contentPadding: const EdgeInsetsDirectional.all(0),
+              scrollable: true,
+              backgroundColor: ConstantsV2.lightGrey,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              content: Container(
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width * 0.9,
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height * 0.7,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Filtrar recetas',
+                            style: boldoTitleBlackTextStyle.copyWith(
+                                color: ConstantsV2.activeText
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              Navigator.pop(context);
+                            },
+                            child: SvgPicture.asset(
+                              'assets/icon/close.svg',
+                              color: ConstantsV2.inactiveText,
+                              height: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Card(
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.zero,
+                                ),
+                                color: ConstantsV2.lightest,
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(vertical: 10),
+                                        child: Text('Filtrar por fecha',
+                                          style: boldoCorpSmallSTextStyle.copyWith(
+                                              color: ConstantsV2.activeText
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(vertical: 8),
+                                        child: Row(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () async {
+                                                DateTime? newDate = await showDatePicker(
+                                                    context: context,
+                                                    initialEntryMode: DatePickerEntryMode
+                                                        .calendarOnly,
+                                                    initialDatePickerMode: DatePickerMode.day,
+                                                    initialDate: date1 ?? DateTime.now(),
+                                                    firstDate: DateTime(1900),
+                                                    lastDate: date2?? DateTime.now(),
+                                                    locale: const Locale("es", "ES"),
+                                                    builder: (context, child){
+                                                      return Theme(
+                                                        data: Theme.of(context).copyWith(
+                                                            colorScheme: const ColorScheme.light(
+                                                                primary: ConstantsV2.orange
+                                                            )
+                                                        ),
+                                                        child: child!,
+                                                      );
+                                                    }
+                                                );
+                                                if (newDate == null) {
+                                                  return;
+                                                } else {
+                                                  setState(() {
+                                                    var outputFormat = DateFormat('yyyy-MM-dd');
+                                                    var inputFormat = DateFormat('dd/MM/yyyy');
+                                                    var _date1 =
+                                                    outputFormat.parse(newDate.toString().trim());
+                                                    var _date2 = inputFormat.format(_date1);
+                                                    dateTextController.text = _date2;
+                                                    date1 = _date1;
+                                                  });
+                                                }
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  SvgPicture.asset(
+                                                    'assets/icon/calendar.svg',
+                                                    color: ConstantsV2.orange,
+                                                    height: 20,
+                                                  ),
+                                                  const SizedBox(width: 6,),
+                                                  Text('Desde: ${inputFormat.format(date1)}',
+                                                    style: boldoCorpSmallSTextStyle.copyWith(
+                                                        color: ConstantsV2.activeText
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(vertical: 8),
+                                        child: Row(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () async {
+                                                DateTime? newDate = await showDatePicker(
+                                                    context: context,
+                                                    initialEntryMode: DatePickerEntryMode
+                                                        .calendarOnly,
+                                                    initialDatePickerMode: DatePickerMode.day,
+                                                    initialDate: date2 ?? date1,
+                                                    firstDate: date1,
+                                                    lastDate: DateTime.now(),
+                                                    locale: const Locale("es", "ES"),
+                                                    builder: (context, child){
+                                                      return Theme(
+                                                        data: Theme.of(context).copyWith(
+                                                            colorScheme: const ColorScheme.light(
+                                                                primary: ConstantsV2.orange
+                                                            )
+                                                        ),
+                                                        child: child!,
+                                                      );
+                                                    }
+                                                );
+                                                if (newDate == null) {
+                                                  return;
+                                                } else {
+                                                  setState(() {
+                                                    var outputFormat = DateFormat('yyyy-MM-dd');
+                                                    var inputFormat = DateFormat('dd/MM/yyyy');
+                                                    var _date1 =
+                                                    outputFormat.parse(newDate.toString().trim());
+                                                    var _date2 = inputFormat.format(_date1);
+                                                    date2TextController.text = _date2;
+                                                    date2 = _date1;
+                                                  });
+                                                }
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  SvgPicture.asset(
+                                                    'assets/icon/calendar.svg',
+                                                    color: ConstantsV2.orange,
+                                                    height: 20,
+                                                  ),
+                                                  const SizedBox(width: 6,),
+                                                  Text('Hasta: ${date2 != null ? inputFormat.format(
+                                                      date2!) : 'indefinido'}',
+                                                    style: boldoCorpSmallSTextStyle.copyWith(
+                                                        color: ConstantsV2.activeText
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton(
+                            onPressed:() {
+                              BlocProvider.of<PrescriptionsBloc>(context).setInitialDate(date1);
+                              BlocProvider.of<PrescriptionsBloc>(context).setFinalDate(date2);
+                              BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList());
+                              Navigator.pop(context);
+                            },
+                            child: Row(
+                              children: [
+                                Text('Aplicar',
+                                  style: boldoCorpSmallSTextStyle.copyWith(
+                                      color: ConstantsV2.lightGrey
+                                  ),
+                                ),
+                                SvgPicture.asset(
+                                  'assets/icon/done.svg',
+                                  color: ConstantsV2.lightGrey,
+                                  height: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+        );
+      },
+    );
+  }
+
 }
 
 class Background extends StatelessWidget {

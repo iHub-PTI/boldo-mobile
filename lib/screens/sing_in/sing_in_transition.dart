@@ -59,13 +59,9 @@ class _SingInTransitionState extends State<SingInTransition> {
                   backgroundColor: Colors.redAccent,
                 ),
               );
-              _dataLoading = false;
-              Navigator.of(context).pushNamedAndRemoveUntil('/onboarding', (Route<dynamic> route) => false);
-            }
-            if(state is RedirectBackScreen){
               UserRepository().logout(context);
             }
-            if(state is Success){
+            if(state is ChangeFamily){
               _background = const Background(text: "SingIn_2");
               _dataLoading = false;
             }

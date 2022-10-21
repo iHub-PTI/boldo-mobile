@@ -113,7 +113,10 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                   });
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => BookingFinalScreen()),
+                    MaterialPageRoute(builder: (context) => BookingFinalScreen(
+                      doctor: widget.doctor,
+                      bookingDate: widget.bookingDate,
+                    )),
                   );
                 }else {
                   setState(() {

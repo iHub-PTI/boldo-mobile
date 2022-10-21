@@ -35,7 +35,6 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           await Future.delayed(const Duration(seconds: 2));
           emit(RedirectBackScreen());
         }else{
-          emit(Success());
           emit(ChangeFamily());
           await Future.delayed(const Duration(seconds: 2));
           emit(RedirectNextScreen());

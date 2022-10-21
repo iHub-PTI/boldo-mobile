@@ -39,3 +39,8 @@ class AddFiles extends MyStudiesEvent {
 }
 
 class GetFiles extends MyStudiesEvent {}
+
+class GetServiceRequests extends MyStudiesEvent {
+  final String serviceRequestId;
+  GetServiceRequests({required this.serviceRequestId});
+}

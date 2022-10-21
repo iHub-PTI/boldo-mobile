@@ -1,6 +1,9 @@
+import 'package:boldo/models/News.dart';
+import 'package:boldo/screens/dashboard/tabs/components/news_cards.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:flutter/material.dart';
 
-class DiagnosticReport {
+class DiagnosticReport extends News  {
   String?
   id,
   attachmentNumber,
@@ -9,7 +12,8 @@ class DiagnosticReport {
       source,
       sourceID,
       type,
-      patientNotes;
+      patientNotes,
+      serviceRequestId;
 
   List<AttachmentUrl>? attachmentUrls;
 
@@ -23,6 +27,7 @@ class DiagnosticReport {
     this.type,
     this.patientNotes,
     this.attachmentUrls,
+    this.serviceRequestId,
   });
 
   factory DiagnosticReport.fromJson(Map<String, dynamic> json,) => DiagnosticReport(
@@ -33,6 +38,8 @@ class DiagnosticReport {
     source: json['source']!= null ? toLowerCase(json['source']!) : null,
     sourceID: json['sourceID'],
     type: json['category'],
+    patientNotes: json['patientNotes'],
+    serviceRequestId: json['serviceRequestId'],
     attachmentUrls: json['attachmentUrls']!= null ? List<AttachmentUrl>.from(json['attachmentUrls'].map((e) => AttachmentUrl.fromJson(e) )) : null,
   );
 
@@ -42,7 +49,14 @@ class DiagnosticReport {
     data['effectiveDate'] = effectiveDate;
     data['category'] = type;
     data['patientNotes'] = patientNotes;
+    data['serviceRequestId'] = serviceRequestId;
+    data['attachmentUrls'] = attachmentUrls?.map((e) => e.toJson()).toList();
     return data;
+  }
+
+  @override
+  Widget show() {
+    return DiagnosticReportCard(diagnosticReport: this);
   }
 }
 
@@ -70,5 +84,7 @@ class AttachmentUrl {
     data['contentType'] = contentType;
     return data;
   }
+
+
 
 }
