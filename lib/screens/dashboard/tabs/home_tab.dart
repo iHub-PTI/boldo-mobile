@@ -239,6 +239,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             ),*/
           ],
           child: NestedScrollView(
+            controller: homeScroll,
               headerSliverBuilder: (context, innerBoxScrolled) => [
                 SliverAppBar(
                   pinned: true,
