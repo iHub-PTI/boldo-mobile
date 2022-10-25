@@ -132,6 +132,17 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       length: 1,
       vsync: this,
     );
+    homeScroll.addListener(() {
+      double offset = 10.0; // or the value you want
+      if (homeScroll.offset > offset) {
+        showAnimatedButton = true;
+        // this we use to get update the state
+        setState(() {});
+      } else {
+        showAnimatedButton = false;
+        setState(() {});
+      }
+    });
     //BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
     BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
     super.initState();
