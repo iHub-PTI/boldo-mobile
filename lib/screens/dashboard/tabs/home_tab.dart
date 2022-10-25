@@ -34,6 +34,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   Isolate? _isolate;
   ReceivePort? _receivePort;
   late TabController _controller;
+  // controller for scroll
+  ScrollController homeScroll = ScrollController();
+  // flag for show or not the button
+  bool showAnimatedButton = false;
 
   List<Appointment> appointments = [];
   List<DiagnosticReport> diagnosticReports = [];
