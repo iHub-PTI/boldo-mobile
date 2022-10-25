@@ -165,6 +165,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton:
+          buttonGoTop(homeScroll, 1000, 500, showAnimatedButton),
       body: SafeArea(
         child: MultiBlocListener(
           listeners: [
