@@ -243,7 +243,9 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                         : 100,
                       child: Stack(
                         children: [
-                          Column(
+                          Align(
+                            alignment: Alignment.topCenter,
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               mainAxisSize: MainAxisSize.min,
                               children: [
