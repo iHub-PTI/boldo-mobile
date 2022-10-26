@@ -160,7 +160,7 @@ class ShowAppoinmentDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final inPersonDesc =
-        "Esta consulta será realizada en persona en el Hospital Los Ángeles.";
+        "Esta consulta será realizada en persona en el Centro Médico Tesai’i- Policlinic.";
     final onlineDesc =
         "Esta consulta será realizada de forma remota a través de esta aplicación.";
     return Padding(

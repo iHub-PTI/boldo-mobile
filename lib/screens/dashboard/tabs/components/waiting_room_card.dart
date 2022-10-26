@@ -36,7 +36,7 @@ class WaitingRoomCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                      "${appointment.appointmentType == 'V' ?'La sala de espera de tu consulta con ${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName!} ya se encuentra habilitada.':'Tiene agendada una consulta presencial en el Hospital Los Ángeles'}  ",
+                      "${appointment.appointmentType == 'V' ?'La sala de espera de tu consulta con ${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName!} ya se encuentra habilitada.':'Tiene agendada una consulta presencial en el Centro Médico Tesai’i- Policlinic'}  ",
                       style: boldoSubTextStyle.copyWith(
                         height: 1.2,
                         fontSize: 15,

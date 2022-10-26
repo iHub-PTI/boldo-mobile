@@ -93,7 +93,7 @@ class _PreRegisterScreenState extends State<PreRegisterScreen> {
                       text: const TextSpan(
                         text: 'Boldo se encuentra en un período de prueba controlado.\n\n'
                             'Antes de registrarte, tenga en cuenta que por el momento, el servicio está disponible solamente para algunos pacientes en un conjunto de centros asistenciales.\n\n'
-                            'En breve, extenderemos el servicio a todo publico.\n\n',
+                            'En breve, extenderemos el servicio a todo público.\n\n',
                         style: TextStyle(
                           color: Color.fromRGBO(54, 65, 82, 1),
                           fontFamily: 'PT Serif',
