@@ -225,8 +225,22 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     content: Container(
-                      width: 330,
-                      height: expand ? 375 : 100,
+                      // screen rotation control
+                      width: MediaQuery.of(context).size.height >= MediaQuery.of(context).size.width 
+                        // vertical orientation
+                        ? MediaQuery.of(context).size.width > 600 
+                          // its a tablet
+                          ? MediaQuery.of(context).size.width*0.5
+                          // its a phone
+                          : MediaQuery.of(context).size.width*0.8
+                        // horizontal orientation
+                        : MediaQuery.of(context).size.width*0.3,
+                      // screen rotation and expand control
+                      height: expand 
+                        ? MediaQuery.of(context).size.height >= MediaQuery.of(context).size.width 
+                          ? MediaQuery.of(context).size.height*0.5
+                          : MediaQuery.of(context).size.height*0.6
+                        : 100,
                       child: Stack(
                         children: [
                           Column(
