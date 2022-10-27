@@ -129,7 +129,10 @@ class UnlinkCaretakerWidget extends StatelessWidget {
           onTapCallback!(result.toString());
         }
       },
-      child: SvgPicture.asset('assets/icon/familyTrash.svg'),
+      child: Padding(
+        padding: const EdgeInsets.only(right:8.0, top: 8.0),
+        child: SvgPicture.asset('assets/icon/familyTrash.svg'),
+      ),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
         PopupMenuItem<String>(
           value: 'Desvincular',
