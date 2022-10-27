@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:boldo/constants.dart';
+import 'package:intl/intl.dart';
 
 import '../../../main.dart';
 
@@ -95,9 +96,12 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text("agregado el ${widget.patient!.startDependenceDate!}",
-                              style: boldoCorpSmallTextStyle.copyWith(
-                                color: ConstantsV2.inactiveText,
+                            Padding(
+                              padding: const EdgeInsets.only(right:8.0),
+                              child: Text("agregado el ${DateFormat('dd-MM-yyyy').format(DateTime.parse(widget.patient!.startDependenceDate!))}",
+                                style: boldoCorpSmallTextStyle.copyWith(
+                                  color: ConstantsV2.inactiveText,
+                                ),
                               ),
                             )
                           ],
