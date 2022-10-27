@@ -70,7 +70,7 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                               ),
                             )
                                 :Text(
-                              "${prefs.getString('name') ?? ''}${prefs.getString('lastName') ?? ''}",
+                              "${prefs.getString('name')?.split(' ')[0] ?? ''}${prefs.getString('lastName')?.split(' ')[0] ?? ''}",
                               style: boldoSubTextMediumStyle.copyWith(
                                   color: ConstantsV2.activeText
                               ),
