@@ -104,25 +104,34 @@ class _MyManagersTabState extends State<MyManagersTab> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8),
                                 alignment: Alignment.topLeft,
-                                child: managers.length > 0 ? ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: managers.length,
-                                  padding: const EdgeInsets.all(8),
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder: _buildItem,
-                                ) : const EmptyStateV2(picture: "Helping old man 1.svg", textBottom: "aún no tienes ningún gestor",),
+                                child: managers.length > 0 
+                                  ? ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: managers.length,
+                                    padding: const EdgeInsets.all(8),
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder: _buildItem,
+                                  ) 
+                                  : _dataLoading
+                                    ? Container()
+                                    : const EmptyStateV2(picture: "Helping old man 1.svg", textBottom: "aún no tienes ningún gestor"),
                               ),
                             ],
                           ),
                         ),
-                        managers.length > 0 ? Container(): Container(
-                          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                          child: const Text("Aquí apareceran las personas a quienes des "
+                        managers.length > 0 
+                          ? Container()
+                          : _dataLoading 
+                            ? Container() 
+                            : Container(
+                              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                              child: const Text("Aquí apareceran las personas a quienes des "
                                 "permiso como gestor. Esto significa que van a poder "
                                 "ver tu historia clinica y realizar gestiones como "
                                 "marcar y cancelar consultas en tu nombre, entre otras "
-                                "funciones"),
-                        ),
+                                "funciones"
+                            ),
+                          ),
                         Expanded(
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),

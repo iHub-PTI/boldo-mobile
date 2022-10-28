@@ -78,6 +78,11 @@ class HomeNewsBloc extends Bloc<HomeNewsEvent, HomeNewsState> {
           late List<StudyOrder> studiesOrders = [];
           _post.foldRight(StudyOrder, (a, previous) => studiesOrders = a);
 
+          // sort studiesOrders by descending date
+          studiesOrders.sort((a, b) =>
+              DateTime.parse(b.authoredDate?? DateTime.now().toString())
+                  .compareTo(DateTime.parse(a.authoredDate?? DateTime.now().toString())));
+
           // add diagnosticReport to news
           news = [...news, ...studiesOrders];
         }

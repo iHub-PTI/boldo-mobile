@@ -111,9 +111,7 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
                                 color: ConstantsV2.darkBlue),
                           ),
                           Text(
-                            daysDifference == 0
-                                ? "Hoy"
-                                : "${daysDifference > 2 ? "Hace $daysDifference días" : 'ayer'} ",
+                            passedDays(daysDifference),
                             style: boldoCorpSmallTextStyle.copyWith(
                                 color: ConstantsV2.veryLightBlue),
                           ),
@@ -301,11 +299,15 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
                     child: Text(
                         "${widget.studyOrder.serviceRequests?.length ?? 0}"),
                   )),
-              Text(
-                "órdenes",
-                style: boldoCorpMediumTextStyle.copyWith(
-                    color: ConstantsV2.darkBlue),
-              ),
+              widget.studyOrder.serviceRequests != null
+                ? widget.studyOrder.serviceRequests!.length > 0
+                  ? Text(
+                    widget.studyOrder.serviceRequests!.length == 1 ? "orden" : "órdenes",
+                    style: boldoCorpMediumTextStyle.copyWith(
+                        color: ConstantsV2.darkBlue),
+                  )
+                  : Container() 
+                : Container(),
             ],
           ),
           Container(

@@ -196,14 +196,25 @@ const boldoTabHeaderUnselectedTextStyle = TextStyle(
 ThemeData boldoTheme = ThemeData(
   fontFamily: 'Montserrat',
   elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16,
-        color: ConstantsV2.lightGrey
+    style: ButtonStyle(
+      textStyle: MaterialStateProperty.all(
+        const TextStyle(fontWeight: FontWeight.w500, fontSize: 16,
+            color: ConstantsV2.lightGrey
+        ),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-      primary: ConstantsV2.orange,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(100),
+      padding: MaterialStateProperty.all(
+        const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      ),
+      backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+        if (states.contains(MaterialState.disabled)) {
+          return ConstantsV2.gray; // Disabled color
+        }
+        return ConstantsV2.orange; // Regular color
+      }),
+      shape: MaterialStateProperty.all(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
       ),
     ),
   ),
@@ -363,7 +374,7 @@ class ConstantsV2 {
   static const double familyConnectSecondaryStop300 = 1.0;
 
   // colors
-  static const Color lightGrey = Color(0xffF5F5F5);
+  static const Color lightGrey = Color(0xffF8F8F8);
   static const Color lightest = Color(0xffFFFFFF);
   static const Color green = Color(0xff28B3BB);
   static const Color veryLightBlue = Color(0xffB1C3D7);
@@ -371,6 +382,7 @@ class ConstantsV2 {
   static const Color darkBlue = Color(0xff364F6B);
   static const Color orange = Color(0xffEB8B76);
   static const Color lightAndClear = Color(0xffF5F5F5);
+  static const Color gray = Color(0xffCFCFCF);
 
 
   // home heights
