@@ -171,7 +171,13 @@ class MyStudesRepository {
         ],
       );
       throw Failure(ex.response?.data['message']);
-    } catch (exception, stackTrace) {
+    } on Failure catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(exception.message);
+    }catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
         stackTrace: stackTrace,

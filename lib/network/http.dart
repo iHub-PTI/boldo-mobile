@@ -136,15 +136,17 @@ void initDio({required GlobalKey<NavigatorState> navKey, required Dio dio}) {
             }
           }
           else{
-            accessToken = null;
-            UserRepository().logout(navKey.currentState!.context);
-            navKey.currentState!.pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (context) => HeroScreenV2(),
-              ),
-                  (route) => false,
-            );
-            return handle.next(error);
+            if(exception.response?.statusCode == 500) {
+              accessToken = null;
+              UserRepository().logout(navKey.currentState!.context);
+              navKey.currentState!.pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => HeroScreenV2(),
+                ),
+                    (route) => false,
+              );
+            }
+            return handle.next(exception);
           }
         } catch (e) {
           print(e);
