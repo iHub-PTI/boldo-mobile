@@ -97,7 +97,12 @@ class _MenuScreenState extends State<MenuScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const ProfileImageView(height: 170, width: 170, border: true),
+                                  GestureDetector(
+                                    onTap: (){
+                                      Navigator.pushNamed(context, '/profileScreen');
+                                    },
+                                    child: const ProfileImageView(height: 170, width: 170, border: true),
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 15,),

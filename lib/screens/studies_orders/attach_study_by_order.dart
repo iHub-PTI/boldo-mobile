@@ -8,6 +8,7 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart' as study_bloc;
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/utils/photos_helpers.dart';
 import 'package:boldo/widgets/image_visor.dart';
 import 'package:date_format/date_format.dart';
 import 'package:dio/dio.dart';
@@ -170,14 +171,32 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
-                                  child: Expanded(
-                                    child: Text(
-                                      serviceRequest?.diagnosis ?? 'Sin diagnóstico presuntivo',
-                                      style: boldoCorpSmallTextStyle.copyWith(
-                                          color: ConstantsV2.inactiveText,
-                                          fontSize: 14),
-                                    ),
-                                  )),
+                                child: Expanded(
+                                  child: BlocBuilder<AttachStudyOrderBloc, AttachStudyOrderState>(
+                                    builder: (context, state) {
+                                      // in case of loading data
+                                      if(state is LoadingStudies){
+                                        return Text(
+                                          'Cargando',
+                                          style: boldoCorpSmallTextStyle.copyWith(
+                                              color: ConstantsV2.inactiveText,
+                                              fontSize: 14),
+                                        );
+                                      }else {
+                                        // show if not loading
+                                        return Text(
+                                          serviceRequest?.diagnosis ??
+                                              'Sin diagnóstico presuntivo',
+                                          style: boldoCorpSmallTextStyle
+                                              .copyWith(
+                                              color: ConstantsV2.inactiveText,
+                                              fontSize: 14),
+                                        );
+                                      }
+                                    }
+                                  )
+                                )
+                              ),
                               Container(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -552,17 +571,20 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
   }
 
   getFromCamera() async {
-    XFile? x;
-    x = await ImagePicker.platform
+    XFile? image;
+    image = await ImagePicker.platform
         .getImage(source: ImageSource.camera);
-    if (x != null) {
-      setState(() {
-        if (files.isNotEmpty) {
-          files = [...files, File(x!.path)];
-        } else {
-          files = [File(x!.path)];
-        }
-      });
+    if(image != null) {
+      File? x = await cropPhoto(file: image);
+      if (x != null) {
+        setState(() {
+          if (files.isNotEmpty) {
+            files = [...files, File(x.path)];
+          } else {
+            files = [File(x.path)];
+          }
+        });
+      }
     }
   }
 
@@ -589,17 +611,20 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
   }
 
   getFromGallery() async {
-    XFile? x;
-    x = await ImagePicker.platform
+    XFile? image;
+    image = await ImagePicker.platform
         .getImage(source: ImageSource.gallery);
-    if (x != null) {
-      setState(() {
-        if (files.isNotEmpty) {
-          files = [...files, File(x!.path)];
-        } else {
-          files = [File(x!.path)];
-        }
-      });
+    if(image != null) {
+      File? x = await cropPhoto(file: image);
+      if (x != null) {
+        setState(() {
+          if (files.isNotEmpty) {
+            files = [...files, File(x.path)];
+          } else {
+            files = [File(x.path)];
+          }
+        });
+      }
     }
   }
 
@@ -731,7 +756,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
-          String? note;
+          String? note = notes;
           return StatefulBuilder(
             builder: (context, setState){
               return AlertDialog(
@@ -742,41 +767,48 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 content: Container(
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width * 0.5,
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.5,
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery
+                        .of(context)
+                        .size
+                        .height * 0.5,
+                    maxWidth: MediaQuery
+                        .of(context)
+                        .size
+                        .width * 0.5,
+                  ),
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      TextFormField(
-                        textCapitalization: TextCapitalization.sentences,
-                        initialValue: notes,
-                        keyboardType: TextInputType.multiline,
-                        minLines: 14,
-                        maxLines: 14,
-                        decoration: InputDecoration(
-                          hintText: "Ingrese un comentario sobre el estudio",
-                          filled: true,
-                          fillColor: ConstantsV2.lightGrey,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: TextFormField(
+                            textCapitalization: TextCapitalization.sentences,
+                            initialValue: notes,
+                            keyboardType: TextInputType.multiline,
+                            expands: true,
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              hintMaxLines: 10,
+                              hintText: "Ingrese un comentario sobre el estudio",
+                              fillColor: ConstantsV2.lightAndClear,
+                              filled: true,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            style: boldoCorpMediumTextStyle.copyWith(
+                                color: ConstantsV2.activeText
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                note = value.trimRight().trimLeft();
+                              });
+                            },
                           ),
                         ),
-                        style: boldoCorpMediumTextStyle.copyWith(
-                            color: ConstantsV2.activeText
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            note = value.trimRight().trimLeft();
-                          });
-                        },
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -807,7 +839,6 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                             child: InkWell(
                               onTap: () async {
                                 setState(() {
-                                  print(note);
                                   this.notes = note?.trimRight().trimLeft();
                                   Navigator.pop(context);
                                 });

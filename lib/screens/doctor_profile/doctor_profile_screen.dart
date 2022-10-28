@@ -128,12 +128,11 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                                     child: Row(
                                                       crossAxisAlignment: CrossAxisAlignment.center,
                                                       children: [
-                                                        for (var specialization
-                                                        in widget.doctor.specializations!)
+                                                        for (int i=0; i<widget.doctor.specializations!.length; i++)
                                                           Padding(
-                                                            padding: const EdgeInsets.only(bottom: 4),
+                                                            padding: EdgeInsets.only(bottom: 4, left: i==0 ? 0 : 3.0),
                                                             child: Text(
-                                                              "${specialization.description}",
+                                                              "${widget.doctor.specializations![i].description}${i<widget.doctor.specializations!.length-1?',':''}",
                                                               style: boldoSubTextMediumStyle.copyWith(
                                                                   color: ConstantsV2.activeText),
                                                             ),

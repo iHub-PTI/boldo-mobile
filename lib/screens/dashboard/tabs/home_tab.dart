@@ -13,6 +13,7 @@ import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state
 import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
+import 'package:boldo/widgets/go_to_top.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -34,6 +35,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   Isolate? _isolate;
   ReceivePort? _receivePort;
   late TabController _controller;
+  // controller for scroll
+  ScrollController homeScroll = ScrollController();
+  // flag for show or not the button
+  bool showAnimatedButton = false;
 
   List<Appointment> appointments = [];
   List<DiagnosticReport> diagnosticReports = [];
@@ -127,6 +132,17 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       length: 1,
       vsync: this,
     );
+    homeScroll.addListener(() {
+      double offset = 10.0; // or the value you want
+      if (homeScroll.offset > offset) {
+        showAnimatedButton = true;
+        // this we use to get update the state
+        setState(() {});
+      } else {
+        showAnimatedButton = false;
+        setState(() {});
+      }
+    });
     //BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
     BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
     super.initState();
@@ -149,6 +165,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton:
+          buttonGoTop(homeScroll, 1000, 500, showAnimatedButton),
       body: SafeArea(
         child: MultiBlocListener(
           listeners: [
@@ -221,6 +239,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             ),*/
           ],
           child: NestedScrollView(
+            controller: homeScroll,
               headerSliverBuilder: (context, innerBoxScrolled) => [
                 SliverAppBar(
                   pinned: true,

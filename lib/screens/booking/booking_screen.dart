@@ -1,3 +1,5 @@
+import 'package:boldo/models/Appointment.dart';
+import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/widgets/in-person-virtual-switch.dart';
 import 'package:dio/dio.dart';
@@ -38,6 +40,7 @@ class _BookingScreenState extends State<BookingScreen> {
   List<AppoinmentWithDateAndType> _availabilitiesForDay = [];
   String _errorMessage = "";
   DateTime selectedDate = DateTime.now();
+  final UserRepository _patientRepository = UserRepository();
 
   @override
   void initState() {
@@ -45,7 +48,32 @@ class _BookingScreenState extends State<BookingScreen> {
     fetchData(DateTime.now());
   }
 
+  // this is a function to show us an alert when exist other with the same date and hour
+  Future<void> _existingSchedule(Doctor doctor) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Atención!'),
+            content: Text(
+                'Recuerde que usted ya tiene agendada una consulta con ${doctor.gender == 'female' ? 'la Dra.' : 'el Dr.'} ${doctor.givenName?.split(' ')[0] ?? ''} ${doctor.familyName?.split(' ')[0] ?? ''} en el horario seleccionado.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'OK'),
+                child: const Text(
+                  'Entiendo',
+                  style: TextStyle(
+                    color: Constants.primaryColor500
+                  ),
+                )
+              )
+            ],
+          );
+        });
+  }
+
   Future<void> handleBookingHour({NextAvailability? bookingHour}) async {
+    final UserRepository _patientRepository = UserRepository();
     bool isAuthenticated =
         Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
     if (!isAuthenticated) {
@@ -53,16 +81,54 @@ class _BookingScreenState extends State<BookingScreen> {
 
       return;
     }
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BookingConfirmScreen(
-          bookingDate: bookingHour ?? _selectedBookingHour!,
-          doctor: widget.doctor,
+    List<Appointment>? appointments =
+        await _patientRepository.getAppointments();
+    // the selected time must not coincide with another pre-scheduled appointment
+    if (bookingHour == null) {
+      if (appointments != null) {
+        if (appointments.any((element) =>
+            DateTime.parse(element.start!).toLocal() ==
+                DateTime.parse(_selectedBookingHour!.availability!).toLocal() &&
+            element.status == 'upcoming')) {
+          // show pop up whit the doctor information
+          // there will always be only one element
+          _existingSchedule(appointments.where((element) =>
+            DateTime.parse(element.start!).toLocal() ==
+                DateTime.parse(_selectedBookingHour!.availability!).toLocal() &&
+            element.status == 'upcoming').first.doctor!);
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BookingConfirmScreen(
+                bookingDate: _selectedBookingHour!,
+                doctor: widget.doctor,
+              ),
+            ),
+          );
+        }
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BookingConfirmScreen(
+              bookingDate: _selectedBookingHour!,
+              doctor: widget.doctor,
+            ),
+          ),
+        );
+      }
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BookingConfirmScreen(
+            bookingDate: bookingHour,
+            doctor: widget.doctor,
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   List<AppoinmentWithDateAndType> findAvailabilitesForDay(
@@ -103,14 +169,35 @@ class _BookingScreenState extends State<BookingScreen> {
       Response response = await dio
           .get("/doctors/${widget.doctor.id}/availability", queryParameters: {
         'start': date.toLocal().toIso8601String(),
-        'end': DateTime(date.year, date.month + 1, 1).toLocal().toIso8601String(),
+        'end':
+            DateTime(date.year, date.month + 1, 1).toLocal().toIso8601String(),
       });
+
+      List<Appointment>? appointments =
+          await _patientRepository.getAppointments();
 
       List<NextAvailability>? allAvailabilities = [];
       response.data['availabilities'].forEach((v) {
         allAvailabilities.add(NextAvailability.fromJson(v));
       });
 
+      // canceled or blocked appointments are not necessary
+      appointments?.removeWhere((element) => element.status != 'upcoming');
+
+      if (appointments != null) {
+        if (appointments.isNotEmpty) {
+          for (int i = 0; i < appointments.length; i++) {
+            print(
+                "disponible: ${DateTime.parse(allAvailabilities[0].availability!).toLocal()}");
+            print("cita: ${DateTime.parse(appointments[i].start!).toLocal()}");
+            allAvailabilities.removeWhere((element) =>
+                DateTime.parse(element.availability!).toLocal().compareTo(
+                    DateTime.parse(appointments[i].start!).toLocal()) ==
+                0);
+          }
+        }
+      }
+      
       List<AppoinmentWithDateAndType> allAvailabilitesDateTime =
           convertToDateTime(allAvailabilities);
 
@@ -138,9 +225,12 @@ class _BookingScreenState extends State<BookingScreen> {
             ? []
             : findAvailabilitesForDay(allAvailabilitesDateTime, firstDay);
         _availabilities = allAvailabilitesDateTime;
-        if (response.data['nextAvailability'] != null) {
-          nextAvailability =
-              NextAvailability.fromJson(response.data["nextAvailability"]);
+        if (allAvailabilities.isNotEmpty) {
+          nextAvailability = nextAvailability == null ?
+              NextAvailability(
+                availability: allAvailabilities.first.availability,
+                appointmentType: allAvailabilities.first.appointmentType
+              ) : nextAvailability;
         }
         selectedDate = firstDay;
         _loading = false;
@@ -263,7 +353,11 @@ class _BookingScreenState extends State<BookingScreen> {
                       Column(children: [
                         Center(
                           child: Text(
-                            DateFormat('dd MMMM yyyy', Localizations.localeOf(context).languageCode).format(selectedDate),
+                            DateFormat(
+                                    'dd MMMM yyyy',
+                                    Localizations.localeOf(context)
+                                        .languageCode)
+                                .format(selectedDate),
                             style: boldoHeadingTextStyle.copyWith(
                                 fontWeight: FontWeight.normal, fontSize: 14),
                           ),
@@ -534,7 +628,7 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
     final parsedAvailability =
         DateTime.parse(widget.nextAvailability).toLocal();
     // int daysDifference = parsedAvailability.difference(actualDay).inDays;
-      int daysDifference = daysBetween(actualDay,parsedAvailability);
+    int daysDifference = daysBetween(actualDay, parsedAvailability);
 
     // if (actualDay.month == parsedAvailability.month) {
     //   daysDifference = parsedAvailability.day - actualDay.day;
@@ -589,18 +683,18 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                               ),
                             ),
                             const Spacer(),
-                            if(widget
-                                    .doctor.nextAvailability != null)
-                            ShowDoctorAvailabilityIcon(
-                                filter: widget
-                                    .doctor.nextAvailability!.appointmentType!)
+                            if (widget.doctor.nextAvailability != null)
+                              ShowDoctorAvailabilityIcon(
+                                  filter: widget.doctor.nextAvailability!
+                                      .appointmentType!)
                           ],
                         ),
                         const SizedBox(
                           height: 4,
                         ),
                         Text(
-                          DateFormat('EEEE, dd MMMM', Localizations.localeOf(context).languageCode)
+                          DateFormat('EEEE, dd MMMM',
+                                  Localizations.localeOf(context).languageCode)
                               .format(parsedAvailability)
                               .capitalize(),
                           style: boldoSubTextStyle,
@@ -636,7 +730,8 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                     final chooseOption =
                         await _showPopupMenu(details.globalPosition);
                     if (chooseOption != null) {
-                      DateTime parsedAvailability = DateTime.parse(widget.nextAvailability).toLocal();
+                      DateTime parsedAvailability =
+                          DateTime.parse(widget.nextAvailability).toLocal();
                       if (chooseOption == 'En persona') {
                         widget.handleBookingHour(
                           NextAvailability(

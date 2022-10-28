@@ -751,9 +751,8 @@ class PastAppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int daysDifference = daysBetween(DateTime.now(),DateTime.parse(
-        appointment.start!)
-        .toLocal());
+    int daysDifference = daysBetween(DateTime.parse(
+        appointment.start!).toLocal(),DateTime.now());
     return GestureDetector(
       onTap: () async {
         await Navigator.push(
@@ -790,9 +789,7 @@ class PastAppointmentCard extends StatelessWidget {
                     // ),
                     const Spacer(),
                     Text(
-                      daysDifference == 0
-                          ? "hoy"
-                          : '${DateFormat('dd/MM/yy').format(DateTime.parse(appointment.start!).toLocal())}',
+                      passedDays(daysDifference),
                       style: boldoCorpSmallTextStyle
                           .copyWith(
                           color: ConstantsV2
