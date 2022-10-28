@@ -147,6 +147,32 @@ class FamilyMetodsAdd extends StatelessWidget {
                 ),
               ]
             ),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16.0, bottom: 16.0),
+              child: OutlinedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: OutlinedButtonTheme(
+                  data: boldoTheme.outlinedButtonTheme,
+                  child: const Text(
+                    'lo haré más tarde',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat'
+                    ),
+                  )
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(
+                    width: 1.0,
+                    color: ConstantsV2.orange
+                  )
+                ),
+              ),
+            ),
           )
         ]
       )
