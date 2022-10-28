@@ -118,7 +118,12 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                       bookingDate: widget.bookingDate,
                     )),
                   );
-                }else {
+                } else if (response.statusCode == 400) {
+                  setState(() {
+                    _loading = false;
+                    _error = "El turno ya no está disponible";
+                  });
+                } else {
                   setState(() {
                     _loading = false;
                     _error = response.data['message'];
@@ -129,7 +134,11 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                 print(exception.response?.data['message']);
                 setState(() {
                   _loading = false;
-                  _error = exception.response?.data['message'];
+                  if(exception.response?.statusCode == 400) {
+                    _error = "El turno ya no está disponible";
+                  } else {
+                    _error = exception.response?.data['message'];
+                  }
                 });
                 await Sentry.captureException(
                   exception,
