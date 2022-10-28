@@ -120,10 +120,17 @@ class _DoctorsTabState extends State<DoctorsTab> {
           doctors = [...doctors, ...doctorsList];
         }
         doctors.sort((a, b) {
-          if (b.nextAvailability == null || a.nextAvailability == null ) {
+          if (b.nextAvailability == null && a.nextAvailability == null) {
+            return 0;
+          }
+          if (a.nextAvailability == null) {
+            return 1;
+          }
+          if (b.nextAvailability == null) {
             return -1;
           }
-            return DateTime.parse(a.nextAvailability!.availability!).compareTo(DateTime.parse(b.nextAvailability!.availability!));
+          return DateTime.parse(a.nextAvailability!.availability!)
+              .compareTo(DateTime.parse(b.nextAvailability!.availability!));
         });
       }
     } on DioError catch (exception, stackTrace) {
