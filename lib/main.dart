@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
@@ -77,6 +79,8 @@ Future<void> main() async {
   // await dotenv.load(fileName: '.env');
 
   //GestureBinding.instance!.resamplingEnabled = true;
+  ByteData data = await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
+  SecurityContext.defaultContext.setTrustedCertificatesBytes(data.buffer.asUint8List());
 
   ConnectionStatusSingleton.getInstance().initialize();
 
