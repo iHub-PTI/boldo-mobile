@@ -182,21 +182,21 @@ class _BookingScreenState extends State<BookingScreen> {
       });
 
       // canceled or blocked appointments are not necessary
-      appointments?.removeWhere((element) => element.status != 'upcoming');
+      // appointments?.removeWhere((element) => element.status != 'upcoming' && element.status != "open");
 
-      if (appointments != null) {
-        if (appointments.isNotEmpty) {
-          for (int i = 0; i < appointments.length; i++) {
-            print(
-                "disponible: ${DateTime.parse(allAvailabilities[0].availability!).toLocal()}");
-            print("cita: ${DateTime.parse(appointments[i].start!).toLocal()}");
-            allAvailabilities.removeWhere((element) =>
-                DateTime.parse(element.availability!).toLocal().compareTo(
-                    DateTime.parse(appointments[i].start!).toLocal()) ==
-                0);
-          }
-        }
-      }
+      // if (appointments != null) {
+      //   if (appointments.isNotEmpty) {
+      //     for (int i = 0; i < appointments.length; i++) {
+      //       print(
+      //           "disponible: ${DateTime.parse(allAvailabilities[0].availability!).toLocal()}");
+      //       print("cita: ${DateTime.parse(appointments[i].start!).toLocal()}");
+      //       allAvailabilities.removeWhere((element) =>
+      //           DateTime.parse(element.availability!).toLocal().compareTo(
+      //               DateTime.parse(appointments[i].start!).toLocal()) ==
+      //           0);
+      //     }
+      //   }
+      // }
       
       List<AppoinmentWithDateAndType> allAvailabilitesDateTime =
           convertToDateTime(allAvailabilities);
