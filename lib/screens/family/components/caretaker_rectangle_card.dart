@@ -65,7 +65,7 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                           children: [
                             widget.isDependent
                                 ? Text(
-                              "${widget.patient!.givenName} ${widget.patient!.familyName}",
+                              "${widget.patient!.givenName?.split(' ')[0]} ${widget.patient!.familyName?.split(' ')[0]}",
                               style: boldoSubTextMediumStyle.copyWith(
                                   color: ConstantsV2.activeText
                               ),
