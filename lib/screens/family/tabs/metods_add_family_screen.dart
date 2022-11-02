@@ -141,6 +141,40 @@ class FamilyMetodsAdd extends StatelessWidget {
                             ),
                           ),
                         ),
+                        Card(
+                          margin: const EdgeInsets.all(16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          color: ConstantsV2.lightAndClear.withOpacity(0.80),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pushNamed(context, '/familyWithoutDniRegister');
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/icon/identification.svg',
+                                    color: ConstantsV2.activeText,
+                                  ),
+                                  const SizedBox(width: 10,),
+                                  Expanded(
+                                    child: Text(
+                                      "Si la persona aún no cuenta con un perfil y tampoco con cédula de identidad, deberás realizar el proceso siguiente.",
+                                      style: boldoCorpMediumTextStyle.copyWith(
+                                        color: ConstantsV2.activeText,
+                                      ),
+                                    )
+                                  )
+                                ],
+                              )
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
