@@ -16,6 +16,7 @@ import 'package:boldo/screens/family/tabs/defined_relationship_screen.dart';
 import 'package:boldo/screens/family/tabs/familyConnectTransition.dart';
 import 'package:boldo/screens/family/tabs/family_change_transition.dart';
 import 'package:boldo/screens/family/tabs/family_register_account.dart';
+import 'package:boldo/screens/family/tabs/family_without_dni_register.dart';
 import 'package:boldo/screens/family/tabs/metods_add_family_screen.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
@@ -221,6 +222,7 @@ class FullApp extends StatelessWidget {
         '/SignInSuccess': (context) => SingInTransition(),
         '/FamilyTransition': (context) => FamilyTransition(),
         '/familyDniRegister': (context) => DniFamilyRegister(),
+        '/familyWithoutDniRegister': (context) => WithoutDniFamilyRegister(),
         '/my_studies': (context) => MyStudies(),
         '/doctorsTab': (context) => DoctorsTab(),
         '/pastAppointmentsScreen': (context) => const PastAppointmentsScreen(),
