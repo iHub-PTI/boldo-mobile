@@ -217,12 +217,15 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                                     color: ConstantsV2.activeText
                                                                 ),
                                                               ),
-                                                              Text(
-                                                                "${widget.doctor.givenName?.split(' ')[0]?? ''} "
-                                                                    "${widget.doctor.familyName?.split(' ')[0]?? ''}, "
-                                                                    "${widget.doctor.specializations?.first.description?? ''}",
-                                                                style: boldoCorpMediumBlackTextStyle.copyWith(
-                                                                    color: ConstantsV2.activeText
+                                                              SingleChildScrollView(
+                                                                scrollDirection: Axis.horizontal,
+                                                                child: Text(
+                                                                  "${widget.doctor.givenName?.split(' ')[0]?? ''} "
+                                                                      "${widget.doctor.familyName?.split(' ')[0]?? ''}, "
+                                                                      "${widget.doctor.specializations?.first.description?? ''}",
+                                                                  style: boldoCorpMediumBlackTextStyle.copyWith(
+                                                                      color: ConstantsV2.activeText
+                                                                  ),
                                                                 ),
                                                               )
                                                             ],
