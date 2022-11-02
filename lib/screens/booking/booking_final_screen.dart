@@ -205,7 +205,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                           height: 20,
                                                         ),
                                                         const SizedBox(width: 6,),
-                                                        Container(
+                                                        Expanded(
                                                           child: Column(
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
