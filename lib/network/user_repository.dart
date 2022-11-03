@@ -328,6 +328,43 @@ class UserRepository {
     }
   }
 
+  Future<None>? linkWithoutCi(String givenName, String familyName,
+      String birthday, String gender, String identifier, String relationShipCode) async {
+    try {
+      Response response =
+          await dio.post("/profile/caretaker/dependent", data: {
+        'givenName': givenName,
+        'familyName': familyName,
+        'birthday': birthday,
+        'gender': gender,
+        'identifier': identifier,
+        'relationShipCode': relationShipCode
+      });
+      if (response.statusCode == 200) {
+        return const None();
+      } else if (response.statusCode == 400) {
+        throw Failure('La persona que desea añadir ya se encuentra como dependiente');
+      }
+      throw Failure(genericError);
+    } on DioError catch (ex) {
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": id,
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se pudo añadir al dependiente");
+    } catch (e) {
+      throw Failure(genericError);
+    }
+  }
+
   Future<None>? unlinkDependent(String id) async {
     try {
       Response response =
