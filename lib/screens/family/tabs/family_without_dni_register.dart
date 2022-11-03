@@ -237,6 +237,43 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                         return "Seleccione un género";
                       }
                     }),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              _relationLoaded
+                                  ? DropdownButtonFormField<String>(
+                                      value: relations[0],
+                                      hint: Text(
+                                        "Relación",
+                                        style: boldoSubTextMediumStyle.copyWith(
+                                            color: ConstantsV2.activeText),
+                                      ),
+                                      dropdownColor: ConstantsV2.lightGrey
+                                          .withOpacity(0.5),
+                                      style: boldoSubTextMediumStyle.copyWith(
+                                          color: Colors.black),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          relationShipCode = relationTypes.where(
+                                              (element) =>
+                                                  element.displaySpan == value).toList().first.code!;
+                                        });
+                                      },
+                                      items: relations
+                                          .map((relationship) =>
+                                              DropdownMenuItem<String>(
+                                                child: Text(relationship),
+                                                value: relationship,
+                                              ))
+                                          .toList(),
+                                      isExpanded: true,
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value == "relación") {
+                                          return "Seleccione la relación que tiene el dependiente";
+                                        }
+                                      })
+                                  : Container(),
               ],
             ),
           ),
