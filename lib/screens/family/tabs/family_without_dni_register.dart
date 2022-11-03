@@ -50,6 +50,45 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
+            child: BlocListener<FamilyBloc, FamilyState>(
+              listener: (context, state) async {
+                if (state is Loading) {
+                  setState(() {
+                    _loadingQuery = true;
+                  });
+                }
+                if (state is RelationLoading) {
+                  setState(() {
+                    _relationLoaded = false;
+                  });
+                }
+                if (state is Success) {
+                  setState(() {
+                    _loadingQuery = false;
+                  });
+                  //await Navigator.pushNamed(context, '/familyTransition');
+                }
+                if (state is RelationSuccess) {
+                  for (var i = 0; i < relationTypes.length; i++) {
+                    relations.add(relationTypes[i].displaySpan!);
+                  }
+                  setState(() {
+                    _relationLoaded = true;
+                  });
+                }
+                if (state is Failed) {
+                  setState(() {
+                    _loadingQuery = false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.response!),
+                      backgroundColor: Colors.redAccent,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
       child: Stack(children: [
         Container(
           decoration: const BoxDecoration(
