@@ -331,15 +331,16 @@ class UserRepository {
   Future<None>? linkWithoutCi(String givenName, String familyName,
       String birthday, String gender, String identifier, String relationShipCode) async {
     try {
-      Response response =
-          await dio.post("/profile/caretaker/dependent", data: {
+      var data = {
         'givenName': givenName,
         'familyName': familyName,
-        'birthday': birthday,
+        'birthDate': birthday,
         'gender': gender,
         'identifier': identifier,
-        'relationShipCode': relationShipCode
-      });
+        'relationshipCode': relationShipCode
+      };
+      Response response =
+        await dio.post("/profile/caretaker/dependent", data: jsonEncode(data));
       if (response.statusCode == 200) {
         return const None();
       } else if (response.statusCode == 400) {
