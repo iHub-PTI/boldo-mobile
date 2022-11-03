@@ -21,6 +21,7 @@ class LinkWithoutCi extends FamilyEvent {
       required this.relationShipCode});
 }
 
+class GetRelationShipCodes extends FamilyEvent {}
 class UnlinkDependent extends FamilyEvent {
   final String id;
   UnlinkDependent({required this.id});

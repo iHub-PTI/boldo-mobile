@@ -1,5 +1,6 @@
 
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/models/Relationship.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
@@ -181,6 +182,11 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
         } else {
           emit(Success());
         }
+      }
+      if (event is GetRelationShipCodes) {
+        emit(RelationLoading());
+        await _patientRepository.getRelationships();
+        emit(RelationSuccess());
       }
     });
   }
