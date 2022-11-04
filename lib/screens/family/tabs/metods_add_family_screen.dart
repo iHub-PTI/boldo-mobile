@@ -158,13 +158,13 @@ class FamilyMetodsAdd extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   SvgPicture.asset(
-                                    'assets/icon/identification.svg',
+                                    'assets/icon/form.svg',
                                     color: ConstantsV2.activeText,
                                   ),
                                   const SizedBox(width: 10,),
                                   Expanded(
                                     child: Text(
-                                      "Si la persona aún no cuenta con un perfil y tampoco con cédula de identidad, deberás realizar el proceso siguiente.",
+                                      "Si la persona aún no cuenta con un perfil y tampoco con cédula de identidad, deberás completar el siguiente formulario.",
                                       style: boldoCorpMediumTextStyle.copyWith(
                                         color: ConstantsV2.activeText,
                                       ),
