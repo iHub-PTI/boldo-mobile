@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:flutter/material.dart';
@@ -38,8 +40,10 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
   String familyName = "";
   String birthDate = "";
   String gender = "";
-  String relationShipCode = "";
-  List<String> genders = ["género", "femenino", "masculino", "otro"];
+  String relation = "";
+  String genderSelected = "sexo";
+  String relationSelected = "relación";
+  List<String> genders = ["sexo", "femenino", "masculino", "otro"];
   List<String> relations = ["relación"];
 
   @override
@@ -55,6 +59,34 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
     // TODO: implement dispose
     _fecha.dispose();
     super.dispose();
+  }
+
+  Future<void> _showMyDialog() async {
+    return showDialog(
+      context: context,
+      barrierDismissible: true, 
+      builder: (BuildContext context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: AlertDialog(
+            title: const Text('Atención!'),
+            content: const Text(
+                'Esta operación debe realizarse desde el perfil principal. Si el error persiste, por favor reinicie su sesión.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Entiendo'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+            shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(32.0))),
+            contentPadding: const EdgeInsets.all(16),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -162,10 +194,6 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                 decoration:
                                     const InputDecoration(hintText: "Nombre"),
                                 keyboardType: TextInputType.name,
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp(r'[a-zA-Z]'))
-                                ],
                                 onChanged: (value) {
                                   givenName = value;
                                 },
@@ -182,10 +210,6 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                 decoration:
                                     const InputDecoration(hintText: "Apellido"),
                                 keyboardType: TextInputType.name,
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp(r'[a-zA-Z]'))
-                                ],
                                 onChanged: (value) {
                                   familyName = value;
                                 },
@@ -250,8 +274,6 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                     style: boldoSubTextMediumStyle.copyWith(
                                         color: ConstantsV2.activeText),
                                   ),
-                                  dropdownColor:
-                                      ConstantsV2.lightGrey.withOpacity(0.5),
                                   style: boldoSubTextMediumStyle.copyWith(
                                       color: Colors.black),
                                   dropdownColor: Colors.white.withOpacity(0.85),
@@ -273,8 +295,8 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                       .toList(),
                                   isExpanded: true,
                                   validator: (value) {
-                                    if (value == null || value == "género") {
-                                      return "Seleccione un género";
+                                    if (value == null || value == "sexo") {
+                                      return "Seleccione el sexo";
                                     }
                                   }),
                               const SizedBox(
@@ -369,15 +391,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                               identifier: _identifier,
                                               relationShipCode: relation));
                                     } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                              'Por favor, intente esta operación desde el perfil principal.'),
-                                          backgroundColor: Colors.redAccent,
-                                          duration: Duration(seconds: 2),
-                                        ),
-                                      );
+                                      _showMyDialog();
                                     }
                                   }
                                 },
