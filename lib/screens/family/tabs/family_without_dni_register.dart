@@ -244,9 +244,9 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                 height: 20,
                               ),
                               DropdownButtonFormField<String>(
-                                  value: genders[0],
+                                  value: genderSelected,
                                   hint: Text(
-                                    "Género",
+                                    "Sexo",
                                     style: boldoSubTextMediumStyle.copyWith(
                                         color: ConstantsV2.activeText),
                                   ),
@@ -254,8 +254,10 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                       ConstantsV2.lightGrey.withOpacity(0.5),
                                   style: boldoSubTextMediumStyle.copyWith(
                                       color: Colors.black),
+                                  dropdownColor: Colors.white.withOpacity(0.85),
                                   onChanged: (value) {
                                     setState(() {
+                                      genderSelected = value!;
                                       value == "masculino"
                                           ? gender = "male"
                                           : value == "femenino"
@@ -280,21 +282,32 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                               ),
                               _relationLoaded
                                   ? DropdownButtonFormField<String>(
-                                      value: relations[0],
+                                      value: relationSelected,
                                       hint: Text(
                                         "Relación",
                                         style: boldoSubTextMediumStyle.copyWith(
                                             color: ConstantsV2.activeText),
                                       ),
-                                      dropdownColor: ConstantsV2.lightGrey
-                                          .withOpacity(0.5),
+                                      alignment: AlignmentDirectional.center,
                                       style: boldoSubTextMediumStyle.copyWith(
                                           color: Colors.black),
+                                      dropdownColor:
+                                          Colors.white.withOpacity(0.85),
                                       onChanged: (value) {
                                         setState(() {
-                                          relationShipCode = relationTypes.where(
-                                              (element) =>
-                                                  element.displaySpan == value).toList().first.code!;
+                                          relationSelected = value!;
+                                          // save to send
+                                          if (value != relations[0]) {
+                                            relation = relationTypes
+                                                .where((element) =>
+                                                    element.displaySpan ==
+                                                    value)
+                                                .toList()
+                                                .first
+                                                .code!;
+                                          } else {
+                                            relation = value;
+                                          }
                                         });
                                       },
                                       items: relations
@@ -354,8 +367,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                               birthDate: birthDate,
                                               gender: gender,
                                               identifier: _identifier,
-                                              relationShipCode:
-                                                  relationShipCode));
+                                              relationShipCode: relation));
                                     } else {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
