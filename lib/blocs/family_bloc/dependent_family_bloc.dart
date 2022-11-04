@@ -185,8 +185,20 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
       }
       if (event is GetRelationShipCodes) {
         emit(RelationLoading());
-        await _patientRepository.getRelationships();
-        emit(RelationSuccess());
+        var _post;
+        await Task(() => _patientRepository.getRelationships()!)
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        });
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(RelationFailed(response: response));
+        } else {
+          emit(RelationSuccess());
+        }
       }
     });
   }

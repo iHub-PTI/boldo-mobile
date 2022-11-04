@@ -101,6 +101,19 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                       duration: const Duration(seconds: 2),
                     ),
                   );
+                  
+                }
+                if (state is RelationFailed) {
+                  setState(() {
+                    _relationLoaded = false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.response!),
+                      backgroundColor: Colors.redAccent,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
                 }
               },
               child: Stack(children: [

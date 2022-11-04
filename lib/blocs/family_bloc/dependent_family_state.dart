@@ -13,6 +13,11 @@ class Failed extends FamilyState {
   Failed({required this.response});
 }
 
+class RelationFailed extends FamilyState {
+  final response;
+  RelationFailed({required this.response});
+}
+
 class RedirectNextScreen extends FamilyState {}
 
 class Success extends FamilyState {}
