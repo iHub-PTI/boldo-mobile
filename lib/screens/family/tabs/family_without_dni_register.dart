@@ -91,342 +91,349 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-        child: GestureDetector(
-            onTap: () {
-              FocusManager.instance.primaryFocus?.unfocus();
-            },
-            child: BlocListener<FamilyBloc, FamilyState>(
-              listener: (context, state) async {
-                if (state is Loading) {
-                  setState(() {
-                    _loadingQuery = true;
-                  });
-                }
-                if (state is RelationLoading) {
-                  setState(() {
-                    _relationLoaded = false;
-                  });
-                }
-                if (state is Success) {
-                  setState(() {
-                    _loadingQuery = false;
-                  });
-                  //await Navigator.pushNamed(context, '/familyTransition');
-                }
-                if (state is RelationSuccess) {
-                  for (var i = 0; i < relationTypes.length; i++) {
-                    relations.add(relationTypes[i].displaySpan!);
-                  }
-                  setState(() {
-                    _relationLoaded = true;
-                  });
-                }
-                if (state is Failed) {
-                  setState(() {
-                    _loadingQuery = false;
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.response!),
-                      backgroundColor: Colors.redAccent,
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                  
-                }
-                if (state is RelationFailed) {
-                  setState(() {
-                    _relationLoaded = false;
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.response!),
-                      backgroundColor: Colors.redAccent,
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                }
-              },
-              child: Stack(children: [
-                Container(
-                  decoration: const BoxDecoration(
-                      // Background linear gradient
-                      gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          colors: <Color>[
-                        ConstantsV2.primaryColor100,
-                        ConstantsV2.primaryColor200,
-                        ConstantsV2.primaryColor300,
-                      ],
-                          stops: <double>[
-                        ConstantsV2.primaryStop100,
-                        ConstantsV2.primaryStop200,
-                        ConstantsV2.primaryStop300,
-                      ])),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      extendBody: true,
+      body: GestureDetector(
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: BlocListener<FamilyBloc, FamilyState>(
+          listener: (context, state) async {
+            if (state is Loading) {
+              setState(() {
+                _loadingQuery = true;
+              });
+            }
+            if (state is RelationLoading) {
+              setState(() {
+                _relationLoaded = false;
+              });
+            }
+            if (state is Success) {
+              setState(() {
+                _loadingQuery = false;
+              });
+              //await Navigator.pushNamed(context, '/familyTransition');
+            }
+            if (state is RelationSuccess) {
+              for (var i = 0; i < relationTypes.length; i++) {
+                relations.add(relationTypes[i].displaySpan!);
+              }
+              setState(() {
+                _relationLoaded = true;
+              });
+            }
+            if (state is Failed) {
+              setState(() {
+                _loadingQuery = false;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.response!),
+                  backgroundColor: Colors.redAccent,
+                  duration: const Duration(seconds: 2),
                 ),
-                Opacity(
-                  opacity: 0.2,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: AssetImage(
-                              'assets/images/register_background.png')),
-                    ),
-                  ),
+              );
+              
+            }
+            if (state is RelationFailed) {
+              setState(() {
+                _relationLoaded = false;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.response!),
+                  backgroundColor: Colors.redAccent,
+                  duration: const Duration(seconds: 2),
                 ),
-                _relationLoaded
-                    ? Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 30.0),
+              );
+            }
+          },
+          child: Stack(children: [
+            Container(
+              decoration: const BoxDecoration(
+                  // Background linear gradient
+                  gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: <Color>[
+                    ConstantsV2.primaryColor100,
+                    ConstantsV2.primaryColor200,
+                    ConstantsV2.primaryColor300,
+                  ],
+                      stops: <double>[
+                    ConstantsV2.primaryStop100,
+                    ConstantsV2.primaryStop200,
+                    ConstantsV2.primaryStop300,
+                  ])),
+            ),
+            Opacity(
+              opacity: 0.2,
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage(
+                          'assets/images/register_background.png')),
+                ),
+              ),
+            ),
+            _relationLoaded
+                ? Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 30.0),
+                            child: SvgPicture.asset(
+                                'assets/icon/logo_text.svg'),
+                          ),
+                          const SizedBox(height: 40),
+                          TextFormField(
+                            decoration:
+                                const InputDecoration(hintText: "Nombre"),
+                            keyboardType: TextInputType.name,
+                            onChanged: (value) {
+                              givenName = value;
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Ingrese al menos un nombre";
+                              }
+                            },
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          TextFormField(
+                            decoration:
+                                const InputDecoration(hintText: "Apellido"),
+                            keyboardType: TextInputType.name,
+                            onChanged: (value) {
+                              familyName = value;
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Ingrese al menos un apellido";
+                              }
+                            },
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          TextFormField(
+                            controller: _fecha,
+                            inputFormatters: [
+                              UpperCaseTextFormatter(),
+                              MaskTextInputFormatter(
+                                  mask: "##/##/####",
+                                  type: MaskAutoCompletionType.eager)
+                            ],
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              hintText: "Fecha de nacimiento (dd/mm/yyyy)",
+                              suffixIcon: Align(
+                                widthFactor: 1.0,
+                                heightFactor: 1.0,
                                 child: SvgPicture.asset(
-                                    'assets/icon/logo_text.svg'),
-                              ),
-                              const SizedBox(height: 40),
-                              TextFormField(
-                                decoration:
-                                    const InputDecoration(hintText: "Nombre"),
-                                keyboardType: TextInputType.name,
-                                onChanged: (value) {
-                                  givenName = value;
-                                },
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Ingrese al menos un nombre";
-                                  }
-                                },
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              TextFormField(
-                                decoration:
-                                    const InputDecoration(hintText: "Apellido"),
-                                keyboardType: TextInputType.name,
-                                onChanged: (value) {
-                                  familyName = value;
-                                },
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Ingrese al menos un apellido";
-                                  }
-                                },
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              TextFormField(
-                                controller: _fecha,
-                                inputFormatters: [
-                                  UpperCaseTextFormatter(),
-                                  MaskTextInputFormatter(
-                                      mask: "##/##/####",
-                                      type: MaskAutoCompletionType.eager)
-                                ],
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  hintText: "Fecha de nacimiento (dd/mm/yyyy)",
-                                  suffixIcon: Align(
-                                    widthFactor: 1.0,
-                                    heightFactor: 1.0,
-                                    child: SvgPicture.asset(
-                                      'assets/icon/calendar.svg',
-                                      color: Constants.primaryColor100,
-                                      height: 20,
-                                    ),
-                                  ),
+                                  'assets/icon/calendar.svg',
+                                  color: Constants.primaryColor100,
+                                  height: 20,
                                 ),
-                                onChanged: (value) {
-                                  birthDate = value;
-                                },
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Ingrese la fecha de nacimiento";
-                                  } else {
-                                    try {
-                                      var inputFormat = DateFormat('dd/MM/yyy');
-                                      var outputFormat =
-                                          DateFormat('yyyy-MM-dd');
-                                      var date1 = inputFormat
-                                          .parse(value.toString().trim());
-                                      var date2 = outputFormat.format(date1);
-                                      birthDate = date2;
-                                    } catch (e) {
-                                      return 'El formato debe ser "dd/MM/yyyy" ';
-                                    }
-                                  }
-                                },
                               ),
-                              const SizedBox(
-                                height: 20,
+                            ),
+                            onChanged: (value) {
+                              birthDate = value;
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Ingrese la fecha de nacimiento";
+                              } else {
+                                try {
+                                  var inputFormat = DateFormat('dd/MM/yyy');
+                                  var outputFormat =
+                                      DateFormat('yyyy-MM-dd');
+                                  var date1 = inputFormat
+                                      .parse(value.toString().trim());
+                                  var date2 = outputFormat.format(date1);
+                                  birthDate = date2;
+                                } catch (e) {
+                                  return 'El formato debe ser "dd/MM/yyyy" ';
+                                }
+                              }
+                            },
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          DropdownButtonFormField<String>(
+                              value: genderSelected,
+                              hint: Text(
+                                "Sexo",
+                                style: boldoSubTextMediumStyle.copyWith(
+                                    color: ConstantsV2.activeText),
                               ),
-                              DropdownButtonFormField<String>(
-                                  value: genderSelected,
+                              style: boldoSubTextMediumStyle.copyWith(
+                                  color: Colors.black),
+                              dropdownColor: Colors.white.withOpacity(0.85),
+                              onChanged: (value) {
+                                setState(() {
+                                  genderSelected = value!;
+                                  value == "masculino"
+                                      ? gender = "male"
+                                      : value == "femenino"
+                                          ? gender = "female"
+                                          : gender = "other";
+                                });
+                              },
+                              items: genders
+                                  .map((gender) => DropdownMenuItem<String>(
+                                        child: Text(gender),
+                                        value: gender,
+                                      ))
+                                  .toList(),
+                              isExpanded: true,
+                              validator: (value) {
+                                if (value == null || value == "sexo") {
+                                  return "Seleccione el sexo";
+                                }
+                              }),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          _relationLoaded
+                              ? DropdownButtonFormField<String>(
+                                  value: relationSelected,
                                   hint: Text(
-                                    "Sexo",
+                                    "Relación",
                                     style: boldoSubTextMediumStyle.copyWith(
                                         color: ConstantsV2.activeText),
                                   ),
+                                  alignment: AlignmentDirectional.center,
                                   style: boldoSubTextMediumStyle.copyWith(
                                       color: Colors.black),
-                                  dropdownColor: Colors.white.withOpacity(0.85),
+                                  dropdownColor:
+                                      Colors.white.withOpacity(0.85),
                                   onChanged: (value) {
                                     setState(() {
-                                      genderSelected = value!;
-                                      value == "masculino"
-                                          ? gender = "male"
-                                          : value == "femenino"
-                                              ? gender = "female"
-                                              : gender = "other";
+                                      relationSelected = value!;
+                                      // save to send
+                                      if (value != relations[0]) {
+                                        relation = relationTypes
+                                            .where((element) =>
+                                                element.displaySpan ==
+                                                value)
+                                            .toList()
+                                            .first
+                                            .code!;
+                                      } else {
+                                        relation = value;
+                                      }
                                     });
                                   },
-                                  items: genders
-                                      .map((gender) => DropdownMenuItem<String>(
-                                            child: Text(gender),
-                                            value: gender,
+                                  items: relations
+                                      .map((relationship) =>
+                                          DropdownMenuItem<String>(
+                                            child: Text(relationship),
+                                            value: relationship,
                                           ))
                                       .toList(),
                                   isExpanded: true,
                                   validator: (value) {
-                                    if (value == null || value == "sexo") {
-                                      return "Seleccione el sexo";
+                                    if (value == null ||
+                                        value == "relación") {
+                                      return "Seleccione la relación que tiene el dependiente";
                                     }
-                                  }),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              _relationLoaded
-                                  ? DropdownButtonFormField<String>(
-                                      value: relationSelected,
-                                      hint: Text(
-                                        "Relación",
-                                        style: boldoSubTextMediumStyle.copyWith(
-                                            color: ConstantsV2.activeText),
-                                      ),
-                                      alignment: AlignmentDirectional.center,
-                                      style: boldoSubTextMediumStyle.copyWith(
-                                          color: Colors.black),
-                                      dropdownColor:
-                                          Colors.white.withOpacity(0.85),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          relationSelected = value!;
-                                          // save to send
-                                          if (value != relations[0]) {
-                                            relation = relationTypes
-                                                .where((element) =>
-                                                    element.displaySpan ==
-                                                    value)
-                                                .toList()
-                                                .first
-                                                .code!;
-                                          } else {
-                                            relation = value;
-                                          }
-                                        });
-                                      },
-                                      items: relations
-                                          .map((relationship) =>
-                                              DropdownMenuItem<String>(
-                                                child: Text(relationship),
-                                                value: relationship,
-                                              ))
-                                          .toList(),
-                                      isExpanded: true,
-                                      validator: (value) {
-                                        if (value == null ||
-                                            value == "relación") {
-                                          return "Seleccione la relación que tiene el dependiente";
-                                        }
-                                      })
-                                  : Container(),
-                            ],
-                          ),
-                        ),
-                      )
-                    : const Center(child: CircularProgressIndicator()),
-                _relationLoaded
-                    ? Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              OutlinedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: OutlinedButtonTheme(
-                                    data: boldoTheme.outlinedButtonTheme,
-                                    child: const Text(
-                                      'lo haré más tarde',
-                                      style:
-                                          TextStyle(fontFamily: 'Montserrat'),
-                                    )),
-                                style: OutlinedButton.styleFrom(
-                                    side: const BorderSide(
-                                        width: 1.0, color: ConstantsV2.orange)),
-                              ),
-                              const SizedBox(width: 10),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    String _identifier =
-                                        prefs.getString('identifier') ?? '';
-                                    if (_identifier != '') {
-                                      BlocProvider.of<FamilyBloc>(context).add(
-                                          LinkWithoutCi(
-                                              givenName: givenName,
-                                              familyName: familyName,
-                                              birthDate: birthDate,
-                                              gender: gender,
-                                              identifier: _identifier,
-                                              relationShipCode: relation));
-                                    } else {
-                                      _showMyDialog();
-                                    }
-                                  }
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text('siguiente'),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: _loadingQuery
-                                          ? Container(
-                                              height: 10,
-                                              width: 10,
-                                              child:
-                                                  const CircularProgressIndicator(
-                                                color: Colors.white,
-                                                strokeWidth: 2.0,
-                                              ))
-                                          : SvgPicture.asset(
-                                              'assets/icon/arrow-right.svg'),
-                                    )
-                                  ],
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  maximumSize: const Size(150, 80),
-                                  shape: const StadiumBorder(),
-                                  primary: ConstantsV2.buttonPrimaryColor100,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : const Center(child: CircularProgressIndicator()),
-              ]),
-            )));
+                                  })
+                              : Container(),
+                        ],
+                      ),
+                    ),
+                  )
+                : const Center(child: CircularProgressIndicator()),
+          ]),
+        )
+      ),
+      persistentFooterButtons: [
+        _relationLoaded
+          ? Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    OutlinedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: OutlinedButtonTheme(
+                          data: boldoTheme.outlinedButtonTheme,
+                          child: const Text(
+                            'lo haré más tarde',
+                            style:
+                                TextStyle(fontFamily: 'Montserrat'),
+                          )),
+                      style: OutlinedButton.styleFrom(
+                          side: const BorderSide(
+                              width: 1.0, color: ConstantsV2.orange)),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          String _identifier =
+                              prefs.getString('identifier') ?? '';
+                          if (_identifier != '') {
+                            BlocProvider.of<FamilyBloc>(context).add(
+                                LinkWithoutCi(
+                                    givenName: givenName,
+                                    familyName: familyName,
+                                    birthDate: birthDate,
+                                    gender: gender,
+                                    identifier: _identifier,
+                                    relationShipCode: relation));
+                          } else {
+                            _showMyDialog();
+                          }
+                        }
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('siguiente'),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: _loadingQuery
+                                ? Container(
+                                    height: 10,
+                                    width: 10,
+                                    child:
+                                        const CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2.0,
+                                    ))
+                                : SvgPicture.asset(
+                                    'assets/icon/arrow-right.svg'),
+                          )
+                        ],
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        maximumSize: const Size(150, 80),
+                        shape: const StadiumBorder(),
+                        primary: ConstantsV2.buttonPrimaryColor100,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : const Center(child: CircularProgressIndicator()),
+      ],    
+    );
+  
   }
 }
