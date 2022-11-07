@@ -360,7 +360,7 @@ class UserRepository {
           }
         ],
       );
-      throw Failure("No se pudo añadir al dependiente");
+      throw Failure("No se pudo añadir al dependiente. Por favor, reintente más tarde.");
     } catch (e) {
       throw Failure(genericError);
     }
