@@ -65,6 +65,7 @@ class UserRepository {
           prefs.setString("userId", patient.id ?? '');
           await prefs.setString("name", response.data['givenName']!= null ? toLowerCase(response.data['givenName']!) : '');
           await prefs.setString("lastName", response.data['familyName']!= null ? toLowerCase(response.data['familyName']!) : '');
+          await prefs.setString("identifier", response.data['identifier'] ?? '');
         }
         return const None();
       }
