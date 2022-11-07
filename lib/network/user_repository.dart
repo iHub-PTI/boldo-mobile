@@ -344,8 +344,6 @@ class UserRepository {
         await dio.post("/profile/caretaker/dependent", data: jsonEncode(data));
       if (response.statusCode == 200) {
         return const None();
-      } else if (response.statusCode == 400) {
-        throw Failure('La persona que desea añadir ya se encuentra como dependiente');
       }
       throw Failure(genericError);
     } on DioError catch (ex) {
