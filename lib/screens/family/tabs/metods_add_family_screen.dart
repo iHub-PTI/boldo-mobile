@@ -28,9 +28,11 @@ class FamilyMetodsAdd extends StatelessWidget {
         body: Stack(
         children: [
           const Background(text: "linkFamily"),
-          SafeArea(
-            child: Column(
-              children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 85.0),
+              child: Column(children: [
                 Container(
                   margin: const EdgeInsets.all(16),
                   child: Row(
