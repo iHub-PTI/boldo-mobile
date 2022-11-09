@@ -6,6 +6,7 @@ import 'package:boldo/screens/dashboard/tabs/home_tab.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/dashboard/tabs/settings_tab.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:move_to_background/move_to_background.dart';
 
 import '../../main.dart';
 
@@ -52,6 +53,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: () async {
+          MoveToBackground.moveTaskToBack();
           return false;
         },
         child: Scaffold(
