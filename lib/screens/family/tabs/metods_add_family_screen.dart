@@ -10,8 +10,22 @@ class FamilyMetodsAdd extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Stack(
+    return Scaffold(
+        floatingActionButton: OutlinedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: OutlinedButtonTheme(
+              data: boldoTheme.outlinedButtonTheme,
+              child: const Text(
+                'lo haré más tarde',
+                style: TextStyle(fontFamily: 'Montserrat'),
+              )),
+          style: OutlinedButton.styleFrom(
+              side: const BorderSide(width: 1.0, color: ConstantsV2.orange)),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        body: Stack(
         children: [
           const Background(text: "linkFamily"),
           SafeArea(
