@@ -96,12 +96,9 @@ class FamilyMetodsAdd extends StatelessWidget {
                             const SizedBox(
                               width: 10,
                             ),
-                            Flexible(
+                            Expanded(
                                 child: Text(
-                              "Si la persona a la que querés agregar ya "
-                              "cuenta con un perfil en Boldo, pedile "
-                              "que genere una QR dentro de la app. "
-                              "Escaneá y listo.",
+                              "Si la persona a la que querés agregar ya cuenta con un perfil en Boldo, pedile que genere una QR dentro de la app. Escaneá y listo.",
                               style: boldoCorpMediumTextStyle.copyWith(
                                 color: ConstantsV2.activeText,
                               ),
@@ -133,11 +130,9 @@ class FamilyMetodsAdd extends StatelessWidget {
                             const SizedBox(
                               width: 10,
                             ),
-                            Flexible(
+                            Expanded(
                                 child: Text(
-                              "Si la persona aún no cuenta con un "
-                              "perfil, deberás realizar el proceso "
-                              "de verificación de identidad.",
+                              "Si la persona aún no cuenta con un perfil, deberás realizar el proceso de verificación de identidad.",
                               style: boldoCorpMediumTextStyle.copyWith(
                                 color: ConstantsV2.activeText,
                               ),
