@@ -36,15 +36,17 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
   bool _loadingQuery = false;
   bool _relationLoaded = false;
   final _fecha = TextEditingController();
+  final _nameController = TextEditingController();
+  final _familyNameController = TextEditingController();
   String givenName = "";
   String familyName = "";
   String birthDate = "";
   String gender = "";
   String relation = "";
-  String genderSelected = "sexo";
-  String relationSelected = "relación";
-  List<String> genders = ["sexo", "femenino", "masculino", "otro"];
-  List<String> relations = ["relación"];
+  String? genderSelected;
+  String? relationSelected;
+  List<String> genders = ["femenino", "masculino"];
+  List<String> relations = [];
 
   @override
   void initState() {
@@ -58,6 +60,8 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
   void dispose() {
     // TODO: implement dispose
     _fecha.dispose();
+    _nameController.dispose();
+    _familyNameController.dispose();
     super.dispose();
   }
 
@@ -196,6 +200,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                               ),
                               const SizedBox(height: 40),
                               TextFormField(
+                                controller: _nameController,
                                 decoration:
                                     const InputDecoration(hintText: "Nombre"),
                                 keyboardType: TextInputType.name,
@@ -203,6 +208,9 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                   givenName = value;
                                 },
                                 validator: (value) {
+                                  //remove unnecessary spaces
+                                  value = value?.trimLeft().trimRight() ?? '';
+                                  _nameController.text = value.trimLeft().trimRight() ?? '';
                                   if (value == null || value.isEmpty) {
                                     return "Ingrese al menos un nombre";
                                   }
@@ -212,6 +220,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                 height: 20,
                               ),
                               TextFormField(
+                                controller: _familyNameController,
                                 decoration:
                                     const InputDecoration(hintText: "Apellido"),
                                 keyboardType: TextInputType.name,
@@ -219,6 +228,9 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                   familyName = value;
                                 },
                                 validator: (value) {
+                                  //remove unnecessary spaces
+                                  value = value?.trimLeft().trimRight() ?? '';
+                                  _familyNameController.text = value.trimLeft().trimRight() ?? '';
                                   if (value == null || value.isEmpty) {
                                     return "Ingrese al menos un apellido";
                                   }
