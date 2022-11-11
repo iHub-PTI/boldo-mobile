@@ -345,6 +345,19 @@ class UserRepository {
       if (response.statusCode == 200) {
         return const None();
       }
+      // send unknown status code to sentry
+      await Sentry.captureMessage(
+        'Status code unknown',
+        params: [
+          {
+            "path": response.realUri,
+            "data": response.data,
+            "patient": prefs.getString("userId"),
+            "responseError": response.data,
+            "status": response.statusCode,
+          }
+        ],
+      );
       throw Failure(genericError);
     } on DioError catch (ex) {
       await Sentry.captureMessage(
@@ -354,13 +367,14 @@ class UserRepository {
             "path": ex.requestOptions.path,
             "data": ex.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "dependentId": id,
             "responseError": ex.response?.data,
           }
         ],
       );
       throw Failure("No se pudo añadir al dependiente. Por favor, reintente más tarde.");
-    } catch (e) {
+    } catch (e, stackTrace) {
+      // send error to sentry
+      await Sentry.captureException(e, stackTrace: stackTrace);
       throw Failure(genericError);
     }
   }
