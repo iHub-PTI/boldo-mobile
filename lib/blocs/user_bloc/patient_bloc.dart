@@ -30,8 +30,6 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
-          // Do not change from user to dependent and vice versa
-          await prefs.setBool(isFamily,! prefs.getBool(isFamily)!);
           await Future.delayed(const Duration(seconds: 2));
           emit(RedirectBackScreen());
         }else{
