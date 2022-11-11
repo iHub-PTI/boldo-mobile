@@ -85,7 +85,7 @@ Future<void> main() async {
   ConnectionStatusSingleton.getInstance().initialize();
 
   prefs = await SharedPreferences.getInstance();
-  prefs.setBool(isFamily, prefs.getBool(isFamily) ?? false);
+  prefs.setBool(isFamily, false);
 
   initDio(navKey: navKey, dio: dio);
   const storage = FlutterSecureStorage();
