@@ -210,7 +210,8 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                 validator: (value) {
                                   //remove unnecessary spaces
                                   value = value?.trimLeft().trimRight() ?? '';
-                                  _nameController.text = value.trimLeft().trimRight() ?? '';
+                                  _nameController.text =
+                                      value.trimLeft().trimRight() ?? '';
                                   if (value == null || value.isEmpty) {
                                     return "Ingrese al menos un nombre";
                                   }
@@ -230,7 +231,8 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                 validator: (value) {
                                   //remove unnecessary spaces
                                   value = value?.trimLeft().trimRight() ?? '';
-                                  _familyNameController.text = value.trimLeft().trimRight() ?? '';
+                                  _familyNameController.text =
+                                      value.trimLeft().trimRight() ?? '';
                                   if (value == null || value.isEmpty) {
                                     return "Ingrese al menos un apellido";
                                   }
@@ -387,9 +389,12 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                         },
                         child: OutlinedButtonTheme(
                             data: boldoTheme.outlinedButtonTheme,
-                            child: const Text(
+                            child: Text(
                               'lo haré más tarde',
-                              style: TextStyle(fontFamily: 'Montserrat'),
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: MediaQuery.of(context).size.width >= 400 ? 16 : 12,
+                              ),
                             )),
                         style: OutlinedButton.styleFrom(
                             side: const BorderSide(
@@ -418,7 +423,12 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text('siguiente'),
+                            Text(
+                              'siguiente',
+                              style: TextStyle(
+                                fontSize: MediaQuery.of(context).size.width >= 400 ? 16 : 12,
+                              ),
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: _loadingQuery
@@ -435,7 +445,10 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                           ],
                         ),
                         style: ElevatedButton.styleFrom(
-                          maximumSize: const Size(150, 80),
+                          maximumSize: Size(
+                            MediaQuery.of(context).size.width >= 400 ? 150 : 120, 
+                            80
+                          ),
                           shape: const StadiumBorder(),
                           primary: ConstantsV2.buttonPrimaryColor100,
                         ),
