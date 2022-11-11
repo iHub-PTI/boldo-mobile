@@ -115,6 +115,8 @@ PODS:
   - mobile_scanner (0.0.1):
     - Flutter
     - GoogleMLKit/BarcodeScanning (~> 2.6.0)
+  - move_to_background (0.0.1):
+    - Flutter
   - nanopb (2.30909.0):
     - nanopb/decode (= 2.30909.0)
     - nanopb/encode (= 2.30909.0)
@@ -167,6 +169,7 @@ DEPENDENCIES:
   - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - mobile_scanner (from `.symlinks/plugins/mobile_scanner/ios`)
+  - move_to_background (from `.symlinks/plugins/move_to_background/ios`)
   - native_device_orientation (from `.symlinks/plugins/native_device_orientation/ios`)
   - open_filex (from `.symlinks/plugins/open_filex/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
@@ -226,6 +229,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   mobile_scanner:
     :path: ".symlinks/plugins/mobile_scanner/ios"
+  move_to_background:
+    :path: ".symlinks/plugins/move_to_background/ios"
   native_device_orientation:
     :path: ".symlinks/plugins/native_device_orientation/ios"
   open_filex:
@@ -273,6 +278,7 @@ SPEC CHECKSUMS:
   MLKitCommon: 3bc17c6f7d25ce3660f030350b46ae7ec9ebca6e
   MLKitVision: e87dc3f2e456a6ab32361ebd985e078dd2746143
   mobile_scanner: 073e39c0c96360297389f4db68e4297a1fa58349
+  move_to_background: 39a5b79b26d577b0372cbe8a8c55e7aa9fcd3a2d
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   native_device_orientation: 3b4cfc9565a7b879cc4fde282b3e27745e852d0d
   open_filex: 6e26e659846ec990262224a12ef1c528bb4edbe4
