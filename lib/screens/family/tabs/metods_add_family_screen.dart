@@ -31,7 +31,12 @@ class FamilyMetodsAdd extends StatelessWidget {
           SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 85.0),
+              padding: EdgeInsets.only(
+                bottom: 85.0,
+                top: MediaQuery.of(context).size.height >= 600
+                  ? 20
+                  : 0
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -49,7 +54,14 @@ class FamilyMetodsAdd extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                    margin: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height >= 600
+                        ? MediaQuery.of(context).size.height*0.01
+                        : 0,
+                      left: 16,
+                      right: 16,
+                      bottom: 16
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -65,7 +77,13 @@ class FamilyMetodsAdd extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 16.0, left: 16.0),
+                    padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height >= 600
+                        ? MediaQuery.of(context).size.height*0.02
+                        : 0,
+                      right: 16.0,
+                      left: 16.0  
+                    ),
                     child: Text(
                       "Elegí uno de los siguiente métodos",
                       style: boldoCorpMediumBlackTextStyle.copyWith(
@@ -73,7 +91,14 @@ class FamilyMetodsAdd extends StatelessWidget {
                     ),
                   ),
                   Card(
-                    margin: const EdgeInsets.only(top: 16, right: 16, left: 16),
+                    margin:  EdgeInsets.only(
+                      top: 16,
+                      right: 16,
+                      left: 16,
+                      bottom: MediaQuery.of(context).size.height >= 600
+                        ? MediaQuery.of(context).size.height*0.01
+                        : 0
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -110,7 +135,14 @@ class FamilyMetodsAdd extends StatelessWidget {
                     ),
                   ),
                   Card(
-                    margin: const EdgeInsets.only(top: 16, right: 16, left: 16),
+                    margin:  EdgeInsets.only(
+                      top: 16,
+                      right: 16,
+                      left: 16,
+                      bottom: MediaQuery.of(context).size.height >= 600
+                        ? MediaQuery.of(context).size.height*0.01
+                        : 0
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -144,7 +176,14 @@ class FamilyMetodsAdd extends StatelessWidget {
                     ),
                   ),
                   Card(
-                    margin: const EdgeInsets.only(top: 16, right: 16, left: 16),
+                    margin:  EdgeInsets.only(
+                      top: 16,
+                      right: 16,
+                      left: 16,
+                      bottom: MediaQuery.of(context).size.height >= 600
+                        ? MediaQuery.of(context).size.height*0.01
+                        : 0
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
