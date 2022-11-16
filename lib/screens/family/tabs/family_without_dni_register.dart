@@ -338,17 +338,13 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                         setState(() {
                                           relationSelected = value!;
                                           // save to send
-                                          if (value != relations[0]) {
-                                            relation = relationTypes
-                                                .where((element) =>
-                                                    element.displaySpan ==
-                                                    value)
-                                                .toList()
-                                                .first
-                                                .code!;
-                                          } else {
-                                            relation = value;
-                                          }
+                                          relation = relationTypes
+                                              .where((element) =>
+                                                  element.displaySpan ==
+                                                  value)
+                                              .toList()
+                                              .first
+                                              .code!;
                                         });
                                       },
                                       items: relations
