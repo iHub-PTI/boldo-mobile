@@ -118,6 +118,13 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                 setState(() {
                   _loadingQuery = false;
                 });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(dependentSuccessAdded),
+                    backgroundColor: ConstantsV2.green,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/home', (route) => false);
               }
@@ -420,7 +427,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'siguiente',
+                              'confirmar',
                               style: TextStyle(
                                 fontSize: MediaQuery.of(context).size.width >= 400 ? 16 : 12,
                               ),
