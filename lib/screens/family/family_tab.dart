@@ -75,7 +75,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
             SafeArea(
               child: Container(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
                       margin: const EdgeInsets.only(right: 10),
@@ -102,28 +102,32 @@ class _FamilyScreenState extends State<FamilyScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width-16,
-                              child: Column(children: [
-                            const FamilyRectangleCard(isDependent: false)
-                          ])),
-                          Container(
-                            height: MediaQuery.of(context).size.height * 0.45,
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            alignment: Alignment.topLeft,
-                            child: families.length > 0
-                                ? ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: families.length,
-                                    padding: const EdgeInsets.all(8),
-                                    scrollDirection: Axis.vertical,
-                                    itemBuilder: _buildItem,
-                                  )
-                                : const EmptyStateV2(
-                                    picture: "Helping old man 1.svg",
-                                    textBottom:
-                                        "Aún no agregaste ningún perfil para gestionar",
-                                  ),
+                          Column(
+                            children: [
+                              Container(
+                                  width: MediaQuery.of(context).size.width-16,
+                                  child: Column(children: [
+                                    const FamilyRectangleCard(isDependent: false)
+                                  ])),
+                              Container(
+                                height: MediaQuery.of(context).size.height * 0.60,
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                alignment: Alignment.topLeft,
+                                child: families.length > 0
+                                    ? ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: families.length,
+                                  padding: const EdgeInsets.all(8),
+                                  scrollDirection: Axis.vertical,
+                                  itemBuilder: _buildItem,
+                                )
+                                    : const EmptyStateV2(
+                                  picture: "Helping old man 1.svg",
+                                  textBottom:
+                                  "Aún no agregaste ningún perfil para gestionar",
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(
                             height: 10,
