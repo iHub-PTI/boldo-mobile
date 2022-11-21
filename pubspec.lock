@@ -236,14 +236,14 @@ packages:
       name: flutter_appauth
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.4.1"
+    version: "4.2.1"
   flutter_appauth_platform_interface:
     dependency: transitive
     description:
       name: flutter_appauth_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.1.0"
+    version: "5.2.0"
   flutter_bloc:
     dependency: "direct main"
     description:
