@@ -118,6 +118,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                 setState(() {
                   _loadingQuery = false;
                 });
+                BlocProvider.of<FamilyBloc>(context).add(GetFamilyList());
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text(dependentSuccessAdded),
