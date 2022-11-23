@@ -198,7 +198,7 @@ class _NewStudyState extends State<NewStudy> {
                             return null;
                           },
                           decoration: InputDecoration(
-                            hintText: "31/12/2020",
+                            hintText: DateFormat('dd/MM/yyyy').format(DateTime.now()),
                             suffixIcon: Align(
                               widthFactor: 1.0,
                               heightFactor: 1.0,

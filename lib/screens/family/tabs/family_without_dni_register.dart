@@ -259,7 +259,8 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                 ],
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
-                                  hintText: "Fecha de nacimiento (dd/mm/yyyy)",
+                                  hintText: DateFormat('dd/MM/yyyy').format(DateTime.now()),
+                                  labelText: "Fecha de nacimiento (dd/mm/yyyy)",
                                   suffixIcon: Align(
                                     widthFactor: 1.0,
                                     heightFactor: 1.0,
