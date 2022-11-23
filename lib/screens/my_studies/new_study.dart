@@ -1,5 +1,6 @@
 import 'package:boldo/main.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:flutter/material.dart';
@@ -189,10 +190,20 @@ class _NewStudyState extends State<NewStudy> {
                                 // use parseStrict to not accept overflow date
                                 var date1 = inputFormat
                                     .parseStrict(value.toString().trim());
+                                // date with year inf to 1000
+                                if(date1.isBefore(minDateDigit)){
+                                  throw Failure('El formato debe ser "dd/mm/yyyy" ');
+                                }else if(date1.isBefore(minDate)){
+                                  throw Failure('Fecha inferior al minimo ${inputFormat.format(minDate)}');
+                                }else if(date1.isAfter(DateTime.now())){
+                                  throw Failure('Fecha superior a la actual');
+                                }
                                 var date2 = outputFormat.format(date1);
                                 fecha = date2;
+                              } on Failure catch (e) {
+                                return e.message;
                               } catch (e) {
-                                return "El formato de la fecha debe ser (dd/MM/yyyy)";
+                                return 'El formato debe ser "dd/mm/yyyy" ';
                               }
                             }
                             return null;
