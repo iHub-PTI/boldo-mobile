@@ -65,6 +65,7 @@ class UserRepository {
           prefs.setString("userId", patient.id ?? '');
           await prefs.setString("name", response.data['givenName']!= null ? toLowerCase(response.data['givenName']!) : '');
           await prefs.setString("lastName", response.data['familyName']!= null ? toLowerCase(response.data['familyName']!) : '');
+          await prefs.setString("identifier", response.data['identifier'] ?? '');
         }
         return const None();
       }
@@ -324,6 +325,56 @@ class UserRepository {
       );
       throw Failure("Error al asociar al familiar");
     } catch (e) {
+      throw Failure(genericError);
+    }
+  }
+
+  Future<None>? linkWithoutCi(String givenName, String familyName,
+      String birthday, String gender, String identifier, String relationShipCode) async {
+    try {
+      var data = {
+        'givenName': givenName,
+        'familyName': familyName,
+        'birthDate': birthday,
+        'gender': gender,
+        'identifier': identifier,
+        'relationshipCode': relationShipCode
+      };
+      Response response =
+        await dio.post("/profile/caretaker/dependent", data: jsonEncode(data));
+      if (response.statusCode == 200) {
+        return const None();
+      }
+      // send unknown status code to sentry
+      await Sentry.captureMessage(
+        'Status code unknown',
+        params: [
+          {
+            "path": response.realUri,
+            "data": response.data,
+            "patient": prefs.getString("userId"),
+            "responseError": response.data,
+            "status": response.statusCode,
+          }
+        ],
+      );
+      throw Failure(genericError);
+    } on DioError catch (ex) {
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "responseError": ex.response?.data,
+          }
+        ],
+      );
+      throw Failure("No se pudo añadir al dependiente. Por favor, reintente más tarde.");
+    } catch (e, stackTrace) {
+      // send error to sentry
+      await Sentry.captureException(e, stackTrace: stackTrace);
       throw Failure(genericError);
     }
   }
