@@ -87,74 +87,81 @@ class _MenuScreenState extends State<MenuScreen> {
                       ],
                     ),
                   ),
-                  Container(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          child :Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    onTap: (){
-                                      Navigator.pushNamed(context, '/profileScreen');
-                                    },
-                                    child: const ProfileImageView(height: 170, width: 170, border: true),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 15,),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "${patient.givenName??''} ${patient.familyName??''}",
-                                    style: boldoTitleRegularTextStyle,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 30,),
-                            ]
-                          )
-                        ),
-                        Container(
-                          alignment: Alignment.topLeft,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: items.length,
-                            padding: const EdgeInsets.all(16),
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: _buildItem,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      child: Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Container(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: TextButton.icon(
-                            onPressed: () {
-                              UserRepository().logout(context);
-                            },
-                            icon: SvgPicture.asset(
-                              "assets/icon/power-settings-new.svg",
-                              color: ConstantsV2.yellow,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Container(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                    child :Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: (){
+                                                  Navigator.pushNamed(context, '/profileScreen');
+                                                },
+                                                child: const ProfileImageView(height: 170, width: 170, border: true),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 15,),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "${patient.givenName??''} ${patient.familyName??''}",
+                                                style: boldoTitleRegularTextStyle,
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 30,),
+                                        ]
+                                    )
+                                ),
+                                Container(
+                                  alignment: Alignment.topLeft,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: items.length,
+                                    padding: const EdgeInsets.all(16),
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder: _buildItem,
+                                    physics: const ClampingScrollPhysics(),
+                                  ),
+                                ),
+                              ],
                             ),
-                            label: Text(
-                              "Cerrar Sesión",
-                              style: boldoSubTextStyle.copyWith(
-                                color: ConstantsV2.lightest,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            child: Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Container(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: TextButton.icon(
+                                  onPressed: () {
+                                    UserRepository().logout(context);
+                                  },
+                                  icon: SvgPicture.asset(
+                                    "assets/icon/power-settings-new.svg",
+                                    color: ConstantsV2.yellow,
+                                  ),
+                                  label: Text(
+                                    "Cerrar Sesión",
+                                    style: boldoSubTextStyle.copyWith(
+                                      color: ConstantsV2.lightest,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ),

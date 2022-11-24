@@ -5,6 +5,23 @@ abstract class FamilyEvent {}
 
 class LinkFamily extends FamilyEvent {}
 
+class LinkWithoutCi extends FamilyEvent {
+  final String givenName;
+  final String familyName;
+  final String birthDate;
+  final String gender;
+  final String identifier;
+  final String relationShipCode;
+  LinkWithoutCi(
+      {required this.givenName,
+      required this.familyName,
+      required this.birthDate,
+      required this.gender,
+      required this.identifier,
+      required this.relationShipCode});
+}
+
+class GetRelationShipCodes extends FamilyEvent {}
 class UnlinkDependent extends FamilyEvent {
   final String id;
   UnlinkDependent({required this.id});

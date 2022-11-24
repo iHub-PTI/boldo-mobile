@@ -186,8 +186,9 @@ class _NewStudyState extends State<NewStudy> {
                               try {
                                 var inputFormat = DateFormat('dd/MM/yyyy');
                                 var outputFormat = DateFormat('yyyy-MM-dd');
+                                // use parseStrict to not accept overflow date
                                 var date1 = inputFormat
-                                    .parse(value.toString().trim());
+                                    .parseStrict(value.toString().trim());
                                 var date2 = outputFormat.format(date1);
                                 fecha = date2;
                               } catch (e) {
@@ -209,7 +210,7 @@ class _NewStudyState extends State<NewStudy> {
                                     initialDatePickerMode: DatePickerMode.year,
                                     initialDate: fecha == '' ? DateTime.now() :
                                     DateFormat('yyyy-MM-dd')
-                                        .parse(fecha.toString().trim()),
+                                        .parseStrict(fecha.toString().trim()),
                                     firstDate: DateTime(1900),
                                     lastDate: DateTime.now(),
                                     locale: const Locale("es", "ES"),
@@ -220,8 +221,9 @@ class _NewStudyState extends State<NewStudy> {
                                     setState(() {
                                       var outputFormat = DateFormat('yyyy-MM-dd');
                                       var inputFormat = DateFormat('dd/MM/yyyy');
+                                      // use parseStrict to not accept overflow date
                                       var date1 =
-                                      outputFormat.parse(newDate.toString().trim());
+                                      outputFormat.parseStrict(newDate.toString().trim());
                                       var date2 = inputFormat.format(date1);
                                       dateTextController.text = date2;
                                     });
