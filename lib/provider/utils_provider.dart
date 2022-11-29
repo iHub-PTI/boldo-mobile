@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Specialization.dart';
 import 'package:boldo/network/http.dart';
@@ -133,17 +134,32 @@ class UtilsProvider with ChangeNotifier {
             response.data['items'].map((i) => Doctor.fromJson(i)));
         _filterCounter = doctorsList.length;
       }
-    } on DioError catch (exception, stackTrace) {
-      print(exception);
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
       );
     } catch (exception, stackTrace) {
       print(exception);
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
     }
     notifyListeners();
@@ -183,18 +199,32 @@ class UtilsProvider with ChangeNotifier {
       await prefs.clear();
 
       Navigator.of(context).pushNamedAndRemoveUntil('/onboarding', (Route<dynamic> route) => false);
-    } on DioError catch (exception, stackTrace) {
-      print(exception);
-
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
       );
     } catch (exception, stackTrace) {
       print(exception);
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
     }
   }

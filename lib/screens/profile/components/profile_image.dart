@@ -133,9 +133,15 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                         ),
                       );
                       print(exception);
-                      await Sentry.captureException(
-                        exception,
-                        stackTrace: stackTrace,
+                      await Sentry.captureMessage(
+                          exception.toString(),
+                          params: [
+                            {
+                              'patient': prefs.getString("userId"),
+                              'access_token': await storage.read(key: 'access_token')
+                            },
+                            stackTrace
+                          ]
                       );
                     }
                   }

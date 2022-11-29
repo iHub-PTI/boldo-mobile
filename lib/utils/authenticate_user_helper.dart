@@ -130,18 +130,20 @@ Future<int> authenticateUser({required BuildContext context}) async {
         ]
       );
     }
-  }on DioError catch (err, stackTrace) {
-    print(err);
+  } on DioError catch(exception, stackTrace){
     await Sentry.captureMessage(
-        err.toString(),
-        params: [
-          {
-            'responseError': err.message,
-            'patient': patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ]
+      exception.toString(),
+      params: [
+        {
+          "path": exception.requestOptions.path,
+          "data": exception.requestOptions.data,
+          "patient": prefs.getString("userId"),
+          "dependentId": patient.id,
+          "responseError": exception.response,
+          'access_token': await storage.read(key: 'access_token')
+        },
+        stackTrace
+      ],
     );
   } catch (err, stackTrace) {
     print(err);

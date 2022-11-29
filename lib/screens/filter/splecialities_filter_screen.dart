@@ -1,4 +1,5 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/main.dart';
 import 'package:boldo/models/Specialization.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:provider/provider.dart';
@@ -70,17 +71,32 @@ class _SpecialitiesFilterScreenState extends State<SpecialitiesFilterScreen> {
         filteredSpecializationsList = filteredSpecializaions;
         _loading = false;
       });
-    } on DioError catch (exception, stackTrace) {
-      print(exception);
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
       );
     } catch (exception, stackTrace) {
       print(exception);
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            'patient': prefs.getString("userId"),
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ]
       );
     }
   }
