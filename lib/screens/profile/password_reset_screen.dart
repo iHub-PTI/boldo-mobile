@@ -1,3 +1,4 @@
+import 'package:boldo/main.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -129,19 +130,27 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
         _successMessage = "¡La contraseña ha sido actualizada!";
         loading = false;
       });
-    } on DioError catch (exception, stackTrace) {
-      print(exception);
-
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
+      );
       setState(() {
         _errorMessage = exception.response!.statusCode == 400
             ? "Contraseña incorrecta"
             : "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         loading = false;
       });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
     } catch (exception, stackTrace) {
       print(exception);
       setState(() {
@@ -149,9 +158,15 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
             "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         loading = false;
       });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
     }
     String baseUrlServer = String.fromEnvironment('SERVER_ADDRESS',

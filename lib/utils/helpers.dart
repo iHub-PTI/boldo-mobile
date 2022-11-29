@@ -145,6 +145,7 @@ async {
           {
             "status": status,
             "patient": prefs.getString("userId"),
+            'access_token': await storage.read(key: 'access_token')
           }
         ],
       );
@@ -186,6 +187,7 @@ async {
           {
             "status": status,
             "patient": prefs.getString("userId"),
+            'access_token': await storage.read(key: 'access_token')
           }
         ],
       );

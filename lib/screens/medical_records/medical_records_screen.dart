@@ -36,25 +36,40 @@ class _MedicalRecordScrennState extends State<MedicalRecordScreen> {
         _dataLoading = false;
         _dataLoaded = true;
       });
-    } on DioError catch (exception, stackTrace) {
-      print(exception);
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
+      );
       setState(() {
         _dataLoading = false;
         _dataLoaded = false;
       });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
     } catch (exception, stackTrace) {
       print(exception);
       setState(() {
         _dataLoading = false;
         _dataLoaded = false;
       });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
     }
   }

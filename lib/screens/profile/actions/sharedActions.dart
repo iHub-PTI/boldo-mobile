@@ -24,19 +24,34 @@ Future<Map<String, String>> updateProfile(
     if(!(prefs.getBool(isFamily)?? false))
       prefs.setString("profile_url", patient.photoUrl?? '');
     return {"successMessage": "Perfil actualizado con éxito."};
-  } on DioError catch (exception, stackTrace) {
-    print(exception);
-    await Sentry.captureException(
-      exception,
-      stackTrace: stackTrace,
+  } on DioError catch(exception, stackTrace){
+    await Sentry.captureMessage(
+      exception.toString(),
+      params: [
+        {
+          "path": exception.requestOptions.path,
+          "data": exception.requestOptions.data,
+          "patient": prefs.getString("userId"),
+          "dependentId": patient.id,
+          "responseError": exception.response,
+          'access_token': await storage.read(key: 'access_token')
+        },
+        stackTrace
+      ],
     );
     return {
       "errorMessage": "Algo salió mal. Por favor, inténtalo de nuevo más tarde."
     };
   } catch (exception, stackTrace) {
-    await Sentry.captureException(
-      exception,
-      stackTrace: stackTrace,
+    await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            'patient': prefs.getString("userId"),
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ]
     );
     print(exception);
     return {
