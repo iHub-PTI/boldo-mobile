@@ -53,7 +53,7 @@ class _VideoCallState extends State<VideoCall> {
   Future _getCallToken() async {
     try {
       Response response;
-      if(! prefs.getBool(isFamily)!)
+      if(!(prefs.getBool(isFamily)?? false))
         response = await dio
             .get("/profile/patient/appointments/${widget.appointment.id}");
       else

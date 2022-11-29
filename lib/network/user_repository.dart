@@ -60,7 +60,7 @@ class UserRepository {
       if (response.statusCode == 200) {
         patient = Patient.fromJson(response.data);
         // Update prefs in Principal Patient
-        if(!prefs.getBool(isFamily)!) {
+        if(!(prefs.getBool(isFamily)?? false)) {
           prefs.setString("profile_url", patient.photoUrl ?? '');
           prefs.setString("userId", patient.id ?? '');
           await prefs.setString("name", response.data['givenName']!= null ? toLowerCase(response.data['givenName']!) : '');
@@ -90,7 +90,7 @@ class UserRepository {
 
   Future<None>? editProfile(Patient editingPatient) async {
     try {
-      if(!prefs.getBool(isFamily)!)
+      if(!(prefs.getBool(isFamily)?? false))
         await dio.post("/profile/patient", data: editingPatient.toJson());
       else
         await dio.put("/profile/caretaker/dependent/${patient.id}", data: editingPatient.toJson());
@@ -99,7 +99,7 @@ class UserRepository {
       patient = Patient.fromJson(editingPatient.toJson());
 
       // Update prefs in Principal Patient
-      if(!prefs.getBool(isFamily)!)
+      if(!(prefs.getBool(isFamily)?? false))
         prefs.setString("profile_url", patient.photoUrl?? '');
       return const None();
     }on DioError catch(ex){
@@ -779,7 +779,7 @@ class UserRepository {
   Future<List<Appointment>>? getPastAppointments(String date) async {
     Response responseAppointments;
     try {
-      if (!prefs.getBool(isFamily)!)
+      if (!(prefs.getBool(isFamily)?? false))
         responseAppointments =
             await dio.get("/profile/patient/appointments?start=$date");
       else
@@ -831,7 +831,7 @@ class UserRepository {
     String lastDate = date2!= null? "&end=${DateTime(date2.year, date2.month, date2.day).add(const Duration(days: 1)).toUtc().toIso8601String()}" : "";
     Response responseAppointments;
     try {
-      if (!prefs.getBool(isFamily)!)
+      if (!(prefs.getBool(isFamily)?? false))
         responseAppointments =
         await dio.get("/profile/patient/appointments$firstDate$lastDate");
       else
@@ -943,7 +943,7 @@ class UserRepository {
   Future<List<Appointment>>? getAppointments() async {
     Response responseAppointments;
     try {
-      if (!prefs.getBool(isFamily)!)
+      if (!(prefs.getBool(isFamily)?? false))
         responseAppointments = await dio.get(
             "/profile/patient/appointments?start=${DateTime(DateTime
                 .now()
@@ -991,7 +991,7 @@ class UserRepository {
   Future<List<DiagnosticReport>>? getDiagnosticRecords() async {
     Response responseAppointments;
     try {
-      if (!prefs.getBool(isFamily)!)
+      if (!(prefs.getBool(isFamily)?? false))
         responseAppointments = await dio.get(
             "/profile/patient/diagnosticReports");
       else
@@ -1031,7 +1031,7 @@ class UserRepository {
   Future<List<Prescription>>? getPrescriptions() async {
     try{
       Response responsePrescriptions;
-      if (!prefs.getBool(isFamily)!)
+      if (!(prefs.getBool(isFamily)?? false))
         responsePrescriptions = await dio.get("/profile/patient/prescriptions");
       else
       responsePrescriptions = await dio
@@ -1063,7 +1063,7 @@ class UserRepository {
   Future<MedicalRecord>? getPrescription(String id) async {
     try{
       Response responsePrescriptions;
-      if (!prefs.getBool(isFamily)!)
+      if (!(prefs.getBool(isFamily)?? false))
         responsePrescriptions = await dio.get('/profile/patient/appointments/$id/encounter');
       else
         responsePrescriptions = await dio

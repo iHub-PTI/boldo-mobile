@@ -90,7 +90,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                   _loading = true;
                   _error = "";
                 });
-                if(! prefs.getBool(isFamily)!)
+                if(!(prefs.getBool(isFamily)?? false))
                   response = await dio.post("/profile/patient/appointments", data: {
                     'start': DateTime.parse(widget.bookingDate.availability!)
                         .toUtc()

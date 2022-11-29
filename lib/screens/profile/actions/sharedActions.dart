@@ -14,14 +14,14 @@ Future<Map<String, String>> updateProfile(
     {required BuildContext context}) async {
   try {
     print(patient.id);
-    if(!prefs.getBool(isFamily)!)
+    if(!(prefs.getBool(isFamily)?? false))
       await dio.post("/profile/patient", data: editingPatient.toJson());
     else
       await dio.put("/profile/caretaker/dependent/${patient.id}", data: editingPatient.toJson());
     BlocProvider.of<PatientBloc>(context).add(ReloadHome());
 
     patient = Patient.fromJson(editingPatient.toJson());
-    if(!prefs.getBool(isFamily)!)
+    if(!(prefs.getBool(isFamily)?? false))
       prefs.setString("profile_url", patient.photoUrl?? '');
     return {"successMessage": "Perfil actualizado con éxito."};
   } on DioError catch (exception, stackTrace) {
