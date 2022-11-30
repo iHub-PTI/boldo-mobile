@@ -3,12 +3,11 @@ import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../../constants.dart';
 import 'attach_files.dart';
@@ -24,6 +23,7 @@ class _NewStudyState extends State<NewStudy> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController dateTextController = TextEditingController();
+  final _nameController = TextEditingController();
   String nombre = '';
   String fecha = '';
   String notas = '';
@@ -70,6 +70,7 @@ class _NewStudyState extends State<NewStudy> {
   @override
   void dispose() {
     dateTextController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
@@ -168,9 +169,14 @@ class _NewStudyState extends State<NewStudy> {
                             });
                           },
                           validator: (value){
-                            if(value == null || value.isEmpty){
+                            //remove unnecessary spaces
+                            value = value?.trimLeft().trimRight() ?? '';
+                            if(value.isEmpty){
                               return "Ingrese un nombre";
                             }
+                            nombre = value;
+                            _nameController.text =
+                                value.trimLeft().trimRight() ?? '';
                           },
                         ),
                         const SizedBox(
@@ -178,8 +184,13 @@ class _NewStudyState extends State<NewStudy> {
                         ),
                         TextFormField(
                           controller: dateTextController,
-                          inputFormatters: [MaskTextInputFormatter(mask: "##/##/####")],
+                          inputFormatters: [DateTextFormatter()],
                           keyboardType: TextInputType.number,
+                          onChanged: (value){
+                            setState(() {
+
+                            });
+                          },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Ingrese la fecha del estudio';
@@ -190,10 +201,7 @@ class _NewStudyState extends State<NewStudy> {
                                 // use parseStrict to not accept overflow date
                                 var date1 = inputFormat
                                     .parseStrict(value.toString().trim());
-                                // date with year inf to 1000
-                                if(date1.isBefore(minDateDigit)){
-                                  throw Failure('El formato debe ser "dd/mm/yyyy" ');
-                                }else if(date1.isBefore(minDate)){
+                                if(date1.isBefore(minDate)){
                                   throw Failure('Fecha inferior al minimo ${inputFormat.format(minDate)}');
                                 }else if(date1.isAfter(DateTime.now())){
                                   throw Failure('Fecha superior a la actual');
@@ -206,7 +214,6 @@ class _NewStudyState extends State<NewStudy> {
                                 return 'El formato debe ser "dd/mm/yyyy" ';
                               }
                             }
-                            return null;
                           },
                           decoration: InputDecoration(
                             hintText: DateFormat('dd/MM/yyyy').format(DateTime.now()),
