@@ -23,6 +23,7 @@ class _NewStudyState extends State<NewStudy> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController dateTextController = TextEditingController();
+  final _nameController = TextEditingController();
   String nombre = '';
   String fecha = '';
   String notas = '';
@@ -69,6 +70,7 @@ class _NewStudyState extends State<NewStudy> {
   @override
   void dispose() {
     dateTextController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
@@ -167,9 +169,14 @@ class _NewStudyState extends State<NewStudy> {
                             });
                           },
                           validator: (value){
-                            if(value == null || value.isEmpty){
+                            //remove unnecessary spaces
+                            value = value?.trimLeft().trimRight() ?? '';
+                            if(value.isEmpty){
                               return "Ingrese un nombre";
                             }
+                            nombre = value;
+                            _nameController.text =
+                                value.trimLeft().trimRight() ?? '';
                           },
                         ),
                         const SizedBox(
