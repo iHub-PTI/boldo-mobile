@@ -3,12 +3,11 @@ import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../../constants.dart';
 import 'attach_files.dart';
@@ -178,7 +177,7 @@ class _NewStudyState extends State<NewStudy> {
                         ),
                         TextFormField(
                           controller: dateTextController,
-                          inputFormatters: [MaskTextInputFormatter(mask: "##/##/####")],
+                          inputFormatters: [DateTextFormatter()],
                           keyboardType: TextInputType.number,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
