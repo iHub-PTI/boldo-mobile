@@ -179,6 +179,11 @@ class _NewStudyState extends State<NewStudy> {
                           controller: dateTextController,
                           inputFormatters: [DateTextFormatter()],
                           keyboardType: TextInputType.number,
+                          onChanged: (value){
+                            setState(() {
+
+                            });
+                          },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Ingrese la fecha del estudio';
@@ -189,10 +194,7 @@ class _NewStudyState extends State<NewStudy> {
                                 // use parseStrict to not accept overflow date
                                 var date1 = inputFormat
                                     .parseStrict(value.toString().trim());
-                                // date with year inf to 1000
-                                if(date1.isBefore(minDateDigit)){
-                                  throw Failure('El formato debe ser "dd/mm/yyyy" ');
-                                }else if(date1.isBefore(minDate)){
+                                if(date1.isBefore(minDate)){
                                   throw Failure('Fecha inferior al minimo ${inputFormat.format(minDate)}');
                                 }else if(date1.isAfter(DateTime.now())){
                                   throw Failure('Fecha superior a la actual');
@@ -205,7 +207,6 @@ class _NewStudyState extends State<NewStudy> {
                                 return 'El formato debe ser "dd/mm/yyyy" ';
                               }
                             }
-                            return null;
                           },
                           decoration: InputDecoration(
                             hintText: DateFormat('dd/MM/yyyy').format(DateTime.now()),
