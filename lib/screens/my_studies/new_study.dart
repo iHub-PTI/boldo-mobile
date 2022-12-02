@@ -239,9 +239,8 @@ class _NewStudyState extends State<NewStudy> {
                                     setState(() {
                                       var outputFormat = DateFormat('yyyy-MM-dd');
                                       var inputFormat = DateFormat('dd/MM/yyyy');
-                                      // use parseStrict to not accept overflow date
                                       var date1 =
-                                      outputFormat.parseStrict(newDate.toString().trim());
+                                      outputFormat.parse(newDate.toString().trim());
                                       var date2 = inputFormat.format(date1);
                                       dateTextController.text = date2;
                                     });
