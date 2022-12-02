@@ -76,7 +76,7 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                                   color: ConstantsV2.activeText
                               ),
                             ),
-                            widget.isDependent && ! prefs.getBool(isFamily)! ? UnlinkCaretakerWidget(
+                            widget.isDependent && !(prefs.getBool(isFamily)?? false) ? UnlinkCaretakerWidget(
                               onTapCallback: (result) async {
                                 if (result == 'Desvincular') {
                                   BlocProvider.of<FamilyBloc>(context).add(UnlinkCaretaker(id: widget.patient!.id!));

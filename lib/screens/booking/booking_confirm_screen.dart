@@ -90,7 +90,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                   _loading = true;
                   _error = "";
                 });
-                if(! prefs.getBool(isFamily)!)
+                if(!(prefs.getBool(isFamily)?? false))
                   response = await dio.post("/profile/patient/appointments", data: {
                     'start': DateTime.parse(widget.bookingDate.availability!)
                         .toUtc()
@@ -130,8 +130,21 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                   });
                 }
 
-              } on DioError catch (exception) {
-                print(exception.response?.data['message']);
+              } on DioError catch(exception, stackTrace){
+                await Sentry.captureMessage(
+                  exception.toString(),
+                  params: [
+                    {
+                      "path": exception.requestOptions.path,
+                      "data": exception.requestOptions.data,
+                      "patient": prefs.getString("userId"),
+                      "dependentId": patient.id,
+                      "responseError": exception.response,
+                      'access_token': await storage.read(key: 'access_token')
+                    },
+                    stackTrace
+                  ],
+                );
                 setState(() {
                   _loading = false;
                   if(exception.response?.statusCode == 400) {
@@ -140,17 +153,21 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                     _error = exception.response?.data['message'];
                   }
                 });
-                await Sentry.captureException(
-                  exception,
-                );
-              } catch (exception) {
+              } catch (exception, stackTrace) {
                 print(exception);
                 setState(() {
                   _loading = false;
                   _error = "Intente nuevamente, por favor";
                 });
-                await Sentry.captureException(
-                  exception,
+                await Sentry.captureMessage(
+                    exception.toString(),
+                    params: [
+                      {
+                        'patient': prefs.getString("userId"),
+                        'access_token': await storage.read(key: 'access_token')
+                      },
+                      stackTrace
+                    ]
                 );
               }
             },

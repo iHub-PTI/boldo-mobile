@@ -1,3 +1,4 @@
+import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
@@ -187,9 +188,6 @@ class _BookingScreenState extends State<BookingScreen> {
       if (appointments != null) {
         if (appointments.isNotEmpty) {
           for (int i = 0; i < appointments.length; i++) {
-            print(
-                "disponible: ${DateTime.parse(allAvailabilities[0].availability!).toLocal()}");
-            print("cita: ${DateTime.parse(appointments[i].start!).toLocal()}");
             allAvailabilities.removeWhere((element) =>
                 DateTime.parse(element.availability!).toLocal().compareTo(
                     DateTime.parse(appointments[i].start!).toLocal()) ==
@@ -236,18 +234,27 @@ class _BookingScreenState extends State<BookingScreen> {
         _loading = false;
         _loadingCalendar = false;
       });
-    } on DioError catch (exception, stackTrace) {
-      print(exception);
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
+      );
       setState(() {
         _errorMessage =
             "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         _loading = false;
         _loadingCalendar = false;
       });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
     } catch (exception, stackTrace) {
       print(exception);
       setState(() {
@@ -256,9 +263,15 @@ class _BookingScreenState extends State<BookingScreen> {
         _loading = false;
         _loadingCalendar = false;
       });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
     }
   }

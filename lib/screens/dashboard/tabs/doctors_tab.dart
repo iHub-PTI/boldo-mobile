@@ -1,3 +1,4 @@
+import 'package:boldo/main.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/custom_search.dart';
 import 'package:boldo/screens/filter/filter_screen.dart';
@@ -133,17 +134,32 @@ class _DoctorsTabState extends State<DoctorsTab> {
               .compareTo(DateTime.parse(b.nextAvailability!.availability!));
         });
       }
-    } on DioError catch (exception, stackTrace) {
-      print(exception);
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
       );
     } catch (exception, stackTrace) {
       print(exception);
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
 
       ///FIXME: SHOW AN ERROR MESSAGE TO THE USER

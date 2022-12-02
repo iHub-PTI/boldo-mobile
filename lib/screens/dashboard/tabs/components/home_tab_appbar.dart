@@ -92,7 +92,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if(prefs.getBool(isFamily)!)
+                      if((prefs.getBool(isFamily)?? false))
                         Flexible(
                           child: Text(
                             "mostrando a",
@@ -112,7 +112,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                       ),
                       SizedBox(height: (widget.max /
                           ConstantsV2.homeAppBarMaxHeight) * 10),
-                      if(! prefs.getBool(isFamily)!)
+                      if(!(prefs.getBool(isFamily)?? false))
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -126,7 +126,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                         ),
 
                       const SizedBox(height: 4),
-                      !prefs.getBool(isFamily)! ?Text(
+                      !(prefs.getBool(isFamily)?? false) ?Text(
                         formatDate(
                           DateTime.now(),
                           [d, ' de ', MM, ' de ', yyyy],
