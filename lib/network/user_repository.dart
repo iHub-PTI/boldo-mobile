@@ -6,6 +6,7 @@ import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/Prescription.dart';
+import 'package:boldo/models/QRCode.dart';
 import 'package:boldo/models/Relationship.dart';
 import 'package:boldo/models/User.dart';
 import 'package:boldo/models/upload_url_model.dart';
@@ -51,6 +52,13 @@ class UserRepository {
   final List<String> relationshipWithDependentAlreadyExistErrors = [
     'Relationship of dependence with the patient is already exists'
   ];
+
+  final Map<String,String> errorInQrValidation = {
+    "The dependent and the caretaker are the same": "El Código pertenece al mismo paciente",
+    "QR code does not exist":"El código QR no existe",
+    "Invalid QR code":"El código QR no es válido",
+    "Expired QR code":"El código QR ya expiró",
+  };
 
   Future<None>? getPatient(String? id) async {
     try {
@@ -226,18 +234,18 @@ class UserRepository {
     }
   }
 
-  Future<None>? getDependent(String id) async {
-    print("ID $id");
+  /// set [user] in the main the patient obtained with his [QrCode]
+  Future<None>? getDependent(String qrCode) async {
     try {
       Response response =
-          await dio.get("/profile/caretaker/dependent/confirm/$id");
+          await dio.get("/profile/caretaker/dependent/qrcode/decode?qr=$qrCode");
       if (response.statusCode == 200) {
         print(response.data);
         user = User.fromJson(response.data);
         return const None();
       }
       print(response.statusCode);
-      throw Failure(genericError);
+      throw Failure('Unknow StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
@@ -253,8 +261,24 @@ class UserRepository {
           stackTrace
         ],
       );
-      throw Failure("No se puede obtener el paciente");
-    } catch (e) {
+      if(exception.response?.data['messages'].isNotEmpty);
+        if( errorInQrValidation.containsKey(exception.response?.data['messages'].first))
+          throw Failure(
+            errorInQrValidation[exception.response?.data['messages'].first]?? genericError
+          );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
+      );
       throw Failure(genericError);
     }
   }
@@ -1215,6 +1239,37 @@ class UserRepository {
           ]
       );
       throw Failure("No fue posible obtener la receta");
+    }
+  }
+
+  Future<QRCode>? getQrCode() async {
+    try {
+      String url = '/profile/patient/qrcode/generate';
+      QRCode qrCode;
+      Response response = await dio.post(url);
+      if (response.statusCode == 200) {
+        qrCode = QRCode.fromJson(response.data);
+        return qrCode;
+      }
+      throw Failure("Response status desconocido ${response.statusCode}");
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
+      );
+      throw Failure("No se puede obtener el óodigo Qr");
+    } catch (e) {
+      throw Failure(genericError);
     }
   }
 

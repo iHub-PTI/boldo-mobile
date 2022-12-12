@@ -4,7 +4,6 @@ import 'package:boldo/widgets/custom_form_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../blocs/user_bloc/patient_bloc.dart';

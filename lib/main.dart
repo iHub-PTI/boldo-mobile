@@ -222,7 +222,7 @@ class FullApp extends StatelessWidget {
         '/methods': (context) => const FamilyMetodsAdd(),
         '/familyScreen': (context) => FamilyScreen(),
         '/defineRelationship': (context) => DefinedRelationshipScreen(),
-        '/familyTransition': (context) => FamilyConnectTransition(),
+        '/familyConnectTransition': (context) => FamilyConnectTransition(),
         '/SignInSuccess': (context) => SingInTransition(),
         '/FamilyTransition': (context) => FamilyTransition(),
         '/familyDniRegister': (context) => DniFamilyRegister(),

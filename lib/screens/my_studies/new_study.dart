@@ -95,7 +95,7 @@ class _NewStudyState extends State<NewStudy> {
             }
             if (state is Failed) {
               print('failed: ${state.msg}');
-              Scaffold.of(context)
+              ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(state.msg)));
             }
           },

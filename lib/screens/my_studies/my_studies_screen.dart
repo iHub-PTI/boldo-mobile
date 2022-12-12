@@ -85,7 +85,7 @@ class _MyStudiesState extends State<MyStudies> {
                 _loading = false;
                 _error = true;
                 setState(() {});
-                Scaffold.of(context).showSnackBar(const SnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text("Falló la obtención de estudios")));
               }
 
