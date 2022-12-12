@@ -53,6 +53,13 @@ class UserRepository {
     'Relationship of dependence with the patient is already exists'
   ];
 
+  final Map<String,String> errorInQrValidation = {
+    "The dependent and the caretaker are the same": "El Código pertenece al mismo paciente",
+    "QR code does not exist":"El código QR no existe",
+    "Invalid QR code":"El código QR no es válido",
+    "Expired QR code":"El código QR ya expiró",
+  };
+
   Future<None>? getPatient(String? id) async {
     try {
       Response response = id == null
