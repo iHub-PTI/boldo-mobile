@@ -234,18 +234,18 @@ class UserRepository {
     }
   }
 
-  Future<None>? getDependent(String id) async {
-    print("ID $id");
+  /// set [user] in the main the patient obtained with his [QrCode]
+  Future<None>? getDependent(String qrCode) async {
     try {
       Response response =
-          await dio.get("/profile/caretaker/dependent/confirm/$id");
+          await dio.get("/profile/caretaker/dependent/qrcode/decode?qr=$qrCode");
       if (response.statusCode == 200) {
         print(response.data);
         user = User.fromJson(response.data);
         return const None();
       }
       print(response.statusCode);
-      throw Failure(genericError);
+      throw Failure('Unknow StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
