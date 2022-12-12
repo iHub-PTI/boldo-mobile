@@ -240,11 +240,11 @@ class UserRepository {
       Response response =
           await dio.get("/profile/caretaker/dependent/qrcode/decode?qr=$qrCode");
       if (response.statusCode == 200) {
-        print(response.data);
+        // set the user obtained from the server
         user = User.fromJson(response.data);
         return const None();
       }
-      print(response.statusCode);
+      // throw an error if isn't a know status code
       throw Failure('Unknow StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
@@ -261,11 +261,18 @@ class UserRepository {
           stackTrace
         ],
       );
-      if(exception.response?.data['messages'].isNotEmpty);
+
+      // check if has message error
+      if(exception.response?.data['messages'].isNotEmpty)
+        // get the first message error and search a coincidence into [errorInQrValidation]
+        // that we know locally
         if( errorInQrValidation.containsKey(exception.response?.data['messages'].first))
+          // set the error
           throw Failure(
             errorInQrValidation[exception.response?.data['messages'].first]?? genericError
           );
+
+      // throw a generic error if we not know the message error obtained from the server
       throw Failure(genericError);
     } catch (exception, stackTrace) {
       await Sentry.captureMessage(
