@@ -6,6 +6,7 @@ import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/Prescription.dart';
+import 'package:boldo/models/QRCode.dart';
 import 'package:boldo/models/Relationship.dart';
 import 'package:boldo/models/User.dart';
 import 'package:boldo/models/upload_url_model.dart';
