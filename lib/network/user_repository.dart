@@ -261,8 +261,24 @@ class UserRepository {
           stackTrace
         ],
       );
-      throw Failure("No se puede obtener el paciente");
-    } catch (e) {
+      if(exception.response?.data['messages'].isNotEmpty);
+        if( errorInQrValidation.containsKey(exception.response?.data['messages'].first))
+          throw Failure(
+            errorInQrValidation[exception.response?.data['messages'].first]?? genericError
+          );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
+      );
       throw Failure(genericError);
     }
   }
