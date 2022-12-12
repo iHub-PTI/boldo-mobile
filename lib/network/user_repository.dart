@@ -1226,6 +1226,37 @@ class UserRepository {
     }
   }
 
+  Future<QRCode>? getQrCode() async {
+    try {
+      String url = '/profile/patient/qrcode/generate';
+      QRCode qrCode;
+      Response response = await dio.post(url);
+      if (response.statusCode == 200) {
+        qrCode = QRCode.fromJson(response.data);
+        return qrCode;
+      }
+      throw Failure("Response status desconocido ${response.statusCode}");
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
+      );
+      throw Failure("No se puede obtener el óodigo Qr");
+    } catch (e) {
+      throw Failure(genericError);
+    }
+  }
+
 }
 
 Future<None> getMedicalRecords() async {
