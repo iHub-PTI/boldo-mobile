@@ -46,6 +46,7 @@ import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/constants.dart';
 
+import 'blocs/app_bloc/appBloc.dart';
 import 'blocs/attach_study_order_bloc/attachStudyOrder_bloc.dart';
 import 'blocs/doctor_bloc/doctor_bloc.dart';
 import 'blocs/prescription_bloc/prescriptionBloc.dart';
@@ -172,6 +173,9 @@ class _MyAppState extends State<MyApp> {
           BlocProvider<AttachStudyOrderBloc>(
             create: (BuildContext context) => AttachStudyOrderBloc(),
           ),
+          BlocProvider<AppBloc>(
+            create: (BuildContext context) => AppBloc(),
+          ),
         ],
         child: MultiProvider(
           providers: [
@@ -188,13 +192,26 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class FullApp extends StatelessWidget {
+class FullApp extends StatefulWidget {
   const FullApp({
     Key? key,
     required this.onboardingCompleted,
   }) : super(key: key);
 
   final String onboardingCompleted;
+
+  @override
+  StateFullApp createState() => StateFullApp();
+}
+
+class StateFullApp extends State<FullApp>{
+
+  @override
+  void initState(){
+    super.initState();
+    BlocProvider.of<AppBloc>(context).add(GetUpdateAvailable());
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -214,7 +231,7 @@ class FullApp extends StatelessWidget {
       title: 'Boldo',
       theme: boldoTheme,
       initialRoute:
-          onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
+      widget.onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
       routes: {
         '/onboarding': (context) => HeroScreenV2(),
         '/home': (context) => DashboardScreen(),
