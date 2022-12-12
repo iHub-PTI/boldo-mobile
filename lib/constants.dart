@@ -291,6 +291,10 @@ class ConstantsV2 {
   static const Color menuBackgroundColor200 = Color(0xff74B49E);
   static const Color menuBackgroundColor300 = Color(0xffFFF7A3E);
 
+  // Gradient splash screen colors
+  static const Color gradientStart = Color(0xff27BEC2);
+  static const Color gradientEnd = Color(0xff009688);
+
   // stops primary background colors
   static const double primaryStop100 = -0.14;
   static const double primaryStop200 = 1.25;
