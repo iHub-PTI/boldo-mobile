@@ -9,21 +9,38 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 class AppRepository{
 
-  Future<bool> validateAppVersion() async {
+  Future<bool>? validateAppVersion() async {
     try {
+
+      // get if previously an update available was detected
+      bool _updateAvailable = prefs.getBool("updateAvailable")?? false;
+
       String? backendVersion;
-      // get app version from server
-      if(Platform.isAndroid){
-        // Get version from server for Android
-        backendVersion = '1.2.7';
-      }else if(Platform.isIOS){
-        // Get version from server for IOS
-        backendVersion = '1.1.8';
-      }else{
-        throw Failure("Unkown SO ${Platform.operatingSystem}");
+
+      // validate actually version
+      if(_updateAvailable) {
+
+        // Old version fetched from server saved locally
+        backendVersion = prefs.getString("serverVersion")?? '1.0.0';
+
+      }else {
+        // get app version from server
+        if (Platform.isAndroid) {
+          // Get version from server for Android
+          backendVersion = '1.2.7';
+
+        } else if (Platform.isIOS) {
+          // Get version from server for IOS
+          backendVersion = '1.1.9';
+
+        } else {
+          throw Failure("Unkown SO ${Platform.operatingSystem}");
+        }
       }
 
 
+      // save remote version locally
+      prefs.setString("serverVersion", backendVersion);
       // get package info
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
@@ -31,6 +48,7 @@ class AppRepository{
       // negative if the version from server is bigger than device version
       int validation = packageInfo.version.compareTo(backendVersion);
 
+      prefs.setBool("updateAvailable", validation < 0);
       return validation < 0;
     } on Failure catch (exception, stackTrace) {
       await Sentry.captureMessage(
