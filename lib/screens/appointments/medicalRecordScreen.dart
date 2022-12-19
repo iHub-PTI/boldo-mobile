@@ -130,8 +130,8 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                         [d, ' de ', MM, ' de ', yyyy],
                                         locale: const SpanishDateLocale(),
                                       )} (${passedDays(_daysBetween, showDateFormat: false)})',
-                                      style: boldoCorpMediumTextStyle.copyWith(
-                                          color: ConstantsV2.darkBlue),
+                                      style: boldoSubTextMediumStyle.copyWith(
+                                          color: ConstantsV2.inactiveText),
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(top: 15.0),
