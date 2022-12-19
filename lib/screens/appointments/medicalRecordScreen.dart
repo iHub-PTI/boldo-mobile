@@ -512,10 +512,13 @@ Widget ShowStudy(BuildContext context, ServiceRequest study) {
       Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 24.0),
-            child: Text(
-              study.description != null ? '${study.description}' : '',
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 24.0),
+                  child: Text(
+                    study.description != null ? '${study.description}' : '',
               style: const TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 10,
