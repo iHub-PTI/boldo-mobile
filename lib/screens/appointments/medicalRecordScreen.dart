@@ -318,7 +318,10 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                                     child: Container(
                                                       padding: const EdgeInsets.symmetric(
                                                           horizontal: 15, vertical: 7),
-                                                      child: const Text("ver receta"),
+                                                      child: Text(
+                                                        "ver receta",
+                                                        style: boldoTitleRegularTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
+                                                      ),
                                                     )
                                                   ),
                                                 ),
@@ -415,7 +418,10 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                                       child: Container(
                                                         padding: const EdgeInsets.symmetric(
                                                             horizontal: 15, vertical: 7),
-                                                        child: const Text("ver órdenes"),
+                                                        child: Text(
+                                                          "ver órdenes",
+                                                          style: boldoTitleRegularTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
+                                                        ),
                                                       )),
                                                 ),
                                               ),
@@ -475,7 +481,7 @@ Widget ShowStudy(BuildContext context, ServiceRequest study) {
                         ? 'Imágenes'
                         : 'Otros'
                 : 'Desconocido',
-            style: const TextStyle(fontFamily: 'Montserrat', fontSize: 14),
+            style: boldoSubTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
           ),
           const SizedBox(width: 10,),
           study.urgent ?? false
@@ -519,12 +525,11 @@ Widget ShowStudy(BuildContext context, ServiceRequest study) {
                   padding: const EdgeInsets.only(left: 24.0),
                   child: Text(
                     study.description != null ? '${study.description}' : '',
-              style: const TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 10,
-                  color: ConstantsV2.inactiveText),
+                    style: boldoSubTextStyle.copyWith(fontSize: 12)
+                  ),
+                ),
+              ),
             ),
-          ),
         ],
       ),
       const SizedBox(height: 10),
@@ -552,7 +557,7 @@ Widget ShowPrescription (BuildContext context, PrescriptionMedicalRecord prescri
             prescription.medicationName != null
               ? prescription.medicationName!
               : 'Nombre desconocido',
-            style: const TextStyle(fontFamily: 'Montserrat', fontSize: 14),
+            style: boldoSubTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
           ),
         ],
       ),
@@ -564,11 +569,7 @@ Widget ShowPrescription (BuildContext context, PrescriptionMedicalRecord prescri
             padding: const EdgeInsets.only(left: 24),
             child: Text(
               prescription.instructions != null ? prescription.instructions! : 'Este medicamento no posee instrucciones',
-              style: const TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 10,
-                color: ConstantsV2.inactiveText
-              ),
+              style: boldoSubTextStyle.copyWith(fontSize: 12)
             ),
           )
         ],
