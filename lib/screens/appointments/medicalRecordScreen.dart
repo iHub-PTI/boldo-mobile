@@ -134,7 +134,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                           color: ConstantsV2.inactiveText),
                                     ),
                                     Padding(
-                                      padding: EdgeInsets.only(top: 15.0),
+                                      padding: const EdgeInsets.only(top: 15.0),
                                       child: Text(
                                           medicalRecord?.mainReason ?? '',
                                           style: boldoCorpMediumBlackTextStyle
