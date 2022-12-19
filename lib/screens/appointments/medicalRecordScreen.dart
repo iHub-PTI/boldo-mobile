@@ -190,7 +190,13 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                               height: 12,
                                               width: 12,
                                             ),
-                                            const Text('Notas')
+                                            Text(
+                                              'Notas',
+                                              style: boldoCardHeadingTextStyle.copyWith(
+                                                color: ConstantsV2.activeText,
+                                                fontSize: 14
+                                              )
+                                            )
                                           ],
                                         ),
                                       ),
@@ -243,7 +249,13 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                               height: 12,
                                               width: 12,
                                             ),
-                                            const Text('Receta')
+                                            Text(
+                                              'Receta',
+                                              style: boldoCardHeadingTextStyle.copyWith(
+                                                color: ConstantsV2.activeText,
+                                                fontSize: 14
+                                              )
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -341,7 +353,13 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                               width: 12,
                                               color: const Color.fromRGBO(54, 79, 107, 1),
                                             ),
-                                            const Text('Órdenes de estudio')
+                                            Text(
+                                              'Órdenes de estudio',
+                                              style: boldoCardHeadingTextStyle.copyWith(
+                                                color: ConstantsV2.activeText,
+                                                fontSize: 14
+                                              )
+                                            ),
                                           ],
                                         ),
                                       ),
