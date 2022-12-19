@@ -565,11 +565,13 @@ Widget ShowPrescription (BuildContext context, PrescriptionMedicalRecord prescri
       Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 24),
-            child: Text(
-              prescription.instructions != null ? prescription.instructions! : 'Este medicamento no posee instrucciones',
-              style: boldoSubTextStyle.copyWith(fontSize: 12)
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 24),
+              child: Text(
+                prescription.instructions != null ? prescription.instructions! : 'Este medicamento no posee instrucciones',
+                style: boldoSubTextStyle.copyWith(fontSize: 12)
+              ),
             ),
           )
         ],
