@@ -394,23 +394,24 @@ class ConstantsV2 {
 
 
   // home heights
-  static double homeAppBarMaxHeight = 154.0;
-  static double homeAppBarMinHeight = 98.0;
+  static double homeAppBarMaxHeight = 132.0;
+  static double homeAppBarMinHeight = 76.0;
   static double homeCarouselContainerMaxHeight = 162.0;
   static double homeCarouselContainerMinHeight = 82.0;
-  static double homeCarouselTitleContainerMaxHeight = 62.0;
-  static double homeCarouselTitleContainerMinHeight = 24.0;
+  static double homeCarouselTitleContainerMaxHeight = 32.0;
+  static double homeCarouselTitleContainerMinHeight = 0.0;
   static double homeCarouselCardMaxHeight = 130.0;
   static double homeCarouselCardMinHeight = 50.0;
   static double homeCarouselCardMaxWidth = 110.0;
   static double homeCarouselCardMinWidth = 50.0;
   static double homeCarouselCardMaxRadius = 100.0;
   static double homeCarouselCardMinRadius = 10.0;
-  static double homeFeedTitleContainerMaxHeight = 62.0;
-  static double homeFeedTitleContainerMinHeight = 62.0;
+  static double homeFeedTitleContainerMaxHeight = 32.0;
+  static double homeFeedTitleContainerMinHeight = 32.0;
+  static double homeCarouselPadding = 24.0;
 
-  static double homeExpandedMaxHeight = homeAppBarMaxHeight + homeCarouselContainerMaxHeight + homeCarouselTitleContainerMaxHeight + homeFeedTitleContainerMaxHeight;
-  static double homeExpandedMinHeight = homeAppBarMinHeight + homeCarouselContainerMinHeight + homeCarouselTitleContainerMinHeight + homeFeedTitleContainerMinHeight;
+  static double homeExpandedMaxHeight = homeAppBarMaxHeight + homeCarouselContainerMaxHeight + homeCarouselTitleContainerMaxHeight + homeFeedTitleContainerMaxHeight + homeCarouselPadding + homeCarouselPadding;
+  static double homeExpandedMinHeight = homeAppBarMinHeight + homeCarouselContainerMinHeight + homeCarouselTitleContainerMinHeight + homeFeedTitleContainerMinHeight + homeCarouselPadding + homeCarouselPadding;
 
 }
 
