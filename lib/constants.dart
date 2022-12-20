@@ -207,7 +207,7 @@ ThemeData boldoTheme = ThemeData(
     style: ButtonStyle(
       textStyle: MaterialStateProperty.all(
         const TextStyle(fontWeight: FontWeight.w500, fontSize: 16,
-            color: ConstantsV2.lightGrey
+            color: ConstantsV2.BGNeutral
         ),
       ),
       padding: MaterialStateProperty.all(
@@ -282,7 +282,7 @@ ThemeData boldoTheme = ThemeData(
     ),
   ),
   primaryColor: Colors.white,
-  scaffoldBackgroundColor: ConstantsV2.lightGrey,
+  scaffoldBackgroundColor: ConstantsV2.BGNeutral,
   brightness: Brightness.light,
   visualDensity: VisualDensity.adaptivePlatformDensity,
 );
