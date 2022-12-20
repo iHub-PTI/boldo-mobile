@@ -49,7 +49,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    expanded = widget.max > (ConstantsV2.homeAppBarMaxHeight+ConstantsV2.homeAppBarMinHeight)/2;
+    expanded = widget.max > (ConstantsV2.homeAppBarMaxHeight+ConstantsV2.homeAppBarMinHeight)*0.6;
     return Container(
       constraints: BoxConstraints(maxHeight: widget.max, minHeight: widget.max),
       height: widget.max,
@@ -251,7 +251,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                               children: [
                                 !expand
                                   ? Container(
-                                    height: 55,
+                                    height: 60,
                                     margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
                                     // screen rotation control
                                     width: MediaQuery.of(context).size.width*0.7,
