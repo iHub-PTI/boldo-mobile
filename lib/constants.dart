@@ -246,7 +246,7 @@ ThemeData boldoTheme = ThemeData(
     style: OutlinedButton.styleFrom(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
       textStyle: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: ConstantsV2.orange),
-      primary: ConstantsV2.orange,
+      foregroundColor: ConstantsV2.orange,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(100),
       ),
