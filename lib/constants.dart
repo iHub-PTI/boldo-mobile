@@ -79,7 +79,15 @@ const boldoHeadingTextStyle = TextStyle(
 const boldoTitleRegularTextStyle = TextStyle(
   color: ConstantsV2.lightest,
   fontStyle: FontStyle.normal,
-  fontSize: 24,
+  fontSize: 12,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const bodyMediumRegular = TextStyle(
+  color: ConstantsV2.lightest,
+  fontStyle: FontStyle.normal,
+  fontSize: 12,
   fontWeight: FontWeight.w400,
   fontFamily: 'Montserrat',
 );
