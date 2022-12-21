@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:camera/camera.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -375,4 +377,46 @@ class DateTextFormatter extends TextInputFormatter {
 
     return TextSelection.fromPosition(TextPosition(offset: selectionEnd));
   }
+}
+
+enum ActionStatus {Success, Fail}
+
+void emitSnackBar({required BuildContext context, String? text, ActionStatus? status, Widget? icon, Color? color}){
+
+  String? message = text;
+
+  switch (status) {
+    case ActionStatus.Success:
+      message = message?? "Acción exitosa";
+      color = color?? ConstantsV2.systemSuccess;
+      icon = icon?? SvgPicture.asset('assets/icon/check-circle2.svg');
+      break;
+    case ActionStatus.Fail:
+      message = message?? "Acción fallida";
+      color = color?? ConstantsV2.systemFail;
+      icon = icon?? SvgPicture.asset('assets/icon/close_black.svg', color: const Color(0xffFBFBFB),);
+      break;
+    default: // Without this, you see a WARNING.
+      message = message?? "Acción con estado desconocido";
+      color = color?? ConstantsV2.primaryColor;
+  }
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      elevation: 1,
+      behavior: SnackBarBehavior.floating,
+      margin: const EdgeInsets.symmetric(horizontal: 19, vertical: 10),
+      content: Row(
+        children: [
+          icon?? Container(),
+          const Padding(padding: EdgeInsets.only(left: 8)),
+          Text(message, style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.lightGrey),),
+        ],
+      ),
+      backgroundColor: color,
+    ),
+  );
 }
