@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/utils/helpers.dart';
@@ -349,7 +351,11 @@ class ProfileImageViewTypeForm extends StatefulWidget {
 
   final double height;
   final double width;
+  final Color? color;
+  final double opacity;
   final bool border;
+  final Color? borderColor;
+  final bool blur;
   final Patient? patient;
   final String form;
 
@@ -358,6 +364,10 @@ class ProfileImageViewTypeForm extends StatefulWidget {
     required this.height,
     required this.width,
     required this.border,
+    this.borderColor = Colors.white,
+    this.color,
+    this.opacity = 1,
+    this.blur = false,
     this.patient,
     this.form = "rounded"
   }) : super(key: key);
@@ -367,81 +377,83 @@ class ProfileImageViewTypeForm extends StatefulWidget {
 }
 
 class _ProfileImageViewTypeForm extends State<ProfileImageViewTypeForm> {
+
+  String? url;
+  String? gender;
+
   @override
   void initState() {
     super.initState();
+    url = widget.patient == null ? prefs.getString('profile_url') : widget.patient?.photoUrl;
+    gender = widget.patient == null ? prefs.getString('gender') : widget.patient?.gender;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        SizedBox(
-          height: widget.height,
-          width: widget.width,
-          child: Card(
-            child: widget.patient == null
-            ? prefs.getString('profile_url') == '' ?
-            SvgPicture.asset(
-              prefs.getString('gender') == 'unknown'
-                  ? 'assets/images/LogoIcon.svg'
-                  : prefs.getString('gender') == "female"
-                  ? 'assets/images/femalePatient.svg'
-                  : 'assets/images/malePatient.svg',
-            ) : CachedNetworkImage(
-              fit: BoxFit.cover,
-              imageUrl: prefs.getString('profile_url')?? '',
-              progressIndicatorBuilder:
-                  (context, url, downloadProgress) => Padding(
-                padding: const EdgeInsets.all(26.0),
-                child: CircularProgressIndicator(
-                  value: downloadProgress.progress,
-                  valueColor:
-                  const AlwaysStoppedAnimation<Color>(
-                      Constants.primaryColor400),
-                  backgroundColor: Constants.primaryColor600,
-                ),
-              ),
-              errorWidget: (context, url, error) =>
-              const Icon(Icons.error),
-            )
-            : widget.patient!.photoUrl == null || widget.patient!.photoUrl == '' ?
-            SvgPicture.asset(
-              widget.patient!.gender == null || widget.patient!.gender == 'unknown'
-                  ? 'assets/images/LogoIcon.svg'
-                  : widget.patient!.gender == "female"
-                  ? 'assets/images/femalePatient.svg'
-                  : 'assets/images/malePatient.svg',
-            ) :
-            CachedNetworkImage(
-              fit: BoxFit.cover,
-              imageUrl: widget.patient!.photoUrl!,
-              progressIndicatorBuilder:
-                  (context, url, downloadProgress) => Padding(
-                padding: const EdgeInsets.all(26.0),
-                child: CircularProgressIndicator(
-                  value: downloadProgress.progress,
-                  valueColor:
-                  const AlwaysStoppedAnimation<Color>(
-                      Constants.primaryColor400),
-                  backgroundColor: Constants.primaryColor600,
-                ),
-              ),
-              errorWidget: (context, url, error) =>
-              const Icon(Icons.error),
-            ),
-            shape: widget.form == "rounded" ? StadiumBorder(
-                side: widget.border ? const BorderSide(
-                  color: Colors.white,
-                  width: 3,
-                ) : BorderSide.none,
-            ) : widget.form == "square" ? RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(3)) : const CircleBorder(),
-            clipBehavior: Clip.antiAlias,
-          ),
+
+
+    Widget child = url == null ?
+    SvgPicture.asset(
+      gender == 'female'
+          ? 'assets/images/femalePatient.svg':
+      gender == 'male'?
+        'assets/images/malePatient.svg':
+      'assets/images/LogoIcon.svg',
+    ) : CachedNetworkImage(
+      fit: BoxFit.cover,
+      imageUrl: url!,
+      progressIndicatorBuilder:
+          (context, url, downloadProgress) => Padding(
+        padding: const EdgeInsets.all(26.0),
+        child: CircularProgressIndicator(
+          value: downloadProgress.progress,
+          valueColor:
+          const AlwaysStoppedAnimation<Color>(
+              Constants.primaryColor400),
+          backgroundColor: Constants.primaryColor600,
         ),
-      ],
+      ),
+      errorWidget: (context, url, error) =>
+      const Icon(Icons.error),
     );
+
+    return Card(
+      child: Stack(
+        children: [
+          Container(
+            child: child,
+            height: widget.height,
+            width: widget.width,
+          ),
+          Container(
+            child: widget.blur ? BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+              child: Container(
+                color: widget.color?.withOpacity(widget.opacity),
+                width: widget.width,
+                height: widget.height,
+              ),
+            ) :
+            Container(
+              color: widget.color?.withOpacity(widget.opacity),
+              width: widget.width,
+              height: widget.height,
+            ),
+            height: widget.height,
+            width: widget.width,
+          ),
+        ],
+      ),
+      shape: widget.form == "rounded" ? StadiumBorder(
+        side: widget.border ? BorderSide(
+          color: widget.borderColor?? Colors.white,
+          width: 3,
+        ) : BorderSide.none,
+      ) : widget.form == "square" ? RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(3)) : const CircleBorder(),
+      clipBehavior: Clip.antiAlias,
+    );
+
   }
 }
 
