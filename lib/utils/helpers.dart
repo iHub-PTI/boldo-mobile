@@ -398,7 +398,7 @@ void emitSnackBar({required BuildContext context, String? text, ActionStatus? st
       break;
     default: // Without this, you see a WARNING.
       message = message?? "Acción con estado desconocido";
-      color = color?? ConstantsV2.primaryColor;
+      color = color?? ConstantsV2.secondaryRegular;
   }
 
   ScaffoldMessenger.of(context).showSnackBar(
@@ -411,7 +411,8 @@ void emitSnackBar({required BuildContext context, String? text, ActionStatus? st
       margin: const EdgeInsets.symmetric(horizontal: 19, vertical: 10),
       content: Row(
         children: [
-          icon?? Container(),
+          if(icon != null)
+            icon,
           const Padding(padding: EdgeInsets.only(left: 8)),
           Text(message, style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.lightGrey),),
         ],
