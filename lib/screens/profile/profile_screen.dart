@@ -1,5 +1,6 @@
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/custom_form_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -72,19 +73,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           }
           if (state is Success) {
             _dataLoading = false;
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Perfil actualizado!"),
-                backgroundColor: ConstantsV2.green,
-              ),
+            emitSnackBar(
+                context: context,
+                text: "Perfil actualizado",
+                status: ActionStatus.Success
             );
           } else if (state is Failed) {
             _dataLoading = false;
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.response!),
-                backgroundColor: Colors.redAccent,
-              ),
+            emitSnackBar(
+                context: context,
+                text: state.response,
+                status: ActionStatus.Fail
             );
           }
         },

@@ -10,6 +10,7 @@ import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -65,16 +66,27 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
 
               }
               if(state is SuccessSubscribed){
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Una solicitud enviada correctamente"),
-                    backgroundColor: ConstantsV2.systemSuccess,
-                  ),
+
+                String text = _organizationsSelected.length == 1
+                    ? "Una solicitud enviada correctamente":
+                    "${_organizationsSelected.length} solicitudes enviadas correctamente"
+                ;
+
+                emitSnackBar(
+                  context: context,
+                  text: text,
+                  status: ActionStatus.Success
                 );
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => const OrganizationsSubscribedScreen()),
                   ModalRoute.withName('/home')
+                );
+              }else if(state is Failed){
+                emitSnackBar(
+                    context: context,
+                    text: state.response,
+                    status: ActionStatus.Fail
                 );
               }
             },
@@ -286,17 +298,22 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
 
                     }else if(state is subscribed.OrganizationRemoved){
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Suscripcion a ${_organizationsSubscribed.firstWhere((element) => element.id == state.id).name} eliminada"),
-                          backgroundColor: ConstantsV2.systemSuccess,
-                        ),
+                      emitSnackBar(
+                        context: context,
+                        text: "Suscripcion a ${_organizationsSubscribed.firstWhere((element) => element.id == state.id).name} eliminada",
+                        status: ActionStatus.Success
                       );
 
                       _organizationsSubscribed.removeWhere((element) => element.id == state.id);
 
                       // notify the home to remove an organization
                       BlocProvider.of<home_organization.HomeOrganizationBloc>(context).add(home_organization.GetOrganizationsSubscribed());
+                    } else if(state is subscribed.Failed){
+                      emitSnackBar(
+                          context: context,
+                          text: state.response,
+                          status: ActionStatus.Fail
+                      );
                     }
                   },
                 ),
@@ -306,13 +323,18 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                       _organizationsPostulated = state.organizationsList;
 
                     }else if(state is applied.PostulationRemoved){
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Solicitud a ${_organizationsPostulated.firstWhere((element) => element.id == state.id).name} cancelada"),
-                          backgroundColor: ConstantsV2.systemSuccess,
-                        ),
+                      emitSnackBar(
+                        context: context,
+                        text: "Solicitud a ${_organizationsPostulated.firstWhere((element) => element.id == state.id).name} cancelada",
+                        status: ActionStatus.Success
                       );
                       _organizationsPostulated.removeWhere((element) => element.id == state.id);
+                    }else if(state is applied.Failed){
+                      emitSnackBar(
+                          context: context,
+                          text: state.response,
+                          status: ActionStatus.Fail
+                      );
                     }
                   },
                 )

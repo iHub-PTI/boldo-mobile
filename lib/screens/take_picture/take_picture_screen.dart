@@ -1,3 +1,4 @@
+import 'package:boldo/utils/helpers.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -187,8 +188,11 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
   }
 
   void showInSnackBar(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    emitSnackBar(
+        context: context,
+        text: message,
+        status: ActionStatus.Fail
+    );
   }
 
   /// Display a bar with buttons to change the flash and exposure modes

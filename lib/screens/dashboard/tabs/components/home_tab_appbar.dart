@@ -2,6 +2,7 @@ import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart' as family;
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -200,11 +201,10 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                 _loading = false;
               });
             }else if(state is family.Failed){
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.response!),
-                  backgroundColor: Colors.redAccent,
-                ),
+              emitSnackBar(
+                  context: context,
+                  text: state.response,
+                  status: ActionStatus.Fail
               );
               _loading = false;
             }else if(state is family.Loading){

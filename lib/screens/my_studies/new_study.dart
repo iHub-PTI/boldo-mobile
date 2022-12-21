@@ -95,8 +95,11 @@ class _NewStudyState extends State<NewStudy> {
             }
             if (state is Failed) {
               print('failed: ${state.msg}');
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.msg)));
+              emitSnackBar(
+                  context: context,
+                  text: state.msg,
+                  status: ActionStatus.Fail
+              );
             }
           },
           child: SingleChildScrollView(

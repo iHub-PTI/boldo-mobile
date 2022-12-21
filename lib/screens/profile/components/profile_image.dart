@@ -105,20 +105,18 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                       var response2  = await http.put(Uri.parse(response.data["uploadUrl"]),
                           body: croppedFile.readAsBytesSync());
                       if(response2.statusCode == 413){
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                          content: Text("El tamaño de la foto es muy grande"),
-                          backgroundColor: Colors.redAccent,
-                          ),
+                        emitSnackBar(
+                            context: context,
+                            text: "El tamaño de la foto es muy grande",
+                            status: ActionStatus.Fail
                         );
                       }else if(response2.statusCode == 201){
                         editingPatient.photoUrl = response.data["location"];
                       }else{
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Ocurrio un error"),
-                            backgroundColor: Colors.redAccent,
-                          ),
+                        emitSnackBar(
+                            context: context,
+                            text: genericError,
+                            status: ActionStatus.Fail
                         );
                       }
                       setState(() {
@@ -128,11 +126,10 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                       setState(() {
                         _isLoading = false;
                       });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Ocurrio un error"),
-                          backgroundColor: Colors.redAccent,
-                        ),
+                      emitSnackBar(
+                          context: context,
+                          text: genericError,
+                          status: ActionStatus.Fail
                       );
                       print(exception);
                       await Sentry.captureMessage(

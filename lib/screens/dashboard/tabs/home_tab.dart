@@ -13,6 +13,7 @@ import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/organizations/memberships_screen.dart';
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/go_to_top.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -178,11 +179,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             BlocListener<HomeOrganizationBloc, HomeOrganizationBlocState>(
               listener: (context, state) {
                 if (state is HomeOrganizationFailed) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.response!),
-                      backgroundColor: Colors.redAccent,
-                    ),
+                  emitSnackBar(
+                      context: context,
+                      text: state.response,
+                      status: ActionStatus.Fail
                   );
                   if (_refreshControllerOrganizationsCheck != null) {
                     _refreshControllerOrganizationsCheck!.refreshCompleted();
@@ -221,11 +221,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             BlocListener<HomeBloc, HomeState>(
               listener: (context, state) {
                 if (state is HomeFailed) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.response!),
-                      backgroundColor: Colors.redAccent,
-                    ),
+                  emitSnackBar(
+                      context: context,
+                      text: state.response,
+                      status: ActionStatus.Fail
                   );
                 }
               },
@@ -233,11 +232,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             BlocListener<HomeNewsBloc, HomeNewsState>(
               listener: (context, state) {
                 if (state is FailedLoadedNews) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.response!),
-                      backgroundColor: Colors.redAccent,
-                    ),
+                  emitSnackBar(
+                      context: context,
+                      text: state.response,
+                      status: ActionStatus.Fail
                   );
                   if (_refreshControllerNews != null) {
                     _refreshControllerNews!.refreshCompleted();
