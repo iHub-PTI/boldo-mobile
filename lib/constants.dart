@@ -405,6 +405,7 @@ class ConstantsV2 {
   static Color secondaryLightAndClear = const Color(0xffEB8B76).withOpacity(0.1);
 
   static const Color systemSuccess = Color(0xff4AB648);
+  static const Color systemFail = Color(0xffC53030);
 
   // home heights
   static double homeAppBarMaxHeight = 132.0;
