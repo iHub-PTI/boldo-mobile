@@ -104,6 +104,7 @@ class _BookingScreenState extends State<BookingScreen> {
               builder: (context) => BookingConfirmScreen(
                 bookingDate: _selectedBookingHour!,
                 doctor: widget.doctor,
+                organization: organizationsSubscribed.first,
               ),
             ),
           );
@@ -115,6 +116,7 @@ class _BookingScreenState extends State<BookingScreen> {
             builder: (context) => BookingConfirmScreen(
               bookingDate: _selectedBookingHour!,
               doctor: widget.doctor,
+              organization: organizationsSubscribed.first,
             ),
           ),
         );
@@ -126,6 +128,7 @@ class _BookingScreenState extends State<BookingScreen> {
           builder: (context) => BookingConfirmScreen(
             bookingDate: bookingHour,
             doctor: widget.doctor,
+            organization: organizationsSubscribed.first,
           ),
         ),
       );

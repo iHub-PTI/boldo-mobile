@@ -1,4 +1,5 @@
 import 'package:boldo/blocs/doctor_bloc/doctor_bloc.dart';
+import 'package:boldo/main.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/booking/booking_screen.dart';
 import 'package:boldo/utils/expandable_card/expandable_card.dart';
@@ -425,6 +426,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         builder: (context) => BookingConfirmScreen(
           bookingDate: bookingHour,
           doctor: widget.doctor,
+          organization: organizationsSubscribed.first,
         ),
       ),
     );
