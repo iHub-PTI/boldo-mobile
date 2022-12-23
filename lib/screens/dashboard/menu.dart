@@ -30,11 +30,12 @@ class _MenuScreenState extends State<MenuScreen> {
       title: 'Mi Familia',
       route: '/familyScreen',
     ),
-    ItemMenu(
+    // TODO: await endpoint to subscribe to others organizations
+    /*ItemMenu(
       image: 'assets/icon/credit-card.svg',
       title: 'Membresías',
       page: Organizations(),
-    ),
+    ),*/
     const ItemMenu(
       image: 'assets/icon/shield-check.svg',
       title: 'Polîticas de privacidad',
