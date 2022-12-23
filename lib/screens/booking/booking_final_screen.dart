@@ -256,7 +256,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                                 child: Expanded(
                                                                   child:  Text(
                                                                       (widget.bookingDate.appointmentType?? 'A') == 'A'?
-                                                                      "Esta consulta será realizada en persona en el Centro Médico Tesai’i- Policlinic."
+                                                                      "Esta consulta será realizada en persona en el ${widget.organization.name}."
                                                                           : "Esta consulta será realizada de forma remota a través de esta aplicación.",
                                                                       style: boldoCorpMediumTextStyle.copyWith(
                                                                           color: ConstantsV2.activeText

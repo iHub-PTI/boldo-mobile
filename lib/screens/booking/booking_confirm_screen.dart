@@ -121,6 +121,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                     MaterialPageRoute(builder: (context) => BookingFinalScreen(
                       doctor: widget.doctor,
                       bookingDate: widget.bookingDate,
+                      organization: widget.organization,
                     )),
                   );
                 } else if (response.statusCode == 400) {
@@ -185,13 +186,14 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
 
 class ShowAppoinmentDescription extends StatelessWidget {
   final NextAvailability nextAvailability;
-  const ShowAppoinmentDescription({Key? key, required this.nextAvailability})
+  final Organization organization;
+  const ShowAppoinmentDescription({Key? key, required this.nextAvailability, required this.organization})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final inPersonDesc =
-        "Esta consulta será realizada en persona en el Centro Médico Tesai’i- Policlinic.";
+        "Esta consulta será realizada en persona en el ${organization.name}.";
     final onlineDesc =
         "Esta consulta será realizada de forma remota a través de esta aplicación.";
     return Padding(
