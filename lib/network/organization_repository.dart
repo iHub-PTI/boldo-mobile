@@ -16,7 +16,7 @@ class OrganizationRepository {
     Response response;
 
     try {
-      /*if (prefs.getBool('isFamily') ?? false) {
+      if (prefs.getBool('isFamily') ?? false) {
         response = await dio
             .get('/profile/caretaker/dependent/${patient.id}/organizations');
       } else {
@@ -25,6 +25,9 @@ class OrganizationRepository {
       }
       // there are organizations
       if (response.statusCode == 200) {
+        organizationsSubscribed = List<Organization>.from(
+            response.data.map((i) => Organization.fromJson(i))
+        );
         return List<Organization>.from(
             response.data.map((i) => Organization.fromJson(i)));
       } // doesn't have any organization
@@ -33,10 +36,8 @@ class OrganizationRepository {
         return List<Organization>.from([]);
       }
 
-       */
-      return List<Organization>.from(organizationsSubscribed);
       // throw an error if isn't a know status code
-      //throw Failure('Unknown StatusCode ${response.statusCode}');
+      throw Failure('Unknown StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
