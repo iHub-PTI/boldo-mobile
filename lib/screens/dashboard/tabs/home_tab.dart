@@ -455,7 +455,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                     }else{
                       return _emptyOrganizations();
                     }
-                  }else {
+                  }else if(state is HomeOrganizationFailed){
+                    return Container(
+                        child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed()) ) );
+                  } else {
                     return const Center(
                       child: CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation<Color>(
