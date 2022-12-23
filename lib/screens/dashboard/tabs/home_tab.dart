@@ -179,6 +179,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             BlocListener<HomeOrganizationBloc, HomeOrganizationBlocState>(
               listener: (context, state) {
                 if (state is HomeOrganizationFailed) {
+
+                  // set normal height
+                  _heightExpandableBarMax = ConstantsV2.homeExpandedMaxHeight;
+                  _heightExpandableBarMin = ConstantsV2.homeExpandedMinHeight;
+
                   emitSnackBar(
                       context: context,
                       text: state.response,
@@ -214,7 +219,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                   BlocProvider.of<HomeBloc>(context).add(ReloadHome());
                 }
                 if (state is HomeOrganizationLoading) {
-                  BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
+                  // set normal height
+                  _heightExpandableBarMax = ConstantsV2.homeExpandedMaxHeight;
+                  _heightExpandableBarMin = ConstantsV2.homeExpandedMinHeight;
                 }
               },
             ),
@@ -415,7 +422,16 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                                   return Container();
                                 }
                               }else {
-                                return Container();
+                                // fill the height between carousel and tabview
+                                // with container with lightGrey color
+                                return Container(
+                                    width: double.maxFinite,
+                                    height: ConstantsV2.homeFeedTitleContainerMinHeight,
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    decoration: const BoxDecoration(
+                                    color: ConstantsV2.lightGrey,
+                                  ),
+                                );
                               }
                             },
                           ),
