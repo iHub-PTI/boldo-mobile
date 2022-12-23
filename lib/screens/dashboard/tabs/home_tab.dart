@@ -209,6 +209,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                     // set normal height
                     _heightExpandableBarMax = ConstantsV2.homeExpandedMaxHeight;
                     _heightExpandableBarMin = ConstantsV2.homeExpandedMinHeight;
+                    BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
                   }
 
 
