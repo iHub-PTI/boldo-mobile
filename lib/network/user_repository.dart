@@ -99,21 +99,15 @@ class UserRepository {
     }
   }
 
-  Future<None>? editProfile(Patient patientData) async {
+  Future<None>? editProfile(Patient editingPatient) async {
     try {
-
-      //copy data to add international code
-      patientData = Patient.fromJson(patientData.toJson());
-
-      // add international py code
-      patientData.phone = addInternationalPyNumber(patientData.phone);
       if(!(prefs.getBool(isFamily)?? false))
-        await dio.post("/profile/patient", data: patientData.toJson());
+        await dio.post("/profile/patient", data: editingPatient.toJson());
       else
-        await dio.put("/profile/caretaker/dependent/${patient.id}", data: patientData.toJson());
+        await dio.put("/profile/caretaker/dependent/${patient.id}", data: editingPatient.toJson());
 
       // Set new profile info
-      patient = Patient.fromJson(patientData.toJson());
+      patient = Patient.fromJson(editingPatient.toJson());
 
       // Update prefs in Principal Patient
       if(!(prefs.getBool(isFamily)?? false))
