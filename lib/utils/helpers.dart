@@ -309,6 +309,22 @@ async {
 
 }
 
+String? removeInternationalPyNumber(String? number){
+  if((number?.length?? 0) >= 4){
+    if(number?.substring(0,4) == '+595'){
+      return number?.substring(4);
+    }
+  }
+  return number;
+}
+
+String? addInternationalPyNumber(String? number){
+  if(number != null){
+    return '+595' + number;
+  }
+  return number;
+}
+
 
 /// Class to format a valid date to input un TextFormField
 /// this will autocomplete with / in the form "1" after typing a second character
