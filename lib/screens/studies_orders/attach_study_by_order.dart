@@ -73,10 +73,10 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                     .pop();
               }
               else if (state is FailedUploadFiles) {
-                Scaffold.of(context)
+                ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.response)));
               } else if (state is FailedLoadedStudies) {
-                Scaffold.of(context)
+                ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.response)));
               }if(state is StudyObtained){
                 serviceRequest = state.serviceRequest;

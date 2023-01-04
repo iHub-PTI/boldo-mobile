@@ -77,7 +77,7 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
                                 ),
                               ),
                             ),
-                            widget.isDependent && ! prefs.getBool(isFamily)! ? UnlinkFamilyWidget(
+                            widget.isDependent && !(prefs.getBool(isFamily)?? false) ? UnlinkFamilyWidget(
                               onTapCallback: (result) async {
                                 if (result == 'Desvincular') {
                                   BlocProvider.of<FamilyBloc>(context).add(UnlinkDependent(id: widget.patient!.id!));

@@ -163,7 +163,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                             if (result == 'Descartar') {
                               try{
                                 final response = await dio.post(
-                                    !prefs.getBool(isFamily)! ?
+                                    !(prefs.getBool(isFamily)?? false) ?
                                     "/profile/patient/appointments/cancel/${widget.appointment.id}"
                                         : "/profile/caretaker/appointments/cancel/${widget.appointment.id}");
                                 if (response.statusMessage != null) {

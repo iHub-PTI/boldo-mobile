@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:boldo/main.dart';
 import 'package:camera/camera.dart';
@@ -145,6 +146,7 @@ async {
           {
             "status": status,
             "patient": prefs.getString("userId"),
+            'access_token': await storage.read(key: 'access_token')
           }
         ],
       );
@@ -186,6 +188,7 @@ async {
           {
             "status": status,
             "patient": prefs.getString("userId"),
+            'access_token': await storage.read(key: 'access_token')
           }
         ],
       );
@@ -304,4 +307,72 @@ async {
   }else
     return true;
 
+}
+
+
+/// Class to format a valid date to input un TextFormField
+/// this will autocomplete with / in the form "1" after typing a second character
+/// the / is inserted in the form "1/2"
+class DateTextFormatter extends TextInputFormatter {
+  static const _maxChars = 8;
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue,
+      TextEditingValue newValue,
+      ) {
+    String separator = '/';
+    var text = _format(
+      newValue.text,
+      oldValue.text,
+      separator,
+    );
+
+    return newValue.copyWith(
+      text: text,
+      selection: updateCursorPosition(
+        oldValue,
+        text,
+      ),
+    );
+  }
+
+  String _format(
+      String value,
+      String oldValue,
+      String separator,
+      ) {
+    var isErasing = value.length < oldValue.length;
+    var isComplete = value.length > _maxChars + 2;
+
+    if (!isErasing && isComplete) {
+      return oldValue;
+    }
+
+    value = value.replaceAll(separator, '');
+    final result = <String>[];
+
+    for (int i = 0; i < min(value.length, _maxChars); i++) {
+      result.add(value[i]);
+      if ((i == 1 || i == 3) && i != value.length - 1) {
+        result.add(separator);
+      }
+    }
+
+    return result.join();
+  }
+
+  TextSelection updateCursorPosition(
+      TextEditingValue oldValue,
+      String text,
+      ) {
+    var endOffset = max(
+      oldValue.text.length - oldValue.selection.end,
+      0,
+    );
+
+    var selectionEnd = text.length - endOffset;
+
+    return TextSelection.fromPosition(TextPosition(offset: selectionEnd));
+  }
 }

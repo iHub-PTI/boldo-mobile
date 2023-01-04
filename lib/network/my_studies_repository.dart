@@ -64,16 +64,19 @@ class MyStudesRepository {
         throw Failure(
             "Falló la obtención de los estudios: Error ${response.statusCode}");
       }
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("Falló la obtención de los estudios");
@@ -99,26 +102,31 @@ class MyStudesRepository {
         throw Failure(
             "Falló la obtención de los estudios: Error ${response.statusCode}");
       }
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("Falló la obtención del estudio");
-    } catch (ex) {
+    } catch (ex, stackTrace) {
       await Sentry.captureMessage(
         ex.toString(),
         params: [
           {
             "patient": prefs.getString("userId"),
-          }
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("Falló la obtención del estudio");
@@ -158,29 +166,45 @@ class MyStudesRepository {
         await dio.post('/profile/patient/diagnosticReport', data: diagnostic);
       }
       return None();
-    } on DioError catch (ex) {
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
-            "patient": patient.id,
-            "responseError": ex.response,
-          }
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
-      throw Failure(ex.response?.data['message']);
+      throw Failure(exception.response?.data['message']);
     } on Failure catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'responseError': exception.message,
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
       throw Failure(exception.message);
     }catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token'),
+            },
+            stackTrace
+          ]
       );
       throw Failure('Ocurrio un error indesperado');
     }

@@ -66,7 +66,7 @@ class _AttachFilesState extends State<AttachFiles> {
               }
               if (state is FailedUpload) {
                 print('failed: ${state.msg}');
-                Scaffold.of(context)
+                ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text(state.msg)));
               }
               if(state is FilesObtained){

@@ -75,13 +75,12 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                 listener: (context, state){
                   setState(() {
                     if(state is Failed){
-                      // this is showing for the second time
-                      // ScaffoldMessenger.of(context).showSnackBar(
-                      //   SnackBar(
-                      //     content: Text(state.response!),
-                      //     backgroundColor: Colors.redAccent,
-                      //   ),
-                      // );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(state.response!),
+                          backgroundColor: Colors.redAccent,
+                        ),
+                      );
                       _dataLoading = false;
                     }
                     if(state is Success){
