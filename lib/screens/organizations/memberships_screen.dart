@@ -358,7 +358,6 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                         style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                       ),
                     ),
-
                     const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.all(16),
@@ -367,104 +366,124 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                     const SizedBox(
                       height: 16,
                     ),
-                    Container(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        color: ConstantsV2.grayLightest,
-                        child: Column(
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width-30,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      'Arrastrá los elementos para establecer el orden de prioridad',
-                                      style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.grayDark),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 12,
-                                  ),
-                                  InkWell(
-                                    onTap: (){
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => const OrganizationsScreen()),
-                                      );
-                                    },
-                                    child: Card(
-                                      elevation: 0,
-                                      margin: EdgeInsets.zero,
-                                      color: ConstantsV2.secondaryRegular,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(100),
+                    BlocBuilder<subscribed.OrganizationSubscribedBloc, subscribed.OrganizationSubscribedBlocState>(
+                      builder: (context, state){
+                        if (state is subscribed.Failed){
+                          return DataFetchErrorWidget(retryCallback: () => subscribed.OrganizationSubscribedBloc()..add(subscribed.GetOrganizationsSubscribed()));
+                        } else if(state is subscribed.Loading){
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  Constants.primaryColor400),
+                              backgroundColor: Constants.primaryColor600,
+                            ),
+                          );
+                        }else{
+                          if ( _organizationsSubscribed.isEmpty ) {
+                            return emptyView(context);
+                          } else {
+                            return Container(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                color: ConstantsV2.grayLightest,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width-30,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              'Arrastrá los elementos para establecer el orden de prioridad',
+                                              style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.grayDark),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 12,
+                                          ),
+                                          InkWell(
+                                            onTap: (){
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => const OrganizationsScreen()),
+                                              );
+                                            },
+                                            child: Card(
+                                              elevation: 0,
+                                              margin: EdgeInsets.zero,
+                                              color: ConstantsV2.secondaryRegular,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(100),
+                                              ),
+                                              child: Container(
+                                                padding: const EdgeInsets.all(12),
+                                                child: const Center(
+                                                  child: Icon(Icons.add)
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      child: Container(
-                                        padding: const EdgeInsets.all(12),
-                                        child: const Center(
-                                          child: Icon(Icons.add)
+                                    )
+                                  ]
+                                )
+                              )
+                            );
+                          }
+                        }
+                      }
+                    ),
+                    const SizedBox(height: 10),
+                    BlocBuilder<applied.OrganizationAppliedBloc, applied.OrganizationAppliedBlocState>(
+                      builder: (context, state){
+                        if (state is applied.Failed){
+                          return DataFetchErrorWidget(retryCallback: () => applied.OrganizationAppliedBloc()..add(applied.GetOrganizationsPostulated()));
+                        } else if(state is applied.Loading){
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  Constants.primaryColor400),
+                              backgroundColor: Constants.primaryColor600,
+                            ),
+                          );
+                        }else{
+                          if ( _organizationsPostulated.isEmpty ) {
+                            return Container();
+                          } else {
+                            return Container(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                color: ConstantsV2.grayLightest,
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 16.0),
+                                          child: Text(
+                                            'Membresías pendientes de aprobación',
+                                            style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.grayDark),
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            BlocBuilder<subscribed.OrganizationSubscribedBloc, subscribed.OrganizationSubscribedBlocState>(
-                                builder: (context, state){
-                                  if (state is subscribed.Failed){
-                                    return DataFetchErrorWidget(retryCallback: () => subscribed.OrganizationSubscribedBloc()..add(subscribed.GetOrganizationsSubscribed()));
-                                  } else if(state is subscribed.Loading){
-                                    return const Center(
-                                      child: CircularProgressIndicator(
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                            Constants.primaryColor400),
-                                        backgroundColor: Constants.primaryColor600,
-                                      ),
-                                    );
-                                  }else{
-                                    return ReorderableListView.builder(
-                                      buildDefaultDragHandles: false,
-                                      physics: const ClampingScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemCount: _organizationsSubscribed.length,
-                                      itemBuilder: organizationsBox,
-                                      onReorder: (int oldIndex, int newIndex) {
-                                        final index = newIndex > oldIndex ? newIndex - 1 : newIndex;
-                                        final organization = _organizationsSubscribed.removeAt(oldIndex);
-                                        _organizationsSubscribed.insert(index, organization);
-                                      },
-                                    );
-                                  }
-                                }
-                            ),
-                            BlocBuilder<applied.OrganizationAppliedBloc, applied.OrganizationAppliedBlocState>(
-                                builder: (context, state){
-                                  if (state is applied.Failed){
-                                    return DataFetchErrorWidget(retryCallback: () => applied.OrganizationAppliedBloc()..add(applied.GetOrganizationsPostulated()));
-                                  } else if(state is applied.Loading){
-                                    return const Center(
-                                      child: CircularProgressIndicator(
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                            Constants.primaryColor400),
-                                        backgroundColor: Constants.primaryColor600,
-                                      ),
-                                    );
-                                  }else{
-                                    return ListView.builder(
+                                    const SizedBox(height: 10),
+                                    ListView.builder(
                                       physics: const ClampingScrollPhysics(),
                                       shrinkWrap: true,
                                       itemCount: _organizationsPostulated.length,
                                       itemBuilder: organizationsPostulatedBox,
-                                    );
-                                  }
-                                }
-                            ),
-                          ],
-                        )
-                      ),
+                                    )
+                                  ]
+                                )
+                              )
+                            );
+                          }
+                        }
+                      }
                     ),
                   ],
                 ),
