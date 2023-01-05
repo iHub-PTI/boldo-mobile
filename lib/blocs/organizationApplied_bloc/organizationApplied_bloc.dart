@@ -18,6 +18,7 @@ class OrganizationAppliedBloc extends Bloc<OrganizationAppliedBlocEvent, Organiz
     on<OrganizationAppliedBlocEvent>((event, emit) async {
       if(event is GetOrganizationsPostulated) {
         emit(Loading());
+        await Future.delayed(const Duration(seconds: 1));
         var _post;
 
         //get organizations that the patient is subscribed
