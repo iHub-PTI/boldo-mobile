@@ -476,6 +476,74 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
     );
   }
 
+  Widget emptyView(BuildContext context) {
+    return Column(
+      children: [
+        // this structure prevent overflow in small screens
+        Row(
+          children: [
+            const Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Aún no contas con membresía en este perfil',
+                  style: boldoSubTextMediumStyle,
+                )
+              )
+            )
+          ],
+        ),
+        const SizedBox(height: 16.0),
+        Row(
+          children: [
+            const Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left:16.0, right: 16.0, bottom: 16.0),
+                child: Text(
+                  'Para usar algunos de los servicios que Boldo tiene para ofrecer, es necesario que este perfil de tu grupo familiar sea miembro de la organización que las provee.',
+                  style: boldoInfoTextStyle
+                ),
+              ),
+            )
+          ],
+        ),
+        const SizedBox(height: 26.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(right: 16.0, bottom: 16.0),
+              child: ElevatedButton(
+                onPressed:(){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const OrganizationsScreen()),
+                  );
+                },
+                child: Container(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Agregar',
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        const Icon(
+                          Icons.arrow_forward_ios_outlined,
+                          size: 16,
+                        ),
+                      ],
+                    )),
+              ),
+            )
+          ],
+        )
+      ],
+    );
+  }
+
   Widget organizationsBox(BuildContext context, int index){
     return ReorderableDelayedDragStartListener(
       key: ValueKey(_organizationsSubscribed[index]),
