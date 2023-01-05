@@ -116,6 +116,14 @@ const boldoSubTextMediumStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoInfoTextStyle = TextStyle(
+  color: ConstantsV2.activeText,
+  fontFamily: 'Montserrat',
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w300,
+  fontSize: 14
+);
+
 const boldoCardHeadingTextStyle = TextStyle(
   color: Colors.white,
   fontStyle: FontStyle.normal,
