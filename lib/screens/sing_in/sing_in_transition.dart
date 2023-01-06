@@ -57,7 +57,7 @@ class _SingInTransitionState extends State<SingInTransition> {
               emitSnackBar(
                   context: context,
                   text: state.response,
-                  status: ActionStatus.Success
+                  status: ActionStatus.Fail
               );
               UserRepository().logout(context);
             }
