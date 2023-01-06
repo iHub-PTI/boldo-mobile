@@ -76,7 +76,7 @@ class OrganizationRepository {
 
     try {
       // the query is made
-      /*response = await dio.get('/organizations');
+      response = await dio.get('/organizations');
       // there are organizations
       if (response.statusCode == 200) {
         return List<Organization>.from(
@@ -87,8 +87,6 @@ class OrganizationRepository {
         return List<Organization>.from([]);
       }
 
-       */
-      return List<Organization>.from([Organization(name: "Tesai'i", id: "1"), Organization(name: 'Ande', id: "2"), Organization(name: 'Copaco', id: "3"), Organization(name: 'Corposana', id: "4") ]);
       // throw an error if isn't a know status code
       await Sentry.captureMessage(
         "unknownError ${response.statusCode}",
