@@ -90,7 +90,20 @@ class OrganizationRepository {
        */
       return List<Organization>.from([Organization(name: "Tesai'i", id: "1"), Organization(name: 'Ande', id: "2"), Organization(name: 'Copaco', id: "3"), Organization(name: 'Corposana', id: "4") ]);
       // throw an error if isn't a know status code
-      //throw Failure('Unknown StatusCode ${response.statusCode}');
+      await Sentry.captureMessage(
+        "unknownError ${response.statusCode}",
+        params: [
+          {
+            "path": response.requestOptions.path,
+            "data": response.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            'access_token': await storage.read(key: 'access_token')
+          }
+        ],
+      );
+      throw Failure('Unknown StatusCode ${response.statusCode}');
+
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
