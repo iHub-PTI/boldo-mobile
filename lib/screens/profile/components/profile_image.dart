@@ -389,30 +389,30 @@ class _ProfileImageViewTypeForm extends State<ProfileImageViewTypeForm> {
   Widget build(BuildContext context) {
 
 
-    Widget child = url == null ?
-    SvgPicture.asset(
-      gender == 'female'
-          ? 'assets/images/femalePatient.svg':
-      gender == 'male'?
-        'assets/images/malePatient.svg':
-      'assets/images/LogoIcon.svg',
-    ) : CachedNetworkImage(
-      fit: BoxFit.cover,
-      imageUrl: url!,
-      progressIndicatorBuilder:
-          (context, url, downloadProgress) => Padding(
-        padding: const EdgeInsets.all(26.0),
-        child: CircularProgressIndicator(
-          value: downloadProgress.progress,
-          valueColor:
-          const AlwaysStoppedAnimation<Color>(
-              Constants.primaryColor400),
-          backgroundColor: Constants.primaryColor600,
-        ),
-      ),
-      errorWidget: (context, url, error) =>
-      const Icon(Icons.error),
-    );
+    Widget child =
+      url == null || url == ""
+        ? SvgPicture.asset(
+          gender == 'female'
+            ? 'assets/images/femalePatient.svg'
+            : gender == 'male'
+              ? 'assets/images/malePatient.svg'
+              : 'assets/images/LogoIcon.svg')
+        : CachedNetworkImage(
+          fit: BoxFit.cover,
+          imageUrl: url!,
+          progressIndicatorBuilder: (context, url, downloadProgress) =>
+            Padding(
+              padding: const EdgeInsets.all(26.0),
+              child: CircularProgressIndicator(
+                value: downloadProgress.progress,
+                valueColor:
+                const AlwaysStoppedAnimation<Color>(
+                    Constants.primaryColor400),
+                backgroundColor: Constants.primaryColor600,
+              ),
+            ),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+        );
 
     return Card(
       child: Stack(
