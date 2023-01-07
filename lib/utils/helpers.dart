@@ -414,7 +414,13 @@ void emitSnackBar({required BuildContext context, String? text, ActionStatus? st
           if(icon != null)
             icon,
           const Padding(padding: EdgeInsets.only(left: 8)),
-          Text(message, style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.lightGrey),),
+          Expanded(
+            child: Text(
+                message,
+                style: boldoCorpMediumBlackTextStyle
+                    .copyWith(color: ConstantsV2.lightGrey)
+            ),
+          )
         ],
       ),
       backgroundColor: color,
