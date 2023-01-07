@@ -426,6 +426,19 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                           ),
                                         ],
                                       ),
+                                    ),
+                                    const SizedBox(height: 16.0),
+                                    ReorderableListView.builder(
+                                      buildDefaultDragHandles: false,
+                                      physics: const ClampingScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: _organizationsSubscribed.length,
+                                      itemBuilder: organizationsBox,
+                                      onReorder: (int oldIndex, int newIndex) {
+                                        final index = newIndex > oldIndex ? newIndex - 1 : newIndex;
+                                        final organization = _organizationsSubscribed.removeAt(oldIndex);
+                                        _organizationsSubscribed.insert(index, organization);
+                                      },
                                     )
                                   ]
                                 )
