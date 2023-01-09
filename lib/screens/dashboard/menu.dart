@@ -1,5 +1,6 @@
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
+import 'package:boldo/screens/organizations/memberships_screen.dart';
 import 'package:boldo/screens/privacy_policy/privacy_policy.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
@@ -29,6 +30,12 @@ class _MenuScreenState extends State<MenuScreen> {
       title: 'Mi Familia',
       route: '/familyScreen',
     ),
+    // TODO: await endpoint to subscribe to others organizations
+    /*ItemMenu(
+      image: 'assets/icon/credit-card.svg',
+      title: 'Membresías',
+      page: Organizations(),
+    ),*/
     const ItemMenu(
       image: 'assets/icon/shield-check.svg',
       title: 'Polîticas de privacidad',

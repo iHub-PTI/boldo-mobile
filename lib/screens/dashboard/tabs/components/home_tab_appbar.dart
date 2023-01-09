@@ -2,6 +2,7 @@ import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart' as family;
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,7 +50,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    expanded = widget.max > (ConstantsV2.homeAppBarMaxHeight+ConstantsV2.homeAppBarMinHeight)/2;
+    expanded = widget.max > (ConstantsV2.homeAppBarMaxHeight+ConstantsV2.homeAppBarMinHeight)*0.6;
     return Container(
       constraints: BoxConstraints(maxHeight: widget.max, minHeight: widget.max),
       height: widget.max,
@@ -200,11 +201,10 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                 _loading = false;
               });
             }else if(state is family.Failed){
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.response!),
-                  backgroundColor: Colors.redAccent,
-                ),
+              emitSnackBar(
+                  context: context,
+                  text: state.response,
+                  status: ActionStatus.Fail
               );
               _loading = false;
             }else if(state is family.Loading){
@@ -251,7 +251,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                               children: [
                                 !expand
                                   ? Container(
-                                    height: 55,
+                                    height: 60,
                                     margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
                                     // screen rotation control
                                     width: MediaQuery.of(context).size.width*0.7,

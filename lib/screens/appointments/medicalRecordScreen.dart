@@ -49,11 +49,10 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
     return BlocListener<MedicalRecordBloc, MedicalRecordState>(
         listener: (context, state) {
           if (state is Failed) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.response!),
-                backgroundColor: Colors.redAccent,
-              ),
+            emitSnackBar(
+                context: context,
+                text: state.response,
+                status: ActionStatus.Fail
             );
           } else if (state is MedicalRecordLoadedState) {
             medicalRecord = state.medicalRecord;

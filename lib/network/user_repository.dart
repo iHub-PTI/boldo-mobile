@@ -251,7 +251,7 @@ class UserRepository {
         return const None();
       }
       // throw an error if isn't a know status code
-      throw Failure('Unknow StatusCode ${response.statusCode}');
+      throw Failure('Unknown StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),

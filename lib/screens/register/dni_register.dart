@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/screens/take_picture/take_picture_screen.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/loading_helper.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -125,11 +126,10 @@ class _DniRegisterState extends State<DniRegister> {
                     });
                   }
                   if (state is Failed) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.response!),
-                        backgroundColor: Colors.redAccent,
-                      ),
+                    emitSnackBar(
+                        context: context,
+                        text: state.response,
+                        status: ActionStatus.Fail
                     );
                   }
                   if (state is NavigateNextScreen) {

@@ -67,8 +67,11 @@ class WaitingRoomCard extends StatelessWidget {
 
                         if (updateAppointments != null) {
                           if (updateAppointments["error"] != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text(updateAppointments["error"])));
+                            emitSnackBar(
+                                context: context,
+                                text: updateAppointments["error"],
+                                status: ActionStatus.Fail
+                            );
                           }
                           if (updateAppointments["appointment"] != null) {
                             await callEndedPopup(
@@ -79,9 +82,11 @@ class WaitingRoomCard extends StatelessWidget {
                             //reload data
                             getAppointmentsData();
                             // show scnackbar
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                content: Text(
-                                    'Algo salió mal, por favor intente de nuevo más tarde')));
+                            emitSnackBar(
+                                context: context,
+                                text: genericError,
+                                status: ActionStatus.Fail
+                            );
                           }
                         }
                       },

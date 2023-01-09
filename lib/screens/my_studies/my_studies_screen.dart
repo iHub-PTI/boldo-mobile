@@ -2,6 +2,7 @@ import 'package:boldo/main.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -85,8 +86,11 @@ class _MyStudiesState extends State<MyStudies> {
                 _loading = false;
                 _error = true;
                 setState(() {});
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Falló la obtención de estudios")));
+                emitSnackBar(
+                    context: context,
+                    text: 'Falló la obtención de estudios',
+                    status: ActionStatus.Fail
+                );
               }
 
               if (state is ServiceRequestLoaded) {
