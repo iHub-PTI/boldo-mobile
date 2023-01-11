@@ -58,8 +58,6 @@ class _MenuScreenState extends State<MenuScreen> {
 
   GlobalKey scaffoldKey = GlobalKey();
 
-  bool _loading = false;
-
   @override
   void initState() {
     super.initState();
@@ -69,19 +67,7 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget build(BuildContext context) {
     return BlocListener<UserLogoutBloc, UserLogoutState>(
       listener: (context, state) {
-        if (state is UserLogoutLoading) {
-          setState(() {
-            _loading = true;
-          });
-        } else if (state is UserLogoutSuccess) {
-          setState(() {
-            _loading = false;
-          });
-          Navigator.of(context).pushNamedAndRemoveUntil('/onboarding', (Route<dynamic> route) => false);
-        } else if (state is UserLogoutFailed) {
-          setState(() {
-            _loading = false;
-          });
+        if (state is UserLogoutFailed) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.response!),
@@ -197,16 +183,22 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                 ),
               ),
-              _loading
-                ? Align(
-                  alignment: Alignment.center,
-                  child: Image.asset(
-                    'assets/images/loading.gif',
-                    height: 60,
-                    width: 60,
-                  ),
-                )
-                : Container(),
+              BlocBuilder<UserLogoutBloc, UserLogoutState>(
+                builder: (context, state) {
+                  if (state is UserLogoutLoading) {
+                    return Align(
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        'assets/images/loading.gif',
+                        height: 60,
+                        width: 60,
+                      )
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+              )
             ]
         ),
       )
