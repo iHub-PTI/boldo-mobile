@@ -1,5 +1,6 @@
 import 'package:boldo/main.dart';
 import 'package:boldo/models/StudyOrder.dart';
+import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
 import 'package:flutter/material.dart';
@@ -140,7 +141,7 @@ class _MyStudiesState extends State<MyStudies> {
 
                   const SizedBox(height: 10),
                   Text(
-                    'Subí y consultá resultados de estudios provenientes de varias fuentes.',
+                    'En esta sección podés subir archivos y fotos de los resultados de tus estudios y los de tu familia.',
                     style: boldoHeadingTextStyle.copyWith(fontSize: 12),
                   ),
                   // const SizedBox(
@@ -155,7 +156,12 @@ class _MyStudiesState extends State<MyStudies> {
                     height: 15,
                   ),
                   diagnosticReport.isEmpty
-                      ? showEmptyList()
+                      ? const EmptyStateV2(
+                        picture: "empty_studies.svg",
+                        titleBottom: "Aún no tenés estudios",
+                        textBottom:
+                        "A medida en que uses la aplicación podrás ir viendo tus estudios",
+                      )
                       : showDiagnosticList(),
                 ],
               ),
