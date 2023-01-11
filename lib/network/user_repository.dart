@@ -521,7 +521,7 @@ class UserRepository {
           stackTrace
         ],
       );
-      throw Failure("No se puedo obtener la disponibilidad");
+      throw Failure("No se pudo obtener la disponibilidad");
     } catch (e) {
       throw Failure(genericError);
     }
@@ -799,7 +799,7 @@ class UserRepository {
           stackTrace
         ],
       );
-      throw Failure("No se puedo cerrar la sesion de forma adecuada");
+      throw Failure("No se pudo cerrar la sesion de forma adecuada");
     } catch (exception, stackTrace) {
       print(exception);
       await Sentry.captureMessage(
@@ -812,7 +812,7 @@ class UserRepository {
             stackTrace
           ]
       );
-      throw Failure("No se puedo cerrar la sesion de forma adecuada");
+      throw Failure("No se pudo cerrar la sesion de forma adecuada");
     }
   }
 
@@ -1158,7 +1158,7 @@ class UserRepository {
           stackTrace
         ],
       );
-      throw Failure("No se puedo obtener los estudios medicos");
+      throw Failure("No se pudo obtener los estudios medicos");
     } catch (exception, stackTrace) {
       await Sentry.captureMessage(
           exception.toString(),
