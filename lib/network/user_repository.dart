@@ -17,12 +17,17 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart';
 import '../main.dart';
 import '../models/Appointment.dart';
 import '../models/Doctor.dart';
+import '../provider/auth_provider.dart';
+import '../provider/user_provider.dart';
 import 'http.dart';
 
 class UserRepository {
@@ -516,7 +521,7 @@ class UserRepository {
           stackTrace
         ],
       );
-      throw Failure("No se puedo obtener la disponibilidad");
+      throw Failure("No se pudo obtener la disponibilidad");
     } catch (e) {
       throw Failure(genericError);
     }
@@ -749,7 +754,7 @@ class UserRepository {
     }
   }
 
-  void logout(BuildContext context) async {
+  Future<None>? logout(BuildContext context) async {
     try {
       String baseUrlKeyCloack = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
           defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
@@ -778,7 +783,7 @@ class UserRepository {
       }catch (e){
         // nothing to do
       }
-
+      return const None();
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
@@ -794,7 +799,7 @@ class UserRepository {
           stackTrace
         ],
       );
-      throw Failure("No se puedo cerrar la sesion de forma adecuada");
+      throw Failure("No se pudo cerrar la sesion de forma adecuada");
     } catch (exception, stackTrace) {
       print(exception);
       await Sentry.captureMessage(
@@ -807,6 +812,7 @@ class UserRepository {
             stackTrace
           ]
       );
+      throw Failure("No se pudo cerrar la sesion de forma adecuada");
     }
   }
 
@@ -1152,7 +1158,7 @@ class UserRepository {
           stackTrace
         ],
       );
-      throw Failure("No se puedo obtener los estudios medicos");
+      throw Failure("No se pudo obtener los estudios medicos");
     } catch (exception, stackTrace) {
       await Sentry.captureMessage(
           exception.toString(),

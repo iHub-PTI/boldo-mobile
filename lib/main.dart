@@ -5,6 +5,7 @@ import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
+import 'package:boldo/blocs/logout_bloc/userLogoutBloc.dart';
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/blocs/prescriptions_bloc/prescriptionsBloc.dart';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
@@ -171,6 +172,9 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<AttachStudyOrderBloc>(
             create: (BuildContext context) => AttachStudyOrderBloc(),
+          ),
+          BlocProvider<UserLogoutBloc>(
+              create: (BuildContext context) => UserLogoutBloc()
           ),
         ],
         child: MultiProvider(
