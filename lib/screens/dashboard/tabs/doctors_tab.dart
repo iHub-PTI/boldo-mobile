@@ -1,6 +1,7 @@
 import 'package:boldo/main.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/custom_search.dart';
+import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/filter/filter_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -284,8 +285,11 @@ class _DoctorsTabState extends State<DoctorsTab> {
                       ))
                       : doctors.isEmpty
                       ? const Center(
-                      child: Text(
-                        "No se encontraron doctores",
+                      child: EmptyStateV2(
+                        picture: "empty_doctors.svg",
+                        titleBottom: "Aún no hay médicos",
+                        textBottom:
+                        "La lista de médicos aparecerá aquí una vez registrados en la web",
                       ))
                       : SmartRefresher(
                     enablePullDown: true,
