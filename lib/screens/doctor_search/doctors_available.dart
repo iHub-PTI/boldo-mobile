@@ -2,6 +2,7 @@ import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
+import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/doctor_profile/doctor_profile_screen.dart';
 import 'package:boldo/screens/doctor_search/doctor_filter.dart';
 import 'package:boldo/utils/helpers.dart';
@@ -198,131 +199,145 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                     ],
                   ),
                 ),
-                _loading
-                    ? const Center(child: CircularProgressIndicator())
-                    : doctors.isNotEmpty
-                        ? Expanded(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.only(right: 16, left: 16),
-                              child: SmartRefresher(
-                                controller: _refreshDoctorController,
-                                enablePullUp: true,
-                                enablePullDown: true,
-                                child: GridView.builder(
-                                  physics: ScrollPhysics(),
-                                  scrollDirection: Axis.vertical,
-                                  shrinkWrap: true,
-                                  controller: scrollDoctorList,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithMaxCrossAxisExtent(
-                                          maxCrossAxisExtent: 200,
-                                          childAspectRatio: 3 / 4,
-                                          crossAxisSpacing: 20,
-                                          mainAxisSpacing: 20),
-                                  itemCount: doctors.length,
-                                  itemBuilder: doctorItem,
-                                ),
-                                footer: CustomFooter(
-                                  builder:
-                                      (BuildContext context, LoadStatus? mode) {
-                                    Widget body = Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(
-                                          Icons.arrow_upward,
+                BlocBuilder<DoctorsAvailableBloc, DoctorsAvailableState>(
+                  builder: (context, state){
+                    if(state is Loading || state is FilterLoadingInDoctorList)
+                      return const Center(child: CircularProgressIndicator());
+                    else if(state is Failed){
+                      return DataFetchErrorWidget(
+                          retryCallback: () =>
+                              BlocProvider.of<DoctorsAvailableBloc>(context).add(
+                                  GetDoctorsAvailable(offset: offset)
+                              )
+                      );
+                    }else{
+                      return
+                        doctors.isNotEmpty
+                            ? Expanded(
+                          child: Padding(
+                            padding:
+                            const EdgeInsets.only(right: 16, left: 16),
+                            child: SmartRefresher(
+                              controller: _refreshDoctorController,
+                              enablePullUp: true,
+                              enablePullDown: true,
+                              child: GridView.builder(
+                                physics: ScrollPhysics(),
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                controller: scrollDoctorList,
+                                gridDelegate:
+                                const SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 200,
+                                    childAspectRatio: 3 / 4,
+                                    crossAxisSpacing: 20,
+                                    mainAxisSpacing: 20),
+                                itemCount: doctors.length,
+                                itemBuilder: doctorItem,
+                              ),
+                              footer: CustomFooter(
+                                builder:
+                                    (BuildContext context, LoadStatus? mode) {
+                                  Widget body = Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.arrow_upward,
+                                        color: Constants.extraColor300,
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      const Text(
+                                        "Sube para cargar más",
+                                        style: TextStyle(
                                           color: Constants.extraColor300,
                                         ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        const Text(
-                                          "Sube para cargar más",
-                                          style: TextStyle(
-                                            color: Constants.extraColor300,
-                                          ),
-                                        )
-                                      ],
-                                    );
-                                    if (mode == LoadStatus.loading) {
-                                      body = const CircularProgressIndicator();
-                                    }
-                                    return Container(
-                                      height: 55.0,
-                                      child: Center(child: body),
-                                    );
-                                  },
-                                ),
-                                // this for refresh all data
-                                onRefresh: () {
-                                  offset = 0;
-                                  if (Provider.of<DoctorFilterProvider>(context,
-                                              listen: false)
-                                          .getSpecializationsApplied ==
-                                      null) {
-                                    BlocProvider.of<DoctorsAvailableBloc>(
-                                            context)
-                                        .add(GetDoctorsAvailable(offset: 0));
-                                  } else {
-                                    BlocProvider.of<DoctorsAvailableBloc>(context)
-                                        .add(GetDoctorFilterInDoctorList(
-                                            specializations:
-                                                Provider.of<DoctorFilterProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .getSpecializationsApplied!,
-                                            virtualAppointment: Provider.of<
-                                                        DoctorFilterProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .getLastVirtualAppointmentApplied!,
-                                            inPersonAppointment:
-                                                Provider.of<DoctorFilterProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .getLastInPersonAppointmentApplied!));
+                                      )
+                                    ],
+                                  );
+                                  if (mode == LoadStatus.loading) {
+                                    body = const CircularProgressIndicator();
                                   }
-                                },
-                                // this for load more doctors
-                                onLoading: () {
-                                  offset = offset + 20;
-                                  if (Provider.of<DoctorFilterProvider>(context,
-                                              listen: false)
-                                          .getSpecializationsApplied ==
-                                      null) {
-                                    // new event for get more available doctor
-                                    BlocProvider.of<DoctorsAvailableBloc>(
-                                            context)
-                                        .add(GetMoreDoctorsAvailable(
-                                            offset: offset));
-                                  } else {
-                                    BlocProvider.of<DoctorsAvailableBloc>(context)
-                                        .add(GetMoreFilterDoctor(
-                                            offset: offset,
-                                            specializations:
-                                                Provider.of<DoctorFilterProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .getSpecializationsApplied!,
-                                            virtualAppointment: Provider.of<
-                                                        DoctorFilterProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .getLastVirtualAppointmentApplied!,
-                                            inPersonAppointment:
-                                                Provider.of<DoctorFilterProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .getLastInPersonAppointmentApplied!));
-                                  }
+                                  return Container(
+                                    height: 55.0,
+                                    child: Center(child: body),
+                                  );
                                 },
                               ),
+                              // this for refresh all data
+                              onRefresh: () {
+                                offset = 0;
+                                if (Provider.of<DoctorFilterProvider>(context,
+                                    listen: false)
+                                    .getSpecializationsApplied ==
+                                    null) {
+                                  BlocProvider.of<DoctorsAvailableBloc>(
+                                      context)
+                                      .add(GetDoctorsAvailable(offset: 0));
+                                } else {
+                                  BlocProvider.of<DoctorsAvailableBloc>(context)
+                                      .add(GetDoctorFilterInDoctorList(
+                                      specializations:
+                                      Provider.of<DoctorFilterProvider>(
+                                          context,
+                                          listen: false)
+                                          .getSpecializationsApplied!,
+                                      virtualAppointment: Provider.of<
+                                          DoctorFilterProvider>(
+                                          context,
+                                          listen: false)
+                                          .getLastVirtualAppointmentApplied!,
+                                      inPersonAppointment:
+                                      Provider.of<DoctorFilterProvider>(
+                                          context,
+                                          listen: false)
+                                          .getLastInPersonAppointmentApplied!));
+                                }
+                              },
+                              // this for load more doctors
+                              onLoading: () {
+                                offset = offset + 20;
+                                if (Provider.of<DoctorFilterProvider>(context,
+                                    listen: false)
+                                    .getSpecializationsApplied ==
+                                    null) {
+                                  // new event for get more available doctor
+                                  BlocProvider.of<DoctorsAvailableBloc>(
+                                      context)
+                                      .add(GetMoreDoctorsAvailable(
+                                      offset: offset));
+                                } else {
+                                  BlocProvider.of<DoctorsAvailableBloc>(context)
+                                      .add(GetMoreFilterDoctor(
+                                      offset: offset,
+                                      specializations:
+                                      Provider.of<DoctorFilterProvider>(
+                                          context,
+                                          listen: false)
+                                          .getSpecializationsApplied!,
+                                      virtualAppointment: Provider.of<
+                                          DoctorFilterProvider>(
+                                          context,
+                                          listen: false)
+                                          .getLastVirtualAppointmentApplied!,
+                                      inPersonAppointment:
+                                      Provider.of<DoctorFilterProvider>(
+                                          context,
+                                          listen: false)
+                                          .getLastInPersonAppointmentApplied!));
+                                }
+                              },
                             ),
-                          )
-                        : const Center(
-                            child: Text('No se encontraron doctores'),
-                          )
+                          ),
+                        )
+                            : const Center(
+                          child: Text('No se encontraron doctores'),
+                        );
+                    }
+                  }
+                ),
               ],
             ),
           ),
@@ -331,8 +346,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
     );
   }
 
-  String availableText(NextAvailability nextAvailability) {
+  String availableText(NextAvailability? nextAvailability) {
     String available = 'Sin disponibilidad en los próximos 30 días';
+    if(nextAvailability == null)
+      return available;
     bool isToday = false;
     final today = DateTime.now();
     final parsedAvailability =
@@ -472,22 +489,19 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                   : Container(),
               Container(
                 width: MediaQuery.of(context).size.width / 2 - 52,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 24.0, bottom: 4),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        doctors[index].nextAvailability != null
-                            ? Text(
-                                availableText(doctors[index].nextAvailability!),
-                                style: boldoCorpSmallInterTextStyle.copyWith(
-                                    fontWeight: FontWeight.bold),
-                              )
-                            : Container(),
-                      ],
-                    ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 24.0, bottom: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          availableText(doctors[index].nextAvailability),
+                          style: boldoCorpSmallInterTextStyle.copyWith(
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
