@@ -298,9 +298,10 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
               child: Column(
                 children: [
                   const EmptyStateV2(
+                    picture: "empty_appointments.svg",
+                    titleBottom: "Aún no tenés consultas",
                     textBottom:
-                    "A medida que uses la app, irás encontrando novedades tales como: "
-                        "próximas consultas, recetas y resultados de estudios.",
+                    "A medida en que uses la aplicación podrás ir viendo tus consultas",
                   ),
                 ],
               ),
@@ -375,9 +376,10 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
               child: Column(
                 children: [
                   const EmptyStateV2(
+                    picture: "empty_appointments.svg",
+                    titleBottom: "Aún no tenés consultas",
                     textBottom:
-                    "A medida que uses la app, irás encontrando novedades tales como: "
-                        "próximas consultas, recetas y resultados de estudios.",
+                    "A medida en que uses la aplicación podrás ir viendo tus consultas",
                   ),
                 ],
               ),

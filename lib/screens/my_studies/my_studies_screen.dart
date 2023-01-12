@@ -1,5 +1,6 @@
 import 'package:boldo/main.dart';
 import 'package:boldo/models/StudyOrder.dart';
+import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
 import 'package:boldo/utils/helpers.dart';
@@ -144,7 +145,7 @@ class _MyStudiesState extends State<MyStudies> {
 
                   const SizedBox(height: 10),
                   Text(
-                    'Subí y consultá resultados de estudios provenientes de varias fuentes.',
+                    'En esta sección podés subir archivos y fotos de los resultados de tus estudios y los de tu familia.',
                     style: boldoHeadingTextStyle.copyWith(fontSize: 12),
                   ),
                   // const SizedBox(
@@ -158,10 +159,23 @@ class _MyStudiesState extends State<MyStudies> {
                   const SizedBox(
                     height: 15,
                   ),
-                  diagnosticReport.isEmpty
-                      ? showEmptyList()
-                      : showDiagnosticList(),
-                ],
+                  _loading
+                    ? const Center(
+                      child: CircularProgressIndicator(
+                        valueColor:
+                        AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                        backgroundColor: Constants.primaryColor600,
+                      )
+                    )
+                    : diagnosticReport.isEmpty
+                      ? const EmptyStateV2(
+                        picture: "empty_studies.svg",
+                        titleBottom: "Aún no tenés estudios",
+                        textBottom:
+                        "A medida en que uses la aplicación podrás ir viendo tus estudios",
+                      )
+                          : showDiagnosticList(),
+                    ],
               ),
             ),
           ),
@@ -169,49 +183,63 @@ class _MyStudiesState extends State<MyStudies> {
       ),
       floatingActionButton: ElevatedButton(
         onPressed: () {
-          Navigator.push(context,
+          _loading
+            ? ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Favor aguardar durante la carga."),
+                backgroundColor: Colors.redAccent,
+              ),
+            )
+            : Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) => NewStudy()));
         },
-        child: Container(
+        child: _loading
+          ? const CircularProgressIndicator(
+              valueColor:
+              AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+              backgroundColor: Constants.primaryColor600,
+            )
+          : Container(
             child: Row(
               mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'nuevo estudio',
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-            SvgPicture.asset(
-              'assets/icon/upload.svg',
-            ),
-          ],
-        )),
+              children: [
+                const Text(
+                  'nuevo estudio',
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                SvgPicture.asset(
+                  'assets/icon/upload.svg',
+                ),
+              ],
+            )
+          ),
       ),
     );
   }
 
-  showEmptyList() {
-    return Center(
-      child: Column(
-        children: [
-          if (_loading)
-            const Text('Cargando...')
-          else if (_error)
-            const Text('Error')
-          else ...[
-            SvgPicture.asset('assets/images/empty_studies.svg',
-                fit: BoxFit.cover),
-            Text(
-              'aún no tenés estudios para visualizar',
-              textAlign: TextAlign.center,
-              style: boldoSubTextStyle.copyWith(color: ConstantsV2.orange),
-            ),
-          ]
-        ],
-      ),
-    );
-  }
+  // showEmptyList() {
+  //   return Center(
+  //     child: Column(
+  //       children: [
+  //         if (_loading)
+  //           const Text('Cargando...')
+  //         else if (_error)
+  //           const Text('Error')
+  //         else ...[
+  //           SvgPicture.asset('assets/images/empty_studies.svg',
+  //               fit: BoxFit.cover),
+  //           Text(
+  //             'aún no tenés estudios para visualizar',
+  //             textAlign: TextAlign.center,
+  //             style: boldoSubTextStyle.copyWith(color: ConstantsV2.orange),
+  //           ),
+  //         ]
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget showDiagnosticList() {
     return SizedBox(
