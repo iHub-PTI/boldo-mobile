@@ -4,6 +4,7 @@ import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
+import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/logout_bloc/userLogoutBloc.dart';
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
@@ -53,6 +54,7 @@ import 'blocs/prescription_bloc/prescriptionBloc.dart';
 import 'blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
 import 'models/MedicalRecord.dart';
+import 'models/Organization.dart';
 import 'models/Patient.dart';
 import 'models/Relationship.dart';
 import 'models/User.dart';
@@ -68,6 +70,8 @@ Patient editingPatient = Patient();
 late List<MedicalRecord> allMedicalData;
 XFile? userImageSelected;
 int selectedPageIndex = 0;
+List<Organization> organizationsSubscribed = [];
+List<Organization> organizationsPostulated = [];
 const storage = FlutterSecureStorage();
 late List<Relationship> relationTypes = [];
 late List<Patient> families = [];
@@ -175,6 +179,9 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<UserLogoutBloc>(
               create: (BuildContext context) => UserLogoutBloc()
+          ),
+          BlocProvider<HomeOrganizationBloc>(
+            create: (BuildContext context) => HomeOrganizationBloc(),
           ),
         ],
         child: MultiProvider(

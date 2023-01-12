@@ -1,4 +1,5 @@
 import 'package:boldo/blocs/doctor_bloc/doctor_bloc.dart';
+import 'package:boldo/main.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/booking/booking_screen.dart';
 import 'package:boldo/utils/expandable_card/expandable_card.dart';
@@ -55,11 +56,10 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
           listener: (context, state){
             if(state is Success) {
             }else if(state is Failed){
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.response!),
-                  backgroundColor: Colors.redAccent,
-                ),
+              emitSnackBar(
+                  context: context,
+                  text: state.response,
+                  status: ActionStatus.Fail
               );
             }else if(state is Loading){
             }else if(state is AvailabilitiesObtained){
@@ -426,6 +426,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         builder: (context) => BookingConfirmScreen(
           bookingDate: bookingHour,
           doctor: widget.doctor,
+          organization: organizationsSubscribed.first,
         ),
       ),
     );

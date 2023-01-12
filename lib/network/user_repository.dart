@@ -104,15 +104,21 @@ class UserRepository {
     }
   }
 
-  Future<None>? editProfile(Patient editingPatient) async {
+  Future<None>? editProfile(Patient patientData) async {
     try {
+
+      //copy data to add international code
+      patientData = Patient.fromJson(patientData.toJson());
+
+      // add international py code
+      patientData.phone = addInternationalPyNumber(patientData.phone);
       if(!(prefs.getBool(isFamily)?? false))
-        await dio.post("/profile/patient", data: editingPatient.toJson());
+        await dio.post("/profile/patient", data: patientData.toJson());
       else
-        await dio.put("/profile/caretaker/dependent/${patient.id}", data: editingPatient.toJson());
+        await dio.put("/profile/caretaker/dependent/${patient.id}", data: patientData.toJson());
 
       // Set new profile info
-      patient = Patient.fromJson(editingPatient.toJson());
+      patient = Patient.fromJson(patientData.toJson());
 
       // Update prefs in Principal Patient
       if(!(prefs.getBool(isFamily)?? false))
@@ -250,7 +256,7 @@ class UserRepository {
         return const None();
       }
       // throw an error if isn't a know status code
-      throw Failure('Unknow StatusCode ${response.statusCode}');
+      throw Failure('Unknown StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),

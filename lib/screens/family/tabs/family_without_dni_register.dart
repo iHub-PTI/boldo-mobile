@@ -120,12 +120,10 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                   _loadingQuery = false;
                 });
                 BlocProvider.of<FamilyBloc>(context).add(GetFamilyList());
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(dependentSuccessAdded),
-                    backgroundColor: ConstantsV2.green,
-                    duration: Duration(seconds: 2),
-                  ),
+                emitSnackBar(
+                    context: context,
+                    text: dependentSuccessAdded,
+                    status: ActionStatus.Success
                 );
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/home', (route) => false);
@@ -155,12 +153,10 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                 setState(() {
                   _relationLoaded = false;
                 });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.response!),
-                    backgroundColor: Colors.redAccent,
-                    duration: const Duration(seconds: 2),
-                  ),
+                emitSnackBar(
+                    context: context,
+                    text: state.response,
+                    status: ActionStatus.Fail
                 );
               }
             },

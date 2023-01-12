@@ -100,8 +100,10 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                 if(state is AppointmentWithPrescriptionsLoadedState){
                   if(allAppointments.isEmpty){
                     return const EmptyStateV2(
-                      textBottom: "A medida que uses la aplicación podrás ir"
-                          " viendo los medicamentos que te sean recetados",
+                      picture: "empty_prescriptions.svg",
+                      titleBottom: "Aún no tenés recetas",
+                      textBottom:
+                      "A medida en que uses la aplicación podrás ir viendo tus recetas",
                     );
                   }else{
                     return Expanded(

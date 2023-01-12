@@ -3,6 +3,7 @@ import 'package:boldo/constants.dart';
 
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -44,11 +45,10 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
               if(state is PrescriptionLoaded){
                 medicalRecord = state.prescription;
               }else if(state is FailedLoadPrescription){
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.response!),
-                    backgroundColor: Colors.redAccent,
-                  ),
+                emitSnackBar(
+                    context: context,
+                    text: state.response,
+                    status: ActionStatus.Fail
                 );
               }
             },

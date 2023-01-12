@@ -57,11 +57,10 @@ class _QRScannerState extends State<QRScanner> {
             listener: (context, state){
               setState(() {
                 if(state is Failed){
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.response!),
-                      backgroundColor: Colors.redAccent,
-                    ),
+                  emitSnackBar(
+                      context: context,
+                      text: state.response,
+                      status: ActionStatus.Fail
                   );
                   _dataLoading = false;
                   Navigator.pop(context);
