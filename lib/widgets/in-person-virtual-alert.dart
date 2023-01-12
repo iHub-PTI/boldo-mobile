@@ -52,7 +52,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
               const SizedBox(height: 22,),
               Align(
                 alignment: Alignment.bottomRight,
-                child: FlatButton(
+                child: TextButton(
                     onPressed: (){
                       Navigator.of(context).pop();
                     },

@@ -95,11 +95,10 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                 _dataLoaded = true;
               });
             } else if (state is Failed) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.response!),
-                  backgroundColor: Colors.redAccent,
-                ),
+              emitSnackBar(
+                  context: context,
+                  text: state.response,
+                  status: ActionStatus.Fail
               );
               if (_refreshPastAppointmentController != null) {
                 _refreshPastAppointmentController!.refreshCompleted();
@@ -119,11 +118,10 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
         BlocListener<HomeAppointmentsBloc, HomeAppointmentsState>(
           listener: (context, state) {
             if (state is FailedLoadedAppointments) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.response!),
-                  backgroundColor: Colors.redAccent,
-                ),
+              emitSnackBar(
+                  context: context,
+                  text: state.response,
+                  status: ActionStatus.Fail
               );
               if (_refreshFutureAppointmentController != null) {
                 _refreshFutureAppointmentController!.refreshCompleted();
@@ -300,9 +298,10 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
               child: Column(
                 children: [
                   const EmptyStateV2(
+                    picture: "empty_appointments.svg",
+                    titleBottom: "Aún no tenés consultas",
                     textBottom:
-                    "A medida que uses la app, irás encontrando novedades tales como: "
-                        "próximas consultas, recetas y resultados de estudios.",
+                    "A medida en que uses la aplicación podrás ir viendo tus consultas",
                   ),
                 ],
               ),
@@ -377,9 +376,10 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
               child: Column(
                 children: [
                   const EmptyStateV2(
+                    picture: "empty_appointments.svg",
+                    titleBottom: "Aún no tenés consultas",
                     textBottom:
-                    "A medida que uses la app, irás encontrando novedades tales como: "
-                        "próximas consultas, recetas y resultados de estudios.",
+                    "A medida en que uses la aplicación podrás ir viendo tus consultas",
                   ),
                 ],
               ),
@@ -751,9 +751,8 @@ class PastAppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int daysDifference = daysBetween(DateTime.now(),DateTime.parse(
-        appointment.start!)
-        .toLocal());
+    int daysDifference = daysBetween(DateTime.parse(
+        appointment.start!).toLocal(),DateTime.now());
     return GestureDetector(
       onTap: () async {
         await Navigator.push(

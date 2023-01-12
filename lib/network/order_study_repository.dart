@@ -36,16 +36,19 @@ class StudiesOrdersRepository {
         return List<StudyOrder>.from([]);
       }
       throw Failure(genericError);
-    } on DioError catch (ex) {
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se pueden obtener las órdenes de estudio");
@@ -71,16 +74,19 @@ class StudiesOrdersRepository {
         return StudyOrder.fromJson(response.data);
       } // no study orders
       throw Failure(genericError);
-    } on DioError catch (ex) {
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se pueden obtener las órdenes de estudio");
@@ -114,23 +120,45 @@ class StudiesOrdersRepository {
         }
       }
       return attachmentUrls;
-    } on DioError catch (ex) {
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
-      throw Failure(ex.response?.data['message']);
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      throw Failure(exception.response?.data['message']);
+    } on Failure catch (exception, stackTrace) {
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'responseError': exception.message,
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
+      );
+      throw Failure(exception.message);
+    }catch (exception, stackTrace) {
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
       throw Failure('Ocurrio un error indesperado');
     }
@@ -147,23 +175,32 @@ class StudiesOrdersRepository {
         await dio.post('/profile/patient/diagnosticReport', data: diagnostic);
       }
       return None();
-    } on DioError catch (ex) {
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
-      throw Failure(ex.response?.data['message']);
+      throw Failure(exception.response?.data['message']);
     } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
       throw Failure('Ocurrio un error indesperado');
     }
@@ -200,6 +237,7 @@ class StudiesOrdersRepository {
                 "path": response2.requestOptions.path,
                 "data": response2.data, //ex.requestOptions.data,
                 "patient": prefs.getString("userId"),
+                'access_token': await storage.read(key: 'access_token')
               }
             ],
           );
@@ -212,6 +250,7 @@ class StudiesOrdersRepository {
               "path": response1.requestOptions.path,
               "data": response1.data, //ex.requestOptions.data,
               "patient": prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
             }
           ],
         );
@@ -224,27 +263,37 @@ class StudiesOrdersRepository {
             "path": response1.requestOptions.path,
             "data": response1.data, //ex.requestOptions.data,
             "patient": prefs.getString("userId"),
+            'access_token': await storage.read(key: 'access_token')
           }
         ],
       );
       throw Failure('No fue posible obtener la cita');
-    } on DioError catch(ex) {
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure('No fue posible obtener la cita');
     }catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
       throw Failure(genericError);
     }
@@ -273,27 +322,37 @@ class StudiesOrdersRepository {
             "path": response.requestOptions.path,
             "data": response.data, //ex.requestOptions.data,
             "patient": prefs.getString("userId"),
+            'access_token': await storage.read(key: 'access_token')
           }
         ],
       );
       throw Failure(genericError);
-    } on DioError catch (ex) {
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se pueden obtener la orden de estudio");
     }catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
       throw Failure(genericError);
     }

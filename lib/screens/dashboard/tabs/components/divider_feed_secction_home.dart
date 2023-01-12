@@ -19,7 +19,7 @@ class DividerFeedSectionHome extends StatelessWidget {
         child: Container(
           width: double.maxFinite ,
           height: height,
-          padding: const EdgeInsetsDirectional.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: const BoxDecoration(
             color: ConstantsV2.lightGrey,
           ),

@@ -2,6 +2,7 @@ import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart' as family;
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,7 +50,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    expanded = widget.max > (ConstantsV2.homeAppBarMaxHeight+ConstantsV2.homeAppBarMinHeight)/2;
+    expanded = widget.max > (ConstantsV2.homeAppBarMaxHeight+ConstantsV2.homeAppBarMinHeight)*0.6;
     return Container(
       constraints: BoxConstraints(maxHeight: widget.max, minHeight: widget.max),
       height: widget.max,
@@ -92,7 +93,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if(prefs.getBool(isFamily)!)
+                      if((prefs.getBool(isFamily)?? false))
                         Flexible(
                           child: Text(
                             "mostrando a",
@@ -112,7 +113,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                       ),
                       SizedBox(height: (widget.max /
                           ConstantsV2.homeAppBarMaxHeight) * 10),
-                      if(! prefs.getBool(isFamily)!)
+                      if(!(prefs.getBool(isFamily)?? false))
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -126,7 +127,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                         ),
 
                       const SizedBox(height: 4),
-                      !prefs.getBool(isFamily)! ?Text(
+                      !(prefs.getBool(isFamily)?? false) ?Text(
                         formatDate(
                           DateTime.now(),
                           [d, ' de ', MM, ' de ', yyyy],
@@ -200,11 +201,10 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                 _loading = false;
               });
             }else if(state is family.Failed){
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.response!),
-                  backgroundColor: Colors.redAccent,
-                ),
+              emitSnackBar(
+                  context: context,
+                  text: state.response,
+                  status: ActionStatus.Fail
               );
               _loading = false;
             }else if(state is family.Loading){
@@ -225,84 +225,124 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     content: Container(
-                      width: 330,
-                      height: expand ? 375 : 100,
+                      // screen rotation control
+                      width: MediaQuery.of(context).size.height >= MediaQuery.of(context).size.width 
+                        // vertical orientation
+                        ? MediaQuery.of(context).size.width > 600 
+                          // its a tablet
+                          ? MediaQuery.of(context).size.width*0.5
+                          // its a phone
+                          : MediaQuery.of(context).size.width*0.8
+                        // horizontal orientation
+                        : MediaQuery.of(context).size.width*0.3,
+                      // screen rotation and expand control
+                      height: expand 
+                        ? MediaQuery.of(context).size.height >= MediaQuery.of(context).size.width 
+                          ? MediaQuery.of(context).size.height*0.5
+                          : MediaQuery.of(context).size.height*0.6
+                        : 100,
                       child: Stack(
                         children: [
-                          Column(
+                          Align(
+                            alignment: Alignment.topCenter,
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 !expand
-                                    ? Container(
-                                  height: 55,
-                                  margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
-                                  width: 305,
-                                  alignment: Alignment.topLeft,
-                                  child: families.length > 0 ? ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: families.length + 2,
-                                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: _buildPictureRoundedFamily,
-                                  ) : Container(),
-                                ) :
-                                Container(
-                                  width: 305,
-                                  height: 250,
-                                  alignment: Alignment.topLeft,
-                                  child: families.length > 0 ? GridView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: families.length + 2,
-                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      crossAxisSpacing: 4,
-                                      mainAxisSpacing: 4,
-                                    ),
-                                    scrollDirection: Axis.vertical,
-                                    itemBuilder:  _buildPictureSquareFamily,
-                                  ) : Container(),
-                                ),
-                                Listener(
-                                  onPointerDown: (PointerDownEvent event) {
-                                    setState ((){
-                                      start = event.localPosition.dy;
-                                    });
-                                  },
-                                  onPointerUp: (PointerUpEvent event) {
-                                    setState ((){
-                                      if(start < event.localPosition.dy)
-                                        expand = true;
-                                      else if( start > event.localPosition.dy )
-                                        expand = false;
-                                    });
-                                  },
-                                  child: Container(
-                                    height: expand? 55: 20,
-                                    width: 200,
-                                    color: ConstantsV2.lightGrey,
-                                    child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                        children: [
-                                          expand? OutlinedButton(
-                                              onPressed: () {
-                                                Navigator.pushNamed(context, '/familyScreen');
-                                              },
-                                              child: const Text("más opciones")
-                                          ) : Container(),
-                                          Container(
-                                            width: 55,
-                                            height: 6,
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(16),
-                                              color: ConstantsV2.inactiveText,
+                                  ? Container(
+                                    height: 60,
+                                    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+                                    // screen rotation control
+                                    width: MediaQuery.of(context).size.width*0.7,
+                                    alignment: Alignment.topCenter,
+                                    child: families.length > 0 
+                                      ? ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: families.length + 2,
+                                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                                        scrollDirection: Axis.horizontal,
+                                        itemBuilder: _buildPictureRoundedFamily,
+                                      )
+                                      : Container(),
+                                  ) 
+                                  : Container(
+                                    width: MediaQuery.of(context).size.height >= MediaQuery.of(context).size.width 
+                                      // its a vertical orientation
+                                      ? MediaQuery.of(context).size.width > 600
+                                        // its a tablet
+                                        ? MediaQuery.of(context).size.width*0.35
+                                        // its a phone
+                                        : MediaQuery.of(context).size.width*0.7
+                                      // its a horizontal orientation
+                                      : MediaQuery.of(context).size.height > 600 
+                                        ? MediaQuery.of(context).size.width*0.25
+                                        : MediaQuery.of(context).size.width*0.35,
+                                    height: MediaQuery.of(context).size.height >= MediaQuery.of(context).size.width 
+                                      // its a vertical orientation
+                                      ? MediaQuery.of(context).size.height*0.4
+                                      // its a horizontal orientation
+                                      : MediaQuery.of(context).size.height > 600 
+                                        // its a tablet
+                                        ? MediaQuery.of(context).size.height*0.5
+                                        // its a phone
+                                        : MediaQuery.of(context).size.height*0.38,
+                                    alignment: Alignment.topCenter,
+                                    child: families.length > 0 
+                                      ? GridView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: families.length + 2,
+                                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2,
+                                          crossAxisSpacing: 4,
+                                          mainAxisSpacing: 4,
+                                        ),
+                                        scrollDirection: Axis.vertical,
+                                        itemBuilder:  _buildPictureSquareFamily,
+                                      ) 
+                                      : Container(),
+                                  ),
+                                  Listener(
+                                    onPointerDown: (PointerDownEvent event) {
+                                      setState ((){
+                                        start = event.localPosition.dy;
+                                      });
+                                    },
+                                    onPointerUp: (PointerUpEvent event) {
+                                      setState ((){
+                                        if(start < event.localPosition.dy)
+                                          expand = true;
+                                        else if( start > event.localPosition.dy )
+                                          expand = false;
+                                      });
+                                    },
+                                    child: Container(
+                                      height: expand? 55: 20,
+                                      width: 200,
+                                      color: ConstantsV2.lightGrey,
+                                      child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                          children: [
+                                            expand? OutlinedButton(
+                                                onPressed: () {
+                                                  Navigator.pushNamed(context, '/familyScreen');
+                                                },
+                                                child: const Text("más opciones")
+                                            ) : Container(),
+                                            Container(
+                                              width: 55,
+                                              height: 6,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(16),
+                                                color: ConstantsV2.inactiveText,
+                                              ),
                                             ),
-                                          ),
-                                        ]
+                                          ]
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ]
+                                ]
+                            ),
                           ),
                           if(_loading)
                             Align(

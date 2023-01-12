@@ -1,4 +1,5 @@
 import 'package:boldo/main.dart';
+import 'package:boldo/models/Organization.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,8 +18,9 @@ import 'booking_final_screen.dart';
 class BookingConfirmScreen extends StatefulWidget {
   final Doctor doctor;
   final NextAvailability bookingDate;
+  final Organization organization;
   BookingConfirmScreen(
-      {Key? key, required this.bookingDate, required this.doctor})
+      {Key? key, required this.bookingDate, required this.doctor, required this.organization})
       : super(key: key);
 
   @override
@@ -67,6 +69,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
         ),
         ShowAppoinmentDescription(
           nextAvailability: widget.bookingDate,
+          organization: widget.organization,
         ),
         Center(
           child: Text(
@@ -90,13 +93,14 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                   _loading = true;
                   _error = "";
                 });
-                if(! prefs.getBool(isFamily)!)
+                if(!(prefs.getBool(isFamily)?? false))
                   response = await dio.post("/profile/patient/appointments", data: {
                     'start': DateTime.parse(widget.bookingDate.availability!)
                         .toUtc()
                         .toIso8601String(),
                     "doctorId": widget.doctor.id,
-                    "appointmentType":widget.bookingDate.appointmentType
+                    "appointmentType":widget.bookingDate.appointmentType,
+                    "organizationId" : widget.organization.id
                   });
                 else
                   response = await dio.post("/profile/caretaker/dependent/${patient.id}/appointments", data: {
@@ -104,7 +108,8 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                         .toUtc()
                         .toIso8601String(),
                     "doctorId": widget.doctor.id,
-                    "appointmentType":widget.bookingDate.appointmentType
+                    "appointmentType":widget.bookingDate.appointmentType,
+                    "organizationId" : widget.organization.id
                   });
                 if(response.statusCode == 200) {
                   setState(() {
@@ -116,32 +121,59 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                     MaterialPageRoute(builder: (context) => BookingFinalScreen(
                       doctor: widget.doctor,
                       bookingDate: widget.bookingDate,
+                      organization: widget.organization,
                     )),
                   );
-                }else {
+                } else if (response.statusCode == 400) {
+                  setState(() {
+                    _loading = false;
+                    _error = "El turno ya no está disponible";
+                  });
+                } else {
                   setState(() {
                     _loading = false;
                     _error = response.data['message'];
                   });
                 }
 
-              } on DioError catch (exception) {
-                print(exception.response?.data['message']);
+              } on DioError catch(exception, stackTrace){
+                await Sentry.captureMessage(
+                  exception.toString(),
+                  params: [
+                    {
+                      "path": exception.requestOptions.path,
+                      "data": exception.requestOptions.data,
+                      "patient": prefs.getString("userId"),
+                      "dependentId": patient.id,
+                      "responseError": exception.response,
+                      'access_token': await storage.read(key: 'access_token')
+                    },
+                    stackTrace
+                  ],
+                );
                 setState(() {
                   _loading = false;
-                  _error = exception.response?.data['message'];
+                  if(exception.response?.statusCode == 400) {
+                    _error = "El turno ya no está disponible";
+                  } else {
+                    _error = exception.response?.data['message'];
+                  }
                 });
-                await Sentry.captureException(
-                  exception,
-                );
-              } catch (exception) {
+              } catch (exception, stackTrace) {
                 print(exception);
                 setState(() {
                   _loading = false;
                   _error = "Intente nuevamente, por favor";
                 });
-                await Sentry.captureException(
-                  exception,
+                await Sentry.captureMessage(
+                    exception.toString(),
+                    params: [
+                      {
+                        'patient': prefs.getString("userId"),
+                        'access_token': await storage.read(key: 'access_token')
+                      },
+                      stackTrace
+                    ]
                 );
               }
             },
@@ -154,13 +186,14 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
 
 class ShowAppoinmentDescription extends StatelessWidget {
   final NextAvailability nextAvailability;
-  const ShowAppoinmentDescription({Key? key, required this.nextAvailability})
+  final Organization organization;
+  const ShowAppoinmentDescription({Key? key, required this.nextAvailability, required this.organization})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final inPersonDesc =
-        "Esta consulta será realizada en persona en el Hospital Los Ángeles.";
+        "Esta consulta será realizada en persona en el ${organization.name}.";
     final onlineDesc =
         "Esta consulta será realizada de forma remota a través de esta aplicación.";
     return Padding(

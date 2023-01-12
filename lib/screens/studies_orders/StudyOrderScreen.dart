@@ -75,8 +75,11 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                   }
 
                   if (state is FailedLoadedOrders) {
-                    Scaffold.of(context).showSnackBar(const SnackBar(
-                        content: Text("Falló la obtención de estudios")));
+                    emitSnackBar(
+                        context: context,
+                        text: "Falló la obtención de estudios",
+                        status: ActionStatus.Fail
+                    );
                   }
 
                   if (state is AppointmentLoaded) {
@@ -91,8 +94,11 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                   }
 
                   if (state is FailedLoadAppointment) {
-                    Scaffold.of(context).showSnackBar(const SnackBar(
-                        content: Text("Falló la obtención de la cita")));
+                    emitSnackBar(
+                        context: context,
+                        text: state.response,
+                        status: ActionStatus.Fail
+                    );
                   }
                 },
               ),

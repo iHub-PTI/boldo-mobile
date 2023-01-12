@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
+import 'package:boldo/models/Organization.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
@@ -17,10 +18,12 @@ import 'booking_confirm_screen.dart';
 class BookingFinalScreen extends StatefulWidget {
   final Doctor doctor;
   final NextAvailability bookingDate;
+  final Organization organization;
   BookingFinalScreen({
     Key? key,
     required this.doctor,
     required this.bookingDate,
+    required this.organization,
   }) : super(key: key);
 
   @override
@@ -253,7 +256,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                                 child: Expanded(
                                                                   child:  Text(
                                                                       (widget.bookingDate.appointmentType?? 'A') == 'A'?
-                                                                      "Esta consulta será realizada en persona en el Hospital Los Ángeles."
+                                                                      "Esta consulta será realizada en persona en el ${widget.organization.name}."
                                                                           : "Esta consulta será realizada de forma remota a través de esta aplicación.",
                                                                       style: boldoCorpMediumTextStyle.copyWith(
                                                                           color: ConstantsV2.activeText

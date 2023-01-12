@@ -61,11 +61,10 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
           child: BlocListener<AttachStudyOrderBloc, AttachStudyOrderState>(
             listener: (context, state) {
               if (state is SendSuccess) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(uploadedStudySuccessfullyMessage),
-                    backgroundColor: ConstantsV2.green,
-                  ),
+                emitSnackBar(
+                    context: context,
+                    text: uploadedStudySuccessfullyMessage,
+                    status: ActionStatus.Success
                 );
                 BlocProvider.of<StudyOrderBloc>(context)
                     .add(GetNewsId(encounter: widget.studyOrder.encounterId ?? "0"));
@@ -73,11 +72,17 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                     .pop();
               }
               else if (state is FailedUploadFiles) {
-                Scaffold.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.response)));
+                emitSnackBar(
+                    context: context,
+                    text: state.response,
+                    status: ActionStatus.Fail
+                );
               } else if (state is FailedLoadedStudies) {
-                Scaffold.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.response)));
+                emitSnackBar(
+                    context: context,
+                    text: state.response,
+                    status: ActionStatus.Fail
+                );
               }if(state is StudyObtained){
                 serviceRequest = state.serviceRequest;
                 setState(() {
@@ -171,14 +176,32 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
-                                  child: Expanded(
-                                    child: Text(
-                                      serviceRequest?.diagnosis ?? 'Sin diagnóstico presuntivo',
-                                      style: boldoCorpSmallTextStyle.copyWith(
-                                          color: ConstantsV2.inactiveText,
-                                          fontSize: 14),
-                                    ),
-                                  )),
+                                child: Expanded(
+                                  child: BlocBuilder<AttachStudyOrderBloc, AttachStudyOrderState>(
+                                    builder: (context, state) {
+                                      // in case of loading data
+                                      if(state is LoadingStudies){
+                                        return Text(
+                                          'Cargando',
+                                          style: boldoCorpSmallTextStyle.copyWith(
+                                              color: ConstantsV2.inactiveText,
+                                              fontSize: 14),
+                                        );
+                                      }else {
+                                        // show if not loading
+                                        return Text(
+                                          serviceRequest?.diagnosis ??
+                                              'Sin diagnóstico presuntivo',
+                                          style: boldoCorpSmallTextStyle
+                                              .copyWith(
+                                              color: ConstantsV2.inactiveText,
+                                              fontSize: 14),
+                                        );
+                                      }
+                                    }
+                                  )
+                                )
+                              ),
                               Container(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,

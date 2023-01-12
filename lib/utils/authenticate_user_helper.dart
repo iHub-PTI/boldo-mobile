@@ -118,11 +118,45 @@ Future<int> authenticateUser({required BuildContext context}) async {
     }
     if (!err.message!.contains('User cancelled flow')) {
       print(err);
-      await Sentry.captureException(err, stackTrace: s);
+      await Sentry.captureMessage(
+        err.toString(),
+        params: [
+          {
+            'responseError': err.message,
+            'patient': patient.id,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          s
+        ]
+      );
     }
-  } catch (err, s) {
+  } on DioError catch(exception, stackTrace){
+    await Sentry.captureMessage(
+      exception.toString(),
+      params: [
+        {
+          "path": exception.requestOptions.path,
+          "data": exception.requestOptions.data,
+          "patient": prefs.getString("userId"),
+          "dependentId": patient.id,
+          "responseError": exception.response,
+          'access_token': await storage.read(key: 'access_token')
+        },
+        stackTrace
+      ],
+    );
+  } catch (err, stackTrace) {
     print(err);
-    await Sentry.captureException(err, stackTrace: s);
+    await Sentry.captureMessage(
+        err.toString(),
+        params: [
+          {
+            'patient': patient.id,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ]
+    );
   }
   return 0;
 }

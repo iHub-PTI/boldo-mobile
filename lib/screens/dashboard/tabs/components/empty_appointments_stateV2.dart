@@ -7,10 +7,15 @@ import 'package:boldo/constants.dart';
 class EmptyStateV2 extends StatelessWidget {
   final String? picture;
   final String? textTop;
+  final String? titleBottom;
   final String? textBottom;
-  const EmptyStateV2(
-      {Key? key, this.picture, this.textTop, this.textBottom})
-      : super(key: key);
+  const EmptyStateV2({
+    Key? key,
+    this.picture,
+    this.textTop,
+    this.textBottom,
+    this.titleBottom
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +38,15 @@ class EmptyStateV2 extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ): Container(),
+            titleBottom != null
+              ? Text(
+                titleBottom!,
+                style: boldoTitleBlackTextStyle.copyWith(
+                  fontSize: 20,
+                )
+              )
+              : Container(),
+            SizedBox(height: titleBottom != null ? 10 : 0),
             Text(
               textBottom ?? '',
               style: boldoCorpMediumTextStyle.copyWith(

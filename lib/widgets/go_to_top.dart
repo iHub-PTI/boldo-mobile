@@ -50,6 +50,7 @@ Widget buttonGoTop(ScrollController scrollController,
     duration: Duration(milliseconds: animationDuration),
     opacity: showAnimatedButton ? 1.0 : 0.0, // 1 is to get visible
     child: FloatingActionButton(
+      heroTag: "btn_go_top",
       onPressed: () {
         scrollController.animateTo(0, // to go to top
             duration: Duration(microseconds: scrollDuration),

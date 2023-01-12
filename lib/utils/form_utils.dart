@@ -21,19 +21,20 @@ String? validatePassword(String password) {
   return null;
 }
 
-String? validateEmail(String email) {
+String? validateEmail(String? email) {
   Pattern pattern =
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
   RegExp regex = RegExp(pattern.toString());
-  // email is only for a not dependent
-  if (email.isEmpty && !prefs.getBool(isFamily)!) {
+  if ((email?.isEmpty)?? true && !(prefs.getBool(isFamily)?? false)) {
     return 'Ingrese su correo electrónico';
-  } else if (email.isNotEmpty && !regex.hasMatch(email)) {
-    return 'Ingrese un correo electrónico válido';
-  } else {
-  
-    return null;
-  }
+  } else
+  if(email !=null)
+    if (email.isNotEmpty && !regex.hasMatch(email)) {
+      return 'Ingrese un correo electrónico válido';
+    } else {
+
+      return null;
+    }
 }
 
 String? valdiateFirstName(String value) {

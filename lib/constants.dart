@@ -77,7 +77,15 @@ const boldoHeadingTextStyle = TextStyle(
 const boldoTitleRegularTextStyle = TextStyle(
   color: ConstantsV2.lightest,
   fontStyle: FontStyle.normal,
-  fontSize: 24,
+  fontSize: 12,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const bodyMediumRegular = TextStyle(
+  color: ConstantsV2.lightest,
+  fontStyle: FontStyle.normal,
+  fontSize: 12,
   fontWeight: FontWeight.w400,
   fontFamily: 'Montserrat',
 );
@@ -104,6 +112,14 @@ const boldoSubTextMediumStyle = TextStyle(
   fontSize: 16,
   fontWeight: FontWeight.w400,
   fontFamily: 'Montserrat',
+);
+
+const boldoInfoTextStyle = TextStyle(
+  color: ConstantsV2.activeText,
+  fontFamily: 'Montserrat',
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w300,
+  fontSize: 14
 );
 
 const boldoCardHeadingTextStyle = TextStyle(
@@ -197,7 +213,7 @@ ThemeData boldoTheme = ThemeData(
     style: ButtonStyle(
       textStyle: MaterialStateProperty.all(
         const TextStyle(fontWeight: FontWeight.w500, fontSize: 16,
-            color: ConstantsV2.lightGrey
+            color: ConstantsV2.BGNeutral
         ),
       ),
       padding: MaterialStateProperty.all(
@@ -236,9 +252,8 @@ ThemeData boldoTheme = ThemeData(
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-      textStyle: const TextStyle(
-          fontWeight: FontWeight.w400, fontSize: 16, color: ConstantsV2.orange),
-      primary: ConstantsV2.orange,
+      textStyle: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: ConstantsV2.orange),
+      foregroundColor: ConstantsV2.orange,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(100),
       ),
@@ -274,7 +289,7 @@ ThemeData boldoTheme = ThemeData(
     ),
   ),
   primaryColor: Colors.white,
-  scaffoldBackgroundColor: ConstantsV2.lightGrey,
+  scaffoldBackgroundColor: ConstantsV2.BGNeutral,
   brightness: Brightness.light,
   visualDensity: VisualDensity.adaptivePlatformDensity,
 );
@@ -385,30 +400,32 @@ class ConstantsV2 {
   static const Color lightAndClear = Color(0xffF5F5F5);
   static const Color gray = Color(0xffCFCFCF);
 
+  static const Color secondaryRegular = Color(0xffEB8B76);
+  static Color secondaryLightAndClear = const Color(0xffEB8B76).withOpacity(0.1);
+
+  static const Color systemSuccess = Color(0xff4AB648);
+  static const Color systemFail = Color(0xffC53030);
+
   // home heights
-  static double homeAppBarMaxHeight = 154.0;
-  static double homeAppBarMinHeight = 98.0;
+  static double homeAppBarMaxHeight = 132.0;
+  static double homeAppBarMinHeight = 76.0;
   static double homeCarouselContainerMaxHeight = 162.0;
   static double homeCarouselContainerMinHeight = 82.0;
-  static double homeCarouselTitleContainerMaxHeight = 62.0;
-  static double homeCarouselTitleContainerMinHeight = 24.0;
+  static double homeCarouselTitleContainerMaxHeight = 32.0;
+  static double homeCarouselTitleContainerMinHeight = 0.0;
   static double homeCarouselCardMaxHeight = 130.0;
   static double homeCarouselCardMinHeight = 50.0;
   static double homeCarouselCardMaxWidth = 110.0;
   static double homeCarouselCardMinWidth = 50.0;
   static double homeCarouselCardMaxRadius = 100.0;
   static double homeCarouselCardMinRadius = 10.0;
-  static double homeFeedTitleContainerMaxHeight = 62.0;
-  static double homeFeedTitleContainerMinHeight = 62.0;
+  static double homeFeedTitleContainerMaxHeight = 32.0;
+  static double homeFeedTitleContainerMinHeight = 32.0;
+  static double homeCarouselPadding = 24.0;
 
-  static double homeExpandedMaxHeight = homeAppBarMaxHeight +
-      homeCarouselContainerMaxHeight +
-      homeCarouselTitleContainerMaxHeight +
-      homeFeedTitleContainerMaxHeight;
-  static double homeExpandedMinHeight = homeAppBarMinHeight +
-      homeCarouselContainerMinHeight +
-      homeCarouselTitleContainerMinHeight +
-      homeFeedTitleContainerMinHeight;
+  static double homeExpandedMaxHeight = homeAppBarMaxHeight + homeCarouselContainerMaxHeight + homeCarouselTitleContainerMaxHeight + homeFeedTitleContainerMaxHeight + homeCarouselPadding + homeCarouselPadding;
+  static double homeExpandedMinHeight = homeAppBarMinHeight + homeCarouselContainerMinHeight + homeCarouselTitleContainerMinHeight + homeFeedTitleContainerMinHeight + homeCarouselPadding + homeCarouselPadding;
+
 }
 
 // Constants
@@ -416,3 +433,6 @@ class ConstantsV2 {
 const String isFamily = 'isFamily';
 const int minutesToCloseAppointment = 120;
 const String uploadedStudySuccessfullyMessage = "¡Estudio subido!";
+const String dependentSuccessAdded = '¡Dependiente agregado!';
+DateTime minDate = DateTime(1900, 1, 1);
+DateTime minDateDigit = DateTime(1000, 1, 1);

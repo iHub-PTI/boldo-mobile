@@ -76,8 +76,11 @@ class _StudyState extends State<Study> {
                 _loading = false;
                 _error = true;
                 setState(() {});
-                Scaffold.of(context).showSnackBar(
-                    SnackBar(content: Text("Falló la obtención de estudios")));
+                emitSnackBar(
+                    context: context,
+                    text: "Falló la obtención de estudios",
+                    status: ActionStatus.Fail
+                );
               }
             },
             child: SingleChildScrollView(

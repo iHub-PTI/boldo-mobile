@@ -49,11 +49,10 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
     return BlocListener<MedicalRecordBloc, MedicalRecordState>(
         listener: (context, state) {
           if (state is Failed) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.response!),
-                backgroundColor: Colors.redAccent,
-              ),
+            emitSnackBar(
+                context: context,
+                text: state.response,
+                status: ActionStatus.Fail
             );
           } else if (state is MedicalRecordLoadedState) {
             medicalRecord = state.medicalRecord;
@@ -130,11 +129,11 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                         [d, ' de ', MM, ' de ', yyyy],
                                         locale: const SpanishDateLocale(),
                                       )} (${passedDays(_daysBetween, showDateFormat: false)})',
-                                      style: boldoCorpMediumTextStyle.copyWith(
-                                          color: ConstantsV2.darkBlue),
+                                      style: boldoSubTextMediumStyle.copyWith(
+                                          color: ConstantsV2.inactiveText),
                                     ),
                                     Padding(
-                                      padding: EdgeInsets.only(top: 15.0),
+                                      padding: const EdgeInsets.only(top: 15.0),
                                       child: Text(
                                           medicalRecord?.mainReason ?? '',
                                           style: boldoCorpMediumBlackTextStyle
@@ -190,7 +189,13 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                               height: 12,
                                               width: 12,
                                             ),
-                                            const Text('Notas')
+                                            Text(
+                                              'Notas',
+                                              style: boldoCardHeadingTextStyle.copyWith(
+                                                color: ConstantsV2.activeText,
+                                                fontSize: 14
+                                              )
+                                            )
                                           ],
                                         ),
                                       ),
@@ -243,7 +248,13 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                               height: 12,
                                               width: 12,
                                             ),
-                                            const Text('Receta')
+                                            Text(
+                                              'Receta',
+                                              style: boldoCardHeadingTextStyle.copyWith(
+                                                color: ConstantsV2.activeText,
+                                                fontSize: 14
+                                              )
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -306,7 +317,10 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                                     child: Container(
                                                       padding: const EdgeInsets.symmetric(
                                                           horizontal: 15, vertical: 7),
-                                                      child: const Text("ver receta"),
+                                                      child: Text(
+                                                        "ver receta",
+                                                        style: boldoTitleRegularTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
+                                                      ),
                                                     )
                                                   ),
                                                 ),
@@ -341,7 +355,13 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                               width: 12,
                                               color: const Color.fromRGBO(54, 79, 107, 1),
                                             ),
-                                            const Text('Órdenes de estudio')
+                                            Text(
+                                              'Órdenes de estudio',
+                                              style: boldoCardHeadingTextStyle.copyWith(
+                                                color: ConstantsV2.activeText,
+                                                fontSize: 14
+                                              )
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -397,7 +417,10 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                                       child: Container(
                                                         padding: const EdgeInsets.symmetric(
                                                             horizontal: 15, vertical: 7),
-                                                        child: const Text("ver órdenes"),
+                                                        child: Text(
+                                                          "ver órdenes",
+                                                          style: boldoTitleRegularTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
+                                                        ),
                                                       )),
                                                 ),
                                               ),
@@ -457,7 +480,7 @@ Widget ShowStudy(BuildContext context, ServiceRequest study) {
                         ? 'Imágenes'
                         : 'Otros'
                 : 'Desconocido',
-            style: const TextStyle(fontFamily: 'Montserrat', fontSize: 14),
+            style: boldoSubTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
           ),
           const SizedBox(width: 10,),
           study.urgent ?? false
@@ -494,16 +517,18 @@ Widget ShowStudy(BuildContext context, ServiceRequest study) {
       Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 24.0),
-            child: Text(
-              study.description != null ? '${study.description}' : '',
-              style: const TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 10,
-                  color: ConstantsV2.inactiveText),
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 24.0),
+                  child: Text(
+                    study.description != null ? '${study.description}' : '',
+                    style: boldoSubTextStyle.copyWith(fontSize: 12)
+                  ),
+                ),
+              ),
             ),
-          ),
         ],
       ),
       const SizedBox(height: 10),
@@ -531,7 +556,7 @@ Widget ShowPrescription (BuildContext context, PrescriptionMedicalRecord prescri
             prescription.medicationName != null
               ? prescription.medicationName!
               : 'Nombre desconocido',
-            style: const TextStyle(fontFamily: 'Montserrat', fontSize: 14),
+            style: boldoSubTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
           ),
         ],
       ),
@@ -539,14 +564,12 @@ Widget ShowPrescription (BuildContext context, PrescriptionMedicalRecord prescri
       Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 24),
-            child: Text(
-              prescription.instructions != null ? prescription.instructions! : 'Este medicamento no posee instrucciones',
-              style: const TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 10,
-                color: ConstantsV2.inactiveText
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 24),
+              child: Text(
+                prescription.instructions != null ? prescription.instructions! : 'Este medicamento no posee instrucciones',
+                style: boldoSubTextStyle.copyWith(fontSize: 12)
               ),
             ),
           )

@@ -36,7 +36,7 @@ class WaitingRoomCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                      "${appointment.appointmentType == 'V' ?'La sala de espera de tu consulta con ${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName!} ya se encuentra habilitada.':'Tiene agendada una consulta presencial en el Hospital Los Ángeles'}  ",
+                      "${appointment.appointmentType == 'V' ?'La sala de espera de tu consulta con ${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName!} ya se encuentra habilitada.':'Tiene agendada una consulta presencial en el Centro Médico Tesai’i- Policlinic'}  ",
                       style: boldoSubTextStyle.copyWith(
                         height: 1.2,
                         fontSize: 15,
@@ -67,8 +67,11 @@ class WaitingRoomCard extends StatelessWidget {
 
                         if (updateAppointments != null) {
                           if (updateAppointments["error"] != null) {
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                                content: Text(updateAppointments["error"])));
+                            emitSnackBar(
+                                context: context,
+                                text: updateAppointments["error"],
+                                status: ActionStatus.Fail
+                            );
                           }
                           if (updateAppointments["appointment"] != null) {
                             await callEndedPopup(
@@ -79,9 +82,11 @@ class WaitingRoomCard extends StatelessWidget {
                             //reload data
                             getAppointmentsData();
                             // show scnackbar
-                            Scaffold.of(context).showSnackBar(const SnackBar(
-                                content: Text(
-                                    'Algo salió mal, por favor intente de nuevo más tarde')));
+                            emitSnackBar(
+                                context: context,
+                                text: genericError,
+                                status: ActionStatus.Fail
+                            );
                           }
                         }
                       },

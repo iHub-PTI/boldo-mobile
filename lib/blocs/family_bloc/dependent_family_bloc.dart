@@ -1,5 +1,6 @@
 
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/models/Relationship.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
@@ -165,8 +166,40 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
           }
         }
       }
-    }
-
-    );
+      if (event is LinkWithoutCi) {
+        emit(Loading());
+        var _post;
+        await Task(() => _patientRepository.linkWithoutCi(event.givenName, event.familyName, event.birthDate, event.gender, event.identifier, event.relationShipCode)!)
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        });
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(Failed(response: response));
+        } else {
+          emit(Success());
+        }
+      }
+      if (event is GetRelationShipCodes) {
+        emit(RelationLoading());
+        var _post;
+        await Task(() => _patientRepository.getRelationships()!)
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        });
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(RelationFailed(response: response));
+        } else {
+          emit(RelationSuccess());
+        }
+      }
+    });
   }
 }

@@ -53,11 +53,10 @@ class _AttachFilesState extends State<AttachFiles> {
           child: BlocListener<MyStudiesBloc, MyStudiesState>(
             listener: (context, state) {
               if (state is Uploaded) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(uploadedStudySuccessfullyMessage),
-                    backgroundColor: ConstantsV2.green,
-                  ),
+                emitSnackBar(
+                    context: context,
+                    text: uploadedStudySuccessfullyMessage,
+                    status: ActionStatus.Success
                 );
                 Navigator.of(context)
                     .popUntil(ModalRoute.withName("/my_studies"));
@@ -66,8 +65,11 @@ class _AttachFilesState extends State<AttachFiles> {
               }
               if (state is FailedUpload) {
                 print('failed: ${state.msg}');
-                Scaffold.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.msg)));
+                emitSnackBar(
+                    context: context,
+                    text: state.msg,
+                    status: ActionStatus.Fail
+                );
               }
               if(state is FilesObtained){
                 files = state.files;

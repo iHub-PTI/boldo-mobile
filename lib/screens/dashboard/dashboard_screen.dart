@@ -7,6 +7,7 @@ import 'package:boldo/screens/dashboard/tabs/home_tab.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/dashboard/tabs/settings_tab.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:move_to_background/move_to_background.dart';
 
 import '../../main.dart';
 
@@ -49,23 +50,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
-      child: Scaffold(
-        // appBar: AppBar(
-        //   backgroundColor: Colors.white,
-        //   actions: [],
-        //   leadingWidth: 200,
-        //   leading: Padding(
-        //     padding: const EdgeInsets.only(left: 16.0),
-        //     child:
-        //     SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
-        //   ),
-        // ),
-        key: scaffoldKey,
-        body: getPage(selectedPageIndex),
-        /*bottomNavigationBar: BottomNavigationBar(
+        onWillPop: () async {
+          MoveToBackground.moveTaskToBack();
+          return false;
+        },
+        child: Scaffold(
+          // appBar: AppBar(
+          //   backgroundColor: Colors.white,
+          //   actions: [],
+          //   leadingWidth: 200,
+          //   leading: Padding(
+          //     padding: const EdgeInsets.only(left: 16.0),
+          //     child:
+          //     SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+          //   ),
+          // ),
+          key: scaffoldKey,
+          body: getPage(selectedPageIndex),
+          /*bottomNavigationBar: BottomNavigationBar(
             showUnselectedLabels: false,
             items: <BottomNavigationBarItem>
               [

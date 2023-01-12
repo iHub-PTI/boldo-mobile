@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:boldo/constants.dart';
+import 'package:intl/intl.dart';
 
 import '../../../main.dart';
 
@@ -70,12 +71,12 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                               ),
                             )
                                 :Text(
-                              "${prefs.getString('name') ?? ''}${prefs.getString('lastName') ?? ''}",
+                              "${prefs.getString('name')?.split(' ')[0] ?? ''}${prefs.getString('lastName')?.split(' ')[0] ?? ''}",
                               style: boldoSubTextMediumStyle.copyWith(
                                   color: ConstantsV2.activeText
                               ),
                             ),
-                            widget.isDependent && ! prefs.getBool(isFamily)! ? UnlinkCaretakerWidget(
+                            widget.isDependent && !(prefs.getBool(isFamily)?? false) ? UnlinkCaretakerWidget(
                               onTapCallback: (result) async {
                                 if (result == 'Desvincular') {
                                   BlocProvider.of<FamilyBloc>(context).add(UnlinkCaretaker(id: widget.patient!.id!));
@@ -95,9 +96,12 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text("agregado el ${widget.patient!.startDependenceDate!}",
-                              style: boldoCorpSmallTextStyle.copyWith(
-                                color: ConstantsV2.inactiveText,
+                            Padding(
+                              padding: const EdgeInsets.only(right:8.0),
+                              child: Text("agregado el ${DateFormat('dd-MM-yyyy').format(DateTime.parse(widget.patient!.startDependenceDate!))}",
+                                style: boldoCorpSmallTextStyle.copyWith(
+                                  color: ConstantsV2.inactiveText,
+                                ),
                               ),
                             )
                           ],
@@ -129,7 +133,10 @@ class UnlinkCaretakerWidget extends StatelessWidget {
           onTapCallback!(result.toString());
         }
       },
-      child: SvgPicture.asset('assets/icon/familyTrash.svg'),
+      child: Padding(
+        padding: const EdgeInsets.only(right:8.0, top: 8.0),
+        child: SvgPicture.asset('assets/icon/familyTrash.svg'),
+      ),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
         PopupMenuItem<String>(
           value: 'Desvincular',

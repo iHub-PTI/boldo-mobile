@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
+import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
+import 'package:boldo/blocs/logout_bloc/userLogoutBloc.dart';
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/blocs/prescriptions_bloc/prescriptionsBloc.dart';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
@@ -19,6 +23,7 @@ import 'package:boldo/screens/family/tabs/defined_relationship_screen.dart';
 import 'package:boldo/screens/family/tabs/familyConnectTransition.dart';
 import 'package:boldo/screens/family/tabs/family_change_transition.dart';
 import 'package:boldo/screens/family/tabs/family_register_account.dart';
+import 'package:boldo/screens/family/tabs/family_without_dni_register.dart';
 import 'package:boldo/screens/family/tabs/metods_add_family_screen.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
@@ -52,6 +57,7 @@ import 'blocs/prescription_bloc/prescriptionBloc.dart';
 import 'blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
 import 'models/MedicalRecord.dart';
+import 'models/Organization.dart';
 import 'models/Patient.dart';
 import 'models/Relationship.dart';
 import 'models/User.dart';
@@ -67,6 +73,8 @@ Patient editingPatient = Patient();
 late List<MedicalRecord> allMedicalData;
 XFile? userImageSelected;
 int selectedPageIndex = 0;
+List<Organization> organizationsSubscribed = [];
+List<Organization> organizationsPostulated = [];
 const storage = FlutterSecureStorage();
 late List<Relationship> relationTypes = [];
 late List<Patient> families = [];
@@ -80,11 +88,13 @@ Future<void> main() async {
   // await dotenv.load(fileName: '.env');
 
   //GestureBinding.instance!.resamplingEnabled = true;
+  ByteData data = await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
+  SecurityContext.defaultContext.setTrustedCertificatesBytes(data.buffer.asUint8List());
 
   ConnectionStatusSingleton.getInstance().initialize();
 
   prefs = await SharedPreferences.getInstance();
-  prefs.setBool(isFamily, prefs.getBool(isFamily) ?? false);
+  prefs.setBool(isFamily, false);
 
   initDio(navKey: navKey, dio: dio);
   const storage = FlutterSecureStorage();
@@ -170,6 +180,12 @@ class _MyAppState extends State<MyApp> {
           BlocProvider<AttachStudyOrderBloc>(
             create: (BuildContext context) => AttachStudyOrderBloc(),
           ),
+          BlocProvider<UserLogoutBloc>(
+              create: (BuildContext context) => UserLogoutBloc()
+          ),
+          BlocProvider<HomeOrganizationBloc>(
+            create: (BuildContext context) => HomeOrganizationBloc(),
+          ),
           BlocProvider<DoctorsAvailableBloc>(
             create: (BuildContext context) => DoctorsAvailableBloc(),
           ),
@@ -224,10 +240,11 @@ class FullApp extends StatelessWidget {
         '/methods': (context) => const FamilyMetodsAdd(),
         '/familyScreen': (context) => FamilyScreen(),
         '/defineRelationship': (context) => DefinedRelationshipScreen(),
-        '/familyTransition': (context) => FamilyConnectTransition(),
+        '/familyConnectTransition': (context) => FamilyConnectTransition(),
         '/SignInSuccess': (context) => SingInTransition(),
         '/FamilyTransition': (context) => FamilyTransition(),
         '/familyDniRegister': (context) => DniFamilyRegister(),
+        '/familyWithoutDniRegister': (context) => WithoutDniFamilyRegister(),
         '/my_studies': (context) => MyStudies(),
         '/doctorsTab': (context) => DoctorsTab(),
         '/pastAppointmentsScreen': (context) => const PastAppointmentsScreen(),

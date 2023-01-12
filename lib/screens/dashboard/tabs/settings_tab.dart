@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:boldo/main.dart';
 import 'package:boldo/screens/about/about_screen.dart';
 import 'package:boldo/screens/contact/contact_screen.dart';
 import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
@@ -211,18 +212,32 @@ class _SettingsTabState extends State<SettingsTab> {
                     await prefs.clear();
 
                     Navigator.of(context).pushNamedAndRemoveUntil('/onboarding', (Route<dynamic> route) => false);
-                  } on DioError catch (exception, stackTrace) {
-                    print(exception);
-
-                    await Sentry.captureException(
-                      exception,
-                      stackTrace: stackTrace,
+                  } on DioError catch(exception, stackTrace){
+                    await Sentry.captureMessage(
+                      exception.toString(),
+                      params: [
+                        {
+                          "path": exception.requestOptions.path,
+                          "data": exception.requestOptions.data,
+                          "patient": prefs.getString("userId"),
+                          "dependentId": patient.id,
+                          "responseError": exception.response,
+                          'access_token': await storage.read(key: 'access_token')
+                        },
+                        stackTrace
+                      ],
                     );
                   } catch (exception, stackTrace) {
                     print(exception);
-                    await Sentry.captureException(
-                      exception,
-                      stackTrace: stackTrace,
+                    await Sentry.captureMessage(
+                        exception.toString(),
+                        params: [
+                          {
+                            'patient': prefs.getString("userId"),
+                            'access_token': await storage.read(key: 'access_token')
+                          },
+                          stackTrace
+                        ]
                     );
                   }
                 },

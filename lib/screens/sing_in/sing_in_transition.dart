@@ -2,6 +2,7 @@ import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart' as family;
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/loading_helper.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:flutter/material.dart';
@@ -53,11 +54,10 @@ class _SingInTransitionState extends State<SingInTransition> {
       body: BlocListener<PatientBloc, PatientState>(
         listener: (context, state){
             if(state is Failed){
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.response!),
-                  backgroundColor: Colors.redAccent,
-                ),
+              emitSnackBar(
+                  context: context,
+                  text: state.response,
+                  status: ActionStatus.Fail
               );
               UserRepository().logout(context);
             }
