@@ -193,27 +193,27 @@ class _MyStudiesState extends State<MyStudies> {
     );
   }
 
-  showEmptyList() {
-    return Center(
-      child: Column(
-        children: [
-          if (_loading)
-            const Text('Cargando...')
-          else if (_error)
-            const Text('Error')
-          else ...[
-            SvgPicture.asset('assets/images/empty_studies.svg',
-                fit: BoxFit.cover),
-            Text(
-              'aún no tenés estudios para visualizar',
-              textAlign: TextAlign.center,
-              style: boldoSubTextStyle.copyWith(color: ConstantsV2.orange),
-            ),
-          ]
-        ],
-      ),
-    );
-  }
+  // showEmptyList() {
+  //   return Center(
+  //     child: Column(
+  //       children: [
+  //         if (_loading)
+  //           const Text('Cargando...')
+  //         else if (_error)
+  //           const Text('Error')
+  //         else ...[
+  //           SvgPicture.asset('assets/images/empty_studies.svg',
+  //               fit: BoxFit.cover),
+  //           Text(
+  //             'aún no tenés estudios para visualizar',
+  //             textAlign: TextAlign.center,
+  //             style: boldoSubTextStyle.copyWith(color: ConstantsV2.orange),
+  //           ),
+  //         ]
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget showDiagnosticList() {
     return SizedBox(
