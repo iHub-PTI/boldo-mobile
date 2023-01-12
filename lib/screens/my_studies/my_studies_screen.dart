@@ -155,15 +155,23 @@ class _MyStudiesState extends State<MyStudies> {
                   const SizedBox(
                     height: 15,
                   ),
-                  diagnosticReport.isEmpty
+                  _loading
+                    ? const Center(
+                      child: CircularProgressIndicator(
+                        valueColor:
+                        AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                        backgroundColor: Constants.primaryColor600,
+                      )
+                    )
+                    : diagnosticReport.isEmpty
                       ? const EmptyStateV2(
                         picture: "empty_studies.svg",
                         titleBottom: "Aún no tenés estudios",
                         textBottom:
                         "A medida en que uses la aplicación podrás ir viendo tus estudios",
                       )
-                      : showDiagnosticList(),
-                ],
+                          : showDiagnosticList(),
+                    ],
               ),
             ),
           ),
@@ -171,24 +179,38 @@ class _MyStudiesState extends State<MyStudies> {
       ),
       floatingActionButton: ElevatedButton(
         onPressed: () {
-          Navigator.push(context,
+          _loading
+            ? ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Favor aguardar durante la carga."),
+                backgroundColor: Colors.redAccent,
+              ),
+            )
+            : Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) => NewStudy()));
         },
-        child: Container(
+        child: _loading
+          ? const CircularProgressIndicator(
+              valueColor:
+              AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+              backgroundColor: Constants.primaryColor600,
+            )
+          : Container(
             child: Row(
               mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'nuevo estudio',
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-            SvgPicture.asset(
-              'assets/icon/upload.svg',
-            ),
-          ],
-        )),
+              children: [
+                const Text(
+                  'nuevo estudio',
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                SvgPicture.asset(
+                  'assets/icon/upload.svg',
+                ),
+              ],
+            )
+          ),
       ),
     );
   }
