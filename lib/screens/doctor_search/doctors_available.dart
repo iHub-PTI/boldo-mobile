@@ -1,6 +1,8 @@
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
+import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Doctor.dart';
+import 'package:boldo/models/Organization.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/doctor_profile/doctor_profile_screen.dart';
@@ -43,36 +45,22 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
   List<Doctor>? doctorsSaved;
   @override
   void initState() {
-    if (widget.callFromHome) {
-      // if there is filter applied
-      if (Provider.of<DoctorFilterProvider>(context, listen: false)
-              .getSpecializationsApplied !=
-          null) {
-        BlocProvider.of<DoctorsAvailableBloc>(context).add(
-            GetDoctorFilterInDoctorList(
-                specializations:
-                    Provider.of<DoctorFilterProvider>(context, listen: false)
-                        .getSpecializationsApplied!,
-                virtualAppointment:
-                    Provider.of<DoctorFilterProvider>(context, listen: false)
-                        .getLastVirtualAppointmentApplied!,
-                inPersonAppointment:
-                    Provider.of<DoctorFilterProvider>(context, listen: false)
-                        .getLastInPersonAppointmentApplied!));
-      } else {
-        // trigger event
-        BlocProvider.of<DoctorsAvailableBloc>(context)
-            .add(GetDoctorsAvailable(offset: offset));
-      }
-    } else if (widget.doctors != null) {
-      // in this point effectively the variable will not be null
-      doctors = widget.doctors!;
-      _loading = false;
-    } else {
-      // this is needed to build the screen
-      doctors = [];
-      _loading = false;
-    }
+
+    BlocProvider.of<DoctorsAvailableBloc>(context).add(
+        GetDoctorFilter(
+            organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
+                .getOrganizationsApplied,
+            specializations:
+            Provider.of<DoctorFilterProvider>(context, listen: false)
+                .getSpecializationsApplied,
+            virtualAppointment:
+            Provider.of<DoctorFilterProvider>(context, listen: false)
+                .getLastVirtualAppointmentApplied,
+            inPersonAppointment:
+            Provider.of<DoctorFilterProvider>(context, listen: false)
+                .getLastInPersonAppointmentApplied
+        )
+    );
     scrollDoctorList.addListener(() {
     double offset = 10.0; // or the value you want
     if (scrollDoctorList.offset > offset){
@@ -182,20 +170,17 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      _loading
-                          ? Container()
-                          : // go to filter
-                          GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DoctorFilter(),
-                                  ),
-                                );
-                              },
-                              child: SvgPicture.asset(
-                                  'assets/icon/change-filter.svg'))
+                      GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DoctorFilter(),
+                              ),
+                            );
+                          },
+                          child: SvgPicture.asset(
+                              'assets/icon/change-filter.svg'))
                     ],
                   ),
                 ),
