@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
+import 'package:boldo/blocs/doctor_more_availability_bloc/doctor_more_availability_bloc.dart';
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:boldo/blocs/logout_bloc/userLogoutBloc.dart';
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/blocs/prescriptions_bloc/prescriptionsBloc.dart';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
+import 'package:boldo/blocs/specializationFilter_bloc/specializationFilter_bloc.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/provider/user_provider.dart';
@@ -52,6 +54,8 @@ import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/constants.dart';
 
 import 'blocs/attach_study_order_bloc/attachStudyOrder_bloc.dart';
+import 'blocs/doctorFilter_bloc/doctorFilter_bloc.dart';
+import 'blocs/doctor_availability_bloc/doctor_availability_bloc.dart';
 import 'blocs/doctor_bloc/doctor_bloc.dart';
 import 'blocs/prescription_bloc/prescriptionBloc.dart';
 import 'blocs/study_order_bloc/studyOrder_bloc.dart';
@@ -153,9 +157,6 @@ class _MyAppState extends State<MyApp> {
           BlocProvider<MedicalRecordBloc>(
             create: (BuildContext context) => MedicalRecordBloc(),
           ),
-          BlocProvider<DoctorBloc>(
-            create: (BuildContext context) => DoctorBloc(),
-          ),
           BlocProvider<HomeBloc>(
             create: (BuildContext context) => HomeBloc(),
           ),
@@ -188,6 +189,18 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<DoctorsAvailableBloc>(
             create: (BuildContext context) => DoctorsAvailableBloc(),
+          ),
+          BlocProvider<DoctorFilterBloc>(
+            create: (BuildContext context) => DoctorFilterBloc(),
+          ),
+          BlocProvider<SpecializationFilterBloc>(
+            create: (BuildContext context) => SpecializationFilterBloc(),
+          ),
+          BlocProvider<DoctorAvailabilityBloc>(
+            create: (BuildContext context) => DoctorAvailabilityBloc(),
+          ),
+          BlocProvider<DoctorMoreAvailabilityBloc>(
+            create: (BuildContext context) => DoctorMoreAvailabilityBloc(),
           ),
         ],
         child: MultiProvider(
