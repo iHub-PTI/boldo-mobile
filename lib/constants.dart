@@ -98,6 +98,14 @@ const boldoTitleBlackTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoScreenTitleTextStyle = TextStyle(
+  color: ConstantsV2.activeText,
+  fontStyle: FontStyle.normal,
+  fontSize: 24,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
+);
+
 const boldoSubTextStyle = TextStyle(
   color: ConstantsV2.inactiveText,
   fontStyle: FontStyle.normal,
@@ -127,6 +135,14 @@ const boldoCardHeadingTextStyle = TextStyle(
   fontStyle: FontStyle.normal,
   fontSize: 17,
   fontWeight: FontWeight.w600,
+  fontFamily: 'Montserrat',
+);
+
+const boldoCardSubtitleTextStyle = TextStyle(
+  color: Colors.white,
+  fontStyle: FontStyle.normal,
+  fontSize: 16,
+  fontWeight: FontWeight.w400,
   fontFamily: 'Montserrat',
 );
 
@@ -230,6 +246,13 @@ ThemeData boldoTheme = ThemeData(
           borderRadius: BorderRadius.circular(100),
         ),
       ),
+    ),
+  ),
+  textButtonTheme: TextButtonThemeData(
+    style: TextButton.styleFrom(
+      foregroundColor: ConstantsV2.secondaryRegular,
+      textStyle: boldoSubTextMediumStyle.copyWith(color: ConstantsV2.secondaryRegular),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
     ),
   ),
   toggleableActiveColor: ConstantsV2.orange,
@@ -408,6 +431,7 @@ class ConstantsV2 {
   static const Color BGNeutral = Color(0xffF5F5F5);
   static const Color CardBG = Color(0xffEAEAEA);
   static const Color primaryRegular = Color(0xff28B3BB);
+  static Color primaryLightAndClear = const Color(0xff28B3BB).withOpacity(.13);
 
   static const Color secondaryRegular = Color(0xffEB8B76);
   static Color secondaryLightAndClear = const Color(0xffEB8B76).withOpacity(0.1);
