@@ -1,5 +1,7 @@
+import 'package:boldo/blocs/doctorFilter_bloc/doctorFilter_bloc.dart';
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/models/Doctor.dart';
+import 'package:boldo/models/Organization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +9,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class DoctorFilterProvider with ChangeNotifier {
   // this is a list of specializations was selected in filter
   List<Specializations> _selectedSpecializations = [];
+
+  // this is a list of organizations was selected in filter
+  List<Organization> _selectedOrganizations = [];
+
   List<Doctor> _doctorsSaved = [];
   // these are a boolean variables to check the type of appointment
   bool virtualAppointment = false;
@@ -15,9 +21,10 @@ class DoctorFilterProvider with ChangeNotifier {
   bool firstTime = true;
 
   // variables containing the last applied filter
-  List<Specializations>? _specializationsApplied;
-  bool? _virtualAppointmentApplied;
-  bool? _inPersonAppointmentApplied;
+  List<Specializations> _specializationsApplied = [];
+  List<Organization> _organizationsApplied = [];
+  bool _virtualAppointmentApplied = false;
+  bool _inPersonAppointmentApplied = false;
 
   // functions to get the variables
 
@@ -25,15 +32,21 @@ class DoctorFilterProvider with ChangeNotifier {
   bool get getFilterState =>
       virtualAppointment ||
       inPersonAppointment ||
-      _selectedSpecializations.isNotEmpty;
+      _selectedSpecializations.isNotEmpty ||
+      _selectedOrganizations.isNotEmpty;
 
   // get specializations
   List<Specializations> get getSpecializations => _selectedSpecializations;
 
+  // get organizations
+  List<Organization> get getOrganizations => _selectedOrganizations;
+
   // get the last specializations applied. This can be return null value
-  List<Specializations>? get getSpecializationsApplied => _specializationsApplied;
-  bool? get getLastVirtualAppointmentApplied => _virtualAppointmentApplied;
-  bool? get getLastInPersonAppointmentApplied => _inPersonAppointmentApplied;
+  List<Specializations> get getSpecializationsApplied => _specializationsApplied;
+  // get the last organizations applied. This can be return null value
+  List<Organization> get getOrganizationsApplied => _organizationsApplied;
+  bool get getLastVirtualAppointmentApplied => _virtualAppointmentApplied;
+  bool get getLastInPersonAppointmentApplied => _inPersonAppointmentApplied;
 
   // get doctors
   List<Doctor> get getDoctorsSaved => _doctorsSaved;
@@ -51,13 +64,12 @@ class DoctorFilterProvider with ChangeNotifier {
   void addSpecializations(
       {required Specializations specialization, required context}) {
     _selectedSpecializations.add(specialization);
-    firstTime = false;
     // call bloc event
-    BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
+    BlocProvider.of<DoctorFilterBloc>(context).add(GetDoctorsPreview(
+        organizations: _selectedOrganizations,
         specializations: _selectedSpecializations,
         virtualAppointment: virtualAppointment,
         inPersonAppointment: inPersonAppointment));
-    notifyListeners();
   }
 
   // delete specializations
@@ -66,21 +78,64 @@ class DoctorFilterProvider with ChangeNotifier {
     _selectedSpecializations = _selectedSpecializations
         .where((element) => element.id != specializationId)
         .toList();
-    if (_selectedSpecializations.length == 0 &&
-        !virtualAppointment &&
-        !inPersonAppointment) {
-      firstTime = true;
-      BlocProvider.of<DoctorsAvailableBloc>(context)
-          .add(ReloadDoctorsAvailable());
-    } else {
-      // if virtualAppointment and inPersonAppointment are not checked then the event should not be called
-      firstTime = false;
-      // call bloc event
-      BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
-          specializations: _selectedSpecializations,
-          virtualAppointment: virtualAppointment,
-          inPersonAppointment: inPersonAppointment));
-    }
+    // call bloc event
+    BlocProvider.of<DoctorFilterBloc>(context).add(GetDoctorsPreview(
+        organizations: _selectedOrganizations,
+        specializations: _selectedSpecializations,
+        virtualAppointment: virtualAppointment,
+        inPersonAppointment: inPersonAppointment));
+    notifyListeners();
+  }
+
+  // add organization
+  void addOrganization(
+      {required Organization organization, required context}) {
+    _selectedOrganizations.add(organization);
+    // call bloc event
+    BlocProvider.of<DoctorFilterBloc>(context).add(GetDoctorsPreview(
+        organizations: _selectedOrganizations,
+        specializations: _selectedSpecializations,
+        virtualAppointment: virtualAppointment,
+        inPersonAppointment: inPersonAppointment));
+  }
+
+  // delete organization
+  void removeOrganization(
+      {required String organizationId, required context}) {
+    _selectedOrganizations = _selectedOrganizations
+        .where((element) => element.id != organizationId)
+        .toList();
+    // call bloc event
+    BlocProvider.of<DoctorFilterBloc>(context).add(GetDoctorsPreview(
+        organizations: _selectedOrganizations,
+        specializations: _selectedSpecializations,
+        virtualAppointment: virtualAppointment,
+        inPersonAppointment: inPersonAppointment));
+    notifyListeners();
+  }
+
+  // delete all specializations
+  void removeAllSpecialization() {
+    _selectedSpecializations = [];
+    notifyListeners();
+  }
+
+  // delete all specializations
+  void removeAllOrganization() {
+    _selectedOrganizations = [];
+    notifyListeners();
+  }
+
+  // delete all specializations
+  void clearFilter() {
+    _selectedSpecializations = [];
+    _selectedOrganizations = [];
+    _specializationsApplied = [];
+    _organizationsApplied = [];
+    _inPersonAppointmentApplied = false;
+    _virtualAppointmentApplied = false;
+    inPersonAppointment = false;
+    virtualAppointment = false;
     notifyListeners();
   }
 
@@ -88,20 +143,12 @@ class DoctorFilterProvider with ChangeNotifier {
       {required List<Specializations> specializationsSelectedCopy,
       required context}) {
     _selectedSpecializations = specializationsSelectedCopy;
-    if (_selectedSpecializations.isEmpty &&
-        !virtualAppointment &&
-        !inPersonAppointment) {
-      firstTime = true;
-      BlocProvider.of<DoctorsAvailableBloc>(context)
-          .add(ReloadDoctorsAvailable());
-    } else {
-      firstTime = false;
-      // call bloc event
-      BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
-          specializations: _selectedSpecializations,
-          virtualAppointment: virtualAppointment,
-          inPersonAppointment: inPersonAppointment));
-    }
+    // call bloc event
+    BlocProvider.of<DoctorFilterBloc>(context).add(GetDoctorsPreview(
+        organizations: _selectedOrganizations,
+        specializations: _selectedSpecializations,
+        virtualAppointment: virtualAppointment,
+        inPersonAppointment: inPersonAppointment));
     notifyListeners();
   }
 
@@ -113,20 +160,12 @@ class DoctorFilterProvider with ChangeNotifier {
   // set true or false the virtual appointment
   void setVirtualAppointment({required context}) {
     virtualAppointment = !virtualAppointment;
-    if (_selectedSpecializations.length == 0 &&
-        !virtualAppointment &&
-        !inPersonAppointment) {
-      firstTime = true;
-      BlocProvider.of<DoctorsAvailableBloc>(context)
-          .add(ReloadDoctorsAvailable());
-    } else {
-      firstTime = false;
-      // call bloc event
-      BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
-          specializations: _selectedSpecializations,
-          virtualAppointment: virtualAppointment,
-          inPersonAppointment: inPersonAppointment));
-    }
+    // call bloc event
+    BlocProvider.of<DoctorFilterBloc>(context).add(GetDoctorsPreview(
+        organizations: _selectedOrganizations,
+        specializations: _selectedSpecializations,
+        virtualAppointment: virtualAppointment,
+        inPersonAppointment: inPersonAppointment));
 
     notifyListeners();
   }
@@ -134,20 +173,12 @@ class DoctorFilterProvider with ChangeNotifier {
   // set true or false the in person appointment
   void setInPersonAppointment({required context}) {
     inPersonAppointment = !inPersonAppointment;
-    if (_selectedSpecializations.length == 0 &&
-        !virtualAppointment &&
-        !inPersonAppointment) {
-      firstTime = true;
-      BlocProvider.of<DoctorsAvailableBloc>(context)
-          .add(ReloadDoctorsAvailable());
-    } else {
-      firstTime = false;
-      // call bloc event
-      BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
-          specializations: _selectedSpecializations,
-          virtualAppointment: virtualAppointment,
-          inPersonAppointment: inPersonAppointment));
-    }
+    // call bloc event
+    BlocProvider.of<DoctorFilterBloc>(context).add(GetDoctorsPreview(
+        organizations: _selectedOrganizations,
+        specializations: _selectedSpecializations,
+        virtualAppointment: virtualAppointment,
+        inPersonAppointment: inPersonAppointment));
     notifyListeners();
   }
 
@@ -159,10 +190,12 @@ class DoctorFilterProvider with ChangeNotifier {
   void filterApplied(
       {required List<Specializations> specializationsApplied,
       required bool virtualAppointmentApplied,
-      required bool inPersonAppointmentApplied}) {
+      required bool inPersonAppointmentApplied,
+      required List<Organization> organizationsApplied}) {
     _specializationsApplied = specializationsApplied;
     _virtualAppointmentApplied = virtualAppointmentApplied;
     _inPersonAppointmentApplied = inPersonAppointmentApplied;
+    _organizationsApplied = organizationsApplied;
     notifyListeners();
   }
 }
