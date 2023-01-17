@@ -180,7 +180,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                 ),
                 BlocBuilder<DoctorsAvailableBloc, DoctorsAvailableState>(
                   builder: (context, state){
-                    if(state is Loading || state is FilterLoadingInDoctorList)
+                    if(state is Loading || state is FilterLoading)
                       return const Center(child: CircularProgressIndicator());
                     else if(state is Failed){
                       return DataFetchErrorWidget(
