@@ -16,6 +16,9 @@ class OrganizationRepository {
     Response response;
 
     try {
+
+      List<Organization> _organizationsSubscribed;
+
       if (prefs.getBool('isFamily') ?? false) {
         response = await dio
             .get('/profile/caretaker/dependent/${patient.id}/organizations');
@@ -25,11 +28,10 @@ class OrganizationRepository {
       }
       // there are organizations
       if (response.statusCode == 200) {
-        organizationsSubscribed = List<Organization>.from(
+        _organizationsSubscribed = List<Organization>.from(
             response.data.map((i) => Organization.fromJson(i))
         );
-        return List<Organization>.from(
-            response.data.map((i) => Organization.fromJson(i)));
+        return _organizationsSubscribed;
       } // doesn't have any organization
       else if (response.statusCode == 204) {
         // return empty list
