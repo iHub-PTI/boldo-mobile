@@ -206,9 +206,11 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                     else if(state is Failed){
                       return DataFetchErrorWidget(
                           retryCallback: () =>
-                              BlocProvider.of<DoctorsAvailableBloc>(context).add(
-                                  GetDoctorsAvailable(offset: offset)
-                              )
+                            GetDoctorsAvailable(
+                                organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
+                                    .getOrganizationsApplied,
+                                offset: offset
+                            )
                       );
                     }else{
                       return
@@ -275,10 +277,19 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                     null) {
                                   BlocProvider.of<DoctorsAvailableBloc>(
                                       context)
-                                      .add(GetDoctorsAvailable(offset: 0));
+                                      .add(GetDoctorsAvailable(
+                                      organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
+                                          .getOrganizationsApplied,
+                                      offset: 0
+                                      ));
                                 } else {
                                   BlocProvider.of<DoctorsAvailableBloc>(context)
                                       .add(GetDoctorFilterInDoctorList(
+                                      organizations:
+                                      Provider.of<DoctorFilterProvider>(
+                                          context,
+                                          listen: false)
+                                          .getOrganizationsApplied,
                                       specializations:
                                       Provider.of<DoctorFilterProvider>(
                                           context,
@@ -307,10 +318,20 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                   BlocProvider.of<DoctorsAvailableBloc>(
                                       context)
                                       .add(GetMoreDoctorsAvailable(
+                                      organizations:
+                                      Provider.of<DoctorFilterProvider>(
+                                          context,
+                                          listen: false
+                                      ).getOrganizationsApplied,
                                       offset: offset));
                                 } else {
                                   BlocProvider.of<DoctorsAvailableBloc>(context)
                                       .add(GetMoreFilterDoctor(
+                                      organizations:
+                                      Provider.of<DoctorFilterProvider>(
+                                          context,
+                                          listen: false
+                                      ).getOrganizationsApplied,
                                       offset: offset,
                                       specializations:
                                       Provider.of<DoctorFilterProvider>(
@@ -496,7 +517,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                     children: [
                       Flexible(
                         child: Text(
-                          availableText(doctors[index].nextAvailability),
+                          availableText(doctors[index].organizations?.first.nextAvailability),
                           style: boldoCorpSmallInterTextStyle.copyWith(
                               fontWeight: FontWeight.bold),
                         ),
