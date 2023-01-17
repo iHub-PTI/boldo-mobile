@@ -461,8 +461,12 @@ class ImageViewTypeForm extends StatefulWidget {
 
   final double height;
   final double width;
+  final Color? color;
+  final double opacity;
   final bool border;
-  final String? photoUrl;
+  final Color? borderColor;
+  final bool blur;
+  final String? url;
   final String? gender;
   final String form;
 
@@ -471,8 +475,12 @@ class ImageViewTypeForm extends StatefulWidget {
     required this.height,
     required this.width,
     required this.border,
-    this.photoUrl,
-    this.gender,
+    required this.gender,
+    this.borderColor = Colors.white,
+    this.color,
+    this.opacity = 1,
+    this.blur = false,
+    this.url,
     this.form = "rounded"
   }) : super(key: key);
 
@@ -481,6 +489,7 @@ class ImageViewTypeForm extends StatefulWidget {
 }
 
 class _ImageViewTypeForm extends State<ImageViewTypeForm> {
+
   @override
   void initState() {
     super.initState();
@@ -488,47 +497,71 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        SizedBox(
-          height: widget.height,
-          width: widget.width,
-          child: Card(
-            child: widget.photoUrl == null ?
-            SvgPicture.asset(
-              widget.gender == 'male'
-                  ? 'assets/images/malePatient.svg'
-                  : prefs.getString('gender') == "female"
-                  ? 'assets/images/femalePatient.svg'
-                  : 'assets/images/LogoIcon.svg',
-            ) : CachedNetworkImage(
-              fit: BoxFit.cover,
-              imageUrl: widget.photoUrl?? '',
-              progressIndicatorBuilder:
-                  (context, url, downloadProgress) => Padding(
-                padding: const EdgeInsets.all(26.0),
-                child: CircularProgressIndicator(
-                  value: downloadProgress.progress,
-                  valueColor:
-                  const AlwaysStoppedAnimation<Color>(
-                      Constants.primaryColor400),
-                  backgroundColor: Constants.primaryColor600,
-                ),
-              ),
-              errorWidget: (context, url, error) =>
-              const Icon(Icons.error),
+
+
+    Widget child =
+    widget.url == null || widget.url == ""
+        ? SvgPicture.asset(
+      widget.gender == 'male'
+          ? 'assets/images/malePatient.svg'
+          : prefs.getString('gender') == "female"
+          ? 'assets/images/femalePatient.svg'
+          : 'assets/images/LogoIcon.svg',
+    )
+        : CachedNetworkImage(
+      fit: BoxFit.cover,
+      imageUrl: widget.url!,
+      progressIndicatorBuilder: (context, url, downloadProgress) =>
+          Padding(
+            padding: const EdgeInsets.all(26.0),
+            child: CircularProgressIndicator(
+              value: downloadProgress.progress,
+              valueColor:
+              const AlwaysStoppedAnimation<Color>(
+                  Constants.primaryColor400),
+              backgroundColor: Constants.primaryColor600,
             ),
-            shape: widget.form == "rounded" ? StadiumBorder(
-              side: widget.border ? const BorderSide(
-                color: Colors.white,
-                width: 3,
-              ) : BorderSide.none,
-            ) : widget.form == "square" ? RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(3)) : const CircleBorder(),
-            clipBehavior: Clip.antiAlias,
           ),
-        ),
-      ],
+      errorWidget: (context, url, error) => const Icon(Icons.error),
     );
+
+    return Card(
+      child: Stack(
+        children: [
+          Container(
+            child: child,
+            height: widget.height,
+            width: widget.width,
+          ),
+          Container(
+            child: widget.blur ? BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+              child: Container(
+                color: widget.color?.withOpacity(widget.opacity),
+                width: widget.width,
+                height: widget.height,
+              ),
+            ) :
+            Container(
+              color: widget.color?.withOpacity(widget.opacity),
+              width: widget.width,
+              height: widget.height,
+            ),
+            height: widget.height,
+            width: widget.width,
+          ),
+        ],
+      ),
+      shape: widget.form == "rounded" ? StadiumBorder(
+        side: widget.border ? BorderSide(
+          color: widget.borderColor?? Colors.white,
+          width: 3,
+        ) : BorderSide.none,
+      ) : widget.form == "square" ? RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(3)) : const CircleBorder(),
+      clipBehavior: Clip.antiAlias,
+    );
+
   }
+
 }
