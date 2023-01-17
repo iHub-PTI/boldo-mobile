@@ -151,13 +151,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                     children: [
                       TextButton.icon(
                         onPressed: () {
-                          if (widget.callFromHome) {
-                            // in this case we don't need do anything
-                            Navigator.pop(context);
-                          } else {
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, '/home', (route) => false);
-                          }
+                          Navigator.pop(context);
                         },
                         icon: const Icon(
                           Icons.chevron_left_rounded,
