@@ -1,10 +1,11 @@
+import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../constants.dart';
 
 class VirtualInPersonSwitch extends StatefulWidget {
-  final Function(String text) switchCallbackResponse;
+  final Function(AppointmentType type) switchCallbackResponse;
   const VirtualInPersonSwitch({Key? key, required this.switchCallbackResponse})
       : super(key: key);
   @override
@@ -66,7 +67,7 @@ class _VirtualInPersonSwitchState extends State<VirtualInPersonSwitch> {
                   xAlign = loginAlign;
                   loginColor = selectedColor;
                   signInColor = normalColor;
-                  widget.switchCallbackResponse('A');
+                  widget.switchCallbackResponse(AppointmentType.InPerson);
                 });
               },
               child: Align(
@@ -102,7 +103,7 @@ class _VirtualInPersonSwitchState extends State<VirtualInPersonSwitch> {
                   xAlign = signInAlign;
                   signInColor = selectedColor;
                   loginColor = normalColor;
-                  widget.switchCallbackResponse('V');
+                  widget.switchCallbackResponse(AppointmentType.Virtual);
                 });
               },
               child: Align(
