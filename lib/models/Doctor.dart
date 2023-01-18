@@ -1,3 +1,4 @@
+import 'package:boldo/models/Organization.dart';
 import 'package:boldo/utils/helpers.dart';
 
 class Doctor {
@@ -19,7 +20,7 @@ class Doctor {
   String? photoUrl;
   List<Specializations>? specializations;
   String? street;
-  NextAvailability? nextAvailability;
+  List<OrganizationWithAvailability>? organizations;
 
   Doctor(
       {this.addressDescription,
@@ -40,7 +41,7 @@ class Doctor {
       this.photoUrl,
       this.specializations,
       this.street,
-      this.nextAvailability});
+      this.organizations});
 
   Doctor.fromJson(Map<String, dynamic> json,) {
     addressDescription = json['addressDescription'];
@@ -71,8 +72,11 @@ class Doctor {
       });
     }
     street = json['street'];
-   if (json['nextAvailability'] != null) {
-     nextAvailability = NextAvailability.fromJson(json["nextAvailability"]);
+    if (json['organizations'] != null) {
+      organizations = [];
+      json['organizations'].forEach((v) {
+        organizations!.add(OrganizationWithAvailability.fromJson(v));
+      });
     }
   }
 
@@ -101,7 +105,6 @@ class Doctor {
           specializations!.map((v) => v.toJson()).toList();
     }
     data['street'] = street;
-    data['nextAvailability'] = nextAvailability;
     return data;
   }
 }
@@ -162,4 +165,40 @@ class NextAvailability {
     return data;
   }
 }
+
+class OrganizationWithAvailability{
+
+  Organization? organization;
+  NextAvailability? nextAvailability;
+  List<NextAvailability?>? availabilities;
+
+  OrganizationWithAvailability.fromJson(Map<String, dynamic> json) {
+    organization = Organization.fromJson(json);
+    if (json['nextAvailability'] != null) {
+      nextAvailability = NextAvailability.fromJson(json["nextAvailability"]);
+    }
+  }
+
+}
+
+class OrganizationWithAvailabilities{
+
+  String? idOrganization;
+  NextAvailability? nextAvailability;
+  List<NextAvailability?> availabilities = [];
+
+  OrganizationWithAvailabilities.fromJson(Map<String, dynamic> json) {
+    idOrganization = json['idOrganization'];
+    if (json['nextAvailability'] != null) {
+      nextAvailability = NextAvailability.fromJson(json["nextAvailability"]);
+    }
+    if (json['availabilities'] != null) {
+      json['availabilities'].forEach((v) {
+        availabilities.add(NextAvailability.fromJson(v));
+      });
+    }
+  }
+
+}
+
 

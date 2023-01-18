@@ -443,3 +443,6 @@ void emitSnackBar({required BuildContext context, String? text, ActionStatus? st
     ),
   );
 }
+
+
+enum AppointmentType {InPerson, Virtual}

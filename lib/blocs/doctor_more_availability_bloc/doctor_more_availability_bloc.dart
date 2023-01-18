@@ -8,13 +8,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../models/Doctor.dart';
 
 
-part 'doctor_availability_event.dart';
-part 'doctor_availability_state.dart';
+part 'doctor_more_availability_event.dart';
+part 'doctor_more_availability_state.dart';
 
-class DoctorAvailabilityBloc extends Bloc<DoctorAvailabilityEvent, DoctorAvailabilityState> {
+class DoctorMoreAvailabilityBloc extends Bloc<DoctorMoreAvailabilityEvent, DoctorMoreAvailabilityState> {
   final UserRepository _patientRepository = UserRepository();
-  DoctorAvailabilityBloc() : super(DoctorAvailabilityInitial()) {
-    on<DoctorAvailabilityEvent>((event, emit) async {
+  DoctorMoreAvailabilityBloc() : super(DoctorAvailabilityInitial()) {
+    on<DoctorMoreAvailabilityEvent>((event, emit) async {
       if(event is GetAvailability) {
         emit(Loading());
         var _post;
@@ -62,7 +62,6 @@ class DoctorAvailabilityBloc extends Bloc<DoctorAvailabilityEvent, DoctorAvailab
           }
 
           emit(AvailabilitiesObtained(availabilities: nextAvailability));
-          emit(Success());
         }
       }
     }

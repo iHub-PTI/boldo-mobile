@@ -1,9 +1,9 @@
-part of 'doctor_availability_bloc.dart';
+part of 'doctor_more_availability_bloc.dart';
 
 @immutable
-abstract class DoctorAvailabilityEvent {}
+abstract class DoctorMoreAvailabilityEvent {}
 
-class GetAvailability extends DoctorAvailabilityEvent {
+class GetAvailability extends DoctorMoreAvailabilityEvent {
   final String id;
   final String startDate;
   final String endDate;

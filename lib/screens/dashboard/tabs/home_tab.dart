@@ -12,6 +12,7 @@ import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state
 import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/organizations/memberships_screen.dart';
+import 'package:boldo/screens/doctor_search/doctors_available.dart';
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/go_to_top.dart';
@@ -68,7 +69,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       title: 'Agendar una consulta',
       appear: true,
       requiredOrganization: true,
-      page: DoctorsTab(),
+      //page: DoctorsTab(),
+      page: DoctorsAvailable(callFromHome: true),
     ),
     CarouselCard(
       key: UniqueKey(),

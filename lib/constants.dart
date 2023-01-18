@@ -56,13 +56,11 @@ class Constants {
   static const Color accordionbg = Color(0xfff3FAF7);
   static const Color dividerAccordion = Color(0x40F08F77);
 
- 
   // SOEP final string
   static const String objective = "Objetivo";
   static const String subjective = "Subjetivo";
   static const String evaluation = "Evaluación";
   static const String plan = "Plan";
-  
 }
 
 const String genericError = "Algo salió mal, vuelve a intentarlo más tarde";
@@ -100,12 +98,20 @@ const boldoTitleBlackTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoScreenTitleTextStyle = TextStyle(
+  color: ConstantsV2.activeText,
+  fontStyle: FontStyle.normal,
+  fontSize: 24,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
+);
+
 const boldoSubTextStyle = TextStyle(
-    color: ConstantsV2.inactiveText,
-    fontStyle: FontStyle.normal,
-    fontSize: 18,
-    fontWeight: FontWeight.w400,
-    fontFamily: 'Montserrat',
+  color: ConstantsV2.inactiveText,
+  fontStyle: FontStyle.normal,
+  fontSize: 18,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
 );
 
 const boldoSubTextMediumStyle = TextStyle(
@@ -129,6 +135,14 @@ const boldoCardHeadingTextStyle = TextStyle(
   fontStyle: FontStyle.normal,
   fontSize: 17,
   fontWeight: FontWeight.w600,
+  fontFamily: 'Montserrat',
+);
+
+const boldoCardSubtitleTextStyle = TextStyle(
+  color: Colors.white,
+  fontStyle: FontStyle.normal,
+  fontSize: 16,
+  fontWeight: FontWeight.w400,
   fontFamily: 'Montserrat',
 );
 
@@ -234,6 +248,13 @@ ThemeData boldoTheme = ThemeData(
       ),
     ),
   ),
+  textButtonTheme: TextButtonThemeData(
+    style: TextButton.styleFrom(
+      foregroundColor: ConstantsV2.secondaryRegular,
+      textStyle: boldoSubTextMediumStyle.copyWith(color: ConstantsV2.secondaryRegular),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+    ),
+  ),
   toggleableActiveColor: ConstantsV2.orange,
   checkboxTheme: CheckboxThemeData(
     shape: RoundedRectangleBorder(
@@ -243,7 +264,8 @@ ThemeData boldoTheme = ThemeData(
   ),
   unselectedWidgetColor: ConstantsV2.orange,
   floatingActionButtonTheme: FloatingActionButtonThemeData(
-    extendedTextStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+    extendedTextStyle:
+        const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
     extendedPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
     backgroundColor: ConstantsV2.orange,
     shape: RoundedRectangleBorder(
@@ -295,7 +317,6 @@ ThemeData boldoTheme = ThemeData(
   visualDensity: VisualDensity.adaptivePlatformDensity,
 );
 
-
 // Colors Boldo V2
 class ConstantsV2 {
   // background colors palette
@@ -318,6 +339,7 @@ class ConstantsV2 {
 
   // button color
   static const Color buttonPrimaryColor100 = Color(0xffEB8B76);
+  static const Color rightBottonNavigaton = Color.fromRGBO(255, 139, 118, 0.1);
 
   // hero cards colors gradient
   static const Color primaryCardHeroColor100 = Color(0xffFDA57D);
@@ -393,6 +415,7 @@ class ConstantsV2 {
   static const Color lightGrey = Color(0xffF8F8F8);
   static const Color lightest = Color(0xffFFFFFF);
   static const Color green = Color(0xff28B3BB);
+  static const Color lightGreen = Color.fromRGBO(40, 179, 187, 0.13);
   static const Color veryLightBlue = Color(0xffB1C3D7);
   static const Color yellow = Color(0xffF9D620);
   static const Color darkBlue = Color(0xff364F6B);
@@ -408,6 +431,7 @@ class ConstantsV2 {
   static const Color BGNeutral = Color(0xffF5F5F5);
   static const Color CardBG = Color(0xffEAEAEA);
   static const Color primaryRegular = Color(0xff28B3BB);
+  static Color primaryLightAndClear = const Color(0xff28B3BB).withOpacity(.13);
 
   static const Color secondaryRegular = Color(0xffEB8B76);
   static Color secondaryLightAndClear = const Color(0xffEB8B76).withOpacity(0.1);
@@ -436,7 +460,6 @@ class ConstantsV2 {
   static double homeExpandedMinHeight = homeAppBarMinHeight + homeCarouselContainerMinHeight + homeCarouselTitleContainerMinHeight + homeFeedTitleContainerMinHeight + homeCarouselPadding + homeCarouselPadding;
 
 }
-
 
 // Constants
 

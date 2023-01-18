@@ -1,13 +1,18 @@
+import 'package:boldo/blocs/user_bloc/patient_bloc.dart'as patient;
 import 'package:boldo/blocs/doctor_bloc/doctor_bloc.dart';
 import 'package:boldo/main.dart';
+import 'package:boldo/models/Organization.dart';
+import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/booking/booking_screen.dart';
+import 'package:boldo/screens/booking/booking_screen2.dart';
 import 'package:boldo/utils/expandable_card/expandable_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/Doctor.dart';
 import '../../constants.dart';
@@ -28,13 +33,10 @@ class DoctorProfileScreen extends StatefulWidget{
 class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
   final List<String> popupRoutes = <String>["Remoto (on line)", "En persona"];
-  List<NextAvailability> availabilities = [];
+  List<OrganizationWithAvailabilities> organizationsWithAvailabilites = [];
 
   @override
   void initState() {
-    // get availabilities only if it should be displayed
-    if(widget.showAvailability)
-    BlocProvider.of<DoctorBloc>(context).add(GetAvailability(id: widget.doctor.id?? '', startDate: DateTime.now().toUtc().toIso8601String(), endDate: DateTime.now().add(const Duration(days: 30)).toUtc().toIso8601String()));
     super.initState();
   }
 
@@ -52,295 +54,343 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         ),
       ),
       body: SafeArea(
-        child: BlocListener<DoctorBloc, DoctorState>(
-          listener: (context, state){
-            if(state is Success) {
-            }else if(state is Failed){
-              emitSnackBar(
-                  context: context,
-                  text: state.response,
-                  status: ActionStatus.Fail
-              );
-            }else if(state is Loading){
-            }else if(state is AvailabilitiesObtained){
-              //only first three elements
-              availabilities = state.availabilities.take(3).toList();
-            }
-          },
-          child: BlocBuilder<DoctorBloc, DoctorState>(
-            builder: (context, state) {
-              return ExpandableCardPage(
-                page: Background(
-                  doctor: widget.doctor,
-                  child: Align(
-                    alignment: AlignmentDirectional.topCenter,
-                    child: Container(
-                      height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height*0.2,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              children: [
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: MediaQuery.of(context).size.width*0.75,
-                                      child: Card(
+        child: BlocProvider<DoctorBloc>(
+          create: (BuildContext context) => DoctorBloc()..add(GetAvailability(
+            id: widget.doctor.id ?? '',
+            startDate: DateTime.now().toUtc().toIso8601String(),
+            endDate: DateTime.now().add(const Duration(days: 30))
+                .toUtc()
+                .toIso8601String(),
+            organizations: Provider
+                .of<DoctorFilterProvider>(context, listen: false)
+                .getOrganizationsApplied
+                .isNotEmpty ? Provider
+                .of<DoctorFilterProvider>(context, listen: false)
+                .getOrganizationsApplied : BlocProvider.of<patient.PatientBloc>(context)
+                .getOrganizations(),
+          )),
+          child: BlocListener<DoctorBloc, DoctorState>(
+            listener: (context, state){
+              if(state is Success) {
+              }else if(state is Failed){
+                emitSnackBar(
+                    context: context,
+                    text: state.response,
+                    status: ActionStatus.Fail
+                );
+              }else if(state is Loading){
+              }else if(state is AvailabilitiesObtained){
+                organizationsWithAvailabilites = state.availabilities;
+              }
+            },
+            child: BlocBuilder<DoctorBloc, DoctorState>(
+                builder: (context, state) {
+                  return ExpandableCardPage(
+                    page: Background(
+                      doctor: widget.doctor,
+                      child: Align(
+                        alignment: AlignmentDirectional.topCenter,
+                        child: Container(
+                          height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height*0.2,
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 16,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: MediaQuery.of(context).size.width*0.75,
+                                        child: Card(
+                                          elevation: 0.0,
+                                          color: ConstantsV2.lightGrey.withOpacity(0.80),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                            side: const BorderSide(
+                                              color: ConstantsV2.lightGrey,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(8),
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      "${getDoctorPrefix(widget.doctor.gender!)}",
+                                                      style: boldoHeadingTextStyle.copyWith(color: ConstantsV2.orange),
+                                                    ),
+                                                    Flexible(
+                                                      child: Text(
+                                                        "${widget.doctor.givenName?.split(" ")[0]} ${widget.doctor.familyName?.split(" ")[0]}",
+                                                        style: boldoHeadingTextStyle.copyWith(color: Colors.black),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                if (widget.doctor.specializations != null)
+                                                  Align(
+                                                    alignment: Alignment.center,
+                                                    child: SingleChildScrollView(
+                                                      scrollDirection:
+                                                      Axis.horizontal,
+                                                      child: Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          for (int i=0; i<widget.doctor.specializations!.length; i++)
+                                                            Padding(
+                                                              padding: EdgeInsets.only(bottom: 4, left: i==0 ? 0 : 3.0),
+                                                              child: Text(
+                                                                "${widget.doctor.specializations![i].description}${i<widget.doctor.specializations!.length-1?',':''}",
+                                                                style: boldoSubTextMediumStyle.copyWith(
+                                                                    color: ConstantsV2.activeText),
+                                                              ),
+                                                            ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Card(
                                         elevation: 0.0,
                                         color: ConstantsV2.lightGrey.withOpacity(0.80),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                          side: const BorderSide(
-                                            color: ConstantsV2.lightGrey,
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    "${getDoctorPrefix(widget.doctor.gender!)}",
-                                                    style: boldoHeadingTextStyle.copyWith(color: ConstantsV2.orange),
-                                                  ),
-                                                  Flexible(
-                                                    child: Text(
-                                                      "${widget.doctor.givenName?.split(" ")[0]} ${widget.doctor.familyName?.split(" ")[0]}",
-                                                      style: boldoHeadingTextStyle.copyWith(color: Colors.black),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              if (widget.doctor.specializations != null)
-                                                Align(
-                                                  alignment: Alignment.center,
-                                                  child: SingleChildScrollView(
-                                                    scrollDirection:
-                                                    Axis.horizontal,
-                                                    child: Row(
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        for (int i=0; i<widget.doctor.specializations!.length; i++)
-                                                          Padding(
-                                                            padding: EdgeInsets.only(bottom: 4, left: i==0 ? 0 : 3.0),
-                                                            child: Text(
-                                                              "${widget.doctor.specializations![i].description}${i<widget.doctor.specializations!.length-1?',':''}",
-                                                              style: boldoSubTextMediumStyle.copyWith(
-                                                                  color: ConstantsV2.activeText),
-                                                            ),
-                                                          ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Card(
-                                      elevation: 0.0,
-                                      color: ConstantsV2.lightGrey.withOpacity(0.80),
-                                      shape: const CircleBorder(),
-                                      clipBehavior: Clip.antiAlias,
-                                      child: SizedBox(
-                                          height: 32,
-                                          width: 32,
-                                          child: Align(
-                                            widthFactor: 1.0,
-                                            heightFactor: 1.0,
-                                            child: GestureDetector(
-                                                onTap: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: SvgPicture.asset(
-                                                  'assets/icon/close_black.svg',
-                                                  height: 17,)
-                                            ),)
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            // show Availability only if go to this page to make a reservation
-                            if(widget.showAvailability)
-                            BlocBuilder<DoctorBloc, DoctorState>(builder: (context, state) {
-                              if(state is Success){
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                      Container(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => BookingScreen(
-                                                  doctor: widget.doctor,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          child: Card(
-                                            elevation: 0.0,
-                                            color: ConstantsV2.lightAndClear.withOpacity(0.80),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(16),
-                                            ),
-                                            child: Container(
-                                              padding: const EdgeInsets.all(10),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  if(availabilities.isNotEmpty)
-                                                    if(DateTime(DateTime.parse(availabilities.first.availability!).year,
-                                                        DateTime.parse(availabilities.first.availability!).month,
-                                                        DateTime.parse(availabilities.first.availability!).day) ==
-                                                        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day))
-                                                      Text("Disponible hoy",
-                                                        style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),)
-                                                    else
-                                                      Text("Disponible el ${DateFormat('dd/MM').format(DateTime.parse(availabilities.first.availability!))}",
-                                                        style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),)
-                                                  else
-                                                    Text("No disponible en los proximos 30 dias",
-                                                      style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),),
-                                                  const Icon(
-                                                    Icons.chevron_right,
-                                                    color: ConstantsV2.orange,
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ),),
-                                      ),
-                                      Container(
-                                        constraints: BoxConstraints(maxHeight: 45),
-                                        child: Row(
-                                          children: [
-                                            ListView.builder(
-                                                shrinkWrap: true,
-                                                padding: const EdgeInsets.only(right: 16),
-                                                scrollDirection: Axis.horizontal,
-                                                itemCount: availabilities.length,
-                                                itemBuilder: _availabilityHourCard
-                                            ),
-                                            Container(
+                                        shape: const CircleBorder(),
+                                        clipBehavior: Clip.antiAlias,
+                                        child: SizedBox(
+                                            height: 32,
+                                            width: 32,
+                                            child: Align(
+                                              widthFactor: 1.0,
+                                              heightFactor: 1.0,
                                               child: GestureDetector(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) => BookingScreen(
-                                                          doctor: widget.doctor,
-                                                        )
-                                                    ),
-                                                  );
-                                                },
-                                                child: Card(
-                                                  elevation: 0.0,
-                                                  color: ConstantsV2.lightGrey.withOpacity(0.80),
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(100),
-                                                      side: const BorderSide(
-                                                        color: ConstantsV2.orange,
-                                                        width: 1.0,
-                                                      )
-                                                  ),
-                                                  child: Container(
-                                                    padding: const EdgeInsets.all(10),
-                                                    child: Row(
-                                                      children: [
-                                                        Text("ver más",
-                                                          style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.orange),),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: SvgPicture.asset(
+                                                    'assets/icon/close_black.svg',
+                                                    height: 17,)
+                                              ),)
                                         ),
                                       ),
-                                  ],
-                                );
-                              }else if(state is Loading){
-                                return Container(
-                                    child: const Center(
-                                        child: CircularProgressIndicator(
-                                          valueColor:
-                                          AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                                          backgroundColor: Constants.primaryColor600,
-                                        )
-                                    )
-                                );
-                              }else{
-                                return Container();
-                              }
-                            }),
-                          ],
-                      ),
-                    ),
-                  ),
-                ),
-                expandableCard: ExpandableCard(
-                  handleColor: ConstantsV2.orange,
-                  backgroundColor: Colors.white.withOpacity(0.85),
-                  maxHeight: MediaQuery.of(context).size.height-120,
-                  minHeight: MediaQuery.of(context).size.height*0.2,
-                  children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (widget.doctor.biography != null)
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Biografía",
-                                style: boldoSubTextMediumStyle.copyWith(color: Colors.black),
-                              ),
-                              const SizedBox(
-                                height: 4,
-                              ),
-                              Text(widget.doctor.biography??'',
-                                  style: boldoCorpMediumBlackTextStyle.copyWith(
-                                      color: ConstantsV2.inactiveText)),
-                              const SizedBox(
-                                height: 12,
+                                    ],
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        const SizedBox(
-                          height: 12,
                         ),
+                      ),
+                    ),
+                    expandableCard: ExpandableCard(
+                      handleColor: ConstantsV2.orange,
+                      backgroundGradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomCenter,
+                        colors: <Color> [
+                          Colors.black.withOpacity(0),
+                          const Color(0xA7A7A7).withOpacity(.8),
+                        ],
+                      ),
+                      maxHeight: MediaQuery.of(context).size.height-120,
+                      minHeight: MediaQuery.of(context).size.height*0.35,
+                      children: <Widget>[
+                        // show Availability only if go to this page to make a reservation
+                        if(widget.showAvailability)
+                          BlocBuilder<DoctorBloc, DoctorState>(builder: (context, state) {
+                            if(state is Success){
+                              return Container(
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    padding: const EdgeInsets.only(right: 16),
+                                    scrollDirection: Axis.vertical,
+                                    itemCount: organizationsWithAvailabilites.length,
+                                    itemBuilder: _organizationAvailabilities
+                                ),
+                              );
+                            }else if(state is Loading){
+                              return Container(
+                                  child: const Center(
+                                      child: CircularProgressIndicator(
+                                        valueColor:
+                                        AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                                        backgroundColor: Constants.primaryColor600,
+                                      )
+                                  )
+                              );
+                            }else{
+                              return Container();
+                            }
+                          }),
                       ],
                     ),
-                  ],
-                ),
-              );
-            }
+                  );
+                }
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _availabilityHourCard(BuildContext context, int index){
+  Widget _organizationAvailabilities(BuildContext context, int index){
+
+    List<Organization> _organizationsSelected = Provider
+        .of<DoctorFilterProvider>(context, listen: false)
+        .getOrganizationsApplied
+        .isNotEmpty ? Provider
+        .of<DoctorFilterProvider>(context, listen: false)
+        .getOrganizationsApplied : BlocProvider.of<patient.PatientBloc>(context)
+        .getOrganizations();
+
+    List<Organization>? _organizations = _organizationsSelected.where(
+            (element) => element.id == organizationsWithAvailabilites[index].idOrganization
+    ).toList();
+
+    String organizationName = _organizations.first.name?? "Desconocido";
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BookingScreen2(
+                    doctor: widget.doctor,
+                  ),
+                ),
+              );
+            },
+            child: Card(
+              elevation: 0.0,
+              color: ConstantsV2.lightAndClear.withOpacity(0.80),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if(organizationsWithAvailabilites[index].availabilities.isNotEmpty)
+                      if(DateTime(DateTime.parse(organizationsWithAvailabilites[index].nextAvailability?.availability?? DateTime.now().toString()).year,
+                          DateTime.parse(organizationsWithAvailabilites[index].nextAvailability?.availability?? DateTime.now().toString()).month,
+                          DateTime.parse(organizationsWithAvailabilites[index].nextAvailability?.availability?? DateTime.now().toString()).day) ==
+                          DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day))
+                        Flexible(
+                          child: Text(
+                            "Disponible hoy vía $organizationName",
+                            style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),
+                          ),
+                        )
+                      else
+                        Flexible(
+                          child: Text("Disponible el ${DateFormat('dd/MM')
+                              .format(DateTime.parse(
+                              organizationsWithAvailabilites[index]
+                                  .nextAvailability?.availability??
+                                  DateTime.now().toString()))}"
+                              " vía $organizationName",
+                            style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),
+                          )
+                        )
+                    else
+                      Flexible(
+                        child: Text(
+                          "No disponible en los proximos 30 dias vía $organizationName",
+                        style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),
+                        ),
+                      ),
+                    const Icon(
+                      Icons.chevron_right,
+                      color: ConstantsV2.orange,
+                    )
+                  ],
+                ),
+              ),
+            ),),
+        ),
+        Container(
+          constraints: BoxConstraints(maxHeight: 45),
+          child: Row(
+            children: [
+              Container(
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.only(right: 16),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: organizationsWithAvailabilites[index].availabilities.length > 3
+                        ? 3: organizationsWithAvailabilites[index].availabilities.length,
+                    itemBuilder: (BuildContext context, int indexAvailable){
+                      return _availabilityHourCard(index, indexAvailable);
+                    }
+                ),
+              ),
+              Container(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => BookingScreen2(
+                            doctor: widget.doctor,
+                          )
+                      ),
+                    );
+                  },
+                  child: Card(
+                    elevation: 0.0,
+                    color: ConstantsV2.lightGrey.withOpacity(0.80),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                        side: const BorderSide(
+                          color: ConstantsV2.orange,
+                          width: 1.0,
+                        )
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        children: [
+                          Text("ver más",
+                            style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.orange),),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _availabilityHourCard(int indexOrganization, int index){
+
+    Organization organization = widget.doctor.organizations?.where(
+            (element) => element.organization?.id == organizationsWithAvailabilites[indexOrganization].idOrganization
+    ).first.organization?? Organization(id: "none");
+
     return Container(
       child: GestureDetector(
         onTapDown: (TapDownDetails details) async {
-          DateTime parsedAvailability = DateTime.parse(availabilities[index].availability!);
-          if (widget.doctor.nextAvailability!.appointmentType! ==
+          DateTime parsedAvailability = DateTime.parse(organizationsWithAvailabilites[indexOrganization].availabilities[index]?.availability?? DateTime.now().toString());
+          if (organizationsWithAvailabilites[indexOrganization].availabilities[index]?.appointmentType! ==
               'AV') {
             print(details.globalPosition);
             final chooseOption =
@@ -348,12 +398,14 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
             if (chooseOption != null) {
               if (chooseOption == 'En persona') {
                 handleBookingHour(
+                  organization: organization,
                   bookingHour: NextAvailability(
                       appointmentType: 'A',
                       availability: parsedAvailability.toString()),
                 );
               } else {
                 handleBookingHour(
+                  organization: organization,
                   bookingHour: NextAvailability(
                       appointmentType: 'V',
                       availability: parsedAvailability.toString()),
@@ -361,9 +413,11 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
               }
             }
           } else {
-            handleBookingHour(bookingHour: NextAvailability(
+            handleBookingHour(
+                organization: organization,
+                bookingHour: NextAvailability(
                 appointmentType:
-                widget.doctor.nextAvailability!.appointmentType,
+                organizationsWithAvailabilites[indexOrganization].availabilities[index]?.appointmentType!,
                 availability: parsedAvailability.toString()));
           }
         },
@@ -377,7 +431,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
             padding: const EdgeInsets.all(10),
             child: Row(
               children: [
-                Text("${DateFormat('HH:mm').format(DateTime.parse(availabilities[index].availability!))}",
+                Text("${DateFormat('HH:mm').format(DateTime.parse(organizationsWithAvailabilites[indexOrganization].availabilities[index]?.availability?? DateTime.now().toString()))}",
                 style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.lightGrey),),
               ],
             ),
@@ -418,7 +472,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
     );
   }
 
-  Future<void> handleBookingHour({required NextAvailability bookingHour}) async {
+  Future<void> handleBookingHour({
+    required NextAvailability bookingHour,
+    required Organization organization}) async {
 
     Navigator.push(
       context,
@@ -426,7 +482,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         builder: (context) => BookingConfirmScreen(
           bookingDate: bookingHour,
           doctor: widget.doctor,
-          organization: organizationsSubscribed.first,
+          organization: organization,
         ),
       ),
     );
@@ -463,13 +519,15 @@ class Background extends StatelessWidget {
                   (context, url, downloadProgress) =>
                   Padding(
                     padding: const EdgeInsets.all(26.0),
-                    child: CircularProgressIndicator(
-                      value: downloadProgress.progress,
-                      valueColor:
-                      const AlwaysStoppedAnimation<Color>(
-                          Constants.primaryColor400),
-                      backgroundColor:
-                      Constants.primaryColor600,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        value: downloadProgress.progress,
+                        valueColor:
+                        const AlwaysStoppedAnimation<Color>(
+                            Constants.primaryColor400),
+                        backgroundColor:
+                        Constants.primaryColor600,
+                      ),
                     ),
                   ),
               errorWidget: (context, url, error) =>
