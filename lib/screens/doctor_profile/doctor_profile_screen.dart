@@ -417,7 +417,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                 organization: organization,
                 bookingHour: NextAvailability(
                 appointmentType:
-                widget.doctor.organizations?.first.nextAvailability!.appointmentType,
+                organizationsWithAvailabilites[indexOrganization].availabilities[index]?.appointmentType!,
                 availability: parsedAvailability.toString()));
           }
         },
