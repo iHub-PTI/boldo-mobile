@@ -167,6 +167,7 @@ class _ExpandableCardState extends State<ExpandableCard>
             (widget.maxHeight - widget.minHeight) * factor;
         return Positioned(
           top: top,
+          bottom: 0,
           child: GestureDetector(
             onVerticalDragStart: _startCardDrag,
             onVerticalDragUpdate: _expandCard,
