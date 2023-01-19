@@ -201,6 +201,7 @@ class _ExpandableCardState extends State<ExpandableCard>
               child: Padding(
                 padding: widget.padding,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     if (widget.hasHandle) Icon(
                       Icons.remove,
