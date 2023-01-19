@@ -204,35 +204,39 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                       ),
                       maxHeight: MediaQuery.of(context).size.height-120,
                       minHeight: MediaQuery.of(context).size.height*0.35,
-                      children: <Widget>[
-                        // show Availability only if go to this page to make a reservation
-                        if(widget.showAvailability)
-                          BlocBuilder<DoctorBloc, DoctorState>(builder: (context, state) {
-                            if(state is Success){
-                              return Container(
-                                child: ListView.builder(
-                                    shrinkWrap: true,
-                                    padding: const EdgeInsets.only(right: 16),
-                                    scrollDirection: Axis.vertical,
-                                    itemCount: organizationsWithAvailabilites.length,
-                                    itemBuilder: _organizationAvailabilities
-                                ),
-                              );
-                            }else if(state is Loading){
-                              return Container(
-                                  child: const Center(
-                                      child: CircularProgressIndicator(
-                                        valueColor:
-                                        AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                                        backgroundColor: Constants.primaryColor600,
+                      children: SingleChildScrollView(
+                        child: Column(
+                          children: <Widget>[
+                            // show Availability only if go to this page to make a reservation
+                            if(widget.showAvailability)
+                              BlocBuilder<DoctorBloc, DoctorState>(builder: (context, state) {
+                                if(state is Success){
+                                  return Container(
+                                    child: ListView.builder(
+                                        shrinkWrap: true,
+                                        padding: const EdgeInsets.only(right: 16),
+                                        scrollDirection: Axis.vertical,
+                                        itemCount: organizationsWithAvailabilites.length,
+                                        itemBuilder: _organizationAvailabilities
+                                    ),
+                                  );
+                                }else if(state is Loading){
+                                  return Container(
+                                      child: const Center(
+                                          child: CircularProgressIndicator(
+                                            valueColor:
+                                            AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                                            backgroundColor: Constants.primaryColor600,
+                                          )
                                       )
-                                  )
-                              );
-                            }else{
-                              return Container();
-                            }
-                          }),
-                      ],
+                                  );
+                                }else{
+                                  return Container();
+                                }
+                              }),
+                          ],
+                        ),
+                      ),
                     ),
                   );
                 }
