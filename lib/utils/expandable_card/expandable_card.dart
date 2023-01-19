@@ -208,7 +208,15 @@ class _ExpandableCardState extends State<ExpandableCard>
                       color: widget.handleColor,
                       size: 45,
                     ),
-                    ...widget.children
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            ...widget.children
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 // child: positionDebugContent,
