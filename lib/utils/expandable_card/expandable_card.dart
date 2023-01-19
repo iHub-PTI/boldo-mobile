@@ -210,6 +210,7 @@ class _ExpandableCardState extends State<ExpandableCard>
                     ),
                     Expanded(
                       child: SingleChildScrollView(
+                        physics: const ClampingScrollPhysics(),
                         child: Column(
                           children: [
                             ...widget.children
