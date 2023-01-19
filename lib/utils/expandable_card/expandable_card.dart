@@ -21,7 +21,7 @@ class ExpandableCard extends StatefulWidget {
   });
 
   /// List of widgets that make the content of the card
-  final List<Widget> children;
+  final Widget children;
 
   /// Padding for the content inside the card
   final EdgeInsetsGeometry padding;
@@ -200,26 +200,26 @@ class _ExpandableCardState extends State<ExpandableCard>
               ),
               child: Padding(
                 padding: widget.padding,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    if (widget.hasHandle) Icon(
-                      Icons.remove,
-                      color: widget.handleColor,
-                      size: 45,
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        physics: const ClampingScrollPhysics(),
-                        child: Column(
-                          children: [
-                            ...widget.children
-                          ],
-                        ),
+                child: CustomScrollView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          if (widget.hasHandle) Icon(
+                            Icons.remove,
+                            color: widget.handleColor,
+                            size: 45,
+                          ),
+                        ],
                       ),
                     ),
+                    SliverFillRemaining(
+                      child: widget.children
+                    ),
                   ],
-                ),
+                )
                 // child: positionDebugContent,
               ),
             ),
