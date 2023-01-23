@@ -81,7 +81,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                         duration: const Duration(seconds: 1),
                                         child: Spin(
                                           spins: 0.05,
-                                          duration: const Duration(seconds: 500),
+                                          duration: const Duration(milliseconds: 500),
                                           child: Spin(
                                             delay: const Duration(milliseconds: 1000),
                                             duration: const Duration(milliseconds: 1000),
@@ -89,7 +89,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                             child: Spin(
                                               delay: const Duration(milliseconds: 2000),
                                               duration: const Duration(milliseconds: 1000),
-                                              spins: 0.1,
+                                              spins: 0.05,
                                               child: ImageViewTypeForm(
                                                 height: 170,
                                                 width: 170,
