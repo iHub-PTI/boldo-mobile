@@ -386,9 +386,17 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
   Widget _availabilityHourCard(int indexOrganization, int index){
 
-    Organization organization = widget.doctor.organizations?.where(
-            (element) => element.organization?.id == organizationsWithAvailabilites[indexOrganization].idOrganization
-    ).first.organization?? Organization(id: "none");
+    List<Organization> _organizationsSelected = Provider
+        .of<DoctorFilterProvider>(context, listen: false)
+        .getOrganizationsApplied
+        .isNotEmpty ? Provider
+        .of<DoctorFilterProvider>(context, listen: false)
+        .getOrganizationsApplied : BlocProvider.of<patient.PatientBloc>(context)
+        .getOrganizations();
+
+    Organization organization = _organizationsSelected.where(
+            (element) => element.id == organizationsWithAvailabilites[indexOrganization].idOrganization
+    ).first;
 
     return Container(
       child: GestureDetector(
