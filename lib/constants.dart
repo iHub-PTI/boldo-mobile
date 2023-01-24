@@ -106,6 +106,14 @@ const boldoScreenTitleTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoScreenSubtitleTextStyle = TextStyle(
+  color: ConstantsV2.activeText,
+  fontStyle: FontStyle.normal,
+  fontSize: 18,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
 const boldoSubTextStyle = TextStyle(
   color: ConstantsV2.inactiveText,
   fontStyle: FontStyle.normal,
