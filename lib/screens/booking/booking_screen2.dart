@@ -1,4 +1,4 @@
-import 'package:boldo/blocs/user_bloc/patient_bloc.dart'as patient;
+import 'package:boldo/blocs/user_bloc/patient_bloc.dart'as patient_bloc;
 import 'package:boldo/blocs/doctor_availability_bloc/doctor_availability_bloc.dart';
 import 'package:boldo/blocs/doctor_more_availability_bloc/doctor_more_availability_bloc.dart' as more_availabilities;
 import 'package:boldo/main.dart';
@@ -8,6 +8,7 @@ import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/booking/booking_screen.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/expandable_card/expandable_card.dart';
+import 'package:boldo/widgets/header_page.dart';
 import 'package:boldo/widgets/in-person-virtual-switch.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +55,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
         .getOrganizationsApplied
         .isNotEmpty ? Provider
         .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied : BlocProvider.of<patient.PatientBloc>(context)
+        .getOrganizationsApplied : BlocProvider.of<patient_bloc.PatientBloc>(context)
         .getOrganizations();
     BlocProvider.of<DoctorAvailabilityBloc>(context).add(GetAvailability(
       id: widget.doctor.id?? '',
@@ -127,6 +128,23 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Icon(
+                                        Icons.chevron_left_rounded,
+                                        size: 25,
+                                        color: Constants.extraColor400,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: header("Marcar cita", "Marcar cita"),
+                                    ),
+                                  ],
+                                ),
                                 const SizedBox(
                                   height: 16,
                                 ),
@@ -500,7 +518,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
         .getOrganizationsApplied
         .isNotEmpty ? Provider
         .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied : BlocProvider.of<patient.PatientBloc>(context)
+        .getOrganizationsApplied : BlocProvider.of<patient_bloc.PatientBloc>(context)
         .getOrganizations();
 
     List<Organization>? _organizations = _organizationsSelected.where(
