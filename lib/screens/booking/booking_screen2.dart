@@ -353,7 +353,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                       ),
                       TableCalendar(
                         rowHeight: 35,
-                        locale: Localizations.localeOf(context).languageCode,
+                        locale: const Locale("es", 'ES').languageCode,
                         headerStyle: HeaderStyle(
                             titleTextStyle: boldoSubTextMediumStyle.copyWith(
                                 color: ConstantsV2.activeText
