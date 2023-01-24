@@ -215,7 +215,6 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                               setState(() {
                                                 selectedType = type;
                                                 _selectedBookingHour = null;
-                                                _selectedOrganization = null;
                                               });
                                             },
                                           ),
