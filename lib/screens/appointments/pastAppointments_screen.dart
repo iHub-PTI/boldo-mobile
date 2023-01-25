@@ -2,6 +2,7 @@ import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart'as medical;
 import 'package:boldo/constants.dart';
+import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
@@ -9,7 +10,9 @@ import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
+import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/header_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -163,22 +166,26 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextButton.icon(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: const Icon(
-                          Icons.chevron_left_rounded,
-                          size: 25,
-                          color: Constants.extraColor400,
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.chevron_left_rounded,
+                                size: 25,
+                                color: Constants.extraColor400,
+                              ),
+                            ],
+                          ),
                         ),
-                        label: Text(
-                          'Mis Consultas',
-                          style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                        Expanded(
+                          child: header("Mis Consultas", "Consultas"),
                         ),
-                      ),
+                      ],
                     ),
                     if (!_dataLoading && !_dataLoaded)
                       const Padding(

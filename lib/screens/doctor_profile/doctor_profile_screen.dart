@@ -11,6 +11,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -193,6 +194,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                       ),
                     ),
                     expandableCard: ExpandableCard(
+                      hasBlur: true,
+                      blurRadius: 15.0,
                       handleColor: ConstantsV2.orange,
                       backgroundGradient: LinearGradient(
                         begin: Alignment.topLeft,
@@ -280,10 +283,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
             },
             child: Card(
               elevation: 0.0,
-              color: ConstantsV2.lightAndClear.withOpacity(0.80),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
+              color: Colors.transparent,
               child: Container(
                 padding: const EdgeInsets.all(10),
                 child: Row(
@@ -296,8 +296,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                           DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day))
                         Flexible(
                           child: Text(
-                            "Disponible hoy vía $organizationName",
-                            style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),
+                            "Hoy - $organizationName",
+                            style: boldoScreenSubtitleTextStyle.copyWith(color: ConstantsV2.grayLightest),
                           ),
                         )
                       else
@@ -307,21 +307,17 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                               organizationsWithAvailabilites[index]
                                   .nextAvailability?.availability??
                                   DateTime.now().toString()))}"
-                              " vía $organizationName",
-                            style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),
+                              " - $organizationName",
+                            style: boldoScreenSubtitleTextStyle.copyWith(color: ConstantsV2.grayLightest),
                           )
                         )
                     else
                       Flexible(
                         child: Text(
-                          "No disponible en los proximos 30 dias vía $organizationName",
+                          "No disponible en los proximos 30 dias - $organizationName",
                         style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),
                         ),
                       ),
-                    const Icon(
-                      Icons.chevron_right,
-                      color: ConstantsV2.orange,
-                    )
                   ],
                 ),
               ),
@@ -357,7 +353,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                   },
                   child: Card(
                     elevation: 0.0,
-                    color: ConstantsV2.lightGrey.withOpacity(0.80),
+                    color: ConstantsV2.grayLightAndClear,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(100),
                         side: const BorderSide(
@@ -369,8 +365,13 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                       padding: const EdgeInsets.all(10),
                       child: Row(
                         children: [
-                          Text("ver más",
-                            style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.orange),),
+                          Text("Más opciones",
+                            style: GoogleFonts.inter().copyWith(
+                              color: ConstantsV2.secondaryRegular,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -435,8 +436,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         },
         child:Card(
           elevation: 0.0,
-          color: ConstantsV2.orange,
+          color: ConstantsV2.grayLightAndClear,
           shape: RoundedRectangleBorder(
+            side: BorderSide(color: ConstantsV2.grayLightAndClear, width: 1),
             borderRadius: BorderRadius.circular(100),
           ),
           child: Container(
@@ -444,7 +446,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
             child: Row(
               children: [
                 Text("${DateFormat('HH:mm').format(DateTime.parse(organizationsWithAvailabilites[indexOrganization].availabilities[index]?.availability?? DateTime.now().toString()))}",
-                style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.lightGrey),),
+                style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.secondaryRegular),),
               ],
             ),
           ),

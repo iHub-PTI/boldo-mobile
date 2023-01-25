@@ -504,7 +504,7 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
         ? SvgPicture.asset(
       widget.gender == 'male'
           ? 'assets/images/malePatient.svg'
-          : prefs.getString('gender') == "female"
+          : widget.gender == "female"
           ? 'assets/images/femalePatient.svg'
           : 'assets/images/LogoIcon.svg',
     )

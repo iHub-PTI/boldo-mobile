@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class ExpandableCard extends StatefulWidget {
@@ -18,6 +20,8 @@ class ExpandableCard extends StatefulWidget {
     this.onShow,
     this.onHide,
     this.isExpanded = false,
+    this.hasBlur = false,
+    this.blurRadius = 1.0,
   });
 
   /// List of widgets that make the content of the card
@@ -34,6 +38,12 @@ class ExpandableCard extends StatefulWidget {
 
   /// Determines whether the card has shadow or not
   final bool hasShadow;
+
+  /// Determines whether the card has blur or not
+  final bool hasBlur;
+
+  /// Initial blurRadius of the card
+  final double blurRadius;
 
   /// Colors of the card
   final LinearGradient? backgroundGradient;
@@ -198,7 +208,29 @@ class _ExpandableCardState extends State<ExpandableCard>
                     )
                 ],
               ),
-              child: Padding(
+              child: widget.hasBlur? ClipRect(
+                child: BackdropFilter(
+                  blendMode: BlendMode.src,
+                  filter: ImageFilter.blur(
+                    sigmaX: widget.blurRadius,
+                    sigmaY: widget.blurRadius,
+                  ),
+                  child: Padding(
+                    padding: widget.padding,
+                    child: Column(
+                      children: <Widget>[
+                        if (widget.hasHandle) Icon(
+                          Icons.remove,
+                          color: widget.handleColor,
+                          size: 45,
+                        ),
+                        ...widget.children
+                      ],
+                    ),
+                    // child: positionDebugContent,
+                  ),
+                ),
+              ) : Padding(
                 padding: widget.padding,
                 child: CustomScrollView(
                   physics: const NeverScrollableScrollPhysics(),
