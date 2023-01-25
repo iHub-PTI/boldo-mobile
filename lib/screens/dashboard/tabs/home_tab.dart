@@ -388,7 +388,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                                                     child: Row(
                                                       mainAxisAlignment:
                                                       MainAxisAlignment.start,
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
                                                         Text(
                                                           'Novedades${prefs.getBool(isFamily) ??
@@ -400,7 +399,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                                                             ? Text(
                                                             '${patient
                                                                 .relationshipDisplaySpan}',
-                                                            style: boldoCorpMediumTextStyle
+                                                            style: boldoSubTextStyle
                                                                 .copyWith(
                                                                 color:
                                                                 ConstantsV2.green))
