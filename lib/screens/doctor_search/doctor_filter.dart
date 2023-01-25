@@ -414,7 +414,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                             Navigator.pop(context);
                           },
                           child: const Text(
-                            'Limpiar filtos',
+                            'Limpiar filtros',
                           )
                       ),
                     ),
