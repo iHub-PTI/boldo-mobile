@@ -362,7 +362,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
       available = 'Disponible Hoy!';
     } else if (daysDifference > 0) {
       available =
-          'Disponible ${DateFormat('EEEE, dd MMMM', Localizations.localeOf(context).languageCode).format(parsedAvailability)}';
+          'Disponible ${DateFormat('EEEE, dd MMMM', const Locale("es", 'ES').languageCode).format(parsedAvailability)}';
     }
     return available;
   }

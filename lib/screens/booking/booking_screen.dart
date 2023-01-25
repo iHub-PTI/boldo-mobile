@@ -365,8 +365,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           child: Text(
                             DateFormat(
                                     'dd MMMM yyyy',
-                                    Localizations.localeOf(context)
-                                        .languageCode)
+                                const Locale("es", 'ES').languageCode)
                                 .format(selectedDate),
                             style: boldoHeadingTextStyle.copyWith(
                                 fontWeight: FontWeight.normal, fontSize: 14),
@@ -651,7 +650,7 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
       availabilityText = "Disponible Hoy!";
     } else if (daysDifference > 0) {
       availabilityText =
-          "Disponible ${DateFormat('EEEE, dd MMMM', Localizations.localeOf(context).languageCode).format(parsedAvailability)}";
+          "Disponible ${DateFormat('EEEE, dd MMMM', const Locale("es", 'ES').languageCode).format(parsedAvailability)}";
     }
 
     return Card(
@@ -704,7 +703,7 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                         ),
                         Text(
                           DateFormat('EEEE, dd MMMM',
-                                  Localizations.localeOf(context).languageCode)
+                                  const Locale("es", 'ES').languageCode)
                               .format(parsedAvailability)
                               .capitalize(),
                           style: boldoSubTextStyle,

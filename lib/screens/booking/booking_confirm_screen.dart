@@ -278,7 +278,7 @@ class _DoctorBookingInfoWidget extends StatelessWidget {
           height: 7,
         ),
         Text(
-          DateFormat('EEEE, dd MMMM yyyy', Localizations.localeOf(context).languageCode).format(bookingDate).capitalize(),
+          DateFormat('EEEE, dd MMMM yyyy', const Locale("es", 'ES').languageCode).format(bookingDate).capitalize(),
           style: boldoSubTextStyle.copyWith(fontSize: 16),
         ),
         const SizedBox(
