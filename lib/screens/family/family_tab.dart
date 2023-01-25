@@ -97,7 +97,8 @@ class _FamilyScreenState extends State<FamilyScreen> {
                         ],
                       ),
                     ),
-                    Container(
+                    Expanded(
+                      child: Container(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -145,6 +146,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
                           ),
                         ],
                       ),
+                    ),
                     ),
                   ],
                 ),
