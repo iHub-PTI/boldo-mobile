@@ -60,7 +60,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
     BlocProvider.of<DoctorAvailabilityBloc>(context).add(GetAvailability(
       id: widget.doctor.id?? '',
       startDate: DateTime.now().toUtc().toIso8601String(),
-      endDate: DateTime(DateTime.now().year, DateTime.now().month + 1, 1).toLocal().toIso8601String(),
+      endDate: DateTime.now().add(const Duration(days: 30)).toUtc().toIso8601String(),
       organizations: _organizations,
     ));
     super.initState();
