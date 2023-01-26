@@ -135,11 +135,12 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                                       ],
                                     ),
                                   )),
-                              ProfileImageView2(
+                              ImageViewTypeForm(
                                 height: 54,
                                 width: 54,
                                 border: true,
-                                patient: patient,
+                                url: patient.photoUrl,
+                                gender: patient.gender,
                                 color: ConstantsV2.orange,
                               ),
                             ],
@@ -864,7 +865,7 @@ class FamilySelector extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 9),
       child:
         index == 0
-            ? ProfileImageViewTypeForm(
+            ? ImageViewTypeForm(
             height: height,
             width: width,
             border: true,
@@ -873,12 +874,15 @@ class FamilySelector extends StatelessWidget {
             opacity: disable? 0.6 : 1,
             blur: disable,
             borderColor: disable? null: ConstantsV2.secondaryRegular,
+            url: patient.photoUrl,
+            gender: patient.gender,
         )
-            :ProfileImageViewTypeForm(
+            :ImageViewTypeForm(
             height: height,
             width: width,
             border: true,
-            patient: families[index-1],
+            url: families[index-1].photoUrl,
+            gender: families[index-1].gender,
             form: type,
             color: disable? ConstantsV2.grayLightAndClear : null,
             opacity: disable? 0.6 : 1,

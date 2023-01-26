@@ -179,6 +179,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                             border: true,
                                             url: widget.doctor.photoUrl,
                                             gender: widget.doctor.gender,
+                                            isPatient: false,
                                           ),
                                           Flexible(
                                             child: Column(

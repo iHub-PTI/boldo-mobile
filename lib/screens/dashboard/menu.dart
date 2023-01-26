@@ -126,7 +126,13 @@ class _MenuScreenState extends State<MenuScreen> {
                                                     onTap: (){
                                                       Navigator.pushNamed(context, '/profileScreen');
                                                     },
-                                                    child: const ProfileImageView(height: 170, width: 170, border: true),
+                                                    child: ImageViewTypeForm(
+                                                      height: 170,
+                                                      width: 170,
+                                                      border: true,
+                                                      url: patient.photoUrl,
+                                                      gender: patient.gender,
+                                                    ),
                                                   ),
                                                 ],
                                               ),

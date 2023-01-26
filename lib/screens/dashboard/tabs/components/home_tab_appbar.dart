@@ -83,8 +83,10 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                       ),
                     );
                   },
-                  child: ProfileImageView(height: expanded ? 100 : 60,
+                  child: ImageViewTypeForm(height: expanded ? 100 : 60,
                       width: expanded ? 100 : 60,
+                      url: patient.photoUrl,
+                      gender: patient.gender,
                       border: true),
                 ),
                 const SizedBox(width: 10),
@@ -389,7 +391,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                     prefs.setBool(isFamily, false);
                     Navigator.pushNamed(context, '/FamilyTransition', arguments: {'isFamily': previous});
                   },
-                  child:ProfileImageViewTypeForm(height: height, width: width, border: false, form: type,)
+                  child:ImageViewTypeForm(height: height, width: width, border: false, form: type, url: prefs.getString('profile_url'), gender: prefs.getString('gender'))
                 )
                 :InkWell(
                   onTap: () {
@@ -398,7 +400,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                     prefs.setBool(isFamily, true);
                     Navigator.pushNamed(context, '/FamilyTransition', arguments: {'isFamily': previous});
                   },
-                  child:ProfileImageViewTypeForm(height: height, width: width, border: false, patient: families[index-1], form: type,)
+                  child:ImageViewTypeForm(height: height, width: width, border: false, url: families[index-1].photoUrl, gender: families[index-1].gender, form: type,)
                 )
               : InkWell(
                 onTap: () {
@@ -429,7 +431,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                 prefs.setBool(isFamily, false);
                 Navigator.pushNamed(context, '/FamilyTransition', arguments: {'isFamily': previous});
               },
-              child: ProfileImageViewTypeForm(height: height, width: width, border: false, form: type,)
+              child:ImageViewTypeForm(height: height, width: width, border: false, form: type, url: prefs.getString('profile_url'), gender: prefs.getString('gender'))
             )
             :InkWell(
               onTap: () {
@@ -438,7 +440,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                 prefs.setBool(isFamily, true);
                 Navigator.pushNamed(context, '/FamilyTransition', arguments: {'isFamily': previous});
               },
-              child: ProfileImageViewTypeForm(height: height, width: width, border: false, patient: families[index-1], form: type,)
+              child:ImageViewTypeForm(height: height, width: width, border: false, url: families[index-1].photoUrl, gender: families[index-1].gender, form: type,)
             )
           :InkWell(
             onTap: () {

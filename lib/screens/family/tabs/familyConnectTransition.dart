@@ -67,7 +67,7 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        ProfileImageView2(height: 170, width: 170, border: true, patient: dependentPhoto,),
+                                        ImageViewTypeForm(height: 170, width: 170, border: true, url: user.photoUrl, gender: user.gender,),
                                       ],
                                     ),
                                     const SizedBox(height: 29,),

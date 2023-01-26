@@ -400,10 +400,13 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                           'assets/images/femaleDoctor.svg',
                           fit: BoxFit.cover,
                         )
-                      : SvgPicture.asset(
+                      : doctors[index].gender == 'male'? SvgPicture.asset(
                           'assets/images/maleDoctor.svg',
                           fit: BoxFit.cover,
-                        ),
+                        ): SvgPicture.asset(
+                    'assets/images/persona.svg',
+                    fit: BoxFit.cover,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(32.0),
                   ),

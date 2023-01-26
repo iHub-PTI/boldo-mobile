@@ -524,7 +524,8 @@ class Background extends StatelessWidget {
                 ? SvgPicture.asset(
               doctor.gender == "female"
                   ? 'assets/images/femaleDoctor.svg'
-                  : 'assets/images/maleDoctor.svg',
+                  : doctor.gender == "male"? 'assets/images/maleDoctor.svg':
+              'assets/images/persona.svg',
               fit: BoxFit.cover,)
                 : CachedNetworkImage(
               fit: BoxFit.cover,

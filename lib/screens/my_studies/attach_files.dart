@@ -119,11 +119,12 @@ class _AttachFilesState extends State<AttachFiles> {
                           ],
                         ),
                       )),
-                      ProfileImageView2(
+                      ImageViewTypeForm(
                         height: 54,
                         width: 54,
                         border: true,
-                        patient: patient,
+                        url: patient.photoUrl,
+                        gender: patient.gender,
                         color: ConstantsV2.orange,
                       ),
                     ],

@@ -161,11 +161,12 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                                       ],
                                     ),
                                   )),
-                              ProfileImageView2(
+                              ImageViewTypeForm(
                                 height: 54,
                                 width: 54,
                                 border: true,
-                                patient: patient,
+                                url: patient.photoUrl,
+                                gender: patient.gender,
                                 color: ConstantsV2.orange,
                               ),
                             ],

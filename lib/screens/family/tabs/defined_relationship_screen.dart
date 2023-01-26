@@ -111,7 +111,7 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            ProfileImageView2(height: 100, width: 100, border: true, patient: dependent),
+                                            ImageViewTypeForm(height: 100, width: 100, border: true, url: dependent?.photoUrl, gender: dependent?.gender,),
                                           ],
                                         ),
                                         const SizedBox(height: 10,),
