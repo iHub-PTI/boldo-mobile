@@ -291,68 +291,88 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                     maxHeight: MediaQuery.of(context).size.height,
                     isExpanded: _expandCalendar,
                     minHeight: _hideCalendar ? 0: MediaQuery.of(context).size.height*_height,
-                    children: <Widget>[
-                      Row(
-                        children: [
-                          Text(
-                            "Horarios disponibles",
-                            style: boldoScreenTitleTextStyle.copyWith(
-                                color: ConstantsV2.activeText
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 24,
-                      ),
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  "${getDoctorPrefix(widget.doctor.gender!)} ${widget.doctor.givenName?.split(" ")[0]} ${widget.doctor.familyName?.split(" ")[0]}",
-                                  style: boldoCardSubtitleTextStyle.copyWith(color: ConstantsV2.inactiveText),
-                                ),
-                              ),
-                            ],
-                          ),
-                          if (widget.doctor.specializations != null)
-                            SingleChildScrollView(
-                              scrollDirection:
-                              Axis.horizontal,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                    //custom scroll to prevent overflow
+                    children: CustomScrollView(
+                      //never scroll to prevent scroll
+                      physics: const NeverScrollableScrollPhysics(),
+                      slivers: [
+                        //elements of const height
+                        SliverToBoxAdapter(
+                          child: Column(
+                            children: <Widget>[
+                              Row(
                                 children: [
-                                  for (int i=0; i<widget.doctor.specializations!.length; i++)
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 4, left: i==0 ? 0 : 3.0),
-                                      child: Text(
-                                        "${widget.doctor.specializations![i].description}${i<widget.doctor.specializations!.length-1?',':''}",
-                                        style: boldoCardSubtitleTextStyle.copyWith(
-                                            color: ConstantsV2.blueLight),
+                                  Text(
+                                    "Horarios disponibles",
+                                    style: boldoScreenTitleTextStyle.copyWith(
+                                        color: ConstantsV2.activeText
+                                    ),
+                                  )
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 24,
+                              ),
+                              Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          "${getDoctorPrefix(widget.doctor.gender!)} ${widget.doctor.givenName?.split(" ")[0]} ${widget.doctor.familyName?.split(" ")[0]}",
+                                          style: boldoCardSubtitleTextStyle.copyWith(color: ConstantsV2.inactiveText),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  if (widget.doctor.specializations != null)
+                                    SingleChildScrollView(
+                                      scrollDirection:
+                                      Axis.horizontal,
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          for (int i=0; i<widget.doctor.specializations!.length; i++)
+                                            Padding(
+                                              padding: EdgeInsets.only(bottom: 4, left: i==0 ? 0 : 3.0),
+                                              child: Text(
+                                                "${widget.doctor.specializations![i].description}${i<widget.doctor.specializations!.length-1?',':''}",
+                                                style: boldoCardSubtitleTextStyle.copyWith(
+                                                    color: ConstantsV2.blueLight),
+                                              ),
+                                            ),
+                                        ],
                                       ),
                                     ),
                                 ],
                               ),
-                            ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 24,
-                      ),
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              _selectedOrganization?.name?? "Sin Organización",
-                              style: boldoCardSubtitleTextStyle.copyWith(
-                                  color: ConstantsV2.orange
+                              const SizedBox(
+                                height: 24,
                               ),
-                            ),
+                            ],
                           ),
-                          // TODO: expanded card not refresh values
-                          /*InkWell(
+                        ),
+                        // fill elements to the remaining height
+                        SliverFillRemaining(
+                          // scroll to fix overflow
+                          child: CustomScrollView(
+                            slivers: [
+                              // doctor calendar with const height
+                              SliverToBoxAdapter(
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            _selectedOrganization?.name?? "Sin Organización",
+                                            style: boldoCardSubtitleTextStyle.copyWith(
+                                                color: ConstantsV2.orange
+                                            ),
+                                          ),
+                                        ),
+                                        // TODO: expanded card not refresh values
+                                        /*InkWell(
                             onTap: (){
                               setState((){
                                 _expandCalendar = !_expandCalendar;
@@ -366,116 +386,119 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                               ),
                             ),
                           ),*/
-                        ],
-                      ),
-                      TableCalendar(
-                        rowHeight: 35,
-                        locale: const Locale("es", 'ES').languageCode,
-                        headerStyle: HeaderStyle(
-                            titleTextStyle: boldoSubTextMediumStyle.copyWith(
-                                color: ConstantsV2.activeText
-                            ),
-                            formatButtonVisible: false,
-                            leftChevronIcon: const Icon(
-                              Icons.chevron_left,
-                              color: ConstantsV2.orange,
-                            ),
-                            rightChevronIcon: const Icon(
-                              Icons.chevron_right,
-                              color: ConstantsV2.orange,
-                            )
-                        ),
-                        calendarStyle: CalendarStyle(
-                            selectedDecoration: const BoxDecoration(color: ConstantsV2.orange, shape: BoxShape.circle),
-                            todayDecoration: BoxDecoration(color: ConstantsV2.secondaryLightAndClear, shape: BoxShape.circle),
-                            todayTextStyle: const TextStyle(color: Color(0xFF263238), fontSize: 14.0)
-                        ),
-                        availableGestures: AvailableGestures.all,
-                        onDaySelected: (DateTime day, DateTime focusedDay){
-                          setState(() {
-                            date = day;
-                            BlocProvider.of<more_availabilities.DoctorMoreAvailabilityBloc>(context).add(more_availabilities.GetAvailability(
-                              id: widget.doctor.id?? '',
-                              startDate: date.toUtc().toIso8601String(),
-                              endDate: DateTime(date.year, date.month, date.day+1).toLocal().toIso8601String(),
-                              organizations: [_selectedOrganization],
-                            ));
-                          });
-                        },
-                        onPageChanged: (newDate){
-                          setState(() {
-                            date = newDate;
-                            BlocProvider.of<more_availabilities.DoctorMoreAvailabilityBloc>(context).add(more_availabilities.GetAvailability(
-                              id: widget.doctor.id?? '',
-                              startDate: date.toUtc().toIso8601String(),
-                              endDate: DateTime(date.year, date.month, date.day+1).toLocal().toIso8601String(),
-                              organizations: [_selectedOrganization],
-                            ));
-                          });
-                        },
-                        selectedDayPredicate: (day) => isSameDay(day, date),
-                        calendarFormat: _expandCalendar? CalendarFormat.month : CalendarFormat.week,
-                        firstDay: DateTime.now(),
-                        lastDay: DateTime(date.year, date.month + 1, 1),
-                        currentDay: DateTime.now(),
-                        focusedDay: date,
-                      ),
-                      BlocBuilder<more_availabilities.DoctorMoreAvailabilityBloc, more_availabilities.DoctorMoreAvailabilityState>(
-                          builder: (context, state){
-                            if(state is more_availabilities.AvailabilitiesObtained){
-                              return Container(
-                                height: MediaQuery.of(context).size.height*0.15,
-                                child: Container(
-                                  child: SingleChildScrollView(
-                                    physics: const ClampingScrollPhysics(),
-                                    child: Wrap(
-                                      clipBehavior: Clip.antiAlias,
-                                      alignment: WrapAlignment.center,
-                                      spacing: 14,
-                                      runSpacing: 14,
-                                      children: [
-                                        if(calendarOrganizationsWithAvailabilites.isNotEmpty)
-                                        if(calendarOrganizationsWithAvailabilites.first.availabilities.isNotEmpty)
-                                          for(NextAvailability? availability in calendarOrganizationsWithAvailabilites.first.availabilities.map((e) => e))
-                                            if(availability != null)
-                                              _calendarAvailabilityHourCard(
-                                                  widget.doctor.organizations?.
-                                                  map((e) => e.organization)
-                                                      .toList()
-                                                      .firstWhere(
-                                                          (element) => element?.id == calendarOrganizationsWithAvailabilites.first.idOrganization
-                                                  ), availability),
-                                        if(calendarOrganizationsWithAvailabilites.isNotEmpty)
-                                        if(calendarOrganizationsWithAvailabilites.first.availabilities.isEmpty)
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 20.0),
-                                            child: Text(
-                                              "No hay disponibilidad en esta fecha",
-                                              style:
-                                              boldoHeadingTextStyle.copyWith(fontSize: 13),
-                                            ),
-                                          ),
                                       ],
                                     ),
-                                  ),
+                                    TableCalendar(
+                                      rowHeight: 35,
+                                      locale: const Locale("es", 'ES').languageCode,
+                                      headerStyle: HeaderStyle(
+                                          titleTextStyle: boldoSubTextMediumStyle.copyWith(
+                                              color: ConstantsV2.activeText
+                                          ),
+                                          formatButtonVisible: false,
+                                          leftChevronIcon: const Icon(
+                                            Icons.chevron_left,
+                                            color: ConstantsV2.orange,
+                                          ),
+                                          rightChevronIcon: const Icon(
+                                            Icons.chevron_right,
+                                            color: ConstantsV2.orange,
+                                          )
+                                      ),
+                                      calendarStyle: CalendarStyle(
+                                          selectedDecoration: const BoxDecoration(color: ConstantsV2.orange, shape: BoxShape.circle),
+                                          todayDecoration: BoxDecoration(color: ConstantsV2.secondaryLightAndClear, shape: BoxShape.circle),
+                                          todayTextStyle: const TextStyle(color: Color(0xFF263238), fontSize: 14.0)
+                                      ),
+                                      availableGestures: AvailableGestures.all,
+                                      onDaySelected: (DateTime day, DateTime focusedDay){
+                                        setState(() {
+                                          date = day;
+                                          BlocProvider.of<more_availabilities.DoctorMoreAvailabilityBloc>(context).add(more_availabilities.GetAvailability(
+                                            id: widget.doctor.id?? '',
+                                            startDate: date.toUtc().toIso8601String(),
+                                            endDate: DateTime(date.year, date.month, date.day+1).toLocal().toIso8601String(),
+                                            organizations: [_selectedOrganization],
+                                          ));
+                                        });
+                                      },
+                                      onPageChanged: (newDate){
+                                        setState(() {
+                                          date = newDate;
+                                          BlocProvider.of<more_availabilities.DoctorMoreAvailabilityBloc>(context).add(more_availabilities.GetAvailability(
+                                            id: widget.doctor.id?? '',
+                                            startDate: date.toUtc().toIso8601String(),
+                                            endDate: DateTime(date.year, date.month, date.day+1).toLocal().toIso8601String(),
+                                            organizations: [_selectedOrganization],
+                                          ));
+                                        });
+                                      },
+                                      selectedDayPredicate: (day) => isSameDay(day, date),
+                                      calendarFormat: _expandCalendar? CalendarFormat.month : CalendarFormat.week,
+                                      firstDay: DateTime.now(),
+                                      lastDay: DateTime(date.year, date.month + 1, 7),
+                                      currentDay: DateTime.now(),
+                                      focusedDay: date,
+                                    ),
+                                  ],
                                 ),
-                              );
-                            }else if(state is more_availabilities.Loading){
-                              return Container(
-                                  child: const Center(
-                                      child: CircularProgressIndicator(
-                                        valueColor:
-                                        AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                                        backgroundColor: Constants.primaryColor600,
-                                      )
-                                  )
-                              );
-                            }else{
-                              return Container();
-                            }
-                          }
-                      ),
-                    ],
+                              ),
+                              // fill doctor availabilities to the remaining height
+                              SliverFillRemaining(
+                                hasScrollBody: false,
+                                child:
+                                BlocBuilder<more_availabilities.DoctorMoreAvailabilityBloc, more_availabilities.DoctorMoreAvailabilityState>(
+                                    builder: (context, state){
+                                      if(state is more_availabilities.AvailabilitiesObtained){
+                                        return Wrap(
+                                          alignment: WrapAlignment.center,
+                                          spacing: 14,
+                                          runSpacing: 14,
+                                          children: [
+                                            if(calendarOrganizationsWithAvailabilites.isNotEmpty)
+                                              if(calendarOrganizationsWithAvailabilites.first.availabilities.isNotEmpty)
+                                                for(NextAvailability? availability in calendarOrganizationsWithAvailabilites.first.availabilities.map((e) => e))
+                                                  if(availability != null)
+                                                    _calendarAvailabilityHourCard(
+                                                        widget.doctor.organizations?.
+                                                        map((e) => e.organization)
+                                                            .toList()
+                                                            .firstWhere(
+                                                                (element) => element?.id == calendarOrganizationsWithAvailabilites.first.idOrganization
+                                                        ), availability),
+                                            if(calendarOrganizationsWithAvailabilites.isNotEmpty)
+                                              if(calendarOrganizationsWithAvailabilites.first.availabilities.isEmpty)
+                                                Padding(
+                                                  padding: const EdgeInsets.only(top: 20.0),
+                                                  child: Text(
+                                                    "No hay disponibilidad en esta fecha",
+                                                    style:
+                                                    boldoHeadingTextStyle.copyWith(fontSize: 13),
+                                                  ),
+                                                ),
+                                          ],
+                                        );
+                                      }else if(state is more_availabilities.Loading){
+                                        return Container(
+                                            child: const Center(
+                                                child: CircularProgressIndicator(
+                                                  valueColor:
+                                                  AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                                                  backgroundColor: Constants.primaryColor600,
+                                                )
+                                            )
+                                        );
+                                      }else{
+                                        return Container();
+                                      }
+                                    }
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 );
               }
