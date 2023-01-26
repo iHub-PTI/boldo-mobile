@@ -8,21 +8,26 @@ Widget header(String? text, String? patientText) {
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       prefs.getBool(isFamily) ?? false ?
-      Row(
+      Flexible(child: Row(
         children: [
           Text(
             '$patientText de ',
-            style: boldoSubTextStyle.copyWith(
+            style: boldoScreenTitleTextStyle.copyWith(
                 color: ConstantsV2.inactiveText),
           ),
-          Text(
-            '${patient.relationshipDisplaySpan}',
-            style: boldoSubTextStyle.copyWith(
-              color: ConstantsV2.green
+          Expanded(
+            child: Container(
+              child: Text(
+                '${patient.givenName} ${patient.familyName}',
+                style: boldoScreenTitleTextStyle.copyWith(
+                    color: ConstantsV2.green
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
+          )
         ],
-      ):
+      )):
       Text(
         text?? "Cacecera",
         style: boldoScreenTitleTextStyle.copyWith(color: ConstantsV2.activeText),

@@ -148,6 +148,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton.icon(
                         onPressed: () {
@@ -159,11 +160,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                           color: Constants.extraColor400,
                         ),
                         label: Text(
-                          'Médicos disponibles',
+                          'Médicos',
                           style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                         ),
                       ),
-                      const SizedBox(width: 8),
                       GestureDetector(
                           onTap: () {
                             Navigator.push(
