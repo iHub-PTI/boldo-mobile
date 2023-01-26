@@ -52,8 +52,8 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                   ? 'assets/images/femalePatient.svg'
                   : editingPatient.gender == "male"
                   ? 'assets/images/malePatient.svg'
-                  :'assets/images/LogoIcon.svg'
-                  : 'assets/images/LogoIcon.svg',
+                  :'assets/images/persona.svg'
+                  : 'assets/images/persona.svg',
             )
                 :CachedNetworkImage(
                   fit: BoxFit.cover,
@@ -469,6 +469,7 @@ class ImageViewTypeForm extends StatefulWidget {
   final String? url;
   final String? gender;
   final String form;
+  final bool isPatient;
 
   const ImageViewTypeForm({
     Key? key,
@@ -481,7 +482,8 @@ class ImageViewTypeForm extends StatefulWidget {
     this.opacity = 1,
     this.blur = false,
     this.url,
-    this.form = "rounded"
+    this.form = "rounded",
+    this.isPatient = true,
   }) : super(key: key);
 
   @override
@@ -503,10 +505,10 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
     widget.url == null || widget.url == ""
         ? SvgPicture.asset(
       widget.gender == 'male'
-          ? 'assets/images/malePatient.svg'
+          ? widget.isPatient? 'assets/images/malePatient.svg': 'assets/images/maleDoctor.svg'
           : widget.gender == "female"
-          ? 'assets/images/femalePatient.svg'
-          : 'assets/images/LogoIcon.svg',
+          ? widget.isPatient? 'assets/images/femalePatient.svg': 'assets/images/femaleDoctor.svg'
+          : 'assets/images/persona.svg',
     )
         : CachedNetworkImage(
       fit: BoxFit.cover,
