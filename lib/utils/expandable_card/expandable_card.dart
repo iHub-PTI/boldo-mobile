@@ -217,17 +217,26 @@ class _ExpandableCardState extends State<ExpandableCard>
                   ),
                   child: Padding(
                     padding: widget.padding,
-                    child: Column(
-                      children: <Widget>[
-                        if (widget.hasHandle) Icon(
-                          Icons.remove,
-                          color: widget.handleColor,
-                          size: 45,
+                    child: CustomScrollView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              if (widget.hasHandle) Icon(
+                                Icons.remove,
+                                color: widget.handleColor,
+                                size: 45,
+                              ),
+                            ],
+                          ),
                         ),
-                        ...widget.children
+                        SliverFillRemaining(
+                            child: widget.children
+                        ),
                       ],
-                    ),
-                    // child: positionDebugContent,
+                    )
                   ),
                 ),
               ) : Padding(
@@ -252,7 +261,6 @@ class _ExpandableCardState extends State<ExpandableCard>
                     ),
                   ],
                 )
-                // child: positionDebugContent,
               ),
             ),
           ),
