@@ -413,22 +413,24 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                       availableGestures: AvailableGestures.all,
                                       onDaySelected: (DateTime day, DateTime focusedDay){
                                         setState(() {
-                                          date = day;
+                                          // utc to local
+                                          date = DateTime(day.year, day.month, day.day);
                                           BlocProvider.of<more_availabilities.DoctorMoreAvailabilityBloc>(context).add(more_availabilities.GetAvailability(
                                             id: widget.doctor.id?? '',
                                             startDate: date.toUtc().toIso8601String(),
-                                            endDate: DateTime(date.year, date.month, date.day+1).toLocal().toIso8601String(),
+                                            endDate: DateTime(date.year, date.month, date.day+1).toUtc().toIso8601String(),
                                             organizations: [_selectedOrganization],
                                           ));
                                         });
                                       },
                                       onPageChanged: (newDate){
                                         setState(() {
-                                          date = newDate;
+                                          // utc to local
+                                          date = DateTime(newDate.year, newDate.month, newDate.day);
                                           BlocProvider.of<more_availabilities.DoctorMoreAvailabilityBloc>(context).add(more_availabilities.GetAvailability(
                                             id: widget.doctor.id?? '',
                                             startDate: date.toUtc().toIso8601String(),
-                                            endDate: DateTime(date.year, date.month, date.day+1).toLocal().toIso8601String(),
+                                            endDate: DateTime(date.year, date.month, date.day+1).toUtc().toIso8601String(),
                                             organizations: [_selectedOrganization],
                                           ));
                                         });
