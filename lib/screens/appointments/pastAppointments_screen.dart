@@ -2,10 +2,8 @@ import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart'as medical;
 import 'package:boldo/constants.dart';
-import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
-import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 
@@ -15,7 +13,6 @@ import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/appointment_location_icon.dart';
 import 'package:boldo/widgets/appointment_type_icon.dart';
 import 'package:boldo/widgets/header_page.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
