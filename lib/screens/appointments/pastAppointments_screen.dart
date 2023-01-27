@@ -12,6 +12,8 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/appointment_location_icon.dart';
+import 'package:boldo/widgets/appointment_type_icon.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -760,6 +762,19 @@ class PastAppointmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     int daysDifference = daysBetween(DateTime.parse(
         appointment.start!).toLocal(),DateTime.now());
+
+
+    AppointmentType? appointmentType;
+    String locationDescription = 'Desconocido';
+
+    //set the appointment type
+    appointmentType = appointment.appointmentType == 'V'
+        ? AppointmentType.Virtual : AppointmentType.InPerson;
+
+    //message to describe whe is the appointment
+    locationDescription = appointmentType == AppointmentType.Virtual
+        ? ''
+        : '${appointment.organization?.name?? "Desconocido"}';
     return GestureDetector(
       onTap: () async {
         await Navigator.push(
