@@ -12,6 +12,8 @@ Widget showAppointmentTypeIcon(AppointmentType? appointmentType) {
       icon = Padding(
         padding: const EdgeInsets.all(4.0),
         child: Container(
+          width: 10,
+          height: 10,
           child: SvgPicture.asset(
             'assets/icon/person.svg',
             color: Constants.primaryColor500,
@@ -23,6 +25,8 @@ Widget showAppointmentTypeIcon(AppointmentType? appointmentType) {
       icon = Padding(
           padding: const EdgeInsets.all(4.0),
           child: Container(
+            width: 10,
+            height: 10,
             child: SvgPicture.asset(
               'assets/icon/video.svg',
               color: Constants.secondaryColor500,
