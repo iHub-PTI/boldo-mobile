@@ -776,6 +776,7 @@ class PastAppointmentCard extends StatelessWidget {
       },
       child: Container(
         child: Card(
+          margin: const EdgeInsets.symmetric(vertical: 4.0),
           elevation: 2,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
