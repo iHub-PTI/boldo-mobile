@@ -295,7 +295,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                     Container(
                                       child: Row(
                                         children: [
-                                          ShowAppoinmentTypeIcon(),
+                                          showAppointmentTypeIcon(appointmentType),
                                           Text(
                                             widget.appointment.appointmentType == 'V' ? "Remoto" : "Presencial",
                                             style: boldoCorpSmallTextStyle.copyWith(
