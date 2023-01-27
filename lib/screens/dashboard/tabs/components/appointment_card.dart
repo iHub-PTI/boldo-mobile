@@ -370,76 +370,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
   }
 
 
-  Widget ShowAppoinmentTypeIcon() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6),
-      child: appointmentType == AppointmentType.Virtual
-          ? Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Container(
-            height: 10,
-            width: 10,
-            child: SvgPicture.asset(
-              'assets/icon/video.svg',
-              color: Constants.secondaryColor500,
 
-            ),
-          ))
-          : Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: Container(
-          height: 10,
-          width: 10,
-          child: SvgPicture.asset(
-            'assets/icon/person.svg',
-            color: Constants.primaryColor500,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget locationType(AppointmentType? appointmentType) {
-
-    Widget icon;
-
-    switch (appointmentType){
-      case AppointmentType.InPerson:
-        icon = Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Container(
-            child: SvgPicture.asset(
-              'assets/icon/location_marker.svg',
-              color: ConstantsV2.veryLightBlue,
-            ),
-          ),
-        );
-        break;
-      case AppointmentType.Virtual:
-        icon = Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Container(
-            child: SvgPicture.asset(
-              'assets/icon/watch-later.svg',
-              color: ConstantsV2.veryLightBlue,
-            ),
-          )
-        );
-        break;
-      case null:
-        icon = const Icon(Icons.error);
-        break;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6),
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-        color: Colors.white,
-      ),
-      child: icon
-    );
-  }
 
   Widget hourContainer() {
     return Container(
