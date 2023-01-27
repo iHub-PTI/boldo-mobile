@@ -808,56 +808,12 @@ class PastAppointmentCard extends StatelessWidget {
                   children: [
                     Container(
                       padding: EdgeInsets.only(right: 8),
-                      child: ClipOval(
-                        child: SizedBox(
-                          width: 54,
-                          height: 54,
-                          child: appointment
-                              .doctor
-                              ?.photoUrl ==
-                              null
-                              ? SvgPicture.asset(
-                              appointment
-                                  .doctor!
-                                  .gender ==
-                                  "female"
-                                  ? 'assets/images/femaleDoctor.svg'
-                                  : 'assets/images/maleDoctor.svg',
-                              fit: BoxFit.cover)
-                              : CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            imageUrl: appointment
-                                .doctor!
-                                .photoUrl ??
-                                '',
-                            progressIndicatorBuilder:
-                                (context, url,
-                                downloadProgress) =>
-                                Padding(
-                                  padding:
-                                  const EdgeInsets
-                                      .all(
-                                      26.0),
-                                  child:
-                                  LinearProgressIndicator(
-                                    value: downloadProgress
-                                        .progress,
-                                    valueColor: const AlwaysStoppedAnimation<
-                                        Color>(
-                                        Constants
-                                            .primaryColor400),
-                                    backgroundColor:
-                                    Constants
-                                        .primaryColor600,
-                                  ),
-                                ),
-                            errorWidget: (context,
-                                url,
-                                error) =>
-                            const Icon(Icons
-                                .error),
-                          ),
-                        ),
+                      child: ImageViewTypeForm(
+                        width: 54,
+                        height: 54,
+                        border: false,
+                        url: appointment.doctor?.photoUrl,
+                        gender: appointment.doctor?.gender,
                       ),
                     ),
                     Column(

@@ -5,6 +5,7 @@ import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/Call/video_call.dart';
 import 'package:boldo/screens/details/appointment_details.dart';
+import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -208,37 +209,12 @@ class _AppointmentCardState extends State<AppointmentCard> {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 7),
-                        child: ClipOval(
-                          child: SizedBox(
-                            width: 54,
-                            height: 54,
-                            child: widget.appointment.doctor?.photoUrl == null
-                                ? SvgPicture.asset(
-                                widget.appointment.doctor!.gender == "female"
-                                    ? 'assets/images/femaleDoctor.svg'
-                                    : 'assets/images/maleDoctor.svg',
-                                fit: BoxFit.cover)
-                                : CachedNetworkImage(
-                              fit: BoxFit.cover,
-                              imageUrl: widget.appointment.doctor!.photoUrl??'',
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) =>
-                                  Padding(
-                                    padding: const EdgeInsets.all(26.0),
-                                    child: LinearProgressIndicator(
-                                      value: downloadProgress.progress,
-                                      valueColor:
-                                      const AlwaysStoppedAnimation<
-                                          Color>(
-                                          Constants.primaryColor400),
-                                      backgroundColor:
-                                      Constants.primaryColor600,
-                                    ),
-                                  ),
-                              errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
-                            ),
-                          ),
+                        child: ImageViewTypeForm(
+                          width: 54,
+                          height: 54,
+                          border: false,
+                          url: widget.appointment.doctor?.photoUrl,
+                          gender: widget.appointment.doctor?.gender,
                         ),
                       ),
                       const SizedBox(
