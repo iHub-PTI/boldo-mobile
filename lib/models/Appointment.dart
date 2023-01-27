@@ -1,8 +1,10 @@
 import 'package:boldo/models/News.dart';
+import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Prescription.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:flutter/widgets.dart';
 import './Doctor.dart';
+import 'Patient.dart';
 
 class Appointment extends News {
   String? status;
@@ -12,6 +14,8 @@ class Appointment extends News {
   String? description;
   Doctor? doctor;
   String? appointmentType;
+  Patient? patient;
+  Organization? organization;
   List<Prescription>? prescriptions;
 
   Appointment({
@@ -22,6 +26,8 @@ class Appointment extends News {
     this.doctor,
     this.status,
     this.prescriptions,
+    this.organization,
+    this.patient,
   });
 
   Appointment.fromJson(Map<String, dynamic> json) {
@@ -32,6 +38,8 @@ class Appointment extends News {
     status = json["status"];
     appointmentType = json["appointmentType"];
     doctor = json['doctor'] != null ? Doctor.fromJson(json['doctor']) : null;
+    organization = Organization.fromJson(json['organization']);
+    patient = Patient.fromJson(json['patient']);
   }
 
   Map<String, dynamic> toJson() {

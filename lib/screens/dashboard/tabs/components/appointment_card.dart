@@ -4,9 +4,11 @@ import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/Call/video_call.dart';
-import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/details/appointment_details.dart';
+import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/appointment_location_icon.dart';
+import 'package:boldo/widgets/appointment_type_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,6 +39,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
   bool isCancelled = false;
   DateTime actualDay = DateTime.now();
   DateTime appointmentDay = DateTime.now();
+  AppointmentType? appointmentType;
+  String locationDescription = 'Desconocido';
   int daysDifference = 0;
   bool isToday = false;
   int minutes = 0;
@@ -53,6 +57,15 @@ class _AppointmentCardState extends State<AppointmentCard> {
       minutes = appointmentDay.difference(actualDay).inMinutes + 1;
       isToday = daysDifference == 0 &&
           !["closed", "locked"].contains(widget.appointment.status);
+
+      //set the appointment type
+      appointmentType = widget.appointment.appointmentType == 'V'
+          ? AppointmentType.Virtual : AppointmentType.InPerson;
+
+      //message to describe whe is the appointment
+      locationDescription = appointmentType == AppointmentType.Virtual
+          ? 'Sala de espera virtual habilitada 15 min. antes de la consulta'
+          : '${widget.appointment.organization?.name?? "Desconocido"}';
     }
     timer?.cancel();
     _updateWaitingRoom(1);
@@ -67,6 +80,15 @@ class _AppointmentCardState extends State<AppointmentCard> {
     minutes = appointmentDay.difference(actualDay).inMinutes + 1;
     isToday = daysDifference == 0 &&
         !["closed", "locked"].contains(widget.appointment.status);
+
+    //set the appointment type
+    appointmentType = widget.appointment.appointmentType == 'V'
+        ? AppointmentType.Virtual : AppointmentType.InPerson;
+
+    //message to describe whe is the appointment
+    locationDescription = appointmentType == AppointmentType.Virtual
+        ? 'Sala de espera virtual habilitada 15 min. antes de la consulta'
+        : '${widget.appointment.organization?.name?? "Desconocido"}';
     super.initState();
     _updateWaitingRoom(1);
   }
@@ -189,37 +211,12 @@ class _AppointmentCardState extends State<AppointmentCard> {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 7),
-                        child: ClipOval(
-                          child: SizedBox(
-                            width: 54,
-                            height: 54,
-                            child: widget.appointment.doctor?.photoUrl == null
-                                ? SvgPicture.asset(
-                                widget.appointment.doctor!.gender == "female"
-                                    ? 'assets/images/femaleDoctor.svg'
-                                    : 'assets/images/maleDoctor.svg',
-                                fit: BoxFit.cover)
-                                : CachedNetworkImage(
-                              fit: BoxFit.cover,
-                              imageUrl: widget.appointment.doctor!.photoUrl??'',
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) =>
-                                  Padding(
-                                    padding: const EdgeInsets.all(26.0),
-                                    child: LinearProgressIndicator(
-                                      value: downloadProgress.progress,
-                                      valueColor:
-                                      const AlwaysStoppedAnimation<
-                                          Color>(
-                                          Constants.primaryColor400),
-                                      backgroundColor:
-                                      Constants.primaryColor600,
-                                    ),
-                                  ),
-                              errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
-                            ),
-                          ),
+                        child: ImageViewTypeForm(
+                          width: 54,
+                          height: 54,
+                          border: false,
+                          url: widget.appointment.doctor?.photoUrl,
+                          gender: widget.appointment.doctor?.gender,
                         ),
                       ),
                       const SizedBox(
@@ -282,23 +279,51 @@ class _AppointmentCardState extends State<AppointmentCard> {
                   Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          hourContainer(),
-                          ShowAppoinmentTypeIcon(appointmentType: widget.appointment.appointmentType!),
-                          Text(
-                            widget.appointment.appointmentType == 'V' ? "Remoto" : "Presencial",
-                            style: TextStyle(
-                              color: widget.appointment.appointmentType == 'V' ? ConstantsV2.orange : ConstantsV2.green,
-                              fontSize: 12,
-                              // fontWeight: FontWeight.bold
-                            ),
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.only(right: 8, bottom: 8),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              hourContainer(),
+                              Flexible(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      child: Row(
+                                        children: [
+                                          showAppointmentTypeIcon(appointmentType),
+                                          Text(
+                                            widget.appointment.appointmentType == 'V' ? "Remoto" : "Presencial",
+                                            style: boldoCorpSmallTextStyle.copyWith(
+                                              color: widget.appointment.appointmentType == 'V' ? ConstantsV2.orange : ConstantsV2.green,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        locationType(appointmentType),
+                                        Expanded(
+                                          child: Text(
+                                            locationDescription,
+                                            style: boldoCorpSmallTextStyle.copyWith(
+                                                color: ConstantsV2.veryLightBlue
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                       widget.appointment.appointmentType == 'V' && minutes <= 15 ?
                           Column(
@@ -343,6 +368,9 @@ class _AppointmentCardState extends State<AppointmentCard> {
       ],
     );
   }
+
+
+
 
   Widget hourContainer() {
     return Container(

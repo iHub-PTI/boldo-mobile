@@ -526,6 +526,7 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
     );
 
     return Card(
+      margin: EdgeInsets.zero,
       child: Stack(
         children: [
           Container(

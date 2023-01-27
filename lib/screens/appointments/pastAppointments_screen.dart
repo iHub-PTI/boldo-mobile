@@ -2,18 +2,17 @@ import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart'as medical;
 import 'package:boldo/constants.dart';
-import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
-import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/appointment_location_icon.dart';
+import 'package:boldo/widgets/appointment_type_icon.dart';
 import 'package:boldo/widgets/header_page.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -438,7 +437,6 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
         TextEditingController dateTextController = TextEditingController();
         TextEditingController date2TextController = TextEditingController();
         var inputFormat = DateFormat('dd/MM/yyyy');
-        var outputFormat = DateFormat('yyyy-MM-dd');
         DateTime date1 = BlocProvider.of<AppointmentBloc>(context).getInitialDate();
         DateTime? date2 = BlocProvider.of<AppointmentBloc>(context).getFinalDate();
         bool virtual = BlocProvider.of<AppointmentBloc>(context).getVirtualStatus();
@@ -588,7 +586,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                                                     initialEntryMode: DatePickerEntryMode
                                                         .calendarOnly,
                                                     initialDatePickerMode: DatePickerMode.day,
-                                                    initialDate: date1 ?? DateTime.now(),
+                                                    initialDate: date1,
                                                     firstDate: DateTime(1900),
                                                     lastDate: date2?? DateTime.now(),
                                                     locale: const Locale("es", "ES"),
@@ -760,6 +758,19 @@ class PastAppointmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     int daysDifference = daysBetween(DateTime.parse(
         appointment.start!).toLocal(),DateTime.now());
+
+
+    AppointmentType? appointmentType;
+    String locationDescription = 'Desconocido';
+
+    //set the appointment type
+    appointmentType = appointment.appointmentType == 'V'
+        ? AppointmentType.Virtual : AppointmentType.InPerson;
+
+    //message to describe whe is the appointment
+    locationDescription = appointmentType == AppointmentType.Virtual
+        ? ''
+        : '${appointment.organization?.name?? "Desconocido"}';
     return GestureDetector(
       onTap: () async {
         await Navigator.push(
@@ -776,6 +787,7 @@ class PastAppointmentCard extends StatelessWidget {
       },
       child: Container(
         child: Card(
+          margin: const EdgeInsets.symmetric(vertical: 4.0),
           elevation: 2,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -807,57 +819,13 @@ class PastAppointmentCard extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: EdgeInsets.only(right: 8),
-                      child: ClipOval(
-                        child: SizedBox(
-                          width: 54,
-                          height: 54,
-                          child: appointment
-                              .doctor
-                              ?.photoUrl ==
-                              null
-                              ? SvgPicture.asset(
-                              appointment
-                                  .doctor!
-                                  .gender ==
-                                  "female"
-                                  ? 'assets/images/femaleDoctor.svg'
-                                  : 'assets/images/maleDoctor.svg',
-                              fit: BoxFit.cover)
-                              : CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            imageUrl: appointment
-                                .doctor!
-                                .photoUrl ??
-                                '',
-                            progressIndicatorBuilder:
-                                (context, url,
-                                downloadProgress) =>
-                                Padding(
-                                  padding:
-                                  const EdgeInsets
-                                      .all(
-                                      26.0),
-                                  child:
-                                  LinearProgressIndicator(
-                                    value: downloadProgress
-                                        .progress,
-                                    valueColor: const AlwaysStoppedAnimation<
-                                        Color>(
-                                        Constants
-                                            .primaryColor400),
-                                    backgroundColor:
-                                    Constants
-                                        .primaryColor600,
-                                  ),
-                                ),
-                            errorWidget: (context,
-                                url,
-                                error) =>
-                            const Icon(Icons
-                                .error),
-                          ),
-                        ),
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ImageViewTypeForm(
+                        width: 54,
+                        height: 54,
+                        border: false,
+                        url: appointment.doctor?.photoUrl,
+                        gender: appointment.doctor?.gender,
                       ),
                     ),
                     Column(
@@ -924,22 +892,33 @@ class PastAppointmentCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                Column(
                   children: [
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        ShowAppoinmentTypeIcon(appointmentType: appointment.appointmentType!),
+                        showAppointmentTypeIcon(appointmentType),
                         Text(
                           appointment.appointmentType == 'V' ? "Remoto" : "Presencial",
                           style: TextStyle(
                             color: appointment.appointmentType == 'V' ? ConstantsV2.orange : ConstantsV2.green,
                             fontSize: 12,
                             // fontWeight: FontWeight.bold
+                          ),
+                        ),
+                      ],
+                    ),
+                    if(appointmentType == AppointmentType.InPerson)
+                    Row(
+                      children: [
+                        locationType(appointmentType),
+                        Expanded(
+                          child: Text(
+                            locationDescription,
+                            style: boldoCorpSmallTextStyle.copyWith(
+                                color: ConstantsV2.veryLightBlue
+                            ),
                           ),
                         ),
                       ],
