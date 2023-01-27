@@ -905,7 +905,7 @@ class PastAppointmentCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        ShowAppoinmentTypeIcon(appointmentType: appointment.appointmentType!),
+                        showAppointmentTypeIcon(appointmentType),
                         Text(
                           appointment.appointmentType == 'V' ? "Remoto" : "Presencial",
                           style: TextStyle(
