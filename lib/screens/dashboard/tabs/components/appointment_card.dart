@@ -4,7 +4,6 @@ import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/Call/video_call.dart';
-import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/details/appointment_details.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -37,6 +36,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
   bool isCancelled = false;
   DateTime actualDay = DateTime.now();
   DateTime appointmentDay = DateTime.now();
+  AppointmentType? appointmentType;
+  String locationDescription = 'Desconocido';
   int daysDifference = 0;
   bool isToday = false;
   int minutes = 0;
@@ -53,6 +54,15 @@ class _AppointmentCardState extends State<AppointmentCard> {
       minutes = appointmentDay.difference(actualDay).inMinutes + 1;
       isToday = daysDifference == 0 &&
           !["closed", "locked"].contains(widget.appointment.status);
+
+      //set the appointment type
+      appointmentType = widget.appointment.appointmentType == 'V'
+          ? AppointmentType.Virtual : AppointmentType.InPerson;
+
+      //message to describe whe is the appointment
+      locationDescription = appointmentType == AppointmentType.Virtual
+          ? 'Sala de espera virtual habilitada 15 min. antes de la consulta'
+          : '${widget.appointment.organization?.name?? "Desconocido"}';
     }
     timer?.cancel();
     _updateWaitingRoom(1);
@@ -67,6 +77,15 @@ class _AppointmentCardState extends State<AppointmentCard> {
     minutes = appointmentDay.difference(actualDay).inMinutes + 1;
     isToday = daysDifference == 0 &&
         !["closed", "locked"].contains(widget.appointment.status);
+
+    //set the appointment type
+    appointmentType = widget.appointment.appointmentType == 'V'
+        ? AppointmentType.Virtual : AppointmentType.InPerson;
+
+    //message to describe whe is the appointment
+    locationDescription = appointmentType == AppointmentType.Virtual
+        ? 'Sala de espera virtual habilitada 15 min. antes de la consulta'
+        : '${widget.appointment.organization?.name?? "Desconocido"}';
     super.initState();
     _updateWaitingRoom(1);
   }
