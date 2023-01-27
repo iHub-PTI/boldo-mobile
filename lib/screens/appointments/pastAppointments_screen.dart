@@ -437,7 +437,6 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
         TextEditingController dateTextController = TextEditingController();
         TextEditingController date2TextController = TextEditingController();
         var inputFormat = DateFormat('dd/MM/yyyy');
-        var outputFormat = DateFormat('yyyy-MM-dd');
         DateTime date1 = BlocProvider.of<AppointmentBloc>(context).getInitialDate();
         DateTime? date2 = BlocProvider.of<AppointmentBloc>(context).getFinalDate();
         bool virtual = BlocProvider.of<AppointmentBloc>(context).getVirtualStatus();
@@ -587,7 +586,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                                                     initialEntryMode: DatePickerEntryMode
                                                         .calendarOnly,
                                                     initialDatePickerMode: DatePickerMode.day,
-                                                    initialDate: date1 ?? DateTime.now(),
+                                                    initialDate: date1,
                                                     firstDate: DateTime(1900),
                                                     lastDate: date2?? DateTime.now(),
                                                     locale: const Locale("es", "ES"),
@@ -820,7 +819,7 @@ class PastAppointmentCard extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.only(right: 8),
                       child: ImageViewTypeForm(
                         width: 54,
                         height: 54,
@@ -893,10 +892,7 @@ class PastAppointmentCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                Column(
                   children: [
                     Row(
                       mainAxisSize: MainAxisSize.max,
