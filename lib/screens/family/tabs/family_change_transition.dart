@@ -100,7 +100,13 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           if(!_dataLoading)
-                                            const ProfileImageView(height: 170, width: 170, border: true),
+                                            ImageViewTypeForm(
+                                              height: 170,
+                                              width: 170,
+                                              border: true,
+                                              url: patient.photoUrl,
+                                              gender: patient.gender,
+                                            ),
                                         ],
                                       ),
                                       const SizedBox(height: 29,),

@@ -124,6 +124,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                 border: true,
                                                 url: widget.doctor.photoUrl,
                                                 gender: widget.doctor.gender,
+                                                isPatient: false,
                                               ),
                                             ),
                                           ),
