@@ -909,6 +909,20 @@ class PastAppointmentCard extends StatelessWidget {
                         ),
                       ],
                     ),
+                    if(appointmentType == AppointmentType.InPerson)
+                    Row(
+                      children: [
+                        locationType(appointmentType),
+                        Expanded(
+                          child: Text(
+                            locationDescription,
+                            style: boldoCorpSmallTextStyle.copyWith(
+                                color: ConstantsV2.veryLightBlue
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 )
               ],
