@@ -7,6 +7,8 @@ import 'package:boldo/screens/Call/video_call.dart';
 import 'package:boldo/screens/details/appointment_details.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/appointment_location_icon.dart';
+import 'package:boldo/widgets/appointment_type_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
