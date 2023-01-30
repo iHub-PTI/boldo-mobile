@@ -269,9 +269,8 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                                 appointmentType == AppointmentType.InPerson?
                                                   'assets/icon/supervisor-account.svg' :
                                                 'assets/icon/videocam.svg',
-                                                height: 16,
-                                                width: 16,
-                                                color: ConstantsV2.grayDark.withOpacity(.5),
+                                                height: 24,
+                                                width: 24,
                                               ),
                                               const SizedBox(width: 16,),
                                               Text(
