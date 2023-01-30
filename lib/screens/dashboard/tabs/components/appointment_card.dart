@@ -4,6 +4,8 @@ import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/Call/video_call.dart';
+import 'package:boldo/screens/booking/booking_confirm_screen.dart';
+import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
 import 'package:boldo/screens/details/appointment_details.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
@@ -152,10 +154,9 @@ class _AppointmentCardState extends State<AppointmentCard> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AppointmentDetailsScreen(
-                        appointment: widget.appointment,
-                        isInWaitingRoom: widget.isInWaitingRoom && appointmentDay.difference(actualDay).compareTo(const Duration(minutes: 15)) <= 0),
-                  ),
+                    builder: (context) => MedicalRecordsScreen(
+                        appointment: widget.appointment
+                    )),
                 );
             },
             child: Container(
