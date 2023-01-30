@@ -103,6 +103,60 @@ String passedDays(int days, {bool showDateFormat = true}) {
   }
 }
 
+/// return a String that represent the difference between dates to reach the current date
+String? dateBetween({DateTime? date, String? afterText}) {
+
+  if(date!=  null){
+
+    DateTime today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+    date = DateTime(date.year, date.month, date.day);
+
+    int difference = date.difference(today).inDays ;
+
+    if (difference <= -365){
+      int year = date.year - today.year;
+      if(year==-1){
+        return 'Realizado hace un año';
+      }else{
+        return 'Realizado hace ${year.abs()} años';
+      }
+    }else if(difference< 0 ) {
+      int month = date.month - today.month + (date.year - today.year)*12;
+      if(difference <-60){
+        return 'Realizado hace ${month.abs()} meses';
+      }else if(difference <-31){
+        return 'Realizado hace un mes';
+      }else if(difference == -1){
+        return "Realizado ayer";
+      }
+      return 'Realizado hace ${difference.abs()} días';
+    }else if(difference == 0){
+      return 'Hoy';
+    }else{
+      if (difference > 365){
+        int year = date.year - today.year;
+        if(year==1){
+          return 'Falta un año ${afterText?? ''}';
+        }else{
+          return 'Faltan ${year.abs()} años ${afterText?? ''}';
+        }
+      }else if(difference> 0 ) {
+        int month = date.month - today.month;
+        if(difference >60){
+          return 'Faltan ${month.abs()} meses ${afterText?? ''}';
+        }else if(difference >31){
+          return 'Falta un mes ${afterText?? ''}';
+        }else if(difference == 1){
+          return "Mañana";
+        }
+        return 'Falta ${difference.abs()} días ${afterText?? ''}';
+      }
+    }
+  }
+  return null;
+}
+
 
 Future<XFile?> pickImage({
   required BuildContext context,
