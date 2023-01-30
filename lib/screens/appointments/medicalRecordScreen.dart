@@ -42,7 +42,6 @@ class MedicalRecordsScreen extends StatefulWidget {
 class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
   MedicalRecord? medicalRecord;
   AppointmentType? appointmentType;
-  int _daysBetween = 0;
   @override
   void initState() {
     //set the appointment type
@@ -66,10 +65,6 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
               );
             } else if (state is MedicalRecordLoadedState) {
               medicalRecord = state.medicalRecord;
-              _daysBetween = daysBetween(
-                  DateTime.parse(widget.appointment.start ??
-                      DateTime.now().toIso8601String()),
-                  DateTime.now());
             }
           },
           child: Scaffold(
