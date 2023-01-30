@@ -230,12 +230,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
             ),
             BlocListener<HomeBloc, HomeState>(
               listener: (context, state) {
-                if (state is HomeFailed) {
-                  emitSnackBar(
-                      context: context,
-                      text: state.response,
-                      status: ActionStatus.Fail
-                  );
+                if (state is ReloadHome) {
+                  setState(() {
+
+                  });
                 }
               },
             ),
@@ -339,22 +337,18 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                             text: "¿Qué desea hacer?",
                             height: _heightCarouselTitleExpandable,
                           ),
-                          BlocBuilder<HomeBloc, HomeState>(
-                            builder: (context, state){
-                              return Container(
-                                alignment: Alignment.centerLeft,
-                                height: _heightCarouselExpandable,
-                                child: Container(
-                                  height: _heightCarouselCard,
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: items.length,
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: _buildCarousel,
-                                  ),
-                                ),
-                              );
-                            },
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            height: _heightCarouselExpandable,
+                            child: Container(
+                              height: _heightCarouselCard,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: items.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: _buildCarousel,
+                              ),
+                            ),
                           ),
                           Container(
                             height: 24,
