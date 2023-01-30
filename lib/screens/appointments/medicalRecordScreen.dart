@@ -129,7 +129,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                         Text(
                                           '${dateBetween( date:
                                           DateTime.parse(widget.appointment.start ??
-                                              DateTime.now().toIso8601String()),
+                                              DateTime.now().toIso8601String()).toLocal(),
                                           afterText: "para esta cita")}',
                                           style: boldoSubTextMediumStyle.copyWith(
                                               color: ConstantsV2.inactiveText),
