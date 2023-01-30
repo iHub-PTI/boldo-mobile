@@ -173,38 +173,6 @@ class _AppointmentCardState extends State<AppointmentCard> {
                         style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.darkBlue),
                       ),*/
                       Container(),
-                      widget.showCancelOption &&
-                          !isCancelled &&
-                          daysDifference >= 0 &&
-                          !["closed", "locked"]
-                              .contains(widget.appointment.status)
-                          ? Padding(
-                        padding: const EdgeInsets.only(right: 4.0),
-                        child: CancelAppointmentWidget(
-                          onTapCallback: (result) async {
-                            if (result == 'Descartar') {
-                              try{
-                                final response = await dio.post(
-                                    !(prefs.getBool(isFamily)?? false) ?
-                                    "/profile/patient/appointments/cancel/${widget.appointment.id}"
-                                        : "/profile/caretaker/appointments/cancel/${widget.appointment.id}");
-                                if (response.statusMessage != null) {
-                                  if (response.statusMessage!
-                                      .contains('OK')) {
-                                    setState(() {
-                                      isCancelled = true;
-                                      widget.appointment.status="cancelled";
-                                    });
-                                  }
-                                }
-                              } catch (e){
-                                print(e);
-                              }
-                            }
-                          },
-                        ),
-                      )
-                          : Container(),
                     ],
                   ),
                   Row(
