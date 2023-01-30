@@ -4,6 +4,8 @@ import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/Call/video_call.dart';
+import 'package:boldo/screens/booking/booking_confirm_screen.dart';
+import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
 import 'package:boldo/screens/details/appointment_details.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
@@ -152,10 +154,9 @@ class _AppointmentCardState extends State<AppointmentCard> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AppointmentDetailsScreen(
-                        appointment: widget.appointment,
-                        isInWaitingRoom: widget.isInWaitingRoom && appointmentDay.difference(actualDay).compareTo(const Duration(minutes: 15)) <= 0),
-                  ),
+                    builder: (context) => MedicalRecordsScreen(
+                        appointment: widget.appointment
+                    )),
                 );
             },
             child: Container(
@@ -173,38 +174,6 @@ class _AppointmentCardState extends State<AppointmentCard> {
                         style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.darkBlue),
                       ),*/
                       Container(),
-                      widget.showCancelOption &&
-                          !isCancelled &&
-                          daysDifference >= 0 &&
-                          !["closed", "locked"]
-                              .contains(widget.appointment.status)
-                          ? Padding(
-                        padding: const EdgeInsets.only(right: 4.0),
-                        child: CancelAppointmentWidget(
-                          onTapCallback: (result) async {
-                            if (result == 'Descartar') {
-                              try{
-                                final response = await dio.post(
-                                    !(prefs.getBool(isFamily)?? false) ?
-                                    "/profile/patient/appointments/cancel/${widget.appointment.id}"
-                                        : "/profile/caretaker/appointments/cancel/${widget.appointment.id}");
-                                if (response.statusMessage != null) {
-                                  if (response.statusMessage!
-                                      .contains('OK')) {
-                                    setState(() {
-                                      isCancelled = true;
-                                      widget.appointment.status="cancelled";
-                                    });
-                                  }
-                                }
-                              } catch (e){
-                                print(e);
-                              }
-                            }
-                          },
-                        ),
-                      )
-                          : Container(),
                     ],
                   ),
                   Row(
@@ -279,6 +248,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                   Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Flexible(
                         child: Container(

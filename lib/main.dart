@@ -154,9 +154,6 @@ class _MyAppState extends State<MyApp> {
           BlocProvider<AppointmentBloc>(
             create: (BuildContext context) => AppointmentBloc(),
           ),
-          BlocProvider<MedicalRecordBloc>(
-            create: (BuildContext context) => MedicalRecordBloc(),
-          ),
           BlocProvider<HomeBloc>(
             create: (BuildContext context) => HomeBloc(),
           ),

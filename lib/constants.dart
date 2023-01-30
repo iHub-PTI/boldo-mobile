@@ -231,6 +231,12 @@ const boldoTabHeaderUnselectedTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+BoxShadow shadowRegular = BoxShadow(
+  offset: const Offset(0, 2),
+  color: Colors.black.withOpacity(0.05),
+  blurRadius: 4,
+);
+
 ThemeData boldoTheme = ThemeData(
   fontFamily: 'Montserrat',
   elevatedButtonTheme: ElevatedButtonThemeData(
