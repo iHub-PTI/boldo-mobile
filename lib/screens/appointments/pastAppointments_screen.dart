@@ -782,8 +782,6 @@ class PastAppointmentCard extends StatelessWidget {
                       appointment
                           )),
         );
-        BlocProvider.of<medical.MedicalRecordBloc>(context)
-            .add(medical.InitialEvent());
       },
       child: Container(
         child: Card(
