@@ -72,11 +72,11 @@ class _PreRegisterSuccessState extends State<PreRegisterSuccess> {
                         height: 1.5),
                     children: <TextSpan>[
                       TextSpan(
-                          text: 'La fundación Tesâi',
+                          text: 'Boldo',
                           style: TextStyle(fontWeight: FontWeight.bold)),
                       TextSpan(
                           text:
-                              ' valide tus datos podrás acceder a la lista de médicos disponibles. También podrás marcar y asistir a consultas remotas, todo desde la app.',
+                              ' valide tus datos podrás acceder a la aplicación. También podrás marcar y asistir a consultas remotas, todo desde la app.',
                           style: TextStyle(fontWeight: FontWeight.normal)),
                     ],
                   ),
