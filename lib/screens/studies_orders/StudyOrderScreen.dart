@@ -90,7 +90,6 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                           builder: (context) =>
                               MedicalRecordsScreen(appointment: appointment!, fromOrderStudy: true,)),
                     );
-                    BlocProvider.of<MedicalRecordBloc>(context).add(InitialEvent());
                   }
 
                   if (state is FailedLoadAppointment) {
