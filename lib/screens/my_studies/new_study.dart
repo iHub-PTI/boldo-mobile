@@ -152,7 +152,7 @@ class _NewStudyState extends State<NewStudy> {
                         border: true,
                         url: patient.photoUrl,
                         gender: patient.gender,
-                        color: ConstantsV2.orange,
+                        borderColor: ConstantsV2.orange,
                       ),
                     ],
                   ),
