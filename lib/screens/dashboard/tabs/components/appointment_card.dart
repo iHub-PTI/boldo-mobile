@@ -191,47 +191,42 @@ class _AppointmentCardState extends State<AppointmentCard> {
                       const SizedBox(
                         width: 8,
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                "${getDoctorPrefix(widget.appointment.doctor!.gender!)}${widget.appointment.doctor!.familyName}",
-                                style: boldoSubTextMediumStyle,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          if (widget.appointment.doctor!.specializations !=
-                              null &&
-                              widget.appointment.doctor!.specializations!
-                                  .isNotEmpty)
-                            SizedBox(
-                              width: 300,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    for (int i = 0;
-                                    i <
-                                        widget.appointment.doctor!
-                                            .specializations!.length;
-                                    i++)
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: i == 0 ? 0 : 3.0, bottom: 5),
-                                        child: Text(
-                                          "${widget.appointment.doctor!.specializations![i].description}${widget.appointment.doctor!.specializations!.length > 1 && i == 0 ? "," : ""}",
-                                          style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
-                                        ),
-                                      ),
-                                  ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "${getDoctorPrefix(widget.appointment.doctor!.gender!)}${widget.appointment.doctor!.familyName}",
+                                  style: boldoSubTextMediumStyle,
                                 ),
-                              ),
+                              ],
                             ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            if (widget.appointment.doctor!.specializations !=
+                                null &&
+                                widget.appointment.doctor!.specializations!
+                                    .isNotEmpty)
+                              Wrap(
+                                children: [
+                                  for (int i = 0;
+                                  i <
+                                      widget.appointment.doctor!
+                                          .specializations!.length;
+                                  i++)
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          right: i == 0 ? 0 : 3.0, bottom: 5),
+                                      child: Text(
+                                        "${widget.appointment.doctor!.specializations![i].description}${widget.appointment.doctor!.specializations!.length-1 != i  ? "," : ""}",
+                                        style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
+                                      ),
+                                    ),
+                                ],
+                              ),
                           if (isCancelled)
                             Text(
                               "Cancelado - ${DateFormat('HH:mm').format(DateTime.parse(widget.appointment.start!).toLocal())} hs ",
@@ -242,7 +237,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                               ),
                             ),
                         ],
-                      ),
+                      ),),
                     ],
                   ),
                   Row(
@@ -275,6 +270,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                         ],
                                       ),
                                     ),
+                                    if(widget.appointment.appointmentType != 'V' || minutes >= 15)
                                     Row(
                                       children: [
                                         locationType(appointmentType),

@@ -200,7 +200,6 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                     ),
                                                     const SizedBox(height: 16,),
                                                     Row(
-                                                      mainAxisSize: MainAxisSize.max,
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
                                                         SvgPicture.asset(
@@ -209,7 +208,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                           height: 20,
                                                         ),
                                                         const SizedBox(width: 6,),
-                                                        Container(
+                                                        Expanded(
                                                           child: Column(
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
@@ -223,15 +222,32 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                               ),
                                                               Text(
                                                                 "${widget.doctor.givenName?.split(' ')[0]?? ''} "
-                                                                    "${widget.doctor.familyName?.split(' ')[0]?? ''}, "
-                                                                    "${widget.doctor.specializations?.first.description?? ''}",
+                                                                    "${widget.doctor.familyName?.split(' ')[0]?? ''} "
+                                                                ,
                                                                 style: boldoCorpMediumBlackTextStyle.copyWith(
                                                                     color: ConstantsV2.activeText
                                                                 ),
-                                                              )
+                                                              ),
+                                                              Wrap(
+                                                                children: [
+                                                                  for (int i = 0;
+                                                                  i <
+                                                                      widget.doctor
+                                                                          .specializations!.length;
+                                                                  i++)
+                                                                    Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                          right: i == 0 ? 0 : 3.0, bottom: 5),
+                                                                      child: Text(
+                                                                        "${widget.doctor.specializations![i].description}${widget.doctor.specializations!.length-1 != i  ? "," : ""}",
+                                                                        style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
+                                                                      ),
+                                                                    ),
+                                                                ],
+                                                              ),
                                                             ],
                                                           ),
-                                                        )
+                                                        ),
                                                       ],
                                                     ),
                                                   ],
