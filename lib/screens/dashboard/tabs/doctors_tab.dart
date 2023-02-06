@@ -122,17 +122,17 @@ class _DoctorsTabState extends State<DoctorsTab> {
           doctors = [...doctors, ...doctorsList];
         }
         doctors.sort((a, b) {
-          if (b.nextAvailability == null && a.nextAvailability == null) {
+          if (b.organizations?.first.nextAvailability == null && a.organizations?.first.nextAvailability == null) {
             return 0;
           }
-          if (a.nextAvailability == null) {
+          if (a.organizations?.first.nextAvailability == null) {
             return 1;
           }
-          if (b.nextAvailability == null) {
+          if (b.organizations?.first.nextAvailability == null) {
             return -1;
           }
-          return DateTime.parse(a.nextAvailability!.availability!)
-              .compareTo(DateTime.parse(b.nextAvailability!.availability!));
+          return DateTime.parse(a.organizations!.first.nextAvailability!.availability!)
+              .compareTo(DateTime.parse(b.organizations!.first.nextAvailability!.availability!));
         });
       }
     } on DioError catch(exception, stackTrace){
@@ -363,10 +363,10 @@ class _DoctorCard extends StatelessWidget {
   Widget build(BuildContext context) {
     String availabilityText = "Sin disponibilidad en los próximos 30 días";
     bool isToday = false;
-    if (doctor.nextAvailability != null) {
+    if (doctor.organizations?.first.nextAvailability != null) {
       final actualDay = DateTime.now();
       final parsedAvailability =
-          DateTime.parse(doctor.nextAvailability!.availability!).toLocal();
+          DateTime.parse(doctor.organizations!.first.nextAvailability!.availability!).toLocal();
       // int daysDifference = parsedAvailability.difference(actualDay).inDays;
       int daysDifference = daysBetween(actualDay,parsedAvailability);
 
@@ -381,7 +381,7 @@ class _DoctorCard extends StatelessWidget {
         availabilityText = "Disponible Hoy!";
       } else if (daysDifference > 0) {
         availabilityText =
-            "Disponible ${DateFormat('EEEE, dd MMMM', Localizations.localeOf(context).languageCode).format(parsedAvailability)}";
+            "Disponible ${DateFormat('EEEE, dd MMMM', const Locale("es", 'ES').languageCode).format(parsedAvailability)}";
       }
     }
 
@@ -448,10 +448,10 @@ class _DoctorCard extends StatelessWidget {
                                     fontSize: 13),
                               ),
                               const Spacer(),
-                              doctor.nextAvailability != null
+                              doctor.organizations?.first.nextAvailability != null
                                   ? ShowDoctorAvailabilityIcon(
                                       filter: doctor
-                                          .nextAvailability!.appointmentType!,
+                                          .organizations!.first.nextAvailability!.appointmentType!,
                                     )
                                   : Container(),
                             ],

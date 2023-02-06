@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class ExpandableCard extends StatefulWidget {
@@ -11,14 +13,19 @@ class ExpandableCard extends StatefulWidget {
     this.minHeight = 100,
     this.maxHeight = 500,
     this.hasShadow = true,
-    this.backgroundColor = Colors.blueGrey,
+    this.backgroundGradient,
     this.hasRoundedCorners = false,
     this.hasHandle = true,
     this.handleColor = Colors.blueGrey,
+    this.onShow,
+    this.onHide,
+    this.isExpanded = false,
+    this.hasBlur = false,
+    this.blurRadius = 1.0,
   });
 
   /// List of widgets that make the content of the card
-  final List<Widget> children;
+  final Widget children;
 
   /// Padding for the content inside the card
   final EdgeInsetsGeometry padding;
@@ -32,8 +39,14 @@ class ExpandableCard extends StatefulWidget {
   /// Determines whether the card has shadow or not
   final bool hasShadow;
 
-  /// Color of the card
-  final Color backgroundColor;
+  /// Determines whether the card has blur or not
+  final bool hasBlur;
+
+  /// Initial blurRadius of the card
+  final double blurRadius;
+
+  /// Colors of the card
+  final LinearGradient? backgroundGradient;
 
   /// Determines whether the card has rounded corners or not
   final bool hasRoundedCorners;
@@ -43,6 +56,12 @@ class ExpandableCard extends StatefulWidget {
 
   /// Color of the handle
   final Color handleColor;
+
+  final Function()? onShow;
+
+  final Function()? onHide;
+
+  final bool isExpanded;
 
   @override
   _ExpandableCardState createState() => _ExpandableCardState();
@@ -58,10 +77,22 @@ class _ExpandableCardState extends State<ExpandableCard>
   final _bounceOutCurve = Cubic(.04, .22, .1, 1.21);
 
   @override
+  void didUpdateWidget(ExpandableCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isExpanded != oldWidget.isExpanded) {
+      setState((){
+        _scrollPercent = widget.isExpanded? 1: 0;
+        _isAnimating = false;
+      });
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _scrollPercent = widget.isExpanded? 1: 0;
   }
 
   void _startCardDrag(DragStartDetails details) {
@@ -98,6 +129,8 @@ class _ExpandableCardState extends State<ExpandableCard>
         _scrollPercent = 1.0;
         _cardIsExpanded = true;
       });
+      if(widget.onShow != null)
+        widget.onShow!();
     } else if (_cardIsExpanded &&
         (details.primaryVelocity! > 200 || _scrollPercent < 0.6)) {
       _animationScrollPercent =
@@ -109,6 +142,8 @@ class _ExpandableCardState extends State<ExpandableCard>
         _scrollPercent = 0.0;
         _cardIsExpanded = false;
       });
+      if(widget.onHide != null)
+        widget.onHide!();
     }
     // Card Slider will not expand
     else {
@@ -142,6 +177,7 @@ class _ExpandableCardState extends State<ExpandableCard>
             (widget.maxHeight - widget.minHeight) * factor;
         return Positioned(
           top: top,
+          bottom: 0,
           child: GestureDetector(
             onVerticalDragStart: _startCardDrag,
             onVerticalDragUpdate: _expandCard,
@@ -150,7 +186,13 @@ class _ExpandableCardState extends State<ExpandableCard>
               width: MediaQuery.of(context).size.width,
               height: widget.maxHeight + 50,
               decoration: BoxDecoration(
-                color: widget.backgroundColor,
+                gradient: widget.backgroundGradient?? const LinearGradient(
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
+                    colors: <Color>[
+                      Colors.blueGrey,
+                    ],
+                ),
                 borderRadius: widget.hasRoundedCorners
                     ? BorderRadius.only(
                   topLeft: Radius.circular(15.0),
@@ -166,19 +208,59 @@ class _ExpandableCardState extends State<ExpandableCard>
                     )
                 ],
               ),
-              child: Padding(
-                padding: widget.padding,
-                child: Column(
-                  children: <Widget>[
-                    if (widget.hasHandle) Icon(
-                      Icons.remove,
-                      color: widget.handleColor,
-                      size: 45,
-                    ),
-                    ...widget.children
-                  ],
+              child: widget.hasBlur? ClipRect(
+                child: BackdropFilter(
+                  blendMode: BlendMode.src,
+                  filter: ImageFilter.blur(
+                    sigmaX: widget.blurRadius,
+                    sigmaY: widget.blurRadius,
+                  ),
+                  child: Padding(
+                    padding: widget.padding,
+                    child: CustomScrollView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              if (widget.hasHandle) Icon(
+                                Icons.remove,
+                                color: widget.handleColor,
+                                size: 45,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SliverFillRemaining(
+                            child: widget.children
+                        ),
+                      ],
+                    )
+                  ),
                 ),
-                // child: positionDebugContent,
+              ) : Padding(
+                padding: widget.padding,
+                child: CustomScrollView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          if (widget.hasHandle) Icon(
+                            Icons.remove,
+                            color: widget.handleColor,
+                            size: 45,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SliverFillRemaining(
+                      child: widget.children
+                    ),
+                  ],
+                )
               ),
             ),
           ),

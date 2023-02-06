@@ -1,4 +1,5 @@
 import 'package:boldo/main.dart';
+import 'package:boldo/models/Organization.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,8 +18,9 @@ import 'booking_final_screen.dart';
 class BookingConfirmScreen extends StatefulWidget {
   final Doctor doctor;
   final NextAvailability bookingDate;
+  final Organization organization;
   BookingConfirmScreen(
-      {Key? key, required this.bookingDate, required this.doctor})
+      {Key? key, required this.bookingDate, required this.doctor, required this.organization})
       : super(key: key);
 
   @override
@@ -67,6 +69,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
         ),
         ShowAppoinmentDescription(
           nextAvailability: widget.bookingDate,
+          organization: widget.organization,
         ),
         Center(
           child: Text(
@@ -96,7 +99,8 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                         .toUtc()
                         .toIso8601String(),
                     "doctorId": widget.doctor.id,
-                    "appointmentType":widget.bookingDate.appointmentType
+                    "appointmentType":widget.bookingDate.appointmentType,
+                    "organizationId" : widget.organization.id
                   });
                 else
                   response = await dio.post("/profile/caretaker/dependent/${patient.id}/appointments", data: {
@@ -104,7 +108,8 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                         .toUtc()
                         .toIso8601String(),
                     "doctorId": widget.doctor.id,
-                    "appointmentType":widget.bookingDate.appointmentType
+                    "appointmentType":widget.bookingDate.appointmentType,
+                    "organizationId" : widget.organization.id
                   });
                 if(response.statusCode == 200) {
                   setState(() {
@@ -116,6 +121,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                     MaterialPageRoute(builder: (context) => BookingFinalScreen(
                       doctor: widget.doctor,
                       bookingDate: widget.bookingDate,
+                      organization: widget.organization,
                     )),
                   );
                 } else if (response.statusCode == 400) {
@@ -180,13 +186,14 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
 
 class ShowAppoinmentDescription extends StatelessWidget {
   final NextAvailability nextAvailability;
-  const ShowAppoinmentDescription({Key? key, required this.nextAvailability})
+  final Organization organization;
+  const ShowAppoinmentDescription({Key? key, required this.nextAvailability, required this.organization})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final inPersonDesc =
-        "Esta consulta será realizada en persona en el Centro Médico Tesai’i- Policlinic.";
+        "Esta consulta será realizada en persona en el ${organization.name}.";
     final onlineDesc =
         "Esta consulta será realizada de forma remota a través de esta aplicación.";
     return Padding(
@@ -271,7 +278,7 @@ class _DoctorBookingInfoWidget extends StatelessWidget {
           height: 7,
         ),
         Text(
-          DateFormat('EEEE, dd MMMM yyyy', Localizations.localeOf(context).languageCode).format(bookingDate).capitalize(),
+          DateFormat('EEEE, dd MMMM yyyy', const Locale("es", 'ES').languageCode).format(bookingDate).capitalize(),
           style: boldoSubTextStyle.copyWith(fontSize: 16),
         ),
         const SizedBox(

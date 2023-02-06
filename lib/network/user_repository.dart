@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/MedicalRecord.dart';
+import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/Prescription.dart';
 import 'package:boldo/models/QRCode.dart';
@@ -104,15 +105,21 @@ class UserRepository {
     }
   }
 
-  Future<None>? editProfile(Patient editingPatient) async {
+  Future<None>? editProfile(Patient patientData) async {
     try {
+
+      //copy data to add international code
+      patientData = Patient.fromJson(patientData.toJson());
+
+      // add international py code
+      patientData.phone = addInternationalPyNumber(patientData.phone);
       if(!(prefs.getBool(isFamily)?? false))
-        await dio.post("/profile/patient", data: editingPatient.toJson());
+        await dio.post("/profile/patient", data: patientData.toJson());
       else
-        await dio.put("/profile/caretaker/dependent/${patient.id}", data: editingPatient.toJson());
+        await dio.put("/profile/caretaker/dependent/${patient.id}", data: patientData.toJson());
 
       // Set new profile info
-      patient = Patient.fromJson(editingPatient.toJson());
+      patient = Patient.fromJson(patientData.toJson());
 
       // Update prefs in Principal Patient
       if(!(prefs.getBool(isFamily)?? false))
@@ -250,7 +257,7 @@ class UserRepository {
         return const None();
       }
       // throw an error if isn't a know status code
-      throw Failure('Unknow StatusCode ${response.statusCode}');
+      throw Failure('Unknown StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
@@ -486,20 +493,38 @@ class UserRepository {
     }
   }
 
-  Future<List<NextAvailability>>? getAvailabilities({required String id, required String startDate, required String endDate}) async {
+  Future<List<OrganizationWithAvailabilities>>? getAvailabilities({
+    required String id,
+    required String startDate,
+    required String endDate,
+    required List<Organization?>? organizations}) async {
+
+    String? _organizations = organizations?.map((e) => e?.id?? "").toList().join(",");
     try {
+
+
       Response response = await dio
-          .get("/doctors/$id/availability", queryParameters: {
+          .get("/profile/patient/doctors/$id/availability", queryParameters: {
         'start': startDate,
         'end': endDate,
+        'organizationIdList': _organizations,
       });
       if (response.statusCode == 200) {
-        List<NextAvailability>? allAvailabilities = [];
-        response.data['availabilities'].forEach((v) {
-          allAvailabilities.add(NextAvailability.fromJson(v));
+        List<OrganizationWithAvailabilities>? allAvailabilities = [];
+        response.data.forEach((v) {
+          allAvailabilities.add(OrganizationWithAvailabilities.fromJson(v));
         });
-        for ( NextAvailability availability in allAvailabilities){
-          availability.availability = DateTime.parse(availability.availability!).toLocal().toString();
+        // set nextAvailability to local time
+        for ( OrganizationWithAvailabilities availability in allAvailabilities){
+          availability.nextAvailability?.availability = DateTime.parse(
+              availability.nextAvailability?.availability?? DateTime.now().toString()
+          ).toLocal().toString();
+          // set list of availabilities to local time
+          for(NextAvailability? nextAvailability in availability.availabilities){
+            nextAvailability?.availability = DateTime.parse(
+                nextAvailability.availability?? DateTime.now().toString()
+            ).toLocal().toString();
+          }
         }
         return allAvailabilities;
       } else if (response.statusCode == 204) {

@@ -5,7 +5,6 @@ abstract class DoctorState{}
 
 class DoctorInitial extends DoctorState {}
 
-class PatientLogoutSuccessfully extends DoctorState {}
 
 class Loading extends DoctorState {}
 
@@ -17,12 +16,6 @@ class Failed extends DoctorState {
 class Success extends DoctorState {}
 
 class AvailabilitiesObtained extends DoctorState {
-  final List<NextAvailability> availabilities;
+  final List<OrganizationWithAvailabilities> availabilities;
   AvailabilitiesObtained({required this.availabilities});
 }
-
-class RedirectNextScreen extends DoctorState {}
-
-class RedirectToHome extends DoctorState {}
-
-class RedirectBackScreen extends DoctorState {}

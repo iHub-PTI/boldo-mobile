@@ -4,13 +4,15 @@ import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart'as medica
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
-import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
+import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:boldo/widgets/appointment_location_icon.dart';
+import 'package:boldo/widgets/appointment_type_icon.dart';
+import 'package:boldo/widgets/header_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -95,11 +97,10 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                 _dataLoaded = true;
               });
             } else if (state is Failed) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.response!),
-                  backgroundColor: Colors.redAccent,
-                ),
+              emitSnackBar(
+                  context: context,
+                  text: state.response,
+                  status: ActionStatus.Fail
               );
               if (_refreshPastAppointmentController != null) {
                 _refreshPastAppointmentController!.refreshCompleted();
@@ -119,11 +120,10 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
         BlocListener<HomeAppointmentsBloc, HomeAppointmentsState>(
           listener: (context, state) {
             if (state is FailedLoadedAppointments) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.response!),
-                  backgroundColor: Colors.redAccent,
-                ),
+              emitSnackBar(
+                  context: context,
+                  text: state.response,
+                  status: ActionStatus.Fail
               );
               if (_refreshFutureAppointmentController != null) {
                 _refreshFutureAppointmentController!.refreshCompleted();
@@ -165,22 +165,26 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextButton.icon(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: const Icon(
-                          Icons.chevron_left_rounded,
-                          size: 25,
-                          color: Constants.extraColor400,
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.chevron_left_rounded,
+                                size: 25,
+                                color: Constants.extraColor400,
+                              ),
+                            ],
+                          ),
                         ),
-                        label: Text(
-                          'Mis Consultas',
-                          style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                        Expanded(
+                          child: header("Mis Consultas", "Consultas"),
                         ),
-                      ),
+                      ],
                     ),
                     if (!_dataLoading && !_dataLoaded)
                       const Padding(
@@ -433,7 +437,6 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
         TextEditingController dateTextController = TextEditingController();
         TextEditingController date2TextController = TextEditingController();
         var inputFormat = DateFormat('dd/MM/yyyy');
-        var outputFormat = DateFormat('yyyy-MM-dd');
         DateTime date1 = BlocProvider.of<AppointmentBloc>(context).getInitialDate();
         DateTime? date2 = BlocProvider.of<AppointmentBloc>(context).getFinalDate();
         bool virtual = BlocProvider.of<AppointmentBloc>(context).getVirtualStatus();
@@ -583,7 +586,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                                                     initialEntryMode: DatePickerEntryMode
                                                         .calendarOnly,
                                                     initialDatePickerMode: DatePickerMode.day,
-                                                    initialDate: date1 ?? DateTime.now(),
+                                                    initialDate: date1,
                                                     firstDate: DateTime(1900),
                                                     lastDate: date2?? DateTime.now(),
                                                     locale: const Locale("es", "ES"),
@@ -755,6 +758,19 @@ class PastAppointmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     int daysDifference = daysBetween(DateTime.parse(
         appointment.start!).toLocal(),DateTime.now());
+
+
+    AppointmentType? appointmentType;
+    String locationDescription = 'Desconocido';
+
+    //set the appointment type
+    appointmentType = appointment.appointmentType == 'V'
+        ? AppointmentType.Virtual : AppointmentType.InPerson;
+
+    //message to describe whe is the appointment
+    locationDescription = appointmentType == AppointmentType.Virtual
+        ? ''
+        : '${appointment.organization?.name?? "Desconocido"}';
     return GestureDetector(
       onTap: () async {
         await Navigator.push(
@@ -766,11 +782,10 @@ class PastAppointmentCard extends StatelessWidget {
                       appointment
                           )),
         );
-        BlocProvider.of<medical.MedicalRecordBloc>(context)
-            .add(medical.InitialEvent());
       },
       child: Container(
         child: Card(
+          margin: const EdgeInsets.symmetric(vertical: 4.0),
           elevation: 2,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -802,139 +817,83 @@ class PastAppointmentCard extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: EdgeInsets.only(right: 8),
-                      child: ClipOval(
-                        child: SizedBox(
-                          width: 54,
-                          height: 54,
-                          child: appointment
-                              .doctor
-                              ?.photoUrl ==
-                              null
-                              ? SvgPicture.asset(
-                              appointment
-                                  .doctor!
-                                  .gender ==
-                                  "female"
-                                  ? 'assets/images/femaleDoctor.svg'
-                                  : 'assets/images/maleDoctor.svg',
-                              fit: BoxFit.cover)
-                              : CachedNetworkImage(
-                            fit: BoxFit.cover,
-                            imageUrl: appointment
-                                .doctor!
-                                .photoUrl ??
-                                '',
-                            progressIndicatorBuilder:
-                                (context, url,
-                                downloadProgress) =>
-                                Padding(
-                                  padding:
-                                  const EdgeInsets
-                                      .all(
-                                      26.0),
-                                  child:
-                                  LinearProgressIndicator(
-                                    value: downloadProgress
-                                        .progress,
-                                    valueColor: const AlwaysStoppedAnimation<
-                                        Color>(
-                                        Constants
-                                            .primaryColor400),
-                                    backgroundColor:
-                                    Constants
-                                        .primaryColor600,
-                                  ),
-                                ),
-                            errorWidget: (context,
-                                url,
-                                error) =>
-                            const Icon(Icons
-                                .error),
-                          ),
-                        ),
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ImageViewTypeForm(
+                        width: 54,
+                        height: 54,
+                        border: false,
+                        url: appointment.doctor?.photoUrl,
+                        gender: appointment.doctor?.gender,
                       ),
                     ),
-                    Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          child: Row(
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              Flexible(
-                                child: Text(
-                                  "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName}",
-                                  style:
-                                  boldoSubTextMediumStyle,
-                                ),
+                              Text(
+                                "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName}",
+                                style: boldoSubTextMediumStyle,
                               ),
                             ],
                           ),
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        if (appointment
-                            .doctor!
-                            .specializations !=
-                            null &&
-                            appointment
-                                .doctor!
-                                .specializations!
-                                .isNotEmpty)
-                          SizedBox(
-                            width: MediaQuery.of(
-                                context)
-                                .size
-                                .width -
-                                90,
-                            child:
-                            SingleChildScrollView(
-                              scrollDirection:
-                              Axis.horizontal,
-                              child: Row(
-                                children: [
-                                  for (int i = 0;
-                                  i <
-                                      appointment
-                                          .doctor!
-                                          .specializations!
-                                          .length;
-                                  i++)
-                                    Text(
-                                      "${toLowerCase(appointment.doctor!.specializations![i].description ?? '')}${appointment.doctor!.specializations!.length > 1 && i < (appointment.doctor!.specializations!.length-1) ? ", " : ""}",
-                                      style: boldoCorpMediumTextStyle
-                                          .copyWith(
-                                          color:
-                                          ConstantsV2.inactiveText),
-                                    ),
-                                ],
-                              ),
-                            ),
+                          const SizedBox(
+                            height: 4,
                           ),
-                      ],
+                          if (appointment.doctor!.specializations !=
+                              null &&
+                              appointment.doctor!.specializations!
+                                  .isNotEmpty)
+                            Wrap(
+                              children: [
+                                for (int i = 0;
+                                i <
+                                    appointment.doctor!
+                                        .specializations!.length;
+                                i++)
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        right: i == 0 ? 0 : 3.0, bottom: 5),
+                                    child: Text(
+                                      "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length-1 != i  ? "," : ""}",
+                                      style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                Column(
                   children: [
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        ShowAppoinmentTypeIcon(appointmentType: appointment.appointmentType!),
+                        showAppointmentTypeIcon(appointmentType),
                         Text(
                           appointment.appointmentType == 'V' ? "Remoto" : "Presencial",
                           style: TextStyle(
                             color: appointment.appointmentType == 'V' ? ConstantsV2.orange : ConstantsV2.green,
                             fontSize: 12,
                             // fontWeight: FontWeight.bold
+                          ),
+                        ),
+                      ],
+                    ),
+                    if(appointmentType == AppointmentType.InPerson)
+                    Row(
+                      children: [
+                        locationType(appointmentType),
+                        Expanded(
+                          child: Text(
+                            locationDescription,
+                            style: boldoCorpSmallTextStyle.copyWith(
+                                color: ConstantsV2.veryLightBlue
+                            ),
                           ),
                         ),
                       ],

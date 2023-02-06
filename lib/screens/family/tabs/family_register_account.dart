@@ -129,11 +129,10 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                     });
                   }
                   if (state is Failed) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.response!),
-                        backgroundColor: Colors.redAccent,
-                      ),
+                    emitSnackBar(
+                        context: context,
+                        text: state.response,
+                        status: ActionStatus.Success
                     );
                   }
                   if (state is NavigateNextScreen) {

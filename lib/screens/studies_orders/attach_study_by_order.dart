@@ -61,11 +61,10 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
           child: BlocListener<AttachStudyOrderBloc, AttachStudyOrderState>(
             listener: (context, state) {
               if (state is SendSuccess) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(uploadedStudySuccessfullyMessage),
-                    backgroundColor: ConstantsV2.green,
-                  ),
+                emitSnackBar(
+                    context: context,
+                    text: uploadedStudySuccessfullyMessage,
+                    status: ActionStatus.Success
                 );
                 BlocProvider.of<StudyOrderBloc>(context)
                     .add(GetNewsId(encounter: widget.studyOrder.encounterId ?? "0"));
@@ -73,11 +72,17 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                     .pop();
               }
               else if (state is FailedUploadFiles) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.response)));
+                emitSnackBar(
+                    context: context,
+                    text: state.response,
+                    status: ActionStatus.Fail
+                );
               } else if (state is FailedLoadedStudies) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.response)));
+                emitSnackBar(
+                    context: context,
+                    text: state.response,
+                    status: ActionStatus.Fail
+                );
               }if(state is StudyObtained){
                 serviceRequest = state.serviceRequest;
                 setState(() {
@@ -156,12 +161,13 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                                       ],
                                     ),
                                   )),
-                              ProfileImageView2(
+                              ImageViewTypeForm(
                                 height: 54,
                                 width: 54,
                                 border: true,
-                                patient: patient,
-                                color: ConstantsV2.orange,
+                                url: patient.photoUrl,
+                                gender: patient.gender,
+                                borderColor: ConstantsV2.orange,
                               ),
                             ],
                           ),

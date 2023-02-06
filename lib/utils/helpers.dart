@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:camera/camera.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -99,6 +101,60 @@ String passedDays(int days, {bool showDateFormat = true}) {
     }
     return 'hace $days días';
   }
+}
+
+/// return a String that represent the difference between dates to reach the current date
+String? dateBetween({DateTime? date, String? afterText}) {
+
+  if(date!=  null){
+
+    DateTime today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+    date = DateTime(date.year, date.month, date.day);
+
+    int difference = date.difference(today).inDays ;
+
+    if (difference <= -365){
+      int year = date.year - today.year;
+      if(year==-1){
+        return 'Realizado hace un año';
+      }else{
+        return 'Realizado hace ${year.abs()} años';
+      }
+    }else if(difference< 0 ) {
+      int month = date.month - today.month + (date.year - today.year)*12;
+      if(difference <-60){
+        return 'Realizado hace ${month.abs()} meses';
+      }else if(difference <-31){
+        return 'Realizado hace un mes';
+      }else if(difference == -1){
+        return "Realizado ayer";
+      }
+      return 'Realizado hace ${difference.abs()} días';
+    }else if(difference == 0){
+      return 'Hoy';
+    }else{
+      if (difference > 365){
+        int year = date.year - today.year;
+        if(year==1){
+          return 'Falta un año ${afterText?? ''}';
+        }else{
+          return 'Faltan ${year.abs()} años ${afterText?? ''}';
+        }
+      }else if(difference> 0 ) {
+        int month = date.month - today.month;
+        if(difference >60){
+          return 'Faltan ${month.abs()} meses ${afterText?? ''}';
+        }else if(difference >31){
+          return 'Falta un mes ${afterText?? ''}';
+        }else if(difference == 1){
+          return "Mañana";
+        }
+        return 'Falta ${difference.abs()} días ${afterText?? ''}';
+      }
+    }
+  }
+  return null;
 }
 
 
@@ -309,6 +365,22 @@ async {
 
 }
 
+String? removeInternationalPyNumber(String? number){
+  if((number?.length?? 0) >= 4){
+    if(number?.substring(0,4) == '+595'){
+      return number?.substring(4);
+    }
+  }
+  return number;
+}
+
+String? addInternationalPyNumber(String? number){
+  if(number != null){
+    return '+595' + number;
+  }
+  return number;
+}
+
 
 /// Class to format a valid date to input un TextFormField
 /// this will autocomplete with / in the form "1" after typing a second character
@@ -376,3 +448,55 @@ class DateTextFormatter extends TextInputFormatter {
     return TextSelection.fromPosition(TextPosition(offset: selectionEnd));
   }
 }
+
+enum ActionStatus {Success, Fail}
+
+void emitSnackBar({required BuildContext context, String? text, ActionStatus? status, Widget? icon, Color? color}){
+
+  String? message = text;
+
+  switch (status) {
+    case ActionStatus.Success:
+      message = message?? "Acción exitosa";
+      color = color?? ConstantsV2.systemSuccess;
+      icon = icon?? SvgPicture.asset('assets/icon/check-circle2.svg');
+      break;
+    case ActionStatus.Fail:
+      message = message?? "Acción fallida";
+      color = color?? ConstantsV2.systemFail;
+      icon = icon?? SvgPicture.asset('assets/icon/close_black.svg', color: const Color(0xffFBFBFB),);
+      break;
+    default: // Without this, you see a WARNING.
+      message = message?? "Acción con estado desconocido";
+      color = color?? ConstantsV2.secondaryRegular;
+  }
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      elevation: 1,
+      behavior: SnackBarBehavior.floating,
+      margin: const EdgeInsets.symmetric(horizontal: 19, vertical: 10),
+      content: Row(
+        children: [
+          if(icon != null)
+            icon,
+          const Padding(padding: EdgeInsets.only(left: 8)),
+          Expanded(
+            child: Text(
+                message,
+                style: boldoCorpMediumBlackTextStyle
+                    .copyWith(color: ConstantsV2.lightGrey)
+            ),
+          )
+        ],
+      ),
+      backgroundColor: color,
+    ),
+  );
+}
+
+
+enum AppointmentType {InPerson, Virtual}

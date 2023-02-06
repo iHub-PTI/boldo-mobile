@@ -95,8 +95,11 @@ class _NewStudyState extends State<NewStudy> {
             }
             if (state is Failed) {
               print('failed: ${state.msg}');
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.msg)));
+              emitSnackBar(
+                  context: context,
+                  text: state.msg,
+                  status: ActionStatus.Fail
+              );
             }
           },
           child: SingleChildScrollView(
@@ -143,12 +146,13 @@ class _NewStudyState extends State<NewStudy> {
                           ],
                         ),
                       )),
-                      ProfileImageView2(
+                      ImageViewTypeForm(
                         height: 54,
                         width: 54,
                         border: true,
-                        patient: patient,
-                        color: ConstantsV2.orange,
+                        url: patient.photoUrl,
+                        gender: patient.gender,
+                        borderColor: ConstantsV2.orange,
                       ),
                     ],
                   ),

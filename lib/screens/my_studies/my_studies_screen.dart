@@ -3,6 +3,8 @@ import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
+import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/header_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -86,8 +88,11 @@ class _MyStudiesState extends State<MyStudies> {
                 _loading = false;
                 _error = true;
                 setState(() {});
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text("Falló la obtención de estudios")));
+                emitSnackBar(
+                    context: context,
+                    text: 'Falló la obtención de estudios',
+                    status: ActionStatus.Fail
+                );
               }
 
               if (state is ServiceRequestLoaded) {
@@ -106,19 +111,28 @@ class _MyStudiesState extends State<MyStudies> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(
-                      Icons.chevron_left_rounded,
-                      size: 25,
-                      color: Constants.extraColor400,
-                    ),
-                    label: Text(
-                      'Mis Estudios',
-                      style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Icon(
+                                Icons.chevron_left_rounded,
+                                size: 25,
+                                color: Constants.extraColor400,
+                              ),
+                            ),
+                            Expanded(
+                              child: header("Mis Estudios", "Estudios"),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   // GestureDetector(
                   //   onTap: () {
