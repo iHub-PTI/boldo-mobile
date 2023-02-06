@@ -270,6 +270,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                         ],
                                       ),
                                     ),
+                                    if(widget.appointment.appointmentType != 'V' || minutes >= 15)
                                     Row(
                                       children: [
                                         locationType(appointmentType),
