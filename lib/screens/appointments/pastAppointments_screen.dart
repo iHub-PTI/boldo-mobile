@@ -826,67 +826,44 @@ class PastAppointmentCard extends StatelessWidget {
                         gender: appointment.doctor?.gender,
                       ),
                     ),
-                    Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          child: Row(
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              Flexible(
-                                child: Text(
-                                  "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName}",
-                                  style:
-                                  boldoSubTextMediumStyle,
-                                ),
+                              Text(
+                                "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName}",
+                                style: boldoSubTextMediumStyle,
                               ),
                             ],
                           ),
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        if (appointment
-                            .doctor!
-                            .specializations !=
-                            null &&
-                            appointment
-                                .doctor!
-                                .specializations!
-                                .isNotEmpty)
-                          SizedBox(
-                            width: MediaQuery.of(
-                                context)
-                                .size
-                                .width -
-                                90,
-                            child:
-                            SingleChildScrollView(
-                              scrollDirection:
-                              Axis.horizontal,
-                              child: Row(
-                                children: [
-                                  for (int i = 0;
-                                  i <
-                                      appointment
-                                          .doctor!
-                                          .specializations!
-                                          .length;
-                                  i++)
-                                    Text(
-                                      "${toLowerCase(appointment.doctor!.specializations![i].description ?? '')}${appointment.doctor!.specializations!.length > 1 && i < (appointment.doctor!.specializations!.length-1) ? ", " : ""}",
-                                      style: boldoCorpMediumTextStyle
-                                          .copyWith(
-                                          color:
-                                          ConstantsV2.inactiveText),
-                                    ),
-                                ],
-                              ),
-                            ),
+                          const SizedBox(
+                            height: 4,
                           ),
-                      ],
+                          if (appointment.doctor!.specializations !=
+                              null &&
+                              appointment.doctor!.specializations!
+                                  .isNotEmpty)
+                            Wrap(
+                              children: [
+                                for (int i = 0;
+                                i <
+                                    appointment.doctor!
+                                        .specializations!.length;
+                                i++)
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        right: i == 0 ? 0 : 3.0, bottom: 5),
+                                    child: Text(
+                                      "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length-1 != i  ? "," : ""}",
+                                      style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
