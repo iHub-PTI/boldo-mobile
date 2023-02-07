@@ -391,24 +391,26 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                           image: NetworkImage(doctors[index].photoUrl!),
                           fit: BoxFit.cover)),
                 )
-              : Card(
-                  margin: EdgeInsets.all(0),
-                  semanticContainer: true,
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  child: doctors[index].gender == 'female'
-                      ? SvgPicture.asset(
-                          'assets/images/femaleDoctor.svg',
-                          fit: BoxFit.cover,
-                        )
-                      : doctors[index].gender == 'male'? SvgPicture.asset(
-                          'assets/images/maleDoctor.svg',
-                          fit: BoxFit.cover,
-                        ): SvgPicture.asset(
-                    'assets/images/persona.svg',
-                    fit: BoxFit.cover,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32.0),
+              : Positioned.fill(
+                  child: Card(
+                    margin: EdgeInsets.all(0),
+                    semanticContainer: true,
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    child: doctors[index].gender == 'female'
+                        ? SvgPicture.asset(
+                      'assets/images/femaleDoctor.svg',
+                      fit: BoxFit.cover,
+                    )
+                        : doctors[index].gender == 'male'? SvgPicture.asset(
+                      'assets/images/maleDoctor.svg',
+                      fit: BoxFit.cover,
+                    ): SvgPicture.asset(
+                      'assets/images/persona.svg',
+                      fit: BoxFit.cover,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(32.0),
+                    ),
                   ),
                 ),
           Container(
