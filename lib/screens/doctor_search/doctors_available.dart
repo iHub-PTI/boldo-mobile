@@ -252,84 +252,55 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                               // this for refresh all data
                               onRefresh: () {
                                 offset = 0;
-                                if (Provider.of<DoctorFilterProvider>(context,
-                                    listen: false)
-                                    .getSpecializationsApplied ==
-                                    null) {
-                                  BlocProvider.of<DoctorsAvailableBloc>(
-                                      context)
-                                      .add(GetDoctorsAvailable(
-                                      organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
-                                          .getOrganizationsApplied,
-                                      offset: 0
-                                      ));
-                                } else {
-                                  BlocProvider.of<DoctorsAvailableBloc>(context)
-                                      .add(GetDoctorFilterInDoctorList(
-                                      organizations:
-                                      Provider.of<DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getOrganizationsApplied,
-                                      specializations:
-                                      Provider.of<DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getSpecializationsApplied!,
-                                      virtualAppointment: Provider.of<
-                                          DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getLastVirtualAppointmentApplied!,
-                                      inPersonAppointment:
-                                      Provider.of<DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getLastInPersonAppointmentApplied!));
-                                }
+                                BlocProvider.of<DoctorsAvailableBloc>(context)
+                                    .add(GetDoctorFilterInDoctorList(
+                                    organizations:
+                                    Provider.of<DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getOrganizationsApplied,
+                                    specializations:
+                                    Provider.of<DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getSpecializationsApplied,
+                                    virtualAppointment: Provider.of<
+                                        DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getLastVirtualAppointmentApplied,
+                                    inPersonAppointment:
+                                    Provider.of<DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getLastInPersonAppointmentApplied));
                               },
                               // this for load more doctors
                               onLoading: () {
                                 offset = offset + 20;
-                                if (Provider.of<DoctorFilterProvider>(context,
-                                    listen: false)
-                                    .getSpecializationsApplied ==
-                                    null) {
-                                  // new event for get more available doctor
-                                  BlocProvider.of<DoctorsAvailableBloc>(
-                                      context)
-                                      .add(GetMoreDoctorsAvailable(
-                                      organizations:
-                                      Provider.of<DoctorFilterProvider>(
-                                          context,
-                                          listen: false
-                                      ).getOrganizationsApplied,
-                                      offset: offset));
-                                } else {
-                                  BlocProvider.of<DoctorsAvailableBloc>(context)
-                                      .add(GetMoreFilterDoctor(
-                                      organizations:
-                                      Provider.of<DoctorFilterProvider>(
-                                          context,
-                                          listen: false
-                                      ).getOrganizationsApplied,
-                                      offset: offset,
-                                      specializations:
-                                      Provider.of<DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getSpecializationsApplied!,
-                                      virtualAppointment: Provider.of<
-                                          DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getLastVirtualAppointmentApplied!,
-                                      inPersonAppointment:
-                                      Provider.of<DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getLastInPersonAppointmentApplied!));
-                                }
+                                BlocProvider.of<DoctorsAvailableBloc>(context)
+                                    .add(GetMoreFilterDoctor(
+                                    organizations:
+                                    Provider.of<DoctorFilterProvider>(
+                                        context,
+                                        listen: false
+                                    ).getOrganizationsApplied,
+                                    offset: offset,
+                                    specializations:
+                                    Provider.of<DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getSpecializationsApplied!,
+                                    virtualAppointment: Provider.of<
+                                        DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getLastVirtualAppointmentApplied!,
+                                    inPersonAppointment:
+                                    Provider.of<DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getLastInPersonAppointmentApplied!));
                               },
                             ),
                           ),
