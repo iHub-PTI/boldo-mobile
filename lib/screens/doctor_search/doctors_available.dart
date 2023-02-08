@@ -125,6 +125,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                 });
               }
             } else if (state is FilterLoadedInDoctorList) {
+              _refreshDoctorController.refreshCompleted();
+              _refreshDoctorController.loadComplete();
               setState(() {
                 doctors = state.doctors;
               });
