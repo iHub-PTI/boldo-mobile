@@ -792,9 +792,9 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                     padding: const EdgeInsets.all(8),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                      CrossAxisAlignment.center,
                                       children: [
                                         Card(
                                             shape: StadiumBorder(),
@@ -809,30 +809,24 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                             )
                                         ),
                                         const SizedBox(width: 10),
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.4,
-                                          child: SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Text(
-                                                '${specializations![index].description}',
-                                                style: boldoTitleBlackTextStyle
-                                                    .copyWith(
-                                                  fontSize: 16,
-                                                  color: specializationsSelectedCopy!
-                                                          .any((element) =>
-                                                              element.id ==
-                                                              specializations![
-                                                                      index]
-                                                                  .id)
-                                                      ? ConstantsV2
-                                                          .buttonPrimaryColor100
-                                                      : ConstantsV2
-                                                          .inactiveText,
-                                                ),
-                                              )),
+                                        Expanded(
+                                          child: Text(
+                                            '${specializations![index].description}',
+                                            style: boldoTitleBlackTextStyle
+                                                .copyWith(
+                                              fontSize: 16,
+                                              color: specializationsSelectedCopy!
+                                                  .any((element) =>
+                                              element.id ==
+                                                  specializations![
+                                                  index]
+                                                      .id)
+                                                  ? ConstantsV2
+                                                  .buttonPrimaryColor100
+                                                  : ConstantsV2
+                                                  .inactiveText,
+                                            ),
+                                          ),
                                         )
                                       ],
                                     ),
