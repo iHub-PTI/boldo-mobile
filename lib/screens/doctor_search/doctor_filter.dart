@@ -788,51 +788,49 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                       }
                                     });
                                   },
-                                  child: Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                        children: [
-                                          Card(
-                                              shape: StadiumBorder(),
-                                              color: ConstantsV2.orange,
-                                              child: Container(
-                                                width: 50,
-                                                height: 50,
-                                                padding: EdgeInsets.all(16),
-                                                child: Center(
-                                                  child: Text("${specializations[index].description?[0]?? ""}"),
-                                                ),
-                                              )
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Text(
-                                              '${specializations![index].description}',
-                                              style: boldoTitleBlackTextStyle
-                                                  .copyWith(
-                                                fontSize: 16,
-                                                color: specializationsSelectedCopy!
-                                                    .any((element) =>
-                                                element.id ==
-                                                    specializations![
-                                                    index]
-                                                        .id)
-                                                    ? ConstantsV2
-                                                    .buttonPrimaryColor100
-                                                    : ConstantsV2
-                                                    .inactiveText,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                      children: [
+                                        Card(
+                                            shape: StadiumBorder(),
+                                            color: ConstantsV2.orange,
+                                            child: Container(
+                                              width: 50,
+                                              height: 50,
+                                              padding: EdgeInsets.all(16),
+                                              child: Center(
+                                                child: Text("${specializations[index].description?[0]?? ""}"),
                                               ),
+                                            )
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text(
+                                            '${specializations![index].description}',
+                                            style: boldoTitleBlackTextStyle
+                                                .copyWith(
+                                              fontSize: 16,
+                                              color: specializationsSelectedCopy!
+                                                  .any((element) =>
+                                              element.id ==
+                                                  specializations![
+                                                  index]
+                                                      .id)
+                                                  ? ConstantsV2
+                                                  .buttonPrimaryColor100
+                                                  : ConstantsV2
+                                                  .inactiveText,
                                             ),
-                                          )
-                                        ],
-                                      ),
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  )
+                                  ),
                                 ),
                               ),
                             );
