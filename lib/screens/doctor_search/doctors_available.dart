@@ -204,6 +204,9 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                               controller: _refreshDoctorController,
                               enablePullUp: true,
                               enablePullDown: true,
+                              header: const MaterialClassicHeader(
+                                color: Constants.primaryColor800,
+                              ),
                               child: GridView.builder(
                                 physics: ScrollPhysics(),
                                 scrollDirection: Axis.vertical,
