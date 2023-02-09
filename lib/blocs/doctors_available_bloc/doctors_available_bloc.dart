@@ -131,6 +131,16 @@ class DoctorsAvailableBloc
         } else {
           late List<Doctor> doctors = [];
           _post.foldRight(Doctor, (a, previous) => doctors = a);
+          //sort each doctor's organizations by availability
+          doctors = doctors.map(
+                  (e) {
+                e.organizations?.sort(orderByAvailability);
+                return e;
+              }
+          ).toList();
+
+          //sort doctors by first availability
+          doctors.sort(orderByOrganizationAvailability);
           emit(FilterLoadedInDoctorList(doctors: doctors));
           emit(FilterSuccesInDoctorList());
         }
