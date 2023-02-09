@@ -9,6 +9,7 @@ import 'package:boldo/screens/doctor_profile/doctor_profile_screen.dart';
 import 'package:boldo/screens/doctor_search/doctor_filter.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/go_to_top.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -380,138 +381,152 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
           ),
         );
       },
-      child: Stack(
-        children: <Widget>[
-          // the first item in stack is the doctor profile photo
-          doctors[index].photoUrl != null
-              ? Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(32),
-                      image: DecorationImage(
-                          image: NetworkImage(doctors[index].photoUrl!),
-                          fit: BoxFit.cover)),
-                )
-              : Card(
-                  margin: EdgeInsets.all(0),
-                  semanticContainer: true,
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  child: doctors[index].gender == 'female'
-                      ? SvgPicture.asset(
-                          'assets/images/femaleDoctor.svg',
-                          fit: BoxFit.cover,
-                        )
-                      : doctors[index].gender == 'male'? SvgPicture.asset(
-                          'assets/images/maleDoctor.svg',
-                          fit: BoxFit.cover,
-                        ): SvgPicture.asset(
-                    'assets/images/persona.svg',
-                    fit: BoxFit.cover,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32.0),
+      child: Card(
+        margin: EdgeInsets.all(0),
+        semanticContainer: true,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(32.0),
+        ),
+        child: Stack(
+          children: <Widget>[
+            // the first item in stack is the doctor profile photo
+            doctors[index].photoUrl != null
+                ? Positioned.fill(child: CachedNetworkImage(
+              fit: BoxFit.cover,
+              imageUrl: doctors[index].photoUrl!,
+              progressIndicatorBuilder:
+                  (context, url, downloadProgress) => Padding(
+                padding: const EdgeInsets.all(26.0),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    value: downloadProgress.progress,
+                    valueColor:
+                    const AlwaysStoppedAnimation<Color>(
+                        Constants.primaryColor400),
+                    backgroundColor: Constants.primaryColor600,
                   ),
                 ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              gradient: const RadialGradient(
-                  radius: 4,
-                  center: Alignment(
-                    1.80,
-                    0.77,
-                  ),
-                  //center: Alignment.center,
-                  colors: [
-                    Color.fromRGBO(0, 0, 0, 0),
-                    Color.fromRGBO(0, 0, 0, 1),
-                  ]),
+              ),
+              errorWidget: (context, url, error) =>
+              const Icon(Icons.error),
+            ))
+                : Positioned.fill(
+              child:doctors[index].gender == 'female'
+                  ? SvgPicture.asset(
+                'assets/images/femaleDoctor.svg',
+                fit: BoxFit.cover,
+              )
+                  : doctors[index].gender == 'male'? SvgPicture.asset(
+                'assets/images/maleDoctor.svg',
+                fit: BoxFit.cover,
+              ): SvgPicture.asset(
+                'assets/images/persona.svg',
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          // the second item in stack is the column of details
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // name of the doctor
-              Row(
-                children: [
-                  // this for jump if there is overflow
-                  Flexible(
-                      child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 24.0, right: 16, bottom: 2),
-                        child: Text(
-                          '${doctors[index].gender == 'female' ? 'Dra.' : 'Dr.'} ${doctors[index].givenName!.split(" ")[0]} ${doctors[index].familyName!.split(" ")[0]}',
-                          style: boldoCardHeadingTextStyle,
-                        ),
-                      ),
-                    ],
-                  ))
-                ],
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(32),
+                gradient: const RadialGradient(
+                    radius: 4,
+                    center: Alignment(
+                      1.80,
+                      0.77,
+                    ),
+                    //center: Alignment.center,
+                    colors: [
+                      Color.fromRGBO(0, 0, 0, 0),
+                      Color.fromRGBO(0, 0, 0, 1),
+                    ]),
               ),
-              // specializations
-              doctors[index].specializations != null
-                  ? doctors[index].specializations!.length > 0
-                      ? Container(
-                          // 52 is the sum of left and right padding plus the space between columns
-                          width: MediaQuery.of(context).size.width / 2 - 52,
-                          child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 24.0,
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    for (int i = 0;
-                                        i <
-                                            doctors[index]
-                                                .specializations!
-                                                .length;
-                                        i++)
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: i == 0 ? 0 : 3.0, bottom: 8),
-                                        child: Text(
-                                          "${doctors[index].specializations![i].description}${doctors[index].specializations!.length > 1 && i == 0 ? "," : ""}",
-                                          style: boldoCorpMediumWithLineSeparationLargeTextStyle
-                                              .copyWith(
-                                                  color: ConstantsV2
-                                                      .buttonPrimaryColor100,
-                                                  fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              )),
-                        )
-                      : Container()
-                  : Container(),
-              Container(
-                width: MediaQuery.of(context).size.width / 2 - 52,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 24.0, bottom: 4),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          availableText(doctors[index].organizations?.first.nextAvailability),
-                          style: boldoCorpSmallInterTextStyle.copyWith(
-                              fontWeight: FontWeight.bold),
+            ),
+            // the second item in stack is the column of details
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // name of the doctor
+                Row(
+                  children: [
+                    // this for jump if there is overflow
+                    Flexible(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 24.0, right: 16, bottom: 2),
+                              child: Text(
+                                '${doctors[index].gender == 'female' ? 'Dra.' : 'Dr.'} ${doctors[index].givenName!.split(" ")[0]} ${doctors[index].familyName!.split(" ")[0]}',
+                                style: boldoCardHeadingTextStyle,
+                              ),
+                            ),
+                          ],
+                        ))
+                  ],
+                ),
+                // specializations
+                doctors[index].specializations != null
+                    ? doctors[index].specializations!.length > 0
+                    ? Container(
+                  // 52 is the sum of left and right padding plus the space between columns
+                  width: MediaQuery.of(context).size.width / 2 - 52,
+                  child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 24.0,
                         ),
-                      ),
-                    ],
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            for (int i = 0;
+                            i <
+                                doctors[index]
+                                    .specializations!
+                                    .length;
+                            i++)
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: i == 0 ? 0 : 3.0, bottom: 8),
+                                child: Text(
+                                  "${doctors[index].specializations![i].description}${doctors[index].specializations!.length > 1 && i == 0 ? "," : ""}",
+                                  style: boldoCorpMediumWithLineSeparationLargeTextStyle
+                                      .copyWith(
+                                      color: ConstantsV2
+                                          .buttonPrimaryColor100,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                          ],
+                        ),
+                      )),
+                )
+                    : Container()
+                    : Container(),
+                Container(
+                  width: MediaQuery.of(context).size.width / 2 - 52,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 24.0, bottom: 4),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            availableText(doctors[index].organizations?.first.nextAvailability),
+                            style: boldoCorpSmallInterTextStyle.copyWith(
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 4)
-            ],
-          ),
-        ],
+                const SizedBox(height: 4)
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
