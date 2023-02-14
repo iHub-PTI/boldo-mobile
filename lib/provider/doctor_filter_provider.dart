@@ -13,6 +13,9 @@ class DoctorFilterProvider with ChangeNotifier {
   // this is a list of organizations was selected in filter
   List<Organization> _selectedOrganizations = [];
 
+  // this is a list of organizations was selected in filter
+  List<String> _selectedNames = [];
+
   List<Doctor> _doctorsSaved = [];
   // these are a boolean variables to check the type of appointment
   bool virtualAppointment = false;
@@ -23,6 +26,7 @@ class DoctorFilterProvider with ChangeNotifier {
   // variables containing the last applied filter
   List<Specializations> _specializationsApplied = [];
   List<Organization> _organizationsApplied = [];
+  List<String> _selectedNamesApplied = [];
   bool _virtualAppointmentApplied = false;
   bool _inPersonAppointmentApplied = false;
 
@@ -33,7 +37,7 @@ class DoctorFilterProvider with ChangeNotifier {
       virtualAppointment ||
       inPersonAppointment ||
       _selectedSpecializations.isNotEmpty ||
-      _selectedOrganizations.isNotEmpty;
+      _selectedOrganizations.isNotEmpty || _selectedNames.isNotEmpty;
 
   // get specializations
   List<Specializations> get getSpecializations => _selectedSpecializations;
@@ -41,10 +45,15 @@ class DoctorFilterProvider with ChangeNotifier {
   // get organizations
   List<Organization> get getOrganizations => _selectedOrganizations;
 
-  // get the last specializations applied. This can be return null value
+  // get names
+  List<String> get getNames => _selectedNames;
+
+  // get the last specializations applied.
   List<Specializations> get getSpecializationsApplied => _specializationsApplied;
-  // get the last organizations applied. This can be return null value
+  // get the last organizations applied.
   List<Organization> get getOrganizationsApplied => _organizationsApplied;
+  // get the last names applied.
+  List<String> get getNamesApplied => _selectedNamesApplied;
   bool get getLastVirtualAppointmentApplied => _virtualAppointmentApplied;
   bool get getLastInPersonAppointmentApplied => _inPersonAppointmentApplied;
 
@@ -126,12 +135,20 @@ class DoctorFilterProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // delete all names
+  void removeAllNames() {
+    _selectedNames = [];
+    notifyListeners();
+  }
+
   // delete all specializations
   void clearFilter() {
     _selectedSpecializations = [];
     _selectedOrganizations = [];
     _specializationsApplied = [];
     _organizationsApplied = [];
+    _selectedNamesApplied = [];
+    _selectedNames = [];
     _inPersonAppointmentApplied = false;
     _virtualAppointmentApplied = false;
     inPersonAppointment = false;
@@ -155,6 +172,7 @@ class DoctorFilterProvider with ChangeNotifier {
   void setSpecializationsWithoutEvent(
       {required List<Specializations> specializationsSelected}) {
     _selectedSpecializations = specializationsSelected;
+    notifyListeners();
   }
 
   // set true or false the virtual appointment
@@ -191,11 +209,14 @@ class DoctorFilterProvider with ChangeNotifier {
       {required List<Specializations> specializationsApplied,
       required bool virtualAppointmentApplied,
       required bool inPersonAppointmentApplied,
-      required List<Organization> organizationsApplied}) {
+      required List<Organization> organizationsApplied,
+      required List<String> namesApplied,
+      }) {
     _specializationsApplied = specializationsApplied;
     _virtualAppointmentApplied = virtualAppointmentApplied;
     _inPersonAppointmentApplied = inPersonAppointmentApplied;
     _organizationsApplied = organizationsApplied;
+    _selectedNamesApplied = namesApplied;
     notifyListeners();
   }
 }
