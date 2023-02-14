@@ -17,7 +17,7 @@ class DoctorFilterBloc extends Bloc<DoctorFilterEvent, DoctorFilterState> {
         emit(LoadingDoctorFilter());
         //prevent get from server if any filter was selected
         if(event.organizations.isNotEmpty || event.specializations.isNotEmpty
-        || event.inPersonAppointment || event.virtualAppointment) {
+        || event.inPersonAppointment || event.virtualAppointment || event.names.isNotEmpty) {
           var _post;
           await Task(() =>
               _doctorRepository
@@ -26,7 +26,10 @@ class DoctorFilterBloc extends Bloc<DoctorFilterEvent, DoctorFilterState> {
                   event.specializations,
                   event.virtualAppointment,
                   event.inPersonAppointment,
-                  event.organizations))
+                  event.organizations,
+                  event.names
+                )
+              )
               .attempt()
               .run()
               .then((value) {
