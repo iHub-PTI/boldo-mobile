@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Constants {
   // primary color palette
@@ -128,6 +129,17 @@ const boldoSubTextMediumStyle = TextStyle(
   fontSize: 16,
   fontWeight: FontWeight.w400,
   fontFamily: 'Montserrat',
+);
+
+TextStyle bodyLarge = GoogleFonts.workSans().copyWith(
+  fontWeight: FontWeight.w400,
+  fontSize: 16,
+);
+
+TextStyle labelMedium = GoogleFonts.workSans().copyWith(
+  fontWeight: FontWeight.w500,
+  fontSize: 14,
+  fontStyle: FontStyle.normal,
 );
 
 const boldoInfoTextStyle = TextStyle(
