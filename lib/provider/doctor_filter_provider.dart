@@ -74,11 +74,16 @@ class DoctorFilterProvider with ChangeNotifier {
       {required Specializations specialization, required context}) {
     _selectedSpecializations.add(specialization);
     // call bloc event
-    BlocProvider.of<DoctorFilterBloc>(context).add(GetDoctorsPreview(
+    BlocProvider.of<DoctorFilterBloc>(context).add(
+      GetDoctorsPreview(
         organizations: _selectedOrganizations,
         specializations: _selectedSpecializations,
         virtualAppointment: virtualAppointment,
-        inPersonAppointment: inPersonAppointment));
+        inPersonAppointment: inPersonAppointment,
+        names: _selectedNames,
+      )
+    );
+    notifyListeners();
   }
 
   // delete specializations
@@ -88,11 +93,15 @@ class DoctorFilterProvider with ChangeNotifier {
         .where((element) => element.id != specializationId)
         .toList();
     // call bloc event
-    BlocProvider.of<DoctorFilterBloc>(context).add(GetDoctorsPreview(
-        organizations: _selectedOrganizations,
-        specializations: _selectedSpecializations,
-        virtualAppointment: virtualAppointment,
-        inPersonAppointment: inPersonAppointment));
+    BlocProvider.of<DoctorFilterBloc>(context).add(
+        GetDoctorsPreview(
+          organizations: _selectedOrganizations,
+          specializations: _selectedSpecializations,
+          virtualAppointment: virtualAppointment,
+          inPersonAppointment: inPersonAppointment,
+          names: _selectedNames,
+        )
+    );
     notifyListeners();
   }
 
@@ -101,11 +110,16 @@ class DoctorFilterProvider with ChangeNotifier {
       {required Organization organization, required context}) {
     _selectedOrganizations.add(organization);
     // call bloc event
-    BlocProvider.of<DoctorFilterBloc>(context).add(GetDoctorsPreview(
-        organizations: _selectedOrganizations,
-        specializations: _selectedSpecializations,
-        virtualAppointment: virtualAppointment,
-        inPersonAppointment: inPersonAppointment));
+    BlocProvider.of<DoctorFilterBloc>(context).add(
+        GetDoctorsPreview(
+          organizations: _selectedOrganizations,
+          specializations: _selectedSpecializations,
+          virtualAppointment: virtualAppointment,
+          inPersonAppointment: inPersonAppointment,
+          names: _selectedNames,
+        )
+    );
+    notifyListeners();
   }
 
   // delete organization
@@ -115,11 +129,51 @@ class DoctorFilterProvider with ChangeNotifier {
         .where((element) => element.id != organizationId)
         .toList();
     // call bloc event
-    BlocProvider.of<DoctorFilterBloc>(context).add(GetDoctorsPreview(
-        organizations: _selectedOrganizations,
-        specializations: _selectedSpecializations,
-        virtualAppointment: virtualAppointment,
-        inPersonAppointment: inPersonAppointment));
+    BlocProvider.of<DoctorFilterBloc>(context).add(
+        GetDoctorsPreview(
+          organizations: _selectedOrganizations,
+          specializations: _selectedSpecializations,
+          virtualAppointment: virtualAppointment,
+          inPersonAppointment: inPersonAppointment,
+          names: _selectedNames,
+        )
+    );
+    notifyListeners();
+  }
+
+  // add organization
+  void addName(
+      {required String name, required context}) {
+    _selectedNames.add(name);
+    // call bloc event
+    BlocProvider.of<DoctorFilterBloc>(context).add(
+        GetDoctorsPreview(
+          organizations: _selectedOrganizations,
+          specializations: _selectedSpecializations,
+          virtualAppointment: virtualAppointment,
+          inPersonAppointment: inPersonAppointment,
+          names: _selectedNames,
+        )
+    );
+    notifyListeners();
+  }
+
+  // delete organization
+  void removeName(
+      {required String name, required context}) {
+    _selectedNames = _selectedNames
+        .where((element) => element != name)
+        .toList();
+    // call bloc event
+    BlocProvider.of<DoctorFilterBloc>(context).add(
+        GetDoctorsPreview(
+          organizations: _selectedOrganizations,
+          specializations: _selectedSpecializations,
+          virtualAppointment: virtualAppointment,
+          inPersonAppointment: inPersonAppointment,
+          names: _selectedNames,
+        )
+    );
     notifyListeners();
   }
 
@@ -161,11 +215,15 @@ class DoctorFilterProvider with ChangeNotifier {
       required context}) {
     _selectedSpecializations = specializationsSelectedCopy;
     // call bloc event
-    BlocProvider.of<DoctorFilterBloc>(context).add(GetDoctorsPreview(
-        organizations: _selectedOrganizations,
-        specializations: _selectedSpecializations,
-        virtualAppointment: virtualAppointment,
-        inPersonAppointment: inPersonAppointment));
+    BlocProvider.of<DoctorFilterBloc>(context).add(
+        GetDoctorsPreview(
+          organizations: _selectedOrganizations,
+          specializations: _selectedSpecializations,
+          virtualAppointment: virtualAppointment,
+          inPersonAppointment: inPersonAppointment,
+          names: _selectedNames,
+        )
+    );
     notifyListeners();
   }
 
@@ -179,12 +237,15 @@ class DoctorFilterProvider with ChangeNotifier {
   void setVirtualAppointment({required context}) {
     virtualAppointment = !virtualAppointment;
     // call bloc event
-    BlocProvider.of<DoctorFilterBloc>(context).add(GetDoctorsPreview(
-        organizations: _selectedOrganizations,
-        specializations: _selectedSpecializations,
-        virtualAppointment: virtualAppointment,
-        inPersonAppointment: inPersonAppointment));
-
+    BlocProvider.of<DoctorFilterBloc>(context).add(
+        GetDoctorsPreview(
+          organizations: _selectedOrganizations,
+          specializations: _selectedSpecializations,
+          virtualAppointment: virtualAppointment,
+          inPersonAppointment: inPersonAppointment,
+          names: _selectedNames,
+        )
+    );
     notifyListeners();
   }
 
@@ -192,11 +253,15 @@ class DoctorFilterProvider with ChangeNotifier {
   void setInPersonAppointment({required context}) {
     inPersonAppointment = !inPersonAppointment;
     // call bloc event
-    BlocProvider.of<DoctorFilterBloc>(context).add(GetDoctorsPreview(
-        organizations: _selectedOrganizations,
-        specializations: _selectedSpecializations,
-        virtualAppointment: virtualAppointment,
-        inPersonAppointment: inPersonAppointment));
+    BlocProvider.of<DoctorFilterBloc>(context).add(
+        GetDoctorsPreview(
+          organizations: _selectedOrganizations,
+          specializations: _selectedSpecializations,
+          virtualAppointment: virtualAppointment,
+          inPersonAppointment: inPersonAppointment,
+          names: _selectedNames,
+        )
+    );
     notifyListeners();
   }
 
