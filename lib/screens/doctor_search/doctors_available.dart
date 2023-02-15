@@ -336,6 +336,62 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
     );
   }
 
+  Widget _availabilityHourCard(OrganizationWithAvailability? organization){
+
+
+    return Container(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  child: Text(
+                    availableText(organization?.nextAvailability),
+                    style: boldoBodySRegularTextStyle
+                        .copyWith(
+                      color: ConstantsV2
+                          .grayLight,
+                    ),
+                  ),
+                ),
+                Container(
+                  child: Text(
+                    "vía ${organization?.organization?.name?? 'Desconocido'}",
+                    style: boldoBodySRegularTextStyle
+                        .copyWith(
+                      color: ConstantsV2
+                          .grayLight,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Card(
+            elevation: 0.0,
+            color: ConstantsV2.grayLightAndClear,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: ConstantsV2.grayLightAndClear, width: 1),
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              child: Row(
+                children: [
+                  Text("${DateFormat('HH:mm').format(DateTime.parse(organization?.nextAvailability?.availability?? DateTime.now().toString()).toLocal())}",
+                    style: boldoBodySBlackTextStyle.copyWith(color: ConstantsV2.secondaryRegular),),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   String availableText(NextAvailability? nextAvailability) {
     String available = 'Sin disponibilidad en los próximos 30 días';
     if(nextAvailability == null)
@@ -349,10 +405,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
       isToday = true;
     }
     if (isToday) {
-      available = 'Disponible Hoy!';
+      available = 'Disponible hoy a las ';
     } else if (daysDifference > 0) {
       available =
-          'Disponible ${DateFormat('EEEE, dd MMMM', const Locale("es", 'ES').languageCode).format(parsedAvailability)}';
+          'Disponible ${DateFormat('EEEE, dd MMMM', const Locale("es", 'ES').languageCode).format(parsedAvailability)} a las';
     }
     return available;
   }
@@ -458,8 +514,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                 doctors[index].specializations != null
                     ? doctors[index].specializations!.length > 0
                     ? Container(
-                  // 52 is the sum of left and right padding plus the space between columns
-                  width: MediaQuery.of(context).size.width / 2 - 52,
                   child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Padding(
@@ -494,24 +548,11 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                     : Container()
                     : Container(),
                 Container(
-                  width: MediaQuery.of(context).size.width / 2 - 52,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 24.0, bottom: 4),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            availableText(doctors[index].organizations?.first.nextAvailability),
-                            style: boldoCorpSmallInterTextStyle.copyWith(
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
+                    padding: const EdgeInsets.only(left: 8.0, bottom: 4),
+                    child: _availabilityHourCard(doctors[index].organizations?.first),
                   ),
                 ),
-                const SizedBox(height: 4)
               ],
             ),
           ],
