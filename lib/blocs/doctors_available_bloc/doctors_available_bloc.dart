@@ -57,7 +57,7 @@ class DoctorsAvailableBloc
         var _post;
         await Task(() => _doctorRepository
             .getDoctorsFilter(
-            0,
+            event.offset,
             event.specializations,
             event.virtualAppointment,
             event.inPersonAppointment,
