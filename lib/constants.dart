@@ -183,6 +183,30 @@ const boldoCorpMediumWithLineSeparationLargeTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoBodyLRegularTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 14,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoBodySRegularTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 10,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoBodySBlackTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 10,
+  fontWeight: FontWeight.w500,
+  fontFamily: 'Montserrat',
+);
+
 const boldoCorpMediumBlackTextStyle = TextStyle(
   color: ConstantsV2.lightGrey,
   fontStyle: FontStyle.normal,
@@ -247,6 +271,27 @@ BoxShadow shadowRegular = BoxShadow(
   offset: const Offset(0, 2),
   color: Colors.black.withOpacity(0.05),
   blurRadius: 4,
+);
+
+const BoxDecoration buttonFXSecondaryStyle = BoxDecoration(
+  boxShadow: [
+    BoxShadow(
+      offset: Offset(0, 2),
+      color: Color(0xffFEAD88),
+      spreadRadius: -4,
+      blurRadius: 4,
+    ),
+    BoxShadow(
+      offset: Offset(0, 2),
+      color: Color.fromRGBO(0, 0, 0, 0.1),
+      blurRadius: 4,
+    ),
+    BoxShadow(
+      offset: Offset(0, 0),
+      color: Color.fromRGBO(253, 165, 125, 0.5),
+      blurRadius: 4,
+    )
+  ]
 );
 
 ThemeData boldoTheme = ThemeData(
