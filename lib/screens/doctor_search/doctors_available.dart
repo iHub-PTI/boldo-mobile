@@ -1,12 +1,14 @@
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
 import 'package:boldo/constants.dart';
+import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/doctor_profile/doctor_profile_screen.dart';
 import 'package:boldo/screens/doctor_search/doctor_filter.dart';
+import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/go_to_top.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -171,17 +173,43 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                           style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                         ),
                       ),
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DoctorFilter(),
+                      Row(
+                        children: [
+                          ImageViewTypeForm(
+                            height: 44,
+                            width: 44,
+                            url: patient.photoUrl,
+                            gender: patient.gender,
+                            border: true,
+                            borderColor: ConstantsV2.secondaryRegular,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DoctorFilter(),
+                                ),
+                              );
+                            },
+                            child:Card(
+                              color: ConstantsV2.secondaryRegular,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(100)),
                               ),
-                            );
-                          },
-                          child: SvgPicture.asset(
-                              'assets/icon/change-filter.svg'))
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: buttonFXSecondaryStyle.copyWith(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: SvgPicture.asset(
+                                  'assets/icon/search.svg',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
