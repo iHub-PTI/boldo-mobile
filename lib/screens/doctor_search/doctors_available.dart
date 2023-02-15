@@ -59,7 +59,11 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                 .getLastVirtualAppointmentApplied,
             inPersonAppointment:
             Provider.of<DoctorFilterProvider>(context, listen: false)
-                .getLastInPersonAppointmentApplied
+                .getLastInPersonAppointmentApplied,
+            names: Provider.of<DoctorFilterProvider>(
+              context,
+              listen: false)
+              .getNamesApplied,
         )
     );
     scrollDoctorList.addListener(() {
@@ -277,7 +281,12 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                     Provider.of<DoctorFilterProvider>(
                                         context,
                                         listen: false)
-                                        .getLastInPersonAppointmentApplied));
+                                        .getLastInPersonAppointmentApplied,
+                                  names: Provider.of<DoctorFilterProvider>(
+                                      context,
+                                      listen: false)
+                                      .getNamesApplied
+                                ));
                               },
                               // this for load more doctors
                               onLoading: () {
@@ -294,17 +303,21 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                     Provider.of<DoctorFilterProvider>(
                                         context,
                                         listen: false)
-                                        .getSpecializationsApplied!,
+                                        .getSpecializationsApplied,
                                     virtualAppointment: Provider.of<
                                         DoctorFilterProvider>(
                                         context,
                                         listen: false)
-                                        .getLastVirtualAppointmentApplied!,
+                                        .getLastVirtualAppointmentApplied,
                                     inPersonAppointment:
                                     Provider.of<DoctorFilterProvider>(
                                         context,
                                         listen: false)
-                                        .getLastInPersonAppointmentApplied!));
+                                        .getLastInPersonAppointmentApplied,
+                                    names: Provider.of<DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getNamesApplied));
                               },
                             ),
                           ),

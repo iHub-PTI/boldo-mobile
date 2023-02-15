@@ -32,18 +32,23 @@ class DoctorRepository {
       List<Specializations> specializations,
       bool virtualAppointment,
       bool inPersonAppointment,
-      List<Organization> organizations) async {
+      List<Organization> organizations,
+      List<String> names,
+      ) async {
     try {
       // list of IDs
       List<String> listOfSpecializations =
           specializations.map((e) => e.id!).toList();
+
+      // list of names split for spaces
+      String listOfNames = names.join(" ");
 
       // list of organizations IDs
       String listOfOrganizations =
       organizations.map((e) => e.id!).toList().join(",");
 
       String? appointmentType;
-      // here set the tipe of appointment
+      // here set the type of appointment
       if (virtualAppointment && inPersonAppointment) {
         appointmentType = "AV";
       } else if (virtualAppointment) {
@@ -57,6 +62,7 @@ class DoctorRepository {
         "offset": offset,
         "count": offset + 20,
         "organizations": listOfOrganizations == ""? null : listOfOrganizations,
+        "names": listOfNames.split(" "),
       };
 
       // remove null values to solve null compare in server

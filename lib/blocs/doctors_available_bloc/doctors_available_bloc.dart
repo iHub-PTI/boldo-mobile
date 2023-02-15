@@ -55,12 +55,16 @@ class DoctorsAvailableBloc
         }
       } else if(event is GetMoreFilterDoctor) {
         var _post;
-        await Task(() => _doctorRepository.getDoctorsFilter(
-          event.offset,
-          event.specializations,
-          event.virtualAppointment,
-          event.inPersonAppointment,
-          event.organizations))
+        await Task(() => _doctorRepository
+            .getDoctorsFilter(
+            0,
+            event.specializations,
+            event.virtualAppointment,
+            event.inPersonAppointment,
+            event.organizations,
+            event.names
+        )
+        )
             .attempt()
             .run()
             .then((value) {
@@ -84,12 +88,16 @@ class DoctorsAvailableBloc
       } else if (event is GetDoctorFilter) {
         emit(FilterLoading());
         var _post;
-        await Task(() => _doctorRepository.getDoctorsFilter(
+        await Task(() => _doctorRepository
+            .getDoctorsFilter(
             0,
             event.specializations,
             event.virtualAppointment,
             event.inPersonAppointment,
-            event.organizations)).attempt().run().then((value) {
+            event.organizations,
+            event.names
+        )
+        ).attempt().run().then((value) {
           _post = value;
         });
         var response;
@@ -116,12 +124,16 @@ class DoctorsAvailableBloc
       } else if (event is GetDoctorFilterInDoctorList) {
         emit(FilterLoadingInDoctorList());
         var _post;
-        await Task(() => _doctorRepository.getDoctorsFilter(
+        await Task(() => _doctorRepository
+            .getDoctorsFilter(
             0,
             event.specializations,
             event.virtualAppointment,
             event.inPersonAppointment,
-            event.organizations)).attempt().run().then((value) {
+            event.organizations,
+            event.names
+        )
+        ).attempt().run().then((value) {
           _post = value;
         });
         var response;
