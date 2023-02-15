@@ -241,7 +241,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                 color: Constants.primaryColor800,
                               ),
                               child: GridView.builder(
-                                physics: ScrollPhysics(),
+                                physics: const ScrollPhysics(),
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
                                 controller: scrollDoctorList,
@@ -459,7 +459,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
         semanticContainer: true,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(32.0),
+          borderRadius: BorderRadius.circular(16.0),
         ),
         child: Stack(
           children: <Widget>[
@@ -500,17 +500,17 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
             ),
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(32),
-                gradient: const RadialGradient(
-                    radius: 4,
-                    center: Alignment(
-                      1.80,
-                      0.77,
-                    ),
-                    //center: Alignment.center,
+                borderRadius: BorderRadius.circular(16),
+                gradient: RadialGradient(
+                    radius: 3,
+                    center: Alignment.bottomLeft,
+                    stops: [
+                      0.08,
+                      0.72
+                    ],
                     colors: [
-                      Color.fromRGBO(0, 0, 0, 0),
-                      Color.fromRGBO(0, 0, 0, 1),
+                      Colors.black,
+                      Colors.black.withOpacity(0)
                     ]),
               ),
             ),
@@ -528,7 +528,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(
-                                  left: 24.0, right: 16, bottom: 2),
+                                  left: 8.0, right: 16, bottom: 2),
                               child: Text(
                                 '${doctors[index].gender == 'female' ? 'Dra.' : 'Dr.'} ${doctors[index].givenName!.split(" ")[0]} ${doctors[index].familyName!.split(" ")[0]}',
                                 style: boldoCardHeadingTextStyle,
@@ -545,8 +545,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                   child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: 24.0,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0,
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -557,16 +557,12 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                     .specializations!
                                     .length;
                             i++)
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: i == 0 ? 0 : 3.0, bottom: 8),
-                                child: Text(
-                                  "${doctors[index].specializations![i].description}${doctors[index].specializations!.length > 1 && i == 0 ? "," : ""}",
-                                  style: boldoCorpMediumWithLineSeparationLargeTextStyle
-                                      .copyWith(
-                                      color: ConstantsV2
-                                          .buttonPrimaryColor100,
-                                      fontWeight: FontWeight.bold),
+                              Text(
+                                "${doctors[index].specializations![i].description}${doctors[index].specializations!.length > 1 && i == 0 ? "," : ""}",
+                                style: boldoBodyLRegularTextStyle
+                                    .copyWith(
+                                  color: ConstantsV2
+                                      .buttonPrimaryColor100,
                                 ),
                               ),
                           ],
