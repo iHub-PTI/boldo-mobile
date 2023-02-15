@@ -4,6 +4,7 @@ import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/network/doctor_repository.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
+import 'package:boldo/utils/organization_helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -160,31 +161,4 @@ class DoctorsAvailableBloc
     });
   }
 
-  int orderByAvailability(OrganizationWithAvailability a, OrganizationWithAvailability b){
-    if (b.nextAvailability == null && a.nextAvailability == null) {
-      return 0;
-    }
-    if (a.nextAvailability == null) {
-      return 1;
-    }
-    if (b.nextAvailability == null) {
-      return -1;
-    }
-    return DateTime.parse(a.nextAvailability!.availability!)
-        .compareTo(DateTime.parse(b.nextAvailability!.availability!));
-  }
-
-  int orderByOrganizationAvailability(Doctor a, Doctor b){
-    if (b.organizations?.first.nextAvailability == null && a.organizations?.first.nextAvailability == null) {
-      return 0;
-    }
-    if (a.organizations?.first.nextAvailability == null) {
-      return 1;
-    }
-    if (b.organizations?.first.nextAvailability == null) {
-      return -1;
-    }
-    return DateTime.parse(a.organizations!.first.nextAvailability!.availability!)
-        .compareTo(DateTime.parse(b.organizations!.first.nextAvailability!.availability!));
-  }
 }

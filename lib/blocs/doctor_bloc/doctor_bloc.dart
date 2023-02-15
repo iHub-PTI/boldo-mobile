@@ -1,6 +1,7 @@
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/network/user_repository.dart';
+import 'package:boldo/utils/organization_helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,6 +39,9 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
         }else{
           late List<OrganizationWithAvailabilities> nextAvailability = [];
           _post.foldRight(NextAvailability, (a, previous) => nextAvailability = a);
+
+          nextAvailability.sort(orderByAvailabilities);
+
           emit(AvailabilitiesObtained(availabilities: nextAvailability));
           emit(Success());
         }
