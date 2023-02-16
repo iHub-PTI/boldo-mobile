@@ -9,29 +9,23 @@ Widget showAppointmentTypeIcon(AppointmentType? appointmentType) {
 
   switch (appointmentType){
     case AppointmentType.InPerson:
-      icon = Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: Container(
-          width: 10,
-          height: 10,
-          child: SvgPicture.asset(
-            'assets/icon/person.svg',
-            color: Constants.primaryColor500,
-          ),
+      icon = Container(
+        width: 10,
+        height: 10,
+        child: SvgPicture.asset(
+          'assets/icon/person.svg',
+          color: Constants.primaryColor500,
         ),
       );
       break;
     case AppointmentType.Virtual:
-      icon = Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Container(
-            width: 10,
-            height: 10,
-            child: SvgPicture.asset(
-              'assets/icon/video.svg',
-              color: Constants.secondaryColor500,
-            ),
-          )
+      icon = Container(
+        width: 10,
+        height: 10,
+        child: SvgPicture.asset(
+          'assets/icon/video.svg',
+          color: Constants.secondaryColor500,
+        ),
       );
       break;
     case null:
@@ -40,7 +34,6 @@ Widget showAppointmentTypeIcon(AppointmentType? appointmentType) {
   }
 
   return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 6),
     child: icon
   );
 }
