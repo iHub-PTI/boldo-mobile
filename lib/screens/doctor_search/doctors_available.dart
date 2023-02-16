@@ -1,12 +1,14 @@
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
 import 'package:boldo/constants.dart';
+import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/doctor_profile/doctor_profile_screen.dart';
 import 'package:boldo/screens/doctor_search/doctor_filter.dart';
+import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/go_to_top.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -171,17 +173,43 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                           style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                         ),
                       ),
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DoctorFilter(),
+                      Row(
+                        children: [
+                          ImageViewTypeForm(
+                            height: 44,
+                            width: 44,
+                            url: patient.photoUrl,
+                            gender: patient.gender,
+                            border: true,
+                            borderColor: ConstantsV2.secondaryRegular,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DoctorFilter(),
+                                ),
+                              );
+                            },
+                            child:Card(
+                              color: ConstantsV2.secondaryRegular,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(100)),
                               ),
-                            );
-                          },
-                          child: SvgPicture.asset(
-                              'assets/icon/change-filter.svg'))
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: buttonFXSecondaryStyle.copyWith(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: SvgPicture.asset(
+                                  'assets/icon/search.svg',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -213,7 +241,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                 color: Constants.primaryColor800,
                               ),
                               child: GridView.builder(
-                                physics: ScrollPhysics(),
+                                physics: const ScrollPhysics(),
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
                                 controller: scrollDoctorList,
@@ -336,6 +364,62 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
     );
   }
 
+  Widget _availabilityHourCard(OrganizationWithAvailability? organization){
+
+
+    return Container(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  child: Text(
+                    availableText(organization?.nextAvailability),
+                    style: boldoBodySRegularTextStyle
+                        .copyWith(
+                      color: ConstantsV2
+                          .grayLight,
+                    ),
+                  ),
+                ),
+                Container(
+                  child: Text(
+                    "vía ${organization?.organization?.name?? 'Desconocido'}",
+                    style: boldoBodySRegularTextStyle
+                        .copyWith(
+                      color: ConstantsV2
+                          .grayLight,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Card(
+            elevation: 0.0,
+            color: ConstantsV2.grayLightAndClear,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: ConstantsV2.grayLightAndClear, width: 1),
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              child: Row(
+                children: [
+                  Text("${DateFormat('HH:mm').format(DateTime.parse(organization?.nextAvailability?.availability?? DateTime.now().toString()).toLocal())}",
+                    style: boldoBodySBlackTextStyle.copyWith(color: ConstantsV2.secondaryRegular),),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   String availableText(NextAvailability? nextAvailability) {
     String available = 'Sin disponibilidad en los próximos 30 días';
     if(nextAvailability == null)
@@ -349,10 +433,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
       isToday = true;
     }
     if (isToday) {
-      available = 'Disponible Hoy!';
+      available = 'Disponible hoy a las ';
     } else if (daysDifference > 0) {
       available =
-          'Disponible ${DateFormat('EEEE, dd MMMM', const Locale("es", 'ES').languageCode).format(parsedAvailability)}';
+          'Disponible ${DateFormat('EEEE, dd MMMM', const Locale("es", 'ES').languageCode).format(parsedAvailability)} a las';
     }
     return available;
   }
@@ -375,7 +459,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
         semanticContainer: true,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(32.0),
+          borderRadius: BorderRadius.circular(16.0),
         ),
         child: Stack(
           children: <Widget>[
@@ -416,17 +500,17 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
             ),
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(32),
-                gradient: const RadialGradient(
-                    radius: 4,
-                    center: Alignment(
-                      1.80,
-                      0.77,
-                    ),
-                    //center: Alignment.center,
+                borderRadius: BorderRadius.circular(16),
+                gradient: RadialGradient(
+                    radius: 3,
+                    center: Alignment.bottomLeft,
+                    stops: [
+                      0.08,
+                      0.72
+                    ],
                     colors: [
-                      Color.fromRGBO(0, 0, 0, 0),
-                      Color.fromRGBO(0, 0, 0, 1),
+                      Colors.black,
+                      Colors.black.withOpacity(0)
                     ]),
               ),
             ),
@@ -444,7 +528,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(
-                                  left: 24.0, right: 16, bottom: 2),
+                                  left: 8.0, right: 16, bottom: 2),
                               child: Text(
                                 '${doctors[index].gender == 'female' ? 'Dra.' : 'Dr.'} ${doctors[index].givenName!.split(" ")[0]} ${doctors[index].familyName!.split(" ")[0]}',
                                 style: boldoCardHeadingTextStyle,
@@ -458,13 +542,11 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                 doctors[index].specializations != null
                     ? doctors[index].specializations!.length > 0
                     ? Container(
-                  // 52 is the sum of left and right padding plus the space between columns
-                  width: MediaQuery.of(context).size.width / 2 - 52,
                   child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: 24.0,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0,
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -475,16 +557,12 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                     .specializations!
                                     .length;
                             i++)
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: i == 0 ? 0 : 3.0, bottom: 8),
-                                child: Text(
-                                  "${doctors[index].specializations![i].description}${doctors[index].specializations!.length > 1 && i == 0 ? "," : ""}",
-                                  style: boldoCorpMediumWithLineSeparationLargeTextStyle
-                                      .copyWith(
-                                      color: ConstantsV2
-                                          .buttonPrimaryColor100,
-                                      fontWeight: FontWeight.bold),
+                              Text(
+                                "${doctors[index].specializations![i].description}${doctors[index].specializations!.length > 1 && i == 0 ? "," : ""}",
+                                style: boldoBodyLRegularTextStyle
+                                    .copyWith(
+                                  color: ConstantsV2
+                                      .buttonPrimaryColor100,
                                 ),
                               ),
                           ],
@@ -494,24 +572,11 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                     : Container()
                     : Container(),
                 Container(
-                  width: MediaQuery.of(context).size.width / 2 - 52,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 24.0, bottom: 4),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            availableText(doctors[index].organizations?.first.nextAvailability),
-                            style: boldoCorpSmallInterTextStyle.copyWith(
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
-                    ),
+                    padding: const EdgeInsets.only(left: 8.0, bottom: 4),
+                    child: _availabilityHourCard(doctors[index].organizations?.first),
                   ),
                 ),
-                const SizedBox(height: 4)
               ],
             ),
           ],
