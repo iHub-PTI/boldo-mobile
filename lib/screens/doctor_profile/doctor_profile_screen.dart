@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart'as patient;
 import 'package:boldo/blocs/doctor_bloc/doctor_bloc.dart';
 import 'package:boldo/main.dart';
@@ -86,23 +88,22 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
             },
             child: BlocBuilder<DoctorBloc, DoctorState>(
                 builder: (context, state) {
-                  return ExpandableCardPage(
-                    page: Background(
-                      doctor: widget.doctor,
-                      child: Align(
-                        alignment: AlignmentDirectional.topCenter,
-                        child: Container(
-                          height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height*0.2,
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                children: [
-                                  const SizedBox(
-                                    height: 16,
-                                  ),
-                                  Row(
+                  return Background(
+                    doctor: widget.doctor,
+                    child: Align(
+                      alignment: AlignmentDirectional.topCenter,
+                      child: Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              children: [
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -185,41 +186,37 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    expandableCard: ExpandableCard(
-                      hasBlur: true,
-                      blurRadius: 15.0,
-                      handleColor: ConstantsV2.orange,
-                      backgroundGradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomCenter,
-                        colors: <Color> [
-                          Colors.black.withOpacity(0),
-                          const Color(0xA7A7A7).withOpacity(.8),
-                        ],
-                      ),
-                      maxHeight: MediaQuery.of(context).size.height-120,
-                      minHeight: MediaQuery.of(context).size.height*0.35,
-                      children: SingleChildScrollView(
-                        child: Column(
-                          children: <Widget>[
-                            // show Availability only if go to this page to make a reservation
+                                )
+                              ],
+                            ),
                             if(widget.showAvailability)
                               BlocBuilder<DoctorBloc, DoctorState>(builder: (context, state) {
                                 if(state is Success){
-                                  return Container(
-                                    child: ListView.builder(
-                                        shrinkWrap: true,
-                                        padding: const EdgeInsets.only(right: 16),
-                                        scrollDirection: Axis.vertical,
-                                        itemCount: organizationsWithAvailabilites.length,
-                                        itemBuilder: _organizationAvailabilities
+                                  return ClipRect(
+                                    child: Container(
+                                      padding: const EdgeInsets.only(bottom: 16),
+                                      decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(15.0),
+                                          topRight: Radius.circular(15.0),
+                                        ),
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomCenter,
+                                          colors: <Color> [
+                                            Colors.black.withOpacity(0),
+                                            const Color(0xA7A7A7).withOpacity(1),
+                                          ],
+                                        ),
+                                      ),
+                                      child: BackdropFilter(
+                                        blendMode: BlendMode.src,
+                                        filter: ImageFilter.blur(
+                                            sigmaX: 5,
+                                            sigmaY: 5
+                                        ),
+                                        child: _organizationAvailabilities(context, 0),
+                                      ),
                                     ),
                                   );
                                 }else if(state is Loading){
@@ -324,12 +321,13 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         ),
         Container(
           constraints: BoxConstraints(maxHeight: 45),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 child: ListView.builder(
                     shrinkWrap: true,
-                    padding: const EdgeInsets.only(right: 16),
                     scrollDirection: Axis.horizontal,
                     itemCount: organizationsWithAvailabilites[index].availabilities.length > 3
                         ? 3: organizationsWithAvailabilites[index].availabilities.length,
@@ -352,6 +350,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                   },
                   child: Card(
                     elevation: 0.0,
+                    margin: EdgeInsets.zero,
                     color: ConstantsV2.grayLightAndClear,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(100),
@@ -441,7 +440,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
             borderRadius: BorderRadius.circular(100),
           ),
           child: Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
               children: [
                 Text("${DateFormat('HH:mm').format(DateTime.parse(organizationsWithAvailabilites[indexOrganization].availabilities[index]?.availability?? DateTime.now().toString()))}",
