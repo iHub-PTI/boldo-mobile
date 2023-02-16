@@ -121,13 +121,14 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
                         height: 10,
                       ),
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 7),
                             child: ClipOval(
                               child: SizedBox(
-                                width: 54,
-                                height: 54,
+                                width: 40,
+                                height: 40,
                                 child: widget.studyOrder.doctor?.photoUrl ==
                                         null
                                     ? SvgPicture.asset(
