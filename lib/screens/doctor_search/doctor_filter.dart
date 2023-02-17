@@ -3,10 +3,12 @@ import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/specializationFilter_bloc/specializationFilter_bloc.dart';
 import 'package:boldo/constants.dart';
+import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
+import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -162,6 +164,14 @@ class _DoctorFilterState extends State<DoctorFilter> {
                           style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                         ),
                       ),
+                      ImageViewTypeForm(
+                        height: 44,
+                        width: 44,
+                        border: true,
+                        gender: patient.gender,
+                        url: patient.photoUrl,
+                        borderColor: ConstantsV2.gray,
+                      )
                     ],
                   ),
                 ),
