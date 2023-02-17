@@ -354,10 +354,6 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                     color: ConstantsV2.grayLightAndClear,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(100),
-                        side: const BorderSide(
-                          color: ConstantsV2.orange,
-                          width: 1.0,
-                        )
                     ),
                     child: Container(
                       padding: const EdgeInsets.all(10),
