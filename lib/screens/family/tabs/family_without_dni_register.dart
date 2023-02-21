@@ -2,12 +2,13 @@ import 'dart:ui';
 
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/constants.dart';
+import 'package:boldo/network/repository_helper.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../../../main.dart';
 
@@ -119,12 +120,10 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                   _loadingQuery = false;
                 });
                 BlocProvider.of<FamilyBloc>(context).add(GetFamilyList());
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(dependentSuccessAdded),
-                    backgroundColor: ConstantsV2.green,
-                    duration: Duration(seconds: 2),
-                  ),
+                emitSnackBar(
+                    context: context,
+                    text: dependentSuccessAdded,
+                    status: ActionStatus.Success
                 );
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/home', (route) => false);
@@ -154,12 +153,10 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                 setState(() {
                   _relationLoaded = false;
                 });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.response!),
-                    backgroundColor: Colors.redAccent,
-                    duration: const Duration(seconds: 2),
-                  ),
+                emitSnackBar(
+                    context: context,
+                    text: state.response,
+                    status: ActionStatus.Fail
                 );
               }
             },
@@ -253,13 +250,12 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                 controller: _fecha,
                                 inputFormatters: [
                                   UpperCaseTextFormatter(),
-                                  MaskTextInputFormatter(
-                                      mask: "##/##/####",
-                                      type: MaskAutoCompletionType.eager)
+                                  DateTextFormatter()
                                 ],
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
-                                  hintText: "Fecha de nacimiento (dd/mm/yyyy)",
+                                  hintText: DateFormat('dd/MM/yyyy').format(DateTime.now()),
+                                  labelText: "Fecha de nacimiento (dd/mm/yyyy)",
                                   suffixIcon: Align(
                                     widthFactor: 1.0,
                                     heightFactor: 1.0,
@@ -283,10 +279,18 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                           DateFormat('yyyy-MM-dd');
                                       var date1 = inputFormat
                                           .parseStrict(value.toString().trim());
+
+                                      if(date1.isBefore(minDate)){
+                                        throw Failure('Fecha inferior al minimo ${inputFormat.format(minDate)}');
+                                      }else if(date1.isAfter(DateTime.now())){
+                                        throw Failure('Fecha superior a la actual');
+                                      }
                                       var date2 = outputFormat.format(date1);
                                       birthDate = date2;
+                                    } on Failure catch (e) {
+                                      return e.message;
                                     } catch (e) {
-                                      return 'El formato debe ser "dd/MM/yyyy" ';
+                                      return 'El formato debe ser "dd/mm/yyyy" ';
                                     }
                                   }
                                 },

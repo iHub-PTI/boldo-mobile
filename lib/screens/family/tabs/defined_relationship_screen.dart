@@ -3,6 +3,7 @@ import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/Relationship.dart';
 import 'package:boldo/models/User.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/loading_helper.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:flutter/material.dart';
@@ -75,13 +76,11 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                 listener: (context, state){
                   setState(() {
                     if(state is Failed){
-                      // this is showing for the second time
-                      // ScaffoldMessenger.of(context).showSnackBar(
-                      //   SnackBar(
-                      //     content: Text(state.response!),
-                      //     backgroundColor: Colors.redAccent,
-                      //   ),
-                      // );
+                      emitSnackBar(
+                          context: context,
+                          text: state.response,
+                          status: ActionStatus.Fail
+                      );
                       _dataLoading = false;
                     }
                     if(state is Success){
@@ -112,7 +111,7 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            ProfileImageView2(height: 100, width: 100, border: true, patient: dependent),
+                                            ImageViewTypeForm(height: 100, width: 100, border: true, url: dependent?.photoUrl, gender: dependent?.gender,),
                                           ],
                                         ),
                                         const SizedBox(height: 10,),

@@ -5,11 +5,6 @@ abstract class DoctorAvailabilityState{}
 
 class DoctorAvailabilityInitial extends DoctorAvailabilityState {}
 
-class DoctorNextAvailabilityLoaded extends DoctorAvailabilityState {
-  final List<NextAvailability>? nextAvailability;
-  DoctorNextAvailabilityLoaded({this.nextAvailability});
-}
-
 class Loading extends DoctorAvailabilityState {}
 
 class Failed extends DoctorAvailabilityState {
@@ -19,8 +14,7 @@ class Failed extends DoctorAvailabilityState {
 
 class Success extends DoctorAvailabilityState {}
 
-class RedirectNextScreen extends DoctorAvailabilityState {}
-
-class RedirectToHome extends DoctorAvailabilityState {}
-
-class RedirectBackScreen extends DoctorAvailabilityState {}
+class AvailabilitiesObtained extends DoctorAvailabilityState {
+  final List<OrganizationWithAvailabilities> availabilities;
+  AvailabilitiesObtained({required this.availabilities});
+}

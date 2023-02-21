@@ -5,8 +5,12 @@ import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/Call/video_call.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
+import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
 import 'package:boldo/screens/details/appointment_details.dart';
+import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/appointment_location_icon.dart';
+import 'package:boldo/widgets/appointment_type_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,6 +41,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
   bool isCancelled = false;
   DateTime actualDay = DateTime.now();
   DateTime appointmentDay = DateTime.now();
+  AppointmentType? appointmentType;
+  String locationDescription = 'Desconocido';
   int daysDifference = 0;
   bool isToday = false;
   int minutes = 0;
@@ -53,6 +59,15 @@ class _AppointmentCardState extends State<AppointmentCard> {
       minutes = appointmentDay.difference(actualDay).inMinutes + 1;
       isToday = daysDifference == 0 &&
           !["closed", "locked"].contains(widget.appointment.status);
+
+      //set the appointment type
+      appointmentType = widget.appointment.appointmentType == 'V'
+          ? AppointmentType.Virtual : AppointmentType.InPerson;
+
+      //message to describe whe is the appointment
+      locationDescription = appointmentType == AppointmentType.Virtual
+          ? 'Sala de espera virtual habilitada 15 min. antes de la consulta'
+          : '${widget.appointment.organization?.name?? "Desconocido"}';
     }
     timer?.cancel();
     _updateWaitingRoom(1);
@@ -67,6 +82,15 @@ class _AppointmentCardState extends State<AppointmentCard> {
     minutes = appointmentDay.difference(actualDay).inMinutes + 1;
     isToday = daysDifference == 0 &&
         !["closed", "locked"].contains(widget.appointment.status);
+
+    //set the appointment type
+    appointmentType = widget.appointment.appointmentType == 'V'
+        ? AppointmentType.Virtual : AppointmentType.InPerson;
+
+    //message to describe whe is the appointment
+    locationDescription = appointmentType == AppointmentType.Virtual
+        ? 'Sala de espera virtual habilitada 15 min. antes de la consulta'
+        : '${widget.appointment.organization?.name?? "Desconocido"}';
     super.initState();
     _updateWaitingRoom(1);
   }
@@ -130,10 +154,9 @@ class _AppointmentCardState extends State<AppointmentCard> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AppointmentDetailsScreen(
-                        appointment: widget.appointment,
-                        isInWaitingRoom: widget.isInWaitingRoom && appointmentDay.difference(actualDay).compareTo(const Duration(minutes: 15)) <= 0),
-                  ),
+                    builder: (context) => MedicalRecordsScreen(
+                        appointment: widget.appointment
+                    )),
                 );
             },
             child: Container(
@@ -151,121 +174,59 @@ class _AppointmentCardState extends State<AppointmentCard> {
                         style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.darkBlue),
                       ),*/
                       Container(),
-                      widget.showCancelOption &&
-                          !isCancelled &&
-                          daysDifference >= 0 &&
-                          !["closed", "locked"]
-                              .contains(widget.appointment.status)
-                          ? Padding(
-                        padding: const EdgeInsets.only(right: 4.0),
-                        child: CancelAppointmentWidget(
-                          onTapCallback: (result) async {
-                            if (result == 'Descartar') {
-                              try{
-                                final response = await dio.post(
-                                    !prefs.getBool(isFamily)! ?
-                                    "/profile/patient/appointments/cancel/${widget.appointment.id}"
-                                        : "/profile/caretaker/appointments/cancel/${widget.appointment.id}");
-                                if (response.statusMessage != null) {
-                                  if (response.statusMessage!
-                                      .contains('OK')) {
-                                    setState(() {
-                                      isCancelled = true;
-                                      widget.appointment.status="cancelled";
-                                    });
-                                  }
-                                }
-                              } catch (e){
-                                print(e);
-                              }
-                            }
-                          },
-                        ),
-                      )
-                          : Container(),
                     ],
                   ),
                   Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 7),
-                        child: ClipOval(
-                          child: SizedBox(
-                            width: 54,
-                            height: 54,
-                            child: widget.appointment.doctor?.photoUrl == null
-                                ? SvgPicture.asset(
-                                widget.appointment.doctor!.gender == "female"
-                                    ? 'assets/images/femaleDoctor.svg'
-                                    : 'assets/images/maleDoctor.svg',
-                                fit: BoxFit.cover)
-                                : CachedNetworkImage(
-                              fit: BoxFit.cover,
-                              imageUrl: widget.appointment.doctor!.photoUrl??'',
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) =>
-                                  Padding(
-                                    padding: const EdgeInsets.all(26.0),
-                                    child: LinearProgressIndicator(
-                                      value: downloadProgress.progress,
-                                      valueColor:
-                                      const AlwaysStoppedAnimation<
-                                          Color>(
-                                          Constants.primaryColor400),
-                                      backgroundColor:
-                                      Constants.primaryColor600,
-                                    ),
-                                  ),
-                              errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
-                            ),
-                          ),
+                        child: ImageViewTypeForm(
+                          width: 54,
+                          height: 54,
+                          border: false,
+                          url: widget.appointment.doctor?.photoUrl,
+                          gender: widget.appointment.doctor?.gender,
                         ),
                       ),
                       const SizedBox(
                         width: 8,
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                "${getDoctorPrefix(widget.appointment.doctor!.gender!)}${widget.appointment.doctor!.familyName}",
-                                style: boldoSubTextMediumStyle,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          if (widget.appointment.doctor!.specializations !=
-                              null &&
-                              widget.appointment.doctor!.specializations!
-                                  .isNotEmpty)
-                            SizedBox(
-                              width: 300,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    for (int i = 0;
-                                    i <
-                                        widget.appointment.doctor!
-                                            .specializations!.length;
-                                    i++)
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: i == 0 ? 0 : 3.0, bottom: 5),
-                                        child: Text(
-                                          "${widget.appointment.doctor!.specializations![i].description}${widget.appointment.doctor!.specializations!.length > 1 && i == 0 ? "," : ""}",
-                                          style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
-                                        ),
-                                      ),
-                                  ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "${getDoctorPrefix(widget.appointment.doctor!.gender!)}${widget.appointment.doctor!.familyName}",
+                                  style: boldoSubTextMediumStyle,
                                 ),
-                              ),
+                              ],
                             ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            if (widget.appointment.doctor!.specializations !=
+                                null &&
+                                widget.appointment.doctor!.specializations!
+                                    .isNotEmpty)
+                              Wrap(
+                                children: [
+                                  for (int i = 0;
+                                  i <
+                                      widget.appointment.doctor!
+                                          .specializations!.length;
+                                  i++)
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          right: i == 0 ? 0 : 3.0, bottom: 5),
+                                      child: Text(
+                                        "${widget.appointment.doctor!.specializations![i].description}${widget.appointment.doctor!.specializations!.length-1 != i  ? "," : ""}",
+                                        style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
+                                      ),
+                                    ),
+                                ],
+                              ),
                           if (isCancelled)
                             Text(
                               "Cancelado - ${DateFormat('HH:mm').format(DateTime.parse(widget.appointment.start!).toLocal())} hs ",
@@ -276,7 +237,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                               ),
                             ),
                         ],
-                      ),
+                      ),),
                     ],
                   ),
                   Row(
@@ -284,21 +245,51 @@ class _AppointmentCardState extends State<AppointmentCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          hourContainer(),
-                          ShowAppoinmentTypeIcon(appointmentType: widget.appointment.appointmentType!),
-                          Text(
-                            widget.appointment.appointmentType == 'V' ? "Remoto" : "Presencial",
-                            style: TextStyle(
-                              color: widget.appointment.appointmentType == 'V' ? ConstantsV2.orange : ConstantsV2.green,
-                              fontSize: 12,
-                              // fontWeight: FontWeight.bold
-                            ),
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.only(right: 8, bottom: 8),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              hourContainer(),
+                              Flexible(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      child: Row(
+                                        children: [
+                                          showAppointmentTypeIcon(appointmentType),
+                                          Text(
+                                            widget.appointment.appointmentType == 'V' ? "Remoto" : "Presencial",
+                                            style: boldoCorpSmallTextStyle.copyWith(
+                                              color: widget.appointment.appointmentType == 'V' ? ConstantsV2.orange : ConstantsV2.green,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    if(widget.appointment.appointmentType != 'V' || minutes >= 15)
+                                    Row(
+                                      children: [
+                                        locationType(appointmentType),
+                                        Expanded(
+                                          child: Text(
+                                            locationDescription,
+                                            style: boldoCorpSmallTextStyle.copyWith(
+                                                color: ConstantsV2.veryLightBlue
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                       widget.appointment.appointmentType == 'V' && minutes <= 15 ?
                           Column(
@@ -343,6 +334,9 @@ class _AppointmentCardState extends State<AppointmentCard> {
       ],
     );
   }
+
+
+
 
   Widget hourContainer() {
     return Container(

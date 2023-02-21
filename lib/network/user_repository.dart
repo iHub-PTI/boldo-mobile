@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/MedicalRecord.dart';
+import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/Prescription.dart';
+import 'package:boldo/models/QRCode.dart';
 import 'package:boldo/models/Relationship.dart';
 import 'package:boldo/models/User.dart';
 import 'package:boldo/models/upload_url_model.dart';
@@ -16,12 +18,17 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart';
 import '../main.dart';
 import '../models/Appointment.dart';
 import '../models/Doctor.dart';
+import '../provider/auth_provider.dart';
+import '../provider/user_provider.dart';
 import 'http.dart';
 
 class UserRepository {
@@ -52,6 +59,13 @@ class UserRepository {
     'Relationship of dependence with the patient is already exists'
   ];
 
+  final Map<String,String> errorInQrValidation = {
+    "The dependent and the caretaker are the same": "El Código pertenece al mismo paciente",
+    "QR code does not exist":"El código QR no existe",
+    "Invalid QR code":"El código QR no es válido",
+    "Expired QR code":"El código QR ya expiró",
+  };
+
   Future<None>? getPatient(String? id) async {
     try {
       Response response = id == null
@@ -60,7 +74,7 @@ class UserRepository {
       if (response.statusCode == 200) {
         patient = Patient.fromJson(response.data);
         // Update prefs in Principal Patient
-        if(!prefs.getBool(isFamily)!) {
+        if(!(prefs.getBool(isFamily)?? false)) {
           prefs.setString("profile_url", patient.photoUrl ?? '');
           prefs.setString("userId", patient.id ?? '');
           await prefs.setString("name", response.data['givenName']!= null ? toLowerCase(response.data['givenName']!) : '');
@@ -70,16 +84,19 @@ class UserRepository {
         return const None();
       }
       throw Failure(genericError);
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se puede obtener el usuario");
@@ -88,30 +105,39 @@ class UserRepository {
     }
   }
 
-  Future<None>? editProfile(Patient editingPatient) async {
+  Future<None>? editProfile(Patient patientData) async {
     try {
-      if(!prefs.getBool(isFamily)!)
-        await dio.post("/profile/patient", data: editingPatient.toJson());
+
+      //copy data to add international code
+      patientData = Patient.fromJson(patientData.toJson());
+
+      // add international py code
+      patientData.phone = addInternationalPyNumber(patientData.phone);
+      if(!(prefs.getBool(isFamily)?? false))
+        await dio.post("/profile/patient", data: patientData.toJson());
       else
-        await dio.put("/profile/caretaker/dependent/${patient.id}", data: editingPatient.toJson());
+        await dio.put("/profile/caretaker/dependent/${patient.id}", data: patientData.toJson());
 
       // Set new profile info
-      patient = Patient.fromJson(editingPatient.toJson());
+      patient = Patient.fromJson(patientData.toJson());
 
       // Update prefs in Principal Patient
-      if(!prefs.getBool(isFamily)!)
+      if(!(prefs.getBool(isFamily)?? false))
         prefs.setString("profile_url", patient.photoUrl?? '');
       return const None();
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se puede actualizar los datos");
@@ -136,16 +162,19 @@ class UserRepository {
       }
       families = List<Patient>.from([]);
       throw Failure(genericError);
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se puede obtener los familiares");
@@ -165,16 +194,19 @@ class UserRepository {
         return List<Patient>.from([]);
       }
       throw Failure(genericError);
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se puede obtener los gestores");
@@ -193,16 +225,19 @@ class UserRepository {
         throw Failure("El gestor ya fue borrado con anterioridad");
       }
       throw Failure(genericError);
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se puede borrar el gestor");
@@ -211,32 +246,58 @@ class UserRepository {
     }
   }
 
-  Future<None>? getDependent(String id) async {
-    print("ID $id");
+  /// set [user] in the main the patient obtained with his [QrCode]
+  Future<None>? getDependent(String qrCode) async {
     try {
       Response response =
-          await dio.get("/profile/caretaker/dependent/confirm/$id");
+          await dio.get("/profile/caretaker/dependent/qrcode/decode?qr=$qrCode");
       if (response.statusCode == 200) {
-        print(response.data);
+        // set the user obtained from the server
         user = User.fromJson(response.data);
         return const None();
       }
-      print(response.statusCode);
-      throw Failure(genericError);
-    }on DioError catch(ex){
+      // throw an error if isn't a know status code
+      throw Failure('Unknown StatusCode ${response.statusCode}');
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
-      throw Failure("No se puede obtener el paciente");
-    } catch (e) {
+
+      // check if has message error
+      if(exception.response?.data['messages'].isNotEmpty)
+        // get the first message error and search a coincidence into [errorInQrValidation]
+        // that we know locally
+        if( errorInQrValidation.containsKey(exception.response?.data['messages'].first))
+          // set the error
+          throw Failure(
+            errorInQrValidation[exception.response?.data['messages'].first]?? genericError
+          );
+
+      // throw a generic error if we not know the message error obtained from the server
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
+      );
       throw Failure(genericError);
     }
   }
@@ -248,16 +309,19 @@ class UserRepository {
     try {
       list = List<MedicalRecord>.from(
           response.data.map((x) => MedicalRecord.fromJson(x[0])));
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se puede obtener los registros medicos");
@@ -278,16 +342,19 @@ class UserRepository {
         return const None();
       }
       throw Failure(genericError);
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se puede obtener las relaciones");
@@ -306,21 +373,24 @@ class UserRepository {
         return const None();
       }
       throw Failure(genericError);
-    }on DioError catch (ex){
-      if(patientAndDependentAreTheSameErrors.contains(ex.response?.data['messages'].join())){
+    } on DioError catch (exception, stackTrace){
+      if(patientAndDependentAreTheSameErrors.contains(exception.response?.data['messages'].join())){
         throw Failure("El familiar no puede ser el mismo que el principal");
-      }else if(relationshipWithDependentAlreadyExistErrors.contains(ex.response?.data['messages'].join())){
+      }else if(relationshipWithDependentAlreadyExistErrors.contains(exception.response?.data['messages'].join())){
         throw Failure("El familiar ya se encuentra asignado");
       }
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("Error al asociar al familiar");
@@ -355,26 +425,39 @@ class UserRepository {
             "patient": prefs.getString("userId"),
             "responseError": response.data,
             "status": response.statusCode,
+            'access_token': await storage.read(key: 'access_token')
           }
         ],
       );
       throw Failure(genericError);
-    } on DioError catch (ex) {
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se pudo añadir al dependiente. Por favor, reintente más tarde.");
-    } catch (e, stackTrace) {
+    } catch (exception, stackTrace) {
       // send error to sentry
-      await Sentry.captureException(e, stackTrace: stackTrace);
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
+      );
       throw Failure(genericError);
     }
   }
@@ -389,17 +472,19 @@ class UserRepository {
         throw Failure("El familiar ya fue borrado con anterioridad");
       }
       throw Failure(genericError);
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "dependentId": id,
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se pudo borrar al familiar");
@@ -408,39 +493,60 @@ class UserRepository {
     }
   }
 
-  Future<List<NextAvailability>>? getAvailabilities({required String id, required String startDate, required String endDate}) async {
+  Future<List<OrganizationWithAvailabilities>>? getAvailabilities({
+    required String id,
+    required String startDate,
+    required String endDate,
+    required List<Organization?>? organizations}) async {
+
+    String? _organizations = organizations?.map((e) => e?.id?? "").toList().join(",");
     try {
+
+
       Response response = await dio
-          .get("/doctors/$id/availability", queryParameters: {
+          .get("/profile/patient/doctors/$id/availability", queryParameters: {
         'start': startDate,
         'end': endDate,
+        'organizationIdList': _organizations,
       });
       if (response.statusCode == 200) {
-        List<NextAvailability>? allAvailabilities = [];
-        response.data['availabilities'].forEach((v) {
-          allAvailabilities.add(NextAvailability.fromJson(v));
+        List<OrganizationWithAvailabilities>? allAvailabilities = [];
+        response.data.forEach((v) {
+          allAvailabilities.add(OrganizationWithAvailabilities.fromJson(v));
         });
-        for ( NextAvailability availability in allAvailabilities){
-          availability.availability = DateTime.parse(availability.availability!).toLocal().toString();
+        // set nextAvailability to local time
+        for ( OrganizationWithAvailabilities availability in allAvailabilities){
+          availability.nextAvailability?.availability = DateTime.parse(
+              availability.nextAvailability?.availability?? DateTime.now().toString()
+          ).toLocal().toString();
+          // set list of availabilities to local time
+          for(NextAvailability? nextAvailability in availability.availabilities){
+            nextAvailability?.availability = DateTime.parse(
+                nextAvailability.availability?? DateTime.now().toString()
+            ).toLocal().toString();
+          }
         }
         return allAvailabilities;
       } else if (response.statusCode == 204) {
         throw Failure("No se encuentra disponible");
       }
       throw Failure(genericError);
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
-      throw Failure("No se puedo obtener la disponibilidad");
+      throw Failure("No se pudo obtener la disponibilidad");
     } catch (e) {
       throw Failure(genericError);
     }
@@ -503,16 +609,19 @@ class UserRepository {
         return const None();
       }
       throw Failure(genericError);
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se puede donde subir la foto");
@@ -612,37 +721,46 @@ class UserRepository {
         }
       }
       throw Failure(genericError);
-    } on DioError catch (ex) {
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "photo": url,
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
-      if (errorInFrontSide.contains(ex.response?.data['messages'].join())) {
+      if (errorInFrontSide.contains(exception.response?.data['messages'].join())) {
         photoStage = UrlUploadType.frontal;
         throw Failure("Error al validar la parte frontal");
       } else if (errorInBackSide
-          .contains(ex.response?.data['messages'].join())) {
+          .contains(exception.response?.data['messages'].join())) {
         photoStage = UrlUploadType.back;
         throw Failure("Error al validar la parte posterior");
-      } else if (errorInSelfie.contains(ex.response?.data['messages'].join())) {
+      } else if (errorInSelfie.contains(exception.response?.data['messages'].join())) {
         photoStage = UrlUploadType.selfie;
         throw Failure("Error al validar la selfie");
       }
       throw Failure(genericError);
-    } catch (e, stackTrace) {
-      await Sentry.captureException(
-        e,
-        stackTrace: stackTrace
+    } catch (exception, stackTrace) {
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'responseError': exception,
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
-      throw Failure('${e.toString().length > 60 ? '$genericError' : e}');
+      throw Failure('${exception.toString().length > 60 ? '$genericError' : exception}');
     }
   }
 
@@ -661,7 +779,7 @@ class UserRepository {
     }
   }
 
-  void logout(BuildContext context) async {
+  Future<None>? logout(BuildContext context) async {
     try {
       String baseUrlKeyCloack = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
           defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
@@ -690,26 +808,36 @@ class UserRepository {
       }catch (e){
         // nothing to do
       }
-
-    }on DioError catch(ex){
+      return const None();
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
-      throw Failure("No se puedo cerrar la sesion de forma adecuada");
+      throw Failure("No se pudo cerrar la sesion de forma adecuada");
     } catch (exception, stackTrace) {
       print(exception);
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
+      throw Failure("No se pudo cerrar la sesion de forma adecuada");
     }
   }
 
@@ -730,16 +858,19 @@ class UserRepository {
         return [];
       }
       throw Failure(genericError);
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se puede obtener la disponibilidad");
@@ -758,16 +889,19 @@ class UserRepository {
         throw Failure("Doctor no encontrado");
       }
       throw Failure(genericError);
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se puede obtener el doctor");
@@ -779,7 +913,7 @@ class UserRepository {
   Future<List<Appointment>>? getPastAppointments(String date) async {
     Response responseAppointments;
     try {
-      if (!prefs.getBool(isFamily)!)
+      if (!(prefs.getBool(isFamily)?? false))
         responseAppointments =
             await dio.get("/profile/patient/appointments?start=$date");
       else
@@ -803,24 +937,33 @@ class UserRepository {
       }
 
       throw Failure("Status deconocido ${responseAppointments.statusCode}");
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se puede obtener las citas");
     } catch (exception, stackTrace) {
 
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
       throw Failure(genericError);
     }
@@ -831,7 +974,7 @@ class UserRepository {
     String lastDate = date2!= null? "&end=${DateTime(date2.year, date2.month, date2.day).add(const Duration(days: 1)).toUtc().toIso8601String()}" : "";
     Response responseAppointments;
     try {
-      if (!prefs.getBool(isFamily)!)
+      if (!(prefs.getBool(isFamily)?? false))
         responseAppointments =
         await dio.get("/profile/patient/appointments$firstDate$lastDate");
       else
@@ -855,24 +998,33 @@ class UserRepository {
       }
 
       throw Failure("Status deconocido ${responseAppointments.statusCode}");
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se puede obtener las citas");
     } catch (exception, stackTrace) {
 
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
       throw Failure(genericError);
     }
@@ -891,16 +1043,19 @@ class UserRepository {
         return medicalRecord;
       }
       throw Failure("Response status desconocido ${response.statusCode}");
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se puede obtener el registro médico");
@@ -922,16 +1077,19 @@ class UserRepository {
         return medicalRecord;
       }
       throw Failure("Response status desconocido ${response.statusCode}");
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se puede obtener el registro médico");
@@ -943,7 +1101,7 @@ class UserRepository {
   Future<List<Appointment>>? getAppointments() async {
     Response responseAppointments;
     try {
-      if (!prefs.getBool(isFamily)!)
+      if (!(prefs.getBool(isFamily)?? false))
         responseAppointments = await dio.get(
             "/profile/patient/appointments?start=${DateTime(DateTime
                 .now()
@@ -970,16 +1128,19 @@ class UserRepository {
       } else {
         throw Failure("Status ${responseAppointments.statusCode}");
       }
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No se puede obtener las citas");
@@ -991,7 +1152,7 @@ class UserRepository {
   Future<List<DiagnosticReport>>? getDiagnosticRecords() async {
     Response responseAppointments;
     try {
-      if (!prefs.getBool(isFamily)!)
+      if (!(prefs.getBool(isFamily)?? false))
         responseAppointments = await dio.get(
             "/profile/patient/diagnosticReports");
       else
@@ -1007,22 +1168,32 @@ class UserRepository {
       }else{
         throw Failure("Status ${responseAppointments.statusCode}");
       }
-    }on DioError catch(ex){
+    } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
-        ex.toString(),
+        exception.toString(),
         params: [
           {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": ex.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
-      throw Failure("No se puedo obtener los estudios medicos");
-    } catch (e) {
-      await Sentry.captureException(
-        e,
+      throw Failure("No se pudo obtener los estudios medicos");
+    } catch (exception, stackTrace) {
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
       throw Failure("Error al obtener los estudios medicos");
     }
@@ -1031,7 +1202,7 @@ class UserRepository {
   Future<List<Prescription>>? getPrescriptions() async {
     try{
       Response responsePrescriptions;
-      if (!prefs.getBool(isFamily)!)
+      if (!(prefs.getBool(isFamily)?? false))
         responsePrescriptions = await dio.get("/profile/patient/prescriptions");
       else
       responsePrescriptions = await dio
@@ -1045,15 +1216,19 @@ class UserRepository {
         return [];
       }
       throw Failure("Response code ${responsePrescriptions.statusCode}");
-    }on DioError catch (exception){
-      await Sentry.captureMessage(exception.toString(),
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
         params: [
           {
             "path": exception.requestOptions.path,
             "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": exception.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No fue posible obtener las recetas");
@@ -1063,7 +1238,7 @@ class UserRepository {
   Future<MedicalRecord>? getPrescription(String id) async {
     try{
       Response responsePrescriptions;
-      if (!prefs.getBool(isFamily)!)
+      if (!(prefs.getBool(isFamily)?? false))
         responsePrescriptions = await dio.get('/profile/patient/appointments/$id/encounter');
       else
         responsePrescriptions = await dio
@@ -1074,24 +1249,65 @@ class UserRepository {
             responsePrescriptions.data['encounter']);
       }
       throw Failure("Response code ${responsePrescriptions.statusCode}");
-    }on DioError catch (exception){
-      await Sentry.captureMessage(exception.toString(),
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
         params: [
           {
             "path": exception.requestOptions.path,
             "data": exception.requestOptions.data,
             "patient": prefs.getString("userId"),
-            "responseError": exception.response?.data,
-          }
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
         ],
       );
       throw Failure("No fue posible obtener la receta");
     }catch (exception, stackTrace){
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
       throw Failure("No fue posible obtener la receta");
+    }
+  }
+
+  Future<QRCode>? getQrCode() async {
+    try {
+      String url = '/profile/patient/qrcode/generate';
+      QRCode qrCode;
+      Response response = await dio.post(url);
+      if (response.statusCode == 200) {
+        qrCode = QRCode.fromJson(response.data);
+        return qrCode;
+      }
+      throw Failure("Response status desconocido ${response.statusCode}");
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
+      );
+      throw Failure("No se puede obtener el óodigo Qr");
+    } catch (e) {
+      throw Failure(genericError);
     }
   }
 

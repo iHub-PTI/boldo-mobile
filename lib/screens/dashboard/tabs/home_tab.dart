@@ -1,25 +1,26 @@
-import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
+import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/News.dart';
 import 'package:boldo/screens/appointments/pastAppointments_screen.dart';
-import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/divider_feed_secction_home.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
+import 'package:boldo/screens/organizations/memberships_screen.dart';
+import 'package:boldo/screens/doctor_search/doctors_available.dart';
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/go_to_top.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'dart:isolate';
 import 'package:boldo/models/Appointment.dart';
-import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../../main.dart';
@@ -45,8 +46,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
   List<News> news = [];
 
-  bool _dataFetchError = false;
-  bool _loading = true;
+  double _heightExpandableBarMax = ConstantsV2.homeExpandedMaxHeight;
+  double _heightExpandableBarMin = ConstantsV2.homeExpandedMinHeight;
+
   double _heightExpandedCarousel = ConstantsV2.homeExpandedMaxHeight;
   double _heightAppBarExpandable = ConstantsV2.homeAppBarMaxHeight;
   double _heightCarouselTitleExpandable =
@@ -57,8 +59,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   double _widthCarouselCard = ConstantsV2.homeCarouselCardMaxWidth;
   double _radiusCarouselCard = ConstantsV2.homeCarouselCardMinRadius;
 
-  final List<CarouselCardPages> items = [
-    CarouselCardPages(
+  final List<CarouselCard> items = [
+    CarouselCard(
       key: UniqueKey(),
       image: 'assets/images/card_appointment.png',
       boxFit: BoxFit.contain,
@@ -66,9 +68,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       index: 0,
       title: 'Agendar una consulta',
       appear: true,
-      page: DoctorsTab(),
+      requiredOrganization: true,
+      //page: DoctorsTab(),
+      page: DoctorsAvailable(callFromHome: true),
     ),
-    CarouselCardPages(
+    CarouselCard(
       key: UniqueKey(),
       image: 'assets/images/card_medicalStudies.png',
       boxFit: BoxFit.cover,
@@ -78,7 +82,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       appear: true,
       page: const PastAppointmentsScreen(),
     ),
-    CarouselCardPages(
+    CarouselCard(
       key: UniqueKey(),
       image: 'assets/images/card_prescriptions.png',
       boxFit: BoxFit.cover,
@@ -88,7 +92,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       appear: true,
       page: const PrescriptionsScreen(),
     ),
-    CarouselCardPages(
+    CarouselCard(
       key: UniqueKey(),
       image: 'assets/images/card_medicalInspection.png',
       boxFit: BoxFit.contain,
@@ -98,7 +102,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       appear: true,
       pageRoute: '/my_studies',
     ),
-    CarouselCardPages(
+    CarouselCard(
       key: UniqueKey(),
       image: 'assets/images/card_healthPassport.png',
       boxFit: BoxFit.contain,
@@ -110,15 +114,18 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     ),
   ];
 
-  RefreshController? _refreshController =
-      RefreshController(initialRefresh: false);
   RefreshController? _refreshControllerNews =
       RefreshController(initialRefresh: false);
-  DateTime dateOffset = DateTime.now().subtract(const Duration(days: 30));
-  void _onRefresh() async {
+
+  RefreshController? _refreshControllerOrganizationsCheck =
+      RefreshController(initialRefresh: false);
+
+  void _onRefreshOrganizationsCheck() async {
     // monitor network fetch
-    BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
+    BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed());
   }
+
+  DateTime dateOffset = DateTime.now().subtract(const Duration(days: 30));
 
   void _onRefreshNews() async {
     // monitor network fetch
@@ -143,8 +150,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         setState(() {});
       }
     });
-    //BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
-    BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
+    // get organizations
+    BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed());
     super.initState();
   }
 
@@ -165,38 +172,78 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ConstantsV2.grayLight,
       floatingActionButton:
           buttonGoTop(homeScroll, 1000, 500, showAnimatedButton),
       body: SafeArea(
         child: MultiBlocListener(
           listeners: [
+            BlocListener<HomeOrganizationBloc, HomeOrganizationBlocState>(
+              listener: (context, state) {
+                if (state is HomeOrganizationFailed) {
+
+                  // set normal height
+                  _heightExpandableBarMax = ConstantsV2.homeExpandedMaxHeight;
+                  _heightExpandableBarMin = ConstantsV2.homeExpandedMinHeight;
+
+                  emitSnackBar(
+                      context: context,
+                      text: state.response,
+                      status: ActionStatus.Fail
+                  );
+                  if (_refreshControllerOrganizationsCheck != null) {
+                    _refreshControllerOrganizationsCheck!.refreshCompleted();
+                    _refreshControllerOrganizationsCheck!.loadComplete();
+                  }
+                }
+                if (state is OrganizationsObtained) {
+                  // establish in Patient Bloc his/her list of subscribing organizations
+                  BlocProvider.of<patientBloc.PatientBloc>(context)
+                      .setOrganizations(state.organizationsList);
+
+                  // reduce height to remove header for news
+                  if(state.organizationsList.isEmpty) {
+                    _heightExpandableBarMax = ConstantsV2.homeExpandedMaxHeight -
+                        ConstantsV2.homeFeedTitleContainerMaxHeight;
+                    _heightExpandableBarMin = ConstantsV2.homeExpandedMinHeight -
+                        ConstantsV2.homeFeedTitleContainerMinHeight;
+                  }else{
+                    // set normal height
+                    _heightExpandableBarMax = ConstantsV2.homeExpandedMaxHeight;
+                    _heightExpandableBarMin = ConstantsV2.homeExpandedMinHeight;
+                    BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
+                  }
+
+
+                  if (_refreshControllerOrganizationsCheck != null) {
+                    _refreshControllerOrganizationsCheck!.refreshCompleted();
+                    _refreshControllerOrganizationsCheck!.loadComplete();
+                  }
+                  BlocProvider.of<HomeBloc>(context).add(ReloadHome());
+                }
+                if (state is HomeOrganizationLoading) {
+                  // set normal height
+                  _heightExpandableBarMax = ConstantsV2.homeExpandedMaxHeight;
+                  _heightExpandableBarMin = ConstantsV2.homeExpandedMinHeight;
+                }
+              },
+            ),
             BlocListener<HomeBloc, HomeState>(
               listener: (context, state) {
-                if (state is Failed) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.response!),
-                      backgroundColor: Colors.redAccent,
-                    ),
-                  );
-                  _loading = false;
-                }
-                if (state is Success) {
-                  _loading = false;
-                }
-                if (state is Loading) {
-                  _loading = true;
+                if (state is ReloadHome) {
+                  setState(() {
+
+                  });
                 }
               },
             ),
             BlocListener<HomeNewsBloc, HomeNewsState>(
               listener: (context, state) {
                 if (state is FailedLoadedNews) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.response!),
-                      backgroundColor: Colors.redAccent,
-                    ),
+                  emitSnackBar(
+                      context: context,
+                      text: state.response,
+                      status: ActionStatus.Fail
                   );
                   if (_refreshControllerNews != null) {
                     _refreshControllerNews!.refreshCompleted();
@@ -213,160 +260,210 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 }
               },
             ),
-            /*BlocListener<HomeAppointmentsBloc, HomeAppointmentsState>(
-              listener: (context, state) {
-                if (state is FailedLoadedAppointments) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.response!),
-                      backgroundColor: Colors.redAccent,
-                    ),
-                  );
-                  if (_refreshController != null) {
-                    _refreshController!.refreshCompleted();
-                    _refreshController!.loadComplete();
-                  }
-                }
-                if (state is AppointmentsHomeLoaded) {
-                  appointments = state.appointments;
-                  news = [...news,...state.appointments];
-                  if (_refreshController != null) {
-                    _refreshController!.refreshCompleted();
-                    _refreshController!.loadComplete();
-                  }
-                }
-              },
-            ),*/
           ],
           child: NestedScrollView(
             controller: homeScroll,
               headerSliverBuilder: (context, innerBoxScrolled) => [
-                SliverAppBar(
-                  pinned: true,
-                  floating: false,
-                  expandedHeight: ConstantsV2.homeExpandedMaxHeight,
-                  automaticallyImplyLeading: false,
-                  backgroundColor: Colors.white,
-                  leadingWidth: double.infinity,
-                  toolbarHeight: ConstantsV2.homeExpandedMinHeight,
-                  flexibleSpace: LayoutBuilder(builder:
-                      (BuildContext context, BoxConstraints constraints) {
-                    _heightExpandedCarousel = constraints.biggest.height;
-                    _heightAppBarExpandable = ConstantsV2.homeAppBarMaxHeight -
-                        (ConstantsV2.homeAppBarMaxHeight -
+                BlocBuilder<HomeOrganizationBloc,HomeOrganizationBlocState>(
+                  builder: (context, state){
+                    return SliverAppBar(
+                      pinned: true,
+                      floating: false,
+                      expandedHeight: _heightExpandableBarMax,
+                      automaticallyImplyLeading: false,
+                      backgroundColor: Colors.white,
+                      leadingWidth: double.infinity,
+                      toolbarHeight: _heightExpandableBarMin,
+                      flexibleSpace: LayoutBuilder(builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        _heightExpandedCarousel = constraints.biggest.height;
+                        _heightAppBarExpandable = ConstantsV2.homeAppBarMaxHeight -
+                            (ConstantsV2.homeAppBarMaxHeight -
                                 ConstantsV2.homeAppBarMinHeight) *
-                            ((ConstantsV2.homeExpandedMaxHeight -
+                                ((_heightExpandableBarMax -
                                     constraints.biggest.height) /
-                                (ConstantsV2.homeExpandedMaxHeight -
-                                    ConstantsV2.homeExpandedMinHeight));
-                    _heightCarouselTitleExpandable =
-                        ConstantsV2.homeCarouselTitleContainerMaxHeight -
-                            (ConstantsV2.homeCarouselTitleContainerMaxHeight -
+                                    (_heightExpandableBarMax -
+                                        _heightExpandableBarMin));
+                        _heightCarouselTitleExpandable =
+                            ConstantsV2.homeCarouselTitleContainerMaxHeight -
+                                (ConstantsV2.homeCarouselTitleContainerMaxHeight -
                                     ConstantsV2
                                         .homeCarouselTitleContainerMinHeight) *
-                                ((ConstantsV2.homeExpandedMaxHeight -
+                                    ((_heightExpandableBarMax -
                                         constraints.biggest.height) /
-                                    (ConstantsV2.homeExpandedMaxHeight -
-                                        ConstantsV2.homeExpandedMinHeight));
-                    _heightCarouselExpandable = ConstantsV2
+                                        (_heightExpandableBarMax -
+                                            _heightExpandableBarMin));
+                        _heightCarouselExpandable = ConstantsV2
                             .homeCarouselContainerMaxHeight -
-                        (ConstantsV2.homeCarouselContainerMaxHeight -
+                            (ConstantsV2.homeCarouselContainerMaxHeight -
                                 ConstantsV2.homeCarouselContainerMinHeight) *
-                            ((ConstantsV2.homeExpandedMaxHeight -
+                                ((_heightExpandableBarMax -
                                     constraints.biggest.height) /
-                                (ConstantsV2.homeExpandedMaxHeight -
-                                    ConstantsV2.homeExpandedMinHeight));
-                    _heightCarouselCard =
-                        ConstantsV2.homeCarouselCardMaxHeight -
-                            (ConstantsV2.homeCarouselCardMaxHeight -
+                                    (_heightExpandableBarMax -
+                                        _heightExpandableBarMin));
+                        _heightCarouselCard =
+                            ConstantsV2.homeCarouselCardMaxHeight -
+                                (ConstantsV2.homeCarouselCardMaxHeight -
                                     ConstantsV2.homeCarouselCardMinHeight) *
-                                ((ConstantsV2.homeExpandedMaxHeight -
+                                    ((_heightExpandableBarMax -
                                         constraints.biggest.height) /
-                                    (ConstantsV2.homeExpandedMaxHeight -
-                                        ConstantsV2.homeExpandedMinHeight));
-                    _widthCarouselCard = ConstantsV2.homeCarouselCardMaxWidth -
-                        (ConstantsV2.homeCarouselCardMaxWidth -
+                                        (_heightExpandableBarMax -
+                                            _heightExpandableBarMin));
+                        _widthCarouselCard = ConstantsV2.homeCarouselCardMaxWidth -
+                            (ConstantsV2.homeCarouselCardMaxWidth -
                                 ConstantsV2.homeCarouselCardMinWidth) *
-                            ((ConstantsV2.homeExpandedMaxHeight -
+                                ((_heightExpandableBarMax -
                                     constraints.biggest.height) /
-                                (ConstantsV2.homeExpandedMaxHeight -
-                                    ConstantsV2.homeExpandedMinHeight));
-                    _radiusCarouselCard =
-                        ConstantsV2.homeCarouselCardMinRadius +
-                            (ConstantsV2.homeCarouselCardMaxRadius -
+                                    (_heightExpandableBarMax -
+                                        _heightExpandableBarMin));
+                        _radiusCarouselCard =
+                            ConstantsV2.homeCarouselCardMinRadius +
+                                (ConstantsV2.homeCarouselCardMaxRadius -
                                     ConstantsV2.homeCarouselCardMinRadius) *
-                                ((ConstantsV2.homeExpandedMaxHeight -
+                                    ((_heightExpandableBarMax -
                                         constraints.biggest.height) /
-                                    (ConstantsV2.homeExpandedMaxHeight -
-                                        ConstantsV2.homeExpandedMinHeight));
+                                        (_heightExpandableBarMax -
+                                            _heightExpandableBarMin));
 
-                    return Column(children: [
-                      HomeTabAppBar(max: _heightAppBarExpandable),
-                      DividerFeedSectionHome(
-                          text: "¿Qué desea hacer?",
-                          height: _heightCarouselTitleExpandable),
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        height: _heightCarouselExpandable,
-                        child: Container(
-                          height: _heightCarouselCard,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: items.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: _buildCarousel,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: Container(
-                            width: double.maxFinite,
-                            height: ConstantsV2.homeFeedTitleContainerMaxHeight,
-                            padding: const EdgeInsetsDirectional.all(16),
+                        return Column(children: [
+                          HomeTabAppBar(max: _heightAppBarExpandable),
+                          Container(
+                            height: 24,
                             decoration: const BoxDecoration(
                               color: ConstantsV2.lightGrey,
                             ),
+                          ),
+                          DividerFeedSectionHome(
+                            text: "¿Qué desea hacer?",
+                            height: _heightCarouselTitleExpandable,
+                          ),
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            height: _heightCarouselExpandable,
                             child: Container(
-                              child:
-                              BlocBuilder<patientBloc.PatientBloc, patientBloc.PatientState>(builder: (context, state) {
-                                if(state is patientBloc.Success){
-                                  return Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Novedades${prefs.getBool(isFamily) ?? false ? " de " : ''}',
-                                        style: boldoSubTextStyle.copyWith(color: ConstantsV2.inactiveText),
-                                      ),
-                                      prefs.getBool(isFamily) ?? false
-                                          ? Text(
-                                          '${patient.relationshipDisplaySpan}',
-                                          style: boldoCorpMediumTextStyle
-                                              .copyWith(
-                                              color:
-                                              ConstantsV2.green))
-                                          : Container(),
-                                    ],
+                              height: _heightCarouselCard,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: items.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: _buildCarousel,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: 24,
+                            decoration: const BoxDecoration(
+                              color: ConstantsV2.lightGrey,
+                            ),
+                          ),
+                          //header
+                          BlocBuilder<HomeOrganizationBloc,HomeOrganizationBlocState>(
+                            builder: (context, state){
+                              //show header if the patient has organization
+                              if(state is OrganizationsObtained) {
+                                if (BlocProvider.of<patientBloc.PatientBloc>(context)
+                                    .getOrganizations().isNotEmpty){
+                                  return BlocBuilder<patientBloc.PatientBloc, patientBloc.PatientState>(
+                                      builder: (context, state) {
+                                        if(BlocProvider.of<patientBloc.PatientBloc>(context)
+                                            .getOrganizations().isNotEmpty) {
+                                          if (state is patientBloc.Success) {
+                                            return SizedBox(
+                                              width: double.infinity,
+                                              child: Container(
+                                                  width: double.maxFinite,
+                                                  height: ConstantsV2.homeFeedTitleContainerMaxHeight,
+                                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                                  decoration: const BoxDecoration(
+                                                    color: ConstantsV2.lightGrey,
+                                                  ),
+                                                  //sections header
+                                                  child: Container(
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                      children: [
+                                                        Text(
+                                                          'Novedades${prefs.getBool(isFamily) ??
+                                                              false ? " de " : ''}',
+                                                          style: boldoSubTextStyle.copyWith(
+                                                              color: ConstantsV2.inactiveText),
+                                                        ),
+                                                        prefs.getBool(isFamily) ?? false
+                                                            ? Text(
+                                                            '${patient
+                                                                .relationshipDisplaySpan}',
+                                                            style: boldoSubTextStyle
+                                                                .copyWith(
+                                                                color:
+                                                                ConstantsV2.green))
+                                                            : Container(),
+                                                      ],
+                                                    ),
+                                                  )),
+                                            );
+                                          } else {
+                                            return Text(
+                                              'Novedades',
+                                              style: boldoSubTextStyle.copyWith(
+                                                  color: ConstantsV2.inactiveText),
+                                            );
+                                          }
+                                        }else{
+                                          return Container();
+                                        }
+                                      }
                                   );
                                 }else{
-                                  return Text(
-                                    'Novedades',
-                                    style: boldoSubTextStyle.copyWith(color: ConstantsV2.inactiveText),
-                                  );
+                                  return Container();
                                 }
-                              }),
-                            )),
-                      ),
-                    ]);
-                  }),
+                              }else {
+                                // fill the height between carousel and tabview
+                                // with container with lightGrey color
+                                return Container(
+                                    width: double.maxFinite,
+                                    height: ConstantsV2.homeFeedTitleContainerMinHeight,
+                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    decoration: const BoxDecoration(
+                                    color: ConstantsV2.lightGrey,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ]);
+                      }),
+                    );
+                  },
                 ),
               ],
-              body: TabBarView(
-                controller: _controller,
-                children: [
-                  _buildNews(),
-                ],
+              body: BlocBuilder<HomeOrganizationBloc,HomeOrganizationBlocState>(
+                builder: (context, state){
+                  if(state is OrganizationsObtained) {
+                    if (BlocProvider.of<patientBloc.PatientBloc>(context)
+                        .getOrganizations().isNotEmpty){
+                      return TabBarView(
+                        controller: _controller,
+                        children: [
+                          _buildNews(),
+                        ],
+                      );
+                    }else{
+                      return _emptyOrganizations();
+                    }
+                  }else if(state is HomeOrganizationFailed){
+                    return Container(
+                        child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed()) ) );
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            Constants.primaryColor400),
+                        backgroundColor: Constants.primaryColor600,
+                      ),
+                    );
+                  }
+                },
               ),
             ),
         ),
@@ -376,103 +473,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
   Widget _buildCarousel(BuildContext context, int carouselIndex) {
     return CustomCardPage(
-      carouselCardPage: items[carouselIndex],
+      carouselCard: items[carouselIndex],
       height: _heightCarouselCard,
       width: _widthCarouselCard,
       radius: _radiusCarouselCard,
-    );
-  }
-
-  Widget _individualTab() {
-    return Container(
-      height: 50 + MediaQuery.of(context).padding.bottom,
-      padding: const EdgeInsets.all(0),
-      width: double.infinity,
-      decoration: const BoxDecoration(
-          border: Border(
-              right: BorderSide(
-                  color: Colors.grey, width: 1, style: BorderStyle.solid))),
-      child: const Tab(
-        // icon: ImageIcon(AssetImage(imagePath)),
-        child: Text('test'),
-      ),
-    );
-  }
-
-  Widget _buildAppointments() {
-    return Container(
-      child: SmartRefresher(
-        enablePullDown: true,
-        enablePullUp: true,
-        header: const MaterialClassicHeader(
-          color: Constants.primaryColor800,
-        ),
-        controller: _refreshController!,
-        onLoading: () {
-          dateOffset = dateOffset.subtract(const Duration(days: 30));
-        },
-        onRefresh: _onRefresh,
-        footer: CustomFooter(
-          height: 140,
-          builder: (BuildContext context, LoadStatus? mode) {
-            Widget body = Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                /*Text(
-            "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
-            style: const TextStyle(
-              color: Constants.primaryColor800,
-            ),
-          )*/
-              ],
-            );
-            return Column(
-              children: [
-                const SizedBox(height: 30),
-                Center(child: body),
-              ],
-            );
-          },
-        ),
-        child: BlocBuilder<HomeAppointmentsBloc, HomeAppointmentsState>(builder: (context, state) {
-          if(state is AppointmentsHomeLoaded){
-            return appointments.isNotEmpty
-                ? ListView.builder(
-              shrinkWrap: true,
-              itemCount: appointments.length,
-              scrollDirection: Axis.vertical,
-              itemBuilder: _ListAppointments,
-              physics: const ClampingScrollPhysics(),
-            )
-                :SingleChildScrollView(
-              child: Column(
-                children: [
-                  const EmptyStateV2(
-                    textBottom:
-                    "A medida que uses la app, irás encontrando novedades tales como: "
-                        "próximas consultas, recetas y resultados de estudios.",
-                  ),
-                ],
-              ),
-            );
-          }else if(state is LoadingAppointments){
-            return Container(
-              child: const Center(
-                child: CircularProgressIndicator(
-                  valueColor:
-                  AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                  backgroundColor: Constants.primaryColor600,
-                )
-              )
-            );
-          }else if(state is FailedLoadedAppointments){
-            return Container(
-                child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome()) ) );
-          }else{
-            return Container();
-          }
-        }),
-      ),
     );
   }
 
@@ -556,11 +560,90 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     return news[index].show();
   }
 
-  Widget _ListAppointments(BuildContext context, int index) {
-    return AppointmentCard(
-      appointment: appointments[index],
-      isInWaitingRoom: appointments[index].status == "open",
-      showCancelOption: true,
+  Widget _emptyOrganizations(){
+    return Container(
+      child: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: true,
+        header: const MaterialClassicHeader(
+          color: Constants.primaryColor800,
+        ),
+        controller: _refreshControllerOrganizationsCheck!,
+        onLoading: () {
+        },
+        onRefresh: _onRefreshOrganizationsCheck,
+        footer: CustomFooter(
+          height: 140,
+          builder: (BuildContext context, LoadStatus? mode) {
+            Widget body = Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Obteniendo Organizaciones",
+                  style: TextStyle(
+                    color: Constants.primaryColor800,
+                  ),
+                )
+              ],
+            );
+            return Column(
+              children: [
+                const SizedBox(height: 30),
+                Center(child: body),
+              ],
+            );
+          },
+        ),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: ListView(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("¿En dónde vas a consultar?",
+                    style: boldoSubTextMediumStyle.copyWith(color: ConstantsV2.activeText),
+                  ),
+                  Text("Para usar algunos servicios que Boldo tiene para vos, "
+                      "es necesario seas miembro de la organización que las provée.",
+                      style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.activeText)
+                  ),
+                  // TODO: await endpoint to subscribe to others organizations
+                  /*Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (BuildContext context) => Organizations()));
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            const Text("Agregar"),
+                            const Icon(Icons.chevron_right_rounded),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),*/
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset('assets/icon/empty_org_home.svg')
+                    ],
+                  )
+                ].map(
+                      (e) => Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: e,
+                  ),
+                ).toList(),
+              ),
+            ],
+          )
+        )
+      ),
     );
   }
 
@@ -568,31 +651,33 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
 
 class CustomCardPage extends StatefulWidget {
-  final CarouselCardPages? carouselCardPage;
+  final CarouselCard carouselCard;
   final double height;
   final double width;
   final double radius;
 
   const CustomCardPage({
     Key? key,
-    required this.carouselCardPage,
+    required this.carouselCard,
     required this.height,
     required this.width,
     required this.radius,
   }) : super(key: key);
 
   @override
-  State<CustomCardPage> createState() =>
-      _CustomCardPageState(carouselCardPage: carouselCardPage);
+  State<CustomCardPage> createState() => _CustomCardPageState();
 }
 
 class _CustomCardPageState extends State<CustomCardPage> {
-  // text and image
-  CarouselCardPages? carouselCardPage;
-  _CustomCardPageState({required this.carouselCardPage});
 
   @override
   Widget build(BuildContext context) {
+
+    // indicates if the patient needs to belong to an organization to access this module
+    bool enable = widget.carouselCard.requiredOrganization ?
+      BlocProvider.of<patientBloc.PatientBloc>(context)
+        .getOrganizations().isNotEmpty : true;
+
     return Container(
       constraints: BoxConstraints(
           maxWidth: widget.width,
@@ -608,18 +693,18 @@ class _CustomCardPageState extends State<CustomCardPage> {
               )
             : const StadiumBorder(),
         child: InkWell(
-          onTap: carouselCardPage!.appear
+          onTap: widget.carouselCard.appear && enable
               ? () {
-                  if(carouselCardPage!.page != null) {
+                  if(widget.carouselCard.page != null) {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => carouselCardPage!.page!));
+                            builder: (context) => widget.carouselCard.page!));
                   }
-                  else if(carouselCardPage!.pageRoute != null) {
+                  else if(widget.carouselCard.pageRoute != null) {
                     Navigator.pushNamed(
                         context,
-                        '${carouselCardPage!.pageRoute!}');
+                        '${widget.carouselCard.pageRoute!}');
                   }
                 }
               : () {},
@@ -631,13 +716,11 @@ class _CustomCardPageState extends State<CustomCardPage> {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      colorFilter: carouselCardPage!.appear
+                      colorFilter: widget.carouselCard.appear && enable
                           ? null
-                          : widget.radius < 70
-                              ? null
-                              : const ColorFilter.mode(
+                          : const ColorFilter.mode(
                                   Colors.black, BlendMode.hue),
-                      image: AssetImage(carouselCardPage!.image),
+                      image: AssetImage(widget.carouselCard.image),
                     ),
                   ),
                 ),
@@ -666,7 +749,7 @@ class _CustomCardPageState extends State<CustomCardPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          carouselCardPage!.appear
+                          widget.carouselCard.appear
                               ? const Text("")
                               : AnimatedOpacity(
                                   opacity: widget.radius < 70 ? 1 : 0,
@@ -680,7 +763,7 @@ class _CustomCardPageState extends State<CustomCardPage> {
                               opacity: widget.radius < 70 ? 1 : 0,
                               duration: const Duration(milliseconds: 300),
                               child: Text(
-                                carouselCardPage!.title,
+                                widget.carouselCard.title,
                                 style: boldoCorpMediumBlackTextStyle,
                               ),
                             ),
@@ -720,7 +803,7 @@ class CardNotAvailable extends StatelessWidget {
   }
 }
 
-class CarouselCardPages extends StatelessWidget {
+class CarouselCard extends StatelessWidget {
   final String image;
   final int index;
   final BoxFit boxFit;
@@ -729,8 +812,9 @@ class CarouselCardPages extends StatelessWidget {
   final bool appear;
   final Widget? page;
   final String? pageRoute;
+  final bool requiredOrganization;
 
-  const CarouselCardPages({
+  const CarouselCard({
     Key? key,
     required this.image,
     required this.boxFit,
@@ -740,6 +824,7 @@ class CarouselCardPages extends StatelessWidget {
     required this.appear,
     this.page,
     this.pageRoute,
+    this.requiredOrganization = false,
   }) : super(key: key);
 
   @override

@@ -2,6 +2,7 @@ import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/family/components/caretaker_rectangle_card.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,11 +55,10 @@ class _MyManagersTabState extends State<MyManagersTab> {
               _dataLoading = false;
             });
           }else if(state is Failed){
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.response!),
-                backgroundColor: Colors.redAccent,
-              ),
+            emitSnackBar(
+                context: context,
+                text: state.response,
+                status: ActionStatus.Success
             );
             _dataLoading = false;
           }else if(state is Loading){

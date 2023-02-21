@@ -77,7 +77,7 @@ void initDio({required GlobalKey<NavigatorState> navKey, required Dio dio}) {
           initDio(navKey: navKey, dio: _dio);
           //retry request
           return handle.resolve(await _dio.request(options.path,
-              data: options.data, options: optionsDio));
+              data: options.data, options: optionsDio, queryParameters: options.queryParameters));
         }
         dio.lock();
         dio.interceptors.responseLock.lock();
@@ -106,7 +106,7 @@ void initDio({required GlobalKey<NavigatorState> navKey, required Dio dio}) {
           initDio(navKey: navKey, dio: _dio);
           //retry request
           return handle.resolve(await _dio.request(options.path,
-              data: options.data, options: optionsDio));
+              data: options.data, options: optionsDio, queryParameters: options.queryParameters));
         } on DioError catch(exception){
           if (exception.response?.statusCode == 401){
             final _result = await authenticateUser(context: navKey.currentState!.context);
@@ -130,7 +130,7 @@ void initDio({required GlobalKey<NavigatorState> navKey, required Dio dio}) {
                 Dio _dio = Dio();
                 initDio(navKey: navKey, dio: _dio);
                 return handle.resolve(await _dio.request(options.path,
-                    data: options.data, options: optionsDio));
+                    data: options.data, options: optionsDio, queryParameters: options.queryParameters));
                 break;
               default:
             }
@@ -193,7 +193,7 @@ void initDio({required GlobalKey<NavigatorState> navKey, required Dio dio}) {
         Dio _dio = Dio();
         initDio(navKey: navKey, dio: _dio);
         return handle.resolve(await _dio.request(options.path,
-            data: options.data, options: optionsDio));
+            data: options.data, options: optionsDio, queryParameters: options.queryParameters));
       }
       return handle.next(error);
     },

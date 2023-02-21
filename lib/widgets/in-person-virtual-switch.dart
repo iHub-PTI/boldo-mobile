@@ -1,10 +1,11 @@
+import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../constants.dart';
 
 class VirtualInPersonSwitch extends StatefulWidget {
-  final Function(String text) switchCallbackResponse;
+  final Function(AppointmentType type) switchCallbackResponse;
   const VirtualInPersonSwitch({Key? key, required this.switchCallbackResponse})
       : super(key: key);
   @override
@@ -15,8 +16,8 @@ const double width = 300.0;
 const double height = 40.0;
 const double loginAlign = -1;
 const double signInAlign = 1;
-const Color selectedColor = Colors.white;
-const Color normalColor = Colors.black54;
+const Color selectedColor = ConstantsV2.primaryRegular;
+const Color normalColor = ConstantsV2.blueDark;
 
 class _VirtualInPersonSwitchState extends State<VirtualInPersonSwitch> {
   double? xAlign;
@@ -37,12 +38,11 @@ class _VirtualInPersonSwitchState extends State<VirtualInPersonSwitch> {
       child: Container(
         width: width,
         height: height,
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: const BorderRadius.all(
-            Radius.circular(10.0),
+        decoration: const BoxDecoration(
+          color: ConstantsV2.grayLightest,
+          borderRadius: BorderRadius.all(
+            Radius.circular(100.0),
           ),
-          border: Border.all(color: Constants.primaryColor500),
         ),
         child: Stack(
           children: [
@@ -52,10 +52,11 @@ class _VirtualInPersonSwitchState extends State<VirtualInPersonSwitch> {
               child: Container(
                 width: width * 0.5,
                 height: height,
-                decoration: const BoxDecoration(
-                  color: Constants.primaryColor500,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10.0),
+                decoration: BoxDecoration(
+                  color: ConstantsV2.primaryLightAndClear,
+                  borderRadius: BorderRadius.horizontal(
+                    left: xAlign == -1? Radius.circular(100.0) : Radius.zero,
+                    right: !(xAlign == -1)? Radius.circular(100.0) : Radius.zero,
                   ),
                 ),
               ),
@@ -66,7 +67,7 @@ class _VirtualInPersonSwitchState extends State<VirtualInPersonSwitch> {
                   xAlign = loginAlign;
                   loginColor = selectedColor;
                   signInColor = normalColor;
-                  widget.switchCallbackResponse('A');
+                  widget.switchCallbackResponse(AppointmentType.InPerson);
                 });
               },
               child: Align(
@@ -102,7 +103,7 @@ class _VirtualInPersonSwitchState extends State<VirtualInPersonSwitch> {
                   xAlign = signInAlign;
                   signInColor = selectedColor;
                   loginColor = normalColor;
-                  widget.switchCallbackResponse('V');
+                  widget.switchCallbackResponse(AppointmentType.Virtual);
                 });
               },
               child: Align(

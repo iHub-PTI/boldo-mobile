@@ -50,8 +50,8 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                 Container(
                   padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8, right: 8),
                   child: widget.isDependent
-                      ? ProfileImageView2(height: 60, width: 60, border: false, patient: widget.patient,)
-                      : const ProfileImageViewTypeForm(height: 60, width: 60, border: false, form: "rounded",),
+                      ? ImageViewTypeForm(height: 60, width: 60, border: false, url: widget.patient?.photoUrl, gender: widget.patient?.photoUrl,)
+                      : ImageViewTypeForm(height: 60, width: 60, border: false, url: prefs.getString('profile_url'), gender: prefs.getString('gender')),
                 ),
                 Expanded(
                   child: Column(
@@ -65,7 +65,7 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                           children: [
                             widget.isDependent
                                 ? Text(
-                              "${widget.patient!.givenName} ${widget.patient!.familyName}",
+                              "${widget.patient?.givenName} ${widget.patient?.familyName}",
                               style: boldoSubTextMediumStyle.copyWith(
                                   color: ConstantsV2.activeText
                               ),
@@ -76,7 +76,7 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                                   color: ConstantsV2.activeText
                               ),
                             ),
-                            widget.isDependent && ! prefs.getBool(isFamily)! ? UnlinkCaretakerWidget(
+                            widget.isDependent && !(prefs.getBool(isFamily)?? false) ? UnlinkCaretakerWidget(
                               onTapCallback: (result) async {
                                 if (result == 'Desvincular') {
                                   BlocProvider.of<FamilyBloc>(context).add(UnlinkCaretaker(id: widget.patient!.id!));

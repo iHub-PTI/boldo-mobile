@@ -122,7 +122,7 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
                 imageCache!.clearLiveImages();
                 imageCache!.clear();
                 await Future.delayed(const Duration(seconds: 2));
-                emit(NavigateNextAndDeleteUntilScreen(routeName: '/familyTransition', untilName: '/methods'));
+                emit(NavigateNextAndDeleteUntilScreen(routeName: '/familyConnectTransition', untilName: '/methods'));
               }
             } else {
               // images was successfully sent to server proceed with take another image [dni or selfie]

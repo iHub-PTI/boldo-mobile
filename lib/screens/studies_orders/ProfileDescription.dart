@@ -88,7 +88,8 @@ class ProfileDescription extends StatelessWidget {
                     : patient != null
                         ? '${toLowerCase(patient!.givenName!).trim().split(RegExp(' +'))[0]} ${toLowerCase(patient!.familyName!).trim().split(RegExp(' +'))[0]}'
                         : '',
-                style: const TextStyle(fontFamily: 'Montserrat'),
+                  style:
+                      boldoCorpMediumTextStyle.copyWith(color: Colors.black)
               ),
             ],
           ),
@@ -102,8 +103,7 @@ class ProfileDescription extends StatelessWidget {
                     : patient != null
                         ? 'Paciente'
                         : '',
-                style: const TextStyle(
-                    fontFamily: 'Montserrat', color: Constants.otherColor100),
+                style: boldoCorpMediumTextStyle.copyWith(color: Constants.otherColor100),
               ),
             ],
           ),

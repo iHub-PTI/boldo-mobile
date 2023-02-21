@@ -76,8 +76,11 @@ class _StudyState extends State<Study> {
                 _loading = false;
                 _error = true;
                 setState(() {});
-                Scaffold.of(context).showSnackBar(
-                    SnackBar(content: Text("Falló la obtención de estudios")));
+                emitSnackBar(
+                    context: context,
+                    text: "Falló la obtención de estudios",
+                    status: ActionStatus.Fail
+                );
               }
             },
             child: SingleChildScrollView(
@@ -141,12 +144,13 @@ class _StudyState extends State<Study> {
                               ],
                             ),
                           )),
-                          ProfileImageView2(
+                          ImageViewTypeForm(
                             height: 54,
                             width: 54,
                             border: true,
-                            patient: patient,
-                            color: ConstantsV2.orange,
+                            url: patient.photoUrl,
+                            gender: patient.gender,
+                            borderColor: ConstantsV2.orange,
                           ),
                         ],
                       ),

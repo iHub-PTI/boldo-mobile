@@ -1,5 +1,7 @@
+import 'package:boldo/main.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/custom_search.dart';
+import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/filter/filter_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -120,30 +122,45 @@ class _DoctorsTabState extends State<DoctorsTab> {
           doctors = [...doctors, ...doctorsList];
         }
         doctors.sort((a, b) {
-          if (b.nextAvailability == null && a.nextAvailability == null) {
+          if (b.organizations?.first.nextAvailability == null && a.organizations?.first.nextAvailability == null) {
             return 0;
           }
-          if (a.nextAvailability == null) {
+          if (a.organizations?.first.nextAvailability == null) {
             return 1;
           }
-          if (b.nextAvailability == null) {
+          if (b.organizations?.first.nextAvailability == null) {
             return -1;
           }
-          return DateTime.parse(a.nextAvailability!.availability!)
-              .compareTo(DateTime.parse(b.nextAvailability!.availability!));
+          return DateTime.parse(a.organizations!.first.nextAvailability!.availability!)
+              .compareTo(DateTime.parse(b.organizations!.first.nextAvailability!.availability!));
         });
       }
-    } on DioError catch (exception, stackTrace) {
-      print(exception);
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
       );
     } catch (exception, stackTrace) {
       print(exception);
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
 
       ///FIXME: SHOW AN ERROR MESSAGE TO THE USER
@@ -268,8 +285,11 @@ class _DoctorsTabState extends State<DoctorsTab> {
                       ))
                       : doctors.isEmpty
                       ? const Center(
-                      child: Text(
-                        "No se encontraron doctores",
+                      child: EmptyStateV2(
+                        picture: "empty_doctors.svg",
+                        titleBottom: "Aún no hay médicos",
+                        textBottom:
+                        "La lista de médicos aparecerá aquí una vez registrados en la web",
                       ))
                       : SmartRefresher(
                     enablePullDown: true,
@@ -343,10 +363,10 @@ class _DoctorCard extends StatelessWidget {
   Widget build(BuildContext context) {
     String availabilityText = "Sin disponibilidad en los próximos 30 días";
     bool isToday = false;
-    if (doctor.nextAvailability != null) {
+    if (doctor.organizations?.first.nextAvailability != null) {
       final actualDay = DateTime.now();
       final parsedAvailability =
-          DateTime.parse(doctor.nextAvailability!.availability!).toLocal();
+          DateTime.parse(doctor.organizations!.first.nextAvailability!.availability!).toLocal();
       // int daysDifference = parsedAvailability.difference(actualDay).inDays;
       int daysDifference = daysBetween(actualDay,parsedAvailability);
 
@@ -361,7 +381,7 @@ class _DoctorCard extends StatelessWidget {
         availabilityText = "Disponible Hoy!";
       } else if (daysDifference > 0) {
         availabilityText =
-            "Disponible ${DateFormat('EEEE, dd MMMM', Localizations.localeOf(context).languageCode).format(parsedAvailability)}";
+            "Disponible ${DateFormat('EEEE, dd MMMM', const Locale("es", 'ES').languageCode).format(parsedAvailability)}";
       }
     }
 
@@ -428,10 +448,10 @@ class _DoctorCard extends StatelessWidget {
                                     fontSize: 13),
                               ),
                               const Spacer(),
-                              doctor.nextAvailability != null
+                              doctor.organizations?.first.nextAvailability != null
                                   ? ShowDoctorAvailabilityIcon(
                                       filter: doctor
-                                          .nextAvailability!.appointmentType!,
+                                          .organizations!.first.nextAvailability!.appointmentType!,
                                     )
                                   : Container(),
                             ],

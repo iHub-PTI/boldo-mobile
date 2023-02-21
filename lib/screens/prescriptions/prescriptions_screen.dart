@@ -8,6 +8,7 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/header_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -64,23 +65,24 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextButton.icon(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        Icons.chevron_left_rounded,
-                        size: 25,
-                        color: Constants.extraColor400,
-                      ),
-                      label: Text(
-                        'Mis Recetas',
-                        style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                      ),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Icon(
+                            Icons.chevron_left_rounded,
+                            size: 25,
+                            color: Constants.extraColor400,
+                          ),
+                        ),
+                        Expanded(
+                          child: header("Mis Recetas", "Recetas"),
+                        ),
+                      ],
                     ),
                   ),
                   Padding(
@@ -100,8 +102,10 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                 if(state is AppointmentWithPrescriptionsLoadedState){
                   if(allAppointments.isEmpty){
                     return const EmptyStateV2(
-                      textBottom: "A medida que uses la aplicación podrás ir"
-                          " viendo los medicamentos que te sean recetados",
+                      picture: "empty_prescriptions.svg",
+                      titleBottom: "Aún no tenés recetas",
+                      textBottom:
+                      "A medida en que uses la aplicación podrás ir viendo tus recetas",
                     );
                   }else{
                     return Expanded(

@@ -33,6 +33,11 @@ import 'package:flutter_svg/flutter_svg.dart';
   });
   super.initState();
 
+
+  ***** in your listview or gridview or any similar structure *****
+  // controller is a Scroll Controller
+  controller = "nameOfYourController"
+
 */
 
 

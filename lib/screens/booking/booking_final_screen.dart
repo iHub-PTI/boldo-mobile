@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
+import 'package:boldo/models/Organization.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
@@ -17,10 +18,12 @@ import 'booking_confirm_screen.dart';
 class BookingFinalScreen extends StatefulWidget {
   final Doctor doctor;
   final NextAvailability bookingDate;
+  final Organization organization;
   BookingFinalScreen({
     Key? key,
     required this.doctor,
     required this.bookingDate,
+    required this.organization,
   }) : super(key: key);
 
   @override
@@ -78,7 +81,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                         duration: const Duration(seconds: 1),
                                         child: Spin(
                                           spins: 0.05,
-                                          duration: const Duration(seconds: 500),
+                                          duration: const Duration(milliseconds: 500),
                                           child: Spin(
                                             delay: const Duration(milliseconds: 1000),
                                             duration: const Duration(milliseconds: 1000),
@@ -86,12 +89,12 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                             child: Spin(
                                               delay: const Duration(milliseconds: 2000),
                                               duration: const Duration(milliseconds: 1000),
-                                              spins: 0.1,
+                                              spins: 0.05,
                                               child: ImageViewTypeForm(
                                                 height: 170,
                                                 width: 170,
                                                 border: true,
-                                                photoUrl: patient.photoUrl,
+                                                url: patient.photoUrl,
                                                 gender: patient.gender,
                                               ),
                                             ),
@@ -119,8 +122,9 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                 height: 170,
                                                 width: 170,
                                                 border: true,
-                                                photoUrl: widget.doctor.photoUrl,
+                                                url: widget.doctor.photoUrl,
                                                 gender: widget.doctor.gender,
+                                                isPatient: false,
                                               ),
                                             ),
                                           ),
@@ -196,7 +200,6 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                     ),
                                                     const SizedBox(height: 16,),
                                                     Row(
-                                                      mainAxisSize: MainAxisSize.max,
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
                                                         SvgPicture.asset(
@@ -205,7 +208,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                           height: 20,
                                                         ),
                                                         const SizedBox(width: 6,),
-                                                        Container(
+                                                        Expanded(
                                                           child: Column(
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
@@ -219,15 +222,32 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                               ),
                                                               Text(
                                                                 "${widget.doctor.givenName?.split(' ')[0]?? ''} "
-                                                                    "${widget.doctor.familyName?.split(' ')[0]?? ''}, "
-                                                                    "${widget.doctor.specializations?.first.description?? ''}",
+                                                                    "${widget.doctor.familyName?.split(' ')[0]?? ''} "
+                                                                ,
                                                                 style: boldoCorpMediumBlackTextStyle.copyWith(
                                                                     color: ConstantsV2.activeText
                                                                 ),
-                                                              )
+                                                              ),
+                                                              Wrap(
+                                                                children: [
+                                                                  for (int i = 0;
+                                                                  i <
+                                                                      widget.doctor
+                                                                          .specializations!.length;
+                                                                  i++)
+                                                                    Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                          right: i == 0 ? 0 : 3.0, bottom: 5),
+                                                                      child: Text(
+                                                                        "${widget.doctor.specializations![i].description}${widget.doctor.specializations!.length-1 != i  ? "," : ""}",
+                                                                        style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
+                                                                      ),
+                                                                    ),
+                                                                ],
+                                                              ),
                                                             ],
                                                           ),
-                                                        )
+                                                        ),
                                                       ],
                                                     ),
                                                   ],
@@ -253,7 +273,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                                 child: Expanded(
                                                                   child:  Text(
                                                                       (widget.bookingDate.appointmentType?? 'A') == 'A'?
-                                                                      "Esta consulta será realizada en persona en el Centro Médico Tesai’i- Policlinic."
+                                                                      "Esta consulta será realizada en persona en el ${widget.organization.name}."
                                                                           : "Esta consulta será realizada de forma remota a través de esta aplicación.",
                                                                       style: boldoCorpMediumTextStyle.copyWith(
                                                                           color: ConstantsV2.activeText

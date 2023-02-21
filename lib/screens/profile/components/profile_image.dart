@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/utils/helpers.dart';
@@ -50,8 +52,8 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                   ? 'assets/images/femalePatient.svg'
                   : editingPatient.gender == "male"
                   ? 'assets/images/malePatient.svg'
-                  :'assets/images/LogoIcon.svg'
-                  : 'assets/images/LogoIcon.svg',
+                  :'assets/images/persona.svg'
+                  : 'assets/images/persona.svg',
             )
                 :CachedNetworkImage(
                   fit: BoxFit.cover,
@@ -103,20 +105,18 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                       var response2  = await http.put(Uri.parse(response.data["uploadUrl"]),
                           body: croppedFile.readAsBytesSync());
                       if(response2.statusCode == 413){
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                          content: Text("El tamaño de la foto es muy grande"),
-                          backgroundColor: Colors.redAccent,
-                          ),
+                        emitSnackBar(
+                            context: context,
+                            text: "El tamaño de la foto es muy grande",
+                            status: ActionStatus.Fail
                         );
                       }else if(response2.statusCode == 201){
                         editingPatient.photoUrl = response.data["location"];
                       }else{
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Ocurrio un error"),
-                            backgroundColor: Colors.redAccent,
-                          ),
+                        emitSnackBar(
+                            context: context,
+                            text: genericError,
+                            status: ActionStatus.Fail
                         );
                       }
                       setState(() {
@@ -126,16 +126,21 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                       setState(() {
                         _isLoading = false;
                       });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Ocurrio un error"),
-                          backgroundColor: Colors.redAccent,
-                        ),
+                      emitSnackBar(
+                          context: context,
+                          text: genericError,
+                          status: ActionStatus.Fail
                       );
                       print(exception);
-                      await Sentry.captureException(
-                        exception,
-                        stackTrace: stackTrace,
+                      await Sentry.captureMessage(
+                          exception.toString(),
+                          params: [
+                            {
+                              'patient': prefs.getString("userId"),
+                              'access_token': await storage.read(key: 'access_token')
+                            },
+                            stackTrace
+                          ]
                       );
                     }
                   }
@@ -343,7 +348,11 @@ class ProfileImageViewTypeForm extends StatefulWidget {
 
   final double height;
   final double width;
+  final Color? color;
+  final double opacity;
   final bool border;
+  final Color? borderColor;
+  final bool blur;
   final Patient? patient;
   final String form;
 
@@ -352,6 +361,10 @@ class ProfileImageViewTypeForm extends StatefulWidget {
     required this.height,
     required this.width,
     required this.border,
+    this.borderColor = Colors.white,
+    this.color,
+    this.opacity = 1,
+    this.blur = false,
     this.patient,
     this.form = "rounded"
   }) : super(key: key);
@@ -361,81 +374,83 @@ class ProfileImageViewTypeForm extends StatefulWidget {
 }
 
 class _ProfileImageViewTypeForm extends State<ProfileImageViewTypeForm> {
+
+  String? url;
+  String? gender;
+
   @override
   void initState() {
     super.initState();
+    url = widget.patient == null ? prefs.getString('profile_url') : widget.patient?.photoUrl;
+    gender = widget.patient == null ? prefs.getString('gender') : widget.patient?.gender;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        SizedBox(
-          height: widget.height,
-          width: widget.width,
-          child: Card(
-            child: widget.patient == null
-            ? prefs.getString('profile_url') == '' ?
-            SvgPicture.asset(
-              prefs.getString('gender') == 'unknown'
-                  ? 'assets/images/LogoIcon.svg'
-                  : prefs.getString('gender') == "female"
-                  ? 'assets/images/femalePatient.svg'
-                  : 'assets/images/malePatient.svg',
-            ) : CachedNetworkImage(
-              fit: BoxFit.cover,
-              imageUrl: prefs.getString('profile_url')?? '',
-              progressIndicatorBuilder:
-                  (context, url, downloadProgress) => Padding(
-                padding: const EdgeInsets.all(26.0),
-                child: CircularProgressIndicator(
-                  value: downloadProgress.progress,
-                  valueColor:
-                  const AlwaysStoppedAnimation<Color>(
-                      Constants.primaryColor400),
-                  backgroundColor: Constants.primaryColor600,
-                ),
+
+
+    Widget child =
+      url == null || url == ""
+        ? SvgPicture.asset(
+          gender == 'female'
+            ? 'assets/images/femalePatient.svg'
+            : gender == 'male'
+              ? 'assets/images/malePatient.svg'
+              : 'assets/images/LogoIcon.svg')
+        : CachedNetworkImage(
+          fit: BoxFit.cover,
+          imageUrl: url!,
+          progressIndicatorBuilder: (context, url, downloadProgress) =>
+            Padding(
+              padding: const EdgeInsets.all(26.0),
+              child: CircularProgressIndicator(
+                value: downloadProgress.progress,
+                valueColor:
+                const AlwaysStoppedAnimation<Color>(
+                    Constants.primaryColor400),
+                backgroundColor: Constants.primaryColor600,
               ),
-              errorWidget: (context, url, error) =>
-              const Icon(Icons.error),
-            )
-            : widget.patient!.photoUrl == null || widget.patient!.photoUrl == '' ?
-            SvgPicture.asset(
-              widget.patient!.gender == null || widget.patient!.gender == 'unknown'
-                  ? 'assets/images/LogoIcon.svg'
-                  : widget.patient!.gender == "female"
-                  ? 'assets/images/femalePatient.svg'
-                  : 'assets/images/malePatient.svg',
-            ) :
-            CachedNetworkImage(
-              fit: BoxFit.cover,
-              imageUrl: widget.patient!.photoUrl!,
-              progressIndicatorBuilder:
-                  (context, url, downloadProgress) => Padding(
-                padding: const EdgeInsets.all(26.0),
-                child: CircularProgressIndicator(
-                  value: downloadProgress.progress,
-                  valueColor:
-                  const AlwaysStoppedAnimation<Color>(
-                      Constants.primaryColor400),
-                  backgroundColor: Constants.primaryColor600,
-                ),
-              ),
-              errorWidget: (context, url, error) =>
-              const Icon(Icons.error),
             ),
-            shape: widget.form == "rounded" ? StadiumBorder(
-                side: widget.border ? const BorderSide(
-                  color: Colors.white,
-                  width: 3,
-                ) : BorderSide.none,
-            ) : widget.form == "square" ? RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(3)) : const CircleBorder(),
-            clipBehavior: Clip.antiAlias,
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+        );
+
+    return Card(
+      child: Stack(
+        children: [
+          Container(
+            child: child,
+            height: widget.height,
+            width: widget.width,
           ),
-        ),
-      ],
+          Container(
+            child: widget.blur ? BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+              child: Container(
+                color: widget.color?.withOpacity(widget.opacity),
+                width: widget.width,
+                height: widget.height,
+              ),
+            ) :
+            Container(
+              color: widget.color?.withOpacity(widget.opacity),
+              width: widget.width,
+              height: widget.height,
+            ),
+            height: widget.height,
+            width: widget.width,
+          ),
+        ],
+      ),
+      shape: widget.form == "rounded" ? StadiumBorder(
+        side: widget.border ? BorderSide(
+          color: widget.borderColor?? Colors.white,
+          width: 3,
+        ) : BorderSide.none,
+      ) : widget.form == "square" ? RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(3)) : const CircleBorder(),
+      clipBehavior: Clip.antiAlias,
     );
+
   }
 }
 
@@ -446,19 +461,29 @@ class ImageViewTypeForm extends StatefulWidget {
 
   final double height;
   final double width;
+  final Color? color;
+  final double opacity;
   final bool border;
-  final String? photoUrl;
+  final Color? borderColor;
+  final bool blur;
+  final String? url;
   final String? gender;
   final String form;
+  final bool isPatient;
 
   const ImageViewTypeForm({
     Key? key,
     required this.height,
     required this.width,
     required this.border,
-    this.photoUrl,
-    this.gender,
-    this.form = "rounded"
+    required this.gender,
+    this.borderColor = Colors.white,
+    this.color,
+    this.opacity = 1,
+    this.blur = false,
+    this.url,
+    this.form = "rounded",
+    this.isPatient = true,
   }) : super(key: key);
 
   @override
@@ -466,6 +491,7 @@ class ImageViewTypeForm extends StatefulWidget {
 }
 
 class _ImageViewTypeForm extends State<ImageViewTypeForm> {
+
   @override
   void initState() {
     super.initState();
@@ -473,47 +499,72 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        SizedBox(
-          height: widget.height,
-          width: widget.width,
-          child: Card(
-            child: widget.photoUrl == null ?
-            SvgPicture.asset(
-              widget.gender == 'male'
-                  ? 'assets/images/malePatient.svg'
-                  : prefs.getString('gender') == "female"
-                  ? 'assets/images/femalePatient.svg'
-                  : 'assets/images/LogoIcon.svg',
-            ) : CachedNetworkImage(
-              fit: BoxFit.cover,
-              imageUrl: widget.photoUrl?? '',
-              progressIndicatorBuilder:
-                  (context, url, downloadProgress) => Padding(
-                padding: const EdgeInsets.all(26.0),
-                child: CircularProgressIndicator(
-                  value: downloadProgress.progress,
-                  valueColor:
-                  const AlwaysStoppedAnimation<Color>(
-                      Constants.primaryColor400),
-                  backgroundColor: Constants.primaryColor600,
-                ),
-              ),
-              errorWidget: (context, url, error) =>
-              const Icon(Icons.error),
+
+
+    Widget child =
+    widget.url == null || widget.url == ""
+        ? SvgPicture.asset(
+      widget.gender == 'male'
+          ? widget.isPatient? 'assets/images/malePatient.svg': 'assets/images/maleDoctor.svg'
+          : widget.gender == "female"
+          ? widget.isPatient? 'assets/images/femalePatient.svg': 'assets/images/femaleDoctor.svg'
+          : 'assets/images/persona.svg',
+    )
+        : CachedNetworkImage(
+      fit: BoxFit.cover,
+      imageUrl: widget.url!,
+      progressIndicatorBuilder: (context, url, downloadProgress) =>
+          Padding(
+            padding: const EdgeInsets.all(26.0),
+            child: CircularProgressIndicator(
+              value: downloadProgress.progress,
+              valueColor:
+              const AlwaysStoppedAnimation<Color>(
+                  Constants.primaryColor400),
+              backgroundColor: Constants.primaryColor600,
             ),
-            shape: widget.form == "rounded" ? StadiumBorder(
-              side: widget.border ? const BorderSide(
-                color: Colors.white,
-                width: 3,
-              ) : BorderSide.none,
-            ) : widget.form == "square" ? RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(3)) : const CircleBorder(),
-            clipBehavior: Clip.antiAlias,
           ),
-        ),
-      ],
+      errorWidget: (context, url, error) => const Icon(Icons.error),
     );
+
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Stack(
+        children: [
+          Container(
+            child: child,
+            height: widget.height,
+            width: widget.width,
+          ),
+          Container(
+            child: widget.blur ? BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+              child: Container(
+                color: widget.color?.withOpacity(widget.opacity),
+                width: widget.width,
+                height: widget.height,
+              ),
+            ) :
+            Container(
+              color: widget.color?.withOpacity(widget.opacity),
+              width: widget.width,
+              height: widget.height,
+            ),
+            height: widget.height,
+            width: widget.width,
+          ),
+        ],
+      ),
+      shape: widget.form == "rounded" ? StadiumBorder(
+        side: widget.border ? BorderSide(
+          color: widget.borderColor?? Colors.white,
+          width: 3,
+        ) : BorderSide.none,
+      ) : widget.form == "square" ? RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(3)) : const CircleBorder(),
+      clipBehavior: Clip.antiAlias,
+    );
+
   }
+
 }
