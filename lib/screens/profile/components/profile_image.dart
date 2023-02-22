@@ -470,6 +470,7 @@ class ImageViewTypeForm extends StatefulWidget {
   final String? gender;
   final String form;
   final bool isPatient;
+  final double elevation;
 
   const ImageViewTypeForm({
     Key? key,
@@ -484,6 +485,7 @@ class ImageViewTypeForm extends StatefulWidget {
     this.url,
     this.form = "rounded",
     this.isPatient = true,
+    this.elevation = 1.0,
   }) : super(key: key);
 
   @override
@@ -528,6 +530,7 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
     );
 
     return Card(
+      elevation: widget.elevation,
       margin: EdgeInsets.zero,
       child: Stack(
         children: [
