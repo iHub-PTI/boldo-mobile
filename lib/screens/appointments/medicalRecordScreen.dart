@@ -390,6 +390,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                                   ? ListView.builder(
                                                   scrollDirection: Axis.vertical,
                                                   shrinkWrap: true,
+                                                  physics: const NeverScrollableScrollPhysics(),
                                                   itemCount: medicalRecord!.prescription!.length > 3 ? 3 : medicalRecord!.prescription!.length,
                                                   itemBuilder: (BuildContext context, int index) {
                                                     return ShowPrescription(
@@ -502,6 +503,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                                   scrollDirection: Axis.vertical,
                                                   shrinkWrap: true,
                                                   itemCount: medicalRecord?.serviceRequests!.length,
+                                                  physics: const NeverScrollableScrollPhysics(),
                                                   itemBuilder: (BuildContext context, int index) {
                                                     return ShowStudy(
                                                         context, medicalRecord?.serviceRequests![index] ??  ServiceRequest());
