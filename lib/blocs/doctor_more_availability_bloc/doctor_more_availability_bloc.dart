@@ -1,6 +1,7 @@
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/network/user_repository.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,6 +25,7 @@ class DoctorMoreAvailabilityBloc extends Bloc<DoctorMoreAvailabilityEvent, Docto
           startDate: event.startDate,
           endDate: event.endDate,
           organizations: event.organizations,
+          appointmentType: event.appointmentType,
         )!)
             .attempt()
             .run()

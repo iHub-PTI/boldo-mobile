@@ -58,6 +58,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
         .getOrganizationsApplied : BlocProvider.of<patient_bloc.PatientBloc>(context)
         .getOrganizations();
     BlocProvider.of<DoctorAvailabilityBloc>(context).add(GetAvailability(
+      appointmentType: AppointmentType.InPerson,
       id: widget.doctor.id?? '',
       startDate: DateTime.now().toUtc().toIso8601String(),
       endDate: DateTime.now().add(const Duration(days: 30)).toUtc().toIso8601String(),
@@ -421,6 +422,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                             startDate: date.toUtc().toIso8601String(),
                                             endDate: DateTime(date.year, date.month, date.day+1).toUtc().toIso8601String(),
                                             organizations: [_selectedOrganization],
+                                            appointmentType: selectedType,
                                           ));
                                         });
                                       },
@@ -433,6 +435,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                             startDate: date.toUtc().toIso8601String(),
                                             endDate: DateTime(date.year, date.month, date.day+1).toUtc().toIso8601String(),
                                             organizations: [_selectedOrganization],
+                                            appointmentType: selectedType,
                                           ));
                                         });
                                       },
