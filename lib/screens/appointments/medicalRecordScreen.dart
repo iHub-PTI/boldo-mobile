@@ -24,6 +24,7 @@ import 'package:intl/intl.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../constants.dart';
+import 'anotations_details.dart';
 
 /// Show annotations in SOEP, prescriptions and StudyOrders emitted in an encounter
 /// The encounter will be got by the id of the [appointment]
@@ -375,6 +376,44 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
               SoepAccordion(
                   title: Constants.plan,
                   medicalRecord: medicalRecord),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    child: GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  AnnotationsDetails(
+                                    appointment: widget.appointment,
+                                    medicalRecord: medicalRecord,
+                                  )
+                          ),
+                        );
+                      },
+                      child: Card(
+                          margin: EdgeInsets.zero,
+                          clipBehavior: Clip.antiAlias,
+                          elevation: 0,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(5)),
+                          ),
+                          color: ConstantsV2.orange.withOpacity(0.10),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 7),
+                            child: Text(
+                              "explorar notas",
+                              style: boldoTitleRegularTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
+                            ),
+                          )),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),
