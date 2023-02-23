@@ -247,6 +247,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                       child: Column(
                                         children: [
                                           VirtualInPersonSwitch(
+                                            initialSelector: selectedType,
                                             switchCallbackResponse: (AppointmentType type) {
                                               setState(() {
                                                 selectedType = type;
