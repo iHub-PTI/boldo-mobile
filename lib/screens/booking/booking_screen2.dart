@@ -252,6 +252,13 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                               setState(() {
                                                 selectedType = type;
                                                 _selectedBookingHour = null;
+                                                BlocProvider.of<DoctorAvailabilityBloc>(context).add(GetAvailability(
+                                                  appointmentType: type,
+                                                  id: widget.doctor.id?? '',
+                                                  startDate: DateTime.now().toUtc().toIso8601String(),
+                                                  endDate: DateTime.now().add(const Duration(days: 30)).toUtc().toIso8601String(),
+                                                  organizations: _organizations,
+                                                ));
                                               });
                                             },
                                           ),
