@@ -372,9 +372,9 @@ class OrganizationRepository {
       Response response;
       if (prefs.getBool(isFamily) ?? false) {
         response = await dio.post(
-            '/profile/caretaker/dependent/${patient.id}/subscribe/',data: {});
+            '/profile/caretaker/dependent/${patient.id}/subscriptions',data: data);
       } else {
-        response = await dio.post('/profile/patient/subscribe/', data: {});
+        response = await dio.post('/profile/patient/subscriptions', data: data);
       }
       if(response.statusCode == 200)
         return None();
