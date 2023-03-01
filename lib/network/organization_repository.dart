@@ -136,6 +136,76 @@ class OrganizationRepository {
     }
   }
 
+  /// get all the unsubscribed organizations
+  Future<List<Organization>>? getUnsubscribedOrganizations() async {
+    Response response;
+
+    try {
+      // the query is made
+      if (prefs.getBool('isFamily') ?? false) {
+        response = await dio.get(
+            '/profile/caretaker/dependent/${patient.id}/organizations?subscribed=false');
+      } else {
+        response = await dio
+            .get('/profile/patient/organizations?subscribed=false');
+      }
+      // there are organizations
+      if (response.statusCode == 200) {
+        return List<Organization>.from(
+            response.data.map((i) => Organization.fromJson(i)));
+      } // doesn't have any organization
+      else if (response.statusCode == 204) {
+        // return empty list
+        return List<Organization>.from([]);
+      }
+
+      // throw an error if isn't a know status code
+      await Sentry.captureMessage(
+        "unknownError ${response.statusCode}",
+        params: [
+          {
+            "path": response.requestOptions.path,
+            "data": response.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            'access_token': await storage.read(key: 'access_token')
+          }
+        ],
+      );
+      throw Failure('Unknown StatusCode ${response.statusCode}');
+
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
+      );
+      throw Failure("No se pueden obtener las Organizaciones");
+    } catch (exception, stackTrace) {
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
+      );
+      throw Failure(genericError);
+    }
+  }
+
   /// get organizations where the patient is waiting for approving
   Future<List<Organization>>? getPostulatedOrganizations() async {
     Response response;
