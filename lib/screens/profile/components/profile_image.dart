@@ -528,7 +528,6 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
     );
 
     return Card(
-      margin: EdgeInsets.zero,
       child: Stack(
         children: [
           Container(
@@ -558,7 +557,7 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
       shape: widget.form == "rounded" ? StadiumBorder(
         side: widget.border ? BorderSide(
           color: widget.borderColor?? Colors.white,
-          width: 3,
+          width: 2,
         ) : BorderSide.none,
       ) : widget.form == "square" ? RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(3)) : const CircleBorder(),
