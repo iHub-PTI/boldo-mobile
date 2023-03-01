@@ -862,7 +862,6 @@ class FamilySelector extends StatelessWidget {
     double width = type == "rounded"? 54 : 120;
     bool disable = index == 0 ? patient.id == prefs.getString("userId") ? false : true : patient.id == families[index-1].id ? false : true;
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 9),
       child:
         index == 0
             ? ImageViewTypeForm(
@@ -883,10 +882,9 @@ class FamilySelector extends StatelessWidget {
             url: families[index-1].photoUrl,
             gender: families[index-1].gender,
             form: type,
-            color: disable? ConstantsV2.grayLightAndClear : null,
+            color: disable? ConstantsV2.gray : null,
             opacity: disable? 0.6 : 1,
-            blur: disable,
-            borderColor: disable? null: ConstantsV2.secondaryRegular,
+            borderColor: disable? ConstantsV2.grayLightAndClear: ConstantsV2.secondaryRegular,
         )
         ,
     );
