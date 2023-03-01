@@ -537,28 +537,33 @@ class OrganizationRepository {
     }
   }
 
-  Future<None>? unSubscribedOrganization(String id) async {
-    Response response;
+  Future<None>? reorderByPriority(List<Organization> organizations) async {
 
     try {
+      Response response;
+
+      List<dynamic> data = organizations.asMap().entries.map((e) =>
+      {
+        'patientId': patient.id,
+        'organizationId': e.value.id,
+        'priority': e.key+1, // 0->1, 1->2, ...
+      }
+      ).toList();
 
       // the query is made
-      /*if (prefs.getBool('isFamily') ?? false) {
+      if (prefs.getBool('isFamily') ?? false) {
         response = await dio
-            .post('/profile/caretaker/dependent/${patient.id}/organizations/remove/$id');
+            .put('/profile/caretaker/dependent/${patient.id}/organizations/priorities', data: data);
       } else {
-        response = await dio.get('/profile/patient/organizations/remove/$id');
+        response = await dio.put('profile/patient/organizations/priorities', data: data);
       }
       // there are organizations
       if (response.statusCode == 200) {
         return None();
       }
 
-       */
-      organizationsSubscribed.removeWhere((element) => element.id == id);
-      return None();
       // throw an error if isn't a know status code
-      //throw Failure('Unknown StatusCode ${response.statusCode}');
+      throw Failure('Unknown StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
