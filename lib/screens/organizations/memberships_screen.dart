@@ -152,7 +152,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                         BlocBuilder<OrganizationBloc, OrganizationBlocState>(
                             builder: (context, state){
                               if (state is Failed){
-                                return DataFetchErrorWidget(retryCallback: () => OrganizationBloc()..add(GetAllOrganizations()));
+                                return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizations()));
                               } else if(state is Loading){
                                 return const Center(
                                   child: CircularProgressIndicator(
@@ -370,7 +370,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                     BlocBuilder<subscribed.OrganizationSubscribedBloc, subscribed.OrganizationSubscribedBlocState>(
                       builder: (context, state){
                         if (state is subscribed.Failed){
-                          return DataFetchErrorWidget(retryCallback: () => subscribed.OrganizationSubscribedBloc()..add(subscribed.GetOrganizationsSubscribed()));
+                          return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed()));
                         } else if(state is subscribed.Loading){
                           return const Center(
                             child: CircularProgressIndicator(
@@ -453,7 +453,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                     BlocBuilder<applied.OrganizationAppliedBloc, applied.OrganizationAppliedBlocState>(
                       builder: (context, state){
                         if (state is applied.Failed){
-                          return DataFetchErrorWidget(retryCallback: () => applied.OrganizationAppliedBloc()..add(applied.GetOrganizationsPostulated()));
+                          return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated()));
                         } else if(state is applied.Loading){
                           return const Center(
                             child: CircularProgressIndicator(
