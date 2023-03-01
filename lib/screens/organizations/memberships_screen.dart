@@ -872,10 +872,9 @@ class FamilySelector extends StatelessWidget {
             form: type,
             color: disable? ConstantsV2.grayLightAndClear : null,
             opacity: disable? 0.6 : 1,
-            blur: disable,
-            borderColor: disable? null: ConstantsV2.secondaryRegular,
-            url: patient.photoUrl,
-            gender: patient.gender,
+            borderColor: disable? ConstantsV2.grayLightAndClear: ConstantsV2.secondaryRegular,
+            url: prefs.getString('profile_url'),
+            gender: prefs.getString('gender'),
         )
             :ImageViewTypeForm(
             height: height,
