@@ -72,6 +72,9 @@ class UserRepository {
           ? await dio.get("/profile/patient")
           : await dio.get("/profile/caretaker/dependent/$id");
       if (response.statusCode == 200) {
+
+        // clear oldPatient data
+        organizationsPostulated = [];
         patient = Patient.fromJson(response.data);
         // Update prefs in Principal Patient
         if(!(prefs.getBool(isFamily)?? false)) {
