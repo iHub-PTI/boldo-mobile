@@ -525,6 +525,15 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
             ),
           ),
       errorWidget: (context, url, error) => const Icon(Icons.error),
+      imageBuilder: widget.color != null ? (context, imageProvider) => Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: imageProvider,
+              fit: BoxFit.cover,
+              colorFilter:
+              ColorFilter.mode(widget.color!, BlendMode.color)),
+        ),
+      ) : null,
     );
 
     return Card(
