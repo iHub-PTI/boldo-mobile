@@ -362,7 +362,14 @@ class OrganizationRepository {
 
   Future<None>? subscribeToManyOrganizations(List<Organization> organizations) async {
     try {
-      /*Response response;
+
+      List<String> organizationsId = organizations.map((e) => e.id?? '').toList();
+
+      dynamic data = {
+        'organizationsId': organizationsId,
+      };
+
+      Response response;
       if (prefs.getBool(isFamily) ?? false) {
         response = await dio.post(
             '/profile/caretaker/dependent/${patient.id}/subscribe/',data: {});
@@ -375,9 +382,6 @@ class OrganizationRepository {
       // throw an error if isn't a know status code
       throw Failure('Unknown StatusCode ${response.statusCode}');
 
-       */
-      organizationsPostulated.addAll(organizations);
-      return None();
     } on DioError catch (exception, stackTrace) {
       await Sentry.captureMessage(
         exception.toString(),
