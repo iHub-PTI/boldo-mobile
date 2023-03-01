@@ -579,7 +579,20 @@ class OrganizationRepository {
           stackTrace
         ],
       );
-      throw Failure("No se puede eliminar la suscripción");
+      throw Failure("No se puede establecer la prioridad");
+    } on Failure catch (exception, stackTrace) {
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
+      );
+      throw Failure(exception.message);
     } catch (exception, stackTrace) {
       await Sentry.captureMessage(
         exception.toString(),
