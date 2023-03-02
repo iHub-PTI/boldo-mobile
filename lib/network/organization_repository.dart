@@ -434,8 +434,7 @@ class OrganizationRepository {
       }
 
        */
-      organizationsSubscribed.removeWhere((element) => element.id == id);
-      return None();
+      throw Failure("Cancelar suscripción sin implementar");
       // throw an error if isn't a know status code
       //throw Failure('Unknown StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
@@ -488,7 +487,7 @@ class OrganizationRepository {
       }
 
        */
-      organizationsPostulated.removeWhere((element) => element.id == id);
+      throw Failure("Cancelar suscripción sin implementar");
       return None();
       // throw an error if isn't a know status code
       //throw Failure('Unknown StatusCode ${response.statusCode}');
