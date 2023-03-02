@@ -416,7 +416,7 @@ class OrganizationRepository {
     }
   }
 
-  Future<None>? unSubscribed(String id) async {
+  Future<None>? unSubscribedOrganization(String id) async {
     Response response;
 
     try {
