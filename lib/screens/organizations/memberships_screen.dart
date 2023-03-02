@@ -589,7 +589,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _cardPriority(index),
+              _cardPriority(index + 1),
               const SizedBox(width: 12,),
               _cardFunder(_organizationsSubscribed[index]),
             ],
