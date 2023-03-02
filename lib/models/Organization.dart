@@ -5,12 +5,16 @@ class Organization {
 
   bool? active;
 
+  /// integer that define the user preference to get doctors by organization
+  int? priority;
+
   Organization({
     this.active,
     this.id,
     this.name,
     this.type,
-    this.coloCode
+    this.coloCode,
+    this.priority,
   });
 
   Organization.fromJson(Map<String, dynamic> json) {
@@ -19,6 +23,7 @@ class Organization {
     name = json['name'];
     type = json['type'];
     coloCode = json['colorCode'];
+    priority = json['priority'];
   }
 
   Map<String, dynamic> toJson() {
