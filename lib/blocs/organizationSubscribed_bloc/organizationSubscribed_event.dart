@@ -10,3 +10,8 @@ class RemoveOrganization extends OrganizationSubscribedBlocEvent {
   final String id;
   RemoveOrganization({required this.id});
 }
+
+class ReorderByPriority extends OrganizationSubscribedBlocEvent {
+  final List<Organization> organizations;
+  ReorderByPriority({required this.organizations});
+}

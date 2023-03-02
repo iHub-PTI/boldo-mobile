@@ -62,6 +62,28 @@ class OrganizationSubscribedBloc extends Bloc<OrganizationSubscribedBlocEvent, O
 
           emit(OrganizationRemoved(id: event.id));
         }
+      }else if(event is ReorderByPriority) {
+        emit(Loading());
+        var _post;
+
+        //unsubscribed to an one organization
+        await Task(() =>
+        _organizationRepository.reorderByPriority(event.organizations)!)
+            .attempt()
+            .run()
+            .then((value) {
+          _post = value;
+        }
+        );
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(Failed(response: response));
+
+        }else{
+
+          emit(PriorityEstablished());
+        }
       }
 
     }
