@@ -439,6 +439,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                         final index = newIndex > oldIndex ? newIndex - 1 : newIndex;
                                         final organization = _organizationsSubscribed.removeAt(oldIndex);
                                         _organizationsSubscribed.insert(index, organization);
+                                        BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.ReorderByPriority(organizations: _organizationsSubscribed));
                                       },
                                     )
                                   ]
