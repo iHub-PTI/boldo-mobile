@@ -157,9 +157,6 @@ class _MyAppState extends State<MyApp> {
           BlocProvider<HomeBloc>(
             create: (BuildContext context) => HomeBloc(),
           ),
-          BlocProvider<PrescriptionsBloc>(
-            create: (BuildContext context) => PrescriptionsBloc(),
-          ),
           BlocProvider<PrescriptionBloc>(
             create: (BuildContext context) => PrescriptionBloc(),
           ),
