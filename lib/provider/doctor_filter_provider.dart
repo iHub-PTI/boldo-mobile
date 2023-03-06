@@ -207,7 +207,7 @@ class DoctorFilterProvider with ChangeNotifier {
     _virtualAppointmentApplied = false;
     inPersonAppointment = false;
     virtualAppointment = false;
-    notifyListeners();
+    //notifyListeners();
   }
 
   void setSpecializations(
