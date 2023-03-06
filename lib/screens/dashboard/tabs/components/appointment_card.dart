@@ -248,7 +248,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                           Text(
                                             formatDate(
                                               appointmentDay,
-                                              [d, '/', mm, '/', yyyy, ' ', hh,':',nn],
+                                              [d, '/', mm, '/', yyyy, ' ', HH,':',nn],
                                               locale: const SpanishDateLocale(),
                                             ),
                                             style: boldoCorpSmallTextStyle.copyWith(

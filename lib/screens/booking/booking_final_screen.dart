@@ -186,7 +186,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                                   DateTime.parse(
                                                                       widget.bookingDate.availability?? DateTime.now().toString()
                                                                   ),
-                                                                  [d, ' de ', MM, ' a las ', hh, ':',nn, ' ', am],
+                                                                  [d, ' de ', MM, ' a las ', HH, ':',nn, ' ', am],
                                                                   locale: const SpanishDateLocale(),
                                                                 ),
                                                                 style: boldoCorpMediumBlackTextStyle.copyWith(
