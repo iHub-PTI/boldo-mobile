@@ -34,6 +34,7 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
   Widget build(BuildContext context) {
     return Container(
       child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 4),
         child: InkWell(
           onTap: widget.isDependent ? (){} : (){
             Navigator.push(
@@ -44,7 +45,6 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
             );
           },
           child: Container(
-            width: MediaQuery.of(context).size.width-16,
             child: Row(
               children: [
                 Container(
