@@ -102,13 +102,12 @@ class _MyManagersTabState extends State<MyManagersTab> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
                                 alignment: Alignment.topLeft,
                                 child: managers.length > 0 
                                   ? ListView.builder(
                                     shrinkWrap: true,
                                     itemCount: managers.length,
-                                    padding: const EdgeInsets.all(8),
+                                    padding: const EdgeInsets.symmetric(vertical: 8),
                                     scrollDirection: Axis.vertical,
                                     itemBuilder: _buildItem,
                                   ) 
