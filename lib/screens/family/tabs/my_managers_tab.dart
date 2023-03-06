@@ -101,6 +101,21 @@ class _MyManagersTabState extends State<MyManagersTab> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
+                              Flexible(
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Text(
+                                      'Las siguientes personas pueden gestionar tu'
+                                          ' perfil. Esto significa que pueden ver '
+                                          'tu historia clinica y realizar gestiones '
+                                          'como marcar y cancelar consultas en tu '
+                                          'nombre, entre otras funciónes.',
+                                    style: boldoCorpMediumTextStyle.copyWith(
+                                      color: Colors.black
+                                    ),
+                                  )
+                                ),
+                              ),
                               Container(
                                 alignment: Alignment.topLeft,
                                 child: managers.length > 0 
