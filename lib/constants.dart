@@ -386,6 +386,9 @@ ThemeData boldoTheme = ThemeData(
         width: 1.0,
       ),
     ),
+    errorStyle: bodySmallRegular.copyWith(
+      color: ConstantsV2.systemFail
+    )
   ),
   primaryColor: Colors.white,
   scaffoldBackgroundColor: ConstantsV2.BGNeutral,
