@@ -31,6 +31,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
 
   TextEditingController _controller = TextEditingController();
   TextEditingController _controllerNames = TextEditingController();
+  GlobalKey<FormFieldState> formNameKey = GlobalKey<FormFieldState>();
 
   List<Organization> organizations = [];
   List<Organization> organizationsSelected = [];
