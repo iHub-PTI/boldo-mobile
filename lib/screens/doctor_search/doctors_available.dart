@@ -33,6 +33,8 @@ class DoctorsAvailable extends StatefulWidget {
 
 // STATE CLASS
 class _DoctorsAvailableState extends State<DoctorsAvailable> {
+
+  late DoctorFilterProvider _myProvider;
   bool _loading = true;
   List<Doctor> doctors = [];
   // initial value
@@ -48,7 +50,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
   List<Doctor>? doctorsSaved;
   @override
   void initState() {
-
+    _myProvider = Provider.of<DoctorFilterProvider>(context, listen: false);
     BlocProvider.of<DoctorsAvailableBloc>(context).add(
         GetDoctorFilter(
             organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
@@ -84,6 +86,12 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
     }
   });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _myProvider.clearFilter();
+    super.dispose();
   }
 
   @override
