@@ -329,6 +329,15 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                   floatingLabelStyle: labelMedium.copyWith(
                                     color: ConstantsV2.secondaryRegular,
                                   ),
+                                  suffix: InkWell(
+                                    onTap: (){
+                                      submitName(_controllerNames.value.text);
+                                      _controllerNames.text = '';
+                                    },
+                                    child: SvgPicture.asset(
+                                      'assets/icon//arrow-upward.svg'
+                                    ),
+                                  ),
                                   floatingLabelBehavior: FloatingLabelBehavior.always,
                                   hintText: "Juan Pérez",
                                   hintStyle: bodyLarge.copyWith(
