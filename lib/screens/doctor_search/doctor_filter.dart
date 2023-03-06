@@ -298,7 +298,8 @@ class _DoctorFilterState extends State<DoctorFilter> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Column(
                             children: [
-                              TextField(
+                              TextFormField(
+                                key: formNameKey,
                                 decoration: InputDecoration(
                                   floatingLabelStyle: labelMedium.copyWith(
                                     color: ConstantsV2.secondaryRegular,
