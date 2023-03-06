@@ -41,6 +41,31 @@ class _DoctorFilterState extends State<DoctorFilter> {
   List<Specializations>? specializationsSelectedCopy;
   List<String> names = [];
 
+  void submitName(String value){
+    if(formNameKey.currentState?.validate()?? false) {
+      // save name in filters
+      Provider.of<
+          DoctorFilterProvider>(
+          context,
+          listen: false)
+          .addName(
+          name: value,
+          context: context);
+      // get the update list
+      names =
+          Provider
+              .of<
+              DoctorFilterProvider>(
+              context,
+              listen: false)
+              .getNames;
+      _controllerNames.text = '';
+      setState(() {
+
+      });
+    }
+  }
+
   @override
   void initState() {
     specializationsSelected =
@@ -326,28 +351,13 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                     ),
                                   ),
                                 ),
-                                controller: _controllerNames,
-                                onSubmitted: (value){
-                                  Provider.of<
-                                      DoctorFilterProvider>(
-                                      context,
-                                      listen: false)
-                                      .addName(
-                                      name: value,
-                                      context: context);
-                                  // get the update list
-                                  names =
-                                      Provider
-                                          .of<
-                                          DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getNames;
-                                  _controllerNames.text = '';
-                                  setState(() {
-
-                                  });
+                                validator: (value){
+                                  if((value?.isEmpty?? true) || (value?.trimRight().trimRight().isEmpty?? true))
+                                    return "Ingrese el nombre";
+                                  return null;
                                 },
+                                controller: _controllerNames,
+                                onFieldSubmitted: submitName,
                               ),
                             ],
                           ),
