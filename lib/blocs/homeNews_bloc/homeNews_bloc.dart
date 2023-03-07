@@ -110,6 +110,19 @@ class HomeNewsBloc extends Bloc<HomeNewsEvent, HomeNewsState> {
               DateTime.parse(b.authoredDate?? DateTime.now().toString())
                   .compareTo(DateTime.parse(a.authoredDate?? DateTime.now().toString())));
 
+          // date limit to show StudyOrder after this date
+          DateTime timeLimitInf = DateTime(
+            DateTime.now().year,
+            DateTime.now().month - timeToShowStudyOrderInMonth,
+            DateTime.now().day,
+          );
+
+          // Clear appointments where appointment after the timeLimitInf
+          studiesOrders = studiesOrders
+              .where((element)
+          => DateTime.parse(element.authoredDate!).toLocal().isAfter(timeLimitInf)
+          ).toList();
+
           // add diagnosticReport to news
           news = [...news, ...studiesOrders];
         }
