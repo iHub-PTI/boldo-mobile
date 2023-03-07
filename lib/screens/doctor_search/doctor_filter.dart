@@ -335,7 +335,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                       _controllerNames.text = '';
                                     },
                                     child: SvgPicture.asset(
-                                      'assets/icon//arrow-upward.svg'
+                                      'assets/icon/arrow-upward.svg'
                                     ),
                                   ),
                                   floatingLabelBehavior: FloatingLabelBehavior.always,
