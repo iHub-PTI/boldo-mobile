@@ -101,14 +101,28 @@ class _MyManagersTabState extends State<MyManagersTab> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
+                              Flexible(
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Text(
+                                      'Las siguientes personas pueden gestionar tu'
+                                          ' perfil. Esto significa que pueden ver '
+                                          'tu historia clinica y realizar gestiones '
+                                          'como marcar y cancelar consultas en tu '
+                                          'nombre, entre otras funciónes.',
+                                    style: boldoCorpMediumTextStyle.copyWith(
+                                      color: Colors.black
+                                    ),
+                                  )
+                                ),
+                              ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
                                 alignment: Alignment.topLeft,
                                 child: managers.length > 0 
                                   ? ListView.builder(
                                     shrinkWrap: true,
                                     itemCount: managers.length,
-                                    padding: const EdgeInsets.all(8),
+                                    padding: const EdgeInsets.symmetric(vertical: 8),
                                     scrollDirection: Axis.vertical,
                                     itemBuilder: _buildItem,
                                   ) 

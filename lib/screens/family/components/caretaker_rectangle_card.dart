@@ -34,6 +34,7 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
   Widget build(BuildContext context) {
     return Container(
       child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 4),
         child: InkWell(
           onTap: widget.isDependent ? (){} : (){
             Navigator.push(
@@ -44,7 +45,6 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
             );
           },
           child: Container(
-            width: MediaQuery.of(context).size.width-16,
             child: Row(
               children: [
                 Container(
@@ -63,17 +63,19 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            widget.isDependent
-                                ? Text(
-                              "${widget.patient?.givenName} ${widget.patient?.familyName}",
-                              style: boldoSubTextMediumStyle.copyWith(
-                                  color: ConstantsV2.activeText
-                              ),
-                            )
-                                :Text(
-                              "${prefs.getString('name')?.split(' ')[0] ?? ''}${prefs.getString('lastName')?.split(' ')[0] ?? ''}",
-                              style: boldoSubTextMediumStyle.copyWith(
-                                  color: ConstantsV2.activeText
+                            Flexible(
+                              child: widget.isDependent
+                                  ? Text(
+                                "${widget.patient?.givenName} ${widget.patient?.familyName}",
+                                style: boldoSubTextMediumStyle.copyWith(
+                                    color: ConstantsV2.activeText
+                                ),
+                              )
+                                  :Text(
+                                "${prefs.getString('name')?.split(' ')[0] ?? ''}${prefs.getString('lastName')?.split(' ')[0] ?? ''}",
+                                style: boldoSubTextMediumStyle.copyWith(
+                                    color: ConstantsV2.activeText
+                                ),
                               ),
                             ),
                             widget.isDependent && !(prefs.getBool(isFamily)?? false) ? UnlinkCaretakerWidget(
