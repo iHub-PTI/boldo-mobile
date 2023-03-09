@@ -807,7 +807,11 @@ class PastAppointmentCard extends StatelessWidget {
                     // ),
                     const Spacer(),
                     Text(
-                      passedDays(daysDifference),
+                      dateBetween(
+                        date: DateTime.parse(
+                          appointment.start!
+                        )
+                      )?? 'Sin fecha',
                       style: boldoCorpSmallTextStyle
                           .copyWith(
                           color: ConstantsV2
