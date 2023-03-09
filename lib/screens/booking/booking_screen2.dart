@@ -201,6 +201,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                           ),
                                           Flexible(
                                             child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Row(
                                                   children: [
