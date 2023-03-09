@@ -272,6 +272,14 @@ const boldoTabHeaderUnselectedTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const BigButton = TextStyle(
+  color: ConstantsV2.lightest,
+  fontStyle: FontStyle.normal,
+  fontSize: 15,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
 BoxShadow shadowRegular = BoxShadow(
   offset: const Offset(0, 2),
   color: Colors.black.withOpacity(0.05),
