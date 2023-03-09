@@ -184,6 +184,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                     child: Container(
                                       padding: const EdgeInsets.all(16),
                                       child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           ImageViewTypeForm(
                                             height: 60,
