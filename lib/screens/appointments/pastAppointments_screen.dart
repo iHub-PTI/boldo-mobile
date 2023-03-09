@@ -769,9 +769,7 @@ class PastAppointmentCard extends StatelessWidget {
         ? AppointmentType.Virtual : AppointmentType.InPerson;
 
     //message to describe whe is the appointment
-    locationDescription = appointmentType == AppointmentType.Virtual
-        ? ''
-        : '${appointment.organization?.name?? "Desconocido"}';
+    locationDescription = '${appointment.organization?.name?? "Desconocido"}';
     return GestureDetector(
       onTap: () async {
         await Navigator.push(
