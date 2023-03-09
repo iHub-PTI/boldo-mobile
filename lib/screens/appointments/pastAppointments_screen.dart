@@ -877,6 +877,7 @@ class PastAppointmentCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         showAppointmentTypeIcon(appointmentType),
+                        const SizedBox(width: 4,),
                         Text(
                           appointment.appointmentType == 'V' ? "Remoto" : "Presencial",
                           style: TextStyle(
@@ -887,10 +888,11 @@ class PastAppointmentCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    if(appointmentType == AppointmentType.InPerson)
+                    const SizedBox(height: 4,),
                     Row(
                       children: [
-                        locationType(appointmentType),
+                        locationType(AppointmentType.InPerson),
+                        const SizedBox(width: 4,),
                         Expanded(
                           child: Text(
                             locationDescription,
