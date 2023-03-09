@@ -212,23 +212,18 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                                   ],
                                                 ),
                                                 if (widget.doctor.specializations != null)
-                                                  SingleChildScrollView(
-                                                    scrollDirection:
-                                                    Axis.horizontal,
-                                                    child: Row(
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        for (int i=0; i<widget.doctor.specializations!.length; i++)
-                                                          Padding(
-                                                            padding: EdgeInsets.only(bottom: 4, left: i==0 ? 0 : 3.0),
-                                                            child: Text(
-                                                              "${widget.doctor.specializations![i].description}${i<widget.doctor.specializations!.length-1?',':''}",
-                                                              style: boldoBodyLRegularTextStyle.copyWith(
-                                                                  color: ConstantsV2.secondaryRegular),
-                                                            ),
+                                                  Wrap(
+                                                    children: [
+                                                      for (int i=0; i<widget.doctor.specializations!.length; i++)
+                                                        Padding(
+                                                          padding: EdgeInsets.only(bottom: 4, left: i==0 ? 0 : 3.0),
+                                                          child: Text(
+                                                            "${widget.doctor.specializations![i].description}${i<widget.doctor.specializations!.length-1?',':''}",
+                                                            style: boldoBodyLRegularTextStyle.copyWith(
+                                                                color: ConstantsV2.secondaryRegular),
                                                           ),
-                                                      ],
-                                                    ),
+                                                        ),
+                                                    ],
                                                   ),
                                               ],
                                             ),
