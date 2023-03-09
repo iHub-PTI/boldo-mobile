@@ -122,6 +122,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                           child: Container(
                                             padding: const EdgeInsets.all(8),
                                             child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Row(
                                                   children: [
@@ -138,8 +139,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                                   ],
                                                 ),
                                                 if (widget.doctor.specializations != null)
-                                                  Align(
-                                                    alignment: Alignment.center,
+                                                  Container(
                                                     child: Wrap(
                                                       children: [
                                                         for (int i = 0;
