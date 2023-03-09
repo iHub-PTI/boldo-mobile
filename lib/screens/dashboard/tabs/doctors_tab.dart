@@ -472,7 +472,7 @@ class _DoctorCard extends StatelessWidget {
                                       padding: EdgeInsets.only(
                                           left: i == 0 ? 0 : 3.0, bottom: 5),
                                       child: Text(
-                                        "${doctor.specializations![i].description}${doctor.specializations!.length > 1 && i == 0 ? "," : ""}",
+                                        "${doctor.specializations![i].description}${doctor.specializations!.length-1 != i  ? ", " : ""}",
                                         style: boldoSubTextStyle,
                                       ),
                                     ),

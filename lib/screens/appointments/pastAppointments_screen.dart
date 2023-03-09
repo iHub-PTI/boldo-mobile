@@ -857,7 +857,7 @@ class PastAppointmentCard extends StatelessWidget {
                                     padding: EdgeInsets.only(
                                         right: i == 0 ? 0 : 3.0, bottom: 5),
                                     child: Text(
-                                      "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length-1 != i  ? "," : ""}",
+                                      "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length-1 != i  ? ", " : ""}",
                                       style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
                                     ),
                                   ),

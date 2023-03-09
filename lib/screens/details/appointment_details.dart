@@ -135,7 +135,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
                                                 padding: EdgeInsets.only(
                                                     left: i == 0 ? 0 : 3.0),
                                                 child: Text(
-                                                  "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length > 1 && i == 0 ? "," : ""}",
+                                                  "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length-1 != i ? ", " : ""}",
                                                   style: boldoSubTextStyle,
                                                 ),
                                               ),
