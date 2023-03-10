@@ -209,28 +209,34 @@ class _MyStudiesState extends State<MyStudies> {
             );
           }
         },
-        child: _loading
-          ? const CircularProgressIndicator(
-              valueColor:
-              AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-              backgroundColor: Constants.primaryColor600,
-            )
-          : Container(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'nuevo estudio',
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                SvgPicture.asset(
-                  'assets/icon/upload.svg',
-                ),
-              ],
-            )
-          ),
+        child: BlocBuilder<MyStudiesBloc, MyStudiesState>(
+          builder: (BuildContext context, state) {
+            if(state is Loading){
+              return const CircularProgressIndicator(
+                valueColor:
+                AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                backgroundColor: Constants.primaryColor600,
+              );
+            }else{
+              return Container(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'nuevo estudio',
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      SvgPicture.asset(
+                        'assets/icon/upload.svg',
+                      ),
+                    ],
+                  )
+              );
+            }
+          },
+        ),
       ),
     );
   }
