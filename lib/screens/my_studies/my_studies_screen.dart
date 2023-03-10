@@ -193,15 +193,21 @@ class _MyStudiesState extends State<MyStudies> {
       ),
       floatingActionButton: ElevatedButton(
         onPressed: () {
-          _loading
-            ? ScaffoldMessenger.of(context).showSnackBar(
+          if(BlocProvider.of<MyStudiesBloc>(context).state is Loading){
+            ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text("Favor aguardar durante la carga."),
                 backgroundColor: Colors.redAccent,
               ),
-            )
-            : Navigator.push(context,
-              MaterialPageRoute(builder: (BuildContext context) => NewStudy()));
+            );
+          }else{
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => NewStudy()
+                )
+            );
+          }
         },
         child: _loading
           ? const CircularProgressIndicator(
