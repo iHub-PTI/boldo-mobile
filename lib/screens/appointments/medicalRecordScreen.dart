@@ -407,7 +407,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                 horizontal: 15, vertical: 7),
                             child: Text(
                               "explorar notas",
-                              style: boldoTitleRegularTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
+                              style: BigButton.copyWith(color: ConstantsV2.darkBlue),
                             ),
                           )),
                     ),
@@ -519,7 +519,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                 horizontal: 15, vertical: 7),
                             child: Text(
                               "ver receta",
-                              style: boldoTitleRegularTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
+                              style: BigButton.copyWith(color: ConstantsV2.darkBlue),
                             ),
                           )
                       ),
@@ -629,7 +629,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                               horizontal: 15, vertical: 7),
                           child: Text(
                             "ver órdenes",
-                            style: boldoTitleRegularTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
+                            style: BigButton.copyWith(color: ConstantsV2.darkBlue),
                           ),
                         )),
                   ),

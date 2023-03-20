@@ -78,7 +78,7 @@ const boldoHeadingTextStyle = TextStyle(
 const boldoTitleRegularTextStyle = TextStyle(
   color: ConstantsV2.lightest,
   fontStyle: FontStyle.normal,
-  fontSize: 12,
+  fontSize: 24,
   fontWeight: FontWeight.w300,
   fontFamily: 'Montserrat',
 );
@@ -268,6 +268,14 @@ const boldoTabHeaderSelectedTextStyle = TextStyle(
 const boldoTabHeaderUnselectedTextStyle = TextStyle(
   fontStyle: FontStyle.normal,
   fontSize: 19,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const BigButton = TextStyle(
+  color: ConstantsV2.lightest,
+  fontStyle: FontStyle.normal,
+  fontSize: 15,
   fontWeight: FontWeight.w300,
   fontFamily: 'Montserrat',
 );

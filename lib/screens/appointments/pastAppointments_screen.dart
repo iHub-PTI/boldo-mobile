@@ -769,9 +769,7 @@ class PastAppointmentCard extends StatelessWidget {
         ? AppointmentType.Virtual : AppointmentType.InPerson;
 
     //message to describe whe is the appointment
-    locationDescription = appointmentType == AppointmentType.Virtual
-        ? ''
-        : '${appointment.organization?.name?? "Desconocido"}';
+    locationDescription = '${appointment.organization?.name?? "Desconocido"}';
     return GestureDetector(
       onTap: () async {
         await Navigator.push(
@@ -807,7 +805,11 @@ class PastAppointmentCard extends StatelessWidget {
                     // ),
                     const Spacer(),
                     Text(
-                      passedDays(daysDifference),
+                      dateBetween(
+                        date: DateTime.parse(
+                          appointment.start!
+                        )
+                      )?? 'Sin fecha',
                       style: boldoCorpSmallTextStyle
                           .copyWith(
                           color: ConstantsV2
@@ -857,7 +859,7 @@ class PastAppointmentCard extends StatelessWidget {
                                     padding: EdgeInsets.only(
                                         right: i == 0 ? 0 : 3.0, bottom: 5),
                                     child: Text(
-                                      "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length-1 != i  ? "," : ""}",
+                                      "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length-1 != i  ? ", " : ""}",
                                       style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
                                     ),
                                   ),
@@ -875,6 +877,7 @@ class PastAppointmentCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         showAppointmentTypeIcon(appointmentType),
+                        const SizedBox(width: 4,),
                         Text(
                           appointment.appointmentType == 'V' ? "Remoto" : "Presencial",
                           style: TextStyle(
@@ -885,10 +888,11 @@ class PastAppointmentCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    if(appointmentType == AppointmentType.InPerson)
+                    const SizedBox(height: 4,),
                     Row(
                       children: [
-                        locationType(appointmentType),
+                        locationType(AppointmentType.InPerson),
+                        const SizedBox(width: 4,),
                         Expanded(
                           child: Text(
                             locationDescription,

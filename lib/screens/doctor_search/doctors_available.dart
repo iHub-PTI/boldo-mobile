@@ -566,7 +566,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                                     .length;
                             i++)
                               Text(
-                                "${doctors[index].specializations![i].description}${doctors[index].specializations!.length > 1 && i == 0 ? "," : ""}",
+                                "${doctors[index].specializations![i].description}${doctors[index].specializations!.length-1 != i  ? ", " : ""}",
                                 style: boldoBodyLRegularTextStyle
                                     .copyWith(
                                   color: ConstantsV2
