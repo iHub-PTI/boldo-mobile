@@ -540,3 +540,5 @@ const String uploadedStudySuccessfullyMessage = "¡Estudio subido!";
 const String dependentSuccessAdded = '¡Dependiente agregado!';
 DateTime minDate = DateTime(1900, 1, 1);
 DateTime minDateDigit = DateTime(1000, 1, 1);
+
+enum StatusRequestOrganization  {Approved, Pending, Rejected}
