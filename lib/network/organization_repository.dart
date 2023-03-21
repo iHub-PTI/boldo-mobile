@@ -476,7 +476,7 @@ class OrganizationRepository {
     try {
 
       // the query is made
-      /*if (prefs.getBool('isFamily') ?? false) {
+      if (prefs.getBool('isFamily') ?? false) {
         response = await dio
             .delete('/profile/caretaker/dependent/${patient.id}/subscriptionRequest/${organizationRequest.id}');
       } else {
@@ -487,11 +487,8 @@ class OrganizationRepository {
         return None();
       }
 
-       */
-      throw Failure("Cancelar suscripción sin implementar");
-      return None();
       // throw an error if isn't a know status code
-      //throw Failure('Unknown StatusCode ${response.statusCode}');
+      throw Failure('Unknown StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
