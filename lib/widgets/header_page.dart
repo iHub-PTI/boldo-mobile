@@ -3,7 +3,9 @@ import 'package:boldo/main.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:flutter/cupertino.dart';
 
-Widget header(String? text, String? patientText) {
+Widget header(String? text, String? patientText,
+    {double? height, double? width, bool border = true, Color? borderColor}
+    ) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
@@ -33,11 +35,13 @@ Widget header(String? text, String? patientText) {
         style: boldoScreenTitleTextStyle.copyWith(color: ConstantsV2.activeText),
       ),
       ImageViewTypeForm(
-        height: 60,
-        width: 60,
-        border: true,
+        height: height?? 60,
+        width: width?? 60,
+        border: border,
         url: patient.photoUrl,
         gender: patient.gender,
+        borderColor: borderColor,
+        elevation: 0,
       ),
     ],
   );

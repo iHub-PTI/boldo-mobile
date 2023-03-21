@@ -497,6 +497,7 @@ class UserRepository {
   }
 
   Future<List<OrganizationWithAvailabilities>>? getAvailabilities({
+    AppointmentType? appointmentType,
     required String id,
     required String startDate,
     required String endDate,
@@ -506,12 +507,24 @@ class UserRepository {
     try {
 
 
-      Response response = await dio
-          .get("/profile/patient/doctors/$id/availability", queryParameters: {
+      String? appointmentTypeString = appointmentType == AppointmentType.InPerson
+          ? "A": appointmentType == AppointmentType.Virtual ?"V": null;
+
+
+      dynamic queryParams = {
+        'appointmentType': appointmentTypeString,
         'start': startDate,
         'end': endDate,
         'organizationIdList': _organizations,
-      });
+      };
+
+      // remove null values to solve null compare in server
+      queryParams.removeWhere((key, value) => value == null);
+
+      Response response = await dio
+          .get("/profile/patient/doctors/$id/availability",
+          queryParameters: queryParams
+      );
       if (response.statusCode == 200) {
         List<OrganizationWithAvailabilities>? allAvailabilities = [];
         response.data.forEach((v) {

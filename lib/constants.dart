@@ -78,7 +78,7 @@ const boldoHeadingTextStyle = TextStyle(
 const boldoTitleRegularTextStyle = TextStyle(
   color: ConstantsV2.lightest,
   fontStyle: FontStyle.normal,
-  fontSize: 12,
+  fontSize: 24,
   fontWeight: FontWeight.w300,
   fontFamily: 'Montserrat',
 );
@@ -134,6 +134,11 @@ const boldoSubTextMediumStyle = TextStyle(
 TextStyle bodyLarge = GoogleFonts.workSans().copyWith(
   fontWeight: FontWeight.w400,
   fontSize: 16,
+);
+
+TextStyle bodySmallRegular = GoogleFonts.montserrat().copyWith(
+  fontWeight: FontWeight.w300,
+  fontSize: 10,
 );
 
 TextStyle labelMedium = GoogleFonts.workSans().copyWith(
@@ -267,6 +272,14 @@ const boldoTabHeaderUnselectedTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const BigButton = TextStyle(
+  color: ConstantsV2.lightest,
+  fontStyle: FontStyle.normal,
+  fontSize: 15,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
 BoxShadow shadowRegular = BoxShadow(
   offset: const Offset(0, 2),
   color: Colors.black.withOpacity(0.05),
@@ -381,6 +394,9 @@ ThemeData boldoTheme = ThemeData(
         width: 1.0,
       ),
     ),
+    errorStyle: bodySmallRegular.copyWith(
+      color: ConstantsV2.systemFail
+    )
   ),
   primaryColor: Colors.white,
   scaffoldBackgroundColor: ConstantsV2.BGNeutral,
@@ -540,5 +556,6 @@ const String uploadedStudySuccessfullyMessage = "¡Estudio subido!";
 const String dependentSuccessAdded = '¡Dependiente agregado!';
 DateTime minDate = DateTime(1900, 1, 1);
 DateTime minDateDigit = DateTime(1000, 1, 1);
-
 enum StatusRequestOrganization  {Approved, Pending, Rejected}
+const int timeToShowAppointmentsOnHoldInMonth = 1;
+const int timeToShowStudyOrderInMonth = 1;

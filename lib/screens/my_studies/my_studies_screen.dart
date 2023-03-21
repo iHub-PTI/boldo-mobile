@@ -193,38 +193,50 @@ class _MyStudiesState extends State<MyStudies> {
       ),
       floatingActionButton: ElevatedButton(
         onPressed: () {
-          _loading
-            ? ScaffoldMessenger.of(context).showSnackBar(
+          if(BlocProvider.of<MyStudiesBloc>(context).state is Loading){
+            ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text("Favor aguardar durante la carga."),
                 backgroundColor: Colors.redAccent,
               ),
-            )
-            : Navigator.push(context,
-              MaterialPageRoute(builder: (BuildContext context) => NewStudy()));
+            );
+          }else{
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => NewStudy()
+                )
+            );
+          }
         },
-        child: _loading
-          ? const CircularProgressIndicator(
-              valueColor:
-              AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-              backgroundColor: Constants.primaryColor600,
-            )
-          : Container(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'nuevo estudio',
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                SvgPicture.asset(
-                  'assets/icon/upload.svg',
-                ),
-              ],
-            )
-          ),
+        child: BlocBuilder<MyStudiesBloc, MyStudiesState>(
+          builder: (BuildContext context, state) {
+            if(state is Loading){
+              return const CircularProgressIndicator(
+                valueColor:
+                AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                backgroundColor: Constants.primaryColor600,
+              );
+            }else{
+              return Container(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'nuevo estudio',
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      SvgPicture.asset(
+                        'assets/icon/upload.svg',
+                      ),
+                    ],
+                  )
+              );
+            }
+          },
+        ),
       ),
     );
   }

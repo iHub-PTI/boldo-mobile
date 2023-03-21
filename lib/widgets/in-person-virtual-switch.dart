@@ -6,7 +6,12 @@ import '../constants.dart';
 
 class VirtualInPersonSwitch extends StatefulWidget {
   final Function(AppointmentType type) switchCallbackResponse;
-  const VirtualInPersonSwitch({Key? key, required this.switchCallbackResponse})
+  final AppointmentType initialSelector;
+  const VirtualInPersonSwitch({
+    Key? key,
+    required this.switchCallbackResponse,
+    this.initialSelector = AppointmentType.InPerson,
+  })
       : super(key: key);
   @override
   _VirtualInPersonSwitchState createState() => _VirtualInPersonSwitchState();
@@ -27,9 +32,23 @@ class _VirtualInPersonSwitchState extends State<VirtualInPersonSwitch> {
   @override
   void initState() {
     super.initState();
-    xAlign = loginAlign;
-    loginColor = selectedColor;
-    signInColor = normalColor;
+    switch (widget.initialSelector){
+      case AppointmentType.InPerson:
+        xAlign = loginAlign;
+        loginColor = selectedColor;
+        signInColor = normalColor;
+        break;
+      case AppointmentType.Virtual:
+        xAlign = signInAlign;
+        signInColor = selectedColor;
+        loginColor = normalColor;
+        break;
+      default:
+        xAlign = loginAlign;
+        loginColor = selectedColor;
+        signInColor = normalColor;
+        break;
+    }
   }
 
   @override

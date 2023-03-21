@@ -64,13 +64,15 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Container(
+                            padding: const EdgeInsets.only(top: 25, bottom: 35),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  "turno marcado",
+                                  "Cita confirmada",
                                   style: boldoTitleRegularTextStyle.copyWith(color: ConstantsV2.lightest),
                                 ),
+                                const SizedBox(height: 26,),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -91,17 +93,19 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                               duration: const Duration(milliseconds: 1000),
                                               spins: 0.05,
                                               child: ImageViewTypeForm(
-                                                height: 170,
-                                                width: 170,
+                                                height: 96,
+                                                width: 96,
                                                 border: true,
                                                 url: patient.photoUrl,
                                                 gender: patient.gender,
+                                                borderColor: ConstantsV2.secondaryRegular,
                                               ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
+                                    const SizedBox(width: 8,),
                                     BounceInUp(
                                       from: 200,
                                       duration: const Duration(seconds: 1),
@@ -119,12 +123,13 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                               duration: const Duration(milliseconds: 1000),
                                               spins: -0.05,
                                               child: ImageViewTypeForm(
-                                                height: 170,
-                                                width: 170,
+                                                height: 96,
+                                                width: 96,
                                                 border: true,
                                                 url: widget.doctor.photoUrl,
                                                 gender: widget.doctor.gender,
                                                 isPatient: false,
+                                                borderColor: ConstantsV2.secondaryRegular,
                                               ),
                                             ),
                                           ),
@@ -186,7 +191,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                                   DateTime.parse(
                                                                       widget.bookingDate.availability?? DateTime.now().toString()
                                                                   ),
-                                                                  [d, ' de ', MM, ' a las ', hh, ':',nn, ' ', am],
+                                                                  [d, ' de ', MM, ' a las ', HH, ':',nn, ' ', am],
                                                                   locale: const SpanishDateLocale(),
                                                                 ),
                                                                 style: boldoCorpMediumBlackTextStyle.copyWith(
@@ -220,16 +225,16 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                                     color: ConstantsV2.activeText
                                                                 ),
                                                               ),
-                                                              Text(
-                                                                "${widget.doctor.givenName?.split(' ')[0]?? ''} "
-                                                                    "${widget.doctor.familyName?.split(' ')[0]?? ''} "
-                                                                ,
-                                                                style: boldoCorpMediumBlackTextStyle.copyWith(
-                                                                    color: ConstantsV2.activeText
-                                                                ),
-                                                              ),
                                                               Wrap(
                                                                 children: [
+                                                                  Text(
+                                                                    "${widget.doctor.givenName?.split(' ')[0]?? ''} "
+                                                                        "${widget.doctor.familyName?.split(' ')[0]?? ''}, "
+                                                                    ,
+                                                                    style: boldoCorpMediumBlackTextStyle.copyWith(
+                                                                        color: ConstantsV2.activeText
+                                                                    ),
+                                                                  ),
                                                                   for (int i = 0;
                                                                   i <
                                                                       widget.doctor
@@ -239,8 +244,8 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                                       padding: EdgeInsets.only(
                                                                           right: i == 0 ? 0 : 3.0, bottom: 5),
                                                                       child: Text(
-                                                                        "${widget.doctor.specializations![i].description}${widget.doctor.specializations!.length-1 != i  ? "," : ""}",
-                                                                        style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
+                                                                        "${widget.doctor.specializations![i].description}${widget.doctor.specializations!.length-1 != i  ? ", " : ""}",
+                                                                        style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),
                                                                       ),
                                                                     ),
                                                                 ],

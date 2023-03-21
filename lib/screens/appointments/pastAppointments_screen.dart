@@ -59,8 +59,6 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
     // get future appointments
     BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
 
-    // get past appointments
-    BlocProvider.of<AppointmentBloc>(context).add(GetPastAppointmentBetweenDatesList());
     super.initState();
   }
 
@@ -77,7 +75,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
     super.dispose();
   }
 
-  void _onRefresh() async {
+  void _onRefresh(BuildContext context) async {
     setState(() {
       dateOffset = DateTime.now().subtract(const Duration(days: 30));
     });
@@ -87,175 +85,178 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<AppointmentBloc, AppointmentState>(
-          listener: (context, state) {
-            if (state is Success) {
-              setState(() {
-                _dataLoading = false;
-                _dataLoaded = true;
-              });
-            } else if (state is Failed) {
-              emitSnackBar(
-                  context: context,
-                  text: state.response,
-                  status: ActionStatus.Fail
-              );
-              if (_refreshPastAppointmentController != null) {
-                _refreshPastAppointmentController!.refreshCompleted();
-                _refreshPastAppointmentController!.loadComplete();
-              }
-              _dataLoading = false;
-              _dataLoaded = false;
-            } else if (state is AppointmentLoadedState) {
-              allAppointments = state.appointments;
-              if (_refreshFutureAppointmentController != null) {
-                _refreshPastAppointmentController!.refreshCompleted();
-                _refreshPastAppointmentController!.loadComplete();
-              }
-            }
-          }
-        ),
-        BlocListener<HomeAppointmentsBloc, HomeAppointmentsState>(
-          listener: (context, state) {
-            if (state is FailedLoadedAppointments) {
-              emitSnackBar(
-                  context: context,
-                  text: state.response,
-                  status: ActionStatus.Fail
-              );
-              if (_refreshFutureAppointmentController != null) {
-                _refreshFutureAppointmentController!.refreshCompleted();
-                _refreshFutureAppointmentController!.loadComplete();
-              }
-            }
-            if (state is AppointmentsHomeLoaded) {
-              futureAppointments = state.appointments;
-              if (_refreshFutureAppointmentController != null) {
-                _refreshFutureAppointmentController!.refreshCompleted();
-                _refreshFutureAppointmentController!.loadComplete();
-              }
-            }
-          },
-        ),
-      ],
-      child: BlocBuilder<AppointmentBloc, AppointmentState>(
-        builder: (context, state) {
-          return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          leadingWidth: 200,
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 16.0),
-            child: SvgPicture.asset('assets/Logo.svg',
-                semanticsLabel: 'BOLDO Logo'),
-          ),
-        ),
-        body: _dataLoading == true
-            ? const Center(
-                child: CircularProgressIndicator(
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                  backgroundColor: Constants.primaryColor600,
-                ),
-              )
-            : Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.chevron_left_rounded,
-                                size: 25,
-                                color: Constants.extraColor400,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: header("Mis Consultas", "Consultas"),
-                        ),
-                      ],
+    return BlocProvider<AppointmentBloc>(
+      create: (BuildContext context) => AppointmentBloc()..add(GetPastAppointmentBetweenDatesList()),
+      child: MultiBlocListener(
+          listeners: [
+            BlocListener<AppointmentBloc, AppointmentState>(
+                listener: (context, state) {
+                  if (state is Success) {
+                    setState(() {
+                      _dataLoading = false;
+                      _dataLoaded = true;
+                    });
+                  } else if (state is Failed) {
+                    emitSnackBar(
+                        context: context,
+                        text: state.response,
+                        status: ActionStatus.Fail
+                    );
+                    if (_refreshPastAppointmentController != null) {
+                      _refreshPastAppointmentController!.refreshCompleted();
+                      _refreshPastAppointmentController!.loadComplete();
+                    }
+                    _dataLoading = false;
+                    _dataLoaded = false;
+                  } else if (state is AppointmentLoadedState) {
+                    allAppointments = state.appointments;
+                    if (_refreshFutureAppointmentController != null) {
+                      _refreshPastAppointmentController!.refreshCompleted();
+                      _refreshPastAppointmentController!.loadComplete();
+                    }
+                  }
+                }
+            ),
+            BlocListener<HomeAppointmentsBloc, HomeAppointmentsState>(
+              listener: (context, state) {
+                if (state is FailedLoadedAppointments) {
+                  emitSnackBar(
+                      context: context,
+                      text: state.response,
+                      status: ActionStatus.Fail
+                  );
+                  if (_refreshFutureAppointmentController != null) {
+                    _refreshFutureAppointmentController!.refreshCompleted();
+                    _refreshFutureAppointmentController!.loadComplete();
+                  }
+                }
+                if (state is AppointmentsHomeLoaded) {
+                  futureAppointments = state.appointments;
+                  if (_refreshFutureAppointmentController != null) {
+                    _refreshFutureAppointmentController!.refreshCompleted();
+                    _refreshFutureAppointmentController!.loadComplete();
+                  }
+                }
+              },
+            ),
+          ],
+          child: BlocBuilder<AppointmentBloc, AppointmentState>(
+              builder: (context, state) {
+                return Scaffold(
+                  appBar: AppBar(
+                    backgroundColor: Colors.white,
+                    leadingWidth: 200,
+                    leading: Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: SvgPicture.asset('assets/Logo.svg',
+                          semanticsLabel: 'BOLDO Logo'),
                     ),
-                    if (!_dataLoading && !_dataLoaded)
-                      const Padding(
-                        padding: EdgeInsets.only(top: 40.0),
-                        child: Center(
-                          child: Text(
-                            "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Constants.otherColor100,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Stack(
-                        children: [
-                          Center(
-                            child: SvgPicture.asset(
-                              'assets/decorations/line_separator.svg',
-                            )
-                          ),
-                          TabBar(
-                            labelStyle: boldoTabHeaderSelectedTextStyle,
-                            unselectedLabelStyle: boldoTabHeaderUnselectedTextStyle,
-                            indicatorColor: Colors.transparent,
-                            unselectedLabelColor:
-                            const Color.fromRGBO(119, 119, 119, 1),
-                            labelColor: ConstantsV2.activeText,
-                            controller: _tabController,
-                            tabs: [
-                              const Text(
-                                'Próximas',
-                              ),
-                              Row(
+                  ),
+                  body: _dataLoading == true
+                      ? const Center(
+                    child: CircularProgressIndicator(
+                      valueColor:
+                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                      backgroundColor: Constants.primaryColor600,
+                    ),
+                  )
+                      : Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Row(
                                 children: [
-                                  const Text(
-                                    'Anteriores',
-                                  ),
-                                  if(_selectedIndex == 1)
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 6.0),
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        await _filterBox();
-                                      },
-                                      child: SvgPicture.asset(
-                                        'assets/icon/filter-list.svg',
-                                      ),
-                                    ),
+                                  const Icon(
+                                    Icons.chevron_left_rounded,
+                                    size: 25,
+                                    color: Constants.extraColor400,
                                   ),
                                 ],
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                      Expanded(
-                        child: TabBarView(
-                          controller: _tabController,
-                          children: [
-                            _buildFutureAppointments(),
-                            _buildPastAppointments(),
+                              ),
+                            ),
+                            Expanded(
+                              child: header("Mis Consultas", "Consultas"),
+                            ),
                           ],
                         ),
-                      ),
+                        if (!_dataLoading && !_dataLoaded)
+                          const Padding(
+                            padding: EdgeInsets.only(top: 40.0),
+                            child: Center(
+                              child: Text(
+                                "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Constants.otherColor100,
+                                ),
+                              ),
+                            ),
+                          ),
+                        Stack(
+                          children: [
+                            Center(
+                                child: SvgPicture.asset(
+                                  'assets/decorations/line_separator.svg',
+                                )
+                            ),
+                            TabBar(
+                              labelStyle: boldoTabHeaderSelectedTextStyle,
+                              unselectedLabelStyle: boldoTabHeaderUnselectedTextStyle,
+                              indicatorColor: Colors.transparent,
+                              unselectedLabelColor:
+                              const Color.fromRGBO(119, 119, 119, 1),
+                              labelColor: ConstantsV2.activeText,
+                              controller: _tabController,
+                              tabs: [
+                                const Text(
+                                  'Próximas',
+                                ),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'Anteriores',
+                                    ),
+                                    if(_selectedIndex == 1)
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 6.0),
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            await _filterBox(context);
+                                          },
+                                          child: SvgPicture.asset(
+                                            'assets/icon/filter-list.svg',
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          child: TabBarView(
+                            controller: _tabController,
+                            children: [
+                              _buildFutureAppointments(),
+                              _buildPastAppointments(context),
+                            ],
+                          ),
+                        ),
 
-                  ],
-                ),
-              ),
-      );
-    }));
+                      ],
+                    ),
+                  ),
+                );
+              })),
+    );
   }
 
   Widget _buildFutureAppointments() {
@@ -333,7 +334,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
     );
   }
 
-  Widget _buildPastAppointments() {
+  Widget _buildPastAppointments(BuildContext context) {
     return Container(
       child: SmartRefresher(
         enablePullDown: true,
@@ -345,7 +346,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
         onLoading: () {
           dateOffset = dateOffset.subtract(const Duration(days: 30));
         },
-        onRefresh: _onRefresh,
+        onRefresh: () => _onRefresh(context),
         footer: CustomFooter(
           height: 140,
           builder: (BuildContext context, LoadStatus? mode) {
@@ -430,17 +431,17 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
       appointment: allAppointments[index],
     );
   }
-  Future _filterBox(){
+  Future _filterBox(BuildContext contextPage){
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         TextEditingController dateTextController = TextEditingController();
         TextEditingController date2TextController = TextEditingController();
         var inputFormat = DateFormat('dd/MM/yyyy');
-        DateTime date1 = BlocProvider.of<AppointmentBloc>(context).getInitialDate();
-        DateTime? date2 = BlocProvider.of<AppointmentBloc>(context).getFinalDate();
-        bool virtual = BlocProvider.of<AppointmentBloc>(context).getVirtualStatus();
-        bool inPerson = BlocProvider.of<AppointmentBloc>(context).getInPersonStatus();
+        DateTime date1 = BlocProvider.of<AppointmentBloc>(contextPage).getInitialDate();
+        DateTime? date2 = BlocProvider.of<AppointmentBloc>(contextPage).getFinalDate();
+        bool virtual = BlocProvider.of<AppointmentBloc>(contextPage).getVirtualStatus();
+        bool inPerson = BlocProvider.of<AppointmentBloc>(contextPage).getInPersonStatus();
 
         dateTextController.text = inputFormat.format(date1);
         date2TextController.text = date2 != null? inputFormat.format(date2) :'';
@@ -710,11 +711,11 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                           children: [
                             ElevatedButton(
                               onPressed:() {
-                                BlocProvider.of<AppointmentBloc>(context).setInitialDate(date1);
-                                BlocProvider.of<AppointmentBloc>(context).setFinalDate(date2);
-                                BlocProvider.of<AppointmentBloc>(context).setInPersonStatus(inPerson);
-                                BlocProvider.of<AppointmentBloc>(context).setVirtualStatus(virtual);
-                                BlocProvider.of<AppointmentBloc>(context).add(GetPastAppointmentBetweenDatesList());
+                                BlocProvider.of<AppointmentBloc>(contextPage).setInitialDate(date1);
+                                BlocProvider.of<AppointmentBloc>(contextPage).setFinalDate(date2);
+                                BlocProvider.of<AppointmentBloc>(contextPage).setInPersonStatus(inPerson);
+                                BlocProvider.of<AppointmentBloc>(contextPage).setVirtualStatus(virtual);
+                                BlocProvider.of<AppointmentBloc>(contextPage).add(GetPastAppointmentBetweenDatesList());
                                 Navigator.pop(context);
                               },
                               child: Row(
@@ -768,9 +769,7 @@ class PastAppointmentCard extends StatelessWidget {
         ? AppointmentType.Virtual : AppointmentType.InPerson;
 
     //message to describe whe is the appointment
-    locationDescription = appointmentType == AppointmentType.Virtual
-        ? ''
-        : '${appointment.organization?.name?? "Desconocido"}';
+    locationDescription = '${appointment.organization?.name?? "Desconocido"}';
     return GestureDetector(
       onTap: () async {
         await Navigator.push(
@@ -806,7 +805,11 @@ class PastAppointmentCard extends StatelessWidget {
                     // ),
                     const Spacer(),
                     Text(
-                      passedDays(daysDifference),
+                      dateBetween(
+                        date: DateTime.parse(
+                          appointment.start!
+                        )
+                      )?? 'Sin fecha',
                       style: boldoCorpSmallTextStyle
                           .copyWith(
                           color: ConstantsV2
@@ -856,7 +859,7 @@ class PastAppointmentCard extends StatelessWidget {
                                     padding: EdgeInsets.only(
                                         right: i == 0 ? 0 : 3.0, bottom: 5),
                                     child: Text(
-                                      "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length-1 != i  ? "," : ""}",
+                                      "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length-1 != i  ? ", " : ""}",
                                       style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
                                     ),
                                   ),
@@ -874,6 +877,7 @@ class PastAppointmentCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         showAppointmentTypeIcon(appointmentType),
+                        const SizedBox(width: 4,),
                         Text(
                           appointment.appointmentType == 'V' ? "Remoto" : "Presencial",
                           style: TextStyle(
@@ -884,10 +888,11 @@ class PastAppointmentCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    if(appointmentType == AppointmentType.InPerson)
+                    const SizedBox(height: 4,),
                     Row(
                       children: [
-                        locationType(appointmentType),
+                        locationType(AppointmentType.InPerson),
+                        const SizedBox(width: 4,),
                         Expanded(
                           child: Text(
                             locationDescription,

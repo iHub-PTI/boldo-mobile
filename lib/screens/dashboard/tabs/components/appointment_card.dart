@@ -221,7 +221,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                           padding: EdgeInsets.only(
                                               right: i == 0 ? 0 : 3.0, bottom: 5),
                                           child: Text(
-                                            "${widget.appointment.doctor!.specializations![i].description}${widget.appointment.doctor!.specializations!.length-1 != i  ? "," : ""}",
+                                            "${widget.appointment.doctor!.specializations![i].description}${widget.appointment.doctor!.specializations!.length-1 != i  ? ", " : ""}",
                                             style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
                                           ),
                                         ),
@@ -248,7 +248,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                           Text(
                                             formatDate(
                                               appointmentDay,
-                                              [d, '/', mm, '/', yyyy, ' ', hh,':',nn],
+                                              [d, '/', mm, '/', yyyy, ' ', HH,':',nn],
                                               locale: const SpanishDateLocale(),
                                             ),
                                             style: boldoCorpSmallTextStyle.copyWith(

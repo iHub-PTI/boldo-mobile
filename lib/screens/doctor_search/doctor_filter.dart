@@ -31,6 +31,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
 
   TextEditingController _controller = TextEditingController();
   TextEditingController _controllerNames = TextEditingController();
+  GlobalKey<FormFieldState> formNameKey = GlobalKey<FormFieldState>();
 
   List<Organization> organizations = [];
   List<Organization> organizationsSelected = [];
@@ -39,6 +40,31 @@ class _DoctorFilterState extends State<DoctorFilter> {
   List<Specializations> specializationsSelected = [];
   List<Specializations>? specializationsSelectedCopy;
   List<String> names = [];
+
+  void submitName(String value){
+    if(formNameKey.currentState?.validate()?? false) {
+      // save name in filters
+      Provider.of<
+          DoctorFilterProvider>(
+          context,
+          listen: false)
+          .addName(
+          name: value,
+          context: context);
+      // get the update list
+      names =
+          Provider
+              .of<
+              DoctorFilterProvider>(
+              context,
+              listen: false)
+              .getNames;
+      _controllerNames.text = '';
+      setState(() {
+
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -297,10 +323,20 @@ class _DoctorFilterState extends State<DoctorFilter> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Column(
                             children: [
-                              TextField(
+                              TextFormField(
+                                key: formNameKey,
                                 decoration: InputDecoration(
                                   floatingLabelStyle: labelMedium.copyWith(
                                     color: ConstantsV2.secondaryRegular,
+                                  ),
+                                  suffix: InkWell(
+                                    onTap: (){
+                                      submitName(_controllerNames.value.text);
+                                      _controllerNames.text = '';
+                                    },
+                                    child: SvgPicture.asset(
+                                      'assets/icon/arrow-upward.svg'
+                                    ),
                                   ),
                                   floatingLabelBehavior: FloatingLabelBehavior.always,
                                   hintText: "Juan Pérez",
@@ -324,28 +360,13 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                     ),
                                   ),
                                 ),
-                                controller: _controllerNames,
-                                onSubmitted: (value){
-                                  Provider.of<
-                                      DoctorFilterProvider>(
-                                      context,
-                                      listen: false)
-                                      .addName(
-                                      name: value,
-                                      context: context);
-                                  // get the update list
-                                  names =
-                                      Provider
-                                          .of<
-                                          DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getNames;
-                                  _controllerNames.text = '';
-                                  setState(() {
-
-                                  });
+                                validator: (value){
+                                  if((value?.isEmpty?? true) || (value?.trimRight().trimRight().isEmpty?? true))
+                                    return "Ingrese el nombre";
+                                  return null;
                                 },
+                                controller: _controllerNames,
+                                onFieldSubmitted: submitName,
                               ),
                             ],
                           ),
