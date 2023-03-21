@@ -539,8 +539,6 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
     );
 
     return Card(
-      elevation: widget.elevation,
-      margin: EdgeInsets.zero,
       child: Stack(
         children: [
           Container(

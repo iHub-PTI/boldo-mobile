@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../constants.dart';
 
-class Failure {
+class Failure extends Error {
   final String message;
 
   Failure(this.message);
