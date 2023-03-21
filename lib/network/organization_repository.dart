@@ -217,10 +217,10 @@ class OrganizationRepository {
     try {
       /*if (prefs.getBool('isFamily') ?? false) {
         response = await dio
-            .get('/profile/caretaker/dependent/${patient.id}/organizations');
+            .get('/profile/caretaker/dependent/${patient.id}/subscriptionRequests?status=PD');
       } else {
         // the query is made
-        response = await dio.get('/profile/patient/organizations');
+        response = await dio.get('/profile/patient/subscriptionRequests?status=PD');
       }
       // there are organizations
       if (response.statusCode == 200) {
@@ -428,9 +428,9 @@ class OrganizationRepository {
       // the query is made
       /*if (prefs.getBool('isFamily') ?? false) {
         response = await dio
-            .post('/profile/caretaker/dependent/${patient.id}/organizations/unsubscribed/$id');
+            .delete('/profile/caretaker/dependent/${patient.id}/organization/${organization.id}');
       } else {
-        response = await dio.get('/profile/patient/organizations/unsubscribed/$id');
+        response = await dio.delete('/profile/patient/organization/${organization.id}');
       }
       // there are organizations
       if (response.statusCode == 200) {
@@ -481,9 +481,9 @@ class OrganizationRepository {
       // the query is made
       /*if (prefs.getBool('isFamily') ?? false) {
         response = await dio
-            .post('/profile/caretaker/dependent/${patient.id}/organizations/unsubscribedPostulation/$id');
+            .delete('/profile/caretaker/dependent/${patient.id}/subscriptionRequest/${organizationRequest.id}');
       } else {
-        response = await dio.get('/profile/patient/organizations/unsubscribedPostulation/$id');
+        response = await dio.delete('/profile/patient/subscriptionRequest/${organizationRequest.id}');
       }
       // there are organizations
       if (response.statusCode == 200) {
