@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:boldo/constants.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/helpers.dart';
@@ -21,8 +22,14 @@ class PassportRepository {
     try {
       print('get user Disease List');
       //fake json Covid
-      Response response = await dioPassport.get(
-          '/profile/citizen/vaccinationRegistry/list?all=true&sync=$needSync&groupByDisease=false');
+      Response response;
+      if (prefs.getBool(isFamily) ?? false) {
+        response = await dioPassport.get(
+            'profile/caretaker/dependent/${patient.id}/vaccines/vaccinationRegistry/list?all=true&sync=$needSync&groupByDisease=false');
+      } else {
+        response = await dioPassport.get(
+            'profile/patient/vaccines/vaccinationRegistry/list?all=true&sync=$needSync&groupByDisease=false');
+      }
       if (response.statusCode == 200) {
         diseaseUserList = userVaccinateFromJson(response.data);
       } else if (response.statusCode == 404) {
@@ -72,18 +79,30 @@ class PassportRepository {
 
       // in this case the path is easier
       if (vaccine!.length == diseaseUserList!.length) {
-        response = await dioDownloader.get(
-            'profile/citizen/vaccinationRegistry/list/pdf',
-            queryParameters: {"all": true});
+        if (prefs.getBool(isFamily) ?? false) {
+          response = await dioDownloader.get(
+              'profile/caretaker/vaccines/dependent/${patient.id}/vaccinationRegistry/list/pdf',
+              queryParameters: {"all": true});
+        } else {
+          response = await dioDownloader.get(
+              'profile/patient/vaccines/vaccinationRegistry/list/pdf',
+              queryParameters: {"all": true});
+        }
       } else {
         //and this case the path for query required a query param
         for (var i = 0; i < vaccine.length; i++) {
           // and then, add all elements
           diseaseCode.add(vaccine[i].diseaseCode);
         }
-        response = await dioDownloader.get(
-            'profile/citizen/vaccinationRegistry/list/pdf',
-            queryParameters: {"diseaseCode": diseaseCode});
+        if (prefs.getBool(isFamily) ?? false) {
+          response = await dioDownloader.get(
+              'profile/caretaker/vaccines/dependent/${patient.id}/vaccinationRegistry/list/pdf',
+              queryParameters: {"diseaseCode": diseaseCode});
+        } else {
+          response = await dioDownloader.get(
+              'profile/patient/vaccines/vaccinationRegistry/list/pdf',
+              queryParameters: {"diseaseCode": diseaseCode});
+        }
       }
 
       final raf = file.openSync(mode: FileMode.write);
@@ -119,9 +138,16 @@ class PassportRepository {
     String verificationCode;
     try {
       print("post verification code");
-      Response response = await dioPassport.post(
-          "profile/citizen/vaccinationRegistry/create?all=$allVaccination",
-          data: dataToPass);
+      Response response;
+      if (prefs.getBool(isFamily) ?? false) {
+        response = await dioPassport.post(
+            "profile/caretaker/vaccines/dependent/${patient.id}/vaccinationRegistry/create?all=$allVaccination",
+            data: dataToPass);
+      } else {
+        response = await dioPassport.post(
+            "profile/patient/vaccines/vaccinationRegistry/create?all=$allVaccination",
+            data: dataToPass);
+      }
       if (response.statusCode == 200) {
         verificationCode = response.data;
       } else if (response.statusCode == 404) {
