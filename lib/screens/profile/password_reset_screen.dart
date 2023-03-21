@@ -1,6 +1,8 @@
+import 'package:boldo/main.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../widgets/wrapper.dart';
@@ -25,6 +27,75 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
   String? _errorMessage;
   String? _successMessage;
   final _formKey = GlobalKey<FormState>();
+
+  // flag for password field
+  bool _obscureText = true;
+
+  // function for password field
+  void _toggle() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
+  // flag for password field
+  bool _obscureText1 = true;
+
+  // function for password field
+  void _toggle1() {
+    setState(() {
+      _obscureText1 = !_obscureText1;
+    });
+  }
+
+  // flag for repeat password field
+  bool _obscureText2 = true;
+
+  // function for repeat password field
+  void _toggle2() {
+    setState(() {
+      _obscureText2 = !_obscureText2;
+    });
+  }
+
+  Widget obscureTextToggle(){
+    return GestureDetector(
+      onTap: _toggle,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SvgPicture.asset(
+          "assets/icon/eyeoff.svg",
+          color: Constants.extraColor300,
+        ),
+      ),
+    );
+  }
+
+  Widget obscureText1Toggle(){
+    return GestureDetector(
+      onTap: _toggle1,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SvgPicture.asset(
+          "assets/icon/eyeoff.svg",
+          color: Constants.extraColor300,
+        ),
+      ),
+    );
+  }
+
+  Widget obscureText2Toggle(){
+    return GestureDetector(
+      onTap: _toggle2,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SvgPicture.asset(
+          "assets/icon/eyeoff.svg",
+          color: Constants.extraColor300,
+        ),
+      ),
+    );
+  }
 
   Future<void> _updatePassword() async {
     if (!_formKey.currentState!.validate()) {
@@ -59,19 +130,27 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
         _successMessage = "¡La contraseña ha sido actualizada!";
         loading = false;
       });
-    } on DioError catch (exception, stackTrace) {
-      print(exception);
-
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
+      );
       setState(() {
         _errorMessage = exception.response!.statusCode == 400
             ? "Contraseña incorrecta"
             : "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         loading = false;
       });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
     } catch (exception, stackTrace) {
       print(exception);
       setState(() {
@@ -79,9 +158,15 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
             "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         loading = false;
       });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
     }
     String baseUrlServer = String.fromEnvironment('SERVER_ADDRESS',
@@ -119,27 +204,27 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
               children: [
                 CustomFormInput(
                   label: "Contraseña actual",
-                  customSVGIcon: "assets/icon/eyeoff.svg",
+                  customIcon: obscureTextToggle(),
                   validator: (value) => validatePassword(value!),
-                  obscureText: true,
+                  obscureText: _obscureText,
                   onChanged: (String val) => setState(() => _currentPassword = val),
                   
                 ),
                 const SizedBox(height: 48),
                 CustomFormInput(
                   label: "Contraseña nueva",
-                  customSVGIcon: "assets/icon/eyeoff.svg",
+                  customIcon: obscureText1Toggle(),
                   validator: (value) => validatePassword(value!),
-                  obscureText: true,
+                  obscureText: _obscureText1,
                   onChanged: (String val) => setState(() => _newPassword = val),
                 ),
                 const SizedBox(height: 20),
                 CustomFormInput(
                   label: "Confirmar contraseña nueva",
-                  customSVGIcon: "assets/icon/eyeoff.svg",
+                  customIcon: obscureText2Toggle(),
                   validator: (pass2) =>
                       validatePasswordConfirmation(pass2, _newPassword),
-                  obscureText: true,
+                  obscureText: _obscureText2,
                     onChanged: (String val) => setState(() => _confirmation = val),
                   
                 ),

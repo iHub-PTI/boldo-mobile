@@ -106,7 +106,7 @@ class SignUpBasicInfo extends StatelessWidget {
                         try {
                           var inputFormat = DateFormat('dd/MM/yyy');
                           var outputFormat = DateFormat('yyyy-MM-dd');
-                          var date1 = inputFormat.parse(value.toString().trim());
+                          var date1 = inputFormat.parseStrict(value.toString().trim());
                           var date2 = outputFormat.format(date1);
                           user.birthDate = date2;
                         }catch (e){

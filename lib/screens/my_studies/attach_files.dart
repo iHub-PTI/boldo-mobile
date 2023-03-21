@@ -4,6 +4,8 @@ import 'package:boldo/main.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
+import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/utils/photos_helpers.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -51,11 +53,10 @@ class _AttachFilesState extends State<AttachFiles> {
           child: BlocListener<MyStudiesBloc, MyStudiesState>(
             listener: (context, state) {
               if (state is Uploaded) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Estudio subido!"),
-                    backgroundColor: ConstantsV2.green,
-                  ),
+                emitSnackBar(
+                    context: context,
+                    text: uploadedStudySuccessfullyMessage,
+                    status: ActionStatus.Success
                 );
                 Navigator.of(context)
                     .popUntil(ModalRoute.withName("/my_studies"));
@@ -64,8 +65,11 @@ class _AttachFilesState extends State<AttachFiles> {
               }
               if (state is FailedUpload) {
                 print('failed: ${state.msg}');
-                Scaffold.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.msg)));
+                emitSnackBar(
+                    context: context,
+                    text: state.msg,
+                    status: ActionStatus.Fail
+                );
               }
               if(state is FilesObtained){
                 files = state.files;
@@ -115,12 +119,13 @@ class _AttachFilesState extends State<AttachFiles> {
                           ],
                         ),
                       )),
-                      ProfileImageView2(
+                      ImageViewTypeForm(
                         height: 54,
                         width: 54,
                         border: true,
-                        patient: patient,
-                        color: ConstantsV2.orange,
+                        url: patient.photoUrl,
+                        gender: patient.gender,
+                        borderColor: ConstantsV2.orange,
                       ),
                     ],
                   ),
@@ -211,6 +216,42 @@ class _AttachFilesState extends State<AttachFiles> {
                                         ],
                                       ),
                                     ),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        textStyle: const TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 14, horizontal: 16),
+                                        primary: ConstantsV2.lightest,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(100),
+                                        ),
+                                      ),
+                                      onPressed: getFromGallery,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'seleccionar imagen',
+                                            style: boldoSubTextMediumStyle
+                                                .copyWith(
+                                                color:
+                                                ConstantsV2.darkBlue),
+                                          ),
+                                          const SizedBox(
+                                            width: 4,
+                                          ),
+                                          SvgPicture.asset(
+                                              'assets/icon/image-search.svg'),
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -296,33 +337,40 @@ class _AttachFilesState extends State<AttachFiles> {
   }
 
   getFromCamera() async {
-    XFile? x;
-    x = await ImagePicker.platform
-        .getImage(source: ImageSource.camera, maxWidth: 1000, maxHeight: 1000);
-    if (x != null) {
-      setState(() {
-        if (files.isNotEmpty) {
-          BlocProvider.of<MyStudiesBloc>(context).add(
-              AddFiles(
-                  files: [File(x!.path)]
-              )
-          );
-          files = [...files, File(x.path)];
-        } else {
-          BlocProvider.of<MyStudiesBloc>(context).add(
-              AddFiles(
-                  files: [File(x!.path)]
-              )
-          );
-          files = [File(x.path)];
-        }
-      });
+    XFile? image;
+    image = await pickImage(
+        context: context,
+        source: ImageSource.camera,
+        permissionDescription: 'Se requiere acceso para tomar fotos'
+    );
+    if(image != null) {
+      File? x = await cropPhoto(file: image);
+      if (x != null) {
+        setState(() {
+          if (files.isNotEmpty) {
+            BlocProvider.of<MyStudiesBloc>(context).add(
+                AddFiles(
+                    files: [File(x!.path)]
+                )
+            );
+            files = [...files, File(x.path)];
+          } else {
+            BlocProvider.of<MyStudiesBloc>(context).add(
+                AddFiles(
+                    files: [File(x!.path)]
+                )
+            );
+            files = [File(x.path)];
+          }
+        });
+      }
     }
   }
 
   getFromFiles() async {
     FilePickerResult? result;
-    result = await FilePicker.platform.pickFiles(
+    result = await pickFiles(
+      context: context,
       withData: true,
       allowMultiple: true,
       type: FileType.custom,
@@ -349,6 +397,36 @@ class _AttachFilesState extends State<AttachFiles> {
           files = result.files.map((e) => File(e.path!)).toList();
         }
       });
+    }
+  }
+
+  getFromGallery() async {
+    XFile? image;
+    image = await pickImage(
+        context: context,
+        source: ImageSource.gallery,
+        permissionDescription: 'Se requiere acceso para subir fotos de la galeria');
+    if(image != null) {
+      File? x = await cropPhoto(file: image);
+      if (x != null) {
+        setState(() {
+          if (files.isNotEmpty) {
+            BlocProvider.of<MyStudiesBloc>(context).add(
+                AddFiles(
+                    files: [File(x.path)]
+                )
+            );
+            files = [...files, File(x.path)];
+          } else {
+            BlocProvider.of<MyStudiesBloc>(context).add(
+                AddFiles(
+                    files: [File(x.path)]
+                )
+            );
+            files = [File(x.path)];
+          }
+        });
+      }
     }
   }
 
@@ -389,6 +467,24 @@ class _AttachFilesState extends State<AttachFiles> {
                     ),
                     Text(
                       'seleccionar archivo',
+                      style: boldoSubTextMediumStyle.copyWith(
+                          color: ConstantsV2.darkBlue),
+                    ),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 4,
+                onTap: getFromGallery,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SvgPicture.asset('assets/icon/image-search.svg'),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      'seleccionar imagen',
                       style: boldoSubTextMediumStyle.copyWith(
                           color: ConstantsV2.darkBlue),
                     ),

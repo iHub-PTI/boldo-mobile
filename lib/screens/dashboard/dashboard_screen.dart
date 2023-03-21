@@ -1,3 +1,4 @@
+import 'package:boldo/screens/doctor_search/doctors_available.dart';
 import 'package:boldo/screens/medical_records/medical_records_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
@@ -6,6 +7,7 @@ import 'package:boldo/screens/dashboard/tabs/home_tab.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/dashboard/tabs/settings_tab.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:move_to_background/move_to_background.dart';
 
 import '../../main.dart';
 
@@ -26,18 +28,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-
   }
 
   Widget getPage(int index) {
-
-
-
     if (index == 0) {
       return HomeTab();
     }
     if (index == 1) {
-      return DoctorsTab();
+      //return DoctorsTab();
+      return DoctorsAvailable(callFromHome: true,);
     }
     if (index == 2) {
       return MedicalRecordScreen();
@@ -52,6 +51,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: () async {
+          MoveToBackground.moveTaskToBack();
           return false;
         },
         child: Scaffold(
@@ -117,7 +117,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 onTap: (index) {
                   selectedPageIndex = index;
                 })*/
-          ),
-        );
+      ),
+    );
   }
 }

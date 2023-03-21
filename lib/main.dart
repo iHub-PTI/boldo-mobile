@@ -1,27 +1,38 @@
+import 'dart:io';
+
 import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
+import 'package:boldo/blocs/doctor_more_availability_bloc/doctor_more_availability_bloc.dart';
+import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
+import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
+import 'package:boldo/blocs/logout_bloc/userLogoutBloc.dart';
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/blocs/prescriptions_bloc/prescriptionsBloc.dart';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
+import 'package:boldo/blocs/specializationFilter_bloc/specializationFilter_bloc.dart';
 import 'package:boldo/provider/auth_provider.dart';
+import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/appointments/pastAppointments_screen.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
+import 'package:boldo/screens/doctor_search/doctors_available.dart';
 import 'package:boldo/screens/family/family_tab.dart';
 import 'package:boldo/screens/family/tabs/defined_relationship_screen.dart';
 import 'package:boldo/screens/family/tabs/familyConnectTransition.dart';
 import 'package:boldo/screens/family/tabs/family_change_transition.dart';
 import 'package:boldo/screens/family/tabs/family_register_account.dart';
+import 'package:boldo/screens/family/tabs/family_without_dni_register.dart';
 import 'package:boldo/screens/family/tabs/metods_add_family_screen.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/my_studies/my_studies_screen.dart';
 import 'package:boldo/screens/passport/user_qr_screen.dart';
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
+import 'package:boldo/screens/profile/profile_screen.dart';
 import 'package:boldo/screens/sing_in/sing_in_transition.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:camera/camera.dart';
@@ -43,11 +54,16 @@ import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/constants.dart';
 
+import 'blocs/attach_study_order_bloc/attachStudyOrder_bloc.dart';
+import 'blocs/doctorFilter_bloc/doctorFilter_bloc.dart';
+import 'blocs/doctor_availability_bloc/doctor_availability_bloc.dart';
 import 'blocs/doctor_bloc/doctor_bloc.dart';
 import 'blocs/passport_bloc/passportBloc.dart';
 import 'blocs/prescription_bloc/prescriptionBloc.dart';
+import 'blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
 import 'models/MedicalRecord.dart';
+import 'models/Organization.dart';
 import 'models/Patient.dart';
 import 'models/Relationship.dart';
 import 'models/User.dart';
@@ -67,6 +83,8 @@ List<UserVaccinate>? diseaseUserList;
 List<UserVaccinate>? vaccineListQR = [];
 XFile? userImageSelected;
 int selectedPageIndex = 0;
+List<Organization> organizationsSubscribed = [];
+List<Organization> organizationsPostulated = [];
 const storage = FlutterSecureStorage();
 late List<Relationship> relationTypes = [];
 late List<Patient> families = [];
@@ -80,42 +98,48 @@ Future<void> main() async {
   // await dotenv.load(fileName: '.env');
 
   //GestureBinding.instance!.resamplingEnabled = true;
+  ByteData data = await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
+  SecurityContext.defaultContext.setTrustedCertificatesBytes(data.buffer.asUint8List());
 
   ConnectionStatusSingleton.getInstance().initialize();
 
   prefs = await SharedPreferences.getInstance();
-  prefs.setBool(isFamily, prefs.getBool(isFamily) ?? false);
+  prefs.setBool(isFamily, false);
 
   initDio(navKey: navKey, dio: dio, passport: false);
   initDio(navKey: navKey, dio: dioPassport, passport: true);
   dioByteInstance();
   const storage = FlutterSecureStorage();
-  String? session = await storage.read(key: "access_token");
+  String? session;
+  try {
+    session = await storage.read(key: "access_token");
+  } catch (e) {
+    storage.deleteAll();
+  }
 
   if (kReleaseMode) {
     String sentryDSN = String.fromEnvironment('SENTRY_DSN',
         defaultValue: dotenv.env['SENTRY_DSN']!);
     await SentryFlutter.init(
       (options) {
-        options.environment = "production";
+        options.environment = String.fromEnvironment('SENTRY_ENV',
+            defaultValue: dotenv.env['SENTRY_ENV']!);
         options.dsn = sentryDSN;
       },
     );
   }
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight,
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeRight,
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,]).then(
-      (value) => runApp(
-          MyApp(session: session??'')));
+    DeviceOrientation.portraitDown,
+  ]).then((value) => runApp(MyApp(session: session ?? '')));
 }
 
 class MyApp extends StatefulWidget {
   final String session;
-  const MyApp(
-      {Key? key, required this.session})
-      : super(key: key);
+  const MyApp({Key? key, required this.session}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -135,26 +159,14 @@ class _MyAppState extends State<MyApp> {
           BlocProvider<FamilyBloc>(
             create: (BuildContext context) => FamilyBloc(),
           ),
-          BlocProvider<AppointmentBloc>(
-            create: (BuildContext context) => AppointmentBloc(),
-          ),
-          BlocProvider<MedicalRecordBloc>(
-            create: (BuildContext context) => MedicalRecordBloc(),
-          ),
-          BlocProvider<DoctorBloc>(
-              create: (BuildContext context) => DoctorBloc(),
-          ),
           BlocProvider<HomeBloc>(
             create: (BuildContext context) => HomeBloc(),
-          ),
-          BlocProvider<PrescriptionsBloc>(
-            create: (BuildContext context) => PrescriptionsBloc(),
           ),
           BlocProvider<PrescriptionBloc>(
             create: (BuildContext context) => PrescriptionBloc(),
           ),
           BlocProvider<MyStudiesBloc>(
-              create: (BuildContext context) => MyStudiesBloc(),
+            create: (BuildContext context) => MyStudiesBloc(),
           ),
           BlocProvider<HomeNewsBloc>(
             create: (BuildContext context) => HomeNewsBloc(),
@@ -164,6 +176,33 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<PassportBloc>(
             create: (BuildContext context)=> PassportBloc(),
+          ),
+          BlocProvider<StudyOrderBloc>(
+            create: (BuildContext context) => StudyOrderBloc(),
+          ),
+          BlocProvider<AttachStudyOrderBloc>(
+            create: (BuildContext context) => AttachStudyOrderBloc(),
+          ),
+          BlocProvider<UserLogoutBloc>(
+              create: (BuildContext context) => UserLogoutBloc()
+          ),
+          BlocProvider<HomeOrganizationBloc>(
+            create: (BuildContext context) => HomeOrganizationBloc(),
+          ),
+          BlocProvider<DoctorsAvailableBloc>(
+            create: (BuildContext context) => DoctorsAvailableBloc(),
+          ),
+          BlocProvider<DoctorFilterBloc>(
+            create: (BuildContext context) => DoctorFilterBloc(),
+          ),
+          BlocProvider<SpecializationFilterBloc>(
+            create: (BuildContext context) => SpecializationFilterBloc(),
+          ),
+          BlocProvider<DoctorAvailabilityBloc>(
+            create: (BuildContext context) => DoctorAvailabilityBloc(),
+          ),
+          BlocProvider<DoctorMoreAvailabilityBloc>(
+            create: (BuildContext context) => DoctorMoreAvailabilityBloc(),
           ),
         ],
         child: MultiProvider(
@@ -175,6 +214,7 @@ class _MyAppState extends State<MyApp> {
                 // ignore: unnecessary_null_comparison
                 create: (_) =>
                     AuthProvider(widget.session != null ? true : false)),
+            ChangeNotifierProvider<DoctorFilterProvider>(create: (_) => DoctorFilterProvider())
           ],
           child: FullApp(onboardingCompleted: widget.session),
         ));
@@ -206,7 +246,8 @@ class FullApp extends StatelessWidget {
       navigatorKey: navKey,
       title: 'Boldo',
       theme: boldoTheme,
-      initialRoute: onboardingCompleted!='' ? '/SignInSuccess' : "/onboarding",
+      initialRoute:
+          onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
       routes: {
         '/onboarding': (context) => HeroScreenV2(),
         '/home': (context) => DashboardScreen(),
@@ -223,6 +264,9 @@ class FullApp extends StatelessWidget {
         '/pastAppointmentsScreen' : (context) => const PastAppointmentsScreen(),
         '/prescriptionsScreen' : (context) => const PrescriptionsScreen(),
         '/user_qr_detail': (context) => UserQrDetail(),
+        '/familyConnectTransition': (context) => FamilyConnectTransition(),
+        '/familyWithoutDniRegister': (context) => WithoutDniFamilyRegister(),
+        '/profileScreen': (context) => const ProfileScreen(),
       },
     );
   }

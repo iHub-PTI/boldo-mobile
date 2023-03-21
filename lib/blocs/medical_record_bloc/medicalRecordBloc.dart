@@ -1,5 +1,7 @@
 
 import 'package:boldo/models/MedicalRecord.dart';
+import 'package:boldo/models/StudyOrder.dart';
+import 'package:boldo/network/order_study_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
@@ -11,6 +13,7 @@ part 'medicalRecordState.dart';
 
 class MedicalRecordBloc extends Bloc<MedicalRecordEvent, MedicalRecordState> {
   final UserRepository _patientRepository = UserRepository();
+  final StudiesOrdersRepository _ordersRepository = StudiesOrdersRepository();
   MedicalRecordBloc() : super(MedicalRecordInitial()) {
     on<MedicalRecordEvent>((event, emit) async {
       if (event is GetMedicalRecord) {
@@ -18,6 +21,28 @@ class MedicalRecordBloc extends Bloc<MedicalRecordEvent, MedicalRecordState> {
         var _post;
         await Task(() =>
         _patientRepository.getMedicalRecordByAppointment(event.appointmentId)!)
+            .attempt()
+            .mapLeftToFailure()
+            .run()
+            .then((value) {
+          _post = value;
+        }
+        );
+        var response;
+        if (_post.isLeft()) {
+          _post.leftMap((l) => response = l.message);
+          emit(Failed(response: response));
+        } else {
+          late MedicalRecord medicalRecord;
+          _post.foldRight(MedicalRecord, (a, previous) => medicalRecord = a);
+          emit(MedicalRecordLoadedState(medicalRecord: medicalRecord));
+          emit(Success());
+        }
+      }else if (event is GetMedicalRecordById) {
+        emit(Loading());
+        var _post;
+        await Task(() =>
+        _patientRepository.getMedicalRecordById(event.id)!)
             .attempt()
             .mapLeftToFailure()
             .run()

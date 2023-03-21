@@ -1,7 +1,9 @@
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
+import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/loading_helper.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:flutter/material.dart';
@@ -53,11 +55,10 @@ class _FamilyTransitionState extends State<FamilyTransition> {
         listener: (context, state){
           setState(() {
             if(state is Failed){
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.response!),
-                  backgroundColor: Colors.redAccent,
-                ),
+              emitSnackBar(
+                  context: context,
+                  text: state.response,
+                  status: ActionStatus.Fail
               );
               final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
               //set previous value
@@ -67,8 +68,7 @@ class _FamilyTransitionState extends State<FamilyTransition> {
             }
             if(state is Success){
               _dataLoading = false;
-              BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
-              BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
+              BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed());
             }
             if(state is RedirectNextScreen){
               // back to home
@@ -100,7 +100,13 @@ class _FamilyTransitionState extends State<FamilyTransition> {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           if(!_dataLoading)
-                                            const ProfileImageView(height: 170, width: 170, border: true),
+                                            ImageViewTypeForm(
+                                              height: 170,
+                                              width: 170,
+                                              border: true,
+                                              url: patient.photoUrl,
+                                              gender: patient.gender,
+                                            ),
                                         ],
                                       ),
                                       const SizedBox(height: 29,),

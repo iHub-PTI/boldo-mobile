@@ -1,3 +1,7 @@
+import 'package:boldo/main.dart';
+import 'package:boldo/models/Appointment.dart';
+import 'package:boldo/models/Organization.dart';
+import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/widgets/in-person-virtual-switch.dart';
 import 'package:dio/dio.dart';
@@ -33,11 +37,12 @@ class _BookingScreenState extends State<BookingScreen> {
   NextAvailability? nextAvailability;
   NextAvailability? _selectedBookingHour;
   List<AppoinmentWithDateAndType> _availabilities = [];
-  String _typeAppoinmentSelected = 'A';
+  AppointmentType _typeAppoinmentSelected = AppointmentType.InPerson;
   List<List<CalendarItem>> chunkArrays = [];
   List<AppoinmentWithDateAndType> _availabilitiesForDay = [];
   String _errorMessage = "";
   DateTime selectedDate = DateTime.now();
+  final UserRepository _patientRepository = UserRepository();
 
   @override
   void initState() {
@@ -45,24 +50,83 @@ class _BookingScreenState extends State<BookingScreen> {
     fetchData(DateTime.now());
   }
 
+  // this is a function to show us an alert when exist other with the same date and hour
+  Future<void> _existingSchedule(Doctor doctor) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Atención!'),
+            content: Text(
+                'Recuerde que usted ya tiene agendada una consulta con ${doctor.gender == 'female' ? 'la Dra.' : 'el Dr.'} ${doctor.givenName?.split(' ')[0] ?? ''} ${doctor.familyName?.split(' ')[0] ?? ''} en el horario seleccionado.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'OK'),
+                child: const Text(
+                  'Entiendo',
+                  style: TextStyle(
+                    color: Constants.primaryColor500
+                  ),
+                )
+              )
+            ],
+          );
+        });
+  }
+
   Future<void> handleBookingHour({NextAvailability? bookingHour}) async {
-    bool isAuthenticated =
-        Provider.of<AuthProvider>(context, listen: false).getAuthenticated;
-    if (!isAuthenticated) {
-      await notLoggedInPop(context: context);
-
-      return;
-    }
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BookingConfirmScreen(
-          bookingDate: bookingHour ?? _selectedBookingHour!,
-          doctor: widget.doctor,
+    final UserRepository _patientRepository = UserRepository();
+    List<Appointment>? appointments =
+        await _patientRepository.getAppointments();
+    // the selected time must not coincide with another pre-scheduled appointment
+    if (bookingHour == null) {
+      if (appointments != null) {
+        if (appointments.any((element) =>
+            DateTime.parse(element.start!).toLocal() ==
+                DateTime.parse(_selectedBookingHour!.availability!).toLocal() &&
+            element.status == 'upcoming')) {
+          // show pop up whit the doctor information
+          // there will always be only one element
+          _existingSchedule(appointments.where((element) =>
+            DateTime.parse(element.start!).toLocal() ==
+                DateTime.parse(_selectedBookingHour!.availability!).toLocal() &&
+            element.status == 'upcoming').first.doctor!);
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BookingConfirmScreen(
+                bookingDate: _selectedBookingHour!,
+                doctor: widget.doctor,
+                organization: widget.doctor.organizations?.first.organization?? Organization(),
+              ),
+            ),
+          );
+        }
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BookingConfirmScreen(
+              bookingDate: _selectedBookingHour!,
+              doctor: widget.doctor,
+              organization: widget.doctor.organizations?.first.organization?? Organization(),
+            ),
+          ),
+        );
+      }
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BookingConfirmScreen(
+            bookingDate: bookingHour,
+            doctor: widget.doctor,
+            organization: widget.doctor.organizations?.first.organization?? Organization(),
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   List<AppoinmentWithDateAndType> findAvailabilitesForDay(
@@ -103,14 +167,32 @@ class _BookingScreenState extends State<BookingScreen> {
       Response response = await dio
           .get("/doctors/${widget.doctor.id}/availability", queryParameters: {
         'start': date.toLocal().toIso8601String(),
-        'end': DateTime(date.year, date.month + 1, 1).toLocal().toIso8601String(),
+        'end':
+            DateTime(date.year, date.month + 1, 1).toLocal().toIso8601String(),
       });
+
+      List<Appointment>? appointments =
+          await _patientRepository.getAppointments();
 
       List<NextAvailability>? allAvailabilities = [];
       response.data['availabilities'].forEach((v) {
         allAvailabilities.add(NextAvailability.fromJson(v));
       });
 
+      // canceled or blocked appointments are not necessary
+      appointments?.removeWhere((element) => element.status != 'upcoming');
+
+      if (appointments != null) {
+        if (appointments.isNotEmpty) {
+          for (int i = 0; i < appointments.length; i++) {
+            allAvailabilities.removeWhere((element) =>
+                DateTime.parse(element.availability!).toLocal().compareTo(
+                    DateTime.parse(appointments[i].start!).toLocal()) ==
+                0);
+          }
+        }
+      }
+      
       List<AppoinmentWithDateAndType> allAvailabilitesDateTime =
           convertToDateTime(allAvailabilities);
 
@@ -138,26 +220,38 @@ class _BookingScreenState extends State<BookingScreen> {
             ? []
             : findAvailabilitesForDay(allAvailabilitesDateTime, firstDay);
         _availabilities = allAvailabilitesDateTime;
-        if (response.data['nextAvailability'] != null) {
-          nextAvailability =
-              NextAvailability.fromJson(response.data["nextAvailability"]);
+        if (allAvailabilities.isNotEmpty) {
+          nextAvailability = nextAvailability == null ?
+              NextAvailability(
+                availability: allAvailabilities.first.availability,
+                appointmentType: allAvailabilities.first.appointmentType
+              ) : nextAvailability;
         }
         selectedDate = firstDay;
         _loading = false;
         _loadingCalendar = false;
       });
-    } on DioError catch (exception, stackTrace) {
-      print(exception);
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
+      );
       setState(() {
         _errorMessage =
             "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         _loading = false;
         _loadingCalendar = false;
       });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
     } catch (exception, stackTrace) {
       print(exception);
       setState(() {
@@ -166,9 +260,15 @@ class _BookingScreenState extends State<BookingScreen> {
         _loading = false;
         _loadingCalendar = false;
       });
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
       );
     }
   }
@@ -263,7 +363,10 @@ class _BookingScreenState extends State<BookingScreen> {
                       Column(children: [
                         Center(
                           child: Text(
-                            DateFormat('dd MMMM yyyy', Localizations.localeOf(context).languageCode).format(selectedDate),
+                            DateFormat(
+                                    'dd MMMM yyyy',
+                                const Locale("es", 'ES').languageCode)
+                                .format(selectedDate),
                             style: boldoHeadingTextStyle.copyWith(
                                 fontWeight: FontWeight.normal, fontSize: 14),
                           ),
@@ -279,7 +382,7 @@ class _BookingScreenState extends State<BookingScreen> {
                             ),
                           ),
                         VirtualInPersonSwitch(
-                          switchCallbackResponse: (String text) {
+                          switchCallbackResponse: (AppointmentType text) {
                             setState(() {
                               _typeAppoinmentSelected = text;
                               _selectedBookingHour = null;
@@ -318,7 +421,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                                                 .dateTime
                                                                 .toString(),
                                                             appointmentType:
-                                                                _typeAppoinmentSelected);
+                                                                _typeAppoinmentSelected == AppointmentType.InPerson? 'A': 'V');
                                                   } else {
                                                     _selectedBookingHour =
                                                         NextAvailability(
@@ -326,7 +429,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                                                 .dateTime
                                                                 .toString(),
                                                             appointmentType:
-                                                                _typeAppoinmentSelected);
+                                                                _typeAppoinmentSelected == AppointmentType.InPerson? 'A': 'V');
                                                   }
                                                 });
                                               },
@@ -534,7 +637,7 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
     final parsedAvailability =
         DateTime.parse(widget.nextAvailability).toLocal();
     // int daysDifference = parsedAvailability.difference(actualDay).inDays;
-      int daysDifference = daysBetween(actualDay,parsedAvailability);
+    int daysDifference = daysBetween(actualDay, parsedAvailability);
 
     // if (actualDay.month == parsedAvailability.month) {
     //   daysDifference = parsedAvailability.day - actualDay.day;
@@ -547,7 +650,7 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
       availabilityText = "Disponible Hoy!";
     } else if (daysDifference > 0) {
       availabilityText =
-          "Disponible ${DateFormat('EEEE, dd MMMM', Localizations.localeOf(context).languageCode).format(parsedAvailability)}";
+          "Disponible ${DateFormat('EEEE, dd MMMM', const Locale("es", 'ES').languageCode).format(parsedAvailability)}";
     }
 
     return Card(
@@ -589,18 +692,18 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                               ),
                             ),
                             const Spacer(),
-                            if(widget
-                                    .doctor.nextAvailability != null)
-                            ShowDoctorAvailabilityIcon(
-                                filter: widget
-                                    .doctor.nextAvailability!.appointmentType!)
+                            if (widget.doctor.organizations?.first.nextAvailability != null)
+                              ShowDoctorAvailabilityIcon(
+                                  filter: widget.doctor.organizations!.first.nextAvailability!
+                                      .appointmentType!)
                           ],
                         ),
                         const SizedBox(
                           height: 4,
                         ),
                         Text(
-                          DateFormat('EEEE, dd MMMM', Localizations.localeOf(context).languageCode)
+                          DateFormat('EEEE, dd MMMM',
+                                  const Locale("es", 'ES').languageCode)
                               .format(parsedAvailability)
                               .capitalize(),
                           style: boldoSubTextStyle,
@@ -631,12 +734,13 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
             child: Center(
               child: GestureDetector(
                 onTapDown: (TapDownDetails details) async {
-                  if (widget.doctor.nextAvailability!.appointmentType! ==
+                  if (widget.doctor.organizations?.first.nextAvailability!.appointmentType! ==
                       'AV') {
                     final chooseOption =
                         await _showPopupMenu(details.globalPosition);
                     if (chooseOption != null) {
-                      DateTime parsedAvailability = DateTime.parse(widget.nextAvailability).toLocal();
+                      DateTime parsedAvailability =
+                          DateTime.parse(widget.nextAvailability).toLocal();
                       if (chooseOption == 'En persona') {
                         widget.handleBookingHour(
                           NextAvailability(
@@ -654,7 +758,7 @@ class _BookDoctorCardState extends State<_BookDoctorCard> {
                   } else {
                     widget.handleBookingHour(NextAvailability(
                         appointmentType:
-                            widget.doctor.nextAvailability!.appointmentType,
+                            widget.doctor.organizations?.first.nextAvailability!.appointmentType,
                         availability: parsedAvailability.toString()));
                   }
                 },

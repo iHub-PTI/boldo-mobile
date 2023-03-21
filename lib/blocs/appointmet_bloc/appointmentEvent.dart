@@ -14,3 +14,6 @@ class GetPastAppointmentList extends AppointmentEvent {
   final String date;
   GetPastAppointmentList({required this.date});
 }
+
+class GetPastAppointmentBetweenDatesList extends AppointmentEvent {
+}

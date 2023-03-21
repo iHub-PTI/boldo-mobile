@@ -77,7 +77,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                 width: 20,
               ),
               Text(
-                DateFormat('MMMM', Localizations.localeOf(context).languageCode).format(selectedMonth),
+                DateFormat('MMMM', const Locale("es", 'ES').languageCode).format(selectedMonth),
                 style: boldoHeadingTextStyle.copyWith(
                     fontWeight: FontWeight.normal),
               ),

@@ -1,6 +1,9 @@
+import 'package:boldo/models/News.dart';
+import 'package:boldo/screens/dashboard/tabs/components/news_cards.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:flutter/material.dart';
 
-class DiagnosticReport {
+class DiagnosticReport extends News  {
   String?
   id,
   attachmentNumber,
@@ -9,9 +12,10 @@ class DiagnosticReport {
       source,
       sourceID,
       type,
-      patientNotes;
+      patientNotes,
+      serviceRequestId;
 
-  List<dynamic>? attachmentUrls;
+  List<AttachmentUrl>? attachmentUrls;
 
   DiagnosticReport ({
     this.id,
@@ -23,6 +27,7 @@ class DiagnosticReport {
     this.type,
     this.patientNotes,
     this.attachmentUrls,
+    this.serviceRequestId,
   });
 
   factory DiagnosticReport.fromJson(Map<String, dynamic> json,) => DiagnosticReport(
@@ -33,7 +38,9 @@ class DiagnosticReport {
     source: json['source']!= null ? toLowerCase(json['source']!) : null,
     sourceID: json['sourceID'],
     type: json['category'],
-    attachmentUrls: json['attachmentUrls']?.map((e) => {'url': e['url'], 'contentType': e['contentType']}).toList(),
+    patientNotes: json['patientNotes'],
+    serviceRequestId: json['serviceRequestId'],
+    attachmentUrls: json['attachmentUrls']!= null ? List<AttachmentUrl>.from(json['attachmentUrls'].map((e) => AttachmentUrl.fromJson(e) )) : null,
   );
 
   Map<String, dynamic> toJson() {
@@ -42,6 +49,42 @@ class DiagnosticReport {
     data['effectiveDate'] = effectiveDate;
     data['category'] = type;
     data['patientNotes'] = patientNotes;
+    data['serviceRequestId'] = serviceRequestId;
+    data['attachmentUrls'] = attachmentUrls?.map((e) => e.toJson()).toList();
     return data;
   }
+
+  @override
+  Widget show() {
+    return DiagnosticReportCard(diagnosticReport: this);
+  }
+}
+
+class AttachmentUrl {
+  String? url,
+      contentType,
+      title;
+
+  AttachmentUrl({
+    this.url,
+    this.contentType,
+    this.title,
+  });
+
+  factory AttachmentUrl.fromJson(Map<String, dynamic> json,) =>
+      AttachmentUrl(
+        url: json['url'],
+        contentType: json['contentType'],
+        title: json['title'],
+      );
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['url'] = url;
+    data['contentType'] = contentType;
+    return data;
+  }
+
+
+
 }

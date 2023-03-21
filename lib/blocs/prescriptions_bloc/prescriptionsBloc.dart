@@ -14,6 +14,20 @@ part 'prescriptionsState.dart';
 
 class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
   final UserRepository _patientRepository = UserRepository();
+  DateTime _initialDate = DateTime.now().subtract(const Duration(days: 30));
+  DateTime? _finalDate;
+
+  DateTime getInitialDate() => _initialDate;
+  DateTime? getFinalDate() => _finalDate;
+
+  void setInitialDate(DateTime initialDate) {
+    _initialDate = initialDate;
+  }
+
+  void setFinalDate(DateTime? finalDate) {
+    _finalDate = finalDate;
+  }
+
   PrescriptionsBloc() : super(PrescriptionBlocInitial()) {
     on<PrescriptionsEvent>((event, emit) async {
       if(event is GetPastAppointmentList){
@@ -43,7 +57,7 @@ class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.getPastAppointments(event.date)!)
+        _patientRepository.getPastAppointmentsBetweenDates(_initialDate, _finalDate)!)
             .attempt()
             .mapLeftToFailure()
             .run()

@@ -1,4 +1,3 @@
-import 'package:boldo/constants.dart';
 import 'package:boldo/network/connection_status.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
@@ -89,7 +88,7 @@ void initDio(
           initDio(navKey: navKey, dio: _dio, passport: passport);
           //retry request
           return handle.resolve(await _dio.request(options.path,
-              data: options.data, options: optionsDio));
+              data: options.data, options: optionsDio, queryParameters: options.queryParameters));
         }
         dio.lock();
         dio.interceptors.responseLock.lock();
@@ -118,11 +117,10 @@ void initDio(
           initDio(navKey: navKey, dio: _dio, passport: passport);
           //retry request
           return handle.resolve(await _dio.request(options.path,
-              data: options.data, options: optionsDio));
-        } on DioError catch (exception) {
-          if (exception.response?.statusCode == 401) {
-            final _result =
-                await authenticateUser(context: navKey.currentState!.context);
+              data: options.data, options: optionsDio, queryParameters: options.queryParameters));
+        } on DioError catch(exception){
+          if (exception.response?.statusCode == 401){
+            final _result = await authenticateUser(context: navKey.currentState!.context);
             switch (_result) {
               case 0:
                 //user canceled or generic error
@@ -144,20 +142,23 @@ void initDio(
                 Dio _dio = Dio();
                 initDio(navKey: navKey, dio: _dio, passport: passport);
                 return handle.resolve(await _dio.request(options.path,
-                    data: options.data, options: optionsDio));
+                    data: options.data, options: optionsDio, queryParameters: options.queryParameters));
                 break;
               default:
             }
-          } else {
-            accessToken = null;
-            UserRepository().logout(navKey.currentState!.context);
-            navKey.currentState!.pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (context) => HeroScreenV2(),
-              ),
-              (route) => false,
-            );
-            return handle.next(error);
+          }
+          else{
+            if(exception.response?.statusCode == 500) {
+              accessToken = null;
+              UserRepository().logout(navKey.currentState!.context);
+              navKey.currentState!.pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => HeroScreenV2(),
+                ),
+                    (route) => false,
+              );
+            }
+            return handle.next(exception);
           }
         } catch (e) {
           print(e);
@@ -204,7 +205,7 @@ void initDio(
         Dio _dio = Dio();
         initDio(navKey: navKey, dio: _dio, passport: passport);
         return handle.resolve(await _dio.request(options.path,
-            data: options.data, options: optionsDio));
+            data: options.data, options: optionsDio, queryParameters: options.queryParameters));
       }
       return handle.next(error);
     },

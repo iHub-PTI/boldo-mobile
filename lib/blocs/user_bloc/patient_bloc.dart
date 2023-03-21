@@ -1,5 +1,7 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/network/organization_repository.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
@@ -13,6 +15,15 @@ part 'patient_state.dart';
 
 class PatientBloc extends Bloc<PatientEvent, PatientState> {
   final UserRepository _patientRepository = UserRepository();
+
+  List<Organization> _organizations = [];
+
+  List<Organization> getOrganizations() => _organizations;
+
+  void setOrganizations(List<Organization> organizations) {
+    _organizations = organizations;
+  }
+
   PatientBloc() : super(PatientInitial()) {
     on<PatientEvent>((event, emit) async {
       if(event is ChangeUser) {
@@ -30,12 +41,9 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
-          // Do not change from user to dependent and vice versa
-          await prefs.setBool(isFamily,! prefs.getBool(isFamily)!);
           await Future.delayed(const Duration(seconds: 2));
           emit(RedirectBackScreen());
         }else{
-          emit(Success());
           emit(ChangeFamily());
           await Future.delayed(const Duration(seconds: 2));
           emit(RedirectNextScreen());

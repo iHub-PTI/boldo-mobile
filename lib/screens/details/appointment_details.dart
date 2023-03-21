@@ -135,7 +135,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
                                                 padding: EdgeInsets.only(
                                                     left: i == 0 ? 0 : 3.0),
                                                 child: Text(
-                                                  "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length > 1 && i == 0 ? "," : ""}",
+                                                  "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length-1 != i ? ", " : ""}",
                                                   style: boldoSubTextStyle,
                                                 ),
                                               ),
@@ -193,7 +193,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                          DateFormat('EEEE, dd MMMM yyyy', Localizations.localeOf(context).languageCode)
+                          DateFormat('EEEE, dd MMMM yyyy', const Locale("es", 'ES').languageCode)
                               .format(
                                   DateTime.parse(appointment.start!).toLocal())
                               .capitalize(),
@@ -251,7 +251,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
                   child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                          "${appointment.appointmentType == 'V' ?'La sala de espera se abrirá a las: ${DateFormat('HH:mm').format(DateTime.parse(appointment.start!).toLocal().subtract(const Duration(minutes: 15))).capitalize()} hs, ${DateFormat(' dd MMMM yyyy', Localizations.localeOf(context).languageCode).format(DateTime.parse(appointment.start!).toLocal()).capitalize()}':'Tiene agendada una consulta presencial en el Hospital Los Ángeles'} ")),
+                          "${appointment.appointmentType == 'V' ?'La sala de espera se abrirá a las: ${DateFormat('HH:mm').format(DateTime.parse(appointment.start!).toLocal().subtract(const Duration(minutes: 15))).capitalize()} hs, ${DateFormat(' dd MMMM yyyy', const Locale("es", 'ES').languageCode).format(DateTime.parse(appointment.start!).toLocal()).capitalize()}':'Tiene agendada una consulta presencial en el Centro Médico Tesai’i- Policlinic'} ")),
                 ),
               const SizedBox(height: 64),
             ],

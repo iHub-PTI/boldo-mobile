@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:boldo/constants.dart';
+import 'package:intl/intl.dart';
 
 import '../../../main.dart';
 
@@ -33,6 +34,7 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
   Widget build(BuildContext context) {
     return Container(
       child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 4),
         child: InkWell(
           onTap: widget.isDependent ? (){} : (){
             Navigator.push(
@@ -43,14 +45,13 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
             );
           },
           child: Container(
-            width: MediaQuery.of(context).size.width-16,
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8, right: 8),
                   child: widget.isDependent
-                      ? ProfileImageView2(height: 60, width: 60, border: false, patient: widget.patient,)
-                      : const ProfileImageViewTypeForm(height: 60, width: 60, border: false, form: "rounded",),
+                      ? ImageViewTypeForm(height: 60, width: 60, border: false, url: widget.patient?.photoUrl, gender: widget.patient?.photoUrl,)
+                      : ImageViewTypeForm(height: 60, width: 60, border: false, url: prefs.getString('profile_url'), gender: prefs.getString('gender')),
                 ),
                 Expanded(
                   child: Column(
@@ -62,20 +63,22 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            widget.isDependent
-                                ? Text(
-                              "${widget.patient!.givenName} ${widget.patient!.familyName}",
-                              style: boldoSubTextMediumStyle.copyWith(
-                                  color: ConstantsV2.activeText
-                              ),
-                            )
-                                :Text(
-                              "${prefs.getString('name') ?? ''}${prefs.getString('lastName') ?? ''}",
-                              style: boldoSubTextMediumStyle.copyWith(
-                                  color: ConstantsV2.activeText
+                            Flexible(
+                              child: widget.isDependent
+                                  ? Text(
+                                "${widget.patient?.givenName} ${widget.patient?.familyName}",
+                                style: boldoSubTextMediumStyle.copyWith(
+                                    color: ConstantsV2.activeText
+                                ),
+                              )
+                                  :Text(
+                                "${prefs.getString('name')?.split(' ')[0] ?? ''}${prefs.getString('lastName')?.split(' ')[0] ?? ''}",
+                                style: boldoSubTextMediumStyle.copyWith(
+                                    color: ConstantsV2.activeText
+                                ),
                               ),
                             ),
-                            widget.isDependent && ! prefs.getBool(isFamily)! ? UnlinkCaretakerWidget(
+                            widget.isDependent && !(prefs.getBool(isFamily)?? false) ? UnlinkCaretakerWidget(
                               onTapCallback: (result) async {
                                 if (result == 'Desvincular') {
                                   BlocProvider.of<FamilyBloc>(context).add(UnlinkCaretaker(id: widget.patient!.id!));
@@ -95,9 +98,12 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text("agregado el ${widget.patient!.startDependenceDate!}",
-                              style: boldoCorpSmallTextStyle.copyWith(
-                                color: ConstantsV2.inactiveText,
+                            Padding(
+                              padding: const EdgeInsets.only(right:8.0),
+                              child: Text("agregado el ${DateFormat('dd-MM-yyyy').format(DateTime.parse(widget.patient!.startDependenceDate!))}",
+                                style: boldoCorpSmallTextStyle.copyWith(
+                                  color: ConstantsV2.inactiveText,
+                                ),
                               ),
                             )
                           ],
@@ -129,7 +135,10 @@ class UnlinkCaretakerWidget extends StatelessWidget {
           onTapCallback!(result.toString());
         }
       },
-      child: SvgPicture.asset('assets/icon/familyTrash.svg'),
+      child: Padding(
+        padding: const EdgeInsets.only(right:8.0, top: 8.0),
+        child: SvgPicture.asset('assets/icon/familyTrash.svg'),
+      ),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
         PopupMenuItem<String>(
           value: 'Desvincular',

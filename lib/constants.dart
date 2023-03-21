@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Constants {
   // primary color palette
@@ -58,13 +59,11 @@ class Constants {
   static const Color accordionbg = Color(0xfff3FAF7);
   static const Color dividerAccordion = Color(0x40F08F77);
 
- 
   // SOEP final string
   static const String objective = "Objetivo";
   static const String subjective = "Subjetivo";
   static const String evaluation = "Evaluación";
   static const String plan = "Plan";
-  
 }
 
 const String genericError = "Algo salió mal, vuelve a intentarlo más tarde";
@@ -83,6 +82,14 @@ const boldoTitleRegularTextStyle = TextStyle(
   color: ConstantsV2.lightest,
   fontStyle: FontStyle.normal,
   fontSize: 24,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const bodyMediumRegular = TextStyle(
+  color: ConstantsV2.lightest,
+  fontStyle: FontStyle.normal,
+  fontSize: 12,
   fontWeight: FontWeight.w400,
   fontFamily: 'Montserrat',
 );
@@ -95,12 +102,28 @@ const boldoTitleBlackTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoScreenTitleTextStyle = TextStyle(
+  color: ConstantsV2.activeText,
+  fontStyle: FontStyle.normal,
+  fontSize: 24,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
+);
+
+const boldoScreenSubtitleTextStyle = TextStyle(
+  color: ConstantsV2.activeText,
+  fontStyle: FontStyle.normal,
+  fontSize: 18,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
 const boldoSubTextStyle = TextStyle(
-    color: ConstantsV2.inactiveText,
-    fontStyle: FontStyle.normal,
-    fontSize: 18,
-    fontWeight: FontWeight.w400,
-    fontFamily: 'Montserrat',
+  color: ConstantsV2.inactiveText,
+  fontStyle: FontStyle.normal,
+  fontSize: 18,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
 );
 
 const boldoSubTextMediumStyle = TextStyle(
@@ -111,6 +134,30 @@ const boldoSubTextMediumStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+TextStyle bodyLarge = GoogleFonts.workSans().copyWith(
+  fontWeight: FontWeight.w400,
+  fontSize: 16,
+);
+
+TextStyle bodySmallRegular = GoogleFonts.montserrat().copyWith(
+  fontWeight: FontWeight.w300,
+  fontSize: 10,
+);
+
+TextStyle labelMedium = GoogleFonts.workSans().copyWith(
+  fontWeight: FontWeight.w500,
+  fontSize: 14,
+  fontStyle: FontStyle.normal,
+);
+
+const boldoInfoTextStyle = TextStyle(
+  color: ConstantsV2.activeText,
+  fontFamily: 'Montserrat',
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w300,
+  fontSize: 14
+);
+
 const boldoCardHeadingTextStyle = TextStyle(
   color: Colors.white,
   fontStyle: FontStyle.normal,
@@ -119,11 +166,52 @@ const boldoCardHeadingTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoCardSubtitleTextStyle = TextStyle(
+  color: Colors.white,
+  fontStyle: FontStyle.normal,
+  fontSize: 16,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
+);
+
 const boldoCorpMediumTextStyle = TextStyle(
   color: ConstantsV2.lightGrey,
   fontStyle: FontStyle.normal,
   fontSize: 14,
   fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoCorpMediumWithLineSeparationLargeTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 14,
+  height: 1.7,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoBodyLRegularTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 14,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoBodySRegularTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 10,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoBodySBlackTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 10,
+  fontWeight: FontWeight.w500,
   fontFamily: 'Montserrat',
 );
 
@@ -143,6 +231,14 @@ const boldoCorpSmallTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoCorpSmallSTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 12,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
 const boldoCorpSmallInterTextStyle = TextStyle(
   color: ConstantsV2.lightGrey,
   fontStyle: FontStyle.normal,
@@ -158,20 +254,105 @@ const boldoBillboardTextStyleAlt = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const boldoTabHeaderTextStyle = TextStyle(
+  fontStyle: FontStyle.normal,
+  fontSize: 19,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoTabHeaderSelectedTextStyle = TextStyle(
+  fontStyle: FontStyle.normal,
+  fontSize: 19,
+  fontWeight: FontWeight.w500,
+  fontFamily: 'Montserrat',
+);
+
+const boldoTabHeaderUnselectedTextStyle = TextStyle(
+  fontStyle: FontStyle.normal,
+  fontSize: 19,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const BigButton = TextStyle(
+  color: ConstantsV2.lightest,
+  fontStyle: FontStyle.normal,
+  fontSize: 15,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+BoxShadow shadowRegular = BoxShadow(
+  offset: const Offset(0, 2),
+  color: Colors.black.withOpacity(0.05),
+  blurRadius: 4,
+);
+
+const BoxDecoration buttonFXSecondaryStyle = BoxDecoration(
+  boxShadow: [
+    BoxShadow(
+      offset: Offset(0, 2),
+      color: Color(0xffFEAD88),
+      spreadRadius: -4,
+      blurRadius: 4,
+    ),
+    BoxShadow(
+      offset: Offset(0, 2),
+      color: Color.fromRGBO(0, 0, 0, 0.1),
+      blurRadius: 4,
+    ),
+    BoxShadow(
+      offset: Offset(0, 0),
+      color: Color.fromRGBO(253, 165, 125, 0.5),
+      blurRadius: 4,
+    )
+  ]
+);
+
 ThemeData boldoTheme = ThemeData(
   fontFamily: 'Montserrat',
   elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-      primary: ConstantsV2.orange,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(100),
+    style: ButtonStyle(
+      textStyle: MaterialStateProperty.all(
+        const TextStyle(fontWeight: FontWeight.w500, fontSize: 16,
+            color: ConstantsV2.BGNeutral
+        ),
+      ),
+      padding: MaterialStateProperty.all(
+        const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      ),
+      backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+        if (states.contains(MaterialState.disabled)) {
+          return ConstantsV2.gray; // Disabled color
+        }
+        return ConstantsV2.orange; // Regular color
+      }),
+      shape: MaterialStateProperty.all(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
+        ),
       ),
     ),
   ),
+  textButtonTheme: TextButtonThemeData(
+    style: TextButton.styleFrom(
+      foregroundColor: ConstantsV2.secondaryRegular,
+      textStyle: boldoSubTextMediumStyle.copyWith(color: ConstantsV2.secondaryRegular),
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+    ),
+  ),
+  toggleableActiveColor: ConstantsV2.orange,
+  checkboxTheme: CheckboxThemeData(
+    shape: RoundedRectangleBorder(
+      side: const BorderSide(color: ConstantsV2.orange, width: 5),
+      borderRadius: BorderRadius.circular(4),
+    ),
+  ),
+  unselectedWidgetColor: ConstantsV2.orange,
   floatingActionButtonTheme: FloatingActionButtonThemeData(
-    extendedTextStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+    extendedTextStyle:
+        const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
     extendedPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
     backgroundColor: ConstantsV2.orange,
     shape: RoundedRectangleBorder(
@@ -182,7 +363,7 @@ ThemeData boldoTheme = ThemeData(
     style: OutlinedButton.styleFrom(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
       textStyle: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: ConstantsV2.orange),
-      primary: ConstantsV2.orange,
+      foregroundColor: ConstantsV2.orange,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(100),
       ),
@@ -216,13 +397,15 @@ ThemeData boldoTheme = ThemeData(
         width: 1.0,
       ),
     ),
+    errorStyle: bodySmallRegular.copyWith(
+      color: ConstantsV2.systemFail
+    )
   ),
   primaryColor: Colors.white,
-  scaffoldBackgroundColor: ConstantsV2.lightGrey,
+  scaffoldBackgroundColor: ConstantsV2.BGNeutral,
   brightness: Brightness.light,
   visualDensity: VisualDensity.adaptivePlatformDensity,
 );
-
 
 // Colors Boldo V2
 class ConstantsV2 {
@@ -246,6 +429,7 @@ class ConstantsV2 {
 
   // button color
   static const Color buttonPrimaryColor100 = Color(0xffEB8B76);
+  static const Color rightBottonNavigaton = Color.fromRGBO(255, 139, 118, 0.1);
 
   // hero cards colors gradient
   static const Color primaryCardHeroColor100 = Color(0xffFDA57D);
@@ -318,38 +502,62 @@ class ConstantsV2 {
   static const double familyConnectSecondaryStop300 = 1.0;
 
   // colors
-  static const Color lightGrey = Color(0xffF5F5F5);
+  static const Color lightGrey = Color(0xffF8F8F8);
   static const Color lightest = Color(0xffFFFFFF);
   static const Color green = Color(0xff28B3BB);
+  static const Color lightGreen = Color.fromRGBO(40, 179, 187, 0.13);
   static const Color veryLightBlue = Color(0xffB1C3D7);
   static const Color yellow = Color(0xffF9D620);
   static const Color darkBlue = Color(0xff364F6B);
+  static const Color blueDark = Color(0xff364F6B);
+  static const Color blueLight = Color(0xffB1C3D7);
   static const Color orange = Color(0xffEB8B76);
   static const Color lightAndClear = Color(0xffF5F5F5);
+  static const Color gray = Color(0xffCFCFCF);
+  static const Color grayLight = Color(0xffF8F8F8);
+  static const Color grayLightest = Color(0xffFBFBFB);
+  static const Color grayDark = Color(0xff52565A);
+  static Color grayLightAndClear = const Color(0xffF5F5F5).withOpacity(.8);
+  static const Color BGNeutral = Color(0xffF5F5F5);
+  static const Color CardBG = Color(0xffEAEAEA);
+  static const Color primaryRegular = Color(0xff28B3BB);
+  static Color primaryLightAndClear = const Color(0xff28B3BB).withOpacity(.13);
 
+  static const Color secondaryRegular = Color(0xffEB8B76);
+  static Color secondaryLightAndClear = const Color(0xffEB8B76).withOpacity(0.1);
+
+  static const Color systemSuccess = Color(0xff4AB648);
+  static const Color systemFail = Color(0xffC53030);
 
   // home heights
-  static double homeAppBarMaxHeight = 154.0;
-  static double homeAppBarMinHeight = 98.0;
+  static double homeAppBarMaxHeight = 132.0;
+  static double homeAppBarMinHeight = 76.0;
   static double homeCarouselContainerMaxHeight = 162.0;
   static double homeCarouselContainerMinHeight = 82.0;
-  static double homeCarouselTitleContainerMaxHeight = 62.0;
-  static double homeCarouselTitleContainerMinHeight = 24.0;
+  static double homeCarouselTitleContainerMaxHeight = 32.0;
+  static double homeCarouselTitleContainerMinHeight = 0.0;
   static double homeCarouselCardMaxHeight = 130.0;
   static double homeCarouselCardMinHeight = 50.0;
   static double homeCarouselCardMaxWidth = 110.0;
   static double homeCarouselCardMinWidth = 50.0;
   static double homeCarouselCardMaxRadius = 100.0;
   static double homeCarouselCardMinRadius = 10.0;
-  static double homeFeedTitleContainerMaxHeight = 62.0;
-  static double homeFeedTitleContainerMinHeight = 62.0;
+  static double homeFeedTitleContainerMaxHeight = 32.0;
+  static double homeFeedTitleContainerMinHeight = 32.0;
+  static double homeCarouselPadding = 24.0;
 
-  static double homeExpandedMaxHeight = homeAppBarMaxHeight + homeCarouselContainerMaxHeight + homeCarouselTitleContainerMaxHeight + homeFeedTitleContainerMaxHeight;
-  static double homeExpandedMinHeight = homeAppBarMinHeight + homeCarouselContainerMinHeight + homeCarouselTitleContainerMinHeight + homeFeedTitleContainerMinHeight;
+  static double homeExpandedMaxHeight = homeAppBarMaxHeight + homeCarouselContainerMaxHeight + homeCarouselTitleContainerMaxHeight + homeFeedTitleContainerMaxHeight + homeCarouselPadding + homeCarouselPadding;
+  static double homeExpandedMinHeight = homeAppBarMinHeight + homeCarouselContainerMinHeight + homeCarouselTitleContainerMinHeight + homeFeedTitleContainerMinHeight + homeCarouselPadding + homeCarouselPadding;
 
 }
-
 
 // Constants
 
 const String isFamily = 'isFamily';
+const int minutesToCloseAppointment = 120;
+const String uploadedStudySuccessfullyMessage = "¡Estudio subido!";
+const String dependentSuccessAdded = '¡Dependiente agregado!';
+DateTime minDate = DateTime(1900, 1, 1);
+DateTime minDateDigit = DateTime(1000, 1, 1);
+const int timeToShowAppointmentsOnHoldInMonth = 1;
+const int timeToShowStudyOrderInMonth = 1;

@@ -1,7 +1,7 @@
 part of 'medicalRecordBloc.dart';
 
 @immutable
-abstract class MedicalRecordState{}
+abstract class MedicalRecordState {}
 
 class MedicalRecordInitial extends MedicalRecordState {}
 

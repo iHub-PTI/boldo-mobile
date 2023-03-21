@@ -1,5 +1,10 @@
 import 'package:boldo/main.dart';
+import 'package:boldo/models/StudyOrder.dart';
+import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
+import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
+import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/header_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -21,6 +26,7 @@ class _MyStudiesState extends State<MyStudies> {
   bool _loading = true;
   bool _error = false;
   List<DiagnosticReport> diagnosticReport = [];
+  ServiceRequest? serviceRequest;
   @override
   void initState() {
     BlocProvider.of<MyStudiesBloc>(context).add(GetPatientStudiesFromServer());
@@ -82,8 +88,22 @@ class _MyStudiesState extends State<MyStudies> {
                 _loading = false;
                 _error = true;
                 setState(() {});
-                Scaffold.of(context).showSnackBar(const SnackBar(
-                    content: Text("Falló la obtención de estudios")));
+                emitSnackBar(
+                    context: context,
+                    text: 'Falló la obtención de estudios',
+                    status: ActionStatus.Fail
+                );
+              }
+
+              if (state is ServiceRequestLoaded) {
+                serviceRequest = state.serviceRequest;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          AttachStudyByOrderScreen(
+                            studyOrder: serviceRequest == null ? ServiceRequest() : serviceRequest!,
+                          )));
               }
             },
             child: SingleChildScrollView(
@@ -91,20 +111,28 @@ class _MyStudiesState extends State<MyStudies> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(
-                      Icons.chevron_left_rounded,
-                      size: 25,
-                      color: Constants.extraColor400,
-                    ),
-                    label: Text(
-                      'Mis Estudios',
-                      style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Icon(
+                                Icons.chevron_left_rounded,
+                                size: 25,
+                                color: Constants.extraColor400,
+                              ),
+                            ),
+                            Expanded(
+                              child: header("Mis Estudios", "Estudios"),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   // GestureDetector(
                   //   onTap: () {
@@ -127,7 +155,7 @@ class _MyStudiesState extends State<MyStudies> {
 
                   const SizedBox(height: 10),
                   Text(
-                    'Subí y consultá resultados de estudios provenientes de varias fuentes.',
+                    'En esta sección podés subir archivos y fotos de los resultados de tus estudios y los de tu familia.',
                     style: boldoHeadingTextStyle.copyWith(fontSize: 12),
                   ),
                   // const SizedBox(
@@ -141,64 +169,103 @@ class _MyStudiesState extends State<MyStudies> {
                   const SizedBox(
                     height: 15,
                   ),
-                  diagnosticReport.isEmpty
-                      ? showEmptyList()
-                      : showDiagnosticList()
-                ],
+                  _loading
+                    ? const Center(
+                      child: CircularProgressIndicator(
+                        valueColor:
+                        AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                        backgroundColor: Constants.primaryColor600,
+                      )
+                    )
+                    : diagnosticReport.isEmpty
+                      ? const EmptyStateV2(
+                        picture: "empty_studies.svg",
+                        titleBottom: "Aún no tenés estudios",
+                        textBottom:
+                        "A medida en que uses la aplicación podrás ir viendo tus estudios",
+                      )
+                          : showDiagnosticList(),
+                    ],
               ),
             ),
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: ElevatedButton(
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (BuildContext context) => NewStudy()));
+          if(BlocProvider.of<MyStudiesBloc>(context).state is Loading){
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Favor aguardar durante la carga."),
+                backgroundColor: Colors.redAccent,
+              ),
+            );
+          }else{
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) => NewStudy()
+                )
+            );
+          }
         },
-        backgroundColor: ConstantsV2.orange,
-        label: Container(
-            child: Row(
-          children: [
-            const Text(
-              'nuevo estudio',
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-            SvgPicture.asset(
-              'assets/icon/upload.svg',
-            ),
-          ],
-        )),
+        child: BlocBuilder<MyStudiesBloc, MyStudiesState>(
+          builder: (BuildContext context, state) {
+            if(state is Loading){
+              return const CircularProgressIndicator(
+                valueColor:
+                AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                backgroundColor: Constants.primaryColor600,
+              );
+            }else{
+              return Container(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'nuevo estudio',
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      SvgPicture.asset(
+                        'assets/icon/upload.svg',
+                      ),
+                    ],
+                  )
+              );
+            }
+          },
+        ),
       ),
     );
   }
 
-  showEmptyList() {
-    return Center(
-      child: Column(
-        children: [
-          if (_loading)
-            const Text('Cargando...')
-          else if (_error)
-            const Text('Error')
-          else ...[
-            SvgPicture.asset('assets/images/empty_studies.svg',
-                fit: BoxFit.cover),
-            Text(
-              'aún no tenés estudios para visualizar',
-              textAlign: TextAlign.center,
-              style: boldoSubTextStyle.copyWith(color: ConstantsV2.orange),
-            ),
-          ]
-        ],
-      ),
-    );
-  }
+  // showEmptyList() {
+  //   return Center(
+  //     child: Column(
+  //       children: [
+  //         if (_loading)
+  //           const Text('Cargando...')
+  //         else if (_error)
+  //           const Text('Error')
+  //         else ...[
+  //           SvgPicture.asset('assets/images/empty_studies.svg',
+  //               fit: BoxFit.cover),
+  //           Text(
+  //             'aún no tenés estudios para visualizar',
+  //             textAlign: TextAlign.center,
+  //             style: boldoSubTextStyle.copyWith(color: ConstantsV2.orange),
+  //           ),
+  //         ]
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget showDiagnosticList() {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.7,
+      height: MediaQuery.of(context).size.height - 200,
       // width: 300,
       child: ListView.separated(
         separatorBuilder: (BuildContext context, int index) => const Divider(
@@ -236,8 +303,8 @@ class _MyStudiesState extends State<MyStudies> {
                     child: Column(
                   children: [
                     SizedBox(
-                      width: 34,
-                      height: 34,
+                      width: 40,
+                      height: 40,
                       child: SvgPicture.asset(
                         diagnosticReport[index].type == "LABORATORY"
                             ? 'assets/icon/lab.svg'
@@ -339,23 +406,55 @@ class _MyStudiesState extends State<MyStudies> {
                       const SizedBox(
                         height: 8,
                       ),
-                      Container(
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icon/attach-file.svg',
-                            ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              "${diagnosticReport[index].attachmentNumber} ${diagnosticReport[index].attachmentNumber == "1" ? "archivo adjunto" : "archivos adjuntos"}",
-                              style: boldoCorpSmallTextStyle.copyWith(
-                                  color: ConstantsV2.darkBlue),
-                            )
-                          ],
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/icon/attach-file.svg',
+                              ),
+                              const SizedBox(
+                                width: 4,
+                              ),
+                              Text(
+                                "${diagnosticReport[index].attachmentNumber} ${diagnosticReport[index].attachmentNumber == "1" ? "archivo adjunto" : "archivos adjuntos"}",
+                                style: boldoCorpSmallTextStyle.copyWith(
+                                    color: ConstantsV2.darkBlue),
+                              )
+                            ],
+                          ),
+                        ]
                       ),
+                      diagnosticReport[index].serviceRequestId != null
+                        ? Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              child: GestureDetector(
+                                onTap: (){
+                                  BlocProvider.of<MyStudiesBloc>(context)
+                                        .add(GetServiceRequests(serviceRequestId: diagnosticReport[index]
+                                                          .serviceRequestId!));
+                                },
+                                child: Card(
+                                    margin: EdgeInsets.zero,
+                                    clipBehavior: Clip.antiAlias,
+                                    elevation: 0,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(5)),
+                                    ),
+                                    color: ConstantsV2.orange.withOpacity(0.10),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+                                      child: const Text("ver orden"),
+                                    )),
+                              ),
+                            ),
+                          ],
+                        )
+                        : Container()
                     ],
                   ),
                 ),

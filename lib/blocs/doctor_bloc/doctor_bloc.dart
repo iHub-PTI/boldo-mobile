@@ -1,5 +1,7 @@
 import 'package:boldo/models/Doctor.dart';
+import 'package:boldo/models/Organization.dart';
 import 'package:boldo/network/user_repository.dart';
+import 'package:boldo/utils/organization_helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +20,12 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.getAvailabilities(id: event.id, startDate: event.startDate, endDate: event.endDate)!)
+        _patientRepository.getAvailabilities(
+            id: event.id,
+            startDate: event.startDate,
+            endDate: event.endDate,
+            organizations: event.organizations,
+        )!)
             .attempt()
             .run()
             .then((value) {
@@ -30,8 +37,11 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
         }else{
-          late List<NextAvailability> nextAvailability = [];
+          late List<OrganizationWithAvailabilities> nextAvailability = [];
           _post.foldRight(NextAvailability, (a, previous) => nextAvailability = a);
+
+          nextAvailability.sort(orderByAvailabilities);
+
           emit(AvailabilitiesObtained(availabilities: nextAvailability));
           emit(Success());
         }
@@ -55,31 +65,6 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
         }else{
           emit(Success());
         }
-      }
-      if(event is LinkFamily) {
-        emit(Loading());
-        var _post;
-        await Task(() =>
-        _patientRepository.setDependent(user.isNew)!)
-            .attempt()
-            .run()
-            .then((value) {
-          _post = value;
-        }
-        );
-        var response;
-        if (_post.isLeft()) {
-          _post.leftMap((l) => response = l.message);
-          emit(Failed(response: response));
-        }else{
-          emit(Success());
-          await UserRepository().getDependents();
-          await Future.delayed(const Duration(seconds: 2));
-          emit(RedirectNextScreen());
-        }
-      }
-      if(event is ReloadHome){
-        emit(Success());
       }
     }
 
