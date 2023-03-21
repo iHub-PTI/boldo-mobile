@@ -215,7 +215,7 @@ class OrganizationRepository {
     Response response;
 
     try {
-      /*if (prefs.getBool('isFamily') ?? false) {
+      if (prefs.getBool('isFamily') ?? false) {
         response = await dio
             .get('/profile/caretaker/dependent/${patient.id}/subscriptionRequests?status=PD');
       } else {
@@ -232,10 +232,9 @@ class OrganizationRepository {
         return List<Organization>.from([]);
       }
 
-       */
-      return List<Organization>.from(organizationsPostulated);
+
       // throw an error if isn't a know status code
-      //throw Failure('Unknown StatusCode ${response.statusCode}');
+      throw Failure('Unknown StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
@@ -426,7 +425,7 @@ class OrganizationRepository {
     try {
 
       // the query is made
-      /*if (prefs.getBool('isFamily') ?? false) {
+      if (prefs.getBool('isFamily') ?? false) {
         response = await dio
             .delete('/profile/caretaker/dependent/${patient.id}/organization/${organization.id}');
       } else {
@@ -437,10 +436,8 @@ class OrganizationRepository {
         return None();
       }
 
-       */
-      throw Failure("Cancelar suscripción sin implementar");
       // throw an error if isn't a know status code
-      //throw Failure('Unknown StatusCode ${response.statusCode}');
+      throw Failure('Unknown StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
