@@ -20,9 +20,7 @@ class Organizations extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    bool has_organizations = BlocProvider.of<patientBloc.PatientBloc>(context).getOrganizations().isNotEmpty || organizationsPostulated.isNotEmpty;
-
-    return has_organizations ? OrganizationsSubscribedScreen() : OrganizationsScreen();
+    return OrganizationsSubscribedScreen();
 
   }
 
