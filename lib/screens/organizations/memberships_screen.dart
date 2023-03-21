@@ -396,7 +396,8 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                         children: [
                                           Flexible(
                                             child: Text(
-                                              'Arrastrá los elementos para establecer el orden de prioridad',
+                                              //'Arrastrá los elementos para establecer el orden de prioridad',
+                                              'Gestioná las organizaciones a las cuales perteneces',
                                               style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.grayDark),
                                             ),
                                           ),
@@ -429,18 +430,19 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                       ),
                                     ),
                                     const SizedBox(height: 16.0),
-                                    ReorderableListView.builder(
-                                      buildDefaultDragHandles: false,
+                                    // ReorderableListView.builder(
+                                    //   buildDefaultDragHandles: false,
+                                    ListView.builder(
                                       physics: const ClampingScrollPhysics(),
                                       shrinkWrap: true,
                                       itemCount: _organizationsSubscribed.length,
                                       itemBuilder: organizationsBox,
-                                      onReorder: (int oldIndex, int newIndex) {
-                                        final index = newIndex > oldIndex ? newIndex - 1 : newIndex;
-                                        final organization = _organizationsSubscribed.removeAt(oldIndex);
-                                        _organizationsSubscribed.insert(index, organization);
-                                        BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.ReorderByPriority(organizations: _organizationsSubscribed));
-                                      },
+                                      // onReorder: (int oldIndex, int newIndex) {
+                                      //   final index = newIndex > oldIndex ? newIndex - 1 : newIndex;
+                                      //   final organization = _organizationsSubscribed.removeAt(oldIndex);
+                                      //   _organizationsSubscribed.insert(index, organization);
+                                      //   BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.ReorderByPriority(organizations: _organizationsSubscribed));
+                                      // },
                                     )
                                   ]
                                 )
