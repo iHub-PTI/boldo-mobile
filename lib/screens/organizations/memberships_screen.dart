@@ -20,9 +20,7 @@ class Organizations extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    bool has_organizations = BlocProvider.of<patientBloc.PatientBloc>(context).getOrganizations().isNotEmpty || organizationsPostulated.isNotEmpty;
-
-    return has_organizations ? OrganizationsSubscribedScreen() : OrganizationsScreen();
+    return OrganizationsSubscribedScreen();
 
   }
 
@@ -152,7 +150,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                         BlocBuilder<OrganizationBloc, OrganizationBlocState>(
                             builder: (context, state){
                               if (state is Failed){
-                                return DataFetchErrorWidget(retryCallback: () => OrganizationBloc()..add(GetAllOrganizations()));
+                                return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizations()));
                               } else if(state is Loading){
                                 return const Center(
                                   child: CircularProgressIndicator(
@@ -264,7 +262,7 @@ class OrganizationsSubscribedScreen extends StatefulWidget {
 class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedScreen> {
 
   List<Organization> _organizationsSubscribed = [];
-  List<Organization> _organizationsPostulated = [];
+  List<OrganizationRequest> _organizationsPostulated = [];
 
   @override
   Widget build(BuildContext context) {
@@ -326,7 +324,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                     }else if(state is applied.PostulationRemoved){
                       emitSnackBar(
                         context: context,
-                        text: "Solicitud a ${_organizationsPostulated.firstWhere((element) => element.id == state.id).name} cancelada",
+                        text: "Solicitud a ${_organizationsPostulated.firstWhere((element) => element.id == state.id).organizationName} cancelada",
                         status: ActionStatus.Success
                       );
                       _organizationsPostulated.removeWhere((element) => element.id == state.id);
@@ -370,7 +368,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                     BlocBuilder<subscribed.OrganizationSubscribedBloc, subscribed.OrganizationSubscribedBlocState>(
                       builder: (context, state){
                         if (state is subscribed.Failed){
-                          return DataFetchErrorWidget(retryCallback: () => subscribed.OrganizationSubscribedBloc()..add(subscribed.GetOrganizationsSubscribed()));
+                          return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed()));
                         } else if(state is subscribed.Loading){
                           return const Center(
                             child: CircularProgressIndicator(
@@ -396,7 +394,8 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                         children: [
                                           Flexible(
                                             child: Text(
-                                              'Arrastrá los elementos para establecer el orden de prioridad',
+                                              //'Arrastrá los elementos para establecer el orden de prioridad',
+                                              'Gestioná las organizaciones a las cuales perteneces',
                                               style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.grayDark),
                                             ),
                                           ),
@@ -429,17 +428,19 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                       ),
                                     ),
                                     const SizedBox(height: 16.0),
-                                    ReorderableListView.builder(
-                                      buildDefaultDragHandles: false,
+                                    // ReorderableListView.builder(
+                                    //   buildDefaultDragHandles: false,
+                                    ListView.builder(
                                       physics: const ClampingScrollPhysics(),
                                       shrinkWrap: true,
                                       itemCount: _organizationsSubscribed.length,
                                       itemBuilder: organizationsBox,
-                                      onReorder: (int oldIndex, int newIndex) {
-                                        final index = newIndex > oldIndex ? newIndex - 1 : newIndex;
-                                        final organization = _organizationsSubscribed.removeAt(oldIndex);
-                                        _organizationsSubscribed.insert(index, organization);
-                                      },
+                                      // onReorder: (int oldIndex, int newIndex) {
+                                      //   final index = newIndex > oldIndex ? newIndex - 1 : newIndex;
+                                      //   final organization = _organizationsSubscribed.removeAt(oldIndex);
+                                      //   _organizationsSubscribed.insert(index, organization);
+                                      //   BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.ReorderByPriority(organizations: _organizationsSubscribed));
+                                      // },
                                     )
                                   ]
                                 )
@@ -453,7 +454,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                     BlocBuilder<applied.OrganizationAppliedBloc, applied.OrganizationAppliedBlocState>(
                       builder: (context, state){
                         if (state is applied.Failed){
-                          return DataFetchErrorWidget(retryCallback: () => applied.OrganizationAppliedBloc()..add(applied.GetOrganizationsPostulated()));
+                          return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated()));
                         } else if(state is applied.Loading){
                           return const Center(
                             child: CircularProgressIndicator(
@@ -588,7 +589,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _cardPriority(index),
+              _cardPriority(index + 1),
               const SizedBox(width: 12,),
               _cardFunder(_organizationsSubscribed[index]),
             ],
@@ -623,7 +624,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
     return OrganizationSubscribedCard(organization: organization,);
   }
 
-  Widget _cardFunderPostulated(Organization organization){
+  Widget _cardFunderPostulated(OrganizationRequest organization){
     return OrganizationPostulationCard(organization: organization,);
   }
 
@@ -654,7 +655,7 @@ class OrganizationPostulationCard extends StatelessWidget {
 
   OrganizationPostulationCard({required this.organization});
 
-  final Organization organization;
+  final OrganizationRequest organization;
 
   @override
   Widget build(BuildContext context) {
@@ -689,9 +690,9 @@ class OrganizationPostulationCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children:[
                             Text(
-                                "${organization.name}"
+                                "${organization.organizationName}"
                             ),
-                            cancelSubscriptionOption(organization.id?? 'without id', context),
+                            cancelSubscriptionOption(organization, context),
                           ]
                       ),
                     ),
@@ -709,10 +710,11 @@ class OrganizationPostulationCard extends StatelessWidget {
     );
   }
 
-  Widget cancelSubscriptionOption(String id, BuildContext context){
+  Widget cancelSubscriptionOption(OrganizationRequest organization, BuildContext context){
     return InkWell(
       onTap: (){
-        BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.UnPostulated(id: id));
+        BlocProvider.of<applied.OrganizationAppliedBloc>(context)
+            .add(applied.UnPostulated(organization: organization));
       },
       child: SvgPicture.asset('assets/icon/familyTrash.svg'),
     );
@@ -762,7 +764,7 @@ class OrganizationSubscribedCard extends StatelessWidget {
                           Text(
                               "${organization.name}"
                           ),
-                          moreOptions(organization.id?? 'without id', context),
+                          moreOptions(organization, context),
                         ]
                     ),
                   ),
@@ -779,11 +781,11 @@ class OrganizationSubscribedCard extends StatelessWidget {
     );
   }
 
-  Widget moreOptions(String id, BuildContext context){
+  Widget moreOptions(Organization organization, BuildContext context){
     return PopupMenuButton<String>(
       onSelected: (String result) {
         if (result == 'baja') {
-          BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.RemoveOrganization(id: id));
+          BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.RemoveOrganization(organization: organization));
         }
       },
       child: SvgPicture.asset('assets/icon/more-horiz.svg'),
@@ -862,7 +864,6 @@ class FamilySelector extends StatelessWidget {
     double width = type == "rounded"? 54 : 120;
     bool disable = index == 0 ? patient.id == prefs.getString("userId") ? false : true : patient.id == families[index-1].id ? false : true;
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 9),
       child:
         index == 0
             ? ImageViewTypeForm(
@@ -872,10 +873,9 @@ class FamilySelector extends StatelessWidget {
             form: type,
             color: disable? ConstantsV2.grayLightAndClear : null,
             opacity: disable? 0.6 : 1,
-            blur: disable,
-            borderColor: disable? null: ConstantsV2.secondaryRegular,
-            url: patient.photoUrl,
-            gender: patient.gender,
+            borderColor: disable? ConstantsV2.grayLightAndClear: ConstantsV2.secondaryRegular,
+            url: prefs.getString('profile_url'),
+            gender: prefs.getString('gender'),
         )
             :ImageViewTypeForm(
             height: height,
@@ -884,10 +884,9 @@ class FamilySelector extends StatelessWidget {
             url: families[index-1].photoUrl,
             gender: families[index-1].gender,
             form: type,
-            color: disable? ConstantsV2.grayLightAndClear : null,
+            color: disable? ConstantsV2.gray : null,
             opacity: disable? 0.6 : 1,
-            blur: disable,
-            borderColor: disable? null: ConstantsV2.secondaryRegular,
+            borderColor: disable? ConstantsV2.grayLightAndClear: ConstantsV2.secondaryRegular,
         )
         ,
     );

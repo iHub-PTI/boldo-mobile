@@ -28,3 +28,5 @@ class AllOrganizationsObtained extends OrganizationSubscribedBlocState {
   final List<Organization> organizationsList;
   AllOrganizationsObtained({required this.organizationsList});
 }
+
+class PriorityEstablished extends OrganizationSubscribedBlocState {}

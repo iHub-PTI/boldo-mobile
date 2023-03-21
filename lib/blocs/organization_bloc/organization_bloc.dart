@@ -21,7 +21,7 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
 
         //get organizations that the patient is subscribed
         await Task(() =>
-        _organizationRepository.getAllOrganizations()!)
+        _organizationRepository.getUnsubscribedOrganizations()!)
             .attempt()
             .run()
             .then((value) {
@@ -35,33 +35,8 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
 
         }else{
 
-          var _post2;
-          List<Organization> organizationsSubscribed = [];
-          //get organizations that the patient is subscribed
-          await Task(() =>
-          _organizationRepository.getOrganizations()!)
-              .attempt()
-              .run()
-              .then((value) {
-            _post2 = value;
-          }
-          );
-          if (_post2.isLeft()) {
-            _post2.leftMap((l) => response = l.message);
-
-          }else{
-
-            _post2.foldRight(QRCode, (a, previous) => organizationsSubscribed = a);
-
-
-          }
           List<Organization> allOrganizations = [];
-          _post.foldRight(QRCode, (a, previous) => allOrganizations = a);
-
-          allOrganizations = allOrganizations.where(
-              (element) => !organizationsSubscribed.any((element2) =>
-                  element.id == element2.id)
-          ).toList();
+          _post.foldRight(Organization, (a, previous) => allOrganizations = a);
 
           allOrganizations = allOrganizations.where(
                   (element) => !organizationsPostulated.any((element2) =>

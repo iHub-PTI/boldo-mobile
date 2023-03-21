@@ -527,6 +527,15 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
             ),
           ),
       errorWidget: (context, url, error) => const Icon(Icons.error),
+      imageBuilder: widget.color != null ? (context, imageProvider) => Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: imageProvider,
+              fit: BoxFit.cover,
+              colorFilter:
+              ColorFilter.mode(widget.color!, BlendMode.color)),
+        ),
+      ) : null,
     );
 
     return Card(
@@ -561,7 +570,7 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
       shape: widget.form == "rounded" ? StadiumBorder(
         side: widget.border ? BorderSide(
           color: widget.borderColor?? Colors.white,
-          width: 3,
+          width: 2,
         ) : BorderSide.none,
       ) : widget.form == "square" ? RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(3)) : const CircleBorder(),

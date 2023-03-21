@@ -36,7 +36,7 @@ class OrganizationAppliedBloc extends Bloc<OrganizationAppliedBlocEvent, Organiz
           emit(Failed(response: response));
 
         }else{
-          late List<Organization> organizations;
+          late List<OrganizationRequest> organizations;
           _post.foldRight(QRCode, (a, previous) => organizations = a);
 
           emit(OrganizationsObtained(organizationsList: organizations));
@@ -47,7 +47,7 @@ class OrganizationAppliedBloc extends Bloc<OrganizationAppliedBlocEvent, Organiz
 
         //unsubscribed to an one organization
         await Task(() =>
-        _organizationRepository.unSubscribedPostulation(event.id)!)
+        _organizationRepository.unSubscribedPostulation(event.organization)!)
             .attempt()
             .run()
             .then((value) {
@@ -61,7 +61,7 @@ class OrganizationAppliedBloc extends Bloc<OrganizationAppliedBlocEvent, Organiz
 
         }else{
 
-          emit(PostulationRemoved(id: event.id));
+          emit(PostulationRemoved(id: event.organization.id?? '0'));
         }
       }
     }
