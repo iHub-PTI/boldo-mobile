@@ -11,6 +11,10 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 class OrganizationRepository {
 
+  final String errorRequestNotExist = "does not exists";
+
+  final String errorRequestCannotDelete = "cannot be deleted";
+
   /// get organizations where the patient is subscribed
   Future<List<Organization>>? getOrganizations() async {
     Response response;
