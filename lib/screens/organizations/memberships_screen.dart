@@ -264,7 +264,7 @@ class OrganizationsSubscribedScreen extends StatefulWidget {
 class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedScreen> {
 
   List<Organization> _organizationsSubscribed = [];
-  List<Organization> _organizationsPostulated = [];
+  List<OrganizationRequest> _organizationsPostulated = [];
 
   @override
   Widget build(BuildContext context) {
@@ -326,7 +326,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                     }else if(state is applied.PostulationRemoved){
                       emitSnackBar(
                         context: context,
-                        text: "Solicitud a ${_organizationsPostulated.firstWhere((element) => element.id == state.id).name} cancelada",
+                        text: "Solicitud a ${_organizationsPostulated.firstWhere((element) => element.id == state.id).organizationName} cancelada",
                         status: ActionStatus.Success
                       );
                       _organizationsPostulated.removeWhere((element) => element.id == state.id);
@@ -624,7 +624,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
     return OrganizationSubscribedCard(organization: organization,);
   }
 
-  Widget _cardFunderPostulated(Organization organization){
+  Widget _cardFunderPostulated(OrganizationRequest organization){
     return OrganizationPostulationCard(organization: organization,);
   }
 
@@ -655,7 +655,7 @@ class OrganizationPostulationCard extends StatelessWidget {
 
   OrganizationPostulationCard({required this.organization});
 
-  final Organization organization;
+  final OrganizationRequest organization;
 
   @override
   Widget build(BuildContext context) {
@@ -690,9 +690,9 @@ class OrganizationPostulationCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children:[
                             Text(
-                                "${organization.name}"
+                                "${organization.organizationName}"
                             ),
-                            cancelSubscriptionOption(organization.id?? 'without id', context),
+                            cancelSubscriptionOption(organization, context),
                           ]
                       ),
                     ),
@@ -710,10 +710,11 @@ class OrganizationPostulationCard extends StatelessWidget {
     );
   }
 
-  Widget cancelSubscriptionOption(String id, BuildContext context){
+  Widget cancelSubscriptionOption(OrganizationRequest organization, BuildContext context){
     return InkWell(
       onTap: (){
-        BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.UnPostulated(id: id));
+        BlocProvider.of<applied.OrganizationAppliedBloc>(context)
+            .add(applied.UnPostulated(organization: organization));
       },
       child: SvgPicture.asset('assets/icon/familyTrash.svg'),
     );
@@ -763,7 +764,7 @@ class OrganizationSubscribedCard extends StatelessWidget {
                           Text(
                               "${organization.name}"
                           ),
-                          moreOptions(organization.id?? 'without id', context),
+                          moreOptions(organization, context),
                         ]
                     ),
                   ),
@@ -780,11 +781,11 @@ class OrganizationSubscribedCard extends StatelessWidget {
     );
   }
 
-  Widget moreOptions(String id, BuildContext context){
+  Widget moreOptions(Organization organization, BuildContext context){
     return PopupMenuButton<String>(
       onSelected: (String result) {
         if (result == 'baja') {
-          BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.RemoveOrganization(id: id));
+          BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.RemoveOrganization(organization: organization));
         }
       },
       child: SvgPicture.asset('assets/icon/more-horiz.svg'),
