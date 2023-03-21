@@ -211,7 +211,7 @@ class OrganizationRepository {
   }
 
   /// get organizations where the patient is waiting for approving
-  Future<List<Organization>>? getPostulatedOrganizations() async {
+  Future<List<OrganizationRequest>>? getPostulatedOrganizations() async {
     Response response;
 
     try {
@@ -224,12 +224,12 @@ class OrganizationRepository {
       }
       // there are organizations
       if (response.statusCode == 200) {
-        return List<Organization>.from(
-            response.data.map((i) => Organization.fromJson(i)));
+        return List<OrganizationRequest>.from(
+            response.data.map((i) => OrganizationRequest.fromJson(i)));
       } // doesn't have any organization
       else if (response.statusCode == 204) {
         // return empty list
-        return List<Organization>.from([]);
+        return List<OrganizationRequest>.from([]);
       }
 
 
