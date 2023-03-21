@@ -419,7 +419,7 @@ class OrganizationRepository {
     }
   }
 
-  Future<None>? unSubscribedOrganization(String id) async {
+  Future<None>? unSubscribedOrganization(Organization organization) async {
     Response response;
 
     try {
@@ -470,7 +470,7 @@ class OrganizationRepository {
     }
   }
 
-  Future<None>? unSubscribedPostulation(String id) async {
+  Future<None>? unSubscribedPostulation(OrganizationRequest organizationRequest) async {
     Response response;
 
     try {
