@@ -81,7 +81,7 @@ class PassportRepository {
       if (vaccine!.length == diseaseUserList!.length) {
         if (prefs.getBool(isFamily) ?? false) {
           response = await dioDownloader.get(
-              'profile/caretaker/vaccines/dependent/${patient.id}/vaccinationRegistry/list/pdf',
+              'profile/caretaker/dependent/${patient.id}/vaccinationRegistry/list/pdf',
               queryParameters: {"all": true});
         } else {
           response = await dioDownloader.get(
@@ -96,7 +96,7 @@ class PassportRepository {
         }
         if (prefs.getBool(isFamily) ?? false) {
           response = await dioDownloader.get(
-              'profile/caretaker/vaccines/dependent/${patient.id}/vaccinationRegistry/list/pdf',
+              'profile/caretaker/dependent/${patient.id}/vaccinationRegistry/list/pdf',
               queryParameters: {"diseaseCode": diseaseCode});
         } else {
           response = await dioDownloader.get(
@@ -141,7 +141,7 @@ class PassportRepository {
       Response response;
       if (prefs.getBool(isFamily) ?? false) {
         response = await dioPassport.post(
-            "profile/caretaker/vaccines/dependent/${patient.id}/vaccinationRegistry/create?all=$allVaccination",
+            "profile/caretaker/dependent/${patient.id}/vaccinationRegistry/create?all=$allVaccination",
             data: dataToPass);
       } else {
         response = await dioPassport.post(
