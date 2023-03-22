@@ -32,7 +32,7 @@ class PassportRepository {
       }
       if (response.statusCode == 200) {
         diseaseUserList = userVaccinateFromJson(response.data);
-      } else if (response.statusCode == 404) {
+      } else if (response.statusCode == 204) {
         diseaseUserList = [];
       }
       return None();
