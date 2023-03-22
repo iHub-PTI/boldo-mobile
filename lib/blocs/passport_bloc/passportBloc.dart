@@ -95,7 +95,7 @@ class PassportBloc extends Bloc<PassportEvent, PassportState> {
           version + userIdentifier + diseaseCode + 'banana'.trim();
       var hashEncode = utf8.encode(hash);
       var hashGenerate = sha256.convert(hashEncode);
-      urlQrFinal = "${baseUrl}vaccinationRegistry/$hashGenerate".trim();
+      urlQrFinal = "${baseUrl}healthPassport/vaccinationRegistry/$hashGenerate".trim();
     } // in this case we have to generate the QR for all vaccine
     else if (vaccineListQR!.length == diseaseUserList!.length) {
       // empty array to send
@@ -103,7 +103,7 @@ class PassportBloc extends Bloc<PassportEvent, PassportState> {
       // in this case we need all vaccine
       bool all = true;
       var verificationCode = await _passportRepository.postVerificationCode(all, []);
-      urlQrFinal = "${baseUrl}vaccinationRegistry/$verificationCode".trim();
+      urlQrFinal = "${baseUrl}healthPassport/vaccinationRegistry/$verificationCode".trim();
     } // in this case we have to generate the QR for some vaccines
     else if (vaccineListQR!.length > 1 &&
         vaccineListQR!.length < diseaseUserList!.length) {
@@ -126,7 +126,7 @@ class PassportBloc extends Bloc<PassportEvent, PassportState> {
       // in this case we don't need all vaccine
       bool all = false;
       var verificationCode = await _passportRepository.postVerificationCode(all, listHashes);
-      urlQrFinal = "${baseUrl}vaccinationRegistry/$verificationCode".trim();
+      urlQrFinal = "${baseUrl}healthPassport/vaccinationRegistry/$verificationCode".trim();
     }
     return urlQrFinal;
   }
