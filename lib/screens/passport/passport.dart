@@ -110,7 +110,6 @@ class _PassportTabState extends State<PassportTab> {
     super.initState();
   }
 
-  bool _isloading = false;
   int _failedConectionCounter = 0;
 
   // principal view
@@ -140,14 +139,6 @@ class _PassportTabState extends State<PassportTab> {
               } else {
                 _failedConectionCounter = 0;
               }
-              setState(() {
-                _isloading = false;
-              });
-            }
-            if (state is Loading) {
-              setState(() {
-                _isloading = true;
-              });
             }
           },
           child: Stack(children: [
@@ -172,6 +163,17 @@ class _PassportTabState extends State<PassportTab> {
                           }
                         },
                       ));
+                }
+                else if(state is Loading) {
+                  return Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                        color: Colors.white.withOpacity(0.3),
+                        child: const LoadingHelper(),
+                      )
+                  );
                 }
                 return SingleChildScrollView(
                   keyboardDismissBehavior:
@@ -307,8 +309,7 @@ class _PassportTabState extends State<PassportTab> {
                         diseaseUserList != null
                             ? !diseaseUserList!.isEmpty
                               ? VaccinateCard()
-                              : !_isloading
-                                  ? Container(
+                              : Container(
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -332,9 +333,7 @@ class _PassportTabState extends State<PassportTab> {
                                       ],
                                     ),
                                   )
-                                  : Text('')
-                            : !_isloading
-                                ? Container(
+                            : Container(
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -358,21 +357,12 @@ class _PassportTabState extends State<PassportTab> {
                                       ],
                                     ),
                                   )
-                                : const Text('')
                       ],
                     ),
                   ),
                 );
               },
             ),
-            if (_isloading)
-              Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                      height: MediaQuery.of(context).size.height,
-                      width: MediaQuery.of(context).size.width,
-                      color: Colors.white.withOpacity(0.3),
-                      child: const LoadingHelper()))
           ]),
         ));
   }
