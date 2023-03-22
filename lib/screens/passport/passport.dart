@@ -321,7 +321,7 @@ class _PassportTabState extends State<PassportTab> {
                                         const Padding(
                                           padding: EdgeInsets.all(16.0),
                                           child: Text(
-                                            'No existee registro vacunatorio suyo.',
+                                            'No existe registro vacunatorio suyo.',
                                             style: TextStyle(
                                               color: Color.fromRGBO(
                                                   253, 165, 125, 1),
