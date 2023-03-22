@@ -52,7 +52,11 @@ class PassportRepository {
           }
         ],
       );
-      throw Failure(e.response?.data['message']);
+      try{
+        throw Failure(e.response?.data['message']);
+      }catch (exception ){
+        throw Failure(genericError);
+      }
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
