@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:boldo/blocs/user_bloc/patient_bloc.dart'as patient;
+import 'package:boldo/blocs/user_bloc/patient_bloc.dart'as patientBloc;
 import 'package:boldo/blocs/doctor_bloc/doctor_bloc.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Organization.dart';
@@ -8,6 +8,7 @@ import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/booking/booking_screen.dart';
 import 'package:boldo/screens/booking/booking_screen2.dart';
+import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/expandable_card/expandable_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
   final List<String> popupRoutes = <String>["Remoto (on line)", "En persona"];
   List<OrganizationWithAvailabilities> organizationsWithAvailabilites = [];
+  bool hasFilter = false;
 
   @override
   void initState() {
@@ -68,13 +70,12 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                 .getOrganizationsApplied
                 .isNotEmpty ? Provider
                 .of<DoctorFilterProvider>(context, listen: false)
-                .getOrganizationsApplied : BlocProvider.of<patient.PatientBloc>(context)
+                .getOrganizationsApplied : BlocProvider.of<patientBloc.PatientBloc>(context)
                 .getOrganizations(),
           )),
           child: BlocListener<DoctorBloc, DoctorState>(
             listener: (context, state){
-              if(state is Success) {
-              }else if(state is Failed){
+              if(state is Failed){
                 emitSnackBar(
                     context: context,
                     text: state.response,
@@ -83,11 +84,15 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
               }else if(state is Loading){
               }else if(state is AvailabilitiesObtained){
                 organizationsWithAvailabilites = state.availabilities;
+                if(organizationsWithAvailabilites.isEmpty)
+                  hasFilter = true;
+
               }
             },
             child: BlocBuilder<DoctorBloc, DoctorState>(
                 builder: (context, state) {
                   return Background(
+                    hasFilter: hasFilter,
                     doctor: widget.doctor,
                     child: Align(
                       alignment: AlignmentDirectional.topCenter,
@@ -190,34 +195,39 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                             ),
                             if(widget.showAvailability)
                               BlocBuilder<DoctorBloc, DoctorState>(builder: (context, state) {
-                                if(state is Success){
-                                  return ClipRect(
-                                    child: Container(
-                                      padding: const EdgeInsets.only(bottom: 16),
-                                      decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(15.0),
-                                          topRight: Radius.circular(15.0),
+                                if(state is AvailabilitiesObtained){
+                                  if(organizationsWithAvailabilites.isNotEmpty)
+                                    return ClipRect(
+                                      child: Container(
+                                        padding: const EdgeInsets.only(bottom: 16),
+                                        decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(15.0),
+                                            topRight: Radius.circular(15.0),
+                                          ),
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomCenter,
+                                            colors: <Color> [
+                                              Colors.black.withOpacity(0),
+                                              const Color(0xA7A7A7).withOpacity(1),
+                                            ],
+                                          ),
                                         ),
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomCenter,
-                                          colors: <Color> [
-                                            Colors.black.withOpacity(0),
-                                            const Color(0xA7A7A7).withOpacity(1),
-                                          ],
+                                        child: BackdropFilter(
+                                          blendMode: BlendMode.src,
+                                          filter: ImageFilter.blur(
+                                              sigmaX: 5,
+                                              sigmaY: 5
+                                          ),
+                                          child: organizationsWithAvailabilites.isNotEmpty ?
+                                          _organizationAvailabilities(context, 0) :
+                                          null
                                         ),
                                       ),
-                                      child: BackdropFilter(
-                                        blendMode: BlendMode.src,
-                                        filter: ImageFilter.blur(
-                                            sigmaX: 5,
-                                            sigmaY: 5
-                                        ),
-                                        child: _organizationAvailabilities(context, 0),
-                                      ),
-                                    ),
-                                  );
+                                    );
+                                  else
+                                    return familyListWithAccess();
                                 }else if(state is Loading){
                                   return Container(
                                       child: const Center(
@@ -252,7 +262,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         .getOrganizationsApplied
         .isNotEmpty ? Provider
         .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied : BlocProvider.of<patient.PatientBloc>(context)
+        .getOrganizationsApplied : BlocProvider.of<patientBloc.PatientBloc>(context)
         .getOrganizations();
 
     List<Organization>? _organizations = _organizationsSelected.where(
@@ -385,7 +395,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         .getOrganizationsApplied
         .isNotEmpty ? Provider
         .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied : BlocProvider.of<patient.PatientBloc>(context)
+        .getOrganizationsApplied : BlocProvider.of<patientBloc.PatientBloc>(context)
         .getOrganizations();
 
     Organization organization = _organizationsSelected.where(
@@ -495,15 +505,52 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
     );
   }
 
+  Widget familyListWithAccess(){
+
+    Widget patientBox = Container(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          ImageViewTypeForm(
+            height: 44,
+            width: 44,
+            border: true,
+            borderColor: ConstantsV2.grayLightAndClear,
+            color: ConstantsV2.grayLightAndClear,
+            opacity: .8,
+            gender: patient.gender,
+          ),
+          const SizedBox(width: 16,),
+          Expanded(
+            child: Container(
+              child: Text(
+                "No tenés acceso a este médico. Agregá una organización",
+                style: boldoCardSubtitleTextStyle.copyWith(color: ConstantsV2.inactiveText),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return Column(
+      children: [
+        patientBox,
+      ],
+    );
+  }
+
 }
 
 class Background extends StatelessWidget {
   final Widget child;
   final Doctor doctor;
+  final bool hasFilter;
   const Background({
     Key? key,
     required this.child,
     required this.doctor,
+    this.hasFilter = false,
   }) : super(key: key);
 
   @override
@@ -540,6 +587,15 @@ class Background extends StatelessWidget {
                   ),
               errorWidget: (context, url, error) =>
               const Icon(Icons.error),
+            ),
+          ),
+          Positioned.fill(
+            child: AnimatedOpacity(
+              opacity: hasFilter== true ? 1 : 0,
+              duration: const Duration(seconds: 1),
+              child: Container(
+                color: const Color(0xF5F5F5).withOpacity(.8),
+              ),
             ),
           ),
           child,
