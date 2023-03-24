@@ -510,6 +510,8 @@ class UserRepository {
       String? appointmentTypeString = appointmentType == AppointmentType.InPerson
           ? "A": appointmentType == AppointmentType.Virtual ?"V": null;
 
+      //subtract a second to get to 23:59:59 time until 00:00:00 next day
+      endDate = endDate.subtract(const Duration(seconds: 1));
 
       dynamic queryParams = {
         'appointmentType': appointmentTypeString,
