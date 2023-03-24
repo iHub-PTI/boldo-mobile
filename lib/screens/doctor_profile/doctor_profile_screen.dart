@@ -60,10 +60,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         child: BlocProvider<DoctorBloc>(
           create: (BuildContext context) => DoctorBloc()..add(GetAvailability(
             id: widget.doctor.id ?? '',
-            startDate: DateTime.now().toUtc().toIso8601String(),
+            startDate: DateTime.now().toUtc(),
             endDate: DateTime.now().add(const Duration(days: 30))
-                .toUtc()
-                .toIso8601String(),
+                .toUtc(),
             organizations: Provider
                 .of<DoctorFilterProvider>(context, listen: false)
                 .getOrganizationsApplied

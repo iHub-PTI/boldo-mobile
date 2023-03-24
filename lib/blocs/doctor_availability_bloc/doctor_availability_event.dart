@@ -6,8 +6,8 @@ abstract class DoctorAvailabilityEvent {}
 class GetAvailability extends DoctorAvailabilityEvent {
   final AppointmentType appointmentType;
   final String id;
-  final String startDate;
-  final String endDate;
+  final DateTime startDate;
+  final DateTime endDate;
   final List<Organization?>? organizations;
   GetAvailability({
     required this.appointmentType,

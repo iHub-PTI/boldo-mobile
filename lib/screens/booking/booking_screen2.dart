@@ -60,8 +60,8 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
     BlocProvider.of<DoctorAvailabilityBloc>(context).add(GetAvailability(
       appointmentType: AppointmentType.InPerson,
       id: widget.doctor.id?? '',
-      startDate: DateTime.now().toUtc().toIso8601String(),
-      endDate: DateTime.now().add(const Duration(days: 30)).toUtc().toIso8601String(),
+      startDate: DateTime.now().toUtc(),
+      endDate: DateTime.now().add(const Duration(days: 30)).toUtc(),
       organizations: _organizations,
     ));
     super.initState();
@@ -249,8 +249,8 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                                 BlocProvider.of<DoctorAvailabilityBloc>(context).add(GetAvailability(
                                                   appointmentType: type,
                                                   id: widget.doctor.id?? '',
-                                                  startDate: DateTime.now().toUtc().toIso8601String(),
-                                                  endDate: DateTime.now().add(const Duration(days: 30)).toUtc().toIso8601String(),
+                                                  startDate: DateTime.now().toUtc(),
+                                                  endDate: DateTime.now().add(const Duration(days: 30)).toUtc(),
                                                   organizations: _organizations,
                                                 ));
                                               });
@@ -439,8 +439,8 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                           date = DateTime(day.year, day.month, day.day);
                                           BlocProvider.of<more_availabilities.DoctorMoreAvailabilityBloc>(context).add(more_availabilities.GetAvailability(
                                             id: widget.doctor.id?? '',
-                                            startDate: date.toUtc().toIso8601String(),
-                                            endDate: DateTime(date.year, date.month, date.day+1).toUtc().toIso8601String(),
+                                            startDate: date.toUtc(),
+                                            endDate: DateTime(date.year, date.month, date.day+1).toUtc(),
                                             organizations: [_selectedOrganization],
                                             appointmentType: selectedType,
                                           ));
@@ -452,8 +452,8 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                           date = DateTime(newDate.year, newDate.month, newDate.day);
                                           BlocProvider.of<more_availabilities.DoctorMoreAvailabilityBloc>(context).add(more_availabilities.GetAvailability(
                                             id: widget.doctor.id?? '',
-                                            startDate: date.toUtc().toIso8601String(),
-                                            endDate: DateTime(date.year, date.month, date.day+1).toUtc().toIso8601String(),
+                                            startDate: date.toUtc(),
+                                            endDate: DateTime(date.year, date.month, date.day+1).toUtc(),
                                             organizations: [_selectedOrganization],
                                             appointmentType: selectedType,
                                           ));
@@ -669,8 +669,8 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                         date = DateTime.now();
                         BlocProvider.of<more_availabilities.DoctorMoreAvailabilityBloc>(context).add(more_availabilities.GetAvailability(
                           id: widget.doctor.id?? '',
-                          startDate: date.toUtc().toIso8601String(),
-                          endDate: DateTime(date.year, date.month, date.day+1).toLocal().toIso8601String(),
+                          startDate: date.toUtc(),
+                          endDate: DateTime(date.year, date.month, date.day+1).toLocal(),
                           organizations: [_selectedOrganization],
                           appointmentType: selectedType,
                         ));

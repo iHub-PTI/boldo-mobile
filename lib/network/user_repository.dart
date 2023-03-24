@@ -499,8 +499,8 @@ class UserRepository {
   Future<List<OrganizationWithAvailabilities>>? getAvailabilities({
     AppointmentType? appointmentType,
     required String id,
-    required String startDate,
-    required String endDate,
+    required DateTime startDate,
+    required DateTime endDate,
     required List<Organization?>? organizations}) async {
 
     String? _organizations = organizations?.map((e) => e?.id?? "").toList().join(",");
@@ -513,8 +513,8 @@ class UserRepository {
 
       dynamic queryParams = {
         'appointmentType': appointmentTypeString,
-        'start': startDate,
-        'end': endDate,
+        'start': startDate.toIso8601String(),
+        'end': endDate.toIso8601String(),
         'organizationIdList': _organizations,
       };
 
