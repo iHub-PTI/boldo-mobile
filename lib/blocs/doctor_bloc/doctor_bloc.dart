@@ -43,27 +43,6 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
           nextAvailability.sort(orderByAvailabilities);
 
           emit(AvailabilitiesObtained(availabilities: nextAvailability));
-          emit(Success());
-        }
-      }
-      if(event is GetDoctor) {
-        emit(Loading());
-        var _post;
-        await Task(() =>
-        _patientRepository.getDoctor(id: event.id)!)
-            .attempt()
-            .run()
-            .then((value) {
-          _post = value;
-        }
-        );
-        var response;
-        if (_post.isLeft()) {
-          _post.leftMap((l) => response = l.message);
-          emit(Failed(response: response));
-
-        }else{
-          emit(Success());
         }
       }
     }

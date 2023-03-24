@@ -15,8 +15,3 @@ class GetAvailability extends DoctorEvent {
     required this.organizations,
   });
 }
-
-class GetDoctor extends DoctorEvent {
-  final String id;
-  GetDoctor({required this.id});
-}

@@ -73,8 +73,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
           )),
           child: BlocListener<DoctorBloc, DoctorState>(
             listener: (context, state){
-              if(state is Success) {
-              }else if(state is Failed){
+              if(state is Failed){
                 emitSnackBar(
                     context: context,
                     text: state.response,
