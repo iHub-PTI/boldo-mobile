@@ -808,7 +808,7 @@ class PastAppointmentCard extends StatelessWidget {
                       dateBetween(
                         date: DateTime.parse(
                           appointment.start!
-                        )
+                        ).toLocal()
                       )?? 'Sin fecha',
                       style: boldoCorpSmallTextStyle
                           .copyWith(
