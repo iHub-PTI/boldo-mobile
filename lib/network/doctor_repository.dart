@@ -11,12 +11,23 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 class DoctorRepository {
   Future<List<Doctor>>? getAllDoctors(int offset) async {
     try {
-      Response response = await dio.get('/profile/patient/doctors',
-        queryParameters: {
-          "offset": offset,
-          "count": offset + 20
-        }
-      );
+      Response response;
+      if (prefs.getBool('isFamily') ?? false) {
+        response = await dio.get('/profile/caretaker/dependent/${patient.id}/doctors',
+            queryParameters: {
+              "offset": offset,
+              "count": offset + 20
+            }
+        );
+      } else {
+        // the query is made
+        response = await dio.get('/profile/patient/doctors',
+            queryParameters: {
+              "offset": offset,
+              "count": offset + 20
+            }
+        );
+      }
       if (response.statusCode == 200) {
         return List<Doctor>.from(
             response.data['items'].map((i) => Doctor.fromJson(i)));
@@ -68,10 +79,17 @@ class DoctorRepository {
       // remove null values to solve null compare in server
       queryParams.removeWhere((key, value) => value == null);
 
-      Response response = await dio.get('/profile/patient/doctors',
-        queryParameters: queryParams
-      );
-
+      Response response;
+      if (prefs.getBool('isFamily') ?? false) {
+        response = await dio.get('/profile/caretaker/dependent/${patient.id}/doctors',
+            queryParameters: queryParams
+        );
+      } else {
+        // the query is made
+        response = await dio.get('/profile/patient/doctors',
+            queryParameters: queryParams
+        );
+      }
       if (response.statusCode == 200) {
         List<Doctor> doctors = List<Doctor>.from(response.data['items'].map((i) => Doctor.fromJson(i)));
         return doctors;
