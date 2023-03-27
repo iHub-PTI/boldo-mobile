@@ -18,7 +18,7 @@ import 'booking_final_screen.dart';
 class BookingConfirmScreen extends StatefulWidget {
   final Doctor doctor;
   final NextAvailability bookingDate;
-  final Organization organization;
+  final OrganizationWithAvailabilities organization;
   BookingConfirmScreen(
       {Key? key, required this.bookingDate, required this.doctor, required this.organization})
       : super(key: key);
@@ -100,7 +100,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                         .toIso8601String(),
                     "doctorId": widget.doctor.id,
                     "appointmentType":widget.bookingDate.appointmentType,
-                    "organizationId" : widget.organization.id
+                    "organizationId" : widget.organization.idOrganization
                   });
                 else
                   response = await dio.post("/profile/caretaker/dependent/${patient.id}/appointments", data: {
@@ -109,7 +109,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                         .toIso8601String(),
                     "doctorId": widget.doctor.id,
                     "appointmentType":widget.bookingDate.appointmentType,
-                    "organizationId" : widget.organization.id
+                    "organizationId" : widget.organization.idOrganization
                   });
                 if(response.statusCode == 200) {
                   setState(() {
@@ -186,14 +186,14 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
 
 class ShowAppoinmentDescription extends StatelessWidget {
   final NextAvailability nextAvailability;
-  final Organization organization;
+  final OrganizationWithAvailabilities organization;
   const ShowAppoinmentDescription({Key? key, required this.nextAvailability, required this.organization})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final inPersonDesc =
-        "Esta consulta será realizada en persona en el ${organization.name}.";
+        "Esta consulta será realizada en persona en el ${organization.nameOrganization}.";
     final onlineDesc =
         "Esta consulta será realizada de forma remota a través de esta aplicación.";
     return Padding(

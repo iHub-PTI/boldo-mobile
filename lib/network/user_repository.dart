@@ -523,10 +523,17 @@ class UserRepository {
       // remove null values to solve null compare in server
       queryParams.removeWhere((key, value) => value == null);
 
-      Response response = await dio
-          .get("/profile/patient/doctors/$id/availability",
-          queryParameters: queryParams
-      );
+      Response response;
+      if (prefs.getBool('isFamily') ?? false) {
+        response = await dio.get('/profile/caretaker/dependent/${patient.id}/doctors/$id/availability',
+            queryParameters: queryParams
+        );
+      } else {
+        // the query is made
+        response = await dio.get('/profile/patient/doctors/$id/availability',
+            queryParameters: queryParams
+        );
+      }
       if (response.statusCode == 200) {
         List<OrganizationWithAvailabilities>? allAvailabilities = [];
         response.data.forEach((v) {

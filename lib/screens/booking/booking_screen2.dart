@@ -40,7 +40,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
   DateTime date = DateTime.now();
   AppointmentType selectedType = AppointmentType.InPerson;
   NextAvailability? _selectedBookingHour;
-  Organization? _selectedOrganization;
+  OrganizationWithAvailabilities? _selectedOrganization;
   bool _hideCalendar = true;
   bool _expandCalendar = false;
   // height of calendar
@@ -55,8 +55,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
         .getOrganizationsApplied
         .isNotEmpty ? Provider
         .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied : BlocProvider.of<patient_bloc.PatientBloc>(context)
-        .getOrganizations();
+        .getOrganizationsApplied : null;
     BlocProvider.of<DoctorAvailabilityBloc>(context).add(GetAvailability(
       appointmentType: AppointmentType.InPerson,
       id: widget.doctor.id?? '',
@@ -387,7 +386,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                       children: [
                                         Flexible(
                                           child: Text(
-                                            _selectedOrganization?.name?? "Sin Organización",
+                                            _selectedOrganization?.nameOrganization?? "Sin Organización",
                                             style: boldoCardSubtitleTextStyle.copyWith(
                                                 color: ConstantsV2.orange
                                             ),
@@ -441,7 +440,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                             id: widget.doctor.id?? '',
                                             startDate: date.toUtc(),
                                             endDate: DateTime(date.year, date.month, date.day+1).toUtc(),
-                                            organizations: [_selectedOrganization],
+                                            organizations: [Organization(id: _selectedOrganization?.idOrganization, name: _selectedOrganization?.nameOrganization)],
                                             appointmentType: selectedType,
                                           ));
                                         });
@@ -454,7 +453,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                             id: widget.doctor.id?? '',
                                             startDate: date.toUtc(),
                                             endDate: DateTime(date.year, date.month, date.day+1).toUtc(),
-                                            organizations: [_selectedOrganization],
+                                            organizations: [Organization(id: _selectedOrganization?.idOrganization, name: _selectedOrganization?.nameOrganization)],
                                             appointmentType: selectedType,
                                           ));
                                         });
@@ -486,12 +485,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                                 for(NextAvailability? availability in calendarOrganizationsWithAvailabilites.first.availabilities.map((e) => e))
                                                   if(availability != null)
                                                     _calendarAvailabilityHourCard(
-                                                        widget.doctor.organizations?.
-                                                        map((e) => e.organization)
-                                                            .toList()
-                                                            .firstWhere(
-                                                                (element) => element?.id == calendarOrganizationsWithAvailabilites.first.idOrganization
-                                                        ), availability),
+                                                        _selectedOrganization, availability),
                                             if(calendarOrganizationsWithAvailabilites.isNotEmpty)
                                               if(calendarOrganizationsWithAvailabilites.first.availabilities.isEmpty)
                                                 Padding(
@@ -569,19 +563,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
 
   Widget _organizationAvailabilities(BuildContext context, int index){
 
-    List<Organization> _organizationsSelected = Provider
-        .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied
-        .isNotEmpty ? Provider
-        .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied : BlocProvider.of<patient_bloc.PatientBloc>(context)
-        .getOrganizations();
-
-    List<Organization>? _organizations = _organizationsSelected.where(
-            (element) => element.id == organizationsWithAvailabilites[index].idOrganization
-    ).toList();
-
-    String organizationName = _organizations.first.name?? "Desconocido";
+    String organizationName = organizationsWithAvailabilites[index].nameOrganization?? "Desconocido";
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -661,9 +643,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
-                        _selectedOrganization = widget.doctor.organizations?.where(
-                                (element) => element.organization?.id == organizationsWithAvailabilites[index].idOrganization
-                        ).first.organization;
+                        _selectedOrganization = organizationsWithAvailabilites[index];
                         _selectedBookingHour = null;
                         _hideCalendar = false;
                         date = DateTime.now();
@@ -671,7 +651,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                           id: widget.doctor.id?? '',
                           startDate: date.toUtc(),
                           endDate: DateTime(date.year, date.month, date.day+1).toLocal(),
-                          organizations: [_selectedOrganization],
+                          organizations: [Organization(id: _selectedOrganization?.idOrganization, name: _selectedOrganization?.nameOrganization)],
                           appointmentType: selectedType,
                         ));
                       });
@@ -723,7 +703,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
           onTap: appointmentType?.contains(selectedType == AppointmentType.Virtual ? "V" : "A")?? false ?() {
             setState(() {
               _selectedBookingHour = organizationsWithAvailabilites[indexOrganization].availabilities[index];
-              _selectedOrganization = widget.doctor.organizations?.map((e) => e.organization).toList().firstWhere((element) => element?.id == organizationsWithAvailabilites[indexOrganization].idOrganization);
+              _selectedOrganization = organizationsWithAvailabilites[indexOrganization];
             });
 
           }: null,
@@ -778,7 +758,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
 
   Future<void> handleBookingHour({
     required NextAvailability bookingHour,
-    required Organization organization}) async {
+    required OrganizationWithAvailabilities organization}) async {
     NextAvailability _bookingHour = NextAvailability.fromJson(bookingHour.toJson());
     _bookingHour.appointmentType = selectedType == AppointmentType.InPerson? "A"
         : selectedType == AppointmentType.Virtual? "V" : "none";
@@ -794,7 +774,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
     );
   }
 
-  Widget _calendarAvailabilityHourCard(Organization? organization, NextAvailability availability){
+  Widget _calendarAvailabilityHourCard(OrganizationWithAvailabilities? organization, NextAvailability availability){
 
     bool _selected = _selectedBookingHour == availability;
     String? appointmentType = availability.appointmentType;
