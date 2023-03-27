@@ -55,8 +55,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
         .getOrganizationsApplied
         .isNotEmpty ? Provider
         .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied : BlocProvider.of<patient_bloc.PatientBloc>(context)
-        .getOrganizations();
+        .getOrganizationsApplied : null;
     BlocProvider.of<DoctorAvailabilityBloc>(context).add(GetAvailability(
       appointmentType: AppointmentType.InPerson,
       id: widget.doctor.id?? '',

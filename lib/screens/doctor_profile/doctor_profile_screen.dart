@@ -70,8 +70,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                 .getOrganizationsApplied
                 .isNotEmpty ? Provider
                 .of<DoctorFilterProvider>(context, listen: false)
-                .getOrganizationsApplied : BlocProvider.of<patientBloc.PatientBloc>(context)
-                .getOrganizations(),
+                .getOrganizationsApplied : null,
           )),
           child: BlocListener<DoctorBloc, DoctorState>(
             listener: (context, state){
