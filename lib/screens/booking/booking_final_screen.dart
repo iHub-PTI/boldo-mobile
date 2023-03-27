@@ -18,7 +18,7 @@ import 'booking_confirm_screen.dart';
 class BookingFinalScreen extends StatefulWidget {
   final Doctor doctor;
   final NextAvailability bookingDate;
-  final Organization organization;
+  final OrganizationWithAvailabilities organization;
   BookingFinalScreen({
     Key? key,
     required this.doctor,
@@ -278,7 +278,7 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                                                                 child: Expanded(
                                                                   child:  Text(
                                                                       (widget.bookingDate.appointmentType?? 'A') == 'A'?
-                                                                      "Esta consulta será realizada en persona en el ${widget.organization.name}."
+                                                                      "Esta consulta será realizada en persona en el ${widget.organization.nameOrganization}."
                                                                           : "Esta consulta será realizada de forma remota a través de esta aplicación.",
                                                                       style: boldoCorpMediumTextStyle.copyWith(
                                                                           color: ConstantsV2.activeText

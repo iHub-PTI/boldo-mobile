@@ -256,19 +256,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
   Widget _organizationAvailabilities(BuildContext context, int index){
 
-    List<Organization> _organizationsSelected = Provider
-        .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied
-        .isNotEmpty ? Provider
-        .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied : BlocProvider.of<patientBloc.PatientBloc>(context)
-        .getOrganizations();
-
-    List<Organization>? _organizations = _organizationsSelected.where(
-            (element) => element.id == organizationsWithAvailabilites[index].idOrganization
-    ).toList();
-
-    String organizationName = _organizations.first.name?? "Desconocido";
+    String organizationName = organizationsWithAvailabilites[index].nameOrganization?? "Desconocido";
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -389,17 +377,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
   Widget _availabilityHourCard(int indexOrganization, int index){
 
-    List<Organization> _organizationsSelected = Provider
-        .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied
-        .isNotEmpty ? Provider
-        .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied : BlocProvider.of<patientBloc.PatientBloc>(context)
-        .getOrganizations();
 
-    Organization organization = _organizationsSelected.where(
-            (element) => element.id == organizationsWithAvailabilites[indexOrganization].idOrganization
-    ).first;
+    OrganizationWithAvailabilities organization = organizationsWithAvailabilites[indexOrganization];
 
     return Container(
       child: GestureDetector(
@@ -490,7 +469,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
   Future<void> handleBookingHour({
     required NextAvailability bookingHour,
-    required Organization organization}) async {
+    required OrganizationWithAvailabilities organization}) async {
 
     Navigator.push(
       context,
