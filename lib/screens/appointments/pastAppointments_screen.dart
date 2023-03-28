@@ -836,7 +836,7 @@ class PastAppointmentCard extends StatelessWidget {
                           Row(
                             children: [
                               Text(
-                                "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName}",
+                                "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor?.givenName?.split(" ")[0]?? ''} ${appointment.doctor?.familyName?.split(" ")[0]?? ''}",
                                 style: boldoSubTextMediumStyle,
                               ),
                             ],

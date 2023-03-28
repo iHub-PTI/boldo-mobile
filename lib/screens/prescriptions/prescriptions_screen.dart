@@ -256,7 +256,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                               children: [
                                                                 Flexible(
                                                                   child: Text(
-                                                                    "${getDoctorPrefix(allAppointments[index].doctor!.gender!)}${allAppointments[index].doctor!.familyName}",
+                                                                    "${getDoctorPrefix(allAppointments[index].doctor!.gender!)}${allAppointments[index].doctor?.givenName?.split(" ")[0]?? ''} ${allAppointments[index].doctor?.familyName?.split(" ")[0]?? ''}",
                                                                     style: boldoSubTextMediumStyle,
                                                                   ),
                                                                 ),
