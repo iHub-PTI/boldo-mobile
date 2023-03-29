@@ -33,8 +33,6 @@ class _MenuScreenState extends State<MenuScreen> {
       title: 'Mi Familia',
       route: '/familyScreen',
     ),
-    // TODO: endpoint to subscribe to others organizations isn't for dependent
-    if(!(prefs.getBool(isFamily)?? false))
     ItemMenu(
       image: 'assets/icon/credit-card.svg',
       title: 'Membresías',
