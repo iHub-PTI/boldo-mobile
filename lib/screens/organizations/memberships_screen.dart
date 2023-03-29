@@ -720,6 +720,26 @@ class OrganizationPostulationCard extends StatelessWidget {
     );
   }
 
+  Future<String?> cancelApplication(BuildContext context, OrganizationRequest organization){
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Cancelar membresía pendiente'),
+        content: Text('¿Desea cancelar la solicitud a ${organization.organizationName}?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'atrás'),
+            child: const Text('atrás'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'cancel'),
+            child: const Text('Sí, cancelar'),
+          ),
+        ],
+      ),
+    );
+  }
+
 }
 
 
@@ -783,9 +803,13 @@ class OrganizationSubscribedCard extends StatelessWidget {
 
   Widget moreOptions(Organization organization, BuildContext context){
     return PopupMenuButton<String>(
-      onSelected: (String result) {
+      onSelected: (String result) async {
         if (result == 'baja') {
-          BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.RemoveOrganization(organization: organization));
+          String? action = await dropOut(context, organization);
+          if(action == 'cancel') {
+            BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(
+                subscribed.RemoveOrganization(organization: organization));
+          }
         }
       },
       child: SvgPicture.asset('assets/icon/more-horiz.svg'),
@@ -810,6 +834,26 @@ class OrganizationSubscribedCard extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Future<String?> dropOut(BuildContext context, Organization organization){
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Cancelar membresía'),
+        content: Text('¿Desea darse de baja de ${organization.name}?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'atrás'),
+            child: const Text('atrás'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'cancel'),
+            child: const Text('Sí, darse de baja'),
+          ),
+        ],
+      ),
     );
   }
 
