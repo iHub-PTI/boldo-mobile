@@ -81,7 +81,12 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                             widget.isDependent && !(prefs.getBool(isFamily)?? false) ? UnlinkCaretakerWidget(
                               onTapCallback: (result) async {
                                 if (result == 'Desvincular') {
-                                  BlocProvider.of<FamilyBloc>(context).add(UnlinkCaretaker(id: widget.patient!.id!));
+                                  String? action = await unlinkCaretakerDialog(context);
+                                  if(action == 'cancel') {
+                                    BlocProvider.of<FamilyBloc>(context).add(
+                                        UnlinkCaretaker(
+                                            id: widget.patient!.id!));
+                                  }
                                 }
                               },
                             ): Container(),
@@ -118,6 +123,27 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
       ),
     );
   }
+
+  Future<String?> unlinkCaretakerDialog(BuildContext context){
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Desvincular gestor'),
+        content: const Text('¿Desea desvincular al gestor?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'atrás'),
+            child: const Text('atrás'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'cancel'),
+            child: const Text('Sí, desvincular'),
+          ),
+        ],
+      ),
+    );
+  }
+
 }
 
 class UnlinkCaretakerWidget extends StatelessWidget {
