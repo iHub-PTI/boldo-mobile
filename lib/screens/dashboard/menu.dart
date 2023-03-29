@@ -35,7 +35,7 @@ class _MenuScreenState extends State<MenuScreen> {
     ),
     ItemMenu(
       image: 'assets/icon/credit-card.svg',
-      title: 'Membresías',
+      title: 'Mis Centros Asistenciales',
       page: Organizations(),
     ),
     const ItemMenu(

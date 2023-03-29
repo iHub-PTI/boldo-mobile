@@ -11,6 +11,7 @@ import 'package:boldo/models/Patient.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/header_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -343,19 +344,28 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextButton.icon(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        Icons.arrow_back_rounded,
-                        size: 25,
-                        color: ConstantsV2.primaryRegular,
-                      ),
-                      label: Text(
-                        'Membresías',
-                        style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Icon(
+                                  Icons.chevron_left_rounded,
+                                  size: 25,
+                                  color: Constants.extraColor400,
+                                ),
+                              ),
+                              Expanded(
+                                child: header("Mis Centros Asistenciales", "Centros Asistenciales"),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 10),
                     Container(
@@ -479,7 +489,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                         Padding(
                                           padding: EdgeInsets.only(left: 16.0),
                                           child: Text(
-                                            'Membresías pendientes de aprobación',
+                                            'Centros Asistenciales pendientes de aprobación',
                                             style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.grayDark),
                                           ),
                                         ),
