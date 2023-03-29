@@ -359,17 +359,26 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
                             children: [
                               // TODO: button to edit the appointment reservation
                               Container(),
-                              ElevatedButton(
-                                //  style: style1,
-                                onPressed: () {
-                                  Provider.of<UtilsProvider>(context, listen: false)
-                                      .setSelectedPageIndex(pageIndex: 0);
-                                  BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
-                                  Navigator.of(context).popUntil(ModalRoute.withName('/home'));
-                                },
-                                child: SvgPicture.asset(
-                                  'assets/icon/home.svg',
-                                  height: 20,
+                              CircularStepProgressIndicator(
+                                height: 55,
+                                width: 55,
+                                stepSize: 4,
+                                totalSteps: 100,
+                                currentStep: time*100~/secondsToRedirectHome,
+                                selectedColor: ConstantsV2.grayLightAndClear,
+                                padding: 0,
+                                child: ElevatedButton(
+                                  //  style: style1,
+                                  onPressed: () {
+                                    Provider.of<UtilsProvider>(context, listen: false)
+                                        .setSelectedPageIndex(pageIndex: 0);
+                                    BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
+                                    Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+                                  },
+                                  child: SvgPicture.asset(
+                                    'assets/icon/home.svg',
+                                    height: 20,
+                                  ),
                                 ),
                               ),
                             ],
