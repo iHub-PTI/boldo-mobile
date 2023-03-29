@@ -193,7 +193,7 @@ class OrganizationRepository {
           stackTrace
         ],
       );
-      throw Failure("No se pueden obtener las Organizaciones");
+      throw Failure("No se pueden obtener las Organizaciones disponibles");
     } catch (exception, stackTrace) {
       await Sentry.captureMessage(
         exception.toString(),
@@ -250,7 +250,7 @@ class OrganizationRepository {
           stackTrace
         ],
       );
-      throw Failure("No se pueden obtener las Organizaciones");
+      throw Failure("No se pueden obtener las Organizaciones pendientes");
     } catch (exception, stackTrace) {
       await Sentry.captureMessage(
         exception.toString(),
@@ -457,9 +457,9 @@ class OrganizationRepository {
     // o	Si se intenta eliminar una organización en la cual el paciente no tiene suscripción: "The patient {idPatient} is not part of the organization {idOrganization}"
     // o	Si el paciente no tiene ninguna organización asignada: "The patient {idPatient} is not part of any organization"
       try{
-        if(exception.response?.data['messages'].contains(errorRequestNotExist )){
+        if(exception.response?.data['message'].contains(errorRequestNotExist )){
           throw Failure("La solicitud a ${organization.name} no fue encontrada");
-        }else if(exception.response?.data['messages'].contains(errorRequestCannotDelete )){
+        }else if(exception.response?.data['message'].contains(errorRequestCannotDelete )){
           throw Failure("La solicitud a ${organization.name} ya no está entre los pendientes");
         }else{
           throw Failure("No se puede eliminar la suscripción");
