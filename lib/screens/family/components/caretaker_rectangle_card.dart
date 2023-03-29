@@ -81,7 +81,12 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                             widget.isDependent && !(prefs.getBool(isFamily)?? false) ? UnlinkCaretakerWidget(
                               onTapCallback: (result) async {
                                 if (result == 'Desvincular') {
-                                  BlocProvider.of<FamilyBloc>(context).add(UnlinkCaretaker(id: widget.patient!.id!));
+                                  String? action = await unlinkCaretakerDialog(context);
+                                  if(action == 'cancel') {
+                                    BlocProvider.of<FamilyBloc>(context).add(
+                                        UnlinkCaretaker(
+                                            id: widget.patient!.id!));
+                                  }
                                 }
                               },
                             ): Container(),

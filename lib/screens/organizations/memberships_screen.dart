@@ -712,9 +712,12 @@ class OrganizationPostulationCard extends StatelessWidget {
 
   Widget cancelSubscriptionOption(OrganizationRequest organization, BuildContext context){
     return InkWell(
-      onTap: (){
-        BlocProvider.of<applied.OrganizationAppliedBloc>(context)
-            .add(applied.UnPostulated(organization: organization));
+      onTap: () async {
+        String? action = await cancelApplication(context, organization);
+        if(action == 'cancel') {
+          BlocProvider.of<applied.OrganizationAppliedBloc>(context)
+              .add(applied.UnPostulated(organization: organization));
+        }
       },
       child: SvgPicture.asset('assets/icon/familyTrash.svg'),
     );
