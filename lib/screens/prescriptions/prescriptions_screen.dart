@@ -28,14 +28,12 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
   bool _dataLoading = true;
   bool _dataLoaded = false;
   late List<Appointment> allAppointments = [];
-  DateTime dateOffset = DateTime.now().subtract(const Duration(days: 30));
   @override
   void initState() {
     super.initState();
   }
 
   void _onRefresh() async {
-    dateOffset = DateTime.now().subtract(const Duration(days: 30));
     // monitor network fetch
     BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList());
   }
