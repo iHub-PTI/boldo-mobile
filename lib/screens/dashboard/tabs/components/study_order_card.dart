@@ -172,7 +172,7 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
                                 Row(
                                   children: [
                                     Text(
-                                      "${getDoctorPrefix(widget.studyOrder.doctor!.gender!)}${widget.studyOrder.doctor!.familyName}",
+                                      "${getDoctorPrefix(widget.studyOrder.doctor!.gender!)}${widget.studyOrder.doctor?.givenName?.split(" ")[0]?? ''} ${widget.studyOrder.doctor?.familyName?.split(" ")[0]?? ''}",
                                       style: boldoSubTextMediumStyle,
                                     ),
                                   ],
