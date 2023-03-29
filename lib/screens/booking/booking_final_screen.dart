@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/main.dart';
@@ -35,6 +37,31 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
   GlobalKey _columnKey = GlobalKey<FormState>();
 
   bool appear = false;
+  int time = 0;
+
+  int secondsToRedirectHome = 30;
+
+  @override
+  void initState() {
+    Timer.periodic(
+        const Duration(seconds: 1),
+          (timer) {
+
+          time = timer.tick;
+          setState(() {
+
+          });
+          if(time == secondsToRedirectHome){
+            timer.cancel();
+            Provider.of<UtilsProvider>(context, listen: false)
+                .setSelectedPageIndex(pageIndex: 0);
+            BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
+            Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+          }
+        }
+    );
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
