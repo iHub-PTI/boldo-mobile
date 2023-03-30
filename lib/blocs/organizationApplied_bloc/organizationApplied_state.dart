@@ -15,7 +15,7 @@ class Failed extends OrganizationAppliedBlocState {
 class Success extends OrganizationAppliedBlocState {}
 
 class OrganizationsObtained extends OrganizationAppliedBlocState {
-  final List<Organization> organizationsList;
+  final List<OrganizationRequest> organizationsList;
   OrganizationsObtained({required this.organizationsList});
 }
 

@@ -11,12 +11,23 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 class DoctorRepository {
   Future<List<Doctor>>? getAllDoctors(int offset) async {
     try {
-      Response response = await dio.get('/profile/patient/doctors',
-        queryParameters: {
-          "offset": offset,
-          "count": offset + 20
-        }
-      );
+      Response response;
+      if (prefs.getBool('isFamily') ?? false) {
+        response = await dio.get('/profile/caretaker/dependent/${patient.id}/doctors',
+            queryParameters: {
+              "offset": offset,
+              "count": offset + 20
+            }
+        );
+      } else {
+        // the query is made
+        response = await dio.get('/profile/patient/doctors',
+            queryParameters: {
+              "offset": offset,
+              "count": offset + 20
+            }
+        );
+      }
       if (response.statusCode == 200) {
         return List<Doctor>.from(
             response.data['items'].map((i) => Doctor.fromJson(i)));
@@ -32,18 +43,23 @@ class DoctorRepository {
       List<Specializations> specializations,
       bool virtualAppointment,
       bool inPersonAppointment,
-      List<Organization> organizations) async {
+      List<Organization> organizations,
+      List<String> names,
+      ) async {
     try {
       // list of IDs
       List<String> listOfSpecializations =
           specializations.map((e) => e.id!).toList();
+
+      // list of names split for spaces
+      String listOfNames = names.join(" ");
 
       // list of organizations IDs
       String listOfOrganizations =
       organizations.map((e) => e.id!).toList().join(",");
 
       String? appointmentType;
-      // here set the tipe of appointment
+      // here set the type of appointment
       if (virtualAppointment && inPersonAppointment) {
         appointmentType = "AV";
       } else if (virtualAppointment) {
@@ -57,15 +73,23 @@ class DoctorRepository {
         "offset": offset,
         "count": offset + 20,
         "organizations": listOfOrganizations == ""? null : listOfOrganizations,
+        "names": listOfNames.split(" "),
       };
 
       // remove null values to solve null compare in server
       queryParams.removeWhere((key, value) => value == null);
 
-      Response response = await dio.get('/profile/patient/doctors',
-        queryParameters: queryParams
-      );
-
+      Response response;
+      if (prefs.getBool('isFamily') ?? false) {
+        response = await dio.get('/profile/caretaker/dependent/${patient.id}/doctors',
+            queryParameters: queryParams
+        );
+      } else {
+        // the query is made
+        response = await dio.get('/profile/patient/doctors',
+            queryParameters: queryParams
+        );
+      }
       if (response.statusCode == 200) {
         List<Doctor> doctors = List<Doctor>.from(response.data['items'].map((i) => Doctor.fromJson(i)));
         return doctors;

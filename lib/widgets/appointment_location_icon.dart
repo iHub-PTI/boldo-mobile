@@ -9,25 +9,19 @@ Widget locationType(AppointmentType? appointmentType) {
 
   switch (appointmentType){
     case AppointmentType.InPerson:
-      icon = Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: Container(
-          child: SvgPicture.asset(
-            'assets/icon/location_marker.svg',
-            color: ConstantsV2.veryLightBlue,
-          ),
+      icon = Container(
+        child: SvgPicture.asset(
+          'assets/icon/location_marker.svg',
+          color: ConstantsV2.inactiveText,
         ),
       );
       break;
     case AppointmentType.Virtual:
-      icon = Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Container(
-            child: SvgPicture.asset(
-              'assets/icon/watch-later.svg',
-              color: ConstantsV2.veryLightBlue,
-            ),
-          )
+      icon = Container(
+        child: SvgPicture.asset(
+          'assets/icon/watch-later.svg',
+          color: ConstantsV2.inactiveText,
+        ),
       );
       break;
     case null:
@@ -36,11 +30,6 @@ Widget locationType(AppointmentType? appointmentType) {
   }
 
   return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6),
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-        color: Colors.white,
-      ),
       child: icon
   );
 }

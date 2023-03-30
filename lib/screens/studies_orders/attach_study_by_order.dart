@@ -216,16 +216,31 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                                       ),
                                     ),
                                     Container(
-                                      child: Text(
-                                          '${formatDate(
-                                            DateTime.parse(serviceRequest?.authoredDate ??
-                                                DateTime.now().toString()),
-                                            [d, '/', m, '/', yyyy],
-                                          )}',
-                                        style: boldoSubTextMediumStyle.copyWith(
-                                            color: ConstantsV2.inactiveText
-                                        ),
-                                      ),
+                                      child: BlocBuilder<AttachStudyOrderBloc, AttachStudyOrderState>(
+                                          builder: (context, state) {
+                                            // in case of loading data
+                                            if(state is LoadingStudies){
+                                              return Text(
+                                                'Cargando',
+                                                style: boldoSubTextMediumStyle.copyWith(
+                                                    color: ConstantsV2.inactiveText
+                                                ),
+                                              );
+                                            }else {
+                                              // show if not loading
+                                              return Text(
+                                                '${formatDate(
+                                                  DateTime.parse(serviceRequest?.authoredDate ??
+                                                      DateTime.now().toString()),
+                                                  [d, '/', m, '/', yyyy],
+                                                )}',
+                                                style: boldoSubTextMediumStyle.copyWith(
+                                                    color: ConstantsV2.inactiveText
+                                                ),
+                                              );
+                                            }
+                                          }
+                                      )
                                     )
                                   ],
                                 ),

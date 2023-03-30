@@ -121,13 +121,14 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
                         height: 10,
                       ),
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 7),
                             child: ClipOval(
                               child: SizedBox(
-                                width: 54,
-                                height: 54,
+                                width: 40,
+                                height: 40,
                                 child: widget.studyOrder.doctor?.photoUrl ==
                                         null
                                     ? SvgPicture.asset(
@@ -164,52 +165,44 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
                           const SizedBox(
                             width: 8,
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    "${getDoctorPrefix(widget.studyOrder.doctor!.gender!)}${widget.studyOrder.doctor!.familyName}",
-                                    style: boldoSubTextMediumStyle,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 4,
-                              ),
-                              if (widget.studyOrder.doctor!.specializations !=
-                                      null &&
-                                  widget.studyOrder.doctor!.specializations!
-                                      .isNotEmpty)
-                                SizedBox(
-                                  width: 300,
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: [
-                                        for (int i = 0;
-                                            i <
-                                                widget.studyOrder.doctor!
-                                                    .specializations!.length;
-                                            i++)
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                left: i == 0 ? 0 : 3.0,
-                                                bottom: 5),
-                                            child: Text(
-                                              "${widget.studyOrder.doctor!.specializations![i].description}${widget.studyOrder.doctor!.specializations!.length > 1 && i == 0 ? "," : ""}",
-                                              style: boldoCorpMediumTextStyle
-                                                  .copyWith(
-                                                      color: ConstantsV2
-                                                          .inactiveText),
-                                            ),
-                                          ),
-                                      ],
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      "${getDoctorPrefix(widget.studyOrder.doctor!.gender!)}${widget.studyOrder.doctor?.givenName?.split(" ")[0]?? ''} ${widget.studyOrder.doctor?.familyName?.split(" ")[0]?? ''}",
+                                      style: boldoSubTextMediumStyle,
                                     ),
-                                  ),
+                                  ],
                                 ),
-                            ],
+                                const SizedBox(
+                                  height: 4,
+                                ),
+                                if (widget.studyOrder.doctor!.specializations !=
+                                    null &&
+                                    widget.studyOrder.doctor!.specializations!
+                                        .isNotEmpty)
+                                  Wrap(
+                                    children: [
+                                      for (int i = 0;
+                                      i <
+                                          widget.studyOrder.doctor!
+                                              .specializations!.length;
+                                      i++)
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              right: i == 0 ? 0 : 3.0, bottom: 5),
+                                          child: Text(
+                                            "${widget.studyOrder.doctor!.specializations![i].description}${widget.studyOrder.doctor!.specializations!.length-1 != i  ? ", " : ""}",
+                                            style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                              ],
+                            ),
                           ),
                         ],
                       ),

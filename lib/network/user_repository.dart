@@ -72,6 +72,9 @@ class UserRepository {
           ? await dio.get("/profile/patient")
           : await dio.get("/profile/caretaker/dependent/$id");
       if (response.statusCode == 200) {
+
+        // clear oldPatient data
+        organizationsPostulated = [];
         patient = Patient.fromJson(response.data);
         // Update prefs in Principal Patient
         if(!(prefs.getBool(isFamily)?? false)) {
@@ -494,21 +497,43 @@ class UserRepository {
   }
 
   Future<List<OrganizationWithAvailabilities>>? getAvailabilities({
+    AppointmentType? appointmentType,
     required String id,
-    required String startDate,
-    required String endDate,
+    required DateTime startDate,
+    required DateTime endDate,
     required List<Organization?>? organizations}) async {
 
     String? _organizations = organizations?.map((e) => e?.id?? "").toList().join(",");
     try {
 
 
-      Response response = await dio
-          .get("/profile/patient/doctors/$id/availability", queryParameters: {
-        'start': startDate,
-        'end': endDate,
+      String? appointmentTypeString = appointmentType == AppointmentType.InPerson
+          ? "A": appointmentType == AppointmentType.Virtual ?"V": null;
+
+      //subtract a second to get to 23:59:59 time until 00:00:00 next day
+      endDate = endDate.subtract(const Duration(seconds: 1));
+
+      dynamic queryParams = {
+        'appointmentType': appointmentTypeString,
+        'start': startDate.toIso8601String(),
+        'end': endDate.toIso8601String(),
         'organizationIdList': _organizations,
-      });
+      };
+
+      // remove null values to solve null compare in server
+      queryParams.removeWhere((key, value) => value == null);
+
+      Response response;
+      if (prefs.getBool('isFamily') ?? false) {
+        response = await dio.get('/profile/caretaker/dependent/${patient.id}/doctors/$id/availability',
+            queryParameters: queryParams
+        );
+      } else {
+        // the query is made
+        response = await dio.get('/profile/patient/doctors/$id/availability',
+            queryParameters: queryParams
+        );
+      }
       if (response.statusCode == 200) {
         List<OrganizationWithAvailabilities>? allAvailabilities = [];
         response.data.forEach((v) {

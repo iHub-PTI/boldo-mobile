@@ -1,14 +1,17 @@
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
 import 'package:boldo/constants.dart';
+import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/doctor_profile/doctor_profile_screen.dart';
 import 'package:boldo/screens/doctor_search/doctor_filter.dart';
+import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/go_to_top.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,6 +33,8 @@ class DoctorsAvailable extends StatefulWidget {
 
 // STATE CLASS
 class _DoctorsAvailableState extends State<DoctorsAvailable> {
+
+  late DoctorFilterProvider _myProvider;
   bool _loading = true;
   List<Doctor> doctors = [];
   // initial value
@@ -45,7 +50,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
   List<Doctor>? doctorsSaved;
   @override
   void initState() {
-
+    _myProvider = Provider.of<DoctorFilterProvider>(context, listen: false);
     BlocProvider.of<DoctorsAvailableBloc>(context).add(
         GetDoctorFilter(
             organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
@@ -58,7 +63,11 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                 .getLastVirtualAppointmentApplied,
             inPersonAppointment:
             Provider.of<DoctorFilterProvider>(context, listen: false)
-                .getLastInPersonAppointmentApplied
+                .getLastInPersonAppointmentApplied,
+            names: Provider.of<DoctorFilterProvider>(
+              context,
+              listen: false)
+              .getNamesApplied,
         )
     );
     scrollDoctorList.addListener(() {
@@ -77,6 +86,12 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
     }
   });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _myProvider.clearFilter();
+    super.dispose();
   }
 
   @override
@@ -125,6 +140,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                 });
               }
             } else if (state is FilterLoadedInDoctorList) {
+              _refreshDoctorController.refreshCompleted();
+              _refreshDoctorController.loadComplete();
               setState(() {
                 doctors = state.doctors;
               });
@@ -164,17 +181,43 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                           style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                         ),
                       ),
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DoctorFilter(),
+                      Row(
+                        children: [
+                          ImageViewTypeForm(
+                            height: 44,
+                            width: 44,
+                            url: patient.photoUrl,
+                            gender: patient.gender,
+                            border: true,
+                            borderColor: ConstantsV2.secondaryRegular,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DoctorFilter(),
+                                ),
+                              );
+                            },
+                            child:Card(
+                              color: ConstantsV2.secondaryRegular,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(100)),
                               ),
-                            );
-                          },
-                          child: SvgPicture.asset(
-                              'assets/icon/change-filter.svg'))
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: buttonFXSecondaryStyle.copyWith(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: SvgPicture.asset(
+                                  'assets/icon/search.svg',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -202,8 +245,11 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                               controller: _refreshDoctorController,
                               enablePullUp: true,
                               enablePullDown: true,
+                              header: const MaterialClassicHeader(
+                                color: Constants.primaryColor800,
+                              ),
                               child: GridView.builder(
-                                physics: ScrollPhysics(),
+                                physics: const ScrollPhysics(),
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
                                 controller: scrollDoctorList,
@@ -250,84 +296,64 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                               // this for refresh all data
                               onRefresh: () {
                                 offset = 0;
-                                if (Provider.of<DoctorFilterProvider>(context,
-                                    listen: false)
-                                    .getSpecializationsApplied ==
-                                    null) {
-                                  BlocProvider.of<DoctorsAvailableBloc>(
-                                      context)
-                                      .add(GetDoctorsAvailable(
-                                      organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
-                                          .getOrganizationsApplied,
-                                      offset: 0
-                                      ));
-                                } else {
-                                  BlocProvider.of<DoctorsAvailableBloc>(context)
-                                      .add(GetDoctorFilterInDoctorList(
-                                      organizations:
-                                      Provider.of<DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getOrganizationsApplied,
-                                      specializations:
-                                      Provider.of<DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getSpecializationsApplied!,
-                                      virtualAppointment: Provider.of<
-                                          DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getLastVirtualAppointmentApplied!,
-                                      inPersonAppointment:
-                                      Provider.of<DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getLastInPersonAppointmentApplied!));
-                                }
+                                BlocProvider.of<DoctorsAvailableBloc>(context)
+                                    .add(GetDoctorFilterInDoctorList(
+                                    organizations:
+                                    Provider.of<DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getOrganizationsApplied,
+                                    specializations:
+                                    Provider.of<DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getSpecializationsApplied,
+                                    virtualAppointment: Provider.of<
+                                        DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getLastVirtualAppointmentApplied,
+                                    inPersonAppointment:
+                                    Provider.of<DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getLastInPersonAppointmentApplied,
+                                  names: Provider.of<DoctorFilterProvider>(
+                                      context,
+                                      listen: false)
+                                      .getNamesApplied
+                                ));
                               },
                               // this for load more doctors
                               onLoading: () {
                                 offset = offset + 20;
-                                if (Provider.of<DoctorFilterProvider>(context,
-                                    listen: false)
-                                    .getSpecializationsApplied ==
-                                    null) {
-                                  // new event for get more available doctor
-                                  BlocProvider.of<DoctorsAvailableBloc>(
-                                      context)
-                                      .add(GetMoreDoctorsAvailable(
-                                      organizations:
-                                      Provider.of<DoctorFilterProvider>(
-                                          context,
-                                          listen: false
-                                      ).getOrganizationsApplied,
-                                      offset: offset));
-                                } else {
-                                  BlocProvider.of<DoctorsAvailableBloc>(context)
-                                      .add(GetMoreFilterDoctor(
-                                      organizations:
-                                      Provider.of<DoctorFilterProvider>(
-                                          context,
-                                          listen: false
-                                      ).getOrganizationsApplied,
-                                      offset: offset,
-                                      specializations:
-                                      Provider.of<DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getSpecializationsApplied!,
-                                      virtualAppointment: Provider.of<
-                                          DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getLastVirtualAppointmentApplied!,
-                                      inPersonAppointment:
-                                      Provider.of<DoctorFilterProvider>(
-                                          context,
-                                          listen: false)
-                                          .getLastInPersonAppointmentApplied!));
-                                }
+                                BlocProvider.of<DoctorsAvailableBloc>(context)
+                                    .add(GetMoreFilterDoctor(
+                                    organizations:
+                                    Provider.of<DoctorFilterProvider>(
+                                        context,
+                                        listen: false
+                                    ).getOrganizationsApplied,
+                                    offset: offset,
+                                    specializations:
+                                    Provider.of<DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getSpecializationsApplied,
+                                    virtualAppointment: Provider.of<
+                                        DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getLastVirtualAppointmentApplied,
+                                    inPersonAppointment:
+                                    Provider.of<DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getLastInPersonAppointmentApplied,
+                                    names: Provider.of<DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getNamesApplied));
                               },
                             ),
                           ),
@@ -346,6 +372,62 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
     );
   }
 
+  Widget _availabilityHourCard(OrganizationWithAvailability? organization){
+
+
+    return Container(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  child: Text(
+                    availableText(organization?.nextAvailability),
+                    style: boldoBodySRegularTextStyle
+                        .copyWith(
+                      color: ConstantsV2
+                          .grayLight,
+                    ),
+                  ),
+                ),
+                Container(
+                  child: Text(
+                    "vía ${organization?.organization?.name?? 'Desconocido'}",
+                    style: boldoBodySRegularTextStyle
+                        .copyWith(
+                      color: ConstantsV2
+                          .grayLight,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Card(
+            elevation: 0.0,
+            color: ConstantsV2.grayLightAndClear,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: ConstantsV2.grayLightAndClear, width: 1),
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              child: Row(
+                children: [
+                  Text("${DateFormat('HH:mm').format(DateTime.parse(organization?.nextAvailability?.availability?? DateTime.now().toString()).toLocal())}",
+                    style: boldoBodySBlackTextStyle.copyWith(color: ConstantsV2.secondaryRegular),),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   String availableText(NextAvailability? nextAvailability) {
     String available = 'Sin disponibilidad en los próximos 30 días';
     if(nextAvailability == null)
@@ -359,10 +441,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
       isToday = true;
     }
     if (isToday) {
-      available = 'Disponible Hoy!';
+      available = 'Disponible hoy a las ';
     } else if (daysDifference > 0) {
       available =
-          'Disponible ${DateFormat('EEEE, dd MMMM', const Locale("es", 'ES').languageCode).format(parsedAvailability)}';
+          'Disponible ${DateFormat('EEEE, dd MMMM', const Locale("es", 'ES').languageCode).format(parsedAvailability)} a las';
     }
     return available;
   }
@@ -380,138 +462,133 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
           ),
         );
       },
-      child: Stack(
-        children: <Widget>[
-          // the first item in stack is the doctor profile photo
-          doctors[index].photoUrl != null
-              ? Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(32),
-                      image: DecorationImage(
-                          image: NetworkImage(doctors[index].photoUrl!),
-                          fit: BoxFit.cover)),
-                )
-              : Card(
-                  margin: EdgeInsets.all(0),
-                  semanticContainer: true,
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  child: doctors[index].gender == 'female'
-                      ? SvgPicture.asset(
-                          'assets/images/femaleDoctor.svg',
-                          fit: BoxFit.cover,
-                        )
-                      : doctors[index].gender == 'male'? SvgPicture.asset(
-                          'assets/images/maleDoctor.svg',
-                          fit: BoxFit.cover,
-                        ): SvgPicture.asset(
-                    'assets/images/persona.svg',
-                    fit: BoxFit.cover,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32.0),
+      child: Card(
+        margin: EdgeInsets.all(0),
+        semanticContainer: true,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        child: Stack(
+          children: <Widget>[
+            // the first item in stack is the doctor profile photo
+            doctors[index].photoUrl != null
+                ? Positioned.fill(child: CachedNetworkImage(
+              fit: BoxFit.cover,
+              imageUrl: doctors[index].photoUrl!,
+              progressIndicatorBuilder:
+                  (context, url, downloadProgress) => Padding(
+                padding: const EdgeInsets.all(26.0),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    value: downloadProgress.progress,
+                    valueColor:
+                    const AlwaysStoppedAnimation<Color>(
+                        Constants.primaryColor400),
+                    backgroundColor: Constants.primaryColor600,
                   ),
                 ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              gradient: const RadialGradient(
-                  radius: 4,
-                  center: Alignment(
-                    1.80,
-                    0.77,
-                  ),
-                  //center: Alignment.center,
-                  colors: [
-                    Color.fromRGBO(0, 0, 0, 0),
-                    Color.fromRGBO(0, 0, 0, 1),
-                  ]),
+              ),
+              errorWidget: (context, url, error) =>
+              const Icon(Icons.error),
+            ))
+                : Positioned.fill(
+              child:doctors[index].gender == 'female'
+                  ? SvgPicture.asset(
+                'assets/images/femaleDoctor.svg',
+                fit: BoxFit.cover,
+              )
+                  : doctors[index].gender == 'male'? SvgPicture.asset(
+                'assets/images/maleDoctor.svg',
+                fit: BoxFit.cover,
+              ): SvgPicture.asset(
+                'assets/images/persona.svg',
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          // the second item in stack is the column of details
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // name of the doctor
-              Row(
-                children: [
-                  // this for jump if there is overflow
-                  Flexible(
-                      child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 24.0, right: 16, bottom: 2),
-                        child: Text(
-                          '${doctors[index].gender == 'female' ? 'Dra.' : 'Dr.'} ${doctors[index].givenName!.split(" ")[0]} ${doctors[index].familyName!.split(" ")[0]}',
-                          style: boldoCardHeadingTextStyle,
-                        ),
-                      ),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: RadialGradient(
+                    radius: 3,
+                    center: Alignment.bottomLeft,
+                    stops: [
+                      0.08,
+                      0.72
                     ],
-                  ))
-                ],
+                    colors: [
+                      Colors.black,
+                      Colors.black.withOpacity(0)
+                    ]),
               ),
-              // specializations
-              doctors[index].specializations != null
-                  ? doctors[index].specializations!.length > 0
-                      ? Container(
-                          // 52 is the sum of left and right padding plus the space between columns
-                          width: MediaQuery.of(context).size.width / 2 - 52,
-                          child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 24.0,
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    for (int i = 0;
-                                        i <
-                                            doctors[index]
-                                                .specializations!
-                                                .length;
-                                        i++)
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: i == 0 ? 0 : 3.0, bottom: 8),
-                                        child: Text(
-                                          "${doctors[index].specializations![i].description}${doctors[index].specializations!.length > 1 && i == 0 ? "," : ""}",
-                                          style: boldoCorpMediumWithLineSeparationLargeTextStyle
-                                              .copyWith(
-                                                  color: ConstantsV2
-                                                      .buttonPrimaryColor100,
-                                                  fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              )),
-                        )
-                      : Container()
-                  : Container(),
-              Container(
-                width: MediaQuery.of(context).size.width / 2 - 52,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 24.0, bottom: 4),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          availableText(doctors[index].organizations?.first.nextAvailability),
-                          style: boldoCorpSmallInterTextStyle.copyWith(
-                              fontWeight: FontWeight.bold),
+            ),
+            // the second item in stack is the column of details
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // name of the doctor
+                Row(
+                  children: [
+                    // this for jump if there is overflow
+                    Flexible(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8.0, right: 16, bottom: 2),
+                              child: Text(
+                                '${doctors[index].gender == 'female' ? 'Dra.' : 'Dr.'} ${doctors[index].givenName!.split(" ")[0]} ${doctors[index].familyName!.split(" ")[0]}',
+                                style: boldoCardHeadingTextStyle,
+                              ),
+                            ),
+                          ],
+                        ))
+                  ],
+                ),
+                // specializations
+                doctors[index].specializations != null
+                    ? doctors[index].specializations!.length > 0
+                    ? Container(
+                  child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0,
                         ),
-                      ),
-                    ],
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            for (int i = 0;
+                            i <
+                                doctors[index]
+                                    .specializations!
+                                    .length;
+                            i++)
+                              Text(
+                                "${doctors[index].specializations![i].description}${doctors[index].specializations!.length-1 != i  ? ", " : ""}",
+                                style: boldoBodyLRegularTextStyle
+                                    .copyWith(
+                                  color: ConstantsV2
+                                      .buttonPrimaryColor100,
+                                ),
+                              ),
+                          ],
+                        ),
+                      )),
+                )
+                    : Container()
+                    : Container(),
+                Container(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0, bottom: 4),
+                    child: _availabilityHourCard(doctors[index].organizations?.first),
                   ),
                 ),
-              ),
-              const SizedBox(height: 4)
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

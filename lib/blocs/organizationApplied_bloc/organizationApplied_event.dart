@@ -6,6 +6,6 @@ abstract class OrganizationAppliedBlocEvent {}
 class GetOrganizationsPostulated extends OrganizationAppliedBlocEvent {}
 
 class UnPostulated extends OrganizationAppliedBlocEvent {
-  final String id;
-  UnPostulated({required this.id});
+  final OrganizationRequest organization;
+  UnPostulated({required this.organization});
 }
