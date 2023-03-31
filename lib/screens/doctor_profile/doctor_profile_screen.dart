@@ -214,55 +214,119 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                 )
                               ],
                             ),
-                            if(widget.showAvailability)
-                              BlocBuilder<DoctorBloc, DoctorState>(builder: (context, state) {
-                                if(state is AvailabilitiesObtained){
-                                  if(organizationsWithAvailabilites.isNotEmpty)
-                                    return ClipRect(
-                                      child: Container(
-                                        padding: const EdgeInsets.only(bottom: 16),
-                                        decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(15.0),
-                                            topRight: Radius.circular(15.0),
-                                          ),
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomCenter,
-                                            colors: <Color> [
-                                              Colors.black.withOpacity(0),
-                                              const Color(0xA7A7A7).withOpacity(1),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                BlocBuilder<last_appointment_bloc.LastAppointmentBloc, last_appointment_bloc.LastAppointmentState>(
+                                  builder: (context, state){
+                                    if(state is last_appointment_bloc.LastAppointmentLoadedState){
+                                      return Card(
+                                        color: ConstantsV2.grayLightAndClear,
+                                        shape: RoundedRectangleBorder(
+                                          side: const BorderSide(color: ConstantsV2.grayLightest, width: 1),
+                                          borderRadius: BorderRadius.circular(16),
+                                        ),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              ImageViewTypeForm(
+                                                height: 44,
+                                                width: 44,
+                                                border: true,
+                                                borderColor: ConstantsV2.secondaryRegular,
+                                                gender: lastAppointment?.patient?.gender,
+                                                url: lastAppointment?.patient?.photoUrl,
+                                              ),
+                                              if(lastAppointment?.patient?.id == prefs.getString("userId"))
+                                                Text(
+                                                  "consultaste",
+                                                  style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText),
+                                                )
+                                              else
+                                                RichText(
+                                                  text: TextSpan(
+                                                    children: [
+                                                      TextSpan(
+                                                          text: lastAppointment?.patient?.givenName?.split(" ")[0]?? "Desconocido",
+                                                          style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText)
+                                                      ),
+                                                      TextSpan(
+                                                          text: " consultó",
+                                                          style: bodyLarge.copyWith(color: ConstantsV2.activeText)
+                                                      ),
+                                                    ]
+                                                  ),
+                                              ),
+                                              Text(
+                                                passedDays(daysBetween(DateTime.parse(
+                                                    lastAppointment?.start?? DateTime.now()
+                                                        .toString()),
+                                                    DateTime.now()
+                                                )),
+                                                style: bodyLarge.copyWith(color: ConstantsV2.activeText)
+                                              )
                                             ],
                                           ),
                                         ),
-                                        child: BackdropFilter(
-                                          blendMode: BlendMode.src,
-                                          filter: ImageFilter.blur(
-                                              sigmaX: 5,
-                                              sigmaY: 5
+                                      );
+                                    }else{
+                                      return Container();
+                                    }
+                                  }
+                                ),
+                                if(widget.showAvailability)
+                                  BlocBuilder<doctor_bloc.DoctorBloc, doctor_bloc.DoctorState>(builder: (context, state) {
+                                    if(state is doctor_bloc.AvailabilitiesObtained){
+                                      if(organizationsWithAvailabilites.isNotEmpty)
+                                        return ClipRect(
+                                          child: Container(
+                                            padding: const EdgeInsets.only(bottom: 16),
+                                            decoration: BoxDecoration(
+                                              borderRadius: const BorderRadius.only(
+                                                topLeft: Radius.circular(15.0),
+                                                topRight: Radius.circular(15.0),
+                                              ),
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomCenter,
+                                                colors: <Color> [
+                                                  Colors.black.withOpacity(0),
+                                                  const Color(0xA7A7A7).withOpacity(1),
+                                                ],
+                                              ),
+                                            ),
+                                            child: BackdropFilter(
+                                                blendMode: BlendMode.src,
+                                                filter: ImageFilter.blur(
+                                                    sigmaX: 5,
+                                                    sigmaY: 5
+                                                ),
+                                                child: organizationsWithAvailabilites.isNotEmpty ?
+                                                _organizationAvailabilities(context, 0) :
+                                                null
+                                            ),
                                           ),
-                                          child: organizationsWithAvailabilites.isNotEmpty ?
-                                          _organizationAvailabilities(context, 0) :
-                                          null
-                                        ),
-                                      ),
-                                    );
-                                  else
-                                    return familyListWithAccess();
-                                }else if(state is Loading){
-                                  return Container(
-                                      child: const Center(
-                                          child: CircularProgressIndicator(
-                                            valueColor:
-                                            AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                                            backgroundColor: Constants.primaryColor600,
+                                        );
+                                      else
+                                        return familyListWithAccess();
+                                    }else if(state is doctor_bloc.Loading){
+                                      return Container(
+                                          child: const Center(
+                                              child: CircularProgressIndicator(
+                                                valueColor:
+                                                AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                                                backgroundColor: Constants.primaryColor600,
+                                              )
                                           )
-                                      )
-                                  );
-                                }else{
-                                  return Container();
-                                }
-                              }),
+                                      );
+                                    }else{
+                                      return Container();
+                                    }
+                                  }),
+                              ],
+                            ),
                           ],
                         ),
                       ),
