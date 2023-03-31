@@ -212,6 +212,27 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
     );
   }
 
+  Widget organizationAvailableEmpty(){
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Container(
+        color: ConstantsV2.grayLightest,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              "No hay organizaciones disponibles en este momento",
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 31,),
+            SvgPicture.asset('assets/icon/undraw_add_files.svg',)
+          ],
+        ),
+      ),
+    );
+  }
+
 }
 
 class BotonAdd extends StatelessWidget {
