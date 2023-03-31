@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:boldo/blocs/user_bloc/patient_bloc.dart'as patientBloc;
-import 'package:boldo/blocs/doctor_bloc/doctor_bloc.dart';
+import 'package:boldo/blocs/lastAppointment_bloc/lastAppointmentBloc.dart' as last_appointment_bloc;
+import 'package:boldo/blocs/doctor_bloc/doctor_bloc.dart' as doctor_bloc;
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
@@ -59,36 +59,56 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         ),
       ),
       body: SafeArea(
-        child: BlocProvider<DoctorBloc>(
-          create: (BuildContext context) => DoctorBloc()..add(GetAvailability(
-            id: widget.doctor.id ?? '',
-            startDate: DateTime.now().toUtc(),
-            endDate: DateTime.now().add(const Duration(days: 30))
-                .toUtc(),
-            organizations: Provider
-                .of<DoctorFilterProvider>(context, listen: false)
-                .getOrganizationsApplied
-                .isNotEmpty ? Provider
-                .of<DoctorFilterProvider>(context, listen: false)
-                .getOrganizationsApplied : null,
-          )),
-          child: BlocListener<DoctorBloc, DoctorState>(
-            listener: (context, state){
-              if(state is Failed){
-                emitSnackBar(
-                    context: context,
-                    text: state.response,
-                    status: ActionStatus.Fail
-                );
-              }else if(state is Loading){
-              }else if(state is AvailabilitiesObtained){
-                organizationsWithAvailabilites = state.availabilities;
-                if(organizationsWithAvailabilites.isEmpty)
-                  hasFilter = true;
-
-              }
-            },
-            child: BlocBuilder<DoctorBloc, DoctorState>(
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider<last_appointment_bloc.LastAppointmentBloc>(
+              create: (BuildContext context) => last_appointment_bloc.LastAppointmentBloc()..add(
+                last_appointment_bloc.GetLastAppointment(doctor: widget.doctor),
+              ),
+            ),
+            BlocProvider<doctor_bloc.DoctorBloc>(
+              create: (BuildContext context) => doctor_bloc.DoctorBloc()..add(
+                doctor_bloc.GetAvailability(
+                  id: widget.doctor.id ?? '',
+                  startDate: DateTime.now().toUtc(),
+                  endDate: DateTime.now().add(const Duration(days: 30))
+                      .toUtc(),
+                  organizations: Provider
+                      .of<DoctorFilterProvider>(context, listen: false)
+                      .getOrganizationsApplied
+                      .isNotEmpty ? Provider
+                      .of<DoctorFilterProvider>(context, listen: false)
+                      .getOrganizationsApplied : null,
+                ),
+              ),
+            ),
+          ],
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<doctor_bloc.DoctorBloc, doctor_bloc.DoctorState>(
+                listener: (context, state){
+                  if(state is doctor_bloc.Failed){
+                    emitSnackBar(
+                      context: context,
+                      text: state.response,
+                      status: ActionStatus.Fail
+                    );
+                  }else if(state is doctor_bloc.AvailabilitiesObtained){
+                    organizationsWithAvailabilites = state.availabilities;
+                    if(organizationsWithAvailabilites.isEmpty)
+                      hasFilter = true;
+                  }
+                },
+              ),
+              BlocListener<last_appointment_bloc.LastAppointmentBloc, last_appointment_bloc.LastAppointmentState>(
+                listener: (context, state){
+                  if(state is last_appointment_bloc.LastAppointmentLoadedState){
+                    lastAppointment = state.appointment;
+                  }
+                }
+              )
+            ],
+            child: BlocBuilder<doctor_bloc.DoctorBloc, doctor_bloc.DoctorState>(
                 builder: (context, state) {
                   return Background(
                     hasFilter: hasFilter,
