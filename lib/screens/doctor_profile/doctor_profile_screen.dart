@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:boldo/blocs/lastAppointment_bloc/lastAppointmentBloc.dart' as last_appointment_bloc;
 import 'package:boldo/blocs/doctor_bloc/doctor_bloc.dart' as doctor_bloc;
 import 'package:boldo/main.dart';
+import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
@@ -39,6 +40,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
   final List<String> popupRoutes = <String>["Remoto (on line)", "En persona"];
   List<OrganizationWithAvailabilities> organizationsWithAvailabilites = [];
   bool hasFilter = false;
+  Appointment? lastAppointment;
 
   @override
   void initState() {
