@@ -52,6 +52,8 @@ class Constants {
   static const Color otherColor100 = Color(0xffDF6D51);
   static const Color otherColor200 = Color(0xffEE983F);
   static const Color otherColor300 = Color(0xffC53030);
+  static const Color otherColor400 = Color(0xffEB8B76);
+  static const Color otherColor800 = Color(0xffdaebed);
 
   //Accordion background color
   static const Color accordionbg = Color(0xfff3FAF7);
@@ -65,6 +67,7 @@ class Constants {
 }
 
 const String genericError = "Algo salió mal, vuelve a intentarlo más tarde";
+const String chooseAll = "Seleccionar todos";
 
 // Text Style
 const boldoHeadingTextStyle = TextStyle(
