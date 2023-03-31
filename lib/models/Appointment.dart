@@ -38,8 +38,8 @@ class Appointment extends News {
     status = json["status"];
     appointmentType = json["appointmentType"];
     doctor = json['doctor'] != null ? Doctor.fromJson(json['doctor']) : null;
-    organization = Organization.fromJson(json['organization']);
-    patient = Patient.fromJson(json['patient']);
+    organization = json['organization'] != null ? Organization.fromJson(json['organization']) : null;
+    patient = json['patient'] != null ? Patient.fromJson(json['patient']): null;
   }
 
   Map<String, dynamic> toJson() {
