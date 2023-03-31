@@ -164,12 +164,12 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                                 return Container(
                                   padding: const EdgeInsets.all(16),
                                   color: ConstantsV2.grayLightest,
-                                  child: ListView.builder(
+                                  child: _organizationsNotSubscribed.isNotEmpty? ListView.builder(
                                       physics: const ClampingScrollPhysics(),
                                       shrinkWrap: true,
                                       itemCount: _organizationsNotSubscribed.length,
                                       itemBuilder: selectOrganizationsBox
-                                  ),
+                                  ): organizationAvailableEmpty(),
                                 );
                               }
                             }
