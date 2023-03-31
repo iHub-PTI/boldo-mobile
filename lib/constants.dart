@@ -139,6 +139,11 @@ TextStyle bodyLarge = GoogleFonts.workSans().copyWith(
   fontSize: 16,
 );
 
+TextStyle bodyLargeBlack = GoogleFonts.montserrat().copyWith(
+  fontWeight: FontWeight.w700,
+  fontSize: 14,
+);
+
 TextStyle bodySmallRegular = GoogleFonts.montserrat().copyWith(
   fontWeight: FontWeight.w300,
   fontSize: 10,
