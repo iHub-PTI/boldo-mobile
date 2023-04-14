@@ -14,7 +14,11 @@ class AppointmentRepository {
     try{
       Response response;
 
-      response = await dio.get("/profile/patient/lastEncounter/doctors/${doctor.id}");
+      response = await dio.get("/profile/patient/lastEncounter/doctors/${doctor.id}",
+        queryParameters: {
+          "includeDependents": true,
+        }
+      );
 
       if (response.statusCode == 200) {
         return Appointment.fromJson(response.data);
