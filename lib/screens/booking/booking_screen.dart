@@ -92,40 +92,40 @@ class _BookingScreenState extends State<BookingScreen> {
                 DateTime.parse(_selectedBookingHour!.availability!).toLocal() &&
             element.status == 'upcoming').first.doctor!);
         } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => BookingConfirmScreen(
-                bookingDate: _selectedBookingHour!,
-                doctor: widget.doctor,
-                organization: widget.doctor.organizations?.first.organization?? Organization(),
-              ),
-            ),
-          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => BookingConfirmScreen(
+          //       bookingDate: _selectedBookingHour!,
+          //       doctor: widget.doctor,
+          //       organization: widget.doctor.organizations?.first.organization?? Organization(),
+          //     ),
+          //   ),
+          // );
         }
       } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BookingConfirmScreen(
-              bookingDate: _selectedBookingHour!,
-              doctor: widget.doctor,
-              organization: widget.doctor.organizations?.first.organization?? Organization(),
-            ),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => BookingConfirmScreen(
+        //       bookingDate: _selectedBookingHour!,
+        //       doctor: widget.doctor,
+        //       organization: widget.doctor.organizations?.first.organization?? Organization(),
+        //     ),
+        //   ),
+        // );
       }
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BookingConfirmScreen(
-            bookingDate: bookingHour,
-            doctor: widget.doctor,
-            organization: widget.doctor.organizations?.first.organization?? Organization(),
-          ),
-        ),
-      );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => BookingConfirmScreen(
+      //       bookingDate: bookingHour,
+      //       doctor: widget.doctor,
+      //       organization: widget.doctor.organizations?.first.organization?? Organization(),
+      //     ),
+      //   ),
+      // );
     }
   }
 

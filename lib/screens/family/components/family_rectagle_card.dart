@@ -80,7 +80,12 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
                             widget.isDependent && !(prefs.getBool(isFamily)?? false) ? UnlinkFamilyWidget(
                               onTapCallback: (result) async {
                                 if (result == 'Desvincular') {
-                                  BlocProvider.of<FamilyBloc>(context).add(UnlinkDependent(id: widget.patient!.id!));
+                                  String? action = await unlinkFamilyDialog(context);
+                                  if(action == 'cancel') {
+                                    BlocProvider.of<FamilyBloc>(context).add(
+                                        UnlinkDependent(
+                                            id: widget.patient!.id!));
+                                  }
                                 }
                               },
                             ): Container(),
@@ -114,6 +119,27 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
       ),
     );
   }
+
+  Future<String?> unlinkFamilyDialog(BuildContext context){
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Desvincular familiar'),
+        content: const Text('¿Desea desvincular al familiar?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'atrás'),
+            child: const Text('atrás'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'cancel'),
+            child: const Text('Sí, desvincular'),
+          ),
+        ],
+      ),
+    );
+  }
+
 }
 
 class UnlinkFamilyWidget extends StatelessWidget {

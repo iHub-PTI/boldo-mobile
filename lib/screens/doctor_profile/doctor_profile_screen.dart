@@ -1,4 +1,6 @@
-import 'package:boldo/blocs/user_bloc/patient_bloc.dart'as patient;
+import 'dart:ui';
+
+import 'package:boldo/blocs/user_bloc/patient_bloc.dart'as patientBloc;
 import 'package:boldo/blocs/doctor_bloc/doctor_bloc.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Organization.dart';
@@ -6,6 +8,7 @@ import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/booking/booking_screen.dart';
 import 'package:boldo/screens/booking/booking_screen2.dart';
+import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/expandable_card/expandable_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +38,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
   final List<String> popupRoutes = <String>["Remoto (on line)", "En persona"];
   List<OrganizationWithAvailabilities> organizationsWithAvailabilites = [];
+  bool hasFilter = false;
 
   @override
   void initState() {
@@ -58,22 +62,19 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         child: BlocProvider<DoctorBloc>(
           create: (BuildContext context) => DoctorBloc()..add(GetAvailability(
             id: widget.doctor.id ?? '',
-            startDate: DateTime.now().toUtc().toIso8601String(),
+            startDate: DateTime.now().toUtc(),
             endDate: DateTime.now().add(const Duration(days: 30))
-                .toUtc()
-                .toIso8601String(),
+                .toUtc(),
             organizations: Provider
                 .of<DoctorFilterProvider>(context, listen: false)
                 .getOrganizationsApplied
                 .isNotEmpty ? Provider
                 .of<DoctorFilterProvider>(context, listen: false)
-                .getOrganizationsApplied : BlocProvider.of<patient.PatientBloc>(context)
-                .getOrganizations(),
+                .getOrganizationsApplied : null,
           )),
           child: BlocListener<DoctorBloc, DoctorState>(
             listener: (context, state){
-              if(state is Success) {
-              }else if(state is Failed){
+              if(state is Failed){
                 emitSnackBar(
                     context: context,
                     text: state.response,
@@ -82,27 +83,30 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
               }else if(state is Loading){
               }else if(state is AvailabilitiesObtained){
                 organizationsWithAvailabilites = state.availabilities;
+                if(organizationsWithAvailabilites.isEmpty)
+                  hasFilter = true;
+
               }
             },
             child: BlocBuilder<DoctorBloc, DoctorState>(
                 builder: (context, state) {
-                  return ExpandableCardPage(
-                    page: Background(
-                      doctor: widget.doctor,
-                      child: Align(
-                        alignment: AlignmentDirectional.topCenter,
-                        child: Container(
-                          height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height*0.2,
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                children: [
-                                  const SizedBox(
-                                    height: 16,
-                                  ),
-                                  Row(
+                  return Background(
+                    hasFilter: hasFilter,
+                    doctor: widget.doctor,
+                    child: Align(
+                      alignment: AlignmentDirectional.topCenter,
+                      child: Container(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              children: [
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -121,6 +125,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                           child: Container(
                                             padding: const EdgeInsets.all(8),
                                             child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Row(
                                                   children: [
@@ -137,8 +142,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                                   ],
                                                 ),
                                                 if (widget.doctor.specializations != null)
-                                                  Align(
-                                                    alignment: Alignment.center,
+                                                  Container(
                                                     child: Wrap(
                                                       children: [
                                                         for (int i = 0;
@@ -150,7 +154,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                                             padding: EdgeInsets.only(
                                                                 right: i == 0 ? 0 : 3.0, bottom: 5),
                                                             child: Text(
-                                                              "${widget.doctor.specializations![i].description}${widget.doctor.specializations!.length-1 != i  ? "," : ""}",
+                                                              "${widget.doctor.specializations![i].description}${widget.doctor.specializations!.length-1 != i  ? ", " : ""}",
                                                               style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
                                                             ),
                                                           ),
@@ -185,43 +189,44 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    expandableCard: ExpandableCard(
-                      hasBlur: true,
-                      blurRadius: 15.0,
-                      handleColor: ConstantsV2.orange,
-                      backgroundGradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomCenter,
-                        colors: <Color> [
-                          Colors.black.withOpacity(0),
-                          const Color(0xA7A7A7).withOpacity(.8),
-                        ],
-                      ),
-                      maxHeight: MediaQuery.of(context).size.height-120,
-                      minHeight: MediaQuery.of(context).size.height*0.35,
-                      children: SingleChildScrollView(
-                        child: Column(
-                          children: <Widget>[
-                            // show Availability only if go to this page to make a reservation
+                                )
+                              ],
+                            ),
                             if(widget.showAvailability)
                               BlocBuilder<DoctorBloc, DoctorState>(builder: (context, state) {
-                                if(state is Success){
-                                  return Container(
-                                    child: ListView.builder(
-                                        shrinkWrap: true,
-                                        padding: const EdgeInsets.only(right: 16),
-                                        scrollDirection: Axis.vertical,
-                                        itemCount: organizationsWithAvailabilites.length,
-                                        itemBuilder: _organizationAvailabilities
-                                    ),
-                                  );
+                                if(state is AvailabilitiesObtained){
+                                  if(organizationsWithAvailabilites.isNotEmpty)
+                                    return ClipRect(
+                                      child: Container(
+                                        padding: const EdgeInsets.only(bottom: 16),
+                                        decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(15.0),
+                                            topRight: Radius.circular(15.0),
+                                          ),
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomCenter,
+                                            colors: <Color> [
+                                              Colors.black.withOpacity(0),
+                                              const Color(0xA7A7A7).withOpacity(1),
+                                            ],
+                                          ),
+                                        ),
+                                        child: BackdropFilter(
+                                          blendMode: BlendMode.src,
+                                          filter: ImageFilter.blur(
+                                              sigmaX: 5,
+                                              sigmaY: 5
+                                          ),
+                                          child: organizationsWithAvailabilites.isNotEmpty ?
+                                          _organizationAvailabilities(context, 0) :
+                                          null
+                                        ),
+                                      ),
+                                    );
+                                  else
+                                    return familyListWithAccess();
                                 }else if(state is Loading){
                                   return Container(
                                       child: const Center(
@@ -251,19 +256,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
   Widget _organizationAvailabilities(BuildContext context, int index){
 
-    List<Organization> _organizationsSelected = Provider
-        .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied
-        .isNotEmpty ? Provider
-        .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied : BlocProvider.of<patient.PatientBloc>(context)
-        .getOrganizations();
-
-    List<Organization>? _organizations = _organizationsSelected.where(
-            (element) => element.id == organizationsWithAvailabilites[index].idOrganization
-    ).toList();
-
-    String organizationName = _organizations.first.name?? "Desconocido";
+    String organizationName = organizationsWithAvailabilites[index].nameOrganization?? "Desconocido";
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,12 +317,13 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         ),
         Container(
           constraints: BoxConstraints(maxHeight: 45),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 child: ListView.builder(
                     shrinkWrap: true,
-                    padding: const EdgeInsets.only(right: 16),
                     scrollDirection: Axis.horizontal,
                     itemCount: organizationsWithAvailabilites[index].availabilities.length > 3
                         ? 3: organizationsWithAvailabilites[index].availabilities.length,
@@ -352,13 +346,10 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                   },
                   child: Card(
                     elevation: 0.0,
+                    margin: EdgeInsets.zero,
                     color: ConstantsV2.grayLightAndClear,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(100),
-                        side: const BorderSide(
-                          color: ConstantsV2.orange,
-                          width: 1.0,
-                        )
                     ),
                     child: Container(
                       padding: const EdgeInsets.all(10),
@@ -386,17 +377,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
   Widget _availabilityHourCard(int indexOrganization, int index){
 
-    List<Organization> _organizationsSelected = Provider
-        .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied
-        .isNotEmpty ? Provider
-        .of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizationsApplied : BlocProvider.of<patient.PatientBloc>(context)
-        .getOrganizations();
 
-    Organization organization = _organizationsSelected.where(
-            (element) => element.id == organizationsWithAvailabilites[indexOrganization].idOrganization
-    ).first;
+    OrganizationWithAvailabilities organization = organizationsWithAvailabilites[indexOrganization];
 
     return Container(
       child: GestureDetector(
@@ -441,7 +423,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
             borderRadius: BorderRadius.circular(100),
           ),
           child: Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
               children: [
                 Text("${DateFormat('HH:mm').format(DateTime.parse(organizationsWithAvailabilites[indexOrganization].availabilities[index]?.availability?? DateTime.now().toString()))}",
@@ -487,7 +469,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
   Future<void> handleBookingHour({
     required NextAvailability bookingHour,
-    required Organization organization}) async {
+    required OrganizationWithAvailabilities organization}) async {
 
     Navigator.push(
       context,
@@ -501,15 +483,52 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
     );
   }
 
+  Widget familyListWithAccess(){
+
+    Widget patientBox = Container(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          ImageViewTypeForm(
+            height: 44,
+            width: 44,
+            border: true,
+            borderColor: ConstantsV2.grayLightAndClear,
+            color: ConstantsV2.grayLightAndClear,
+            opacity: .8,
+            gender: patient.gender,
+          ),
+          const SizedBox(width: 16,),
+          Expanded(
+            child: Container(
+              child: Text(
+                "No tenés acceso a este médico. Agregá una organización",
+                style: boldoCardSubtitleTextStyle.copyWith(color: ConstantsV2.inactiveText),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return Column(
+      children: [
+        patientBox,
+      ],
+    );
+  }
+
 }
 
 class Background extends StatelessWidget {
   final Widget child;
   final Doctor doctor;
+  final bool hasFilter;
   const Background({
     Key? key,
     required this.child,
     required this.doctor,
+    this.hasFilter = false,
   }) : super(key: key);
 
   @override
@@ -546,6 +565,15 @@ class Background extends StatelessWidget {
                   ),
               errorWidget: (context, url, error) =>
               const Icon(Icons.error),
+            ),
+          ),
+          Positioned.fill(
+            child: AnimatedOpacity(
+              opacity: hasFilter== true ? 1 : 0,
+              duration: const Duration(seconds: 1),
+              child: Container(
+                color: const Color(0xF5F5F5).withOpacity(.8),
+              ),
             ),
           ),
           child,

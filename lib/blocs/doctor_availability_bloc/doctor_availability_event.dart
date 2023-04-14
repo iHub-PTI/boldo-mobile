@@ -4,11 +4,13 @@ part of 'doctor_availability_bloc.dart';
 abstract class DoctorAvailabilityEvent {}
 
 class GetAvailability extends DoctorAvailabilityEvent {
+  final AppointmentType appointmentType;
   final String id;
-  final String startDate;
-  final String endDate;
+  final DateTime startDate;
+  final DateTime endDate;
   final List<Organization?>? organizations;
   GetAvailability({
+    required this.appointmentType,
     required this.id,
     required this.startDate,
     required this.endDate,

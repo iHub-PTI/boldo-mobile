@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Constants {
   // primary color palette
@@ -77,7 +78,7 @@ const boldoHeadingTextStyle = TextStyle(
 const boldoTitleRegularTextStyle = TextStyle(
   color: ConstantsV2.lightest,
   fontStyle: FontStyle.normal,
-  fontSize: 12,
+  fontSize: 24,
   fontWeight: FontWeight.w300,
   fontFamily: 'Montserrat',
 );
@@ -130,6 +131,22 @@ const boldoSubTextMediumStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+TextStyle bodyLarge = GoogleFonts.workSans().copyWith(
+  fontWeight: FontWeight.w400,
+  fontSize: 16,
+);
+
+TextStyle bodySmallRegular = GoogleFonts.montserrat().copyWith(
+  fontWeight: FontWeight.w300,
+  fontSize: 10,
+);
+
+TextStyle labelMedium = GoogleFonts.workSans().copyWith(
+  fontWeight: FontWeight.w500,
+  fontSize: 14,
+  fontStyle: FontStyle.normal,
+);
+
 const boldoInfoTextStyle = TextStyle(
   color: ConstantsV2.activeText,
   fontFamily: 'Montserrat',
@@ -168,6 +185,30 @@ const boldoCorpMediumWithLineSeparationLargeTextStyle = TextStyle(
   fontSize: 14,
   height: 1.7,
   fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoBodyLRegularTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 14,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoBodySRegularTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 10,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const boldoBodySBlackTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 10,
+  fontWeight: FontWeight.w500,
   fontFamily: 'Montserrat',
 );
 
@@ -231,10 +272,39 @@ const boldoTabHeaderUnselectedTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const BigButton = TextStyle(
+  color: ConstantsV2.lightest,
+  fontStyle: FontStyle.normal,
+  fontSize: 15,
+  fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
 BoxShadow shadowRegular = BoxShadow(
   offset: const Offset(0, 2),
   color: Colors.black.withOpacity(0.05),
   blurRadius: 4,
+);
+
+const BoxDecoration buttonFXSecondaryStyle = BoxDecoration(
+  boxShadow: [
+    BoxShadow(
+      offset: Offset(0, 2),
+      color: Color(0xffFEAD88),
+      spreadRadius: -4,
+      blurRadius: 4,
+    ),
+    BoxShadow(
+      offset: Offset(0, 2),
+      color: Color.fromRGBO(0, 0, 0, 0.1),
+      blurRadius: 4,
+    ),
+    BoxShadow(
+      offset: Offset(0, 0),
+      color: Color.fromRGBO(253, 165, 125, 0.5),
+      blurRadius: 4,
+    )
+  ]
 );
 
 ThemeData boldoTheme = ThemeData(
@@ -324,6 +394,9 @@ ThemeData boldoTheme = ThemeData(
         width: 1.0,
       ),
     ),
+    errorStyle: bodySmallRegular.copyWith(
+      color: ConstantsV2.systemFail
+    )
   ),
   primaryColor: Colors.white,
   scaffoldBackgroundColor: ConstantsV2.BGNeutral,
@@ -483,3 +556,6 @@ const String uploadedStudySuccessfullyMessage = "¡Estudio subido!";
 const String dependentSuccessAdded = '¡Dependiente agregado!';
 DateTime minDate = DateTime(1900, 1, 1);
 DateTime minDateDigit = DateTime(1000, 1, 1);
+enum StatusRequestOrganization  {Approved, Pending, Rejected}
+const int timeToShowAppointmentsOnHoldInMonth = 1;
+const int timeToShowStudyOrderInMonth = 1;

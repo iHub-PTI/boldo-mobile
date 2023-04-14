@@ -24,6 +24,7 @@ import 'package:intl/intl.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../constants.dart';
+import 'anotations_details.dart';
 
 /// Show annotations in SOEP, prescriptions and StudyOrders emitted in an encounter
 /// The encounter will be got by the id of the [appointment]
@@ -284,374 +285,13 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                   if(widget.appointment.status != 'upcoming')
                                   Column(
                                     children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          boxShadow: [
-                                            shadowRegular
-                                          ],
-                                        ),
-                                        child: Card(
-                                          margin: const EdgeInsets.symmetric(vertical: 4),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(0),
-                                          ),
-                                          elevation: 0,
-                                          color: ConstantsV2.lightest,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                padding: const EdgeInsets.all(8),
-                                                child: Row(
-                                                  children: [
-                                                    SvgPicture.asset(
-                                                      'assets/icon/clipboard.svg',
-                                                      height: 12,
-                                                      width: 12,
-                                                    ),
-                                                    Text(
-                                                        'Notas',
-                                                        style: boldoCardHeadingTextStyle.copyWith(
-                                                            color: ConstantsV2.activeText,
-                                                            fontSize: 14
-                                                        )
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                              // SoepAccordion(
-                                              //     title: Constants.subjective,
-                                              //     medicalRecord: medicalRecord!),
-                                              // const Divider(
-                                              //   color: Constants.dividerAccordion,
-                                              //   thickness: 1,
-                                              // ),
-                                              // SoepAccordion(
-                                              //     title: Constants.objective,
-                                              //     medicalRecord: medicalRecord!),
-                                              // const Divider(
-                                              //     color: Constants.dividerAccordion,
-                                              //     thickness: 1),
-                                              // SoepAccordion(
-                                              //     title: Constants.evaluation,
-                                              //     medicalRecord: medicalRecord!),
-                                              // const Divider(
-                                              //     color: Constants.dividerAccordion,
-                                              //     thickness: 1),
-                                              SoepAccordion(
-                                                  title: Constants.plan,
-                                                  medicalRecord: medicalRecord),
-                                              // const Divider(
-                                              //     color: Constants.dividerAccordion,
-                                              //     thickness: 1),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          boxShadow: [
-                                            shadowRegular
-                                          ],
-                                        ),
-                                        child: Card(
-                                          margin: const EdgeInsets.symmetric(vertical: 4),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(0),
-                                          ),
-                                          elevation: 0,
-                                          color: ConstantsV2.lightest,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                padding: const EdgeInsets.all(8),
-                                                child: Row(
-                                                  children: [
-                                                    SvgPicture.asset(
-                                                      'assets/icon/pill.svg',
-                                                      height: 12,
-                                                      width: 12,
-                                                    ),
-                                                    Text(
-                                                        'Receta',
-                                                        style: boldoCardHeadingTextStyle.copyWith(
-                                                            color: ConstantsV2.activeText,
-                                                            fontSize: 14
-                                                        )
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              medicalRecord?.prescription != null
-                                                  ? medicalRecord!.prescription!.length > 0
-                                                  ? ListView.builder(
-                                                  scrollDirection: Axis.vertical,
-                                                  shrinkWrap: true,
-                                                  itemCount: medicalRecord!.prescription!.length > 3 ? 3 : medicalRecord!.prescription!.length,
-                                                  itemBuilder: (BuildContext context, int index) {
-                                                    return ShowPrescription(
-                                                        context, medicalRecord!.prescription![index]
-                                                    );
-                                                  }
-                                              )
-                                                  : Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  'No posee medicamentos recetados',
-                                                  style: boldoCorpMediumTextStyle.copyWith(
-                                                      color: ConstantsV2.darkBlue),
-                                                ),
-                                              )
-                                                  : Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  'No posee medicamentos recetados',
-                                                  style: boldoCorpMediumTextStyle.copyWith(
-                                                      color: ConstantsV2.darkBlue),
-                                                ),
-                                              ),
-                                              medicalRecord?.prescription != null
-                                                  ? medicalRecord!.prescription!.length > 0
-                                                  ? Row(
-                                                  mainAxisAlignment: MainAxisAlignment.end,
-                                                  children:[
-                                                    Container(
-                                                      child: GestureDetector(
-                                                        onTap: medicalRecord!.prescription!.length > 0
-                                                            ? () async {
-                                                          await Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder: (context) => PrescriptionRecordScreen(
-                                                                    medicalRecordId: medicalRecord?.appointmentId ?? '')),
-                                                          );
-                                                          BlocProvider.of<PrescriptionBloc>(context)
-                                                              .add(InitialPrescriptionEvent());
-                                                        }
-                                                            : null,
-                                                        child: Card(
-                                                            margin: EdgeInsets.zero,
-                                                            clipBehavior: Clip.antiAlias,
-                                                            elevation: 0,
-                                                            shape: const RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.only(
-                                                                  topLeft: Radius.circular(5)),
-                                                            ),
-                                                            color: ConstantsV2.orange.withOpacity(0.10),
-                                                            child: Container(
-                                                              padding: const EdgeInsets.symmetric(
-                                                                  horizontal: 15, vertical: 7),
-                                                              child: Text(
-                                                                "ver receta",
-                                                                style: boldoTitleRegularTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
-                                                              ),
-                                                            )
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ]
-                                              )
-                                                  : Container()
-                                                  : Container(),
-
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          boxShadow: [
-                                            shadowRegular
-                                          ],
-                                        ),
-                                        child: Card(
-                                          margin: const EdgeInsets.symmetric(vertical: 4),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(0),
-                                          ),
-                                          elevation: 0,
-                                          color: ConstantsV2.lightest,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                padding: const EdgeInsets.all(8),
-                                                child: Row(
-                                                  children: [
-                                                    SvgPicture.asset(
-                                                      'assets/icon/test-tube 1.svg',
-                                                      height: 12,
-                                                      width: 12,
-                                                      color: const Color.fromRGBO(54, 79, 107, 1),
-                                                    ),
-                                                    Text(
-                                                        'Órdenes de estudio',
-                                                        style: boldoCardHeadingTextStyle.copyWith(
-                                                            color: ConstantsV2.activeText,
-                                                            fontSize: 14
-                                                        )
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              ListView.builder(
-                                                  scrollDirection: Axis.vertical,
-                                                  shrinkWrap: true,
-                                                  itemCount: medicalRecord?.serviceRequests!.length,
-                                                  itemBuilder: (BuildContext context, int index) {
-                                                    return ShowStudy(
-                                                        context, medicalRecord?.serviceRequests![index] ??  ServiceRequest());
-                                                  }
-                                              ),
-                                              medicalRecord?.serviceRequests != null
-                                                  ? medicalRecord!.serviceRequests!.length > 0
-                                                  ? Container()
-                                                  : Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  'No posee órdenes de estudios',
-                                                  style: boldoCorpMediumTextStyle.copyWith(
-                                                      color: ConstantsV2.darkBlue),
-                                                ),
-                                              )
-                                                  : Container(),
-                                              medicalRecord?.serviceRequests != null
-                                              // show button to go at the order screen if
-                                              // contains elements and is not coming
-                                              // from a study order screen
-                                                  ? medicalRecord!.serviceRequests!.length > 0 && !widget.fromOrderStudy
-                                                  ? Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                children: [
-                                                  Container(
-                                                    child: GestureDetector(
-                                                      onTap: (){
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  StudyOrderScreen(callFromHome: false, encounterId: medicalRecord?.id?? "0")
-                                                          ),
-                                                        );
-                                                      },
-                                                      child: Card(
-                                                          margin: EdgeInsets.zero,
-                                                          clipBehavior: Clip.antiAlias,
-                                                          elevation: 0,
-                                                          shape: const RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.only(
-                                                                topLeft: Radius.circular(5)),
-                                                          ),
-                                                          color: ConstantsV2.orange.withOpacity(0.10),
-                                                          child: Container(
-                                                            padding: const EdgeInsets.symmetric(
-                                                                horizontal: 15, vertical: 7),
-                                                            child: Text(
-                                                              "ver órdenes",
-                                                              style: boldoTitleRegularTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
-                                                            ),
-                                                          )),
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                                  : Container()
-                                                  : Container(),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
+                                      notesBox(),
+                                      medicationBox(),
+                                      studyOrderBox(),
                                     ],
                                   ),
                                   if(widget.appointment.status == 'upcoming')
-                                  Container(
-                                      margin: const EdgeInsets.symmetric(vertical: 4),
-                                      child: Column(
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () async {
-                                              var result = await cancelAppointment();
-                                              if (result == 'cancel') {
-                                                try{
-                                                  final response = await dio.post(
-                                                      !(prefs.getBool(isFamily)?? false) ?
-                                                      "/profile/patient/appointments/cancel/${widget.appointment.id}"
-                                                          : "/profile/caretaker/appointments/cancel/${widget.appointment.id}");
-                                                  if (response.statusCode == 200) {
-                                                    setState(() {
-                                                      widget.appointment.status="cancelled";
-                                                    });
-                                                    BlocProvider.of<HomeBloc>(context).add(ReloadHome());
-                                                    Navigator.of(context).popUntil(ModalRoute.withName('/home'));
-                                                  }
-                                                } on DioError catch(exception, stackTrace){
-                                                  await Sentry.captureMessage(
-                                                    exception.toString(),
-                                                    params: [
-                                                      {
-                                                        "path": exception.requestOptions.path,
-                                                        "data": exception.requestOptions.data,
-                                                        "patient": prefs.getString("userId"),
-                                                        "dependentId": patient.id,
-                                                        "responseError": exception.response,
-                                                        'access_token': await storage.read(key: 'access_token')
-                                                      },
-                                                      stackTrace
-                                                    ],
-                                                  );
-                                                  emitSnackBar(
-                                                      context: context,
-                                                      text: 'No se pudo cancelar la cita',
-                                                      status: ActionStatus.Fail
-                                                  );
-                                                }catch (exception, stackTrace) {
-                                                  await Sentry.captureMessage(
-                                                      exception.toString(),
-                                                      params: [
-                                                        {
-                                                          'patient': prefs.getString("userId"),
-                                                          'access_token': await storage.read(key: 'access_token')
-                                                        },
-                                                        stackTrace
-                                                      ]
-                                                  );
-                                                  emitSnackBar(
-                                                      context: context,
-                                                      text: 'No se pudo cancelar la cita',
-                                                      status: ActionStatus.Fail
-                                                  );
-                                                }
-                                              }
-                                            },
-                                            child: Container(
-                                              padding: const EdgeInsets.all(8),
-                                              child: Row(
-                                                children: [
-                                                  SvgPicture.asset(
-                                                    'assets/icon/familyTrash.svg',
-                                                    height: 24,
-                                                    width: 24,
-                                                    color: ConstantsV2.secondaryRegular,
-                                                  ),
-                                                  const SizedBox(width: 16,),
-                                                  Text(
-                                                      "Cancelar cita",
-                                                      style: boldoCardHeadingTextStyle.copyWith(
-                                                          color: ConstantsV2.secondaryRegular,
-                                                          fontSize: 14
-                                                      )
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                    cancelAppointmentBox(),
                                 ],
                               ),
                             ),
@@ -695,6 +335,405 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
     );
   }
 
+  Widget notesBox(){
+    return
+      Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            shadowRegular
+          ],
+        ),
+        child: Card(
+          margin: const EdgeInsets.symmetric(vertical: 4),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
+          ),
+          elevation: 0,
+          color: ConstantsV2.lightest,
+          child: Column(
+            crossAxisAlignment:
+            CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icon/clipboard.svg',
+                      height: 12,
+                      width: 12,
+                    ),
+                    Text(
+                        'Notas',
+                        style: boldoCardHeadingTextStyle.copyWith(
+                            color: ConstantsV2.activeText,
+                            fontSize: 14
+                        )
+                    )
+                  ],
+                ),
+              ),
+              SoepAccordion(
+                  title: Constants.plan,
+                  medicalRecord: medicalRecord),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    child: GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  AnnotationsDetails(
+                                    appointment: widget.appointment,
+                                    medicalRecord: medicalRecord,
+                                  )
+                          ),
+                        );
+                      },
+                      child: Card(
+                          margin: EdgeInsets.zero,
+                          clipBehavior: Clip.antiAlias,
+                          elevation: 0,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(5)),
+                          ),
+                          color: ConstantsV2.orange.withOpacity(0.10),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 7),
+                            child: Text(
+                              "explorar notas",
+                              style: BigButton.copyWith(color: ConstantsV2.darkBlue),
+                            ),
+                          )),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      );
+  }
+
+  Widget medicationBox(){
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          shadowRegular
+        ],
+      ),
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0),
+        ),
+        elevation: 0,
+        color: ConstantsV2.lightest,
+        child: Column(
+          crossAxisAlignment:
+          CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  SvgPicture.asset(
+                    'assets/icon/pill.svg',
+                    height: 12,
+                    width: 12,
+                  ),
+                  Text(
+                      'Receta',
+                      style: boldoCardHeadingTextStyle.copyWith(
+                          color: ConstantsV2.activeText,
+                          fontSize: 14
+                      )
+                  ),
+                ],
+              ),
+            ),
+            medicalRecord?.prescription != null
+                ? medicalRecord!.prescription!.length > 0
+                ? ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: medicalRecord!.prescription!.length > 3 ? 3 : medicalRecord!.prescription!.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ShowPrescription(
+                      context, medicalRecord!.prescription![index]
+                  );
+                }
+            )
+                : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'No posee medicamentos recetados',
+                style: boldoCorpMediumTextStyle.copyWith(
+                    color: ConstantsV2.darkBlue),
+              ),
+            )
+                : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'No posee medicamentos recetados',
+                style: boldoCorpMediumTextStyle.copyWith(
+                    color: ConstantsV2.darkBlue),
+              ),
+            ),
+            medicalRecord?.prescription != null
+                ? medicalRecord!.prescription!.length > 0
+                ? Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children:[
+                  Container(
+                    child: GestureDetector(
+                      onTap: medicalRecord!.prescription!.length > 0
+                          ? () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PrescriptionRecordScreen(
+                                  medicalRecordId: medicalRecord?.appointmentId ?? '')),
+                        );
+                        BlocProvider.of<PrescriptionBloc>(context)
+                            .add(InitialPrescriptionEvent());
+                      }
+                          : null,
+                      child: Card(
+                          margin: EdgeInsets.zero,
+                          clipBehavior: Clip.antiAlias,
+                          elevation: 0,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(5)),
+                          ),
+                          color: ConstantsV2.orange.withOpacity(0.10),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 7),
+                            child: Text(
+                              "ver receta",
+                              style: BigButton.copyWith(color: ConstantsV2.darkBlue),
+                            ),
+                          )
+                      ),
+                    ),
+                  )
+                ]
+            )
+                : Container()
+                : Container(),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  Widget studyOrderBox(){
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [
+          shadowRegular
+        ],
+      ),
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0),
+        ),
+        elevation: 0,
+        color: ConstantsV2.lightest,
+        child: Column(
+          crossAxisAlignment:
+          CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  SvgPicture.asset(
+                    'assets/icon/test-tube 1.svg',
+                    height: 12,
+                    width: 12,
+                    color: const Color.fromRGBO(54, 79, 107, 1),
+                  ),
+                  Text(
+                      'Órdenes de estudio',
+                      style: boldoCardHeadingTextStyle.copyWith(
+                          color: ConstantsV2.activeText,
+                          fontSize: 14
+                      )
+                  ),
+                ],
+              ),
+            ),
+            ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: medicalRecord?.serviceRequests!.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ShowStudy(
+                      context, medicalRecord?.serviceRequests![index] ??  ServiceRequest());
+                }
+            ),
+            medicalRecord?.serviceRequests != null
+                ? medicalRecord!.serviceRequests!.length > 0
+                ? Container()
+                : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'No posee órdenes de estudios',
+                style: boldoCorpMediumTextStyle.copyWith(
+                    color: ConstantsV2.darkBlue),
+              ),
+            )
+                : Container(),
+            medicalRecord?.serviceRequests != null
+            // show button to go at the order screen if
+            // contains elements and is not coming
+            // from a study order screen
+                ? medicalRecord!.serviceRequests!.length > 0 && !widget.fromOrderStudy
+                ? Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  child: GestureDetector(
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                StudyOrderScreen(callFromHome: false, encounterId: medicalRecord?.id?? "0")
+                        ),
+                      );
+                    },
+                    child: Card(
+                        margin: EdgeInsets.zero,
+                        clipBehavior: Clip.antiAlias,
+                        elevation: 0,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(5)),
+                        ),
+                        color: ConstantsV2.orange.withOpacity(0.10),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 7),
+                          child: Text(
+                            "ver órdenes",
+                            style: BigButton.copyWith(color: ConstantsV2.darkBlue),
+                          ),
+                        )),
+                  ),
+                ),
+              ],
+            )
+                : Container()
+                : Container(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void cancelAppointmentAction() async {
+    try{
+      final response = await dio.post(
+          !(prefs.getBool(isFamily)?? false) ?
+          "/profile/patient/appointments/cancel/${widget.appointment.id}"
+              : "/profile/caretaker/appointments/cancel/${widget.appointment.id}");
+      if (response.statusCode == 200) {
+        setState(() {
+          widget.appointment.status="cancelled";
+        });
+        BlocProvider.of<HomeBloc>(context).add(ReloadHome());
+        Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+      }
+    } on DioError catch(exception, stackTrace){
+      await Sentry.captureMessage(
+        exception.toString(),
+        params: [
+          {
+            "path": exception.requestOptions.path,
+            "data": exception.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "dependentId": patient.id,
+            "responseError": exception.response,
+            'access_token': await storage.read(key: 'access_token')
+          },
+          stackTrace
+        ],
+      );
+      emitSnackBar(
+          context: context,
+          text: 'No se pudo cancelar la cita',
+          status: ActionStatus.Fail
+      );
+    }catch (exception, stackTrace) {
+      await Sentry.captureMessage(
+          exception.toString(),
+          params: [
+            {
+              'patient': prefs.getString("userId"),
+              'access_token': await storage.read(key: 'access_token')
+            },
+            stackTrace
+          ]
+      );
+      emitSnackBar(
+          context: context,
+          text: 'No se pudo cancelar la cita',
+          status: ActionStatus.Fail
+      );
+    }
+  }
+
+  Widget cancelAppointmentBox(){
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: () async {
+              var result = await cancelAppointment();
+              if (result == 'cancel') {
+                cancelAppointmentAction();
+              }
+            },
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  SvgPicture.asset(
+                    'assets/icon/familyTrash.svg',
+                    height: 24,
+                    width: 24,
+                    color: ConstantsV2.secondaryRegular,
+                  ),
+                  const SizedBox(width: 16,),
+                  Text(
+                      "Cancelar cita",
+                      style: boldoCardHeadingTextStyle.copyWith(
+                          color: ConstantsV2.secondaryRegular,
+                          fontSize: 14
+                      )
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
 }
 

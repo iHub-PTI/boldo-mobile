@@ -1,3 +1,4 @@
+import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/News.dart';
@@ -66,6 +67,32 @@ class HomeNewsBloc extends Bloc<HomeNewsEvent, HomeNewsState> {
           !["closed", "locked", "cancelled"].contains(element.status))
               .toList();
 
+          // date limit to show Appointment before this date
+          // day + 1 in applied for appointments with startDate dd/mm/aaaa hh:nn
+          // and the filter is dd/mm/aaaa 00:00, the limit date is under startDate
+          // by a few hours, but is at the same date, in this case the limit must
+          // be dd+1/mm/aaaa 00:00 to filter before or equal to dd/mm/aaaa
+          DateTime timeLimitSup = DateTime(
+            DateTime.now().year,
+            DateTime.now().month + timeToShowAppointmentsOnHoldInMonth,
+            DateTime.now().day + 1,
+          );
+
+          // Clear appointments where appointment before the timeLimitSup
+          appointments = appointments
+              .where((element) {
+
+                DateTime appointmentDate = DateTime(
+                  DateTime.parse(element.start!).toLocal().year,
+                  DateTime.parse(element.start!).toLocal().month,
+                  DateTime.parse(element.start!).toLocal().day,
+                );
+
+                return appointmentDate.isBefore(timeLimitSup);
+
+          }
+          ).toList();
+
           // add appointments to news
           news = [...news, ...appointments];
         }
@@ -82,6 +109,19 @@ class HomeNewsBloc extends Bloc<HomeNewsEvent, HomeNewsState> {
           studiesOrders.sort((a, b) =>
               DateTime.parse(b.authoredDate?? DateTime.now().toString())
                   .compareTo(DateTime.parse(a.authoredDate?? DateTime.now().toString())));
+
+          // date limit to show StudyOrder after this date
+          DateTime timeLimitInf = DateTime(
+            DateTime.now().year,
+            DateTime.now().month - timeToShowStudyOrderInMonth,
+            DateTime.now().day,
+          );
+
+          // Clear appointments where appointment after the timeLimitInf
+          studiesOrders = studiesOrders
+              .where((element)
+          => DateTime.parse(element.authoredDate!).toLocal().isAfter(timeLimitInf)
+          ).toList();
 
           // add diagnosticReport to news
           news = [...news, ...studiesOrders];

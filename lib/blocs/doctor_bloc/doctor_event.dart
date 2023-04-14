@@ -5,8 +5,8 @@ abstract class DoctorEvent {}
 
 class GetAvailability extends DoctorEvent {
   final String id;
-  final String startDate;
-  final String endDate;
+  final DateTime startDate;
+  final DateTime endDate;
   final List<Organization?>? organizations;
   GetAvailability({
     required this.id,
@@ -14,9 +14,4 @@ class GetAvailability extends DoctorEvent {
     required this.endDate,
     required this.organizations,
   });
-}
-
-class GetDoctor extends DoctorEvent {
-  final String id;
-  GetDoctor({required this.id});
 }

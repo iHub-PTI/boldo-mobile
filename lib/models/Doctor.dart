@@ -183,12 +183,14 @@ class OrganizationWithAvailability{
 
 class OrganizationWithAvailabilities{
 
-  String? idOrganization;
+  String? idOrganization,
+  nameOrganization;
   NextAvailability? nextAvailability;
   List<NextAvailability?> availabilities = [];
 
   OrganizationWithAvailabilities.fromJson(Map<String, dynamic> json) {
     idOrganization = json['idOrganization'];
+    nameOrganization = json['nameOrganization'];
     if (json['nextAvailability'] != null) {
       nextAvailability = NextAvailability.fromJson(json["nextAvailability"]);
     }

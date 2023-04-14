@@ -13,7 +13,7 @@ part 'appointmentState.dart';
 
 class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
   final UserRepository _patientRepository = UserRepository();
-  DateTime _initialDate = DateTime.now().subtract(const Duration(days: 30));
+  DateTime _initialDate = DateTime(DateTime.now().year-1,DateTime.now().month,DateTime.now().day);
   DateTime? _finalDate = DateTime.now();
 
   // remote type

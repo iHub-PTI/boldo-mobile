@@ -1,6 +1,7 @@
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/network/user_repository.dart';
+import 'package:boldo/utils/organization_helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,28 +39,10 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
         }else{
           late List<OrganizationWithAvailabilities> nextAvailability = [];
           _post.foldRight(NextAvailability, (a, previous) => nextAvailability = a);
-          emit(AvailabilitiesObtained(availabilities: nextAvailability));
-          emit(Success());
-        }
-      }
-      if(event is GetDoctor) {
-        emit(Loading());
-        var _post;
-        await Task(() =>
-        _patientRepository.getDoctor(id: event.id)!)
-            .attempt()
-            .run()
-            .then((value) {
-          _post = value;
-        }
-        );
-        var response;
-        if (_post.isLeft()) {
-          _post.leftMap((l) => response = l.message);
-          emit(Failed(response: response));
 
-        }else{
-          emit(Success());
+          nextAvailability.sort(orderByAvailabilities);
+
+          emit(AvailabilitiesObtained(availabilities: nextAvailability));
         }
       }
     }
