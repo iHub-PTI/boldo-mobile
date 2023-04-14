@@ -84,22 +84,22 @@ int daysBetween(DateTime from, DateTime to) {
 /// if [showDateFormat] is true and [days] > 7 return a date in the format dd/mm/aaaa calculate [DateTime.now] - [days]
 ///
 /// if [showDateFormat] is false and [days] > 7 return 'hace [days] días'
-String passedDays(int days, {bool showDateFormat = true}) {
+String passedDays(int days, {bool showDateFormat = true, bool showPrefixText = false}) {
   if(days <0) {
     return 'día inválido';
   }else if( days == 0){
-    return 'hoy';
+    return '${showPrefixText? 'Realizado ': ''}hoy';
   }else if( days == 1){
-    return 'ayer';
+    return '${showPrefixText? 'Realizado ': ''}ayer';
   }else if( days <= 7){
-    return 'hace $days días';
+    return '${showPrefixText? 'Realizado ': ''}hace $days días';
   }else{
     if(showDateFormat) {
       var outputFormat = DateFormat('dd/MM/yyyy');
-      return outputFormat.format(DateTime.now().subtract(Duration(days: days)))
-          .toString();
+      return "${showPrefixText? 'Realizado el ': ''}${outputFormat.format(DateTime.now().subtract(Duration(days: days)))
+          .toString()}";
     }
-    return 'hace $days días';
+    return '${showPrefixText? 'Realizado ': ''}hace $days días';
   }
 }
 
