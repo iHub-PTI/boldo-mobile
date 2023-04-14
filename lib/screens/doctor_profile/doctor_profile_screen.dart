@@ -219,61 +219,64 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                               children: [
                                 BlocBuilder<last_appointment_bloc.LastAppointmentBloc, last_appointment_bloc.LastAppointmentState>(
                                   builder: (context, state){
-                                    if(state is last_appointment_bloc.LastAppointmentLoadedState){
-                                      return Card(
-                                        color: ConstantsV2.grayLightAndClear,
-                                        shape: RoundedRectangleBorder(
-                                          side: const BorderSide(color: ConstantsV2.grayLightest, width: 1),
-                                          borderRadius: BorderRadius.circular(16),
-                                        ),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              ImageViewTypeForm(
-                                                height: 44,
-                                                width: 44,
-                                                border: true,
-                                                borderColor: ConstantsV2.secondaryRegular,
-                                                gender: lastAppointment?.patient?.gender,
-                                                url: lastAppointment?.patient?.photoUrl,
-                                              ),
-                                              if(lastAppointment?.patient?.id == prefs.getString("userId"))
-                                                Text(
-                                                  "consultaste",
-                                                  style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText),
-                                                )
-                                              else
-                                                RichText(
-                                                  text: TextSpan(
-                                                    children: [
-                                                      TextSpan(
-                                                          text: lastAppointment?.patient?.givenName?.split(" ")[0]?? "Desconocido",
-                                                          style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText)
-                                                      ),
-                                                      TextSpan(
-                                                          text: " consultó",
-                                                          style: bodyLarge.copyWith(color: ConstantsV2.activeText)
-                                                      ),
-                                                    ]
+                                    return AnimatedOpacity(
+                                      duration: const Duration(milliseconds: 1000),
+                                      opacity: state is last_appointment_bloc.LastAppointmentLoadedState && lastAppointment != null? 1.0: 0.0, // 1 is to get visible
+                                      child: Visibility(
+                                        visible: lastAppointment != null,
+                                        child: Card(
+                                          color: ConstantsV2.grayLightAndClear,
+                                          shape: RoundedRectangleBorder(
+                                            side: const BorderSide(color: ConstantsV2.grayLightest, width: 1),
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(8),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                ImageViewTypeForm(
+                                                  height: 44,
+                                                  width: 44,
+                                                  border: true,
+                                                  borderColor: ConstantsV2.secondaryRegular,
+                                                  gender: lastAppointment?.patient?.gender,
+                                                  url: lastAppointment?.patient?.photoUrl,
+                                                ),
+                                                if(lastAppointment?.patient?.id == prefs.getString("userId"))
+                                                  Text(
+                                                    "consultaste",
+                                                    style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText),
+                                                  )
+                                                else
+                                                  RichText(
+                                                    text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                              text: lastAppointment?.patient?.givenName?.split(" ")[0]?? "Desconocido",
+                                                              style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText)
+                                                          ),
+                                                          TextSpan(
+                                                              text: " consultó",
+                                                              style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText)
+                                                          ),
+                                                        ]
+                                                    ),
                                                   ),
-                                              ),
-                                              Text(
-                                                passedDays(daysBetween(DateTime.parse(
-                                                    lastAppointment?.start?? DateTime.now()
-                                                        .toString()),
-                                                    DateTime.now()
-                                                )),
-                                                style: bodyLarge.copyWith(color: ConstantsV2.activeText)
-                                              )
-                                            ],
+                                                Text(
+                                                    passedDays(daysBetween(DateTime.parse(
+                                                        lastAppointment?.start?? DateTime.now()
+                                                            .toString()),
+                                                        DateTime.now()
+                                                    )),
+                                                    style: bodyP.copyWith(color: ConstantsV2.activeText)
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      );
-                                    }else{
-                                      return Container();
-                                    }
+                                      ),
+                                    );
                                   }
                                 ),
                                 if(widget.showAvailability)

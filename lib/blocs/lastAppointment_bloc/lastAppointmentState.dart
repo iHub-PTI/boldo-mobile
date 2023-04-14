@@ -13,7 +13,7 @@ class Failed extends LastAppointmentState {
 }
 
 class LastAppointmentLoadedState extends LastAppointmentState {
-  final Appointment appointment;
+  final Appointment? appointment;
   LastAppointmentLoadedState({required this.appointment});
 }
 

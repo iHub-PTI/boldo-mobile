@@ -35,7 +35,7 @@ class LastAppointmentBloc extends Bloc<LastAppointmentEvent, LastAppointmentStat
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
         } else {
-          late Appointment appointment;
+          late Appointment? appointment;
           _post.foldRight(
               Appointment, (a, previous) => appointment = a);
           emit(LastAppointmentLoadedState(appointment: appointment));

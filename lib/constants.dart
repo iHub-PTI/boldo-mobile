@@ -139,8 +139,13 @@ TextStyle bodyLarge = GoogleFonts.montserrat().copyWith(
   fontSize: 14,
 );
 
+TextStyle bodyP = GoogleFonts.montserrat().copyWith(
+  fontWeight: FontWeight.w300,
+  fontSize: 10,
+);
+
 TextStyle bodyLargeBlack = GoogleFonts.montserrat().copyWith(
-  fontWeight: FontWeight.w700,
+  fontWeight: FontWeight.w500,
   fontSize: 14,
 );
 
