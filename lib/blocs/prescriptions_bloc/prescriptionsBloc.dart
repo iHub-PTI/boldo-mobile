@@ -15,7 +15,7 @@ part 'prescriptionsState.dart';
 class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
   final UserRepository _patientRepository = UserRepository();
   DateTime _initialDate = DateTime(DateTime.now().year-1,DateTime.now().month,DateTime.now().day);
-  DateTime? _finalDate;
+  DateTime? _finalDate = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day, 23, 59, 59);
 
   DateTime getInitialDate() => _initialDate;
   DateTime? getFinalDate() => _finalDate;
