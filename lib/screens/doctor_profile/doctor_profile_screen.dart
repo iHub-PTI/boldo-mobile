@@ -1,8 +1,9 @@
 import 'dart:ui';
 
-import 'package:boldo/blocs/user_bloc/patient_bloc.dart'as patientBloc;
-import 'package:boldo/blocs/doctor_bloc/doctor_bloc.dart';
+import 'package:boldo/blocs/lastAppointment_bloc/lastAppointmentBloc.dart' as last_appointment_bloc;
+import 'package:boldo/blocs/doctor_bloc/doctor_bloc.dart' as doctor_bloc;
 import 'package:boldo/main.dart';
+import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
@@ -39,6 +40,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
   final List<String> popupRoutes = <String>["Remoto (on line)", "En persona"];
   List<OrganizationWithAvailabilities> organizationsWithAvailabilites = [];
   bool hasFilter = false;
+  Appointment? lastAppointment;
 
   @override
   void initState() {
@@ -59,36 +61,56 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         ),
       ),
       body: SafeArea(
-        child: BlocProvider<DoctorBloc>(
-          create: (BuildContext context) => DoctorBloc()..add(GetAvailability(
-            id: widget.doctor.id ?? '',
-            startDate: DateTime.now().toUtc(),
-            endDate: DateTime.now().add(const Duration(days: 30))
-                .toUtc(),
-            organizations: Provider
-                .of<DoctorFilterProvider>(context, listen: false)
-                .getOrganizationsApplied
-                .isNotEmpty ? Provider
-                .of<DoctorFilterProvider>(context, listen: false)
-                .getOrganizationsApplied : null,
-          )),
-          child: BlocListener<DoctorBloc, DoctorState>(
-            listener: (context, state){
-              if(state is Failed){
-                emitSnackBar(
-                    context: context,
-                    text: state.response,
-                    status: ActionStatus.Fail
-                );
-              }else if(state is Loading){
-              }else if(state is AvailabilitiesObtained){
-                organizationsWithAvailabilites = state.availabilities;
-                if(organizationsWithAvailabilites.isEmpty)
-                  hasFilter = true;
-
-              }
-            },
-            child: BlocBuilder<DoctorBloc, DoctorState>(
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider<last_appointment_bloc.LastAppointmentBloc>(
+              create: (BuildContext context) => last_appointment_bloc.LastAppointmentBloc()..add(
+                last_appointment_bloc.GetLastAppointment(doctor: widget.doctor),
+              ),
+            ),
+            BlocProvider<doctor_bloc.DoctorBloc>(
+              create: (BuildContext context) => doctor_bloc.DoctorBloc()..add(
+                doctor_bloc.GetAvailability(
+                  id: widget.doctor.id ?? '',
+                  startDate: DateTime.now().toUtc(),
+                  endDate: DateTime.now().add(const Duration(days: 30))
+                      .toUtc(),
+                  organizations: Provider
+                      .of<DoctorFilterProvider>(context, listen: false)
+                      .getOrganizationsApplied
+                      .isNotEmpty ? Provider
+                      .of<DoctorFilterProvider>(context, listen: false)
+                      .getOrganizationsApplied : null,
+                ),
+              ),
+            ),
+          ],
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<doctor_bloc.DoctorBloc, doctor_bloc.DoctorState>(
+                listener: (context, state){
+                  if(state is doctor_bloc.Failed){
+                    emitSnackBar(
+                      context: context,
+                      text: state.response,
+                      status: ActionStatus.Fail
+                    );
+                  }else if(state is doctor_bloc.AvailabilitiesObtained){
+                    organizationsWithAvailabilites = state.availabilities;
+                    if(organizationsWithAvailabilites.isEmpty)
+                      hasFilter = true;
+                  }
+                },
+              ),
+              BlocListener<last_appointment_bloc.LastAppointmentBloc, last_appointment_bloc.LastAppointmentState>(
+                listener: (context, state){
+                  if(state is last_appointment_bloc.LastAppointmentLoadedState){
+                    lastAppointment = state.appointment;
+                  }
+                }
+              )
+            ],
+            child: BlocBuilder<doctor_bloc.DoctorBloc, doctor_bloc.DoctorState>(
                 builder: (context, state) {
                   return Background(
                     hasFilter: hasFilter,
@@ -192,55 +214,122 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                 )
                               ],
                             ),
-                            if(widget.showAvailability)
-                              BlocBuilder<DoctorBloc, DoctorState>(builder: (context, state) {
-                                if(state is AvailabilitiesObtained){
-                                  if(organizationsWithAvailabilites.isNotEmpty)
-                                    return ClipRect(
-                                      child: Container(
-                                        padding: const EdgeInsets.only(bottom: 16),
-                                        decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(15.0),
-                                            topRight: Radius.circular(15.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                BlocBuilder<last_appointment_bloc.LastAppointmentBloc, last_appointment_bloc.LastAppointmentState>(
+                                  builder: (context, state){
+                                    return AnimatedOpacity(
+                                      duration: const Duration(milliseconds: 1000),
+                                      opacity: state is last_appointment_bloc.LastAppointmentLoadedState && lastAppointment != null? 1.0: 0.0, // 1 is to get visible
+                                      child: Visibility(
+                                        visible: lastAppointment != null,
+                                        child: Card(
+                                          color: ConstantsV2.grayLightAndClear,
+                                          shape: RoundedRectangleBorder(
+                                            side: const BorderSide(color: ConstantsV2.grayLightest, width: 1),
+                                            borderRadius: BorderRadius.circular(16),
                                           ),
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomCenter,
-                                            colors: <Color> [
-                                              Colors.black.withOpacity(0),
-                                              const Color(0xA7A7A7).withOpacity(1),
-                                            ],
+                                          child: Container(
+                                            padding: const EdgeInsets.all(8),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                ImageViewTypeForm(
+                                                  height: 44,
+                                                  width: 44,
+                                                  border: true,
+                                                  borderColor: ConstantsV2.secondaryRegular,
+                                                  gender: lastAppointment?.patient?.gender,
+                                                  url: lastAppointment?.patient?.photoUrl,
+                                                ),
+                                                if(lastAppointment?.patient?.id == prefs.getString("userId"))
+                                                  Text(
+                                                    "consultaste",
+                                                    style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText),
+                                                  )
+                                                else
+                                                  RichText(
+                                                    text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                              text: lastAppointment?.patient?.givenName?.split(" ")[0]?? "Desconocido",
+                                                              style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText)
+                                                          ),
+                                                          TextSpan(
+                                                              text: " consultó",
+                                                              style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText)
+                                                          ),
+                                                        ]
+                                                    ),
+                                                  ),
+                                                Text(
+                                                    passedDays(daysBetween(DateTime.parse(
+                                                        lastAppointment?.start?? DateTime.now()
+                                                            .toString()),
+                                                        DateTime.now()
+                                                    )),
+                                                    style: bodyP.copyWith(color: ConstantsV2.activeText)
+                                                )
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                        child: BackdropFilter(
-                                          blendMode: BlendMode.src,
-                                          filter: ImageFilter.blur(
-                                              sigmaX: 5,
-                                              sigmaY: 5
-                                          ),
-                                          child: organizationsWithAvailabilites.isNotEmpty ?
-                                          _organizationAvailabilities(context, 0) :
-                                          null
                                         ),
                                       ),
                                     );
-                                  else
-                                    return familyListWithAccess();
-                                }else if(state is Loading){
-                                  return Container(
-                                      child: const Center(
-                                          child: CircularProgressIndicator(
-                                            valueColor:
-                                            AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                                            backgroundColor: Constants.primaryColor600,
+                                  }
+                                ),
+                                if(widget.showAvailability)
+                                  BlocBuilder<doctor_bloc.DoctorBloc, doctor_bloc.DoctorState>(builder: (context, state) {
+                                    if(state is doctor_bloc.AvailabilitiesObtained){
+                                      if(organizationsWithAvailabilites.isNotEmpty)
+                                        return ClipRect(
+                                          child: Container(
+                                            padding: const EdgeInsets.only(bottom: 16),
+                                            decoration: BoxDecoration(
+                                              borderRadius: const BorderRadius.only(
+                                                topLeft: Radius.circular(15.0),
+                                                topRight: Radius.circular(15.0),
+                                              ),
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomCenter,
+                                                colors: <Color> [
+                                                  Colors.black.withOpacity(0),
+                                                  const Color(0xA7A7A7).withOpacity(1),
+                                                ],
+                                              ),
+                                            ),
+                                            child: BackdropFilter(
+                                                blendMode: BlendMode.src,
+                                                filter: ImageFilter.blur(
+                                                    sigmaX: 5,
+                                                    sigmaY: 5
+                                                ),
+                                                child: organizationsWithAvailabilites.isNotEmpty ?
+                                                _organizationAvailabilities(context, 0) :
+                                                null
+                                            ),
+                                          ),
+                                        );
+                                      else
+                                        return familyListWithAccess();
+                                    }else if(state is doctor_bloc.Loading){
+                                      return Container(
+                                          child: const Center(
+                                              child: CircularProgressIndicator(
+                                                valueColor:
+                                                AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                                                backgroundColor: Constants.primaryColor600,
+                                              )
                                           )
-                                      )
-                                  );
-                                }else{
-                                  return Container();
-                                }
-                              }),
+                                      );
+                                    }else{
+                                      return Container();
+                                    }
+                                  }),
+                              ],
+                            ),
                           ],
                         ),
                       ),

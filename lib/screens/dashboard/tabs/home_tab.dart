@@ -13,6 +13,7 @@ import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
 import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/organizations/memberships_screen.dart';
 import 'package:boldo/screens/doctor_search/doctors_available.dart';
+import 'package:boldo/screens/passport/passport.dart';
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/go_to_top.dart';
@@ -109,8 +110,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       alignment: Alignment.bottomCenter,
       index: 3,
       title: 'Pasaporte de salud',
-      appear: false,
-      page: DoctorsTab(),
+      appear: true,
+      page: PassportTab(),
     ),
   ];
 

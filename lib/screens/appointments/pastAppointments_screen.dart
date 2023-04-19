@@ -799,17 +799,9 @@ class PastAppointmentCard extends StatelessWidget {
                   MainAxisAlignment
                       .spaceBetween,
                   children: [
-                    // Text(
-                    //   "Consultaste con",
-                    //   style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.darkBlue),
-                    // ),
                     const Spacer(),
                     Text(
-                      dateBetween(
-                        date: DateTime.parse(
-                          appointment.start!
-                        ).toLocal()
-                      )?? 'Sin fecha',
+                      passedDays(daysDifference, showPrefixText: true),
                       style: boldoCorpSmallTextStyle
                           .copyWith(
                           color: ConstantsV2

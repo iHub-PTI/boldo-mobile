@@ -1,0 +1,25 @@
+{
+  "birthdate": "1999-01-13",
+  "diseaseCode": "Influenza",
+  "documentId": "123432",
+  "givenName": "JUAN ",
+  "lastName": "PEREZ",
+  "vaccineApplicationList": [
+      {
+          "diseaseCode": "Influenza",
+          "dose": "Dosis anual",
+          "lotNumber": "FL4222",
+          "vaccineApplicationDate": "2019-06-18",
+          "vaccineName": "IIV4"
+      },
+      {
+          "diseaseCode": "Influenza",
+          "dose": "Dosis anual",
+          "lotNumber": "30125BA",
+          "vaccineApplicationDate": "2020-11-21",
+          "vaccineName": "IIV4"
+      }
+     
+  ],
+  "version": 3
+}

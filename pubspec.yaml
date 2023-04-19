@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 
-version: 2.5.0+119
+version: 2.6.0+121
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -150,6 +150,7 @@ flutter:
     - assets/fonts/
     - assets/fake_studies_orders/
     - assets/ca/
+    - assets/fake_jsons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

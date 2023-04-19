@@ -52,6 +52,8 @@ class Constants {
   static const Color otherColor100 = Color(0xffDF6D51);
   static const Color otherColor200 = Color(0xffEE983F);
   static const Color otherColor300 = Color(0xffC53030);
+  static const Color otherColor400 = Color(0xffEB8B76);
+  static const Color otherColor800 = Color(0xffdaebed);
 
   //Accordion background color
   static const Color accordionbg = Color(0xfff3FAF7);
@@ -65,6 +67,7 @@ class Constants {
 }
 
 const String genericError = "Algo salió mal, vuelve a intentarlo más tarde";
+const String chooseAll = "Seleccionar todos";
 
 // Text Style
 const boldoHeadingTextStyle = TextStyle(
@@ -131,9 +134,19 @@ const boldoSubTextMediumStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
-TextStyle bodyLarge = GoogleFonts.workSans().copyWith(
-  fontWeight: FontWeight.w400,
-  fontSize: 16,
+TextStyle bodyLarge = GoogleFonts.montserrat().copyWith(
+  fontWeight: FontWeight.w300,
+  fontSize: 14,
+);
+
+TextStyle bodyP = GoogleFonts.montserrat().copyWith(
+  fontWeight: FontWeight.w300,
+  fontSize: 10,
+);
+
+TextStyle bodyLargeBlack = GoogleFonts.montserrat().copyWith(
+  fontWeight: FontWeight.w500,
+  fontSize: 14,
 );
 
 TextStyle bodySmallRegular = GoogleFonts.montserrat().copyWith(

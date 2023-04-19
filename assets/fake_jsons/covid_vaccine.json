@@ -1,0 +1,31 @@
+{
+  "birthdate": "1999-01-13",
+  "diseaseCode": "COVID-19",
+  "documentId": "123432",
+  "givenName": "JUAN ",
+  "lastName": "PEREZ",
+  "vaccineApplicationList": [
+      {
+          "diseaseCode": "COVID-19",
+          "dose": "1° Refuerzo",
+          "lotNumber": "FL4222",
+          "vaccineApplicationDate": "2022-01-04",
+          "vaccineName": "Sputnik"
+      },
+      {
+          "diseaseCode": "COVID-19",
+          "dose": "2",
+          "lotNumber": "30125BA",
+          "vaccineApplicationDate": "2021-08-11",
+          "vaccineName": "PFIZER - COVID-19"
+      },
+      {
+          "diseaseCode": "COVID-19",
+          "dose": "1",
+          "lotNumber": "EY0584",
+          "vaccineApplicationDate": "2021-07-21",
+          "vaccineName": "PFIZER - COVID-19"
+      }
+  ],
+  "version": 3
+}
