@@ -135,7 +135,13 @@ class StudiesOrdersRepository {
           stackTrace
         ],
       );
-      throw Failure(exception.response?.data['message']);
+      // try to show backend error message
+      try{
+        String errorMsg = exception.response?.data['message'];
+        throw Failure(errorMsg);
+      }catch(exception){
+        throw Failure(genericError);
+      }
     } on Failure catch (exception, stackTrace) {
       await Sentry.captureMessage(
           exception.toString(),
@@ -160,7 +166,7 @@ class StudiesOrdersRepository {
             stackTrace
           ]
       );
-      throw Failure('Ocurrio un error indesperado');
+      throw Failure(genericError);
     }
   }
 
@@ -190,7 +196,13 @@ class StudiesOrdersRepository {
           stackTrace
         ],
       );
-      throw Failure(exception.response?.data['message']);
+      // try to show backend error message
+      try{
+        String errorMsg = exception.response?.data['message'];
+        throw Failure(errorMsg);
+      }catch(exception){
+        throw Failure(genericError);
+      }
     } catch (exception, stackTrace) {
       await Sentry.captureMessage(
           exception.toString(),

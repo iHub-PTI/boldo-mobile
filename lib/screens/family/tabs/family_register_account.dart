@@ -132,7 +132,7 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                     emitSnackBar(
                         context: context,
                         text: state.response,
-                        status: ActionStatus.Success
+                        status: ActionStatus.Fail
                     );
                   }
                   if (state is NavigateNextScreen) {
