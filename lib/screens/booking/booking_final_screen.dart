@@ -66,6 +66,13 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
   }
 
   @override
+  void dispose(){
+    // stop the timer in charge of updating circular progress
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
