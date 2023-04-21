@@ -39,12 +39,13 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
 
   bool appear = false;
   int time = 0;
+  Timer? _timer;
 
   int secondsToRedirectHome = 30;
 
   @override
   void initState() {
-    Timer.periodic(
+    _timer = Timer.periodic(
         const Duration(seconds: 1),
           (timer) {
 
@@ -62,6 +63,13 @@ class _BookingFinalScreenState extends State<BookingFinalScreen> {
         }
     );
     super.initState();
+  }
+
+  @override
+  void dispose(){
+    // stop the timer in charge of updating circular progress
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
