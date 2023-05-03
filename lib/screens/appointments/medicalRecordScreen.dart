@@ -205,7 +205,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                                   formatDate(
                                                     DateTime.parse(widget.appointment.start?? DateTime.now().toString())
                                                         .toLocal(),
-                                                    [ DD, ' ', d, ' de ', MM, ' del ', yyyy, ' a las ', HH, ':', nn],
+                                                    [ DD, ' ', d, ' de ', MM, ' del ', yyyy, ' a las ', HH, ':', nn, 'hs'],
                                                     locale: const SpanishDateLocale(),
                                                   ),
                                                   style: boldoCardHeadingTextStyle.copyWith(
@@ -270,7 +270,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                               ),
                                               const SizedBox(width: 16,),
                                               Text(
-                                                  appointmentType == AppointmentType.InPerson? 'Modalidad presencial' : 'Modalida virtual',
+                                                  appointmentType == AppointmentType.InPerson? 'Modalidad presencial' : 'Modalidad virtual',
                                                   style: boldoCardHeadingTextStyle.copyWith(
                                                       color: ConstantsV2.activeText,
                                                       fontSize: 14

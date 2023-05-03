@@ -111,7 +111,7 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
                                 color: ConstantsV2.darkBlue),
                           ),
                           Text(
-                            passedDays(daysDifference),
+                            passedDays(daysDifference, showPrefixText: true),
                             style: boldoCorpSmallTextStyle.copyWith(
                                 color: ConstantsV2.veryLightBlue),
                           ),

@@ -161,7 +161,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                               // ),
                                               const Spacer(),
                                               Text(
-                                                passedDays(daysDifference),
+                                                passedDays(daysDifference, showPrefixText: true),
                                                 style: boldoCorpSmallTextStyle
                                                     .copyWith(
                                                     color: ConstantsV2

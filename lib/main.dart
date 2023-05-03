@@ -30,6 +30,7 @@ import 'package:boldo/screens/family/tabs/metods_add_family_screen.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/my_studies/my_studies_screen.dart';
+import 'package:boldo/screens/passport/user_qr_screen.dart';
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
 import 'package:boldo/screens/sing_in/sing_in_transition.dart';
@@ -57,6 +58,7 @@ import 'blocs/attach_study_order_bloc/attachStudyOrder_bloc.dart';
 import 'blocs/doctorFilter_bloc/doctorFilter_bloc.dart';
 import 'blocs/doctor_availability_bloc/doctor_availability_bloc.dart';
 import 'blocs/doctor_bloc/doctor_bloc.dart';
+import 'blocs/passport_bloc/passportBloc.dart';
 import 'blocs/prescription_bloc/prescriptionBloc.dart';
 import 'blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
@@ -65,6 +67,7 @@ import 'models/Organization.dart';
 import 'models/Patient.dart';
 import 'models/Relationship.dart';
 import 'models/User.dart';
+import 'models/UserVaccinate.dart';
 import 'models/upload_url_model.dart';
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
@@ -75,6 +78,9 @@ User user = User();
 Patient patient = Patient();
 Patient editingPatient = Patient();
 late List<MedicalRecord> allMedicalData;
+List<UserVaccinate>? diseaseUserList;
+// list of vaccinate for generate QR url
+List<UserVaccinate>? vaccineListQR = [];
 XFile? userImageSelected;
 int selectedPageIndex = 0;
 List<Organization> organizationsPostulated = [];
@@ -99,7 +105,9 @@ Future<void> main() async {
   prefs = await SharedPreferences.getInstance();
   prefs.setBool(isFamily, false);
 
-  initDio(navKey: navKey, dio: dio);
+  initDio(navKey: navKey, dio: dio, passport: false);
+  initDio(navKey: navKey, dio: dioPassport, passport: true);
+  dioByteInstance();
   const storage = FlutterSecureStorage();
   String? session;
   try {
@@ -164,6 +172,9 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<HomeAppointmentsBloc>(
             create: (BuildContext context) => HomeAppointmentsBloc(),
+          ),
+          BlocProvider<PassportBloc>(
+            create: (BuildContext context)=> PassportBloc(),
           ),
           BlocProvider<StudyOrderBloc>(
             create: (BuildContext context) => StudyOrderBloc(),
@@ -240,18 +251,20 @@ class FullApp extends StatelessWidget {
         '/onboarding': (context) => HeroScreenV2(),
         '/home': (context) => DashboardScreen(),
         '/login': (context) => const LoginWebViewHelper(),
-        '/methods': (context) => const FamilyMetodsAdd(),
-        '/familyScreen': (context) => FamilyScreen(),
-        '/defineRelationship': (context) => DefinedRelationshipScreen(),
+        '/methods' : (context) => const FamilyMetodsAdd(),
+        '/familyScreen' : (context) => FamilyScreen(),
+        '/defineRelationship' : (context) => DefinedRelationshipScreen(),
+        '/familyTransition' : (context) => FamilyConnectTransition(),
+        '/SignInSuccess' : (context) => SingInTransition(),
+        '/FamilyTransition' : (context) => FamilyTransition(),
+        '/familyDniRegister' : (context) => DniFamilyRegister(),
+        '/my_studies' : (context) => MyStudies(),
+        '/doctorsTab' : (context) => DoctorsTab(),
+        '/pastAppointmentsScreen' : (context) => const PastAppointmentsScreen(),
+        '/prescriptionsScreen' : (context) => const PrescriptionsScreen(),
+        '/user_qr_detail': (context) => UserQrDetail(),
         '/familyConnectTransition': (context) => FamilyConnectTransition(),
-        '/SignInSuccess': (context) => SingInTransition(),
-        '/FamilyTransition': (context) => FamilyTransition(),
-        '/familyDniRegister': (context) => DniFamilyRegister(),
         '/familyWithoutDniRegister': (context) => WithoutDniFamilyRegister(),
-        '/my_studies': (context) => MyStudies(),
-        '/doctorsTab': (context) => DoctorsTab(),
-        '/pastAppointmentsScreen': (context) => const PastAppointmentsScreen(),
-        '/prescriptionsScreen': (context) => const PrescriptionsScreen(),
         '/profileScreen': (context) => const ProfileScreen(),
       },
     );

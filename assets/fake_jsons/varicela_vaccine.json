@@ -1,0 +1,24 @@
+{
+  "birthdate": "1999-01-13",
+  "diseaseCode": "Varicela",
+  "documentId": "123432",
+  "givenName": "JUAN ",
+  "lastName": "PEREZ",
+  "vaccineApplicationList": [
+      {
+          "diseaseCode": "Varicela",
+          "dose": "1° Dosis",
+          "lotNumber": "FL4222",
+          "vaccineApplicationDate": "2016-04-21",
+          "vaccineName": "MMRV"
+      },
+      {
+          "diseaseCode": "Varicela",
+          "dose": "2° Dosis",
+          "lotNumber": "30125BA",
+          "vaccineApplicationDate": "2021-05-16",
+          "vaccineName": "MMRV"
+      }
+  ],
+  "version": 3
+}
