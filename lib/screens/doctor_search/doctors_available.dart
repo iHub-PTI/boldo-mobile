@@ -16,6 +16,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -358,9 +359,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
                             ),
                           ),
                         )
-                            : const Center(
-                          child: Text('No se encontraron doctores'),
-                        );
+                            : _emptyDoctor();
                     }
                   }
                 ),
@@ -368,6 +367,102 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _emptyDoctor(){
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 50),
+            child: Center(
+              child: SvgPicture.asset(
+                'assets/icon/empty-doctors.svg',
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Container(
+            child: Column(
+              children: [
+                Container(
+                  child: Text(
+                    "A medida que vayas usando la app, vas a ver algunas "
+                        "sugerencias de médicos en esta sección.",
+                    style: bodyMediumRegular.copyWith(color: Colors.black),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  child: Text(
+                      "De momento, podés hacer una búsqueda entre los médicos a "
+                          "los que tenés acceso.",
+                    style: bodyMediumRegular.copyWith(color: Colors.black),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Center(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DoctorFilter(),
+                  ),
+                );
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Card(
+                    color: ConstantsV2.secondaryRegular,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(100)),
+                    ),
+                    child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
+                        decoration: buttonFXSecondaryStyle.copyWith(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              "Buscar",
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                color: ConstantsV2.grayLightest,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            SvgPicture.asset(
+                              'assets/icon/search.svg',
+                            ),
+                          ],
+                        )
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
