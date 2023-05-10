@@ -476,6 +476,147 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     );
   }
 
+  Widget _allDoctors(){
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
+            child: Text(
+              "Todos los médicos",
+              style: boldoScreenSubtitleTextStyle.copyWith(
+                  color: ConstantsV2.activeText
+              ),
+            ),
+          ),
+          Expanded(
+            child: Container(
+              color: ConstantsV2.grayLightest,
+              padding:
+              const EdgeInsets.only(right: 16, left: 16),
+              child: SmartRefresher(
+                controller: _refreshDoctorController,
+                enablePullUp: true,
+                enablePullDown: true,
+                header: const MaterialClassicHeader(
+                  color: Constants.primaryColor800,
+                ),
+                child: GridView.builder(
+                  physics: const ScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  controller: scrollDoctorList,
+                  gridDelegate:
+                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 200,
+                      childAspectRatio: 3 / 4,
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20),
+                  itemCount: doctors.length,
+                  itemBuilder: doctorItem,
+                ),
+                footer: CustomFooter(
+                  builder:
+                      (BuildContext context, LoadStatus? mode) {
+                    Widget body = Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.arrow_upward,
+                          color: Constants.extraColor300,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        const Text(
+                          "Sube para cargar más",
+                          style: TextStyle(
+                            color: Constants.extraColor300,
+                          ),
+                        )
+                      ],
+                    );
+                    if (mode == LoadStatus.loading) {
+                      body = const CircularProgressIndicator();
+                    }
+                    return Container(
+                      height: 55.0,
+                      child: Center(child: body),
+                    );
+                  },
+                ),
+                // this for refresh all data
+                onRefresh: () {
+                  offset = 0;
+                  BlocProvider.of<DoctorsAvailableBloc>(context)
+                      .add(GetDoctorFilterInDoctorList(
+                      organizations:
+                      Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                          .getOrganizationsApplied,
+                      specializations:
+                      Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                          .getSpecializationsApplied,
+                      virtualAppointment: Provider.of<
+                          DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                          .getLastVirtualAppointmentApplied,
+                      inPersonAppointment:
+                      Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                          .getLastInPersonAppointmentApplied,
+                      names: Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                          .getNamesApplied
+                  ));
+                },
+                // this for load more doctors
+                onLoading: () {
+                  offset = offset + 20;
+                  BlocProvider.of<DoctorsAvailableBloc>(context)
+                      .add(GetMoreFilterDoctor(
+                      organizations:
+                      Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false
+                      ).getOrganizationsApplied,
+                      offset: offset,
+                      specializations:
+                      Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                          .getSpecializationsApplied,
+                      virtualAppointment: Provider.of<
+                          DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                          .getLastVirtualAppointmentApplied,
+                      inPersonAppointment:
+                      Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                          .getLastInPersonAppointmentApplied,
+                      names: Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                          .getNamesApplied));
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _availabilityHourCard(OrganizationWithAvailability? organization){
 
 
