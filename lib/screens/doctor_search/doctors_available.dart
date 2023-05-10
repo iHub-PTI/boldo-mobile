@@ -33,7 +33,7 @@ class DoctorsAvailable extends StatefulWidget {
 }
 
 // STATE CLASS
-class _DoctorsAvailableState extends State<DoctorsAvailable> {
+class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerProviderStateMixin{
 
   late DoctorFilterProvider _myProvider;
   bool _loading = true;
