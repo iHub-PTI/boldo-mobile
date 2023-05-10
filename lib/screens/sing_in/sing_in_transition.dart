@@ -145,110 +145,134 @@ class _SingInTransitionState extends State<SingInTransition> with SingleTickerPr
               _dataLoading = true;
             }
           },
-        child : BlocBuilder<PatientBloc, PatientState>(
-          builder: (context, state){
-            if(state is ChangeFamily || state is RedirectNextScreen) {
-              return Stack(
-                children: [
-                  _background,
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment
-                                        .center,
-                                    children: [
-                                      if(!_dataLoading) const ProfileImageView(
-                                          height: 170,
-                                          width: 170,
-                                          border: true),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 29,),
-                                  Container(
+        child : Stack(
+          children: [
+            backGround(),
+            BlocBuilder<PatientBloc, PatientState>(
+              builder: (context, state){
+                if(state is ChangeFamily || state is RedirectNextScreen || state is Success) {
+                  return
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: Expanded(
+                            child: Column(
+                              children: [
+                                Container(
+                                  child: Expanded(
                                     child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment
                                               .center,
                                           children: [
-                                            _dataLoading ? Text('',
-                                              style: boldoSubTextStyle
-                                                  .copyWith(
-                                                  color: ConstantsV2
-                                                      .lightGrey
-                                              ),) : Text(
-                                              patient.gender == "unknown" ?
-                                              "Bienvenido/a" :
-                                              patient.gender == "male" ?
-                                              "Bienvenido" : "Bienvenida",
-                                              style: boldoSubTextStyle
-                                                  .copyWith(
-                                                  color: ConstantsV2
-                                                      .lightGrey
-                                              ),
-                                            ),
+                                            if(!_dataLoading) const ProfileImageView(
+                                                height: 170,
+                                                width: 170,
+                                                border: true),
                                           ],
                                         ),
-                                        const SizedBox(height: 16,),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .center,
-                                          children: [
-                                            Text(
-                                              patient.givenName ?? '',
-                                              style: boldoBillboardTextStyleAlt
-                                                  .copyWith(
-                                                  color: ConstantsV2
-                                                      .lightGrey
+                                        const SizedBox(height: 29,),
+                                        Container(
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment
+                                                    .center,
+                                                children: [
+                                                  _dataLoading ? Text('',
+                                                    style: boldoSubTextStyle
+                                                        .copyWith(
+                                                        color: ConstantsV2
+                                                            .lightGrey
+                                                    ),) : Text(
+                                                    patient.gender == "unknown" ?
+                                                    "Bienvenido/a" :
+                                                    patient.gender == "male" ?
+                                                    "Bienvenido" : "Bienvenida",
+                                                    style: boldoSubTextStyle
+                                                        .copyWith(
+                                                        color: ConstantsV2
+                                                            .lightGrey
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ),
-                                          ],
+                                              const SizedBox(height: 16,),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment
+                                                    .center,
+                                                children: [
+                                                  Flexible(child: Text(
+                                                    "${patient.givenName ?? ''}",
+                                                    style: boldoBillboardTextStyleAlt
+                                                        .copyWith(
+                                                        color: ConstantsV2
+                                                            .lightGrey
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),)
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                ],
-              );
-            }else if(state is Loading){
-              return
-                Stack(
-                  children: [
-                    _background,
+                      ],
+                    );
+                }else if(state is Loading){
+                  return
                     Align(
                         alignment: Alignment.center,
                         child: Container(
                             child: const LoadingHelper()
                         )
-                    ),
+                    );
+                }else{
+                  return Container();
+                }
+              },
+            ),
+          ],
+        )
+      )
+    );
+  }
+
+  Widget backGround(){
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+              gradient: RadialGradient(
+                  radius: _radiusTween.value?? 1,
+                  center: const Alignment(
+                    0,
+                    0,
+                  ),
+                  colors: <Color>[
+                    _color1Tween.value?? ConstantsV2.singInPrimaryColor200,
+                    _color2Tween.value?? ConstantsV2.singInPrimaryColor200,
+                    _color3Tween.value?? ConstantsV2.singInPrimaryColor300,
                   ],
-                );
-            }else{
-              return Stack(
-                children: [
-                  _background,
-                  Container(),
-                ],
-              );
-            }
-          },
+                  stops: <double>[
+                    _stop1Tween.value?? ConstantsV2.singInPrimaryStop100,
+                    _stop2Tween.value?? ConstantsV2.singInPrimaryStop200,
+                    _stop3Tween.value?? ConstantsV2.singInPrimaryStop300,
+                  ]
+              )
+          ),
         ),
-      ),
+      ],
     );
   }
 
