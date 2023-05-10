@@ -25,9 +25,7 @@ class SingInTransition extends StatefulWidget {
 
 class _SingInTransitionState extends State<SingInTransition> with SingleTickerProviderStateMixin {
 
-  Response? response;
   bool _dataLoading = true;
-  Widget _background = const Background(text: "SingIn_1");
   FlutterAppAuth appAuth = FlutterAppAuth();
 
   GlobalKey scaffoldKey = GlobalKey();
@@ -120,7 +118,6 @@ class _SingInTransitionState extends State<SingInTransition> with SingleTickerPr
               UserRepository().logout(context);
             }
             if(state is ChangeFamily){
-              _background = const Background(text: "SingIn_2");
               _dataLoading = false;
 
               //init animation
