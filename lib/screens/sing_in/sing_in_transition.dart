@@ -58,6 +58,52 @@ class _SingInTransitionState extends State<SingInTransition> with SingleTickerPr
     timer();
     super.initState();
 
+    // initialize animation duration
+    _colorController = AnimationController(
+        duration: const Duration(milliseconds: 1700),
+        vsync: this
+    )..addListener(() {
+      // change screen with animation
+      setState(() {
+
+      });
+    });
+
+    //initialize colors
+    _color1Tween = ColorTween(
+        begin: ConstantsV2.singInPrimaryColor100,
+        end: ConstantsV2.singInSecondaryColor100)
+        .animate(
+          CurvedAnimation(parent: _colorController, curve: Curves.linear)
+    );
+    _color2Tween = ColorTween(
+        begin: ConstantsV2.singInPrimaryColor200,
+        end: ConstantsV2.singInSecondaryColor200)
+        .animate(
+          CurvedAnimation(parent: _colorController, curve: Curves.linear)
+    );
+    _color3Tween = ColorTween(
+        begin: ConstantsV2.singInPrimaryColor300,
+        end: ConstantsV2.singInSecondaryColor300)
+        .animate(
+          CurvedAnimation(parent: _colorController, curve: Curves.linear)
+    );
+
+    //initialize radius value
+    _radiusTween = Tween<double?>(begin: .6, end: 1.7).animate(
+        CurvedAnimation(parent: _colorController, curve: Curves.linear)
+    );
+
+    //initialize stopColors value
+    _stop1Tween = Tween<double?>(begin: ConstantsV2.singInPrimaryStop100, end: ConstantsV2.singInSecondaryStop100).animate(
+        CurvedAnimation(parent: _colorController, curve: Curves.linear)
+    );
+    _stop2Tween = Tween<double?>(begin: ConstantsV2.singInPrimaryStop200, end: ConstantsV2.singInSecondaryStop200).animate(
+        CurvedAnimation(parent: _colorController, curve: Curves.linear)
+    );
+    _stop3Tween = Tween<double?>(begin: ConstantsV2.singInPrimaryStop300, end: ConstantsV2.singInSecondaryStop300).animate(
+        CurvedAnimation(parent: _colorController, curve: Curves.linear)
+    );
   }
 
   @override
