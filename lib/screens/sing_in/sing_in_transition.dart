@@ -122,10 +122,24 @@ class _SingInTransitionState extends State<SingInTransition> with SingleTickerPr
             if(state is ChangeFamily){
               _background = const Background(text: "SingIn_2");
               _dataLoading = false;
-            }
-            if(state is RedirectNextScreen){
-              // go to home
-              Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
+
+              //init animation
+              _colorController.forward();
+
+              _colorController..addStatusListener((status) {
+                if(status == AnimationStatus.completed){
+                  // go to home
+                  Future.delayed(const Duration(
+                    milliseconds: 800
+                  )).then((value) => Navigator
+                      .of(context).
+                    pushNamedAndRemoveUntil(
+                      '/home',
+                      (Route<dynamic> route) => false
+                    )
+                  );
+                }
+              });
             }
             if(state is Loading){
               _dataLoading = true;
