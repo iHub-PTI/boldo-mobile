@@ -90,7 +90,7 @@ const bodyMediumRegular = TextStyle(
   color: ConstantsV2.lightest,
   fontStyle: FontStyle.normal,
   fontSize: 12,
-  fontWeight: FontWeight.w400,
+  fontWeight: FontWeight.w300,
   fontFamily: 'Montserrat',
 );
 
