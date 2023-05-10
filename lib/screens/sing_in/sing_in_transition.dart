@@ -23,7 +23,7 @@ class SingInTransition extends StatefulWidget {
   _SingInTransitionState createState() => _SingInTransitionState();
 }
 
-class _SingInTransitionState extends State<SingInTransition> {
+class _SingInTransitionState extends State<SingInTransition> with SingleTickerProviderStateMixin {
 
   Response? response;
   bool _dataLoading = true;
