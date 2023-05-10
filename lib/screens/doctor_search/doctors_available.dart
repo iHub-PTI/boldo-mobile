@@ -49,6 +49,9 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   bool _getDoctorsFailed = false;
   bool _getFilterDoctorsFailed = false;
   List<Doctor>? doctorsSaved;
+
+  late TabController _tabController;
+
   @override
   void initState() {
     _myProvider = Provider.of<DoctorFilterProvider>(context, listen: false);
@@ -86,6 +89,12 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
       });
     }
   });
+
+    _tabController = TabController(
+      length: 1,
+      vsync: this,
+    );
+
     super.initState();
   }
 
