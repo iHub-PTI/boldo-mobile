@@ -32,6 +32,18 @@ class _SingInTransitionState extends State<SingInTransition> {
 
   GlobalKey scaffoldKey = GlobalKey();
 
+  // controller to animate background
+  late AnimationController _colorController;
+
+  // pair of values for radialGradient
+  late Animation<Color?> _color1Tween;
+  late Animation<Color?> _color2Tween;
+  late Animation<Color?> _color3Tween;
+  late Animation<double?> _radiusTween;
+  late Animation<double?> _stop1Tween;
+  late Animation<double?> _stop2Tween;
+  late Animation<double?> _stop3Tween;
+
   Future<void> timer() async {
     BlocProvider.of<family.FamilyBloc>(context).add(family.GetFamilyList());
     if(prefs.getBool(isFamily)?? false)
