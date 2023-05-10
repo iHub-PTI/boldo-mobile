@@ -380,6 +380,58 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     );
   }
 
+  Widget _body(){
+    return Expanded(
+      child: Column(
+        children: [
+          _tabBar(),
+          _tabs(),
+        ],
+      ),
+    );
+  }
+
+  Widget _tabs(){
+    return Expanded(
+      child: TabBarView(
+        controller: _tabController,
+        children: [
+          _recentDoctorTab(),
+        ],
+      )
+    );
+  }
+
+  Widget _tabBar(){
+    return Container(
+      height: 44,
+      color: ConstantsV2.grayLightest,
+      child: TabBar(
+        labelStyle: boldoTabHeaderSelectedTextStyle,
+        unselectedLabelStyle: boldoTabHeaderUnselectedTextStyle,
+        indicatorColor: Colors.transparent,
+        unselectedLabelColor:
+        const Color.fromRGBO(119, 119, 119, 1),
+        labelColor: ConstantsV2.activeText,
+        controller: _tabController,
+        tabs: [
+          const Text(
+            'Recientes',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _recentDoctorTab(){
+    return Column(
+      children: [
+
+        _allDoctors(),
+      ],
+    );
+  }
+
   Widget _emptyDoctor(){
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
