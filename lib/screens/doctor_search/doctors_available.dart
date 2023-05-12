@@ -519,6 +519,59 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     );
   }
 
+  Widget _emptyRecentDoctors(){
+    return Container(
+      color: ConstantsV2.grayLightest,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 39),
+        child: Column(
+          children: [
+            Container(
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/icon/empty_recentDoctors.svg',
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Container(
+              child: Column(
+                children: [
+                  Container(
+                    child: const Text(
+                      "No hay consultas recientes",
+                      style: TextStyle(
+                        color: ConstantsV2.activeText,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Montserrat',
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    child: Text(
+                      "El listado aparecerá aquí una vez que hayas consultado",
+                      style: bodyMediumRegular.copyWith(color: Colors.black),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      )
+    );
+  }
+
   Widget _recentDoctors(){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
