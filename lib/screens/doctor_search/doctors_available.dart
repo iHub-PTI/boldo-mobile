@@ -38,6 +38,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   late DoctorFilterProvider _myProvider;
   bool _loading = true;
   List<Doctor> doctors = [];
+  List<Doctor> recentDoctors = [];
   // initial value
   int offset = 0;
   RefreshController _refreshDoctorController =
