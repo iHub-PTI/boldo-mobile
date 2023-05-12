@@ -518,6 +518,33 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     );
   }
 
+  Widget _recentDoctors(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          color: ConstantsV2.grayLightest,
+          padding:
+          const EdgeInsets.only(right: 16, left: 16),
+          height: 250,
+          child: GridView.builder(
+            physics: const ScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            shrinkWrap: true,
+            gridDelegate:
+            const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 300,
+                childAspectRatio: 4 / 3.2,
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 20),
+            itemCount: doctors.length,
+            itemBuilder: doctorItem,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _allDoctors(){
     return Expanded(
       child: Column(
