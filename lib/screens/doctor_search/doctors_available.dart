@@ -591,8 +591,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 childAspectRatio: 4 / 3.2,
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20),
-            itemCount: doctors.length,
-            itemBuilder: doctorItem,
+            itemCount: recentDoctors.length,
+            itemBuilder: (context, index){
+              return doctorItem(context, index, recentDoctors);
+            },
           ),
         ),
       ],
@@ -627,7 +629,9 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20),
             itemCount: doctors.length,
-            itemBuilder: doctorItem,
+            itemBuilder: (context, index){
+              return doctorItem(context, index, doctors);
+            },
           ),
         ),
       ],
