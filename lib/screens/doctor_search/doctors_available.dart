@@ -573,7 +573,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   }
 
   Widget _recentDoctors(){
-    return Column(
+    return recentDoctors.isNotEmpty? Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
@@ -596,7 +596,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
           ),
         ),
       ],
-    );
+    ): _emptyRecentDoctors();
   }
 
   Widget _allDoctors(){
