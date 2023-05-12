@@ -308,11 +308,117 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   }
 
   Widget _recentDoctorTab(){
-    return Column(
-      children: [
-
-        _allDoctors(),
-      ],
+    return SmartRefresher(
+      physics: const ClampingScrollPhysics(),
+      controller: _refreshDoctorController,
+      enablePullUp: true,
+      enablePullDown: true,
+      header: const MaterialClassicHeader(
+        color: Constants.primaryColor800,
+      ),
+      child: SingleChildScrollView(
+        controller: scrollDoctorList,
+        child: Column(
+          children: [
+            _recentDoctors(),
+            const SizedBox(height: 24,),
+            _allDoctors(),
+          ],
+        ),
+      ),
+      footer: CustomFooter(
+        builder:
+            (BuildContext context, LoadStatus? mode) {
+          Widget body = Row(
+            mainAxisAlignment:
+            MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.arrow_upward,
+                color: Constants.extraColor300,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              const Text(
+                "Sube para cargar más",
+                style: TextStyle(
+                  color: Constants.extraColor300,
+                ),
+              )
+            ],
+          );
+          if (mode == LoadStatus.loading) {
+            body = const CircularProgressIndicator();
+          }
+          return Container(
+            height: 55.0,
+            child: Center(child: body),
+          );
+        },
+      ),
+      // this for refresh all data
+      onRefresh: () {
+        offset = 0;
+        BlocProvider.of<DoctorsAvailableBloc>(context)
+            .add(GetDoctorFilterInDoctorList(
+            organizations:
+            Provider.of<DoctorFilterProvider>(
+                context,
+                listen: false)
+                .getOrganizationsApplied,
+            specializations:
+            Provider.of<DoctorFilterProvider>(
+                context,
+                listen: false)
+                .getSpecializationsApplied,
+            virtualAppointment: Provider.of<
+                DoctorFilterProvider>(
+                context,
+                listen: false)
+                .getLastVirtualAppointmentApplied,
+            inPersonAppointment:
+            Provider.of<DoctorFilterProvider>(
+                context,
+                listen: false)
+                .getLastInPersonAppointmentApplied,
+            names: Provider.of<DoctorFilterProvider>(
+                context,
+                listen: false)
+                .getNamesApplied
+        ));
+      },
+      // this for load more doctors
+      onLoading: () {
+        offset = offset + 20;
+        BlocProvider.of<DoctorsAvailableBloc>(context)
+            .add(GetMoreFilterDoctor(
+            organizations:
+            Provider.of<DoctorFilterProvider>(
+                context,
+                listen: false
+            ).getOrganizationsApplied,
+            offset: offset,
+            specializations:
+            Provider.of<DoctorFilterProvider>(
+                context,
+                listen: false)
+                .getSpecializationsApplied,
+            virtualAppointment: Provider.of<
+                DoctorFilterProvider>(
+                context,
+                listen: false)
+                .getLastVirtualAppointmentApplied,
+            inPersonAppointment:
+            Provider.of<DoctorFilterProvider>(
+                context,
+                listen: false)
+                .getLastInPersonAppointmentApplied,
+            names: Provider.of<DoctorFilterProvider>(
+                context,
+                listen: false)
+                .getNamesApplied));
+      },
     );
   }
 
