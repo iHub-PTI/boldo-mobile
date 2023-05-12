@@ -711,7 +711,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     return available;
   }
 
-  Widget doctorItem(BuildContext context, index) {
+  Widget doctorItem(BuildContext context, int index, List<Doctor> listDoctor) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
