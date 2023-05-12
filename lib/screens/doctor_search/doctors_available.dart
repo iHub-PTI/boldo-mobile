@@ -262,23 +262,26 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
 
   Widget _body(){
     return Expanded(
-      child: Column(
-        children: [
-          _tabBar(),
-          _tabs(),
-        ],
+      child: NestedScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return [
+            SliverToBoxAdapter(
+              child: _tabBar(),
+            ),
+          ];
+        },
+        body: _tabs(),
       ),
     );
   }
 
   Widget _tabs(){
-    return Expanded(
-      child: TabBarView(
-        controller: _tabController,
-        children: [
-          _recentDoctorTab(),
-        ],
-      )
+    return TabBarView(
+      controller: _tabController,
+      children: [
+        _recentDoctorTab(),
+      ],
     );
   }
 
@@ -287,6 +290,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
       height: 44,
       color: ConstantsV2.grayLightest,
       child: TabBar(
+        isScrollable: true,
         labelStyle: boldoTabHeaderSelectedTextStyle,
         unselectedLabelStyle: boldoTabHeaderUnselectedTextStyle,
         indicatorColor: Colors.transparent,
