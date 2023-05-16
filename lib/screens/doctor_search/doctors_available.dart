@@ -140,52 +140,65 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
       ),
       floatingActionButton: buttonGoTop(scrollDoctorList, 1000, 500, showAnimatedButton),
       body: SafeArea(
-        child: BlocListener<DoctorsAvailableBloc, DoctorsAvailableState>(
-          listener: (context, state) {
-            if (state is Loading) {
-              setState(() {
-                _loading = true;
-              });
-            } else if (state is FilterLoadingInDoctorList) {
-              setState(() {
-                _loading = true;
-              });
-            } else if (state is Success) {
-              setState(() {
-                _loading = false;
-              });
-            } else if (state is FilterSuccesInDoctorList) {
-              setState(() {
-                _loading = false;
-              });
-            } else if (state is DoctorsLoaded) {
-              setState(() {
-                doctors = state.doctors;
-              });
-            } else if (state is MoreDoctorsLoaded) {
-              if (mounted) {
-                _refreshDoctorController.refreshCompleted();
-                _refreshDoctorController.loadComplete();
-                setState(() {
-                  doctors = [...doctors, ...state.doctors];
-                });
-              }
-            } else if (state is FilterLoadedInDoctorList) {
-              _refreshDoctorController.refreshCompleted();
-              _refreshDoctorController.loadComplete();
-              setState(() {
-                doctors = state.doctors;
-              });
-            } else if (state is FilterFailedInDoctorList) {
-              setState(() {
-                _getFilterDoctorsFailed = true;
-              });
-            } else if (state is Failed) {
-              setState(() {
-                _getDoctorsFailed = true;
-              });
-            }
-          },
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener<DoctorsAvailableBloc, DoctorsAvailableState>(
+              listener: (context, state) {
+                if (state is Loading) {
+                  setState(() {
+                    _loading = true;
+                  });
+                } else if (state is FilterLoadingInDoctorList) {
+                  setState(() {
+                    _loading = true;
+                  });
+                } else if (state is Success) {
+                  setState(() {
+                    _loading = false;
+                  });
+                } else if (state is FilterSuccesInDoctorList) {
+                  setState(() {
+                    _loading = false;
+                  });
+                } else if (state is DoctorsLoaded) {
+                  setState(() {
+                    doctors = state.doctors;
+                  });
+                } else if (state is MoreDoctorsLoaded) {
+                  if (mounted) {
+                    _refreshDoctorController.refreshCompleted();
+                    _refreshDoctorController.loadComplete();
+                    setState(() {
+                      doctors = [...doctors, ...state.doctors];
+                    });
+                  }
+                } else if (state is FilterLoadedInDoctorList) {
+                  _refreshDoctorController.refreshCompleted();
+                  _refreshDoctorController.loadComplete();
+                  setState(() {
+                    doctors = state.doctors;
+                  });
+                } else if (state is FilterFailedInDoctorList) {
+                  setState(() {
+                    _getFilterDoctorsFailed = true;
+                  });
+                } else if (state is Failed) {
+                  setState(() {
+                    _getDoctorsFailed = true;
+                  });
+                }
+              },
+            ),
+            BlocListener<RecentDoctorsBloc, RecentDoctorsState>(
+              listener: (context, state) {
+                if (state is RecentDoctorsLoaded) {
+                  setState(() {
+                    recentDoctors = state.doctors;
+                  });
+                }
+              },
+            ),
+          ],
           child: Container(
             height: MediaQuery.of(context).size.height,
             child: Column(
