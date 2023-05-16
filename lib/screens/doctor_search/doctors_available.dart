@@ -754,7 +754,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
               ],
             ),
           ),
-          Card(
+          if( organization?.nextAvailability?.availability != null ) Card(
             elevation: 0.0,
             color: ConstantsV2.grayLightAndClear,
             shape: RoundedRectangleBorder(
