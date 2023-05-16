@@ -1,4 +1,5 @@
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
+import 'package:boldo/blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
 import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
@@ -74,6 +75,25 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
               listen: false)
               .getNamesApplied,
         )
+    );
+    BlocProvider.of<RecentDoctorsBloc>(context)..add(
+      GetRecentDoctors(
+        organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
+            .getOrganizationsApplied,
+        specializations:
+        Provider.of<DoctorFilterProvider>(context, listen: false)
+            .getSpecializationsApplied,
+        virtualAppointment:
+        Provider.of<DoctorFilterProvider>(context, listen: false)
+            .getLastVirtualAppointmentApplied,
+        inPersonAppointment:
+        Provider.of<DoctorFilterProvider>(context, listen: false)
+            .getLastInPersonAppointmentApplied,
+        names: Provider.of<DoctorFilterProvider>(
+            context,
+            listen: false)
+            .getNamesApplied,
+      ),
     );
     scrollDoctorList.addListener(() {
     double offset = 10.0; // or the value you want
