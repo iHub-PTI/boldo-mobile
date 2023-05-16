@@ -122,6 +122,9 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   @override
   void dispose() {
     _myProvider.clearFilter();
+    _refreshDoctorController.dispose();
+    _tabController.dispose();
+    scrollDoctorList.dispose();
     super.dispose();
   }
 
