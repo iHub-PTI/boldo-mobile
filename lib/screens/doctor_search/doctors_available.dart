@@ -272,19 +272,33 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                     else if(state is Failed){
                       return DataFetchErrorWidget(
                           retryCallback: () =>
-                            GetDoctorsAvailable(
-                                organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
-                                    .getOrganizationsApplied,
-                                offset: offset
-                            )
-                      );
-                    }else{
-                      return
-                        doctors.isNotEmpty
-                            ? _body()
-                            : _emptyDoctor();
+                              BlocProvider.of<DoctorsAvailableBloc>(context).add(
+                                  GetDoctorFilter(
+                                    organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
+                                        .getOrganizationsApplied,
+                                    specializations:
+                                    Provider.of<DoctorFilterProvider>(context, listen: false)
+                                        .getSpecializationsApplied,
+                                    virtualAppointment:
+                                    Provider.of<DoctorFilterProvider>(context, listen: false)
+                                        .getLastVirtualAppointmentApplied,
+                                    inPersonAppointment:
+                                    Provider.of<DoctorFilterProvider>(context, listen: false)
+                                        .getLastInPersonAppointmentApplied,
+                                    names: Provider.of<DoctorFilterProvider>(
+                                        context,
+                                        listen: false)
+                                        .getNamesApplied,
+                                  )
+                              )
+                        );
+                      }else{
+                        return
+                          doctors.isNotEmpty
+                              ? _body()
+                              : _emptyDoctor();
+                      }
                     }
-                  }
                 ),
               ],
             ),
