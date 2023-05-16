@@ -804,7 +804,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
           context,
           MaterialPageRoute(
             builder: (context) => DoctorProfileScreen(
-              doctor: doctors[index],
+              doctor: listDoctor[index],
               showAvailability: true,
             ),
           ),
@@ -820,10 +820,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         child: Stack(
           children: <Widget>[
             // the first item in stack is the doctor profile photo
-            doctors[index].photoUrl != null
+            listDoctor[index].photoUrl != null
                 ? Positioned.fill(child: CachedNetworkImage(
               fit: BoxFit.cover,
-              imageUrl: doctors[index].photoUrl!,
+              imageUrl: listDoctor[index].photoUrl!,
               progressIndicatorBuilder:
                   (context, url, downloadProgress) => Padding(
                 padding: const EdgeInsets.all(26.0),
@@ -841,12 +841,12 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
               const Icon(Icons.error),
             ))
                 : Positioned.fill(
-              child:doctors[index].gender == 'female'
+              child:listDoctor[index].gender == 'female'
                   ? SvgPicture.asset(
                 'assets/images/femaleDoctor.svg',
                 fit: BoxFit.cover,
               )
-                  : doctors[index].gender == 'male'? SvgPicture.asset(
+                  : listDoctor[index].gender == 'male'? SvgPicture.asset(
                 'assets/images/maleDoctor.svg',
                 fit: BoxFit.cover,
               ): SvgPicture.asset(
@@ -886,7 +886,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                               padding: const EdgeInsets.only(
                                   left: 8.0, right: 16, bottom: 2),
                               child: Text(
-                                '${doctors[index].gender == 'female' ? 'Dra.' : 'Dr.'} ${doctors[index].givenName!.split(" ")[0]} ${doctors[index].familyName!.split(" ")[0]}',
+                                '${listDoctor[index].gender == 'female' ? 'Dra.' : 'Dr.'} ${listDoctor[index].givenName!.split(" ")[0]} ${listDoctor[index].familyName!.split(" ")[0]}',
                                 style: boldoCardHeadingTextStyle,
                               ),
                             ),
@@ -895,8 +895,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                   ],
                 ),
                 // specializations
-                doctors[index].specializations != null
-                    ? doctors[index].specializations!.length > 0
+                listDoctor[index].specializations != null
+                    ? listDoctor[index].specializations!.length > 0
                     ? Container(
                   child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
@@ -909,12 +909,12 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                           children: [
                             for (int i = 0;
                             i <
-                                doctors[index]
+                                listDoctor[index]
                                     .specializations!
                                     .length;
                             i++)
                               Text(
-                                "${doctors[index].specializations![i].description}${doctors[index].specializations!.length-1 != i  ? ", " : ""}",
+                                "${listDoctor[index].specializations![i].description}${listDoctor[index].specializations!.length-1 != i  ? ", " : ""}",
                                 style: boldoBodyLRegularTextStyle
                                     .copyWith(
                                   color: ConstantsV2
@@ -930,7 +930,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 Container(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8.0, bottom: 4),
-                    child: _availabilityHourCard(doctors[index].organizations?.first),
+                    child: _availabilityHourCard(listDoctor[index].organizations?.first),
                   ),
                 ),
               ],
