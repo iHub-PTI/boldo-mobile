@@ -1,5 +1,6 @@
 import 'package:boldo/blocs/doctorFilter_bloc/doctorFilter_bloc.dart';
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
+import 'package:boldo/blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
 import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/specializationFilter_bloc/specializationFilter_bloc.dart';
 import 'package:boldo/constants.dart';
@@ -543,6 +544,15 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                 virtualAppointment: virtualAppointment,
                                 inPersonAppointment: inPersonAppointment,
                                 organizations: organizationsSelected));
+                            BlocProvider.of<RecentDoctorsBloc>(context).add(
+                                GetRecentDoctors(
+                                names: names,
+                                specializations: specializationsSelected,
+                                virtualAppointment: virtualAppointment,
+                                inPersonAppointment: inPersonAppointment,
+                                organizations: organizationsSelected,
+                              )
+                            );
                             // call doctor list page
                             Navigator.pop(context);
                           }
