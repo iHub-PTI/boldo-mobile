@@ -606,32 +606,64 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   }
 
   Widget _recentDoctors(){
-    return recentDoctors.isNotEmpty? Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          color: ConstantsV2.grayLightest,
-          padding:
-          const EdgeInsets.only(right: 16, left: 16),
-          height: 250,
-          child: GridView.builder(
-            physics: const ScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            shrinkWrap: true,
-            gridDelegate:
-            const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 300,
-                childAspectRatio: 4 / 3.2,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20),
-            itemCount: recentDoctors.length,
-            itemBuilder: (context, index){
-              return doctorItem(context, index, recentDoctors);
-            },
-          ),
-        ),
-      ],
-    ): _emptyRecentDoctors();
+    return BlocBuilder<RecentDoctorsBloc, RecentDoctorsState>(
+        builder: (context, state){
+          if(state is LoadingRecentDoctors)
+            return const Center(child: CircularProgressIndicator());
+          else if(state is FailedRecentDoctors){
+            return DataFetchErrorWidget(
+                retryCallback: () =>
+                BlocProvider.of<RecentDoctorsBloc>(context)..add(
+                  GetRecentDoctors(
+                    organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
+                        .getOrganizationsApplied,
+                    specializations:
+                    Provider.of<DoctorFilterProvider>(context, listen: false)
+                        .getSpecializationsApplied,
+                    virtualAppointment:
+                    Provider.of<DoctorFilterProvider>(context, listen: false)
+                        .getLastVirtualAppointmentApplied,
+                    inPersonAppointment:
+                    Provider.of<DoctorFilterProvider>(context, listen: false)
+                        .getLastInPersonAppointmentApplied,
+                    names: Provider.of<DoctorFilterProvider>(
+                        context,
+                        listen: false)
+                        .getNamesApplied,
+                  ),
+                )
+            );
+          }else{
+            return
+              recentDoctors.isNotEmpty? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    color: ConstantsV2.grayLightest,
+                    padding:
+                    const EdgeInsets.only(right: 16, left: 16),
+                    height: 250,
+                    child: GridView.builder(
+                      physics: const ScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      gridDelegate:
+                      const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 300,
+                          childAspectRatio: 4 / 3.2,
+                          crossAxisSpacing: 20,
+                          mainAxisSpacing: 20),
+                      itemCount: recentDoctors.length,
+                      itemBuilder: (context, index){
+                        return doctorItem(context, index, recentDoctors);
+                      },
+                    ),
+                  ),
+                ],
+              ): _emptyRecentDoctors();
+          }
+        }
+    );
   }
 
   Widget _allDoctors(){
