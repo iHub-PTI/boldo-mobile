@@ -850,7 +850,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         );
       },
       child: Card(
-        margin: EdgeInsets.all(0),
+        margin: const EdgeInsets.all(0),
         semanticContainer: true,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         shape: RoundedRectangleBorder(
