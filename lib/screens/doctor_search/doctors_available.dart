@@ -1,5 +1,6 @@
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
+import 'package:boldo/blocs/favorite_action_bloc/favorite_action_bloc.dart';
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
 import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
@@ -940,4 +941,57 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
       ),
     );
   }
+  
+  Widget favoriteIcon(List<Doctor> listDoctor, int index){
+    return BlocProvider<FavoriteActionBloc>(
+      create: (BuildContext context) => FavoriteActionBloc(),
+      child: BlocBuilder<FavoriteActionBloc, FavoriteActionState>(
+        builder: (BuildContext context, state) {
+          return BlocListener<FavoriteActionBloc, FavoriteActionState>(
+            listener: (context, state) {
+              if (state is SuccessFavoriteAction) {
+
+                // update favorite status in list of all doctors
+                doctors.forEach((element) {
+                  if(element.id == listDoctor[index].id){
+                    element.isFavorite = !element.isFavorite;
+                  }
+                });
+
+                // update favorite status in list of recent doctors
+                recentDoctors.forEach((element) {
+                  if(element.id == listDoctor[index].id){
+                    element.isFavorite = !element.isFavorite;
+                  }
+                });
+
+                // update view
+                setState(() {
+                });
+              }
+            },
+            child: GestureDetector(
+              onTap: state is LoadingFavoriteAction? () => {}: (){
+                BlocProvider.of<FavoriteActionBloc>(context).add(
+                    PutFavoriteStatus(
+                      doctor: listDoctor[index],
+                      favoriteStatus: ! listDoctor[index].isFavorite,
+                    )
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                child: SvgPicture.asset(
+                  'assets/icon/favorite-star.svg',
+                  color: listDoctor[index].isFavorite? ConstantsV2.accentRegular: null,
+                ),
+              ),
+            ),
+          );
+        },
+
+      ),
+    );
+  }
+  
 }
