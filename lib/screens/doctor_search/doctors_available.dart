@@ -1,11 +1,9 @@
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
 import 'package:boldo/blocs/favorite_action_bloc/favorite_action_bloc.dart';
-import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
 import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
-import 'package:boldo/models/Organization.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/doctor_profile/doctor_profile_screen.dart';
@@ -14,7 +12,6 @@ import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/go_to_top.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -38,7 +35,6 @@ class DoctorsAvailable extends StatefulWidget {
 class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerProviderStateMixin{
 
   late DoctorFilterProvider _myProvider;
-  bool _loading = true;
   List<Doctor> doctors = [];
   List<Doctor> recentDoctors = [];
   // initial value
@@ -49,8 +45,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   ScrollController scrollDoctorList = ScrollController();
   // flag for show or not the scroll button
   bool showAnimatedButton = false;
-  bool _getDoctorsFailed = false;
-  bool _getFilterDoctorsFailed = false;
   List<Doctor>? doctorsSaved;
 
   late TabController _tabController;
@@ -129,23 +123,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
           listeners: [
             BlocListener<DoctorsAvailableBloc, DoctorsAvailableState>(
               listener: (context, state) {
-                if (state is Loading) {
-                  setState(() {
-                    _loading = true;
-                  });
-                } else if (state is FilterLoadingInDoctorList) {
-                  setState(() {
-                    _loading = true;
-                  });
-                } else if (state is Success) {
-                  setState(() {
-                    _loading = false;
-                  });
-                } else if (state is FilterSuccesInDoctorList) {
-                  setState(() {
-                    _loading = false;
-                  });
-                } else if (state is DoctorsLoaded) {
+                if (state is DoctorsLoaded) {
                   setState(() {
                     doctors = state.doctors;
                   });
@@ -181,14 +159,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                   _refreshDoctorController.loadComplete();
                   setState(() {
                     doctors = state.doctors;
-                  });
-                } else if (state is FilterFailedInDoctorList) {
-                  setState(() {
-                    _getFilterDoctorsFailed = true;
-                  });
-                } else if (state is Failed) {
-                  setState(() {
-                    _getDoctorsFailed = true;
                   });
                 }
               },
