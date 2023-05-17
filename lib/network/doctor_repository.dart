@@ -210,7 +210,7 @@ class DoctorRepository {
 
       Response response;
       if (prefs.getBool('isFamily') ?? false) {
-        response = await dio.get('/profile/caretaker/dependent/${patient.id}/favorite/doctor/${doctor.id}',
+        response = await dio.put('/profile/caretaker/dependent/${patient.id}/favorite/doctor/${doctor.id}',
             queryParameters: queryParams
         );
       } else {
