@@ -21,6 +21,7 @@ class Doctor {
   List<Specializations>? specializations;
   String? street;
   List<OrganizationWithAvailability>? organizations;
+  bool isFavorite = false;
 
   Doctor(
       {this.addressDescription,
@@ -41,7 +42,9 @@ class Doctor {
       this.photoUrl,
       this.specializations,
       this.street,
-      this.organizations});
+      this.organizations,
+      this.isFavorite = false,
+      });
 
   Doctor.fromJson(Map<String, dynamic> json,) {
     addressDescription = json['addressDescription'];
