@@ -81,6 +81,7 @@ class Doctor {
         organizations!.add(OrganizationWithAvailability.fromJson(v));
       });
     }
+    isFavorite = json['isFavorite']?? false;
   }
 
   Map<String, dynamic> toJson() {
