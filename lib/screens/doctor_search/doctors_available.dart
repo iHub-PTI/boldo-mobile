@@ -77,25 +77,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
               .getNamesApplied,
         )
     );
-    BlocProvider.of<RecentDoctorsBloc>(context)..add(
-      GetRecentDoctors(
-        organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
-            .getOrganizationsApplied,
-        specializations:
-        Provider.of<DoctorFilterProvider>(context, listen: false)
-            .getSpecializationsApplied,
-        virtualAppointment:
-        Provider.of<DoctorFilterProvider>(context, listen: false)
-            .getLastVirtualAppointmentApplied,
-        inPersonAppointment:
-        Provider.of<DoctorFilterProvider>(context, listen: false)
-            .getLastInPersonAppointmentApplied,
-        names: Provider.of<DoctorFilterProvider>(
-            context,
-            listen: false)
-            .getNamesApplied,
-      ),
-    );
     scrollDoctorList.addListener(() {
     double offset = 10.0; // or the value you want
     if (scrollDoctorList.offset > offset){
@@ -168,6 +149,25 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                   setState(() {
                     doctors = state.doctors;
                   });
+                  BlocProvider.of<RecentDoctorsBloc>(context)..add(
+                    GetRecentDoctors(
+                      organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
+                          .getOrganizationsApplied,
+                      specializations:
+                      Provider.of<DoctorFilterProvider>(context, listen: false)
+                          .getSpecializationsApplied,
+                      virtualAppointment:
+                      Provider.of<DoctorFilterProvider>(context, listen: false)
+                          .getLastVirtualAppointmentApplied,
+                      inPersonAppointment:
+                      Provider.of<DoctorFilterProvider>(context, listen: false)
+                          .getLastInPersonAppointmentApplied,
+                      names: Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                          .getNamesApplied,
+                    ),
+                  );
                 } else if (state is MoreDoctorsLoaded) {
                   if (mounted) {
                     _refreshDoctorController.refreshCompleted();
