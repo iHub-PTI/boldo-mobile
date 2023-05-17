@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/blocs/doctor_more_availability_bloc/doctor_more_availability_bloc.dart';
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
+import 'package:boldo/blocs/doctors_favorite_bloc/doctors_favorite_bloc.dart';
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
@@ -206,6 +207,9 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<RecentDoctorsBloc>(
             create: (BuildContext context) => RecentDoctorsBloc(),
+          ),
+          BlocProvider<FavoriteDoctorsBloc>(
+            create: (BuildContext context) => FavoriteDoctorsBloc(),
           ),
         ],
         child: MultiProvider(
