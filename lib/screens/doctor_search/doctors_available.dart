@@ -1,4 +1,5 @@
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
+import 'package:boldo/blocs/doctors_favorite_bloc/doctors_favorite_bloc.dart';
 import 'package:boldo/blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
 import 'package:boldo/blocs/favorite_action_bloc/favorite_action_bloc.dart';
 import 'package:boldo/constants.dart';
@@ -34,13 +35,26 @@ class DoctorsAvailable extends StatefulWidget {
 // STATE CLASS
 class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerProviderStateMixin{
 
+  // filter provider
   late DoctorFilterProvider _myProvider;
+
+  //list of doctors for tabs
   List<Doctor> doctors = [];
   List<Doctor> recentDoctors = [];
+  List<Doctor> favoritesDoctors = [];
+
   // initial value
-  int offset = 0;
+  int offsetAllDoctors = 0;
+  int offsetRecentDoctors = 0;
+
+  //controllers for smartRefresh to pull and get more doctors
   RefreshController _refreshDoctorController =
       RefreshController(initialRefresh: false);
+
+  RefreshController _refreshFavoriteDoctorController =
+  RefreshController(initialRefresh: false);
+
+
   // scroll controller
   ScrollController scrollDoctorList = ScrollController();
   // flag for show or not the scroll button
@@ -88,7 +102,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   });
 
     _tabController = TabController(
-      length: 1,
+      length: 2,
       vsync: this,
     );
 
@@ -99,6 +113,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   void dispose() {
     _myProvider.clearFilter();
     _refreshDoctorController.dispose();
+    _refreshFavoriteDoctorController.dispose();
     _tabController.dispose();
     scrollDoctorList.dispose();
     super.dispose();
@@ -146,6 +161,34 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                           .getNamesApplied,
                     ),
                   );
+                  BlocProvider.of<FavoriteDoctorsBloc>(context)
+                      .add(GetFavoriteDoctors(
+                      organizations:
+                      Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                          .getOrganizationsApplied,
+                      specializations:
+                      Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                          .getSpecializationsApplied,
+                      virtualAppointment: Provider.of<
+                          DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                          .getLastVirtualAppointmentApplied,
+                      inPersonAppointment:
+                      Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                          .getLastInPersonAppointmentApplied,
+                      names: Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false)
+                          .getNamesApplied
+                    ),
+                  );
                 } else if (state is MoreDoctorsLoaded) {
                   if (mounted) {
                     _refreshDoctorController.refreshCompleted();
@@ -168,6 +211,23 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 if (state is RecentDoctorsLoaded) {
                   setState(() {
                     recentDoctors = state.doctors;
+                  });
+                }
+              },
+            ),
+            BlocListener<FavoriteDoctorsBloc, FavoriteDoctorsState>(
+              listener: (context, state) {
+                if (state is FavoriteDoctorsLoaded) {
+                  _refreshFavoriteDoctorController.refreshCompleted();
+                  _refreshFavoriteDoctorController.loadComplete();
+                  setState(() {
+                    favoritesDoctors = state.doctors;
+                  });
+                }else if (state is MoreFavoriteDoctorsLoaded) {
+                  _refreshFavoriteDoctorController.refreshCompleted();
+                  _refreshFavoriteDoctorController.loadComplete();
+                  setState(() {
+                    favoritesDoctors = [... favoritesDoctors, ... state.doctors];
                   });
                 }
               },
@@ -285,6 +345,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   Widget _body(){
     return Expanded(
       child: NestedScrollView(
+        controller: scrollDoctorList,
         physics: const NeverScrollableScrollPhysics(),
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
@@ -303,6 +364,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
       controller: _tabController,
       children: [
         _recentDoctorTab(),
+        _favoriteDoctorTab(),
       ],
     );
   }
@@ -312,7 +374,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
       height: 44,
       color: ConstantsV2.grayLightest,
       child: TabBar(
-        isScrollable: true,
         labelStyle: boldoTabHeaderSelectedTextStyle,
         unselectedLabelStyle: boldoTabHeaderUnselectedTextStyle,
         indicatorColor: Colors.transparent,
@@ -323,6 +384,9 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         tabs: [
           const Text(
             'Recientes',
+          ),
+          const Text(
+            'Favoritos',
           ),
         ],
       ),
@@ -339,7 +403,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         color: Constants.primaryColor800,
       ),
       child: SingleChildScrollView(
-        controller: scrollDoctorList,
         child: Column(
           children: [
             _recentDoctors(),
@@ -381,7 +444,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
       ),
       // this for refresh all data
       onRefresh: () {
-        offset = 0;
+        offsetAllDoctors = 0;
         BlocProvider.of<DoctorsAvailableBloc>(context)
             .add(GetDoctorFilterInDoctorList(
             organizations:
@@ -412,7 +475,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
       },
       // this for load more doctors
       onLoading: () {
-        offset = offset + 20;
+        offsetAllDoctors = offsetAllDoctors + 20;
         BlocProvider.of<DoctorsAvailableBloc>(context)
             .add(GetMoreFilterDoctor(
             organizations:
@@ -420,7 +483,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 context,
                 listen: false
             ).getOrganizationsApplied,
-            offset: offset,
+            offset: offsetAllDoctors,
             specializations:
             Provider.of<DoctorFilterProvider>(
                 context,
@@ -441,6 +504,121 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 listen: false)
                 .getNamesApplied));
       },
+    );
+  }
+
+  Widget _favoriteDoctorTab(){
+    return Container(
+      color: ConstantsV2.grayLightest,
+      child: SmartRefresher(
+        physics: const ClampingScrollPhysics(),
+        controller: _refreshFavoriteDoctorController,
+        enablePullUp: true,
+        enablePullDown: true,
+        header: const MaterialClassicHeader(
+          color: Constants.primaryColor800,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _favoritesDoctors(),
+            ],
+          ),
+        ),
+        footer: CustomFooter(
+          builder:
+              (BuildContext context, LoadStatus? mode) {
+            Widget body = Row(
+              mainAxisAlignment:
+              MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.arrow_upward,
+                  color: Constants.extraColor300,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  "Sube para cargar más",
+                  style: TextStyle(
+                    color: Constants.extraColor300,
+                  ),
+                )
+              ],
+            );
+            if (mode == LoadStatus.loading) {
+              body = const CircularProgressIndicator();
+            }
+            return Container(
+              height: 55.0,
+              child: Center(child: body),
+            );
+          },
+        ),
+        // this for refresh all data
+        onRefresh: () {
+          offsetRecentDoctors = 0;
+          BlocProvider.of<FavoriteDoctorsBloc>(context)
+              .add(GetFavoriteDoctors(
+              organizations:
+              Provider.of<DoctorFilterProvider>(
+                  context,
+                  listen: false)
+                  .getOrganizationsApplied,
+              specializations:
+              Provider.of<DoctorFilterProvider>(
+                  context,
+                  listen: false)
+                  .getSpecializationsApplied,
+              virtualAppointment: Provider.of<
+                  DoctorFilterProvider>(
+                  context,
+                  listen: false)
+                  .getLastVirtualAppointmentApplied,
+              inPersonAppointment:
+              Provider.of<DoctorFilterProvider>(
+                  context,
+                  listen: false)
+                  .getLastInPersonAppointmentApplied,
+              names: Provider.of<DoctorFilterProvider>(
+                  context,
+                  listen: false)
+                  .getNamesApplied
+          ));
+        },
+        // this for load more doctors
+        onLoading: () {
+          offsetRecentDoctors = offsetRecentDoctors + 20;
+          BlocProvider.of<FavoriteDoctorsBloc>(context)
+              .add(GetMoreFavoriteDoctors(
+              organizations:
+              Provider.of<DoctorFilterProvider>(
+                  context,
+                  listen: false
+              ).getOrganizationsApplied,
+              offset: offsetRecentDoctors,
+              specializations:
+              Provider.of<DoctorFilterProvider>(
+                  context,
+                  listen: false)
+                  .getSpecializationsApplied,
+              virtualAppointment: Provider.of<
+                  DoctorFilterProvider>(
+                  context,
+                  listen: false)
+                  .getLastVirtualAppointmentApplied,
+              inPersonAppointment:
+              Provider.of<DoctorFilterProvider>(
+                  context,
+                  listen: false)
+                  .getLastInPersonAppointmentApplied,
+              names: Provider.of<DoctorFilterProvider>(
+                  context,
+                  listen: false)
+                  .getNamesApplied));
+        },
+      ),
     );
   }
 
@@ -534,6 +712,59 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 ],
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _emptyFavoriteDoctors(){
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 50),
+            child: Center(
+              child: SvgPicture.asset(
+                'assets/icon/empty_favorite_doctors.svg',
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Container(
+            child: Column(
+              children: [
+                Container(
+                  child: const Text(
+                    "No hay favoritos",
+                    style: TextStyle(
+                      color: ConstantsV2.activeText,
+                      fontStyle: FontStyle.normal,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Montserrat',
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  child: Text(
+                    "Tu listado de médicos aparecerá aquí una vez marcado como favorito",
+                    style: bodyMediumRegular.copyWith(color: Colors.black),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 10,
           ),
         ],
       ),
@@ -686,6 +917,76 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
               return doctorItem(context, index, doctors);
             },
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _favoritesDoctors(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        BlocBuilder<FavoriteDoctorsBloc, FavoriteDoctorsState>(
+            builder: (context, state){
+              if(state is LoadingFavoriteDoctors)
+                return const Center(child: CircularProgressIndicator());
+              else if(state is FailedFavoriteDoctors){
+                return DataFetchErrorWidget(
+                    retryCallback: () =>
+                        BlocProvider.of<RecentDoctorsBloc>(context)
+                            .add(GetRecentDoctors(
+                            organizations:
+                            Provider.of<DoctorFilterProvider>(
+                                context,
+                                listen: false)
+                                .getOrganizationsApplied,
+                            specializations:
+                            Provider.of<DoctorFilterProvider>(
+                                context,
+                                listen: false)
+                                .getSpecializationsApplied,
+                            virtualAppointment: Provider.of<
+                                DoctorFilterProvider>(
+                                context,
+                                listen: false)
+                                .getLastVirtualAppointmentApplied,
+                            inPersonAppointment:
+                            Provider.of<DoctorFilterProvider>(
+                                context,
+                                listen: false)
+                                .getLastInPersonAppointmentApplied,
+                            names: Provider.of<DoctorFilterProvider>(
+                                context,
+                                listen: false)
+                                .getNamesApplied
+                            )
+                        )
+                );
+              }else{
+                return
+                  favoritesDoctors.isNotEmpty
+                      ? Container(
+                    padding:
+                    const EdgeInsets.only(right: 16, left: 16),
+                    child: GridView.builder(
+                      physics: const ClampingScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      gridDelegate:
+                      const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 200,
+                          childAspectRatio: 5 / 4,
+                          crossAxisSpacing: 20,
+                          mainAxisSpacing: 20),
+                      itemCount: favoritesDoctors.length,
+                      itemBuilder: (context, index){
+                        return doctorItem(context, index, favoritesDoctors);
+                      },
+                    ),
+                  )
+                      : _emptyFavoriteDoctors();
+              }
+            }
         ),
       ],
     );
@@ -935,7 +1236,34 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                     element.isFavorite = !element.isFavorite;
                   }
                 });
-
+                offsetRecentDoctors = 0;
+                BlocProvider.of<FavoriteDoctorsBloc>(context)
+                    .add(GetFavoriteDoctors(
+                    organizations:
+                    Provider.of<DoctorFilterProvider>(
+                        context,
+                        listen: false)
+                        .getOrganizationsApplied,
+                    specializations:
+                    Provider.of<DoctorFilterProvider>(
+                        context,
+                        listen: false)
+                        .getSpecializationsApplied,
+                    virtualAppointment: Provider.of<
+                        DoctorFilterProvider>(
+                        context,
+                        listen: false)
+                        .getLastVirtualAppointmentApplied,
+                    inPersonAppointment:
+                    Provider.of<DoctorFilterProvider>(
+                        context,
+                        listen: false)
+                        .getLastInPersonAppointmentApplied,
+                    names: Provider.of<DoctorFilterProvider>(
+                        context,
+                        listen: false)
+                        .getNamesApplied
+                ));
                 // update view
                 setState(() {
                 });
