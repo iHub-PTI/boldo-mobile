@@ -936,6 +936,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 ),
               ],
             ),
+            favoriteIcon(listDoctor, index),
           ],
         ),
       ),
