@@ -45,7 +45,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
 
   // initial value
   int offsetAllDoctors = 0;
-  int offsetRecentDoctors = 0;
+  int offsetFavoriteDoctors = 0;
 
   //controllers for smartRefresh to pull and get more doctors
   RefreshController _refreshDoctorController =
