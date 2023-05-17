@@ -196,4 +196,51 @@ class DoctorRepository {
     }
   }
 
+  Future<None> putFavoriteStatus(
+      Doctor doctor,
+      bool favoriteStatus
+      ) async {
+    try {
+      dynamic queryParams = {
+        "addFavorite": favoriteStatus,
+      };
+
+      // remove null values to solve null compare in server
+      queryParams.removeWhere((key, value) => value == null);
+
+      Response response;
+      if (prefs.getBool('isFamily') ?? false) {
+        response = await dio.get('/profile/caretaker/dependent/${patient.id}/favorite/doctor/${doctor.id}',
+            queryParameters: queryParams
+        );
+      } else {
+        // the query is made
+        response = await dio.put('/profile/patient/favorite/doctor/${doctor.id}',
+            queryParameters: queryParams
+        );
+      }
+      return const None();
+    } on DioError catch(ex) {
+      await Sentry.captureMessage(
+        ex.toString(),
+        params: [
+          {
+            "path": ex.requestOptions.path,
+            "data": ex.requestOptions.data,
+            "patient": prefs.getString("userId"),
+            "responseError": ex.response,
+          }
+        ],
+      );
+      print(ex.response?.data);
+      throw Failure('No se establecer como favorito');
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    }
+  }
+
 }
