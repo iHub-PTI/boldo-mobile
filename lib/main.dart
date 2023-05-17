@@ -58,6 +58,7 @@ import 'blocs/attach_study_order_bloc/attachStudyOrder_bloc.dart';
 import 'blocs/doctorFilter_bloc/doctorFilter_bloc.dart';
 import 'blocs/doctor_availability_bloc/doctor_availability_bloc.dart';
 import 'blocs/doctor_bloc/doctor_bloc.dart';
+import 'blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
 import 'blocs/passport_bloc/passportBloc.dart';
 import 'blocs/prescription_bloc/prescriptionBloc.dart';
 import 'blocs/study_order_bloc/studyOrder_bloc.dart';
@@ -202,6 +203,9 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<DoctorMoreAvailabilityBloc>(
             create: (BuildContext context) => DoctorMoreAvailabilityBloc(),
+          ),
+          BlocProvider<RecentDoctorsBloc>(
+            create: (BuildContext context) => RecentDoctorsBloc(),
           ),
         ],
         child: MultiProvider(
