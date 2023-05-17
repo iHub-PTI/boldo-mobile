@@ -66,25 +66,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   @override
   void initState() {
     _myProvider = Provider.of<DoctorFilterProvider>(context, listen: false);
-    BlocProvider.of<DoctorsAvailableBloc>(context).add(
-        GetDoctorFilter(
-            organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
-                .getOrganizationsApplied,
-            specializations:
-            Provider.of<DoctorFilterProvider>(context, listen: false)
-                .getSpecializationsApplied,
-            virtualAppointment:
-            Provider.of<DoctorFilterProvider>(context, listen: false)
-                .getLastVirtualAppointmentApplied,
-            inPersonAppointment:
-            Provider.of<DoctorFilterProvider>(context, listen: false)
-                .getLastInPersonAppointmentApplied,
-            names: Provider.of<DoctorFilterProvider>(
-              context,
-              listen: false)
-              .getNamesApplied,
-        )
-    );
+    getDoctors();
     scrollDoctorList.addListener(() {
     double offset = 10.0; // or the value you want
     if (scrollDoctorList.offset > offset){
@@ -142,53 +124,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                   setState(() {
                     doctors = state.doctors;
                   });
-                  BlocProvider.of<RecentDoctorsBloc>(context)..add(
-                    GetRecentDoctors(
-                      organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
-                          .getOrganizationsApplied,
-                      specializations:
-                      Provider.of<DoctorFilterProvider>(context, listen: false)
-                          .getSpecializationsApplied,
-                      virtualAppointment:
-                      Provider.of<DoctorFilterProvider>(context, listen: false)
-                          .getLastVirtualAppointmentApplied,
-                      inPersonAppointment:
-                      Provider.of<DoctorFilterProvider>(context, listen: false)
-                          .getLastInPersonAppointmentApplied,
-                      names: Provider.of<DoctorFilterProvider>(
-                          context,
-                          listen: false)
-                          .getNamesApplied,
-                    ),
-                  );
-                  BlocProvider.of<FavoriteDoctorsBloc>(context)
-                      .add(GetFavoriteDoctors(
-                      organizations:
-                      Provider.of<DoctorFilterProvider>(
-                          context,
-                          listen: false)
-                          .getOrganizationsApplied,
-                      specializations:
-                      Provider.of<DoctorFilterProvider>(
-                          context,
-                          listen: false)
-                          .getSpecializationsApplied,
-                      virtualAppointment: Provider.of<
-                          DoctorFilterProvider>(
-                          context,
-                          listen: false)
-                          .getLastVirtualAppointmentApplied,
-                      inPersonAppointment:
-                      Provider.of<DoctorFilterProvider>(
-                          context,
-                          listen: false)
-                          .getLastInPersonAppointmentApplied,
-                      names: Provider.of<DoctorFilterProvider>(
-                          context,
-                          listen: false)
-                          .getNamesApplied
-                    ),
-                  );
+                  getRecentDoctors();
+                  getFavoriteDoctors();
                 } else if (state is MoreDoctorsLoaded) {
                   if (mounted) {
                     _refreshDoctorController.refreshCompleted();
@@ -305,26 +242,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                       return const Center(child: CircularProgressIndicator());
                     else if(state is Failed){
                       return DataFetchErrorWidget(
-                          retryCallback: () =>
-                              BlocProvider.of<DoctorsAvailableBloc>(context).add(
-                                  GetDoctorFilter(
-                                    organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
-                                        .getOrganizationsApplied,
-                                    specializations:
-                                    Provider.of<DoctorFilterProvider>(context, listen: false)
-                                        .getSpecializationsApplied,
-                                    virtualAppointment:
-                                    Provider.of<DoctorFilterProvider>(context, listen: false)
-                                        .getLastVirtualAppointmentApplied,
-                                    inPersonAppointment:
-                                    Provider.of<DoctorFilterProvider>(context, listen: false)
-                                        .getLastInPersonAppointmentApplied,
-                                    names: Provider.of<DoctorFilterProvider>(
-                                        context,
-                                        listen: false)
-                                        .getNamesApplied,
-                                  )
-                              )
+                          retryCallback: getDoctors
                         );
                       }else{
                         return
@@ -445,64 +363,12 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
       // this for refresh all data
       onRefresh: () {
         offsetAllDoctors = 0;
-        BlocProvider.of<DoctorsAvailableBloc>(context)
-            .add(GetDoctorFilterInDoctorList(
-            organizations:
-            Provider.of<DoctorFilterProvider>(
-                context,
-                listen: false)
-                .getOrganizationsApplied,
-            specializations:
-            Provider.of<DoctorFilterProvider>(
-                context,
-                listen: false)
-                .getSpecializationsApplied,
-            virtualAppointment: Provider.of<
-                DoctorFilterProvider>(
-                context,
-                listen: false)
-                .getLastVirtualAppointmentApplied,
-            inPersonAppointment:
-            Provider.of<DoctorFilterProvider>(
-                context,
-                listen: false)
-                .getLastInPersonAppointmentApplied,
-            names: Provider.of<DoctorFilterProvider>(
-                context,
-                listen: false)
-                .getNamesApplied
-        ));
+        getDoctors();
       },
       // this for load more doctors
       onLoading: () {
         offsetAllDoctors = offsetAllDoctors + 20;
-        BlocProvider.of<DoctorsAvailableBloc>(context)
-            .add(GetMoreFilterDoctor(
-            organizations:
-            Provider.of<DoctorFilterProvider>(
-                context,
-                listen: false
-            ).getOrganizationsApplied,
-            offset: offsetAllDoctors,
-            specializations:
-            Provider.of<DoctorFilterProvider>(
-                context,
-                listen: false)
-                .getSpecializationsApplied,
-            virtualAppointment: Provider.of<
-                DoctorFilterProvider>(
-                context,
-                listen: false)
-                .getLastVirtualAppointmentApplied,
-            inPersonAppointment:
-            Provider.of<DoctorFilterProvider>(
-                context,
-                listen: false)
-                .getLastInPersonAppointmentApplied,
-            names: Provider.of<DoctorFilterProvider>(
-                context,
-                listen: false)
-                .getNamesApplied));
+        getMoreDoctors();
       },
     );
   }
@@ -558,65 +424,13 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         ),
         // this for refresh all data
         onRefresh: () {
-          offsetRecentDoctors = 0;
-          BlocProvider.of<FavoriteDoctorsBloc>(context)
-              .add(GetFavoriteDoctors(
-              organizations:
-              Provider.of<DoctorFilterProvider>(
-                  context,
-                  listen: false)
-                  .getOrganizationsApplied,
-              specializations:
-              Provider.of<DoctorFilterProvider>(
-                  context,
-                  listen: false)
-                  .getSpecializationsApplied,
-              virtualAppointment: Provider.of<
-                  DoctorFilterProvider>(
-                  context,
-                  listen: false)
-                  .getLastVirtualAppointmentApplied,
-              inPersonAppointment:
-              Provider.of<DoctorFilterProvider>(
-                  context,
-                  listen: false)
-                  .getLastInPersonAppointmentApplied,
-              names: Provider.of<DoctorFilterProvider>(
-                  context,
-                  listen: false)
-                  .getNamesApplied
-          ));
+          offsetFavoriteDoctors = 0;
+          getFavoriteDoctors();
         },
         // this for load more doctors
         onLoading: () {
-          offsetRecentDoctors = offsetRecentDoctors + 20;
-          BlocProvider.of<FavoriteDoctorsBloc>(context)
-              .add(GetMoreFavoriteDoctors(
-              organizations:
-              Provider.of<DoctorFilterProvider>(
-                  context,
-                  listen: false
-              ).getOrganizationsApplied,
-              offset: offsetRecentDoctors,
-              specializations:
-              Provider.of<DoctorFilterProvider>(
-                  context,
-                  listen: false)
-                  .getSpecializationsApplied,
-              virtualAppointment: Provider.of<
-                  DoctorFilterProvider>(
-                  context,
-                  listen: false)
-                  .getLastVirtualAppointmentApplied,
-              inPersonAppointment:
-              Provider.of<DoctorFilterProvider>(
-                  context,
-                  listen: false)
-                  .getLastInPersonAppointmentApplied,
-              names: Provider.of<DoctorFilterProvider>(
-                  context,
-                  listen: false)
-                  .getNamesApplied));
+          offsetFavoriteDoctors = offsetFavoriteDoctors + 20;
+          getMoreFavoriteDoctors();
         },
       ),
     );
@@ -831,26 +645,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
             return const Center(child: CircularProgressIndicator());
           else if(state is FailedRecentDoctors){
             return DataFetchErrorWidget(
-                retryCallback: () =>
-                BlocProvider.of<RecentDoctorsBloc>(context)..add(
-                  GetRecentDoctors(
-                    organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
-                        .getOrganizationsApplied,
-                    specializations:
-                    Provider.of<DoctorFilterProvider>(context, listen: false)
-                        .getSpecializationsApplied,
-                    virtualAppointment:
-                    Provider.of<DoctorFilterProvider>(context, listen: false)
-                        .getLastVirtualAppointmentApplied,
-                    inPersonAppointment:
-                    Provider.of<DoctorFilterProvider>(context, listen: false)
-                        .getLastInPersonAppointmentApplied,
-                    names: Provider.of<DoctorFilterProvider>(
-                        context,
-                        listen: false)
-                        .getNamesApplied,
-                  ),
-                )
+                retryCallback: () => getRecentDoctors
             );
           }else{
             return
@@ -932,35 +727,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 return const Center(child: CircularProgressIndicator());
               else if(state is FailedFavoriteDoctors){
                 return DataFetchErrorWidget(
-                    retryCallback: () =>
-                        BlocProvider.of<RecentDoctorsBloc>(context)
-                            .add(GetRecentDoctors(
-                            organizations:
-                            Provider.of<DoctorFilterProvider>(
-                                context,
-                                listen: false)
-                                .getOrganizationsApplied,
-                            specializations:
-                            Provider.of<DoctorFilterProvider>(
-                                context,
-                                listen: false)
-                                .getSpecializationsApplied,
-                            virtualAppointment: Provider.of<
-                                DoctorFilterProvider>(
-                                context,
-                                listen: false)
-                                .getLastVirtualAppointmentApplied,
-                            inPersonAppointment:
-                            Provider.of<DoctorFilterProvider>(
-                                context,
-                                listen: false)
-                                .getLastInPersonAppointmentApplied,
-                            names: Provider.of<DoctorFilterProvider>(
-                                context,
-                                listen: false)
-                                .getNamesApplied
-                            )
-                        )
+                    retryCallback: () => getFavoriteDoctors
                 );
               }else{
                 return
@@ -1236,34 +1003,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                     element.isFavorite = !element.isFavorite;
                   }
                 });
-                offsetRecentDoctors = 0;
-                BlocProvider.of<FavoriteDoctorsBloc>(context)
-                    .add(GetFavoriteDoctors(
-                    organizations:
-                    Provider.of<DoctorFilterProvider>(
-                        context,
-                        listen: false)
-                        .getOrganizationsApplied,
-                    specializations:
-                    Provider.of<DoctorFilterProvider>(
-                        context,
-                        listen: false)
-                        .getSpecializationsApplied,
-                    virtualAppointment: Provider.of<
-                        DoctorFilterProvider>(
-                        context,
-                        listen: false)
-                        .getLastVirtualAppointmentApplied,
-                    inPersonAppointment:
-                    Provider.of<DoctorFilterProvider>(
-                        context,
-                        listen: false)
-                        .getLastInPersonAppointmentApplied,
-                    names: Provider.of<DoctorFilterProvider>(
-                        context,
-                        listen: false)
-                        .getNamesApplied
-                ));
+                offsetFavoriteDoctors = 0;
+                getFavoriteDoctors();
                 // update view
                 setState(() {
                 });
@@ -1291,6 +1032,141 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
 
       ),
     );
+  }
+
+  void getDoctors(){
+    BlocProvider.of<DoctorsAvailableBloc>(context).add(
+        GetDoctorFilter(
+          organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
+              .getOrganizationsApplied,
+          specializations:
+          Provider.of<DoctorFilterProvider>(context, listen: false)
+              .getSpecializationsApplied,
+          virtualAppointment:
+          Provider.of<DoctorFilterProvider>(context, listen: false)
+              .getLastVirtualAppointmentApplied,
+          inPersonAppointment:
+          Provider.of<DoctorFilterProvider>(context, listen: false)
+              .getLastInPersonAppointmentApplied,
+          names: Provider.of<DoctorFilterProvider>(
+              context,
+              listen: false)
+              .getNamesApplied,
+        )
+    );
+  }
+
+  void getMoreDoctors(){
+    BlocProvider.of<DoctorsAvailableBloc>(context)
+        .add(GetMoreFilterDoctor(
+        organizations:
+        Provider.of<DoctorFilterProvider>(
+            context,
+            listen: false
+        ).getOrganizationsApplied,
+        offset: offsetAllDoctors,
+        specializations:
+        Provider.of<DoctorFilterProvider>(
+            context,
+            listen: false)
+            .getSpecializationsApplied,
+        virtualAppointment: Provider.of<
+            DoctorFilterProvider>(
+            context,
+            listen: false)
+            .getLastVirtualAppointmentApplied,
+        inPersonAppointment:
+        Provider.of<DoctorFilterProvider>(
+            context,
+            listen: false)
+            .getLastInPersonAppointmentApplied,
+        names: Provider.of<DoctorFilterProvider>(
+            context,
+            listen: false)
+            .getNamesApplied));
+  }
+
+  void getRecentDoctors(){
+    BlocProvider.of<RecentDoctorsBloc>(context)..add(
+      GetRecentDoctors(
+        organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
+            .getOrganizationsApplied,
+        specializations:
+        Provider.of<DoctorFilterProvider>(context, listen: false)
+            .getSpecializationsApplied,
+        virtualAppointment:
+        Provider.of<DoctorFilterProvider>(context, listen: false)
+            .getLastVirtualAppointmentApplied,
+        inPersonAppointment:
+        Provider.of<DoctorFilterProvider>(context, listen: false)
+            .getLastInPersonAppointmentApplied,
+        names: Provider.of<DoctorFilterProvider>(
+            context,
+            listen: false)
+            .getNamesApplied,
+      ),
+    );
+  }
+
+  void getFavoriteDoctors(){
+    BlocProvider.of<FavoriteDoctorsBloc>(context)
+        .add(GetFavoriteDoctors(
+        organizations:
+        Provider.of<DoctorFilterProvider>(
+            context,
+            listen: false)
+            .getOrganizationsApplied,
+        specializations:
+        Provider.of<DoctorFilterProvider>(
+            context,
+            listen: false)
+            .getSpecializationsApplied,
+        virtualAppointment: Provider.of<
+            DoctorFilterProvider>(
+            context,
+            listen: false)
+            .getLastVirtualAppointmentApplied,
+        inPersonAppointment:
+        Provider.of<DoctorFilterProvider>(
+            context,
+            listen: false)
+            .getLastInPersonAppointmentApplied,
+        names: Provider.of<DoctorFilterProvider>(
+            context,
+            listen: false)
+            .getNamesApplied
+    ),
+    );
+  }
+
+  void getMoreFavoriteDoctors(){
+    BlocProvider.of<FavoriteDoctorsBloc>(context)
+        .add(GetMoreFavoriteDoctors(
+        organizations:
+        Provider.of<DoctorFilterProvider>(
+            context,
+            listen: false
+        ).getOrganizationsApplied,
+        offset: offsetFavoriteDoctors,
+        specializations:
+        Provider.of<DoctorFilterProvider>(
+            context,
+            listen: false)
+            .getSpecializationsApplied,
+        virtualAppointment: Provider.of<
+            DoctorFilterProvider>(
+            context,
+            listen: false)
+            .getLastVirtualAppointmentApplied,
+        inPersonAppointment:
+        Provider.of<DoctorFilterProvider>(
+            context,
+            listen: false)
+            .getLastInPersonAppointmentApplied,
+        names: Provider.of<DoctorFilterProvider>(
+            context,
+            listen: false)
+            .getNamesApplied));
   }
   
 }
