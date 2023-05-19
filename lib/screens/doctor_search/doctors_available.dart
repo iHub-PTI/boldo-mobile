@@ -61,6 +61,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   bool showAnimatedButton = false;
   List<Doctor>? doctorsSaved;
 
+  final GlobalKey<AnimatedGridState> gridFavoriteDoctorsKey = GlobalKey<AnimatedGridState>();
+
   late TabController _tabController;
 
   @override
