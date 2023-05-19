@@ -188,6 +188,13 @@ class OrganizationWithAvailability{
     }
   }
 
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data.addAll(organization?.toJson()?? {});
+    data['nextAvailability'] = nextAvailability?.toJson();
+    return data;
+  }
+
 }
 
 class OrganizationWithAvailabilities{
