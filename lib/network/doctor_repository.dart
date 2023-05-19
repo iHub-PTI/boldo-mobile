@@ -170,7 +170,8 @@ class DoctorRepository {
         );
       }
       if (response.statusCode == 200) {
-        List<Doctor> doctors = List<Doctor>.from(response.data.map((i) => Doctor.fromJson(i)));
+        List<Doctor> doctors = List<Doctor>.from(
+            response.data['items'].map((i) => Doctor.fromJson(i)));
         return doctors;
       }
       throw Failure('No se pudo obtener la lista de médicos');
