@@ -109,6 +109,11 @@ class Doctor {
           specializations!.map((v) => v.toJson()).toList();
     }
     data['street'] = street;
+    if (organizations != null) {
+      data['organizations'] =
+          organizations!.map((v) => v.toJson()).toList();
+    }
+    data['isFavorite'] = isFavorite;
     return data;
   }
 }
