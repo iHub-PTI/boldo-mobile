@@ -161,14 +161,31 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 if (state is FavoriteDoctorsLoaded) {
                   _refreshFavoriteDoctorController.refreshCompleted();
                   _refreshFavoriteDoctorController.loadComplete();
-                  setState(() {
-                    favoritesDoctors = state.doctors;
+                  favoritesDoctors.clear();
+                  state.doctors.forEach((doctor) {
+                    favoritesDoctors.add(doctor);
+                    try {
+                      gridFavoriteDoctorsKey.currentState!.insertItem(
+                        favoritesDoctors.length - 1,
+                        duration: durationFavoriteAction
+                      );
+                    } catch (error) {
+                      //none
+                    }
                   });
                 }else if (state is MoreFavoriteDoctorsLoaded) {
                   _refreshFavoriteDoctorController.refreshCompleted();
                   _refreshFavoriteDoctorController.loadComplete();
-                  setState(() {
-                    favoritesDoctors = [... favoritesDoctors, ... state.doctors];
+                  state.doctors.forEach((doctor) {
+                    favoritesDoctors.add(doctor);
+                    try {
+                      gridFavoriteDoctorsKey.currentState!.insertItem(
+                        favoritesDoctors.length - 1,
+                        duration: durationFavoriteAction
+                      );
+                    } catch (error) {
+                      //none
+                    }
                   });
                 }
               },
