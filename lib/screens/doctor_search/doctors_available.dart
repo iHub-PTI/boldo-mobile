@@ -669,10 +669,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 children: [
                   Container(
                     color: ConstantsV2.grayLightest,
-                    padding:
-                    const EdgeInsets.only(right: 16, left: 16),
                     height: 250,
                     child: GridView.builder(
+                      padding:
+                      const EdgeInsets.only(right: 16, left: 16),
                       physics: const ScrollPhysics(),
                       scrollDirection: Axis.horizontal,
                       shrinkWrap: true,
