@@ -90,7 +90,7 @@ const bodyMediumRegular = TextStyle(
   color: ConstantsV2.lightest,
   fontStyle: FontStyle.normal,
   fontSize: 12,
-  fontWeight: FontWeight.w400,
+  fontWeight: FontWeight.w300,
   fontFamily: 'Montserrat',
 );
 
@@ -538,6 +538,7 @@ class ConstantsV2 {
 
   static const Color systemSuccess = Color(0xff4AB648);
   static const Color systemFail = Color(0xffC53030);
+  static const Color accentRegular = Color(0xffF9D620);
 
   // home heights
   static double homeAppBarMaxHeight = 132.0;

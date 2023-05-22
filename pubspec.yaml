@@ -27,7 +27,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   http: ^0.13.3
-  sentry_flutter: ^6.2.2
+  sentry_flutter: 7.6.1
   socket_io_client: ^1.0.2
   flutter_webrtc: 0.9.17
   shared_preferences: ^2.0.7
@@ -38,7 +38,7 @@ dependencies:
   flutter_secure_storage: ^5.0.2
   flutter_dotenv: ^5.0.2
   page_view_dot_indicator: ^1.1.0
-  google_fonts: 2.2.0
+  google_fonts: 4.0.4
   flutter_appauth: ^4.2.1
   provider: ^6.0.2
   connectivity: ^3.0.6
@@ -48,7 +48,7 @@ dependencies:
   file_picker: ^5.2.3
   image_cropper: ^1.4.1
   url_launcher: ^6.0.10
-  intl: ^0.17.0
+  intl: 0.17.0
   flutter_datetime_picker: ^1.5.1
   email_validator: ^2.0.1
   intl_phone_field: ^3.0.1
@@ -69,6 +69,7 @@ dependencies:
   open_filex: ^4.3.1
   animate_do: ^2.1.0
   table_calendar: ^3.0.8
+  file: ^6.1.4
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.3

@@ -56,7 +56,7 @@ PODS:
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
-  - GoogleDataTransport (9.2.0):
+  - GoogleDataTransport (9.2.3):
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
@@ -77,11 +77,11 @@ PODS:
     - GoogleToolboxForMac/Defines (= 2.3.2)
     - "GoogleToolboxForMac/NSString+URLArguments (= 2.3.2)"
   - "GoogleToolboxForMac/NSString+URLArguments (2.3.2)"
-  - GoogleUtilities/Environment (7.10.0):
+  - GoogleUtilities/Environment (7.11.1):
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleUtilities/Logger (7.10.0):
+  - GoogleUtilities/Logger (7.11.1):
     - GoogleUtilities/Environment
-  - GoogleUtilities/UserDefaults (7.10.0):
+  - GoogleUtilities/UserDefaults (7.11.1):
     - GoogleUtilities/Logger
   - GoogleUtilitiesComponents (1.1.0):
     - GoogleUtilities/Logger
@@ -131,23 +131,25 @@ PODS:
     - Flutter
   - "permission_handler (5.1.0+2)":
     - Flutter
-  - PromisesObjC (2.1.1)
-  - Protobuf (3.21.10)
+  - PromisesObjC (2.2.0)
+  - Protobuf (3.23.1)
   - Reachability (3.2)
-  - SDWebImage (5.14.2):
-    - SDWebImage/Core (= 5.14.2)
-  - SDWebImage/Core (5.14.2)
-  - Sentry/HybridSDK (7.31.2)
+  - SDWebImage (5.15.8):
+    - SDWebImage/Core (= 5.15.8)
+  - SDWebImage/Core (5.15.8)
+  - Sentry/HybridSDK (8.7.1):
+    - SentryPrivate (= 8.7.1)
   - sentry_flutter (0.0.1):
     - Flutter
     - FlutterMacOS
-    - Sentry/HybridSDK (= 7.31.2)
+    - Sentry/HybridSDK (= 8.7.1)
+  - SentryPrivate (8.7.1)
   - shared_preferences_ios (0.0.1):
     - Flutter
   - sqflite (0.0.2):
     - Flutter
     - FMDB (>= 2.7.5)
-  - SwiftyGif (5.4.3)
+  - SwiftyGif (5.4.4)
   - TOCropViewController (2.6.1)
   - url_launcher_ios (0.0.1):
     - Flutter
@@ -200,6 +202,7 @@ SPEC REPOS:
     - Reachability
     - SDWebImage
     - Sentry
+    - SentryPrivate
     - SwiftyGif
     - TOCropViewController
     - WebRTC-SDK
@@ -260,10 +263,10 @@ SPEC CHECKSUMS:
   flutter_secure_storage: 7953c38a04c3fdbb00571bcd87d8e3b5ceb9daec
   flutter_webrtc: 6767eafaa728c1e58026e901ca19f3fd5d713397
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
+  GoogleDataTransport: f0308f5905a745f94fb91fea9c6cbaf3831cb1bd
   GoogleMLKit: 0017a6a8372e1a182139b9def4d89be5d87ca5a7
   GoogleToolboxForMac: 8bef7c7c5cf7291c687cf5354f39f9db6399ad34
-  GoogleUtilities: bad72cb363809015b1f7f19beb1f1cd23c589f95
+  GoogleUtilities: 9aa0ad5a7bc171f8bae016300bfcfa3fb8425749
   GoogleUtilitiesComponents: 679b2c881db3b615a2777504623df6122dd20afe
   GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
   image_cropper: 60c2789d1f1a78c873235d4319ca0c34a69f2d98
@@ -280,15 +283,16 @@ SPEC CHECKSUMS:
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
   permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
-  PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
-  Protobuf: ced4c17d029d7566cbfc51cfb44193e4aaafae27
+  PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
+  Protobuf: 3dd214698ddb7afd832da281c777b2e9facef401
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
-  SDWebImage: b9a731e1d6307f44ca703b3976d18c24ca561e84
-  Sentry: b15765d11769852fe78c9add942f7df60ed5dbf5
-  sentry_flutter: 8ef5e68ee2d301805279ed134b3b38dbe9e090f0
+  SDWebImage: cb032eba469c54e0000e78bcb0a13cdde0a52798
+  Sentry: 11776f6a25a128808d793d0d41bb7ad873b5ae4f
+  sentry_flutter: 886dbeb2674ba1232f540c54311a774bb50fda42
+  SentryPrivate: b3c448eacdabe9eab7679a2e0af609c608f91572
   shared_preferences_ios: aef470a42dc4675a1cdd50e3158b42e3d1232b32
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
-  SwiftyGif: 6c3eafd0ce693cad58bb63d2b2fb9bacb8552780
+  SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   url_launcher_ios: 02f1989d4e14e998335b02b67a7590fa34f971af
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
@@ -296,4 +300,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 57f1acefa15df09045c9cdcd82e5529bafde63a3
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1
