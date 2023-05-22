@@ -63,6 +63,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
 
   final GlobalKey<AnimatedGridState> gridFavoriteDoctorsKey = GlobalKey<AnimatedGridState>();
 
+  final Duration durationFavoriteAction = const Duration(seconds: 1);
+
   late TabController _tabController;
 
   @override
