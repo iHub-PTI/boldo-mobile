@@ -386,13 +386,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         header: const MaterialClassicHeader(
           color: Constants.primaryColor800,
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _favoritesDoctors(),
-            ],
-          ),
-        ),
+        child: _favoritesDoctors(),
         footer: CustomFooter(
           builder:
               (BuildContext context, LoadStatus? mode) {
@@ -720,44 +714,39 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   }
 
   Widget _favoritesDoctors(){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        BlocBuilder<FavoriteDoctorsBloc, FavoriteDoctorsState>(
-            builder: (context, state){
-              if(state is LoadingFavoriteDoctors)
-                return const Center(child: CircularProgressIndicator());
-              else if(state is FailedFavoriteDoctors){
-                return DataFetchErrorWidget(
-                    retryCallback: () => getFavoriteDoctors
-                );
-              }else{
-                return
-                  favoritesDoctors.isNotEmpty
-                      ? Container(
-                    padding:
-                    const EdgeInsets.only(right: 16, left: 16),
-                    child: GridView.builder(
-                      physics: const ClampingScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      gridDelegate:
-                      const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 200,
-                          childAspectRatio: 5 / 4,
-                          crossAxisSpacing: 20,
-                          mainAxisSpacing: 20),
-                      itemCount: favoritesDoctors.length,
-                      itemBuilder: (context, index){
-                        return doctorItem(context, index, favoritesDoctors);
-                      },
-                    ),
-                  )
-                      : _emptyFavoriteDoctors();
-              }
-            }
-        ),
-      ],
+    return BlocBuilder<FavoriteDoctorsBloc, FavoriteDoctorsState>(
+        builder: (context, state){
+          if(state is LoadingFavoriteDoctors)
+            return const Center(child: CircularProgressIndicator());
+          else if(state is FailedFavoriteDoctors){
+            return DataFetchErrorWidget(
+                retryCallback: () => getFavoriteDoctors
+            );
+          }else{
+            return
+              favoritesDoctors.isNotEmpty
+                  ? AnimatedGrid(
+                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                key: gridFavoriteDoctorsKey,
+                physics: const ClampingScrollPhysics(),
+                scrollDirection: Axis.vertical,
+                gridDelegate:
+                const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 200,
+                    childAspectRatio: 5 / 4,
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20),
+                initialItemCount: favoritesDoctors.length,
+                itemBuilder: (context, index, animation){
+                  return FadeTransition(
+                    opacity: animation,
+                    child: doctorItem(context, index, favoritesDoctors),
+                  );
+                },
+              )
+                  : _emptyFavoriteDoctors();
+          }
+        }
     );
   }
 
