@@ -319,7 +319,7 @@ class _PassportDetailState extends State<PassportDetail> {
                             // mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               const Text(
-                                'Pasaporte de Salud',
+                                'Vacunaciones',
                                 style: boldoTitleBlackTextStyle,
                               ),
                               const SizedBox(
