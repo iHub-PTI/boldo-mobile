@@ -509,6 +509,8 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                   virtualAppointment: false,
                                   inPersonAppointment: false,
                                   organizations: []));
+                              // TODO: disable endpoint consultation for dependents
+                              if(!(prefs.getBool(isFamily)?? false))
                               BlocProvider.of<RecentDoctorsBloc>(context).add(
                                   GetRecentDoctors(
                                     names: [],
@@ -518,6 +520,8 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                     organizations: [],
                                   )
                               );
+                              // TODO: disable endpoint consultation for dependents
+                              if(!(prefs.getBool(isFamily)?? false))
                               BlocProvider.of<FavoriteDoctorsBloc>(context)
                                   .add(GetFavoriteDoctors(
                                 names: [],
@@ -563,6 +567,8 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                 virtualAppointment: virtualAppointment,
                                 inPersonAppointment: inPersonAppointment,
                                 organizations: organizationsSelected));
+                            // TODO: disable endpoint consultation for dependents
+                            if(!(prefs.getBool(isFamily)?? false))
                             BlocProvider.of<RecentDoctorsBloc>(context).add(
                                 GetRecentDoctors(
                                 names: names,
@@ -572,6 +578,8 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                 organizations: organizationsSelected,
                               )
                             );
+                            // TODO: disable endpoint consultation for dependents
+                            if(!(prefs.getBool(isFamily)?? false))
                             BlocProvider.of<FavoriteDoctorsBloc>(context)
                                 .add(GetFavoriteDoctors(
                               names: names,

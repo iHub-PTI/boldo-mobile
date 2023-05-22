@@ -88,7 +88,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   });
 
     _tabController = TabController(
-      length: 2,
+      length:  // TODO: disable module recent and favorite for dependents
+        (!(prefs.getBool(isFamily)?? false)) ? 2 : 1,
       vsync: this,
     );
 
@@ -128,8 +129,11 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                   setState(() {
                     doctors = state.doctors;
                   });
-                  getRecentDoctors();
-                  getFavoriteDoctors();
+                  // TODO: disable module recent and favorite for dependents
+                  if(!(prefs.getBool(isFamily)?? false)) {
+                    getRecentDoctors();
+                    getFavoriteDoctors();
+                  }
                 } else if (state is MoreDoctorsLoaded) {
                   if (mounted) {
                     _refreshDoctorController.refreshCompleted();
@@ -303,6 +307,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
       controller: _tabController,
       children: [
         _recentDoctorTab(),
+        // TODO: disable module recent and favorite for dependents
+        if(!(prefs.getBool(isFamily)?? false))
         _favoriteDoctorTab(),
       ],
     );
@@ -310,8 +316,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
 
   Widget _tabBar(){
     return Container(
-      height: 44,
-      color: ConstantsV2.grayLightest,
+      padding: // TODO: disable module recent and favorite for dependents
+      (!(prefs.getBool(isFamily)?? false))?const EdgeInsets.all(12):null,
+      color: // TODO: disable module recent and favorite for dependents
+      (!(prefs.getBool(isFamily)?? false))?ConstantsV2.grayLightest:Colors.transparent,
       child: TabBar(
         labelStyle: boldoTabHeaderSelectedTextStyle,
         unselectedLabelStyle: boldoTabHeaderUnselectedTextStyle,
@@ -321,9 +329,13 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         labelColor: ConstantsV2.activeText,
         controller: _tabController,
         tabs: [
+          // TODO: disable module recent and favorite for dependents
+          (!(prefs.getBool(isFamily)?? false))?
           const Text(
             'Recientes',
-          ),
+          ):Container(),
+          // TODO: disable module recent and favorite for dependents
+          if(!(prefs.getBool(isFamily)?? false))
           const Text(
             'Favoritos',
           ),
@@ -333,64 +345,69 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   }
 
   Widget _recentDoctorTab(){
-    return SmartRefresher(
-      physics: const ClampingScrollPhysics(),
-      controller: _refreshDoctorController,
-      enablePullUp: true,
-      enablePullDown: true,
-      header: const MaterialClassicHeader(
-        color: Constants.primaryColor800,
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            _recentDoctors(),
-            const SizedBox(height: 24,),
-            _allDoctors(),
-          ],
+    return Container(
+      color: ConstantsV2.grayLightest,
+      child: SmartRefresher(
+        physics: const ClampingScrollPhysics(),
+        controller: _refreshDoctorController,
+        enablePullUp: true,
+        enablePullDown: true,
+        header: const MaterialClassicHeader(
+          color: Constants.primaryColor800,
         ),
-      ),
-      footer: CustomFooter(
-        builder:
-            (BuildContext context, LoadStatus? mode) {
-          Widget body = Row(
-            mainAxisAlignment:
-            MainAxisAlignment.center,
+        child: SingleChildScrollView(
+          child: Column(
             children: [
-              const Icon(
-                Icons.arrow_upward,
-                color: Constants.extraColor300,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              const Text(
-                "Sube para cargar más",
-                style: TextStyle(
+              // TODO: disable module recent and favorite for dependents
+              if(!(prefs.getBool(isFamily)?? false))
+                _recentDoctors(),
+              const SizedBox(height: 24,),
+              _allDoctors(),
+            ],
+          ),
+        ),
+        footer: CustomFooter(
+          builder:
+              (BuildContext context, LoadStatus? mode) {
+            Widget body = Row(
+              mainAxisAlignment:
+              MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.arrow_upward,
                   color: Constants.extraColor300,
                 ),
-              )
-            ],
-          );
-          if (mode == LoadStatus.loading) {
-            body = const CircularProgressIndicator();
-          }
-          return Container(
-            height: 55.0,
-            child: Center(child: body),
-          );
+                const SizedBox(
+                  width: 10,
+                ),
+                const Text(
+                  "Sube para cargar más",
+                  style: TextStyle(
+                    color: Constants.extraColor300,
+                  ),
+                )
+              ],
+            );
+            if (mode == LoadStatus.loading) {
+              body = const CircularProgressIndicator();
+            }
+            return Container(
+              height: 55.0,
+              child: Center(child: body),
+            );
+          },
+        ),
+        // this for refresh all data
+        onRefresh: () {
+          offsetAllDoctors = 0;
+          getDoctors();
+        },
+        // this for load more doctors
+        onLoading: () {
+          offsetAllDoctors = offsetAllDoctors + 20;
+          getMoreDoctors();
         },
       ),
-      // this for refresh all data
-      onRefresh: () {
-        offsetAllDoctors = 0;
-        getDoctors();
-      },
-      // this for load more doctors
-      onLoading: () {
-        offsetAllDoctors = offsetAllDoctors + 20;
-        getMoreDoctors();
-      },
     );
   }
 
@@ -984,6 +1001,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 ),
               ],
             ),
+            // TODO: disable module recent and favorite for dependents
+            if(!(prefs.getBool(isFamily)?? false))
             favoriteIcon(listDoctor, index),
           ],
         ),
