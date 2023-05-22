@@ -109,7 +109,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       boxFit: BoxFit.contain,
       alignment: Alignment.bottomCenter,
       index: 3,
-      title: 'Pasaporte de salud',
+      title: 'Ver mis vacunas',
       appear: true,
       page: PassportTab(),
     ),
