@@ -979,23 +979,110 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         builder: (BuildContext context, state) {
           return BlocListener<FavoriteActionBloc, FavoriteActionState>(
             listener: (context, state) {
-              if (state is SuccessFavoriteAction) {
+              if (state is LoadingFavoriteAction) {
+                Doctor doctorAction = Doctor.fromJson(listDoctor[index].toJson());
+                if(!doctorAction.isFavorite) {
+                  doctorAction.isFavorite = true;
+                  favoritesDoctors.add(doctorAction);
+                  try {
+                    gridFavoriteDoctorsKey.currentState!.insertItem(
+                      favoritesDoctors.length - 1,
+                      duration: durationFavoriteAction,
+                    );
+                  } catch (error) {
+                    //none
+                  }
+                }else{
+                  try {
+                    favoritesDoctors.remove(
+                        favoritesDoctors.lastWhere(
+                                (element) => element.id == doctorAction.id
+                        )
+                    );
+                    gridFavoriteDoctorsKey.currentState!.removeItem(
+                      index, (context, animation) => FadeTransition(
+                      opacity: animation,
+                        child: doctorItem(context, 0, [doctorAction]),
+                      ),
+                      duration: durationFavoriteAction,
+                    );
+                  } catch (error) {
+                    //none
+                  }
+                }
+
 
                 // update favorite status in list of all doctors
                 doctors.forEach((element) {
-                  if(element.id == listDoctor[index].id){
+                  if(element.id == doctorAction.id){
                     element.isFavorite = !element.isFavorite;
                   }
                 });
 
                 // update favorite status in list of recent doctors
                 recentDoctors.forEach((element) {
-                  if(element.id == listDoctor[index].id){
+                  if(element.id == doctorAction.id){
                     element.isFavorite = !element.isFavorite;
                   }
                 });
-                offsetFavoriteDoctors = 0;
-                getFavoriteDoctors();
+                // update view
+                setState(() {
+                });
+              }
+              if (state is FailedFavoriteAction) {
+                emitSnackBar(
+                    context: context,
+                    text: "No se pudo realizar la acción",
+                    status: ActionStatus.Fail
+                );
+                Doctor doctorAction = Doctor.fromJson(listDoctor[index].toJson());
+                if(doctorAction.isFavorite) {
+                  doctorAction.isFavorite = true;
+                  favoritesDoctors.add(doctorAction);
+                  try {
+                    gridFavoriteDoctorsKey.currentState!.insertItem(
+                      favoritesDoctors.length - 1,
+                      duration: durationFavoriteAction,
+                    );
+                  } catch (error) {
+                    //none
+                  }
+                }else{
+                  doctorAction.isFavorite = false;
+                  try {
+                    favoritesDoctors.remove(
+                        favoritesDoctors.lastWhere(
+                                (element) => element.id == doctorAction.id
+                        )
+                    );
+
+                    favoritesDoctors.lastWhere((element) => element.id == doctorAction.id);
+                    gridFavoriteDoctorsKey.currentState!.removeItem(
+                      index, (context, animation) => FadeTransition(
+                        opacity: animation,
+                        child: doctorItem(context, 0, [doctorAction]),
+                      ),
+                      duration: durationFavoriteAction,
+                    );
+                  } catch (error) {
+                    //none
+                  }
+                }
+
+
+                // update favorite status in list of all doctors
+                doctors.forEach((element) {
+                  if(element.id == doctorAction.id){
+                    element.isFavorite = !element.isFavorite;
+                  }
+                });
+
+                // update favorite status in list of recent doctors
+                recentDoctors.forEach((element) {
+                  if(element.id == doctorAction.id){
+                    element.isFavorite = !element.isFavorite;
+                  }
+                });
                 // update view
                 setState(() {
                 });
