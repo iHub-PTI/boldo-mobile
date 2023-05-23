@@ -106,87 +106,62 @@ class _MyStudiesState extends State<MyStudies> {
                           )));
               }
             },
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Icon(
-                                Icons.chevron_left_rounded,
-                                size: 25,
-                                color: Constants.extraColor400,
-                              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Icon(
+                              Icons.chevron_left_rounded,
+                              size: 25,
+                              color: Constants.extraColor400,
                             ),
-                            Expanded(
-                              child: header("Mis Estudios", "Estudios"),
-                            ),
-                          ],
-                        ),
+                          ),
+                          Expanded(
+                            child: header("Mis Estudios", "Estudios"),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     Navigator.pop(context);
-                  //   },
-                  //   child: Row(
-                  //     children: [
-                  //       const Icon(
-                  //         Icons.chevron_left_rounded,
-                  //         size: 25,
-                  //         color: Constants.extraColor400,
-                  //       ),
-                  //       Text(
-                  //         'Estudios',
-                  //         style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
-
-                  const SizedBox(height: 10),
-                  Text(
-                    'En esta sección podés subir archivos y fotos de los resultados de tus estudios y los de tu familia.',
-                    style: boldoHeadingTextStyle.copyWith(fontSize: 12),
-                  ),
-                  // const SizedBox(
-                  //   height: 15,
-                  // ),
-                  // Text(
-                  //   'Mis estudios',
-                  //   style: boldoSubTextStyle.copyWith(
-                  //       color: ConstantsV2.inactiveText),
-                  // ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  _loading
-                    ? const Center(
-                      child: CircularProgressIndicator(
-                        valueColor:
-                        AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                        backgroundColor: Constants.primaryColor600,
-                      )
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'En esta sección podés subir archivos y fotos de los resultados de tus estudios y los de tu familia.',
+                  style: boldoHeadingTextStyle.copyWith(fontSize: 12),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                _loading
+                  ? const Center(
+                    child: CircularProgressIndicator(
+                      valueColor:
+                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                      backgroundColor: Constants.primaryColor600,
                     )
-                    : diagnosticReport.isEmpty
-                      ? const EmptyStateV2(
-                        picture: "empty_studies.svg",
-                        titleBottom: "Aún no tenés estudios",
-                        textBottom:
-                        "A medida en que uses la aplicación podrás ir viendo tus estudios",
-                      )
-                          : showDiagnosticList(),
-                    ],
-              ),
+                )
+                    : Expanded(
+                    child: SingleChildScrollView(
+                      child: diagnosticReport.isEmpty
+                        ? const EmptyStateV2(
+                          picture: "empty_studies.svg",
+                          titleBottom: "Aún no tenés estudios",
+                          textBottom:
+                          "A medida en que uses la aplicación podrás ir viendo tus estudios",
+                        )
+                        : showDiagnosticList(),
+                    )
+                )
+              ],
             ),
           ),
         ),
