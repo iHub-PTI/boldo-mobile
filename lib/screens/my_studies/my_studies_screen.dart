@@ -264,19 +264,16 @@ class _MyStudiesState extends State<MyStudies> {
   // }
 
   Widget showDiagnosticList() {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height - 200,
-      // width: 300,
-      child: ListView.separated(
-        separatorBuilder: (BuildContext context, int index) => const Divider(
-          color: Colors.transparent,
-          height: 5,
-        ),
-        itemCount: diagnosticReport.length,
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemBuilder: showStudy,
+    return ListView.separated(
+      physics: const ClampingScrollPhysics(),
+      separatorBuilder: (BuildContext context, int index) => const Divider(
+        color: Colors.transparent,
+        height: 5,
       ),
+      itemCount: diagnosticReport.length,
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemBuilder: showStudy,
     );
   }
 
