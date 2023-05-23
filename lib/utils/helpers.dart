@@ -142,7 +142,7 @@ String? dateBetween({DateTime? date, String? afterText}) {
           return 'Faltan ${year.abs()} años ${afterText?? ''}';
         }
       }else if(difference> 0 ) {
-        int month = date.month - today.month;
+        int month = date.month - today.month + (date.year - today.year)*12;
         if(difference >60){
           return 'Faltan ${month.abs()} meses ${afterText?? ''}';
         }else if(difference >31){
