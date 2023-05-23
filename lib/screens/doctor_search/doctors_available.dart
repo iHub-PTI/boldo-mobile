@@ -88,8 +88,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   });
 
     _tabController = TabController(
-      length:  // TODO: disable module recent and favorite for dependents
-        (!(prefs.getBool(isFamily)?? false)) ? 2 : 1,
+      length: 2,
       vsync: this,
     );
 
@@ -129,11 +128,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                   setState(() {
                     doctors = state.doctors;
                   });
-                  // TODO: disable module recent and favorite for dependents
-                  if(!(prefs.getBool(isFamily)?? false)) {
-                    getRecentDoctors();
-                    getFavoriteDoctors();
-                  }
+                  getRecentDoctors();
+                  getFavoriteDoctors();
                 } else if (state is MoreDoctorsLoaded) {
                   if (mounted) {
                     _refreshDoctorController.refreshCompleted();
@@ -307,8 +303,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
       controller: _tabController,
       children: [
         _recentDoctorTab(),
-        // TODO: disable module recent and favorite for dependents
-        if(!(prefs.getBool(isFamily)?? false))
         _favoriteDoctorTab(),
       ],
     );
@@ -316,10 +310,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
 
   Widget _tabBar(){
     return Container(
-      padding: // TODO: disable module recent and favorite for dependents
-      (!(prefs.getBool(isFamily)?? false))?const EdgeInsets.all(12):null,
-      color: // TODO: disable module recent and favorite for dependents
-      (!(prefs.getBool(isFamily)?? false))?ConstantsV2.grayLightest:Colors.transparent,
+      padding: const EdgeInsets.all(12),
+      color: ConstantsV2.grayLightest,
       child: TabBar(
         labelStyle: boldoTabHeaderSelectedTextStyle,
         unselectedLabelStyle: boldoTabHeaderUnselectedTextStyle,
@@ -329,13 +321,9 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         labelColor: ConstantsV2.activeText,
         controller: _tabController,
         tabs: [
-          // TODO: disable module recent and favorite for dependents
-          (!(prefs.getBool(isFamily)?? false))?
           const Text(
             'Recientes',
-          ):Container(),
-          // TODO: disable module recent and favorite for dependents
-          if(!(prefs.getBool(isFamily)?? false))
+          ),
           const Text(
             'Favoritos',
           ),
@@ -357,10 +345,9 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         ),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // TODO: disable module recent and favorite for dependents
-              if(!(prefs.getBool(isFamily)?? false))
-                _recentDoctors(),
+              _recentDoctors(),
               const SizedBox(height: 24,),
               _allDoctors(),
             ],
@@ -1001,8 +988,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 ),
               ],
             ),
-            // TODO: disable module recent and favorite for dependents
-            if(!(prefs.getBool(isFamily)?? false))
             favoriteIcon(listDoctor, index),
           ],
         ),
