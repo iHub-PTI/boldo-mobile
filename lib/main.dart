@@ -64,6 +64,8 @@ import 'blocs/passport_bloc/passportBloc.dart';
 import 'blocs/prescription_bloc/prescriptionBloc.dart';
 import 'blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
+import 'environment.dart';
+import 'firebase_options.dart';
 import 'models/MedicalRecord.dart';
 import 'models/Organization.dart';
 import 'models/Patient.dart';
@@ -119,12 +121,10 @@ Future<void> main() async {
   }
 
   if (kReleaseMode) {
-    String sentryDSN = String.fromEnvironment('SENTRY_DSN',
-        defaultValue: dotenv.env['SENTRY_DSN']!);
+    String? sentryDSN = environment.SENTRY_DSN;
     await SentryFlutter.init(
       (options) {
-        options.environment = String.fromEnvironment('SENTRY_ENV',
-            defaultValue: dotenv.env['SENTRY_ENV']!);
+        options.environment = environment.SENTRY_ENV;
         options.dsn = sentryDSN;
       },
     );

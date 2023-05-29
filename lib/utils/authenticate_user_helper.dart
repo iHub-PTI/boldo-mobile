@@ -1,3 +1,4 @@
+import 'package:boldo/environment.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/pre_register_notify/pre_register_success_screen.dart';
@@ -64,8 +65,7 @@ class _LoginWebViewHelperState extends State<LoginWebViewHelper> {
 }
 
 Future<int> authenticateUser({required BuildContext context}) async {
-  String keycloakRealmAddress = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
-      defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
+  String keycloakRealmAddress = environment.KEYCLOAK_REALM_ADDRESS;
 
   FlutterAppAuth appAuth = FlutterAppAuth();
 

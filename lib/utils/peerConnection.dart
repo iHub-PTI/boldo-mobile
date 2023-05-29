@@ -1,19 +1,12 @@
+import 'package:boldo/environment.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 Map<String, dynamic> _iceServers = {
   "sdpSemantics": "plan-b",
   'iceServers': [
-    {
-      'urls': "turn:coturn.pti.org.py:3478",
-      'username': "coturn",
-      'credential': "VHJ1cGVyMjB4MjB4Lgo"
-    },
-    {
-      'urls': "stun:coturn.pti.org.py:3478",
-      'username': "coturn",
-      'credential': "VHJ1cGVyMjB4MjB4Lgo"
-    }
+    environment.ICE_SERVER_TURN_CONFIG,
+    environment.ICE_SERVER_STUN_CONFIG,
   ]
 };
 
