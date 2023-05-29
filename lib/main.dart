@@ -35,8 +35,11 @@ import 'package:boldo/screens/passport/user_qr_screen.dart';
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
 import 'package:boldo/screens/sing_in/sing_in_transition.dart';
+import 'package:boldo/services/firebase/FirebaseRemoteConfigService.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:camera/camera.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -98,6 +101,18 @@ late UploadUrl userSelfieUrl;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await environment.init();
+
+  // comment these lines if you doesn't have a firebase project
+  // init firebase config
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  // set remoteConfigService
+  final firebaseRemoteConfigService = FirebaseRemoteConfigService(
+    firebaseRemoteConfig: FirebaseRemoteConfig.instance,
+  );
+  //init remoteConfigService with firebase
+  await firebaseRemoteConfigService.init();
 
   //GestureBinding.instance!.resamplingEnabled = true;
   ByteData data = await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
