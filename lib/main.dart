@@ -114,6 +114,17 @@ Future<void> main() async {
   //init remoteConfigService with firebase
   await firebaseRemoteConfigService.init();
 
+  // listen changes of serverAddress
+  environment.streamServerAddress.listen((event) {
+    dio.options.baseUrl = event;
+  });
+
+  // listen changes of passportServerAddress
+  environment.streamPassportServerAddress.listen((event) {
+    dioPassport.options.baseUrl = event;
+    dioDownloader.options.baseUrl = event;
+  });
+
   //GestureBinding.instance!.resamplingEnabled = true;
   ByteData data = await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
   SecurityContext.defaultContext.setTrustedCertificatesBytes(data.buffer.asUint8List());
