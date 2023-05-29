@@ -97,8 +97,7 @@ late UploadUrl userSelfieUrl;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
-  // await dotenv.load(fileName: '.env');
+  await environment.init();
 
   //GestureBinding.instance!.resamplingEnabled = true;
   ByteData data = await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
