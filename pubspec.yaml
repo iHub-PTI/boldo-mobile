@@ -148,6 +148,7 @@ flutter:
   assets:
     - .env
     - .env_ice_server_config
+    - .env_app_config
     - assets/
     - assets/icon/
     - assets/images/
