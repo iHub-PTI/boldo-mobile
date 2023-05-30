@@ -37,6 +37,7 @@ import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
 import 'package:boldo/screens/sing_in/sing_in_transition.dart';
 import 'package:boldo/services/firebase/FirebaseRemoteConfigService.dart';
+import 'package:boldo/utils/app_helper.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -156,6 +157,9 @@ Future<void> main() async {
       },
     );
   }
+
+  bool hasUpdate = await checkUpdated();
+  bool hasRequiredUpdate = await checkRequiredUpdated();
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeRight,
