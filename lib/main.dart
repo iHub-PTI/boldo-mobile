@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:boldo/app_config.dart';
 import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/blocs/doctor_more_availability_bloc/doctor_more_availability_bloc.dart';
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
@@ -101,6 +102,7 @@ late UploadUrl userSelfieUrl;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await environment.init();
+  await appConfig.init();
 
   // comment these lines if you doesn't have a firebase project
   // init firebase config
