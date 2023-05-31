@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:boldo/app_config.dart';
 import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/blocs/doctor_more_availability_bloc/doctor_more_availability_bloc.dart';
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
@@ -35,7 +36,9 @@ import 'package:boldo/screens/passport/user_qr_screen.dart';
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
 import 'package:boldo/screens/sing_in/sing_in_transition.dart';
+import 'package:boldo/screens/update/UpdateAvailable.dart';
 import 'package:boldo/services/firebase/FirebaseRemoteConfigService.dart';
+import 'package:boldo/utils/app_helper.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -101,6 +104,7 @@ late UploadUrl userSelfieUrl;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await environment.init();
+  await appConfig.init();
 
   // comment these lines if you doesn't have a firebase project
   // init firebase config
@@ -155,17 +159,31 @@ Future<void> main() async {
     );
   }
 
+  bool hasUpdate = await checkUpdated();
+  bool hasRequiredUpdate = await checkRequiredUpdated();
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeRight,
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
-  ]).then((value) => runApp(MyApp(session: session ?? '')));
+  ]).then((value) => runApp(MyApp(
+    session: session ?? '',
+    hasUpdate: hasUpdate,
+    hasRequiredUpdate: hasRequiredUpdate,
+  )));
 }
 
 class MyApp extends StatefulWidget {
   final String session;
-  const MyApp({Key? key, required this.session}) : super(key: key);
+  final bool hasUpdate;
+  final bool hasRequiredUpdate;
+  const MyApp({
+    Key? key,
+    required this.session,
+    required this.hasUpdate,
+    required this.hasRequiredUpdate,
+  }) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -248,7 +266,11 @@ class _MyAppState extends State<MyApp> {
                     AuthProvider(widget.session != null ? true : false)),
             ChangeNotifierProvider<DoctorFilterProvider>(create: (_) => DoctorFilterProvider())
           ],
-          child: FullApp(onboardingCompleted: widget.session),
+          child: FullApp(
+            onboardingCompleted: widget.session,
+            hasUpdate: widget.hasUpdate,
+            hasRequiredUpdate: widget.hasRequiredUpdate,
+          ),
         ));
   }
 }
@@ -257,9 +279,13 @@ class FullApp extends StatelessWidget {
   const FullApp({
     Key? key,
     required this.onboardingCompleted,
+    required this.hasUpdate,
+    required this.hasRequiredUpdate,
   }) : super(key: key);
 
   final String onboardingCompleted;
+  final bool hasUpdate;
+  final bool hasRequiredUpdate;
 
   @override
   Widget build(BuildContext context) {
@@ -278,7 +304,7 @@ class FullApp extends StatelessWidget {
       navigatorKey: navKey,
       title: 'Boldo',
       theme: boldoTheme,
-      initialRoute:
+      initialRoute: hasUpdate? '/updateAvailable' :
           onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
       routes: {
         '/onboarding': (context) => HeroScreenV2(),
@@ -299,6 +325,10 @@ class FullApp extends StatelessWidget {
         '/familyConnectTransition': (context) => FamilyConnectTransition(),
         '/familyWithoutDniRegister': (context) => WithoutDniFamilyRegister(),
         '/profileScreen': (context) => const ProfileScreen(),
+        '/updateAvailable': (context) => UpdateAvailable(
+          onboardingCompleted: onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
+          isRequiredUpdate: hasRequiredUpdate,
+        ),
       },
     );
   }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:boldo/app_config.dart';
 import 'package:boldo/environment.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -27,6 +28,10 @@ class FirebaseRemoteConfigService {
         "SENTRY_ENV": environment.SENTRY_ENV?? '',
         "ICE_SERVER_TURN": jsonEncode(environment.ICE_SERVER_TURN_CONFIG),
         "ICE_SERVER_STUN": jsonEncode(environment.ICE_SERVER_STUN_CONFIG.toString()),
+        "APP_URL_DOWNLOAD": appConfig.APP_URL_DOWNLOAD,
+        "DEFAULT_APP_URL_DOWNLOAD": appConfig.DEFAULT_APP_URL_DOWNLOAD,
+        "LAST_AVAILABLE_VERSION": appConfig.LAST_AVAILABLE_VERSION,
+        "LAST_STABLE_VERSION": appConfig.LAST_STABLE_VERSION,
       });
 
       // get values from server
@@ -40,6 +45,10 @@ class FirebaseRemoteConfigService {
       environment.updateSentryDSNValue(firebaseRemoteConfig.getString("SENTRY_DSN"));
       environment.updateIceServerTurnConfigValue(jsonDecode(firebaseRemoteConfig.getString("ICE_SERVER_TURN")));
       environment.updateIceServerStunConfig(jsonDecode(firebaseRemoteConfig.getString("ICE_SERVER_STUN")));
+      appConfig.updateAppUrlDownloadValue(firebaseRemoteConfig.getString("APP_URL_DOWNLOAD"));
+      appConfig.updateDefaultAppUrlDownloadValue(firebaseRemoteConfig.getString("DEFAULT_APP_URL_DOWNLOAD"));
+      appConfig.updateLastAvailableVersionValue(firebaseRemoteConfig.getString("LAST_AVAILABLE_VERSION"));
+      appConfig.updateLastStableVersionValue(firebaseRemoteConfig.getString("LAST_STABLE_VERSION"));
 
       // listen remote changes
       firebaseRemoteConfig.onConfigUpdated.listen((event) async {
@@ -79,6 +88,23 @@ class FirebaseRemoteConfigService {
           var jsonString = firebaseRemoteConfig.getString("ICE_SERVER_STUN");
           var value = jsonDecode(jsonString);
           environment.updateIceServerStunConfig(value);
+        }
+
+        if(event.updatedKeys.contains("APP_URL_DOWNLOAD")){
+          // set new value
+          appConfig.updateAppUrlDownloadValue(firebaseRemoteConfig.getString("APP_URL_DOWNLOAD"));
+        }
+        if(event.updatedKeys.contains("DEFAULT_APP_URL_DOWNLOAD")){
+          // set new value
+          appConfig.updateDefaultAppUrlDownloadValue(firebaseRemoteConfig.getString("DEFAULT_APP_URL_DOWNLOAD"));
+        }
+        if(event.updatedKeys.contains("LAST_AVAILABLE_VERSION")){
+          // set new value
+          appConfig.updateLastAvailableVersionValue(firebaseRemoteConfig.getString("LAST_AVAILABLE_VERSION"));
+        }
+        if(event.updatedKeys.contains("LAST_STABLE_VERSION")){
+          // set new value
+          appConfig.updateLastStableVersionValue(firebaseRemoteConfig.getString("LAST_STABLE_VERSION"));
         }
       });
     } on FirebaseException catch (exception, stackTrace){

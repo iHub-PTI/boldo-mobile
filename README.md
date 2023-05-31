@@ -49,7 +49,23 @@ The mobile app is specifically for patients.
    
    ```
 
-5. `flutter run` - to start the app on an available device
+5. Create a `.env_app_config` file in the project's root folder and add these contents:
+
+   ```
+   
+   APP_URL_DOWNLOAD=
+   DEFAULT_APP_URL_DOWNLOAD= 
+   LAST_STABLE_VERSION=<LAST APP VERSION WITH BREAKING CHANGES>
+   LAST_AVAILABLE_VERSION=<LAST APP VERSION>
+   
+   ```
+   
+   Notes: 
+   - APP_URL_DOWNLOAD represent url to redirect to store for every platform
+   - DEFAULT_APP_URL_DOWNLOAD url to redirect page of promotion to get app 
+   
+
+6`flutter run` - to start the app on an available device
 
 Note: You can check the availability of connected devices by running `flutter doctor`.
 
