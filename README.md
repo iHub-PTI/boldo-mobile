@@ -16,45 +16,40 @@ The mobile app is specifically for patients.
 3. Create a `.env` file in the project's root folder and add these contents:
 
    ```
-   # ###################### Amientes locales ######################
+   # ###################### locale enviroments ######################
+   SOCKETS_ADDRESS = http://localhost:8000 
+   SERVER_ADDRESS = http://localhost:8008
+   KEYCLOAK_REALM_ADDRESS = http://localhost:8080/realms/iHub
+   
 
-   # ###################### Android ######################
-   # SOCKETS_ADDRESS = http://10.0.2.2:8000
-   # SERVER_ADDRESS = http://10.0.2.2:8008
-   # KEYCLOAK_REALM_ADDRESS = http://10.0.2.2:8080/auth/realms/iHub
+   # ###################### SENTRY credentials to listen erros on release mode ##########
+   # SENTRY_DSN=CREATE A PROJECT IN SENTRY FOR FLUTTER 
+   # SENTRY_ENV=ASK DEVELOPERS FOR KEY
 
-   # ######################## iOs ########################
-   # SOCKETS_ADDRESS = http://localhost:8000
-   # SERVER_ADDRESS = http://localhost:8008
-   # KEYCLOAK_REALM_ADDRESS = http://localhost:8080/auth/realms/iHub
+   ```
    
-   # ###################### Ambientes online ######################
+   Notes:
+   - [Sentry flutter documentation](https://docs.sentry.io/platforms/flutter/)
+   - For the SOCKETS_ADDRESS build the project [boldo-socket](https://github.com/iHub-PTI/boldo-sockets)
+   - For the SERVER_ADDRESS build the project [boldo-server](https://github.com/iHub-PTI/boldo-server)
+   - For the KEYCLOAK_REALM_ADDRESS build the project [ihub-keycloak](https://github.com/iHub-PTI/ihub-keycloak)
    
-   # ###################### SENTRY global para todos los entornos online ##########
-   # SENTRY_DSN=ASK DEVELOPERS FOR KEY
    
-   # ######################## dev online 01/03/2022 ########################
-   # SOCKETS_ADDRESS = https://boldo-dev.pti.org.py/
-   # SERVER_ADDRESS = https://boldo-dev.pti.org.py/api 
-   # HEALTH_PTI_API = https://sso-dev.pti.org.py/api 
-   # KEYCLOAK_REALM_ADDRESS = https://sso-dev.pti.org.py/auth/realms/iHub
+4. Create a `.env_ice_server_config` file in the project's root folder and add these contents:
    
-   # ######################## Test online 01/03/2022 ########################
-   SOCKETS_ADDRESS = https://boldo-test.pti.org.py/
-   SERVER_ADDRESS = https://boldo-test.pti.org.py/api
-   HEALTH_PTI_API = https://sso-test2.pti.org.py/api/
-   KEYCLOAK_REALM_ADDRESS = https://sso-test2.pti.org.py/auth/realms/iHub
+   ```
    
-   # ######################## Prod online 01/03/2022 ########################
-   # SOCKETS_ADDRESS = https://bol.do 
-   # SERVER_ADDRESS = https://bol.do/api 
-   # HEALTH_PTI_API = https://sso.bol.do/api 
-   # KEYCLOAK_REALM_ADDRESS = https://sso.bol.do/auth/realms/iHub
+   ICE_SERVER_TURN_URL = "turn:<your.turn.uri>:<UDP-PORT>"
+   ICE_SERVER_TURN_USERNAME = <guest>
+   ICE_SERVER_TURN_CREDENTIAL = <credential>
+   
+   ICE_SERVER_STUN_URL = stun:<your.stun.uri>:<UDP-PORT>
+   ICE_SERVER_STUN_USERNAME = <guest>
+   ICE_SERVER_STUN_CREDENTIAL = <credential>
+   
    ```
 
-   Note: Uncomment the Android secion in case you want to run it on an Android and you have the servers running on localhost.
-
-4. `flutter run` - to start the app on an available device
+5. `flutter run` - to start the app on an available device
 
 Note: You can check the availability of connected devices by running `flutter doctor`.
 
@@ -76,7 +71,7 @@ The webRTC and chatty libraries causes a lot of unnecessary comments. To disable
 
 To allow as many people as possible access to health services, this applications aims to run also on old devices. Currently we support the following minmal platform versions:
 
-- iOS: 10
+- iOS: 11
 - Android: 5.0 (Lollipop)
 
 ## Contributing

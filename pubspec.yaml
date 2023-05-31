@@ -75,6 +75,9 @@ dependencies:
   cupertino_icons: ^1.0.3
   move_to_background: ^1.0.2
   step_progress_indicator: ^1.0.2
+  firebase_core: ^2.9.0
+  firebase_remote_config: ^4.0.0
+  firebase_analytics: ^10.2.0
 
 dev_dependencies:
   pedantic: ^1.9.2
@@ -144,6 +147,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - .env
+    - .env_ice_server_config
     - assets/
     - assets/icon/
     - assets/images/

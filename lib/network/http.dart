@@ -1,4 +1,5 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/environment.dart';
 import 'package:boldo/network/connection_status.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
@@ -22,11 +23,9 @@ void initDio(
     required bool passport}) {
   String baseUrl = "";
   if (passport) {
-    baseUrl = String.fromEnvironment('SERVER_ADDRESS_PASSPORT',
-        defaultValue: dotenv.env['SERVER_ADDRESS_PASSPORT']!);
+    baseUrl = environment.SERVER_ADDRESS_PASSPORT;
   } else {
-    baseUrl = String.fromEnvironment('SERVER_ADDRESS',
-        defaultValue: dotenv.env['SERVER_ADDRESS']!);
+    baseUrl = environment.SERVER_ADDRESS;
         dio.options.headers['content-Type'] = 'application/json';
         dio.options.headers['accept'] = 'application/json';
   }
@@ -95,9 +94,7 @@ void initDio(
         dio.interceptors.responseLock.lock();
         dio.interceptors.errorLock.lock();
 
-        String keycloakRealmAddress = String.fromEnvironment(
-            'KEYCLOAK_REALM_ADDRESS',
-            defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
+        String keycloakRealmAddress = environment.KEYCLOAK_REALM_ADDRESS;
         final String? refreshToken = await storage.read(key: "refresh_token");
 
         try {
@@ -263,8 +260,7 @@ Future<void> _showInternetFailedDialog() async {
 }
 
 void dioByteInstance() async {
-  String baseUrl = String.fromEnvironment('SERVER_ADDRESS_PASSPORT',
-      defaultValue: dotenv.env['SERVER_ADDRESS_PASSPORT']!);
+  String baseUrl = environment.SERVER_ADDRESS_PASSPORT;
   dioDownloader.options.baseUrl = baseUrl;
   dioDownloader.options.connectTimeout = 20000;
   dioDownloader.options.receiveTimeout = 20000;
@@ -322,14 +318,12 @@ void dioByteInstance() async {
         if ("bearer $accessToken" != options.headers["authorization"]) {
           options.headers["authorization"] = "bearer $accessToken";
           handle.resolve(
-              await dioDownloader.request(options.path, options: optionsDio));
+              await dioDownloader.request(options.path, data: options.data, options: optionsDio, queryParameters: options.queryParameters));
         }
         dioDownloader.lock();
         dioDownloader.interceptors.responseLock.lock();
         dioDownloader.interceptors.errorLock.lock();
-        String keycloakRealmAddress = String.fromEnvironment(
-            'KEYCLOAK_REALM_ADDRESS',
-            defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
+        String keycloakRealmAddress = environment.KEYCLOAK_REALM_ADDRESS;
         final String? refreshToken = await storage.read(key: "refresh_token");
 
         try {
@@ -347,7 +341,7 @@ void dioByteInstance() async {
           dioDownloader.interceptors.errorLock.unlock();
           //retry request
           return handle.resolve(
-              await dioDownloader.request(options.path, options: optionsDio));
+              await dioDownloader.request(options.path, data: options.data, options: optionsDio, queryParameters: options.queryParameters));
         } catch (e) {
           dioDownloader.unlock();
           dioDownloader.interceptors.responseLock.unlock();

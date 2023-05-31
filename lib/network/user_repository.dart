@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
+import 'package:boldo/environment.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Organization.dart';
@@ -737,7 +738,7 @@ class UserRepository {
           default:
         }
         final _finalUrl =
-            '${String.fromEnvironment('SERVER_ADDRESS', defaultValue: dotenv.env['SERVER_ADDRESS']!)}$_url';
+            '${environment.SERVER_ADDRESS}$_url';
         print(_finalUrl);
         var response = await dio.post(_finalUrl);
         print(response.statusCode);
@@ -820,8 +821,7 @@ class UserRepository {
 
   Future<None>? logout(BuildContext context) async {
     try {
-      String baseUrlKeyCloack = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
-          defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
+      String baseUrlKeyCloack = environment.KEYCLOAK_REALM_ADDRESS;
 
       String? refreshToken = await storage.read(key: "refresh_token");
       Map<String, dynamic> body = {

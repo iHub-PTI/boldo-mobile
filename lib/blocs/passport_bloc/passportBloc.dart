@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:boldo/environment.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/network/passport_repository.dart';
 import 'package:bloc/bloc.dart';
@@ -84,8 +85,7 @@ class PassportBloc extends Bloc<PassportEvent, PassportState> {
     String userIdentifier = "";
     String diseaseCode = "";
     String version = "";
-    String baseUrl = String.fromEnvironment('SERVER_ADDRESS_PASSPORT',
-        defaultValue: dotenv.env['SERVER_ADDRESS_PASSPORT']!);
+    String baseUrl = environment.SERVER_ADDRESS_PASSPORT;
     if (vaccineListQR!.length == 1) {
       diseaseCode = vaccineListQR![0].diseaseCode;
       version = vaccineListQR![0].version.toString();
