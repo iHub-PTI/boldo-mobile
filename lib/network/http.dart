@@ -90,9 +90,6 @@ void initDio(
           return handle.resolve(await _dio.request(options.path,
               data: options.data, options: optionsDio, queryParameters: options.queryParameters));
         }
-        dio.lock();
-        dio.interceptors.responseLock.lock();
-        dio.interceptors.errorLock.lock();
 
         String keycloakRealmAddress = environment.KEYCLOAK_REALM_ADDRESS;
         final String? refreshToken = await storage.read(key: "refresh_token");
@@ -107,9 +104,6 @@ void initDio(
           await storage.write(key: "access_token", value: result!.accessToken);
           await storage.write(key: "refresh_token", value: result.refreshToken);
           accessToken = result.accessToken;
-          dio.unlock();
-          dio.interceptors.responseLock.unlock();
-          dio.interceptors.errorLock.unlock();
           // New dio connection to handle new errors
           Dio _dio = Dio();
           initDio(navKey: navKey, dio: _dio, passport: passport);
@@ -160,9 +154,6 @@ void initDio(
           }
         } catch (e) {
           print(e);
-          dio.unlock();
-          dio.interceptors.responseLock.unlock();
-          dio.interceptors.errorLock.unlock();
           await storage.deleteAll();
           accessToken = null;
 
@@ -262,8 +253,8 @@ Future<void> _showInternetFailedDialog() async {
 void dioByteInstance() async {
   String baseUrl = environment.SERVER_ADDRESS_PASSPORT;
   dioDownloader.options.baseUrl = baseUrl;
-  dioDownloader.options.connectTimeout = 20000;
-  dioDownloader.options.receiveTimeout = 20000;
+  dioDownloader.options.connectTimeout = const Duration(milliseconds: 20000);
+  dioDownloader.options.receiveTimeout = const Duration(milliseconds: 20000);
   dioDownloader.options.responseType = ResponseType.bytes;
 
   String? accessToken;
@@ -320,9 +311,6 @@ void dioByteInstance() async {
           handle.resolve(
               await dioDownloader.request(options.path, data: options.data, options: optionsDio, queryParameters: options.queryParameters));
         }
-        dioDownloader.lock();
-        dioDownloader.interceptors.responseLock.lock();
-        dioDownloader.interceptors.errorLock.lock();
         String keycloakRealmAddress = environment.KEYCLOAK_REALM_ADDRESS;
         final String? refreshToken = await storage.read(key: "refresh_token");
 
@@ -336,17 +324,10 @@ void dioByteInstance() async {
           await storage.write(key: "access_token", value: result!.accessToken);
           await storage.write(key: "refresh_token", value: result.refreshToken);
           accessToken = result.accessToken;
-          dioDownloader.unlock();
-          dioDownloader.interceptors.responseLock.unlock();
-          dioDownloader.interceptors.errorLock.unlock();
           //retry request
           return handle.resolve(
               await dioDownloader.request(options.path, data: options.data, options: optionsDio, queryParameters: options.queryParameters));
         } catch (e) {
-          dioDownloader.unlock();
-          dioDownloader.interceptors.responseLock.unlock();
-          dioDownloader.interceptors.errorLock.unlock();
-          await storage.deleteAll();
           accessToken = null;
 
           navKey.currentState!.pushAndRemoveUntil(
