@@ -609,8 +609,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                       "es necesario seas miembro de la organización que las provée.",
                       style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.activeText)
                   ),
-                  // TODO: await endpoint to subscribe to others organizations
-                  /*Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       ElevatedButton(
@@ -627,7 +626,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                         ),
                       ),
                     ],
-                  ),*/
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
