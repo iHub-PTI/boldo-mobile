@@ -60,12 +60,7 @@ class _SingInTransitionState extends State<SingInTransition> with SingleTickerPr
     _colorController = AnimationController(
         duration: const Duration(milliseconds: 1700),
         vsync: this
-    )..addListener(() {
-      // change screen with animation
-      setState(() {
-
-      });
-    });
+    );
 
     //initialize colors
     _color1Tween = ColorTween(
@@ -144,7 +139,15 @@ class _SingInTransitionState extends State<SingInTransition> with SingleTickerPr
           },
         child : Stack(
           children: [
-            backGround(),
+            BackgroundRadialGradientTransition(
+              initialColors: [ConstantsV2.singInPrimaryColor100, ConstantsV2.singInPrimaryColor200, ConstantsV2.singInPrimaryColor300,],
+              finalColors: [ConstantsV2.singInSecondaryColor100, ConstantsV2.singInSecondaryColor200, ConstantsV2.singInSecondaryColor300,],
+              initialStops: [ConstantsV2.singInPrimaryStop100, ConstantsV2.singInPrimaryStop200, ConstantsV2.singInPrimaryStop300,],
+              finalStops: [ConstantsV2.singInSecondaryStop100, ConstantsV2.singInSecondaryStop200, ConstantsV2.singInSecondaryStop300,],
+              initialRadius: .6,
+              finalRadius: 1.7,
+              animationController: _colorController
+            ),
             BlocBuilder<PatientBloc, PatientState>(
               builder: (context, state){
                 if(state is ChangeFamily || state is RedirectNextScreen || state is Success) {
@@ -242,34 +245,6 @@ class _SingInTransitionState extends State<SingInTransition> with SingleTickerPr
           ],
         )
       )
-    );
-  }
-
-  Widget backGround(){
-    return Stack(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-              gradient: RadialGradient(
-                  radius: _radiusTween.value?? 1,
-                  center: const Alignment(
-                    0,
-                    0,
-                  ),
-                  colors: <Color>[
-                    _color1Tween.value?? ConstantsV2.singInPrimaryColor200,
-                    _color2Tween.value?? ConstantsV2.singInPrimaryColor200,
-                    _color3Tween.value?? ConstantsV2.singInPrimaryColor300,
-                  ],
-                  stops: <double>[
-                    _stop1Tween.value?? ConstantsV2.singInPrimaryStop100,
-                    _stop2Tween.value?? ConstantsV2.singInPrimaryStop200,
-                    _stop3Tween.value?? ConstantsV2.singInPrimaryStop300,
-                  ]
-              )
-          ),
-        ),
-      ],
     );
   }
 
