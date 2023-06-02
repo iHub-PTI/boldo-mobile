@@ -19,22 +19,23 @@ class FamilyConnectTransition extends StatefulWidget {
   _FamilyConnectTransitionTransitionState createState() => _FamilyConnectTransitionTransitionState();
 }
 
-class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransition> {
+class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransition> with SingleTickerProviderStateMixin {
 
   Patient? dependentPhoto;
   Response? response;
   bool _dataLoading = false;
-  Widget _background = const Background(text: "FamilyConnect_1");
   FlutterAppAuth appAuth = FlutterAppAuth();
 
   GlobalKey scaffoldKey = GlobalKey();
 
+  // controller to animate background
+  late AnimationController _colorController;
+
 
   Future<void> timer() async {
     await Future.delayed(const Duration(seconds: 3));
-    setState(() {
-      _background = const Background(text: "FamilyConnect_2");
-    });
+    //init animation
+    _colorController.forward();
     await UserRepository().getRelationships();
     await Future.delayed(const Duration(seconds: 2));
     Navigator.pushNamed(context, '/defineRelationship');
@@ -43,6 +44,11 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
   @override
   void initState() {
     timer();
+    // initialize animation duration
+    _colorController = AnimationController(
+        duration: const Duration(milliseconds: 1700),
+        vsync: this
+    );
     super.initState();
   }
 
@@ -51,7 +57,15 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
     return Scaffold(
       body: Stack(
           children: [
-            _background,
+            BackgroundRadialGradientTransition(
+                initialColors: [ConstantsV2.familyConnectPrimaryColor100, ConstantsV2.familyConnectPrimaryColor200, ConstantsV2.familyConnectPrimaryColor300,],
+                finalColors: [ConstantsV2.familyConnectSecondaryColor100, ConstantsV2.familyConnectSecondaryColor200, ConstantsV2.familyConnectSecondaryColor300,],
+                initialStops: [ConstantsV2.familyConnectPrimaryStop100, ConstantsV2.familyConnectPrimaryStop200, ConstantsV2.familyConnectPrimaryStop300,],
+                finalStops: [ConstantsV2.familyConnectSecondaryStop100, ConstantsV2.familyConnectSecondaryStop200, ConstantsV2.familyConnectSecondaryStop300,],
+                initialRadius: .5,
+                finalRadius: .6,
+                animationController: _colorController
+            ),
             SafeArea(
               child: Container(
                 child: Column(
