@@ -28,8 +28,10 @@ class Organizations extends StatelessWidget {
 }
 
 class OrganizationsScreen extends StatefulWidget {
+  final Patient patientSelected;
   const OrganizationsScreen({
     Key? key,
+    required this.patientSelected,
   }) : super(key: key);
 
   @override
@@ -44,7 +46,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<OrganizationBloc>(
-      create: (context) => OrganizationBloc()..add(GetAllOrganizations()),
+      create: (context) => OrganizationBloc()..add(GetAllOrganizations(patientSelected: widget.patientSelected)),
       child: Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -138,8 +140,8 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                                 height: 54,
                                 width: 54,
                                 border: true,
-                                url: patient.photoUrl,
-                                gender: patient.gender,
+                                url: widget.patientSelected.photoUrl,
+                                gender: widget.patientSelected.gender,
                                 borderColor: ConstantsV2.orange,
                               ),
                             ],
@@ -151,7 +153,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                         BlocBuilder<OrganizationBloc, OrganizationBlocState>(
                             builder: (context, state){
                               if (state is Failed){
-                                return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizations()));
+                                return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizations(patientSelected: widget.patientSelected)));
                               } else if(state is Loading){
                                 return const Center(
                                   child: CircularProgressIndicator(
@@ -177,7 +179,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                       ],
                     ),
                   ),
-                  BotonAdd(organizationsSelected: _organizationsSelected,)
+                  BotonAdd(organizationsSelected: _organizationsSelected, patientSelected: widget.patientSelected,)
                 ],
               ),
             ),
@@ -237,8 +239,11 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
 
 class BotonAdd extends StatelessWidget {
 
-  BotonAdd({required this.organizationsSelected});
-
+  BotonAdd({
+    required this.organizationsSelected,
+    required this.patientSelected,
+  });
+  final Patient patientSelected;
   final List<Organization> organizationsSelected;
 
   @override
@@ -250,7 +255,7 @@ class BotonAdd extends StatelessWidget {
         children: [
           ElevatedButton(
             onPressed: organizationsSelected.isEmpty ? null : (){
-              BlocProvider.of<OrganizationBloc>(context).add(SubscribeToAnManyOrganizations(organizations: organizationsSelected));
+              BlocProvider.of<OrganizationBloc>(context).add(SubscribeToAnManyOrganizations(organizations: organizationsSelected, patientSelected: patientSelected));
             },
             child: Container(
                 child: Row(
@@ -283,6 +288,8 @@ class OrganizationsSubscribedScreen extends StatefulWidget {
 
 class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedScreen> {
 
+  Patient patientSelected = patient;
+
   List<Organization> _organizationsSubscribed = [];
   List<OrganizationRequest> _organizationsPostulated = [];
 
@@ -291,10 +298,10 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
     return MultiBlocProvider(
       providers: [
         BlocProvider<subscribed.OrganizationSubscribedBloc>(
-          create: (BuildContext context) => subscribed.OrganizationSubscribedBloc()..add(subscribed.GetOrganizationsSubscribed()),
+          create: (BuildContext context) => subscribed.OrganizationSubscribedBloc()..add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected)),
         ),
         BlocProvider<applied.OrganizationAppliedBloc>(
-          create: (BuildContext context) => applied.OrganizationAppliedBloc()..add(applied.GetOrganizationsPostulated()),
+          create: (BuildContext context) => applied.OrganizationAppliedBloc()..add(applied.GetOrganizationsPostulated(patientSelected: patientSelected)),
         ),
       ],
       child: Scaffold(
@@ -391,7 +398,18 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                     const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.all(16),
-                      child: FamilySelector(patient: patient,)
+                      child: Builder(builder: (context){
+                        return FamilySelector(
+                          patientSelected: patientSelected,
+                          actionCallback: (_patientSelected){
+                            setState(() {
+                              patientSelected = _patientSelected;
+                            });
+                            BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected));
+                            BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated(patientSelected: patientSelected));
+                          },
+                        );
+                      })
                     ),
                     const SizedBox(
                       height: 16,
@@ -437,7 +455,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                             onTap: (){
                                               Navigator.push(
                                                 context,
-                                                MaterialPageRoute(builder: (context) => const OrganizationsScreen()),
+                                                MaterialPageRoute(builder: (context) => OrganizationsScreen(patientSelected: patientSelected)),
                                               );
                                             },
                                             child: Card(
@@ -582,7 +600,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                 onPressed:(){
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const OrganizationsScreen()),
+                    MaterialPageRoute(builder: (context) => OrganizationsScreen(patientSelected: patientSelected)),
                   );
                 },
                 child: Container(
@@ -652,11 +670,11 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
   }
 
   Widget _cardFunder(Organization organization){
-    return OrganizationSubscribedCard(organization: organization,);
+    return OrganizationSubscribedCard(organization: organization, patientSelected: patientSelected,);
   }
 
   Widget _cardFunderPostulated(OrganizationRequest organization){
-    return OrganizationPostulationCard(organization: organization,);
+    return OrganizationPostulationCard(organization: organization, patientSelected: patientSelected);
   }
 
   Widget organizationsPostulatedBox(BuildContext context, int index){
@@ -684,8 +702,11 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
 
 class OrganizationPostulationCard extends StatelessWidget {
 
-  OrganizationPostulationCard({required this.organization});
-
+  OrganizationPostulationCard({
+    required this.organization,
+    required this.patientSelected,
+  });
+  final Patient patientSelected;
   final OrganizationRequest organization;
 
   @override
@@ -747,7 +768,7 @@ class OrganizationPostulationCard extends StatelessWidget {
         String? action = await cancelApplication(context, organization);
         if(action == 'cancel') {
           BlocProvider.of<applied.OrganizationAppliedBloc>(context)
-              .add(applied.UnPostulated(organization: organization));
+              .add(applied.UnPostulated(organization: organization, patientSelected: patientSelected));
         }
       },
       child: SvgPicture.asset('assets/icon/familyTrash.svg'),
@@ -779,8 +800,9 @@ class OrganizationPostulationCard extends StatelessWidget {
 
 class OrganizationSubscribedCard extends StatelessWidget {
 
-  OrganizationSubscribedCard({required this.organization});
+  OrganizationSubscribedCard({required this.organization, required this.patientSelected});
 
+  final Patient patientSelected;
   final Organization organization;
 
   @override
@@ -842,7 +864,7 @@ class OrganizationSubscribedCard extends StatelessWidget {
           String? action = await dropOut(context, organization);
           if(action == 'cancel') {
             BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(
-                subscribed.RemoveOrganization(organization: organization));
+                subscribed.RemoveOrganization(organization: organization, patientSelected: patientSelected));
           }
         }
       },
