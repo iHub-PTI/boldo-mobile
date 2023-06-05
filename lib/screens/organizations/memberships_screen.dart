@@ -422,10 +422,11 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                     ),
                     BlocBuilder<subscribed.OrganizationSubscribedBloc, subscribed.OrganizationSubscribedBlocState>(
                       builder: (context, state){
+                        Widget child;
                         if (state is subscribed.Failed){
-                          return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed()));
+                          child = DataFetchErrorWidget(retryCallback: () => BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected)));
                         } else if(state is subscribed.Loading){
-                          return const Center(
+                          child = const Center(
                             child: CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(
                                   Constants.primaryColor400),
@@ -434,9 +435,9 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                           );
                         }else{
                           if ( _organizationsSubscribed.isEmpty ) {
-                            return emptyView(context);
+                            child = emptyView(context);
                           } else {
-                            return Container(
+                            child = Container(
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 16),
                                 color: ConstantsV2.grayLightest,
@@ -503,15 +504,20 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                             );
                           }
                         }
+                        return AnimatedSwitcher(
+                          duration: appearWidgetDuration,
+                          child: child,
+                        );
                       }
                     ),
                     const SizedBox(height: 10),
                     BlocBuilder<applied.OrganizationAppliedBloc, applied.OrganizationAppliedBlocState>(
                       builder: (context, state){
+                        Widget child;
                         if (state is applied.Failed){
-                          return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated()));
+                          child = DataFetchErrorWidget(retryCallback: () => BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated(patientSelected: patientSelected)));
                         } else if(state is applied.Loading){
-                          return const Center(
+                          child = const Center(
                             child: CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(
                                   Constants.primaryColor400),
@@ -520,9 +526,9 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                           );
                         }else{
                           if ( _organizationsPostulated.isEmpty ) {
-                            return Container();
+                            child = Container();
                           } else {
-                            return Container(
+                            child = Container(
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 16),
                                 color: ConstantsV2.grayLightest,
@@ -553,6 +559,10 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                             );
                           }
                         }
+                        return AnimatedSwitcher(
+                          duration: appearWidgetDuration,
+                          child: child,
+                        );
                       }
                     ),
                   ],
@@ -950,20 +960,21 @@ class FamilySelectorState extends State<FamilySelector>{
     List<Patient> _families = families;
     return BlocBuilder<family_bloc.FamilyBloc, family_bloc.FamilyState>(
       builder: (context, state){
+        Widget child;
         if(state is family_bloc.Success){
           _families = families;
-          return Container(
+          child = _families.isNotEmpty? Container(
             height: 60,
             child: ListView.builder(
               itemCount: _families.length + 1, //patient is first element
               scrollDirection: Axis.horizontal,
               itemBuilder: _buildPictureRoundedFamily
             ),
-          );
+          ) : Container();
         }else if(state is family_bloc.Failed){
-          return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<family_bloc.FamilyBloc>(context).add(family_bloc.GetFamilyList()));
+          child = DataFetchErrorWidget(retryCallback: () => BlocProvider.of<family_bloc.FamilyBloc>(context).add(family_bloc.GetFamilyList()));
         }else {
-          return const Center(
+          child = const Center(
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(
                   Constants.primaryColor400),
@@ -971,6 +982,10 @@ class FamilySelectorState extends State<FamilySelector>{
             ),
           );
         }
+        return AnimatedSwitcher(
+          duration: appearWidgetDuration,
+          child: child,
+        );
       }
     );
   }
