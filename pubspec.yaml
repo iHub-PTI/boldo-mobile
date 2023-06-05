@@ -34,7 +34,7 @@ dependencies:
   logger: ^1.1.0
   flutter_svg: ^1.0.0
   pull_to_refresh: ^2.0.0
-  dio: ^4.0.4
+  dio: ^5.1.2
   flutter_secure_storage: ^5.0.2
   flutter_dotenv: ^5.0.2
   page_view_dot_indicator: ^1.1.0
