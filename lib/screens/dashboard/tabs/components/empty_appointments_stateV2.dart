@@ -9,12 +9,14 @@ class EmptyStateV2 extends StatelessWidget {
   final String? textTop;
   final String? titleBottom;
   final String? textBottom;
+  final EdgeInsets paddingButtonPicture;
   const EmptyStateV2({
     Key? key,
     this.picture,
     this.textTop,
     this.textBottom,
-    this.titleBottom
+    this.titleBottom,
+    this.paddingButtonPicture = const EdgeInsets.all(16),
   }) : super(key: key);
 
   @override
@@ -38,6 +40,10 @@ class EmptyStateV2 extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ): Container(),
+            if(picture != null)
+            Container(
+              padding: paddingButtonPicture,
+            ),
             titleBottom != null
               ? Text(
                 titleBottom!,
