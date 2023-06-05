@@ -894,17 +894,33 @@ class OrganizationSubscribedCard extends StatelessWidget {
 }
 
 
-class FamilySelector extends StatelessWidget {
+class FamilySelector extends StatefulWidget {
 
-  FamilySelector({required this.patient});
-  final Patient patient;
+  FamilySelector({required this.patientSelected, this.actionCallback});
+
+  Patient patientSelected;
+  void Function(Patient patientSelected)? actionCallback;
+
+  @override
+  FamilySelectorState createState() => FamilySelectorState();
+
+
+}
+
+class FamilySelectorState extends State<FamilySelector>{
+
+  @override
+  void initState() {
+    super.initState();
+
+    BlocProvider.of<family_bloc.FamilyBloc>(context).add(family_bloc.GetFamilyList());
+  }
 
   @override
   Widget build(BuildContext context) {
 
     List<Patient> _families = families;
-    return BlocBuilder(
-      bloc: family_bloc.FamilyBloc()..add(family_bloc.GetFamilyList()),
+    return BlocBuilder<family_bloc.FamilyBloc, family_bloc.FamilyState>(
       builder: (context, state){
         if(state is family_bloc.Success){
           _families = families;
@@ -933,14 +949,23 @@ class FamilySelector extends StatelessWidget {
 
   Widget _buildPictureRoundedFamily(BuildContext context, int index){
     return Center(
-      child: _profileFamily(index, "rounded"),
+      child: GestureDetector(
+        onTap: () => {
+          setState((){
+            widget.patientSelected = index==0? patient : families[index-1];
+          }),
+          if(widget.actionCallback != null)
+            widget.actionCallback!(widget.patientSelected),
+        },
+        child: _profileFamily(index, "rounded"),
+      ),
     );
   }
 
   Widget _profileFamily(int index, String type){
     double height = type == "rounded"? 54 : 85;
     double width = type == "rounded"? 54 : 120;
-    bool disable = index == 0 ? patient.id == prefs.getString("userId") ? false : true : patient.id == families[index-1].id ? false : true;
+    bool disable = index == 0 ? widget.patientSelected.id == prefs.getString("userId") ? false : true : widget.patientSelected.id == families[index-1].id ? false : true;
     return Container(
       child:
         index == 0
