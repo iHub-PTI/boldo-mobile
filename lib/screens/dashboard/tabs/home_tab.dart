@@ -529,6 +529,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
               child: Column(
                 children: [
                   const EmptyStateV2(
+                    picture: "empty_news.svg",
+                    titleBottom: "Aún no hay novedades",
                     textBottom:
                     "A medida que uses la app, irás encontrando novedades tales como: "
                         "próximas consultas, recetas y resultados de estudios.",
