@@ -25,13 +25,15 @@ class FamilyTransition extends StatefulWidget {
   _FamilyTransitionState createState() => _FamilyTransitionState();
 }
 
-class _FamilyTransitionState extends State<FamilyTransition> {
+class _FamilyTransitionState extends State<FamilyTransition> with SingleTickerProviderStateMixin {
 
   Response? response;
   bool _dataLoading = true;
-  Widget _background = const Background(text: "SingIn_1");
   FlutterAppAuth appAuth = FlutterAppAuth();
   GlobalKey scaffoldKey = GlobalKey();
+
+  // controller to animate background
+  late AnimationController _colorController;
 
   Future<void> timer() async {
     if(prefs.getBool(isFamily)?? false)
@@ -44,6 +46,11 @@ class _FamilyTransitionState extends State<FamilyTransition> {
   @override
   void initState() {
     super.initState();
+    // initialize animation duration
+    _colorController = AnimationController(
+        duration: const Duration(milliseconds: 1700),
+        vsync: this
+    );
     timer();
 
   }
@@ -69,10 +76,23 @@ class _FamilyTransitionState extends State<FamilyTransition> {
             if(state is Success){
               _dataLoading = false;
               BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed());
-            }
-            if(state is RedirectNextScreen){
-              // back to home
-              Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+              //init animation
+              _colorController.forward();
+
+              _colorController..addStatusListener((status) {
+                if(status == AnimationStatus.completed){
+                  // go to home
+                  Future.delayed(const Duration(
+                      milliseconds: 800
+                  )).then((value) => Navigator
+                      .of(context).
+                  pushNamedAndRemoveUntil(
+                      '/home',
+                          (Route<dynamic> route) => false
+                  )
+                  );
+                }
+              });
             }
             if(state is Loading){
               _dataLoading = true;
@@ -81,7 +101,26 @@ class _FamilyTransitionState extends State<FamilyTransition> {
         },
         child : Stack(
             children: [
-              _background,
+              if(prefs.getBool(isFamily)?? false)
+                BackgroundRadialGradientTransition(
+                    initialColors: [ConstantsV2.familyConnectPrimaryColor100, ConstantsV2.familyConnectPrimaryColor200, ConstantsV2.familyConnectPrimaryColor300,],
+                    finalColors: [ConstantsV2.familyConnectSecondaryColor100, ConstantsV2.familyConnectSecondaryColor200, ConstantsV2.familyConnectSecondaryColor300,],
+                    initialStops: [ConstantsV2.familyConnectPrimaryStop100, ConstantsV2.familyConnectPrimaryStop200, ConstantsV2.familyConnectPrimaryStop300,],
+                    finalStops: [ConstantsV2.familyConnectSecondaryStop100, ConstantsV2.familyConnectSecondaryStop200, ConstantsV2.familyConnectSecondaryStop300,],
+                    initialRadius: .5,
+                    finalRadius: .6,
+                    animationController: _colorController
+                )
+              else
+                BackgroundRadialGradientTransition(
+                    initialColors: [ConstantsV2.singInPrimaryColor100, ConstantsV2.singInPrimaryColor200, ConstantsV2.singInPrimaryColor300,],
+                    finalColors: [ConstantsV2.singInSecondaryColor100, ConstantsV2.singInSecondaryColor200, ConstantsV2.singInSecondaryColor300,],
+                    initialStops: [ConstantsV2.singInPrimaryStop100, ConstantsV2.singInPrimaryStop200, ConstantsV2.singInPrimaryStop300,],
+                    finalStops: [ConstantsV2.singInSecondaryStop100, ConstantsV2.singInSecondaryStop200, ConstantsV2.singInSecondaryStop300,],
+                    initialRadius: .6,
+                    finalRadius: 1.7,
+                    animationController: _colorController
+                ),
               SafeArea(
                 child: BlocBuilder<PatientBloc, PatientState>(
                   builder: (context, state){
