@@ -1,4 +1,5 @@
 import 'package:boldo/models/Organization.dart';
+import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/QRCode.dart';
 import 'package:boldo/network/organization_repository.dart';
 import 'package:dartz/dartz.dart';
@@ -21,7 +22,7 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
 
         //get organizations that the patient is subscribed
         await Task(() =>
-        _organizationRepository.getUnsubscribedOrganizations()!)
+        _organizationRepository.getUnsubscribedOrganizations(event.patientSelected)!)
             .attempt()
             .run()
             .then((value) {
@@ -51,7 +52,7 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
 
         //get organizations that the patient is subscribed
         await Task(() =>
-        _organizationRepository.subscribeToManyOrganizations(event.organizations)!)
+        _organizationRepository.subscribeToManyOrganizations(event.organizations, event.patientSelected)!)
             .attempt()
             .run()
             .then((value) {
