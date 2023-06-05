@@ -995,7 +995,14 @@ class FamilySelectorState extends State<FamilySelector>{
       child: GestureDetector(
         onTap: () => {
           setState((){
-            widget.patientSelected = index==0? patient : families[index-1];
+            Patient _patient = Patient(
+              id: prefs.getString("userId"),
+              photoUrl: prefs.getString("profile_url"),
+              givenName: prefs.getString("name"),
+              familyName: prefs.getString("lastName"),
+              identifier: prefs.getString("identifier"),
+            );
+            widget.patientSelected = index==0? _patient : families[index-1];
           }),
           if(widget.actionCallback != null)
             widget.actionCallback!(widget.patientSelected),
