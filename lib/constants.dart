@@ -573,3 +573,4 @@ DateTime minDateDigit = DateTime(1000, 1, 1);
 enum StatusRequestOrganization  {Approved, Pending, Rejected}
 const int timeToShowAppointmentsOnHoldInMonth = 1;
 const int timeToShowStudyOrderInMonth = 1;
+const Duration appearWidgetDuration = Duration(seconds: 1);
