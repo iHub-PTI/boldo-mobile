@@ -9,6 +9,7 @@ import 'package:boldo/main.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
+import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/header_page.dart';
@@ -216,18 +217,19 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Container(
-        color: ConstantsV2.grayLightest,
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text(
-              "No hay organizaciones disponibles en este momento",
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 31,),
-            SvgPicture.asset('assets/icon/undraw_add_files.svg',)
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const EmptyStateV2(
+                picture: "undraw_add_files.svg",
+                titleBottom: "No hay organizaciones",
+                textBottom:
+                "La lista de organizaciones aparecerá "
+                    "aquí una vez que estén disponibles.",
+              ),
+            ],
+          ),
         ),
       ),
     );

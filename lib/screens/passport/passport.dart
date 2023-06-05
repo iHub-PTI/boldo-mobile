@@ -1,5 +1,6 @@
 import 'package:boldo/blocs/passport_bloc/passportBloc.dart';
 import 'package:boldo/constants.dart';
+import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/passport/passport_detail_screen.dart';
 import 'package:boldo/screens/passport/vaccine_filter.dart';
 import 'package:boldo/widgets/header_page.dart';
@@ -320,19 +321,11 @@ class _PassportTabState extends State<PassportTab> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        SvgPicture.asset(
-                                            'assets/images/empty_studies.svg'),
-                                        const Padding(
-                                          padding: EdgeInsets.all(16.0),
-                                          child: Text(
-                                            'No existe registro vacunatorio suyo.',
-                                            style: TextStyle(
-                                              color: Color.fromRGBO(
-                                                  253, 165, 125, 1),
-                                              fontSize: 18,
-                                              fontFamily: 'Montserrat'
-                                            ),
-                                          ),
+                                        const EmptyStateV2(
+                                          picture: "empty_vaccines.svg",
+                                          titleBottom: "No existe registro vacunatorio",
+                                          textBottom:
+                                          "Hacé click en botón de recarga para intentar de nuevo",
                                         ),
                                       ],
                                     ),
