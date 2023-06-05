@@ -110,7 +110,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                             color: ConstantsV2.primaryRegular,
                           ),
                           label: Text(
-                            'Organizaciones',
+                            'Centros Asistenciales',
                             style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                           ),
                         ),
@@ -128,7 +128,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "Seleccioná las organizaciones a las que desea "
+                                          "Seleccioná los Centros Asistenciales a los que desea "
                                               "enviar una solicitud",
                                           style: bodyMediumRegular.copyWith(
                                               color: ConstantsV2.activeText),
@@ -388,7 +388,13 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                 ),
                               ),
                               Expanded(
-                                child: header("Mis Centros Asistenciales", "Centros Asistenciales"),
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Text(
+                                    'Centros Asistenciales',
+                                    style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
