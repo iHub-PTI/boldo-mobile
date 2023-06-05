@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Organization.dart';
+import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
@@ -16,16 +17,16 @@ class OrganizationRepository {
   final String errorRequestCannotDelete = "cannot be deleted";
 
   /// get organizations where the patient is subscribed
-  Future<List<Organization>>? getOrganizations() async {
+  Future<List<Organization>>? getOrganizations(Patient patientSelected) async {
     Response response;
 
     try {
 
       List<Organization> _organizationsSubscribed;
 
-      if (prefs.getBool('isFamily') ?? false) {
+      if (patientSelected.id != prefs.getString('userId')) {
         response = await dio
-            .get('/profile/caretaker/dependent/${patient.id}/organizations');
+            .get('/profile/caretaker/dependent/${patientSelected.id}/organizations');
       } else {
         // the query is made
         response = await dio.get('/profile/patient/organizations');
@@ -141,14 +142,14 @@ class OrganizationRepository {
   }
 
   /// get all the unsubscribed organizations
-  Future<List<Organization>>? getUnsubscribedOrganizations() async {
+  Future<List<Organization>>? getUnsubscribedOrganizations(Patient patientSelected) async {
     Response response;
 
     try {
       // the query is made
-      if (prefs.getBool('isFamily') ?? false) {
+      if (patientSelected.id != prefs.getString('userId')) {
         response = await dio.get(
-            '/profile/caretaker/dependent/${patient.id}/organizations?subscribed=false');
+            '/profile/caretaker/dependent/${patientSelected.id}/organizations?subscribed=false');
       } else {
         response = await dio
             .get('/profile/patient/organizations?subscribed=false');
@@ -211,13 +212,13 @@ class OrganizationRepository {
   }
 
   /// get organizations where the patient is waiting for approving
-  Future<List<OrganizationRequest>>? getPostulatedOrganizations() async {
+  Future<List<OrganizationRequest>>? getPostulatedOrganizations(Patient patientSelected) async {
     Response response;
 
     try {
-      if (prefs.getBool('isFamily') ?? false) {
+      if (patientSelected.id != prefs.getString('userId')) {
         response = await dio
-            .get('/profile/caretaker/dependent/${patient.id}/subscriptionRequests?status=PD');
+            .get('/profile/caretaker/dependent/${patientSelected.id}/subscriptionRequests?status=PD');
       } else {
         // the query is made
         response = await dio.get('/profile/patient/subscriptionRequests?status=PD');
@@ -267,14 +268,14 @@ class OrganizationRepository {
     }
   }
 
-  Future<Organization>? getOrganizationId(String id) async {
+  Future<Organization>? getOrganizationId(String id, Patient patientSelected) async {
     Response response;
 
     try {
       // the query is made
-      if (prefs.getBool('isFamily') ?? false) {
+      if (patientSelected.id != prefs.getString('userId')) {
         response = await dio.get(
-            '/profile/caretaker/dependent/${patient.id}/encounter/${id}/serviceRequests');
+            '/profile/caretaker/dependent/${patientSelected.id}/encounter/${id}/serviceRequests');
       } else {
         response = await dio
             .get('/profile/patient/encounter/${id}/serviceRequests');
@@ -317,12 +318,12 @@ class OrganizationRepository {
     }
   }
 
-  Future<None>? subscribeToAnOrganization(String id) async {
+  Future<None>? subscribeToAnOrganization(String id, Patient patientSelected) async {
     try {
       Response response;
-      if (prefs.getBool(isFamily) ?? false) {
+      if (patientSelected.id != prefs.getString('userId')) {
         response = await dio.post(
-            '/profile/caretaker/dependent/${patient.id}/subscribe/$id');
+            '/profile/caretaker/dependent/${patientSelected.id}/subscribe/$id');
       } else {
         response = await dio.post('/profile/patient/subscribe/$id');
       }
@@ -363,7 +364,7 @@ class OrganizationRepository {
     }
   }
 
-  Future<None>? subscribeToManyOrganizations(List<Organization> organizations) async {
+  Future<None>? subscribeToManyOrganizations(List<Organization> organizations, Patient patientSelected) async {
     try {
 
       List<String> organizationsId = organizations.map((e) => e.id?? '').toList();
@@ -373,9 +374,9 @@ class OrganizationRepository {
       };
 
       Response response;
-      if (prefs.getBool(isFamily) ?? false) {
+      if (patientSelected.id != prefs.getString('userId')) {
         response = await dio.post(
-            '/profile/caretaker/dependent/${patient.id}/subscriptions',data: data);
+            '/profile/caretaker/dependent/${patientSelected.id}/subscriptions',data: data);
       } else {
         response = await dio.post('/profile/patient/subscriptions', data: data);
       }
@@ -419,15 +420,15 @@ class OrganizationRepository {
     }
   }
 
-  Future<None>? unSubscribedOrganization(Organization organization) async {
+  Future<None>? unSubscribedOrganization(Organization organization, Patient patientSelected) async {
     Response response;
 
     try {
 
       // the query is made
-      if (prefs.getBool('isFamily') ?? false) {
+      if (patientSelected.id != prefs.getString('userId')) {
         response = await dio
-            .delete('/profile/caretaker/dependent/${patient.id}/organization/${organization.id}');
+            .delete('/profile/caretaker/dependent/${patientSelected.id}/organization/${organization.id}');
       } else {
         response = await dio.delete('/profile/patient/organization/${organization.id}');
       }
@@ -483,15 +484,15 @@ class OrganizationRepository {
     }
   }
 
-  Future<None>? unSubscribedPostulation(OrganizationRequest organizationRequest) async {
+  Future<None>? unSubscribedPostulation(OrganizationRequest organizationRequest, Patient patientSelected) async {
     Response response;
 
     try {
 
       // the query is made
-      if (prefs.getBool('isFamily') ?? false) {
+      if (patientSelected.id != prefs.getString('userId')) {
         response = await dio
-            .delete('/profile/caretaker/dependent/${patient.id}/subscriptionRequest/${organizationRequest.id}');
+            .delete('/profile/caretaker/dependent/${patientSelected.id}/subscriptionRequest/${organizationRequest.id}');
       } else {
         response = await dio.delete('/profile/patient/subscriptionRequest/${organizationRequest.id}');
       }
@@ -561,7 +562,7 @@ class OrganizationRepository {
     }
   }
 
-  Future<None>? reorderByPriority(List<Organization> organizations) async {
+  Future<None>? reorderByPriority(List<Organization> organizations, Patient patientSelected) async {
 
     try {
       Response response;
@@ -575,9 +576,9 @@ class OrganizationRepository {
       ).toList();
 
       // the query is made
-      if (prefs.getBool('isFamily') ?? false) {
+      if (patientSelected.id != prefs.getString('userId')) {
         response = await dio
-            .put('/profile/caretaker/dependent/${patient.id}/organizations/priorities', data: data);
+            .put('/profile/caretaker/dependent/${patientSelected.id}/organizations/priorities', data: data);
       } else {
         response = await dio.put('profile/patient/organizations/priorities', data: data);
       }
