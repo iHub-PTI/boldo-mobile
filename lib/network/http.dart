@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../main.dart';
 import '../screens/dashboard/dashboard_screen.dart';
@@ -63,6 +65,26 @@ void initDio(
         if (accessToken == null) {
           await storage.deleteAll();
           return handle.next(error);
+        }
+
+        //check role permission
+        try{
+          // decode access token
+          Map<String, dynamic> decodedToken = JwtDecoder.decode(accessToken?? '');
+
+          //get roles list
+          List<dynamic> roles = decodedToken['realm_access']['roles'];
+
+          //check role patient
+          if(!roles.contains('patient')){
+            //return error 401
+            return handle.next(error);
+          }
+        }catch(exception, stacktrace){
+          Sentry.captureException(
+            exception,
+            stackTrace: stacktrace,
+          );
         }
 
         RequestOptions options = error.response!.requestOptions;
