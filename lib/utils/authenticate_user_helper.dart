@@ -145,6 +145,14 @@ Future<int> authenticateUser({required BuildContext context}) async {
         stackTrace
       ],
     );
+    if(exception.response?.statusCode == 401){
+      emitSnackBar(
+          context: context,
+          text: 'Su usuario no se encuentra autorizado para ingresar, favor '
+              'contacte al correo info@bol.do para solicitar soporte personalizado.',
+          status: ActionStatus.Fail
+      );
+    }
   } catch (err, stackTrace) {
     print(err);
     await Sentry.captureMessage(
