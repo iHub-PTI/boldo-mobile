@@ -61,12 +61,14 @@ class AppConfig {
   StreamController<String> _defaultAppUrlDownloadController = StreamController<String>.broadcast();
   StreamController<String> _lastStableVersionController = StreamController<String>.broadcast();
   StreamController<String> _lastAvailableVersionController = StreamController<String>.broadcast();
+  StreamController<double> _traceRateErrorController = StreamController<double>.broadcast();
 
   // streams to emit values to listeners
   Stream<String> get streamAppUrlDownload => _appUrlDownloadController.stream;
   Stream<String> get streamDefaultAppUrlDownload => _defaultAppUrlDownloadController.stream;
   Stream<String> get streamLastStableVersion => _lastStableVersionController.stream;
   Stream<String> get streamLastAvailableVersion => _lastAvailableVersionController.stream;
+  Stream<double> get streamTraceRateError => _traceRateErrorController.stream;
 
   void updateAppUrlDownloadValue(String value){
     APP_URL_DOWNLOAD = value;
@@ -88,6 +90,11 @@ class AppConfig {
     _lastAvailableVersionController.sink.add(value);
   }
 
+  void updateTraceRateErrorValue(double value){
+    TRACE_RATE_ERROR = value;
+    _traceRateErrorController.sink.add(value);
+  }
+
   /// This value can change remotely, you must be subscribe to [streamAppUrlDownload]
   /// to listen changes dynamically
   late String APP_URL_DOWNLOAD;
@@ -104,5 +111,8 @@ class AppConfig {
   /// to listen changes dynamically
   late String LAST_AVAILABLE_VERSION;
 
+  /// This value can change remotely, you must be subscribe to [streamTraceRateError]
+  /// to listen changes dynamically
+  late double? TRACE_RATE_ERROR;
 
 }

@@ -53,6 +53,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sentry_dio/sentry_dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -149,20 +150,10 @@ Future<void> main() async {
     storage.deleteAll();
   }
 
-  if (kReleaseMode) {
-    String? sentryDSN = environment.SENTRY_DSN;
-    await SentryFlutter.init(
-      (options) {
-        options.environment = environment.SENTRY_ENV;
-        options.dsn = sentryDSN;
-      },
-    );
-  }
-
   bool hasUpdate = await checkUpdated();
   bool hasRequiredUpdate = await checkRequiredUpdated();
 
-  SystemChrome.setPreferredOrientations([
+  await SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeRight,
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.portraitUp,
