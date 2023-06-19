@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 AppConfig appConfig = AppConfig(
@@ -53,6 +54,20 @@ class AppConfig {
         'LAST_AVAILABLE_VERSION',
         defaultValue: envApp.env['LAST_AVAILABLE_VERSION']?? ""
     );
+
+    if(kReleaseMode){
+      if(envApp.maybeGet("TRACE_RATE_ERROR") == null){
+        throw Exception("TRACE_RATE_ERROR is not defined");
+      }
+
+      TRACE_RATE_ERROR = double.tryParse(
+        String.fromEnvironment(
+          'TRACE_RATE_ERROR',
+          defaultValue: envApp.env['TRACE_RATE_ERROR']?? ""
+        ),
+
+      );
+    }
 
   }
 
