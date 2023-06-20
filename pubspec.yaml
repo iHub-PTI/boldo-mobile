@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 
-version: 2.6.0+121
+version: 2.9.0+237
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -27,18 +27,18 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   http: ^0.13.3
-  sentry_flutter: ^6.2.2
+  sentry_flutter: 7.6.1
   socket_io_client: ^1.0.2
   flutter_webrtc: 0.9.17
   shared_preferences: ^2.0.7
   logger: ^1.1.0
   flutter_svg: ^1.0.0
   pull_to_refresh: ^2.0.0
-  dio: ^4.0.4
+  dio: ^5.1.2
   flutter_secure_storage: ^5.0.2
   flutter_dotenv: ^5.0.2
   page_view_dot_indicator: ^1.1.0
-  google_fonts: 2.2.0
+  google_fonts: 4.0.4
   flutter_appauth: ^4.2.1
   provider: ^6.0.2
   connectivity: ^3.0.6
@@ -48,7 +48,7 @@ dependencies:
   file_picker: ^5.2.3
   image_cropper: ^1.4.1
   url_launcher: ^6.0.10
-  intl: ^0.17.0
+  intl: 0.17.0
   flutter_datetime_picker: ^1.5.1
   email_validator: ^2.0.1
   intl_phone_field: ^3.0.1
@@ -63,17 +63,22 @@ dependencies:
   qr_flutter: ^4.0.0
   mobile_scanner: ^2.1.0
   crypto: ^3.0.1
-  wakelock: ^0.6.1+2
+  wakelock: 0.6.2
   native_device_orientation: ^1.1.4
   photo_view: ^0.14.0
   open_filex: ^4.3.1
   animate_do: ^2.1.0
   table_calendar: ^3.0.8
+  file: ^6.1.4
+  package_info_plus: 3.1.2
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.3
   move_to_background: ^1.0.2
   step_progress_indicator: ^1.0.2
+  firebase_core: ^2.9.0
+  firebase_remote_config: ^4.0.0
+  firebase_analytics: ^10.2.0
 
 dev_dependencies:
   pedantic: ^1.9.2
@@ -143,6 +148,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - .env
+    - .env_ice_server_config
+    - .env_app_config
     - assets/
     - assets/icon/
     - assets/images/

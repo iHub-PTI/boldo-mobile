@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'package:boldo/constants.dart';
+import 'package:boldo/environment.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -41,8 +42,7 @@ class _VideoCallState extends State<VideoCall> {
 
   MediaStream? localStream;
 
-  String socketsAddress = String.fromEnvironment('SOCKETS_ADDRESS',
-      defaultValue: dotenv.env['SOCKETS_ADDRESS']!);
+  String socketsAddress = environment.SOCKETS_ADDRESS;
 
   @override
   void initState() {

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:boldo/environment.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Specialization.dart';
@@ -167,9 +168,7 @@ class UtilsProvider with ChangeNotifier {
 
   void logout(BuildContext context) async {
     try {
-      String baseUrlKeyCloack = String.fromEnvironment(
-          'KEYCLOAK_REALM_ADDRESS',
-          defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
+      String baseUrlKeyCloack = environment.KEYCLOAK_REALM_ADDRESS;
 
       const storage = FlutterSecureStorage();
       final SharedPreferences prefs =

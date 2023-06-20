@@ -10,7 +10,8 @@ class SubscribeToAnOrganization extends OrganizationBlocEvent {
 
 class SubscribeToAnManyOrganizations extends OrganizationBlocEvent {
   final List<Organization> organizations;
-  SubscribeToAnManyOrganizations({required this.organizations});
+  final Patient patientSelected;
+  SubscribeToAnManyOrganizations({required this.organizations, required this.patientSelected});
 }
 
 class GetOrganizationById extends OrganizationBlocEvent {
@@ -18,4 +19,7 @@ class GetOrganizationById extends OrganizationBlocEvent {
   GetOrganizationById({required this.id});
 }
 
-class GetAllOrganizations extends OrganizationBlocEvent {}
+class GetAllOrganizations extends OrganizationBlocEvent {
+  final Patient patientSelected;
+  GetAllOrganizations({required this.patientSelected});
+}

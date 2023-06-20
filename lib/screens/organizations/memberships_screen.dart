@@ -9,6 +9,7 @@ import 'package:boldo/main.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
+import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/header_page.dart';
@@ -28,8 +29,10 @@ class Organizations extends StatelessWidget {
 }
 
 class OrganizationsScreen extends StatefulWidget {
+  final Patient patientSelected;
   const OrganizationsScreen({
     Key? key,
+    required this.patientSelected,
   }) : super(key: key);
 
   @override
@@ -44,7 +47,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<OrganizationBloc>(
-      create: (context) => OrganizationBloc()..add(GetAllOrganizations()),
+      create: (context) => OrganizationBloc()..add(GetAllOrganizations(patientSelected: widget.patientSelected)),
       child: Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -108,7 +111,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                             color: ConstantsV2.primaryRegular,
                           ),
                           label: Text(
-                            'Organizaciones',
+                            'Centros Asistenciales',
                             style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                           ),
                         ),
@@ -126,7 +129,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "Seleccioná las organizaciones a las que desea "
+                                          "Seleccioná los Centros Asistenciales a los que desea "
                                               "enviar una solicitud",
                                           style: bodyMediumRegular.copyWith(
                                               color: ConstantsV2.activeText),
@@ -138,8 +141,8 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                                 height: 54,
                                 width: 54,
                                 border: true,
-                                url: patient.photoUrl,
-                                gender: patient.gender,
+                                url: widget.patientSelected.photoUrl,
+                                gender: widget.patientSelected.gender,
                                 borderColor: ConstantsV2.orange,
                               ),
                             ],
@@ -151,7 +154,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                         BlocBuilder<OrganizationBloc, OrganizationBlocState>(
                             builder: (context, state){
                               if (state is Failed){
-                                return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizations()));
+                                return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizations(patientSelected: widget.patientSelected)));
                               } else if(state is Loading){
                                 return const Center(
                                   child: CircularProgressIndicator(
@@ -177,7 +180,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                       ],
                     ),
                   ),
-                  BotonAdd(organizationsSelected: _organizationsSelected,)
+                  BotonAdd(organizationsSelected: _organizationsSelected, patientSelected: widget.patientSelected,)
                 ],
               ),
             ),
@@ -216,18 +219,19 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Container(
-        color: ConstantsV2.grayLightest,
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text(
-              "No hay organizaciones disponibles en este momento",
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 31,),
-            SvgPicture.asset('assets/icon/undraw_add_files.svg',)
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const EmptyStateV2(
+                picture: "undraw_add_files.svg",
+                titleBottom: "No hay organizaciones",
+                textBottom:
+                "La lista de organizaciones aparecerá "
+                    "aquí una vez que estén disponibles.",
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -237,8 +241,11 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
 
 class BotonAdd extends StatelessWidget {
 
-  BotonAdd({required this.organizationsSelected});
-
+  BotonAdd({
+    required this.organizationsSelected,
+    required this.patientSelected,
+  });
+  final Patient patientSelected;
   final List<Organization> organizationsSelected;
 
   @override
@@ -250,7 +257,7 @@ class BotonAdd extends StatelessWidget {
         children: [
           ElevatedButton(
             onPressed: organizationsSelected.isEmpty ? null : (){
-              BlocProvider.of<OrganizationBloc>(context).add(SubscribeToAnManyOrganizations(organizations: organizationsSelected));
+              BlocProvider.of<OrganizationBloc>(context).add(SubscribeToAnManyOrganizations(organizations: organizationsSelected, patientSelected: patientSelected));
             },
             child: Container(
                 child: Row(
@@ -283,6 +290,8 @@ class OrganizationsSubscribedScreen extends StatefulWidget {
 
 class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedScreen> {
 
+  Patient patientSelected = patient;
+
   List<Organization> _organizationsSubscribed = [];
   List<OrganizationRequest> _organizationsPostulated = [];
 
@@ -291,10 +300,10 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
     return MultiBlocProvider(
       providers: [
         BlocProvider<subscribed.OrganizationSubscribedBloc>(
-          create: (BuildContext context) => subscribed.OrganizationSubscribedBloc()..add(subscribed.GetOrganizationsSubscribed()),
+          create: (BuildContext context) => subscribed.OrganizationSubscribedBloc()..add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected)),
         ),
         BlocProvider<applied.OrganizationAppliedBloc>(
-          create: (BuildContext context) => applied.OrganizationAppliedBloc()..add(applied.GetOrganizationsPostulated()),
+          create: (BuildContext context) => applied.OrganizationAppliedBloc()..add(applied.GetOrganizationsPostulated(patientSelected: patientSelected)),
         ),
       ],
       child: Scaffold(
@@ -381,7 +390,13 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                 ),
                               ),
                               Expanded(
-                                child: header("Mis Centros Asistenciales", "Centros Asistenciales"),
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Text(
+                                    'Centros Asistenciales',
+                                    style: boldoHeadingTextStyle.copyWith(fontSize: 20),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -391,17 +406,29 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                     const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.all(16),
-                      child: FamilySelector(patient: patient,)
+                      child: Builder(builder: (context){
+                        return FamilySelector(
+                          patientSelected: patientSelected,
+                          actionCallback: (_patientSelected){
+                            setState(() {
+                              patientSelected = _patientSelected;
+                            });
+                            BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected));
+                            BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated(patientSelected: patientSelected));
+                          },
+                        );
+                      })
                     ),
                     const SizedBox(
                       height: 16,
                     ),
                     BlocBuilder<subscribed.OrganizationSubscribedBloc, subscribed.OrganizationSubscribedBlocState>(
                       builder: (context, state){
+                        Widget child;
                         if (state is subscribed.Failed){
-                          return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed()));
+                          child = DataFetchErrorWidget(retryCallback: () => BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected)));
                         } else if(state is subscribed.Loading){
-                          return const Center(
+                          child = const Center(
                             child: CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(
                                   Constants.primaryColor400),
@@ -410,9 +437,9 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                           );
                         }else{
                           if ( _organizationsSubscribed.isEmpty ) {
-                            return emptyView(context);
+                            child = emptyView(context);
                           } else {
-                            return Container(
+                            child = Container(
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 16),
                                 color: ConstantsV2.grayLightest,
@@ -437,7 +464,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                             onTap: (){
                                               Navigator.push(
                                                 context,
-                                                MaterialPageRoute(builder: (context) => const OrganizationsScreen()),
+                                                MaterialPageRoute(builder: (context) => OrganizationsScreen(patientSelected: patientSelected)),
                                               );
                                             },
                                             child: Card(
@@ -479,15 +506,20 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                             );
                           }
                         }
+                        return AnimatedSwitcher(
+                          duration: appearWidgetDuration,
+                          child: child,
+                        );
                       }
                     ),
                     const SizedBox(height: 10),
                     BlocBuilder<applied.OrganizationAppliedBloc, applied.OrganizationAppliedBlocState>(
                       builder: (context, state){
+                        Widget child;
                         if (state is applied.Failed){
-                          return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated()));
+                          child = DataFetchErrorWidget(retryCallback: () => BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated(patientSelected: patientSelected)));
                         } else if(state is applied.Loading){
-                          return const Center(
+                          child = const Center(
                             child: CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(
                                   Constants.primaryColor400),
@@ -496,9 +528,9 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                           );
                         }else{
                           if ( _organizationsPostulated.isEmpty ) {
-                            return Container();
+                            child = Container();
                           } else {
-                            return Container(
+                            child = Container(
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 16),
                                 color: ConstantsV2.grayLightest,
@@ -529,6 +561,10 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                             );
                           }
                         }
+                        return AnimatedSwitcher(
+                          duration: appearWidgetDuration,
+                          child: child,
+                        );
                       }
                     ),
                   ],
@@ -582,7 +618,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                 onPressed:(){
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const OrganizationsScreen()),
+                    MaterialPageRoute(builder: (context) => OrganizationsScreen(patientSelected: patientSelected)),
                   );
                 },
                 child: Container(
@@ -652,11 +688,11 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
   }
 
   Widget _cardFunder(Organization organization){
-    return OrganizationSubscribedCard(organization: organization,);
+    return OrganizationSubscribedCard(organization: organization, patientSelected: patientSelected,);
   }
 
   Widget _cardFunderPostulated(OrganizationRequest organization){
-    return OrganizationPostulationCard(organization: organization,);
+    return OrganizationPostulationCard(organization: organization, patientSelected: patientSelected);
   }
 
   Widget organizationsPostulatedBox(BuildContext context, int index){
@@ -684,8 +720,11 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
 
 class OrganizationPostulationCard extends StatelessWidget {
 
-  OrganizationPostulationCard({required this.organization});
-
+  OrganizationPostulationCard({
+    required this.organization,
+    required this.patientSelected,
+  });
+  final Patient patientSelected;
   final OrganizationRequest organization;
 
   @override
@@ -747,7 +786,7 @@ class OrganizationPostulationCard extends StatelessWidget {
         String? action = await cancelApplication(context, organization);
         if(action == 'cancel') {
           BlocProvider.of<applied.OrganizationAppliedBloc>(context)
-              .add(applied.UnPostulated(organization: organization));
+              .add(applied.UnPostulated(organization: organization, patientSelected: patientSelected));
         }
       },
       child: SvgPicture.asset('assets/icon/familyTrash.svg'),
@@ -779,8 +818,9 @@ class OrganizationPostulationCard extends StatelessWidget {
 
 class OrganizationSubscribedCard extends StatelessWidget {
 
-  OrganizationSubscribedCard({required this.organization});
+  OrganizationSubscribedCard({required this.organization, required this.patientSelected});
 
+  final Patient patientSelected;
   final Organization organization;
 
   @override
@@ -842,7 +882,7 @@ class OrganizationSubscribedCard extends StatelessWidget {
           String? action = await dropOut(context, organization);
           if(action == 'cancel') {
             BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(
-                subscribed.RemoveOrganization(organization: organization));
+                subscribed.RemoveOrganization(organization: organization, patientSelected: patientSelected));
           }
         }
       },
@@ -894,32 +934,49 @@ class OrganizationSubscribedCard extends StatelessWidget {
 }
 
 
-class FamilySelector extends StatelessWidget {
+class FamilySelector extends StatefulWidget {
 
-  FamilySelector({required this.patient});
-  final Patient patient;
+  FamilySelector({required this.patientSelected, this.actionCallback});
+
+  Patient patientSelected;
+  void Function(Patient patientSelected)? actionCallback;
+
+  @override
+  FamilySelectorState createState() => FamilySelectorState();
+
+
+}
+
+class FamilySelectorState extends State<FamilySelector>{
+
+  @override
+  void initState() {
+    super.initState();
+
+    BlocProvider.of<family_bloc.FamilyBloc>(context).add(family_bloc.GetFamilyList());
+  }
 
   @override
   Widget build(BuildContext context) {
 
     List<Patient> _families = families;
-    return BlocBuilder(
-      bloc: family_bloc.FamilyBloc()..add(family_bloc.GetFamilyList()),
+    return BlocBuilder<family_bloc.FamilyBloc, family_bloc.FamilyState>(
       builder: (context, state){
+        Widget child;
         if(state is family_bloc.Success){
           _families = families;
-          return Container(
+          child = _families.isNotEmpty? Container(
             height: 60,
             child: ListView.builder(
               itemCount: _families.length + 1, //patient is first element
               scrollDirection: Axis.horizontal,
               itemBuilder: _buildPictureRoundedFamily
             ),
-          );
+          ) : Container();
         }else if(state is family_bloc.Failed){
-          return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<family_bloc.FamilyBloc>(context).add(family_bloc.GetFamilyList()));
+          child = DataFetchErrorWidget(retryCallback: () => BlocProvider.of<family_bloc.FamilyBloc>(context).add(family_bloc.GetFamilyList()));
         }else {
-          return const Center(
+          child = const Center(
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(
                   Constants.primaryColor400),
@@ -927,20 +984,40 @@ class FamilySelector extends StatelessWidget {
             ),
           );
         }
+        return AnimatedSwitcher(
+          duration: appearWidgetDuration,
+          child: child,
+        );
       }
     );
   }
 
   Widget _buildPictureRoundedFamily(BuildContext context, int index){
     return Center(
-      child: _profileFamily(index, "rounded"),
+      child: GestureDetector(
+        onTap: () => {
+          setState((){
+            Patient _patient = Patient(
+              id: prefs.getString("userId"),
+              photoUrl: prefs.getString("profile_url"),
+              givenName: prefs.getString("name"),
+              familyName: prefs.getString("lastName"),
+              identifier: prefs.getString("identifier"),
+            );
+            widget.patientSelected = index==0? _patient : families[index-1];
+          }),
+          if(widget.actionCallback != null)
+            widget.actionCallback!(widget.patientSelected),
+        },
+        child: _profileFamily(index, "rounded"),
+      ),
     );
   }
 
   Widget _profileFamily(int index, String type){
     double height = type == "rounded"? 54 : 85;
     double width = type == "rounded"? 54 : 120;
-    bool disable = index == 0 ? patient.id == prefs.getString("userId") ? false : true : patient.id == families[index-1].id ? false : true;
+    bool disable = index == 0 ? widget.patientSelected.id == prefs.getString("userId") ? false : true : widget.patientSelected.id == families[index-1].id ? false : true;
     return Container(
       child:
         index == 0

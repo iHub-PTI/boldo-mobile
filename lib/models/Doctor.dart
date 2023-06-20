@@ -21,6 +21,7 @@ class Doctor {
   List<Specializations>? specializations;
   String? street;
   List<OrganizationWithAvailability>? organizations;
+  bool isFavorite = false;
 
   Doctor(
       {this.addressDescription,
@@ -41,7 +42,9 @@ class Doctor {
       this.photoUrl,
       this.specializations,
       this.street,
-      this.organizations});
+      this.organizations,
+      this.isFavorite = false,
+      });
 
   Doctor.fromJson(Map<String, dynamic> json,) {
     addressDescription = json['addressDescription'];
@@ -78,6 +81,7 @@ class Doctor {
         organizations!.add(OrganizationWithAvailability.fromJson(v));
       });
     }
+    isFavorite = json['isFavorite']?? false;
   }
 
   Map<String, dynamic> toJson() {
@@ -105,6 +109,11 @@ class Doctor {
           specializations!.map((v) => v.toJson()).toList();
     }
     data['street'] = street;
+    if (organizations != null) {
+      data['organizations'] =
+          organizations!.map((v) => v.toJson()).toList();
+    }
+    data['isFavorite'] = isFavorite;
     return data;
   }
 }
@@ -177,6 +186,13 @@ class OrganizationWithAvailability{
     if (json['nextAvailability'] != null) {
       nextAvailability = NextAvailability.fromJson(json["nextAvailability"]);
     }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data.addAll(organization?.toJson()?? {});
+    data['nextAvailability'] = nextAvailability?.toJson();
+    return data;
   }
 
 }

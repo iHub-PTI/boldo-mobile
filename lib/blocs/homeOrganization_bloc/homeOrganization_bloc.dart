@@ -1,3 +1,4 @@
+import 'package:boldo/main.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/network/organization_repository.dart';
 import 'package:dartz/dartz.dart';
@@ -18,7 +19,7 @@ class HomeOrganizationBloc extends Bloc<HomeOrganizationBlocEvent, HomeOrganizat
 
         //get organizations that the patient is subscribed
         await Task(() =>
-        _organizationRepository.getOrganizations()!)
+        _organizationRepository.getOrganizations(patient)!)
             .attempt()
             .run()
             .then((value) {

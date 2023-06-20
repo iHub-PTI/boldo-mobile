@@ -109,7 +109,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       boxFit: BoxFit.contain,
       alignment: Alignment.bottomCenter,
       index: 3,
-      title: 'Pasaporte de salud',
+      title: 'Ver mis vacunas',
       appear: true,
       page: PassportTab(),
     ),
@@ -529,6 +529,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
               child: Column(
                 children: [
                   const EmptyStateV2(
+                    picture: "empty_news.svg",
+                    titleBottom: "Aún no hay novedades",
                     textBottom:
                     "A medida que uses la app, irás encontrando novedades tales como: "
                         "próximas consultas, recetas y resultados de estudios.",
@@ -609,8 +611,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                       "es necesario seas miembro de la organización que las provée.",
                       style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.activeText)
                   ),
-                  // TODO: await endpoint to subscribe to others organizations
-                  /*Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       ElevatedButton(
@@ -627,7 +628,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                         ),
                       ),
                     ],
-                  ),*/
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

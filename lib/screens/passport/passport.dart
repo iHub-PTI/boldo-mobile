@@ -1,7 +1,9 @@
 import 'package:boldo/blocs/passport_bloc/passportBloc.dart';
 import 'package:boldo/constants.dart';
+import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/passport/passport_detail_screen.dart';
 import 'package:boldo/screens/passport/vaccine_filter.dart';
+import 'package:boldo/widgets/header_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -179,29 +181,32 @@ class _PassportTabState extends State<PassportTab> {
                   keyboardDismissBehavior:
                       ScrollViewKeyboardDismissBehavior.onDrag,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
                     width: MediaQuery.of(context).size.width,
                     child: Column(
                       // starts at the top of the page
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // button and label for go to back
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16),
-                          child: TextButton.icon(
-                              onPressed: () {
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
                                 Navigator.pop(context);
                               },
-                              icon: const Icon(
-                                Icons.chevron_left_rounded,
-                                size: 25,
-                                color: Constants.extraColor400,
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.chevron_left_rounded,
+                                    size: 25,
+                                    color: Constants.extraColor400,
+                                  ),
+                                ],
                               ),
-                              label: Text(
-                                'Pasaporte',
-                                style: boldoHeadingTextStyle.copyWith(
-                                    fontSize: 20),
-                              )),
+                            ),
+                            Expanded(
+                              child: header("Mis Vacunas", "Vacunas"),
+                            ),
+                          ],
                         ),
                         // label and options for download vaccination
                         Padding(
@@ -316,19 +321,11 @@ class _PassportTabState extends State<PassportTab> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
-                                        SvgPicture.asset(
-                                            'assets/images/empty_studies.svg'),
-                                        const Padding(
-                                          padding: EdgeInsets.all(16.0),
-                                          child: Text(
-                                            'No existe registro vacunatorio suyo.',
-                                            style: TextStyle(
-                                              color: Color.fromRGBO(
-                                                  253, 165, 125, 1),
-                                              fontSize: 18,
-                                              fontFamily: 'Montserrat'
-                                            ),
-                                          ),
+                                        const EmptyStateV2(
+                                          picture: "empty_vaccines.svg",
+                                          titleBottom: "No existe registro vacunatorio",
+                                          textBottom:
+                                          "Hacé click en botón de recarga para intentar de nuevo",
                                         ),
                                       ],
                                     ),
