@@ -36,13 +36,26 @@ void initDio(
 
   String? accessToken;
   FlutterAppAuth appAuth = FlutterAppAuth();
+
+  ISentrySpan? transaction;
+
   //setup interceptors
   dio.interceptors.add(QueuedInterceptorsWrapper(
     onRequest: (options, handler) async {
       accessToken = (await storage.read(key: "access_token") ?? '');
       options.headers["authorization"] = "bearer $accessToken";
-
+      transaction = Sentry.startTransaction(
+        options.path,
+        'request',
+        bindToScope: true,
+      );
       return handler.next(options);
+    },
+    onResponse: (response, handler){
+      transaction?.finish(
+        status: SpanStatus.fromHttpStatusCode(response.statusCode?? -1)
+      );
+      return handler.next(response);
     },
     onError: (DioError error, handle) async {
       if (error.response?.statusCode == 403) {
@@ -218,6 +231,10 @@ void initDio(
         return handle.resolve(await _dio.request(options.path,
             data: options.data, options: optionsDio, queryParameters: options.queryParameters));
       }
+      transaction?.throwable = error;
+      transaction?.finish(
+        status: SpanStatus.fromHttpStatusCode(error.response?.statusCode?? -1)
+      );
       return handle.next(error);
     },
   ));

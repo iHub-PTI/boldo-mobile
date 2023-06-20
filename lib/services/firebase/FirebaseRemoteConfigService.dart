@@ -32,6 +32,7 @@ class FirebaseRemoteConfigService {
         "DEFAULT_APP_URL_DOWNLOAD": appConfig.DEFAULT_APP_URL_DOWNLOAD,
         "LAST_AVAILABLE_VERSION": appConfig.LAST_AVAILABLE_VERSION,
         "LAST_STABLE_VERSION": appConfig.LAST_STABLE_VERSION,
+        "TRACE_RATE_ERROR": appConfig.TRACE_RATE_ERROR,
       });
 
       // get values from server
@@ -49,6 +50,7 @@ class FirebaseRemoteConfigService {
       appConfig.updateDefaultAppUrlDownloadValue(firebaseRemoteConfig.getString("DEFAULT_APP_URL_DOWNLOAD"));
       appConfig.updateLastAvailableVersionValue(firebaseRemoteConfig.getString("LAST_AVAILABLE_VERSION"));
       appConfig.updateLastStableVersionValue(firebaseRemoteConfig.getString("LAST_STABLE_VERSION"));
+      appConfig.updateTraceRateErrorValue(firebaseRemoteConfig.getDouble("TRACE_RATE_ERROR"));
 
       // listen remote changes
       firebaseRemoteConfig.onConfigUpdated.listen((event) async {
@@ -105,6 +107,10 @@ class FirebaseRemoteConfigService {
         if(event.updatedKeys.contains("LAST_STABLE_VERSION")){
           // set new value
           appConfig.updateLastStableVersionValue(firebaseRemoteConfig.getString("LAST_STABLE_VERSION"));
+        }
+        if(event.updatedKeys.contains("TRACE_RATE_ERROR")){
+          // set new value
+          appConfig.updateTraceRateErrorValue(firebaseRemoteConfig.getDouble("TRACE_RATE_ERROR"));
         }
       });
     } on FirebaseException catch (exception, stackTrace){

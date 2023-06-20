@@ -53,6 +53,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sentry_dio/sentry_dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -149,29 +150,46 @@ Future<void> main() async {
     storage.deleteAll();
   }
 
+  bool hasUpdate = await checkUpdated();
+  bool hasRequiredUpdate = await checkRequiredUpdated();
+
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeRight,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   if (kReleaseMode) {
     String? sentryDSN = environment.SENTRY_DSN;
     await SentryFlutter.init(
       (options) {
         options.environment = environment.SENTRY_ENV;
         options.dsn = sentryDSN;
+        options.tracesSampleRate = appConfig.TRACE_RATE_ERROR;
+        options.captureFailedRequests = true;
+      },
+      appRunner: ()=>{
+
+        dio.addSentry(),
+        dioDownloader.addSentry(),
+        dioPassport.addSentry(),
+
+        runApp(MyApp(
+          session: session ?? '',
+          hasUpdate: hasUpdate,
+          hasRequiredUpdate: hasRequiredUpdate,
+        ))
       },
     );
+  }else{
+    runApp(MyApp(
+      session: session ?? '',
+      hasUpdate: hasUpdate,
+      hasRequiredUpdate: hasRequiredUpdate,
+    ));
   }
 
-  bool hasUpdate = await checkUpdated();
-  bool hasRequiredUpdate = await checkRequiredUpdated();
-
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeRight,
-    DeviceOrientation.landscapeLeft,
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]).then((value) => runApp(MyApp(
-    session: session ?? '',
-    hasUpdate: hasUpdate,
-    hasRequiredUpdate: hasRequiredUpdate,
-  )));
 }
 
 class MyApp extends StatefulWidget {

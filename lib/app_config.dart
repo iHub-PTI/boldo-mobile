@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 AppConfig appConfig = AppConfig(
@@ -54,6 +55,20 @@ class AppConfig {
         defaultValue: envApp.env['LAST_AVAILABLE_VERSION']?? ""
     );
 
+    if(kReleaseMode){
+      if(envApp.maybeGet("TRACE_RATE_ERROR") == null){
+        throw Exception("TRACE_RATE_ERROR is not defined");
+      }
+
+      TRACE_RATE_ERROR = double.tryParse(
+        String.fromEnvironment(
+          'TRACE_RATE_ERROR',
+          defaultValue: envApp.env['TRACE_RATE_ERROR']?? ""
+        ),
+
+      );
+    }
+
   }
 
   // stream controllers to update values
@@ -61,12 +76,14 @@ class AppConfig {
   StreamController<String> _defaultAppUrlDownloadController = StreamController<String>.broadcast();
   StreamController<String> _lastStableVersionController = StreamController<String>.broadcast();
   StreamController<String> _lastAvailableVersionController = StreamController<String>.broadcast();
+  StreamController<double> _traceRateErrorController = StreamController<double>.broadcast();
 
   // streams to emit values to listeners
   Stream<String> get streamAppUrlDownload => _appUrlDownloadController.stream;
   Stream<String> get streamDefaultAppUrlDownload => _defaultAppUrlDownloadController.stream;
   Stream<String> get streamLastStableVersion => _lastStableVersionController.stream;
   Stream<String> get streamLastAvailableVersion => _lastAvailableVersionController.stream;
+  Stream<double> get streamTraceRateError => _traceRateErrorController.stream;
 
   void updateAppUrlDownloadValue(String value){
     APP_URL_DOWNLOAD = value;
@@ -88,6 +105,11 @@ class AppConfig {
     _lastAvailableVersionController.sink.add(value);
   }
 
+  void updateTraceRateErrorValue(double value){
+    TRACE_RATE_ERROR = value;
+    _traceRateErrorController.sink.add(value);
+  }
+
   /// This value can change remotely, you must be subscribe to [streamAppUrlDownload]
   /// to listen changes dynamically
   late String APP_URL_DOWNLOAD;
@@ -104,5 +126,8 @@ class AppConfig {
   /// to listen changes dynamically
   late String LAST_AVAILABLE_VERSION;
 
+  /// This value can change remotely, you must be subscribe to [streamTraceRateError]
+  /// to listen changes dynamically
+  late double? TRACE_RATE_ERROR;
 
 }

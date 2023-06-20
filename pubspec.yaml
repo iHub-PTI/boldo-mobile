@@ -27,7 +27,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   http: ^0.13.3
-  sentry_flutter: 7.6.1
+  sentry_flutter: 7.7.0
+  sentry_dio: 7.7.0
   socket_io_client: ^1.0.2
   flutter_webrtc: 0.9.17
   shared_preferences: ^2.0.7
