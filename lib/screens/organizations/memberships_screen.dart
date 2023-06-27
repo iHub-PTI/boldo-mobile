@@ -362,6 +362,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                 )
               ],
               child: SingleChildScrollView(
+                padding: const EdgeInsets.only(top: 16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -371,24 +372,9 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                         Expanded(
                           child: Row(
                             children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Icon(
-                                  Icons.chevron_left_rounded,
-                                  size: 25,
-                                  color: Constants.extraColor400,
-                                ),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Text(
-                                    'Centros Asistenciales',
-                                    style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                                  ),
-                                ),
+                              BackButtonLabel(
+                                iconType: BackIcon.backArrow,
+                                labelText: 'Centros Asistenciales',
                               ),
                             ],
                           ),
