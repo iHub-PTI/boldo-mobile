@@ -5,6 +5,7 @@ import 'package:boldo/screens/take_picture/take_picture_screen.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/loading_helper.dart';
 import 'package:boldo/utils/photos_helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -158,8 +159,17 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                         child: SingleChildScrollView(
                           child: Column(
                             children: [
-                              Padding(
-                                  padding: const EdgeInsets.only(top: 60.0),
+                              Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    BackButtonLabel(
+                                      iconType: BackIcon.backClose,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
                                   child: SvgPicture.asset(
                                     'assets/icon/logo_text.svg',
                                     height: 100,

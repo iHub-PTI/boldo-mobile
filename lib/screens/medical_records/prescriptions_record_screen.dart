@@ -4,6 +4,7 @@ import 'package:boldo/constants.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -60,19 +61,8 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
                   const SizedBox(
                     height: 24,
                   ),
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(
-                      Icons.chevron_left_rounded,
-                      size: 25,
-                      color: Constants.extraColor400,
-                    ),
-                    label: Text(
-                      'Detalles de la receta',
-                      style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                    ),
+                  BackButtonLabel(
+                    labelText: 'Detalles de la receta',
                   ),
                   const SizedBox(
                     height: 16,

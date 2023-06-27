@@ -9,6 +9,7 @@ import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart' as study_blo
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/photos_helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/image_visor.dart';
 import 'package:date_format/date_format.dart';
 import 'package:dio/dio.dart';
@@ -96,21 +97,10 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(
-                    height: 10,
+                    height: 16,
                   ),
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(
-                      Icons.chevron_left_rounded,
-                      size: 25,
-                      color: Constants.extraColor400,
-                    ),
-                    label: Text(
-                      'Detalles de la orden',
-                      style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                    ),
+                  BackButtonLabel(
+                    labelText: 'Detalles de la orden',
                   ),
                   Padding(
                     padding: const EdgeInsets.all(16),

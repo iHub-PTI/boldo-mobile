@@ -8,6 +8,7 @@ import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/booking/booking_screen.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/expandable_card/expandable_card.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:boldo/widgets/in-person-virtual-switch.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -133,19 +134,9 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                               children: [
                                 Row(
                                   children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Icon(
-                                        Icons.chevron_left_rounded,
-                                        size: 25,
-                                        color: Constants.extraColor400,
-                                      ),
-                                    ),
+                                    BackButtonLabel(),
                                     Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16),
+                                      child: Container(
                                         child: header(
                                             "Marcar cita", "Marcar cita",
                                           height: 44,

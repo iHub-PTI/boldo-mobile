@@ -11,6 +11,7 @@ import 'package:boldo/screens/doctor_profile/doctor_profile_screen.dart';
 import 'package:boldo/screens/doctor_search/doctor_filter.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/go_to_top.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -203,20 +204,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: const Icon(
-                          Icons.chevron_left_rounded,
-                          size: 25,
-                          color: Constants.extraColor400,
-                        ),
-                        label: Text(
-                          'Médicos',
-                          style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                        ),
-                      ),
+                      BackButtonLabel(labelText: 'Médicos',padding: null,),
                       Row(
                         children: [
                           ImageViewTypeForm(

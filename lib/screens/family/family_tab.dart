@@ -2,6 +2,7 @@ import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/family/components/family_rectagle_card.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -73,6 +74,7 @@ class _FamilyScreenState extends State<FamilyScreen> {
             const Background(text: "family"),
             SafeArea(
               child: Container(
+                padding: const EdgeInsets.only(top: 16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -81,18 +83,8 @@ class _FamilyScreenState extends State<FamilyScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: SvgPicture.asset(
-                              'assets/icon/chevron-left.svg',
-                              color: ConstantsV2.activeText,
-                            ),
-                          ),
-                          const Text(
-                            "Mi Familia",
-                            style: boldoTitleBlackTextStyle,
+                          BackButtonLabel(
+                            labelText: 'Mi Familia',
                           ),
                         ],
                       ),

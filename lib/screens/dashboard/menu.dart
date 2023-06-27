@@ -6,6 +6,7 @@ import 'package:boldo/screens/privacy_policy/privacy_policy.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
 import 'package:boldo/utils/loading_helper.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -91,19 +92,13 @@ class _MenuScreenState extends State<MenuScreen> {
                   child: Column(
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(right: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            IconButton(
-                              onPressed: (){
-                                Navigator.pop(context);
-                              },
-                              icon: SvgPicture.asset(
-                                'assets/icon/close.svg',
-                                color: ConstantsV2.lightest,
-                              ),
-                            )
+                            BackButtonLabel(
+                              iconType: BackIcon.backClose,
+                              iconColor: ConstantsV2.lightest,
+                            ),
                           ],
                         ),
                       ),

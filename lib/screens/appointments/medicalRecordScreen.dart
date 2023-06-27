@@ -15,6 +15,7 @@ import 'package:boldo/screens/my_studies/estudy_screen.dart';
 import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
 import 'package:boldo/screens/studies_orders/StudyOrderScreen.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:date_format/date_format.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -79,7 +80,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
               ),
             ),
             body: Padding(
-              padding: const EdgeInsets.only(top: 15),
+              padding: const EdgeInsets.only(top: 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,11 +91,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                     },
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.chevron_left_rounded,
-                          size: 25,
-                          color: Constants.extraColor400,
-                        ),
+                        BackButtonLabel(),
                         Text(
                           'Detalles de Cita',
                           style: boldoHeadingTextStyle.copyWith(fontSize: 20),
