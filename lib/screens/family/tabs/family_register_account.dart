@@ -152,8 +152,7 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                   if (state is Loading) {
                     return const LoadingHelper();
                   }
-                    return Align(
-                      alignment: Alignment.topCenter,
+                    return SafeArea(
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: SingleChildScrollView(
@@ -181,7 +180,10 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                               Text(
                                 'verificá tu identidad',
                                 textAlign: TextAlign.center,
-                                style: boldoSubTextStyle.copyWith(fontSize: 25),
+                                style: boldoSubTextStyle.copyWith(
+                                  fontSize: 25,
+                                  color: ConstantsV2.activeText
+                                ),
                               ),
                               const SizedBox(
                                 height: 20,
@@ -198,6 +200,7 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                                         ? 'A continuación, subí una foto de la cara frontal de tu cédula de identidad paraguaya.'
                                         : 'Genial! Ahora una foto de la cara posterior de tu cédula de identidad paraguaya.',
                                     style: boldoSubTextStyle.copyWith(
+                                        color: ConstantsV2.activeText,
                                         fontWeight: FontWeight.w400),
                                   ),
                                 ),
@@ -209,7 +212,7 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                                   style: TextStyle(
                                       fontSize: 16,
                                       decoration: TextDecoration.underline,
-                                      color: ConstantsV2.focuseBorder)),
+                                      color: ConstantsV2.activeText)),
                               const SizedBox(
                                 height: 20,
                               ),
