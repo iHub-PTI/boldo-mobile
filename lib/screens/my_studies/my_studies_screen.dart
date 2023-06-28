@@ -4,6 +4,7 @@ import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,8 +48,7 @@ class _MyStudiesState extends State<MyStudies> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
+        child: Container(
           child: BlocListener<MyStudiesBloc, MyStudiesState>(
             listener: (context, state) {
               if (state is Loading) {
@@ -115,16 +115,7 @@ class _MyStudiesState extends State<MyStudies> {
                     Expanded(
                       child: Row(
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Icon(
-                              Icons.chevron_left_rounded,
-                              size: 25,
-                              color: Constants.extraColor400,
-                            ),
-                          ),
+                          BackButtonLabel(),
                           Expanded(
                             child: header("Mis Estudios", "Estudios"),
                           ),

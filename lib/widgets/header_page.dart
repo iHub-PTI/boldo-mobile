@@ -4,10 +4,14 @@ import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:flutter/cupertino.dart';
 
 Widget header(String? text, String? patientText,
-    {double? height, double? width, bool border = true, Color? borderColor}
+    {double? height,
+      double? width,
+      bool border = true,
+      Color? borderColor,
+      EdgeInsetsGeometry? padding = const EdgeInsets.all(16)}
     ) {
   return Container(
-    padding: const EdgeInsets.all(16.0),
+    padding: padding,
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

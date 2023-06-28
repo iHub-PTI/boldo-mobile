@@ -1,3 +1,4 @@
+import 'package:boldo/widgets/back_button.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/svg.dart';
@@ -65,25 +66,21 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: SvgPicture.asset('assets/Logo.svg',
-            height: 30, semanticsLabel: 'BOLDO Logo'),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.chevron_left,
-            color: Colors.black,
-          ),
-          onPressed: () => Navigator.pop(context),
+        actions: [],
+        leadingWidth: 200,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: SvgPicture.asset('assets/Logo.svg',
+              semanticsLabel: 'BOLDO Logo'),
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(children: [
-          const SizedBox(height: 15),
-
-          Center(
-            child: Text(
-              'Políticas de privacidad',
-              style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-            ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+          const SizedBox(height: 16),
+          BackButtonLabel(
+            labelText: 'Políticas de privacidad',
           ),
           const SizedBox(height: 24),
           const Padding(

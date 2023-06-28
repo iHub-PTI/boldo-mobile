@@ -3,6 +3,7 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/image_visor.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,7 @@ class _StudyState extends State<Study> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
           child: BlocListener<MyStudiesBloc, MyStudiesState>(
             listener: (context, state) {
               if (state is Loading) {
@@ -88,26 +89,9 @@ class _StudyState extends State<Study> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(
-                      Icons.chevron_left_rounded,
-                      size: 25,
-                      color: Constants.extraColor400,
-                    ),
-                    label: Text(
-                      'Detalle del estudio',
-                      style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                    ),
+                  BackButtonLabel(
+                    labelText: 'Detalles del estudio',
                   ),
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     Navigator.pop(context);
-                  //   },
-                  //   child: SvgPicture.asset('assets/icon/chevron-left.svg'),
-                  // ),
                   if (_loading)
                     Container(
                       child: const Center(

@@ -9,6 +9,7 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
 import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,8 +61,8 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
           child: MultiBlocListener(
             listeners: [
               BlocListener<StudyOrderBloc, StudyOrderState>(
@@ -107,19 +108,8 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(
-                      Icons.chevron_left_rounded,
-                      size: 25,
-                      color: Constants.extraColor400,
-                    ),
-                    label: Text(
-                      'Órdenes de estudio',
-                      style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                    ),
+                  BackButtonLabel(
+                    labelText: 'Órdenes de estudio',
                   ),
                   const SizedBox(height: 10),
                   BlocBuilder<StudyOrderBloc, StudyOrderState>(
@@ -129,18 +119,21 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '${formatDate(
-                              DateTime.parse(studiesOrders?.authoredDate ??
-                                  DateTime.now().toString()),
-                              [d, ' de ', MM, ' de ', yyyy],
-                              locale: const SpanishDateLocale(),
-                            )} (${passedDays(_daysBetween, showDateFormat: false)})',
-                            style: boldoCorpMediumTextStyle.copyWith(
-                                color: ConstantsV2.darkBlue),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                              '${formatDate(
+                                DateTime.parse(studiesOrders?.authoredDate ??
+                                    DateTime.now().toString()),
+                                [d, ' de ', MM, ' de ', yyyy],
+                                locale: const SpanishDateLocale(),
+                              )} (${passedDays(_daysBetween, showDateFormat: false)})',
+                              style: boldoCorpMediumTextStyle.copyWith(
+                                  color: ConstantsV2.darkBlue),
+                            ),
                           ),
                           const SizedBox(
-                            height: 15,
+                            height: 16,
                           ),
                           // here show the profile views
                           Card(

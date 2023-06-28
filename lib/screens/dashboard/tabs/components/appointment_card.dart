@@ -6,7 +6,6 @@ import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/Call/video_call.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
-import 'package:boldo/screens/details/appointment_details.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/appointment_location_icon.dart';
