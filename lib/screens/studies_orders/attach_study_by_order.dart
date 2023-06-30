@@ -1046,7 +1046,6 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
   Widget showStudyDescription(BuildContext context, int index, StudiesCodes studiesCodes) {
     return Card(
       elevation: 0,
-      margin: const EdgeInsets.only(bottom: 4),
       child: Column(
         children: [
           Row(
