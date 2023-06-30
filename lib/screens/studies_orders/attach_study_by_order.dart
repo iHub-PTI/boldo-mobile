@@ -456,37 +456,43 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
             ),
           ),
           Container(
-            width: MediaQuery.of(context).size.width,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
             color: ConstantsV2.lightest,
-            child: serviceRequest?.studiesCodes?.isEmpty?? true ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              child: Container(
-                child: GestureDetector(
-                  onTap: () async {
-                    _noteBox(notes);
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                serviceRequest?.studiesCodes?.isEmpty?? true ? Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  child: Container(
+                    child: Text(
+                      'Sin pedidos',
+                      style: boldoSubTextMediumStyle.copyWith(decoration: TextDecoration.underline,),
+                    ),
+                  ),
+                ): ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  itemBuilder: (BuildContext context, int index) {
+                    return showStudyDescription(context, index, serviceRequest?.studiesCodes?[index]?? StudiesCodes());
                   },
-                  child: Row(
-                    children: [
-                      Text(
-                        'Sin descripción de la orden',
-                        style: boldoSubTextMediumStyle.copyWith(decoration: TextDecoration.underline,),
-                      ),
-                    ],
+                  itemCount: serviceRequest?.studiesCodes?.length,
+                  physics: const ClampingScrollPhysics(),
+                ),
+                const SizedBox(
+                  height: 23,
+                ),
+                Container(
+                  child: Text(
+                    '${serviceRequest?.notes?.isNotEmpty?? false ? serviceRequest?.notes : 'Sin notas del Dr/a.'}',
+                    style: boldoCorpMediumTextStyle.copyWith(
+                      color: ConstantsV2.inactiveText
+                    ),
                   ),
                 ),
-              ),
-            ): ListView.builder(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              itemBuilder: (BuildContext context, int index) {
-                return showStudyDescription(context, index, serviceRequest?.studiesCodes?[index]?? StudiesCodes());
-              },
-              itemCount: serviceRequest?.studiesCodes?.length,
-              physics: const ClampingScrollPhysics(),
-            ),
-          )
+              ],
+            )
+          ),
         ],
       ),
     );
