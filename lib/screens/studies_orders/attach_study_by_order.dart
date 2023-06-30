@@ -116,7 +116,26 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                                   child: Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
+                                        BlocBuilder<AttachStudyOrderBloc, AttachStudyOrderState>(
+                                            builder: (context, state) {
+                                              if(state is! LoadingStudies ){
+                                                // show if not loading
+                                                return Container(
+                                                  padding: const EdgeInsets.symmetric(vertical: 4),
+                                                  child: Text(
+                                                    "Número de orden: ${serviceRequest?.orderNumber?? 'Sin Nro de Orden'}",
+                                                    style: bodyLargeBlack.copyWith(
+                                                      color: ConstantsV2.orange,
+                                                    ),
+                                                  ),
+                                                );
+                                              }else{
+                                                return Container();
+                                              }
+                                            }
+                                        ),
                                         serviceRequest?.urgent ?? false
                                             ? Card(
                                           shape: RoundedRectangleBorder(

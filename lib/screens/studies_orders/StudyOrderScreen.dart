@@ -291,35 +291,49 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ClipRect(
-                        child: Row(
-                      children: [
-                        SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: SvgPicture.asset(
-                            studiesOrders?.serviceRequests![index].category ==
-                                    "Laboratory"
-                                ? 'assets/icon/lab-dark.svg'
-                                : studiesOrders?.serviceRequests![index]
-                                            .category ==
-                                        "Diagnostic Imaging"
-                                    ? 'assets/icon/image-dark.svg'
-                                    : studiesOrders?.serviceRequests![index]
-                                                .category ==
-                                            "Other"
-                                        ? 'assets/icon/other.svg'
-                                        : 'assets/images/LogoIcon.svg',
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            child: Text(
+                              'Nro de orden: ${studiesOrders!.serviceRequests![index].orderNumber}',
+                              style: boldoBodySBlackTextStyle.copyWith(color: ConstantsV2.activeText),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          "${studiesOrders?.serviceRequests![index].category == "Laboratory" ? 'Laboratorio' : studiesOrders?.serviceRequests![index].category == "Diagnostic Imaging" ? 'Imágenes' : studiesOrders?.serviceRequests![index].category == "Other" ? 'Otros' : 'Desconocido'}",
-                          style: boldoCorpSmallTextStyle.copyWith(
-                              color: ConstantsV2.darkBlue),
-                        ),
-                      ],
-                    )),
+                          const SizedBox(height: 5,),
+                          Container(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                SvgPicture.asset(
+                                  studiesOrders?.serviceRequests![index].category ==
+                                      "Laboratory"
+                                      ? 'assets/icon/lab-dark.svg'
+                                      : studiesOrders?.serviceRequests![index]
+                                      .category ==
+                                      "Diagnostic Imaging"
+                                      ? 'assets/icon/image-dark.svg'
+                                      : studiesOrders?.serviceRequests![index]
+                                      .category ==
+                                      "Other"
+                                      ? 'assets/icon/other.svg'
+                                      : 'assets/images/LogoIcon.svg',
+                                  width: 24,
+                                  height: 24,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  "${studiesOrders?.serviceRequests![index].category == "Laboratory" ? 'Laboratorio' : studiesOrders?.serviceRequests![index].category == "Diagnostic Imaging" ? 'Imágenes' : studiesOrders?.serviceRequests![index].category == "Other" ? 'Otros' : 'Desconocido'}",
+                                  style: boldoCorpSmallTextStyle.copyWith(
+                                      color: ConstantsV2.darkBlue),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
