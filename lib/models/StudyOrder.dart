@@ -89,6 +89,7 @@ class ServiceRequest {
     this.notes,
     this.studiesCodes,
     this.diagnosticReports,
+    this.orderNumber,
   });
 
   String? id;
@@ -101,6 +102,7 @@ class ServiceRequest {
   bool? urgent;
   String? notes;
   int? diagnosticReportCount;
+  String? orderNumber;
 
   List<DiagnosticReport>? diagnosticReports;
   List<StudiesCodes>? studiesCodes;
@@ -124,7 +126,8 @@ class ServiceRequest {
         ? List<DiagnosticReport>.from(json["diagnosticReports"]
           .map((x) => DiagnosticReport.fromJson(x)))
           : null,
-      );
+    orderNumber: json['orderNumber'],
+  );
 
   Map<String, dynamic> toJson() => {
         "authoredDate": authoredDate,
