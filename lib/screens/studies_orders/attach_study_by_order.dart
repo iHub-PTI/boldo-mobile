@@ -947,8 +947,11 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                           files.remove(file);
                           setState(() {});
                         },
-                        child: SvgPicture.asset(
-                          'assets/icon/trash.svg',
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          child: SvgPicture.asset(
+                            'assets/icon/trash.svg',
+                          ),
                         ),
                       ),
                     ],
@@ -989,27 +992,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7),
-                child: ClipOval(
-                  child: SizedBox(
-                    width: 54,
-                    height: 54,
-                    child: SvgPicture.asset(
-                      type == 'pdf'
-                          ? 'assets/icon/picture-as-pdf.svg'
-                          : (type == 'jpeg' || type == 'png')
-                          ? 'assets/icon/crop-original.svg'
-                          : 'assets/Logo.svg',
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: [
                     Container(
                       child: SvgPicture.asset(
@@ -1040,8 +1023,18 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                             ),
                           ]),
                     ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Container(
+                      child: SvgPicture.asset('assets/icon/chevron-right.svg'),
+                    ),
                   ],
                 ),
+              ),
+              //trash icon disabled
+              const SizedBox(
+                height: 30,
               ),
             ],
           ),
