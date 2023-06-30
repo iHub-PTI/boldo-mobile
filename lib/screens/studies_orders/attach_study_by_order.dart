@@ -106,6 +106,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                     padding: const EdgeInsets.all(16),
                     child: Container(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
@@ -137,39 +138,27 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                                             }
                                         ),
                                         serviceRequest?.urgent ?? false
-                                            ? Card(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(100),
-                                          ),
-                                          elevation: 0,
-                                          color: ConstantsV2.orange ,
-                                          margin: EdgeInsets.zero,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 6.0,
-                                                top: 2.0,
-                                                bottom: 2.0,
-                                                right: 6.0),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                SvgPicture.asset(
-                                                  'assets/icon/warning-white.svg',
-                                                ),
-                                                const SizedBox(width: 6),
-                                                Text(
-                                                  "urgente",
-                                                  style:
-                                                  boldoCorpSmallTextStyle.copyWith(
-                                                      color: ConstantsV2.lightGrey),
-                                                ),
-                                              ],
-                                            ),
+                                            ? roundedCard(
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              SvgPicture.asset(
+                                                'assets/icon/warning-white.svg',
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                "urgente",
+                                                style:
+                                                boldoCorpSmallTextStyle.copyWith(
+                                                    color: ConstantsV2.lightGrey),
+                                              ),
+                                            ],
                                           ),
                                         ): Container(),
                                       ],
                                     ),
-                                  )),
+                                  ),
+                              ),
                               ImageViewTypeForm(
                                 height: 54,
                                 width: 54,
@@ -1106,5 +1095,27 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
       return 'OTHER';
     }
   }
+
+  Widget roundedCard({
+    Widget? child,
+    Color color = ConstantsV2.orange,
+    EdgeInsetsGeometry? padding = const EdgeInsets.symmetric(
+      horizontal: 6.0,
+      vertical: 2.0,
+    ),
+  }){
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(100),
+      ),
+      elevation: 0,
+      color: color ,
+      margin: EdgeInsets.zero,
+      child: Container(
+        padding: padding,
+        child: child,
+      ),
+    );
+}
 
 }
