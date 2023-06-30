@@ -93,7 +93,7 @@ class BackButtonLabel<T> extends StatelessWidget {
       Flexible(
         child: labelWidget?? Text(
           labelText?? '',
-          style: boldoScreenTitleTextStyle.copyWith(color: ConstantsV2.activeText),
+          style: boldoTitleBlackTextStyle.copyWith(color: ConstantsV2.activeText),
         ),
       ),
     ];
