@@ -914,7 +914,9 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                             children: [
                               SvgPicture.asset(p.extension(file.path).toLowerCase() == '.pdf'
                                   ? 'assets/icon/picture-as-pdf.svg'
-                                  : 'assets/icon/crop-original.svg'),
+                                  : 'assets/icon/crop-original.svg',
+                                height: 24,
+                                width: 24,),
                               const SizedBox(
                                 width: 8,
                               ),
@@ -1009,6 +1011,20 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Container(
+                      child: SvgPicture.asset(
+                        type == 'pdf'
+                            ? 'assets/icon/picture-as-pdf.svg'
+                            : (type == 'jpeg' || type == 'png')
+                            ? 'assets/icon/crop-original.svg'
+                            : 'assets/Logo.svg',
+                        height: 24,
+                        width: 24,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
                     Container(
                       margin: const EdgeInsets.only(right: 8),
                       child: Flex(
