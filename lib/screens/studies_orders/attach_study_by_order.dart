@@ -106,6 +106,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                     padding: const EdgeInsets.all(16),
                     child: Container(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
@@ -116,41 +117,48 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                                   child: Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
+                                        BlocBuilder<AttachStudyOrderBloc, AttachStudyOrderState>(
+                                            builder: (context, state) {
+                                              if(state is! LoadingStudies ){
+                                                // show if not loading
+                                                return Container(
+                                                  padding: const EdgeInsets.symmetric(vertical: 4),
+                                                  child: Text(
+                                                    "Número de orden: ${serviceRequest?.orderNumber?? 'Sin Nro de Orden'}",
+                                                    style: bodyLargeBlack.copyWith(
+                                                      color: ConstantsV2.orange,
+                                                    ),
+                                                  ),
+                                                );
+                                              }else{
+                                                return Container();
+                                              }
+                                            }
+                                        ),
                                         serviceRequest?.urgent ?? false
-                                            ? Card(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(100),
-                                          ),
-                                          elevation: 0,
-                                          color: ConstantsV2.orange ,
-                                          margin: EdgeInsets.zero,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 6.0,
-                                                top: 2.0,
-                                                bottom: 2.0,
-                                                right: 6.0),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                SvgPicture.asset(
-                                                  'assets/icon/warning-white.svg',
-                                                ),
-                                                const SizedBox(width: 6),
-                                                Text(
-                                                  "urgente",
-                                                  style:
-                                                  boldoCorpSmallTextStyle.copyWith(
-                                                      color: ConstantsV2.lightGrey),
-                                                ),
-                                              ],
-                                            ),
+                                            ? roundedCard(
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              SvgPicture.asset(
+                                                'assets/icon/warning-white.svg',
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                "urgente",
+                                                style:
+                                                boldoCorpSmallTextStyle.copyWith(
+                                                    color: ConstantsV2.lightGrey),
+                                              ),
+                                            ],
                                           ),
                                         ): Container(),
                                       ],
                                     ),
-                                  )),
+                                  ),
+                              ),
                               ImageViewTypeForm(
                                 height: 54,
                                 width: 54,
@@ -393,10 +401,9 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
           ),
           serviceRequest?.diagnosticReports?.isEmpty?? true ? Container(
             width: MediaQuery.of(context).size.width,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            color: ConstantsV2.lightest,
             child: files.isEmpty ? Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              color: ConstantsV2.lightest,
               child: _offsetPopup(
                 child: Text(
                   'adjuntar un archivo',
@@ -429,11 +436,11 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
+                  padding: const EdgeInsets.only(bottom: 16, left: 14, right: 16, top: 24),
                   child: Row(
                     children: [
                       Text(
@@ -448,37 +455,43 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
             ),
           ),
           Container(
-            width: MediaQuery.of(context).size.width,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
             color: ConstantsV2.lightest,
-            child: serviceRequest?.studiesCodes?.isEmpty?? true ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              child: Container(
-                child: GestureDetector(
-                  onTap: () async {
-                    _noteBox(notes);
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                serviceRequest?.studiesCodes?.isEmpty?? true ? Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  child: Container(
+                    child: Text(
+                      'Sin pedidos',
+                      style: boldoSubTextMediumStyle.copyWith(decoration: TextDecoration.underline,),
+                    ),
+                  ),
+                ): ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  itemBuilder: (BuildContext context, int index) {
+                    return showStudyDescription(context, index, serviceRequest?.studiesCodes?[index]?? StudiesCodes());
                   },
-                  child: Row(
-                    children: [
-                      Text(
-                        'Sin descripción de la orden',
-                        style: boldoSubTextMediumStyle.copyWith(decoration: TextDecoration.underline,),
-                      ),
-                    ],
+                  itemCount: serviceRequest?.studiesCodes?.length,
+                  physics: const ClampingScrollPhysics(),
+                ),
+                const SizedBox(
+                  height: 23,
+                ),
+                Container(
+                  child: Text(
+                    '${serviceRequest?.notes?.isNotEmpty?? false ? serviceRequest?.notes : 'Sin notas del Dr/a.'}',
+                    style: boldoCorpMediumTextStyle.copyWith(
+                      color: ConstantsV2.inactiveText
+                    ),
                   ),
                 ),
-              ),
-            ): ListView.builder(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              itemBuilder: (BuildContext context, int index) {
-                return showStudyDescription(context, index, serviceRequest?.studiesCodes?[index]?? StudiesCodes());
-              },
-              itemCount: serviceRequest?.studiesCodes?.length,
-              physics: const ClampingScrollPhysics(),
-            ),
-          )
+              ],
+            )
+          ),
         ],
       ),
     );
@@ -717,24 +730,16 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
   Widget _fileServerElement(BuildContext context, int index){
     return Column(
       children: [
-        Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0),
-          ),
-          elevation: 1,
-          margin: const EdgeInsets.only(bottom: 4),
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-            child: ListView.builder(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              itemBuilder: (BuildContext context, int index2) {
-                return showStudy(context, index2, serviceRequest?.diagnosticReports?[index]?? DiagnosticReport());
-                },
-              itemCount: serviceRequest?.diagnosticReports?[index].attachmentUrls?.length,
-              physics: const ClampingScrollPhysics(),
-            ),
+        Container(
+          child: ListView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            itemBuilder: (BuildContext context, int index2) {
+              return showStudy(context, index2, serviceRequest?.diagnosticReports?[index]?? DiagnosticReport());
+            },
+            itemCount: serviceRequest?.diagnosticReports?[index].attachmentUrls?.length,
+            physics: const ClampingScrollPhysics(),
           ),
         ),
       ],
@@ -892,13 +897,10 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
             OpenFilex.open(file.path)
             ,
           child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0),
-            ),
-            elevation: 1,
+            elevation: 4,
             margin: const EdgeInsets.only(bottom: 4),
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -912,7 +914,9 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                             children: [
                               SvgPicture.asset(p.extension(file.path).toLowerCase() == '.pdf'
                                   ? 'assets/icon/picture-as-pdf.svg'
-                                  : 'assets/icon/crop-original.svg'),
+                                  : 'assets/icon/crop-original.svg',
+                                height: 24,
+                                width: 24,),
                               const SizedBox(
                                 width: 8,
                               ),
@@ -943,8 +947,11 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                           files.remove(file);
                           setState(() {});
                         },
-                        child: SvgPicture.asset(
-                          'assets/icon/trash.svg',
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          child: SvgPicture.asset(
+                            'assets/icon/trash.svg',
+                          ),
                         ),
                       ),
                     ],
@@ -981,32 +988,26 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
           }
         },
         child: Container(
-          padding: const EdgeInsets.only(top: 8, left: 8),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7),
-                child: ClipOval(
-                  child: SizedBox(
-                    width: 54,
-                    height: 54,
-                    child: SvgPicture.asset(
-                      type == 'pdf'
-                          ? 'assets/icon/picture-as-pdf.svg'
-                          : (type == 'jpeg' || type == 'png')
-                          ? 'assets/icon/crop-original.svg'
-                          : 'assets/Logo.svg',
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: [
+                    Container(
+                      child: SvgPicture.asset(
+                        type == 'pdf'
+                            ? 'assets/icon/picture-as-pdf.svg'
+                            : (type == 'jpeg' || type == 'png')
+                            ? 'assets/icon/crop-original.svg'
+                            : 'assets/Logo.svg',
+                        height: 24,
+                        width: 24,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
                     Container(
                       margin: const EdgeInsets.only(right: 8),
                       child: Flex(
@@ -1022,8 +1023,18 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                             ),
                           ]),
                     ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Container(
+                      child: SvgPicture.asset('assets/icon/chevron-right.svg'),
+                    ),
                   ],
                 ),
+              ),
+              //trash icon disabled
+              const SizedBox(
+                height: 30,
               ),
             ],
           ),
@@ -1035,14 +1046,13 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
   Widget showStudyDescription(BuildContext context, int index, StudiesCodes studiesCodes) {
     return Card(
       elevation: 0,
-      margin: const EdgeInsets.only(bottom: 4),
       child: Column(
         children: [
           Row(
             children: [
               // the orange circle
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(right: 8.0),
                 child: Container(
                   height: 2,
                   width: 2,
@@ -1059,7 +1069,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 5),
+          if(studiesCodes.note != null)
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -1072,7 +1082,6 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 10),
         ],
       )
     );
@@ -1087,5 +1096,27 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
       return 'OTHER';
     }
   }
+
+  Widget roundedCard({
+    Widget? child,
+    Color color = ConstantsV2.orange,
+    EdgeInsetsGeometry? padding = const EdgeInsets.symmetric(
+      horizontal: 6.0,
+      vertical: 2.0,
+    ),
+  }){
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(100),
+      ),
+      elevation: 0,
+      color: color ,
+      margin: EdgeInsets.zero,
+      child: Container(
+        padding: padding,
+        child: child,
+      ),
+    );
+}
 
 }
