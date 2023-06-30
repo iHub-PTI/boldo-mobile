@@ -1069,7 +1069,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 5),
+          if(studiesCodes.note != null)
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
