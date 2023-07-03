@@ -384,7 +384,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                       listStudiesDisplay(
                           studiesOrders!.serviceRequests![index]),
                       Text(
-                        "${studiesOrders?.serviceRequests![index].notes ?? ''}",
+                        "${studiesOrders?.serviceRequests![index].notes ?? 'Sin notas'}",
                         style: boldoCorpSmallTextStyle.copyWith(
                             color: ConstantsV2.inactiveText),
                       ),
