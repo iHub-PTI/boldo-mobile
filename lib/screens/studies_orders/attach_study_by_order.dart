@@ -292,7 +292,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                                                   )),
                                                   description: widget.studyOrder.description,
                                                   sourceID: patient.id,
-                                                  patientNotes: notes,
+                                                  notes: notes,
                                                   type: changeCategory(widget.studyOrder.category),
                                                   serviceRequestId: widget.studyOrder.id,
                                                 );

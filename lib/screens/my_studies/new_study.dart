@@ -284,7 +284,7 @@ class _NewStudyState extends State<NewStudy> {
                                   if(_formKey.currentState!.validate()){
                                     DiagnosticReport newDiagnosticReport = DiagnosticReport(
                                         description: nombre,
-                                        patientNotes: notas,
+                                        notes: notas,
                                         effectiveDate: fecha,
                                         type: type);
                                     Navigator.push(
