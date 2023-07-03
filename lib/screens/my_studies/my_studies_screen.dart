@@ -310,42 +310,36 @@ class _MyStudiesState extends State<MyStudies> {
                             color: Constants.secondaryColor100,
                             child: Padding(
                               padding: const EdgeInsets.only(
-                                  left: 10.0,
-                                  top: 2.0,
-                                  bottom: 2.0,
-                                  right: 8.0),
-                              child: diagnosticReport[index].sourceID ==
+                                left: 10.0,
+                                top: 2.0,
+                                bottom: 2.0,
+                                right: 8.0,
+                              ),
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/icon/cloud.svg',
+                                  ),
+                                  const SizedBox(width: 6),
+                                  diagnosticReport[index].sourceID ==
                                       (prefs.getString('userId') ?? '')
-                                  ? Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/icon/cloud.svg',
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          "subido por usted",
-                                          style:
-                                              boldoCorpSmallTextStyle.copyWith(
-                                                  color: ConstantsV2.darkBlue),
-                                        ),
-                                      ],
-                                    )
-                                  : Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/icon/inbox-in.svg',
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          diagnosticReport[index].source != null
-                                              ? "subido por ${diagnosticReport[index].source?.split(' ')[0]}"
-                                              : 'Boldo',
-                                          style:
-                                              boldoCorpSmallTextStyle.copyWith(
-                                                  color: ConstantsV2.darkBlue),
-                                        ),
-                                      ],
-                                    ),
+                                      ?
+                                  Text(
+                                    "subido por usted",
+                                    style:
+                                        boldoCorpSmallTextStyle.copyWith(
+                                            color: ConstantsV2.darkBlue),
+                                  ):Text(
+                                    diagnosticReport[index].source != null
+                                        ? "subido por ${diagnosticReport[index].sourceType == 'Practitioner'? 'Dr/a.': '' } "
+                                        "${diagnosticReport[index].source?.split(' ')[0]}"
+                                        : 'Boldo',
+                                    style:
+                                    boldoCorpSmallTextStyle.copyWith(
+                                        color: ConstantsV2.darkBlue),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           Text(
