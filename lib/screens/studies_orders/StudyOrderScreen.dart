@@ -433,8 +433,9 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
         //   Text(", ${studyOrder.studiesCodes![1].display}"),
         // if ((studyOrder.studiesCodes?.length ?? 0) > 2)
         //   Text("... + ${(studyOrder.studiesCodes?.length ?? 0) - 2}"),
-        const Text(
-          'Estudios',
+        if(studyOrder.description != null)
+        Text(
+          "${studyOrder.description}",
         ),
       ],
     );
