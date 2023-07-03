@@ -140,59 +140,51 @@ class _StudyState extends State<Study> {
                       ),
                     ),
                   if (!_loading && !_error)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'fuente',
-                                style: boldoCorpSmallInterTextStyle.copyWith(
-                                    color: ConstantsV2.activeText),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Card(
-                                  margin: EdgeInsets.zero,
-                                  elevation: 0,
-                                  color: ConstantsV2.lightest,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(0),
-                                    child: sourceLogo(diagnosticReport?.source
-                                        ?.toUpperCase(), diagnosticReport?.sourceID),
-                                  ))
-                            ],
-                          ),
-                        ),
-                        Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'fecha de realización',
-                                style: boldoCorpSmallInterTextStyle.copyWith(
-                                    color: ConstantsV2.activeText),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Container(
-                                child: Text(
-                                  "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport?.effectiveDate ?? "2000-01-01").toLocal())}",
-                                  style: boldoSubTextMediumStyle.copyWith(
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'fuente',
+                                  style: boldoCorpSmallInterTextStyle.copyWith(
                                       color: ConstantsV2.activeText),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                sourceLogo(diagnosticReport: diagnosticReport)
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                          Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'fecha de realización',
+                                  style: boldoCorpSmallInterTextStyle.copyWith(
+                                      color: ConstantsV2.activeText),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Container(
+                                  child: Text(
+                                    "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport?.effectiveDate ?? "2000-01-01").toLocal())}",
+                                    style: boldoSubTextMediumStyle.copyWith(
+                                        color: ConstantsV2.activeText),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   const SizedBox(
                     height: 15,
@@ -286,40 +278,57 @@ class _StudyState extends State<Study> {
                       type == 'pdf'
                           ? 'assets/icon/picture-as-pdf.svg'
                           : (type == 'jpeg' || type == 'png')
-                              ? 'assets/icon/crop-original.svg'
-                              : 'assets/Logo.svg',
+                          ? 'assets/icon/crop-original.svg'
+                          : 'assets/Logo.svg',
+                      height: 24,
+                      width: 24,
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      child: Flex(
-                          mainAxisSize: MainAxisSize.min,
-                          direction: Axis.horizontal,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                "${diagnosticReport!.attachmentUrls![index].title}",
-                                style: boldoCorpMediumBlackTextStyle.copyWith(
-                                    color: ConstantsV2.activeText),
-                              ),
-                            ),
-                          ]),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          child: Flex(
+                              mainAxisSize: MainAxisSize.min,
+                              direction: Axis.horizontal,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    "${diagnosticReport!.attachmentUrls![index].title}",
+                                    style: boldoCorpMediumBlackTextStyle.copyWith(
+                                        color: ConstantsV2.activeText),
+                                  ),
+                                ),
+                              ]),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  Container(
+                    child: SvgPicture.asset('assets/icon/chevron-right.svg'),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              child: Text(
+                "Subido por ${diagnosticReport?.sourceType== 'Practitioner'? 'Dr/a.': '' }"
+                    "${diagnosticReport?.sourceID == prefs.getString("userId")? 'usted' : diagnosticReport?.source?.split(' ')[0]}",
+                style: boldoCorpMediumTextStyle.copyWith(
+                    color: ConstantsV2.inactiveText
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+          ],
+        )
       ),
     );
   }
