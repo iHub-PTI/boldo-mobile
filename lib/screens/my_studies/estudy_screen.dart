@@ -324,16 +324,53 @@ class _StudyState extends State<Study> {
     );
   }
 
-  Widget sourceLogo (String? source, String? sourceID){
-    return Image.asset(
-      source == null?
-        'assets/images/Source=No_source.png':
-      source == 'VENTRIX'
-          ? 'assets/images/Source=Ventrix.png':
-      source == 'TESÂI'
-          ? 'assets/images/Source=Tesai.png':
-          'assets/images/Source=Paciente.png',
+  Widget sourceLogo ({
+    DiagnosticReport? diagnosticReport,
+    Color backgroundColor = ConstantsV2.lightest,
+  }){
+
+    Widget sourcePatientIcon =  SvgPicture.asset(
+      'assets/icon/Source_patient.svg',
     );
+
+    Map<String, Widget> sourceOrganizationIcon = {
+      'VENTRIX':  Image.asset(
+        'assets/images/Source=Ventrix.png',
+      ),
+      'TESÂI': Image.asset(
+        'assets/images/Source=Ventrix.png',
+      ),
+      'MEYER': Image.asset(
+        'assets/images/Source=Meyer.png',
+      )
+    };
+
+    Widget sourceDoctorIcon =  SvgPicture.asset(
+      'assets/icon/Source_doctor.svg',
+    );
+
+    Widget sourceDefaultIcon =  SvgPicture.asset(
+      'assets/icon/Source_no_source.svg',
+    );
+
+    Map<String, Widget> sourceIcon = {
+      'Organization' : sourceOrganizationIcon[diagnosticReport?.source?.toUpperCase()]?? sourceDefaultIcon,
+      'Patient': sourcePatientIcon,
+      'Practitioner': sourceDoctorIcon,
+    };
+
+    return Card(
+      margin: EdgeInsets.zero,
+      elevation: 0,
+      color: backgroundColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        child: sourceIcon[diagnosticReport?.sourceType]?? sourceDefaultIcon,
+      ),
+    );
+
   }
 
 }
