@@ -292,7 +292,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                                                   )),
                                                   description: widget.studyOrder.description,
                                                   sourceID: patient.id,
-                                                  patientNotes: notes,
+                                                  notes: notes,
                                                   type: changeCategory(widget.studyOrder.category),
                                                   serviceRequestId: widget.studyOrder.id,
                                                 );
@@ -402,8 +402,12 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
           serviceRequest?.diagnosticReports?.isEmpty?? true ? Container(
             width: MediaQuery.of(context).size.width,
             child: files.isEmpty ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              color: ConstantsV2.lightest,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),decoration: BoxDecoration(
+                color: ConstantsV2.lightest,
+                boxShadow: [
+                  shadowAttachStudy,
+                ]
+              ),
               child: _offsetPopup(
                 child: Text(
                   'adjuntar un archivo',
@@ -456,7 +460,12 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
           ),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-            color: ConstantsV2.lightest,
+            decoration: BoxDecoration(
+              color: ConstantsV2.lightest,
+              boxShadow: [
+                shadowAttachStudy,
+              ],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -523,9 +532,14 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
           serviceRequest?.diagnosticReports?.isEmpty?? true ? Container(
             width: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            color: ConstantsV2.lightest,
+            decoration: BoxDecoration(
+              color: ConstantsV2.lightest,
+              boxShadow: [
+                shadowAttachStudy,
+              ]
+            ),
             child: notes?.isEmpty?? true ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Container(
                 child: GestureDetector(
                   onTap: () async {
@@ -552,8 +566,6 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                  color: ConstantsV2.lightest,
                   child: Text("$notes"),
                 ),
                 GestureDetector(
@@ -714,15 +726,33 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                 ),
               ),
             ],
-        child: child?? Card(
+        child: child?? Opacity(
+          opacity: 0.80,
           child: Container(
             padding: const EdgeInsets.all(10),
             child: SvgPicture.asset('assets/icon/add-outline.svg'),
+            decoration: ShapeDecoration(
+              color: ConstantsV2.orange,
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(width: 0.50, color: Color(0xFFF59984)),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              shadows: [
+                const BoxShadow(
+                  color: Color(0x19000000),
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                  spreadRadius: 0,
+                ),
+                const BoxShadow(
+                  color: ConstantsV2.primaryColor300,
+                  blurRadius: 4,
+                  offset: Offset(0, 0),
+                  spreadRadius: 0,
+                )
+              ],
+            ),
           ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          color: ConstantsV2.orange.withOpacity(0.8),
         ),
     );
   }
@@ -749,19 +779,18 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
   Widget _notesServerElement(BuildContext context, int index){
     return Column(
       children: [
-        Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0),
-          ),
-          elevation: 1,
-          margin: const EdgeInsets.only(bottom: 4),
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
             color: ConstantsV2.lightest,
-            child: Container(
-              child: Text("${ (serviceRequest?.diagnosticReports?.length?? 0) > 1 ?"Notas del estudio ${index + 1} (${serviceRequest?.diagnosticReports?[index].effectiveDate?? "Sin fecha"} ):" : ''}  ${serviceRequest?.diagnosticReports?[index].patientNotes?? "Sin notas"}"),
-            ),
+            boxShadow: [
+              shadowAttachStudy,
+            ],
+          ),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: Text("${ (serviceRequest?.diagnosticReports?.length?? 0) > 1 ?"Notas del estudio ${index + 1} (${serviceRequest?.diagnosticReports?[index].effectiveDate?? "Sin fecha"} ):" : ''}  ${serviceRequest?.diagnosticReports?[index].notes?? "Sin notas"}"),
           ),
         ),
       ],
@@ -892,72 +921,75 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
     File file = files[index];
     return Column(
       children: [
-        GestureDetector(
+        InkWell(
           onTap: () =>
             OpenFilex.open(file.path)
             ,
-          child: Card(
-            elevation: 4,
+          child: Container(
             margin: const EdgeInsets.only(bottom: 4),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                          child: Row(
-                            children: [
-                              SvgPicture.asset(p.extension(file.path).toLowerCase() == '.pdf'
-                                  ? 'assets/icon/picture-as-pdf.svg'
-                                  : 'assets/icon/crop-original.svg',
-                                height: 24,
-                                width: 24,),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              Container(
-                                  width: MediaQuery.of(context).size.width * 0.7,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Flexible(
-                                        child: Text(
-                                          p.basename(
-                                            file.path,
-                                          ),
-                                          style: boldoCorpMediumBlackTextStyle.copyWith(
-                                              color: ConstantsV2.activeText,
-                                              overflow: TextOverflow.ellipsis),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            decoration: BoxDecoration(
+                color: ConstantsV2.lightest,
+                boxShadow: [
+                  shadowAttachStudy,
+                ]
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(p.extension(file.path).toLowerCase() == '.pdf'
+                                ? 'assets/icon/picture-as-pdf.svg'
+                                : 'assets/icon/crop-original.svg',
+                              height: 24,
+                              width: 24,),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Container(
+                                width: MediaQuery.of(context).size.width * 0.7,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        p.basename(
+                                          file.path,
                                         ),
+                                        style: boldoCorpMediumBlackTextStyle.copyWith(
+                                            color: ConstantsV2.activeText,
+                                            overflow: TextOverflow.ellipsis),
                                       ),
-                                      SvgPicture.asset('assets/icon/chevron-right.svg'),
-                                    ],
-                                  )
-                              ),
-                            ],
-                          )
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          files.remove(file);
-                          setState(() {});
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          child: SvgPicture.asset(
-                            'assets/icon/trash.svg',
-                          ),
+                                    ),
+                                    SvgPicture.asset('assets/icon/chevron-right.svg'),
+                                  ],
+                                )
+                            ),
+                          ],
+                        )
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        files.remove(file);
+                        setState(() {});
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        child: SvgPicture.asset(
+                          'assets/icon/trash.svg',
                         ),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
@@ -969,76 +1001,95 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
     String type = getTypeFromContentType(
         diagnosticReport.attachmentUrls?[index].contentType) ??
         '';
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.only(bottom: 4),
-      child: InkWell(
-        onTap: () {
-          if (type == 'jpeg' || type == 'png') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ImageVisor(
-                    url: diagnosticReport.attachmentUrls![index].url?? '',
-                  )),
-            );
-          } else if (type == 'pdf') {
-            BlocProvider.of<study_bloc.MyStudiesBloc>(context).add(study_bloc.GetUserPdfFromUrl(
-                url: diagnosticReport.attachmentUrls![index].url));
-          }
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          child: Row(
-            children: [
-              Container(
-                child: Row(
-                  children: [
-                    Container(
-                      child: SvgPicture.asset(
-                        type == 'pdf'
-                            ? 'assets/icon/picture-as-pdf.svg'
-                            : (type == 'jpeg' || type == 'png')
-                            ? 'assets/icon/crop-original.svg'
-                            : 'assets/Logo.svg',
-                        height: 24,
-                        width: 24,
-                      ),
+    return InkWell(
+      onTap: () {
+        if (type == 'jpeg' || type == 'png') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ImageVisor(
+                  url: diagnosticReport.attachmentUrls![index].url?? '',
+                )),
+          );
+        } else if (type == 'pdf') {
+          BlocProvider.of<study_bloc.MyStudiesBloc>(context).add(study_bloc.GetUserPdfFromUrl(
+              url: diagnosticReport.attachmentUrls![index].url));
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 4),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        decoration: BoxDecoration(
+            color: ConstantsV2.lightest,
+            boxShadow: [
+              shadowAttachStudy,
+            ]
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              child: Row(
+                children: [
+                  Container(
+                    child: Row(
+                      children: [
+                        Container(
+                          child: SvgPicture.asset(
+                            type == 'pdf'
+                                ? 'assets/icon/picture-as-pdf.svg'
+                                : (type == 'jpeg' || type == 'png')
+                                ? 'assets/icon/crop-original.svg'
+                                : 'assets/Logo.svg',
+                            height: 24,
+                            width: 24,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          child: Flex(
+                              mainAxisSize: MainAxisSize.min,
+                              direction: Axis.horizontal,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    "${diagnosticReport.attachmentUrls![index].title}",
+                                    style: boldoCorpMediumBlackTextStyle.copyWith(
+                                        color: ConstantsV2.activeText),
+                                  ),
+                                ),
+                              ]),
+                        ),
+                        const SizedBox(
+                          width: 4,
+                        ),
+                        Container(
+                          child: SvgPicture.asset('assets/icon/chevron-right.svg'),
+                        ),
+                      ],
                     ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      child: Flex(
-                          mainAxisSize: MainAxisSize.min,
-                          direction: Axis.horizontal,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                "${diagnosticReport.attachmentUrls![index].title}",
-                                style: boldoCorpMediumBlackTextStyle.copyWith(
-                                    color: ConstantsV2.activeText),
-                              ),
-                            ),
-                          ]),
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Container(
-                      child: SvgPicture.asset('assets/icon/chevron-right.svg'),
-                    ),
-                  ],
+                  ),
+                  //trash icon disabled
+                  const SizedBox(
+                    height: 30,
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              child: Text(
+                "Subido por ${diagnosticReport.sourceType== 'Practitioner'? 'Dr/a.': '' } "
+                    "${diagnosticReport.sourceID == prefs.getString("userId")? 'usted' : diagnosticReport.source?.split(' ')[0]}",
+                style: boldoCorpMediumTextStyle.copyWith(
+                    color: ConstantsV2.inactiveText
                 ),
               ),
-              //trash icon disabled
-              const SizedBox(
-                height: 30,
-              ),
-            ],
-          ),
-        ),
+            ),
+          ],
+        )
       ),
     );
   }

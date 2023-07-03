@@ -306,6 +306,13 @@ BoxShadow shadowHeader = const BoxShadow(
   spreadRadius: 0,
 );
 
+BoxShadow shadowAttachStudy = const BoxShadow(
+  color: Color(0x0C000000),
+  blurRadius: 4,
+  offset: Offset(0, 2),
+  spreadRadius: 0,
+);
+
 const BoxDecoration buttonFXSecondaryStyle = BoxDecoration(
   boxShadow: [
     BoxShadow(

@@ -140,59 +140,51 @@ class _StudyState extends State<Study> {
                       ),
                     ),
                   if (!_loading && !_error)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'fuente',
-                                style: boldoCorpSmallInterTextStyle.copyWith(
-                                    color: ConstantsV2.activeText),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Card(
-                                  margin: EdgeInsets.zero,
-                                  elevation: 0,
-                                  color: ConstantsV2.lightest,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(0),
-                                    child: sourceLogo(diagnosticReport?.source
-                                        ?.toUpperCase(), diagnosticReport?.sourceID),
-                                  ))
-                            ],
-                          ),
-                        ),
-                        Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'fecha de realización',
-                                style: boldoCorpSmallInterTextStyle.copyWith(
-                                    color: ConstantsV2.activeText),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Container(
-                                child: Text(
-                                  "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport?.effectiveDate ?? "2000-01-01").toLocal())}",
-                                  style: boldoSubTextMediumStyle.copyWith(
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'fuente',
+                                  style: boldoCorpSmallInterTextStyle.copyWith(
                                       color: ConstantsV2.activeText),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                sourceLogo(diagnosticReport: diagnosticReport)
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                          Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'fecha de realización',
+                                  style: boldoCorpSmallInterTextStyle.copyWith(
+                                      color: ConstantsV2.activeText),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Container(
+                                  child: Text(
+                                    "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport?.effectiveDate ?? "2000-01-01").toLocal())}",
+                                    style: boldoSubTextMediumStyle.copyWith(
+                                        color: ConstantsV2.activeText),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   const SizedBox(
                     height: 15,
@@ -228,12 +220,12 @@ class _StudyState extends State<Study> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Adjuntos',
-          style: boldoSubTextStyle.copyWith(color: ConstantsV2.activeText),
-        ),
-        const SizedBox(
-          height: 15,
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Text(
+            'Adjuntos',
+            style: boldoSubTextStyle.copyWith(color: ConstantsV2.activeText),
+          ),
         ),
         SizedBox(
           child: ListView.builder(
@@ -251,86 +243,143 @@ class _StudyState extends State<Study> {
     String type = getTypeFromContentType(
             diagnosticReport?.attachmentUrls?[index].contentType) ??
         '';
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.only(bottom: 4),
-      child: InkWell(
-        onTap: () {
-          if (type == 'jpeg' || type == 'png') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ImageVisor(
-                        url: diagnosticReport!.attachmentUrls![index].url?? '',
-                      )),
-            );
-          } else if (type == 'pdf') {
-            BlocProvider.of<MyStudiesBloc>(context).add(GetUserPdfFromUrl(
-                url: diagnosticReport!.attachmentUrls![index].url));
-          }
-        },
-        child: Container(
-          padding: const EdgeInsets.only(top: 8, left: 8),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7),
-                child: ClipOval(
-                  child: SizedBox(
-                    width: 54,
-                    height: 54,
+    return InkWell(
+      onTap: () {
+        if (type == 'jpeg' || type == 'png') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ImageVisor(
+                  url: diagnosticReport!.attachmentUrls![index].url?? '',
+                )),
+          );
+        } else if (type == 'pdf') {
+          BlocProvider.of<MyStudiesBloc>(context).add(GetUserPdfFromUrl(
+              url: diagnosticReport!.attachmentUrls![index].url));
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            shadowAttachStudy,
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              child: Row(
+                children: [
+                  Container(
                     child: SvgPicture.asset(
                       type == 'pdf'
                           ? 'assets/icon/picture-as-pdf.svg'
                           : (type == 'jpeg' || type == 'png')
-                              ? 'assets/icon/crop-original.svg'
-                              : 'assets/Logo.svg',
+                          ? 'assets/icon/crop-original.svg'
+                          : 'assets/Logo.svg',
+                      height: 24,
+                      width: 24,
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      child: Flex(
-                          mainAxisSize: MainAxisSize.min,
-                          direction: Axis.horizontal,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                "${diagnosticReport!.attachmentUrls![index].title}",
-                                style: boldoCorpMediumBlackTextStyle.copyWith(
-                                    color: ConstantsV2.activeText),
-                              ),
-                            ),
-                          ]),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          child: Flex(
+                              mainAxisSize: MainAxisSize.min,
+                              direction: Axis.horizontal,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    "${diagnosticReport!.attachmentUrls![index].title}",
+                                    style: boldoCorpMediumBlackTextStyle.copyWith(
+                                        color: ConstantsV2.activeText),
+                                  ),
+                                ),
+                              ]),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  Container(
+                    child: SvgPicture.asset('assets/icon/chevron-right.svg'),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              child: Text(
+                "Subido por ${diagnosticReport?.sourceType== 'Practitioner'? 'Dr/a.': '' }"
+                    "${diagnosticReport?.sourceID == prefs.getString("userId")? 'usted' : diagnosticReport?.source?.split(' ')[0]}",
+                style: boldoCorpMediumTextStyle.copyWith(
+                    color: ConstantsV2.inactiveText
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+          ],
+        )
       ),
     );
   }
 
-  Widget sourceLogo (String? source, String? sourceID){
-    return Image.asset(
-      source == null?
-        'assets/images/Source=No_source.png':
-      source == 'VENTRIX'
-          ? 'assets/images/Source=Ventrix.png':
-      source == 'TESÂI'
-          ? 'assets/images/Source=Tesai.png':
-          'assets/images/Source=Paciente.png',
+  Widget sourceLogo ({
+    DiagnosticReport? diagnosticReport,
+    Color backgroundColor = ConstantsV2.lightest,
+  }){
+
+    Widget sourcePatientIcon =  SvgPicture.asset(
+      'assets/icon/Source_patient.svg',
     );
+
+    Map<String, Widget> sourceOrganizationIcon = {
+      'VENTRIX':  Image.asset(
+        'assets/images/Source=Ventrix.png',
+      ),
+      'TESÂI': Image.asset(
+        'assets/images/Source=Ventrix.png',
+      ),
+      'MEYER': Image.asset(
+        'assets/images/Source=Meyer.png',
+      )
+    };
+
+    Widget sourceDoctorIcon =  SvgPicture.asset(
+      'assets/icon/Source_doctor.svg',
+    );
+
+    Widget sourceDefaultIcon =  SvgPicture.asset(
+      'assets/icon/Source_no_source.svg',
+    );
+
+    Map<String, Widget> sourceIcon = {
+      'Organization' : sourceOrganizationIcon[diagnosticReport?.source?.toUpperCase()]?? sourceDefaultIcon,
+      'Patient': sourcePatientIcon,
+      'Practitioner': sourceDoctorIcon,
+    };
+
+    return Card(
+      margin: EdgeInsets.zero,
+      elevation: 0,
+      color: backgroundColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        child: sourceIcon[diagnosticReport?.sourceType]?? sourceDefaultIcon,
+      ),
+    );
+
   }
 
 }
