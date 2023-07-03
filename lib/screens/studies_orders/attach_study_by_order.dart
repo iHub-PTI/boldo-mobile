@@ -921,7 +921,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
     File file = files[index];
     return Column(
       children: [
-        GestureDetector(
+        InkWell(
           onTap: () =>
             OpenFilex.open(file.path)
             ,
