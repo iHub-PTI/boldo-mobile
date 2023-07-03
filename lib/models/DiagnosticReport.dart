@@ -13,6 +13,7 @@ class DiagnosticReport extends News  {
       sourceID,
       type,
       notes,
+      sourceType,
       serviceRequestId;
 
   List<AttachmentUrl>? attachmentUrls;
@@ -28,6 +29,7 @@ class DiagnosticReport extends News  {
     this.notes,
     this.attachmentUrls,
     this.serviceRequestId,
+    this.sourceType,
   });
 
   factory DiagnosticReport.fromJson(Map<String, dynamic> json,) => DiagnosticReport(
@@ -41,6 +43,7 @@ class DiagnosticReport extends News  {
     notes: json['notes'],
     serviceRequestId: json['serviceRequestId'],
     attachmentUrls: json['attachmentUrls']!= null ? List<AttachmentUrl>.from(json['attachmentUrls'].map((e) => AttachmentUrl.fromJson(e) )) : null,
+    sourceType: json['sourceType'],
   );
 
   Map<String, dynamic> toJson() {
