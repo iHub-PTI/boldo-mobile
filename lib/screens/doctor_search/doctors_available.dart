@@ -251,6 +251,9 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                     ],
                   ),
                 ),
+                const SizedBox(
+                  height: 16,
+                ),
                 BlocBuilder<DoctorsAvailableBloc, DoctorsAvailableState>(
                   builder: (context, state){
                     if(state is Loading || state is FilterLoading)

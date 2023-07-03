@@ -539,7 +539,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
               ]
             ),
             child: notes?.isEmpty?? true ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Container(
                 child: GestureDetector(
                   onTap: () async {
@@ -566,8 +566,6 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                  color: ConstantsV2.lightest,
                   child: Text("$notes"),
                 ),
                 GestureDetector(

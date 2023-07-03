@@ -125,9 +125,12 @@ class _MyStudiesState extends State<MyStudies> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  'En esta sección podés subir archivos y fotos de los resultados de tus estudios y los de tu familia.',
-                  style: boldoHeadingTextStyle.copyWith(fontSize: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'En esta sección podés subir archivos y fotos de los resultados de tus estudios y los de tu familia.',
+                    style: boldoHeadingTextStyle.copyWith(fontSize: 12),
+                  ),
                 ),
                 const SizedBox(
                   height: 15,

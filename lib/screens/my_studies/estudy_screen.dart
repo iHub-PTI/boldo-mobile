@@ -228,12 +228,12 @@ class _StudyState extends State<Study> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Adjuntos',
-          style: boldoSubTextStyle.copyWith(color: ConstantsV2.activeText),
-        ),
-        const SizedBox(
-          height: 15,
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Text(
+            'Adjuntos',
+            style: boldoSubTextStyle.copyWith(color: ConstantsV2.activeText),
+          ),
         ),
         SizedBox(
           child: ListView.builder(
