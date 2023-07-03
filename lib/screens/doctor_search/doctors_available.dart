@@ -198,8 +198,14 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
+                Container(
                   padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: ConstantsV2.lightAndClear,
+                    boxShadow: [
+                      shadowHeader,
+                    ]
+                  ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

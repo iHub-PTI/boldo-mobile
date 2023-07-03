@@ -251,34 +251,37 @@ class _StudyState extends State<Study> {
     String type = getTypeFromContentType(
             diagnosticReport?.attachmentUrls?[index].contentType) ??
         '';
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.only(bottom: 4),
-      child: InkWell(
-        onTap: () {
-          if (type == 'jpeg' || type == 'png') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ImageVisor(
-                        url: diagnosticReport!.attachmentUrls![index].url?? '',
-                      )),
-            );
-          } else if (type == 'pdf') {
-            BlocProvider.of<MyStudiesBloc>(context).add(GetUserPdfFromUrl(
-                url: diagnosticReport!.attachmentUrls![index].url));
-          }
-        },
-        child: Container(
-          padding: const EdgeInsets.only(top: 8, left: 8),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7),
-                child: ClipOval(
-                  child: SizedBox(
-                    width: 54,
-                    height: 54,
+    return InkWell(
+      onTap: () {
+        if (type == 'jpeg' || type == 'png') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ImageVisor(
+                  url: diagnosticReport!.attachmentUrls![index].url?? '',
+                )),
+          );
+        } else if (type == 'pdf') {
+          BlocProvider.of<MyStudiesBloc>(context).add(GetUserPdfFromUrl(
+              url: diagnosticReport!.attachmentUrls![index].url));
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            shadowAttachStudy,
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              child: Row(
+                children: [
+                  Container(
                     child: SvgPicture.asset(
                       type == 'pdf'
                           ? 'assets/icon/picture-as-pdf.svg'
