@@ -210,7 +210,7 @@ class _VideoCallState extends State<VideoCall> {
     socket!.on('sdp offer', (message) async {
       print('offer');
 
-      if (peerConnection != null) peerConnection!.cleanup();
+      //if (peerConnection != null) peerConnection!.cleanup();
 
       if (localStream != null && socket != null && token != null) {
         //initialize the peer connection
