@@ -197,10 +197,10 @@ packages:
     dependency: transitive
     description:
       name: dart_webrtc
-      sha256: e3d2bef2e561f062aacc3894dcac7e346d5435fcade9eefd6a800af1a7802cb0
+      sha256: "8949301071ac7c3fb8f78ef7dffc48652db16f2ec63d84078b608f2ca27cca38"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.11"
+    version: "1.0.17"
   dartz:
     dependency: "direct main"
     description:
@@ -489,10 +489,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_webrtc
-      sha256: "005b7b03c62398a00870bf639f8b913b3adb9fc7556ef33408684f3ebe7e3b0d"
+      sha256: "4a3194900981ac7a2aa1e68a37903d8910cc3459c7a1ab68ad0407310cea1642"
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.17"
+    version: "0.9.34"
   google_fonts:
     dependency: "direct main"
     description:
@@ -861,6 +861,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.0"
+  platform_detect:
+    dependency: transitive
+    description:
+      name: platform_detect
+      sha256: "14afcb6ffcd93745e39a288db53d1d6522ea25d71f7993c13a367a86c437b54d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.7"
   plugin_platform_interface:
     dependency: transitive
     description:
@@ -885,6 +893,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.2"
+  pub_semver:
+    dependency: transitive
+    description:
+      name: pub_semver
+      sha256: "40d3ab1bbd474c4c2328c91e3a7df8c6dd629b79ece4c4bd04bee496a224fb0c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.4"
   pull_to_refresh:
     dependency: "direct main"
     description:
@@ -1270,10 +1286,10 @@ packages:
     dependency: transitive
     description:
       name: webrtc_interface
-      sha256: d891c844cbe4a10d0d51469d5af02cafe9be288bed341fe5c797b951bd7e9c18
+      sha256: "0ac4693f921c81005edefd2f43b9fe84b0ed54481474fe1ee16b789b0c84a77c"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.10"
+    version: "1.0.13"
   win32:
     dependency: transitive
     description:

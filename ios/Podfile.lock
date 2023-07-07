@@ -108,9 +108,9 @@ PODS:
     - Flutter
   - flutter_secure_storage (3.3.1):
     - Flutter
-  - flutter_webrtc (0.9.17):
+  - flutter_webrtc (0.9.31):
     - Flutter
-    - WebRTC-SDK (= 104.5112.07)
+    - WebRTC-SDK (= 104.5112.17)
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
@@ -246,7 +246,7 @@ PODS:
     - Flutter
   - wakelock (0.0.1):
     - Flutter
-  - WebRTC-SDK (104.5112.07)
+  - WebRTC-SDK (104.5112.17)
 
 DEPENDENCIES:
   - camera (from `.symlinks/plugins/camera/ios`)
@@ -379,7 +379,7 @@ SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_appauth: 525652bda90e43ca5eb7ed748ecc106b79d1f5a1
   flutter_secure_storage: 7953c38a04c3fdbb00571bcd87d8e3b5ceb9daec
-  flutter_webrtc: 6767eafaa728c1e58026e901ca19f3fd5d713397
+  flutter_webrtc: 02c023207f972145a3bc8c7aada86754f264d563
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   GoogleAppMeasurement: 373bcbead1bb6a85be7a64d5d8f96284b762ea9c
   GoogleDataTransport: f0308f5905a745f94fb91fea9c6cbaf3831cb1bd
@@ -415,7 +415,7 @@ SPEC CHECKSUMS:
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   url_launcher_ios: 02f1989d4e14e998335b02b67a7590fa34f971af
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
-  WebRTC-SDK: ef83f71e443c135d98de109940343bcf6d313e8f
+  WebRTC-SDK: 082ae4893212534a779ca233f19a9df8efd5f3bd
 
 PODFILE CHECKSUM: 4615583468863664868294ea8262cbcdc894213d
 
