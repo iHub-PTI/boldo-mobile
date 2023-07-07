@@ -172,6 +172,13 @@ class _VideoCallState extends State<VideoCall> {
             setState(() {
               isDisconnected = true;
             });
+            // notify again that the patient is waiting in room to repeat negotiation
+            if (socket != null) {
+              socket!.emit('patient ready',
+                  {"room": widget.appointment.id, "token": token});
+              socket!.emit(
+                  'ready!', {"room": widget.appointment.id, "token": token});
+            }
             break;
           }
         case CallState.CallClosed:
@@ -203,7 +210,7 @@ class _VideoCallState extends State<VideoCall> {
     socket!.on('sdp offer', (message) async {
       print('offer');
 
-      if (peerConnection != null) peerConnection!.cleanup();
+      //if (peerConnection != null) peerConnection!.cleanup();
 
       if (localStream != null && socket != null && token != null) {
         //initialize the peer connection
