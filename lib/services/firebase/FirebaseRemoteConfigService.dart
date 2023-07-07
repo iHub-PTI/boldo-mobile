@@ -32,7 +32,7 @@ class FirebaseRemoteConfigService {
         "DEFAULT_APP_URL_DOWNLOAD": appConfig.DEFAULT_APP_URL_DOWNLOAD,
         "LAST_AVAILABLE_VERSION": appConfig.LAST_AVAILABLE_VERSION,
         "LAST_STABLE_VERSION": appConfig.LAST_STABLE_VERSION,
-        "TRACE_RATE_ERROR": appConfig.TRACE_RATE_ERROR,
+        "TRACE_RATE_ERROR": appConfig.TRACE_RATE_ERROR?? 0.2,
       });
 
       // get values from server
