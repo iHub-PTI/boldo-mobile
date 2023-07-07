@@ -128,6 +128,6 @@ class AppConfig {
 
   /// This value can change remotely, you must be subscribe to [streamTraceRateError]
   /// to listen changes dynamically
-  late double? TRACE_RATE_ERROR;
+  double? TRACE_RATE_ERROR;
 
 }
