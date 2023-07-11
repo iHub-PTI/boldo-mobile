@@ -6,22 +6,22 @@ abstract class DoctorsAvailableState {}
 class DoctorsAvailableInitial extends DoctorsAvailableState {}
 
 class DoctorsLoaded extends DoctorsAvailableState {
-  List<Doctor> doctors;
+  final PagList<Doctor> doctors;
   DoctorsLoaded({required this.doctors});
 }
 
 class MoreDoctorsLoaded extends DoctorsAvailableState {
-  List<Doctor> doctors;
+  final PagList<Doctor> doctors;
   MoreDoctorsLoaded({required this.doctors});
 }
 
 class FilterLoaded extends DoctorsAvailableState {
-  List<Doctor> doctors;
+  final PagList<Doctor> doctors;
   FilterLoaded({required this.doctors});
 }
 
 class FilterLoadedInDoctorList extends DoctorsAvailableState {
-  List<Doctor> doctors;
+  final PagList<Doctor> doctors;
   FilterLoadedInDoctorList({required this.doctors});
 }
 

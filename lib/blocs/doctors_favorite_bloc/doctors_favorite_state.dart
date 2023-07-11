@@ -17,11 +17,11 @@ class FailedFavoriteDoctors extends FavoriteDoctorsState {
 class SuccessFavoriteDoctors extends FavoriteDoctorsState {}
 
 class FavoriteDoctorsLoaded extends FavoriteDoctorsState {
-  final List<Doctor> doctors;
+  final PagList<Doctor> doctors;
   FavoriteDoctorsLoaded({required this.doctors});
 }
 
 class MoreFavoriteDoctorsLoaded extends FavoriteDoctorsState {
-  final List<Doctor> doctors;
+  final PagList<Doctor> doctors;
   MoreFavoriteDoctorsLoaded({required this.doctors});
 }
