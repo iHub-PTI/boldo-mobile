@@ -1,3 +1,4 @@
+import 'package:boldo/app_config.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
@@ -71,7 +72,7 @@ class DoctorRepository {
         "appointmentType": appointmentType,
         "specialtyIds": listOfSpecializations,
         "offset": offset,
-        "count": offset + 20,
+        "count": appConfig.ALL_DOCTORS_PAGE_COUNT,
         "organizations": listOfOrganizations == ""? null : listOfOrganizations,
         "names": listOfNames.split(" "),
       };
@@ -277,7 +278,7 @@ class DoctorRepository {
         "appointmentType": appointmentType,
         "specialtyIds": listOfSpecializations,
         "offset": offset,
-        "count": offset + 20,
+        "count": appConfig.ALL_DOCTORS_PAGE_COUNT,
         "organizations": listOfOrganizations == ""? null : listOfOrganizations,
         "names": listOfNames.split(" "),
       };
