@@ -33,6 +33,7 @@ class FirebaseRemoteConfigService {
         "LAST_AVAILABLE_VERSION": appConfig.LAST_AVAILABLE_VERSION,
         "LAST_STABLE_VERSION": appConfig.LAST_STABLE_VERSION,
         "TRACE_RATE_ERROR": appConfig.TRACE_RATE_ERROR?? 0.2,
+        "ALL_DOCTORS_PAGE_COUNT": appConfig.ALL_DOCTORS_PAGE_COUNT,
       });
 
       // get values from server
@@ -51,6 +52,7 @@ class FirebaseRemoteConfigService {
       appConfig.updateLastAvailableVersionValue(firebaseRemoteConfig.getString("LAST_AVAILABLE_VERSION"));
       appConfig.updateLastStableVersionValue(firebaseRemoteConfig.getString("LAST_STABLE_VERSION"));
       appConfig.updateTraceRateErrorValue(firebaseRemoteConfig.getDouble("TRACE_RATE_ERROR"));
+      appConfig.updateAllDoctorsPageCountValue(firebaseRemoteConfig.getInt("ALL_DOCTORS_PAGE_COUNT"));
 
       // listen remote changes
       firebaseRemoteConfig.onConfigUpdated.listen((event) async {
@@ -111,6 +113,10 @@ class FirebaseRemoteConfigService {
         if(event.updatedKeys.contains("TRACE_RATE_ERROR")){
           // set new value
           appConfig.updateTraceRateErrorValue(firebaseRemoteConfig.getDouble("TRACE_RATE_ERROR"));
+        }
+        if(event.updatedKeys.contains("ALL_DOCTORS_PAGE_COUNT")){
+          // set new value
+          appConfig.updateAllDoctorsPageCountValue(firebaseRemoteConfig.getInt("ALL_DOCTORS_PAGE_COUNT"));
         }
       });
     } on FirebaseException catch (exception, stackTrace){

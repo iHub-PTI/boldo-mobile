@@ -55,6 +55,17 @@ class AppConfig {
         defaultValue: envApp.env['LAST_AVAILABLE_VERSION']?? ""
     );
 
+    if(envApp.maybeGet("ALL_DOCTORS_PAGE_COUNT") == null){
+      throw Exception("ALL_DOCTORS_PAGE_COUNT is not defined");
+    }
+
+    ALL_DOCTORS_PAGE_COUNT = int.tryParse(
+      String.fromEnvironment(
+        'ALL_DOCTORS_PAGE_COUNT',
+        defaultValue: envApp.env['ALL_DOCTORS_PAGE_COUNT']?? ""
+      ),
+    )?? 20;
+
     if(kReleaseMode){
       if(envApp.maybeGet("TRACE_RATE_ERROR") == null){
         throw Exception("TRACE_RATE_ERROR is not defined");
@@ -77,6 +88,7 @@ class AppConfig {
   StreamController<String> _lastStableVersionController = StreamController<String>.broadcast();
   StreamController<String> _lastAvailableVersionController = StreamController<String>.broadcast();
   StreamController<double> _traceRateErrorController = StreamController<double>.broadcast();
+  StreamController<int> _allDoctorsPageCountController = StreamController<int>.broadcast();
 
   // streams to emit values to listeners
   Stream<String> get streamAppUrlDownload => _appUrlDownloadController.stream;
@@ -84,6 +96,7 @@ class AppConfig {
   Stream<String> get streamLastStableVersion => _lastStableVersionController.stream;
   Stream<String> get streamLastAvailableVersion => _lastAvailableVersionController.stream;
   Stream<double> get streamTraceRateError => _traceRateErrorController.stream;
+  Stream<int> get streamAllDoctorsPageCount => _allDoctorsPageCountController.stream;
 
   void updateAppUrlDownloadValue(String value){
     APP_URL_DOWNLOAD = value;
@@ -110,6 +123,11 @@ class AppConfig {
     _traceRateErrorController.sink.add(value);
   }
 
+  void updateAllDoctorsPageCountValue(int value){
+    ALL_DOCTORS_PAGE_COUNT = value;
+    _allDoctorsPageCountController.sink.add(value);
+  }
+
   /// This value can change remotely, you must be subscribe to [streamAppUrlDownload]
   /// to listen changes dynamically
   late String APP_URL_DOWNLOAD;
@@ -129,5 +147,9 @@ class AppConfig {
   /// This value can change remotely, you must be subscribe to [streamTraceRateError]
   /// to listen changes dynamically
   double? TRACE_RATE_ERROR;
+
+  /// This value can change remotely, you must be subscribe to [streamAllDoctorsPageCount]
+  /// to listen changes dynamically
+  late int ALL_DOCTORS_PAGE_COUNT;
 
 }
