@@ -288,9 +288,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 16,
-                ),
                 BlocBuilder<DoctorsAvailableBloc, DoctorsAvailableState>(
                   builder: (context, state){
                     if(state is Loading || state is FilterLoading)
@@ -722,7 +719,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                           mainAxisSpacing: 20),
                       itemCount: recentDoctors.length,
                       itemBuilder: (context, index){
-                        return doctorItem(context, index, recentDoctors);
+                        return doctorItem(context, recentDoctors[index]);
                       },
                     ),
                   ),
@@ -798,7 +795,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 itemBuilder: (context, index, animation){
                   return FadeTransition(
                     opacity: animation,
-                    child: doctorItem(context, index, favoritesDoctors),
+                    child: doctorItem(context, favoritesDoctors[index]),
                   );
                 },
               )
@@ -885,14 +882,15 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     return available;
   }
 
-  Widget doctorItem(BuildContext context, int index, List<Doctor> listDoctor) {
+  Widget doctorItem(BuildContext context, Doctor doctor) {
     return GestureDetector(
+      key: Key(doctor.id?? '0'),
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => DoctorProfileScreen(
-              doctor: listDoctor[index],
+              doctor: doctor,
               showAvailability: true,
             ),
           ),
@@ -909,10 +907,10 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         child: Stack(
           children: <Widget>[
             // the first item in stack is the doctor profile photo
-            listDoctor[index].photoUrl != null
+            doctor.photoUrl != null
                 ? Positioned.fill(child: CachedNetworkImage(
               fit: BoxFit.cover,
-              imageUrl: listDoctor[index].photoUrl!,
+              imageUrl: doctor.photoUrl!,
               progressIndicatorBuilder:
                   (context, url, downloadProgress) => Padding(
                 padding: const EdgeInsets.all(26.0),
@@ -930,12 +928,12 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
               const Icon(Icons.error),
             ))
                 : Positioned.fill(
-              child:listDoctor[index].gender == 'female'
+              child:doctor.gender == 'female'
                   ? SvgPicture.asset(
                 'assets/images/femaleDoctor.svg',
                 fit: BoxFit.cover,
               )
-                  : listDoctor[index].gender == 'male'? SvgPicture.asset(
+                  : doctor.gender == 'male'? SvgPicture.asset(
                 'assets/images/maleDoctor.svg',
                 fit: BoxFit.cover,
               ): SvgPicture.asset(
@@ -1040,7 +1038,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     );
   }
   
-  Widget favoriteIcon(List<Doctor> listDoctor, int index){
+  Widget favoriteIcon(Doctor doctor){
     return BlocProvider<FavoriteActionBloc>(
       create: (BuildContext context) => FavoriteActionBloc(),
       child: BlocBuilder<FavoriteActionBloc, FavoriteActionState>(
@@ -1048,7 +1046,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
           return BlocListener<FavoriteActionBloc, FavoriteActionState>(
             listener: (context, state) {
               if (state is LoadingFavoriteAction) {
-                Doctor doctorAction = Doctor.fromJson(listDoctor[index].toJson());
+                Doctor doctorAction = Doctor.fromJson(doctor.toJson());
                 if(!doctorAction.isFavorite) {
                   doctorAction.isFavorite = true;
                   favoritesDoctors.add(doctorAction);
@@ -1062,15 +1060,18 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                   }
                 }else{
                   try {
-                    favoritesDoctors.remove(
-                        favoritesDoctors.lastWhere(
-                                (element) => element.id == doctorAction.id
-                        )
+
+                    int index = favoritesDoctors.lastIndexWhere(
+                        (element) => element.id == doctorAction.id
+                    );
+
+                    favoritesDoctors.removeAt(
+                        index
                     );
                     gridFavoriteDoctorsKey.currentState!.removeItem(
                       index, (context, animation) => FadeTransition(
                       opacity: animation,
-                        child: doctorItem(context, 0, [doctorAction]),
+                        child: doctorItem(context, doctorAction),
                       ),
                       duration: durationFavoriteAction,
                     );
@@ -1103,7 +1104,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                     text: "No se pudo realizar la acción",
                     status: ActionStatus.Fail
                 );
-                Doctor doctorAction = Doctor.fromJson(listDoctor[index].toJson());
+                Doctor doctorAction = Doctor.fromJson(doctor.toJson());
                 if(doctorAction.isFavorite) {
                   doctorAction.isFavorite = true;
                   favoritesDoctors.add(doctorAction);
@@ -1118,17 +1119,18 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 }else{
                   doctorAction.isFavorite = false;
                   try {
-                    favoritesDoctors.remove(
-                        favoritesDoctors.lastWhere(
-                                (element) => element.id == doctorAction.id
-                        )
+                    int index = favoritesDoctors.lastIndexWhere(
+                            (element) => element.id == doctorAction.id
                     );
 
+                    favoritesDoctors.removeAt(
+                        index
+                    );
                     favoritesDoctors.lastWhere((element) => element.id == doctorAction.id);
                     gridFavoriteDoctorsKey.currentState!.removeItem(
                       index, (context, animation) => FadeTransition(
                         opacity: animation,
-                        child: doctorItem(context, 0, [doctorAction]),
+                        child: doctorItem(context, doctorAction),
                       ),
                       duration: durationFavoriteAction,
                     );
@@ -1160,8 +1162,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
               onTap: state is LoadingFavoriteAction? () => {}: (){
                 BlocProvider.of<FavoriteActionBloc>(context).add(
                     PutFavoriteStatus(
-                      doctor: listDoctor[index],
-                      favoriteStatus: ! listDoctor[index].isFavorite,
+                      doctor: doctor,
+                      favoriteStatus: ! doctor.isFavorite,
                     )
                 );
               },
@@ -1169,7 +1171,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 padding: const EdgeInsets.all(8),
                 child: SvgPicture.asset(
                   'assets/icon/favorite-star.svg',
-                  color: listDoctor[index].isFavorite? ConstantsV2.accentRegular: null,
+                  color: doctor.isFavorite? ConstantsV2.accentRegular: null,
                 ),
               ),
             ),
