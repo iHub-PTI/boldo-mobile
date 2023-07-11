@@ -140,6 +140,14 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                   if (mounted) {
                     _refreshDoctorController.refreshCompleted();
                     _refreshDoctorController.loadComplete();
+                    maxSizeAllDoctors = state.doctors.total??0;
+
+                    state.doctors.items?.removeWhere(
+                      (newDoctor) => doctors.any(
+                        (doctor) => newDoctor.id == doctor.id
+                      )
+                    );
+
                     setState(() {
                       doctors = [...doctors, ...state.doctors.items?? [] ];
                     });
@@ -169,7 +177,15 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                   _refreshFavoriteDoctorController.refreshCompleted();
                   _refreshFavoriteDoctorController.loadComplete();
                   favoritesDoctors.clear();
-                  state.doctors.forEach((doctor) {
+                  maxSizeFavoriteDoctors = state.doctors.total??0;
+
+                  state.doctors.items?.removeWhere(
+                          (newDoctor) => favoritesDoctors.any(
+                              (doctor) => newDoctor.id == doctor.id
+                      )
+                  );
+
+                  state.doctors.items?.forEach((doctor) {
                     favoritesDoctors.add(doctor);
                     try {
                       gridFavoriteDoctorsKey.currentState!.insertItem(
@@ -183,7 +199,15 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 }else if (state is MoreFavoriteDoctorsLoaded) {
                   _refreshFavoriteDoctorController.refreshCompleted();
                   _refreshFavoriteDoctorController.loadComplete();
-                  state.doctors.forEach((doctor) {
+                  maxSizeFavoriteDoctors = state.doctors.total??0;
+
+                  state.doctors.items?.removeWhere(
+                          (newDoctor) => favoritesDoctors.any(
+                              (doctor) => newDoctor.id == doctor.id
+                      )
+                  );
+
+                  state.doctors.items?.forEach((doctor) {
                     favoritesDoctors.add(doctor);
                     try {
                       gridFavoriteDoctorsKey.currentState!.insertItem(
