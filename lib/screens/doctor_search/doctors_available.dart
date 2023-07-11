@@ -48,6 +48,9 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   int offsetAllDoctors = 0;
   int offsetFavoriteDoctors = 0;
 
+  int maxSizeFavoriteDoctors = 0;
+  int maxSizeAllDoctors = 0;
+
   //controllers for smartRefresh to pull and get more doctors
   RefreshController _refreshDoctorController =
       RefreshController(initialRefresh: false);
