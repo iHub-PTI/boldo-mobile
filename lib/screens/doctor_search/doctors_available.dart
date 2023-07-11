@@ -194,6 +194,13 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                       //none
                     }
                   });
+                  // reloadScreen
+                  setState(() {
+
+                  });
+                }else if (state is FailedFavoriteDoctors){
+                  _refreshFavoriteDoctorController.refreshCompleted();
+                  _refreshFavoriteDoctorController.loadComplete();
                 }
               },
             ),
