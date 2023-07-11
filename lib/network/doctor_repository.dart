@@ -3,6 +3,7 @@ import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
+import 'package:boldo/models/PagList.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
@@ -39,7 +40,7 @@ class DoctorRepository {
     }
   }
 
-  Future<List<Doctor>> getDoctorsFilter(
+  Future<PagList<Doctor>> getDoctorsFilter(
       int offset,
       List<Specializations> specializations,
       bool virtualAppointment,
@@ -92,8 +93,13 @@ class DoctorRepository {
         );
       }
       if (response.statusCode == 200) {
-        List<Doctor> doctors = List<Doctor>.from(response.data['items'].map((i) => Doctor.fromJson(i)));
-        return doctors;
+        PagList<Doctor> result = PagList.fromJson(
+            response.data,
+            List<Doctor>.from(
+                response.data['items'].map((i) => Doctor.fromJson(i))
+            )
+        );
+        return result;
       }
       throw Failure('No se pudo obtener la lista de médicos');
     } on DioError catch(ex) {
@@ -245,7 +251,7 @@ class DoctorRepository {
     }
   }
 
-  Future<List<Doctor>> getFavoriteDoctors(
+  Future<PagList<Doctor>> getFavoriteDoctors(
       int offset,
       List<Specializations> specializations,
       bool virtualAppointment,
@@ -298,9 +304,13 @@ class DoctorRepository {
         );
       }
       if (response.statusCode == 200) {
-        List<Doctor> doctors = List<Doctor>.from(
-            response.data['items'].map((i) => Doctor.fromJson(i)));
-        return doctors;
+        PagList<Doctor> result = PagList.fromJson(
+            response.data,
+            List<Doctor>.from(
+              response.data['items'].map((i) => Doctor.fromJson(i))
+            )
+        );
+        return result;
       }
       throw Failure('No se pudo obtener los médicos recientes');
     } on DioError catch(ex) {

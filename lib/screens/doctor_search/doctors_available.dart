@@ -129,8 +129,9 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
             BlocListener<DoctorsAvailableBloc, DoctorsAvailableState>(
               listener: (context, state) {
                 if (state is DoctorsLoaded) {
+                  maxSizeAllDoctors = state.doctors.total??0;
                   setState(() {
-                    doctors = state.doctors;
+                    doctors = state.doctors.items?? [];
                   });
                   getRecentDoctors();
                   getFavoriteDoctors();
@@ -139,14 +140,15 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                     _refreshDoctorController.refreshCompleted();
                     _refreshDoctorController.loadComplete();
                     setState(() {
-                      doctors = [...doctors, ...state.doctors];
+                      doctors = [...doctors, ...state.doctors.items?? [] ];
                     });
                   }
                 } else if (state is FilterLoadedInDoctorList) {
                   _refreshDoctorController.refreshCompleted();
                   _refreshDoctorController.loadComplete();
+                  maxSizeAllDoctors = state.doctors.total??0;
                   setState(() {
-                    doctors = state.doctors;
+                    doctors = state.doctors.items?? [];
                   });
                 }
               },
@@ -339,7 +341,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
       child: SmartRefresher(
         physics: const ClampingScrollPhysics(),
         controller: _refreshDoctorController,
-        enablePullUp: true,
+        enablePullUp: doctors.length< maxSizeAllDoctors,
         enablePullDown: true,
         header: const MaterialClassicHeader(
           color: Constants.primaryColor800,
@@ -391,7 +393,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         },
         // this for load more doctors
         onLoading: () {
-          offsetAllDoctors = offsetAllDoctors + 20;
+          offsetAllDoctors = offsetAllDoctors + appConfig.ALL_DOCTORS_PAGE_COUNT;
           getMoreDoctors();
         },
       ),
@@ -404,7 +406,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
       child: SmartRefresher(
         physics: const ClampingScrollPhysics(),
         controller: _refreshFavoriteDoctorController,
-        enablePullUp: true,
+        enablePullUp: favoritesDoctors.length< maxSizeFavoriteDoctors,
         enablePullDown: true,
         header: const MaterialClassicHeader(
           color: Constants.primaryColor800,
@@ -448,7 +450,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         },
         // this for load more doctors
         onLoading: () {
-          offsetFavoriteDoctors = offsetFavoriteDoctors + 20;
+          offsetFavoriteDoctors = offsetFavoriteDoctors + appConfig.ALL_DOCTORS_PAGE_COUNT;
           getMoreFavoriteDoctors();
         },
       ),
