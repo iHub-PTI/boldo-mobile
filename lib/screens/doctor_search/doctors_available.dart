@@ -17,6 +17,8 @@ import 'package:boldo/widgets/go_to_top.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_reorderable_grid_view/entities/order_update_entity.dart';
+import 'package:flutter_reorderable_grid_view/widgets/reorderable_builder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -748,19 +750,27 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
           color: ConstantsV2.grayLightest,
           padding:
           const EdgeInsets.only(right: 16, left: 16),
-          child: GridView.builder(
-            physics: const ClampingScrollPhysics(),
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            gridDelegate:
-            const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
-                childAspectRatio: 5 / 4,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20),
-            itemCount: doctors.length,
-            itemBuilder: (context, index){
-              return doctorItem(context, index, doctors);
+          child: ReorderableBuilder(
+            enableDraggable: false,
+            children: doctors.map((e) => doctorItem(context, e)).toList(),
+            onReorder: _handleReorder,
+            enableScrollingWhileDragging: false,
+            builder: (children){
+              return GridView.builder(
+                physics: const ClampingScrollPhysics(),
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                gridDelegate:
+                const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 200,
+                    childAspectRatio: 5 / 4,
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20),
+                itemCount: children.length,
+                itemBuilder: (context, index){
+                  return children[index];
+                },
+              );
             },
           ),
         ),
@@ -803,6 +813,14 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
           }
         }
     );
+  }
+
+  void _handleReorder(List<OrderUpdateEntity> onReorderList) {
+    for (final reorder in onReorderList) {
+      final child = doctors.removeAt(reorder.oldIndex);
+      doctors.insert(reorder.newIndex, child);
+    }
+    setState(() {});
   }
 
   Widget _availabilityHourCard(OrganizationWithAvailability? organization){
