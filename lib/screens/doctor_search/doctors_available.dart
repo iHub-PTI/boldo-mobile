@@ -273,7 +273,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                       return const Center(child: CircularProgressIndicator());
                     else if(state is Failed){
                       return DataFetchErrorWidget(
-                          retryCallback: getDoctors
+                          retryCallback: (){ getDoctors(); }
                         );
                       }else{
                         return
@@ -674,7 +674,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
             return const Center(child: CircularProgressIndicator());
           else if(state is FailedRecentDoctors){
             return DataFetchErrorWidget(
-                retryCallback: () => getRecentDoctors
+                retryCallback: () { getRecentDoctors(); }
             );
           }else{
             return
@@ -754,7 +754,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
             return const Center(child: CircularProgressIndicator());
           else if(state is FailedFavoriteDoctors){
             return DataFetchErrorWidget(
-                retryCallback: () => getFavoriteDoctors
+                retryCallback: () { getFavoriteDoctors(); }
             );
           }else{
             return
