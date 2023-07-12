@@ -176,8 +176,6 @@ class _VideoCallState extends State<VideoCall> {
             if (socket != null) {
               socket!.emit('patient ready',
                   {"room": widget.appointment.id, "token": token});
-              socket!.emit(
-                  'ready!', {"room": widget.appointment.id, "token": token});
             }
             break;
           }
