@@ -12,6 +12,7 @@ import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/appointment_location_icon.dart';
 import 'package:boldo/widgets/appointment_type_icon.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -167,22 +168,14 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                       children: [
                         Row(
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.chevron_left_rounded,
-                                    size: 25,
-                                    color: Constants.extraColor400,
-                                  ),
-                                ],
-                              ),
+                            BackButtonLabel(
+                              gapSpace: 0,
                             ),
                             Expanded(
-                              child: header("Mis Consultas", "Consultas"),
+                              child: header(
+                                "Mis Consultas",
+                                "Consultas",
+                              ),
                             ),
                           ],
                         ),

@@ -16,10 +16,10 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 
-version: 2.9.0+237
+version: 2.11.0+244
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -27,9 +27,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   http: ^0.13.3
-  sentry_flutter: 7.6.1
+  sentry_flutter: 7.7.0
+  sentry_dio: 7.7.0
   socket_io_client: ^1.0.2
-  flutter_webrtc: 0.9.17
+  flutter_webrtc: 0.9.34
   shared_preferences: ^2.0.7
   logger: ^1.1.0
   flutter_svg: ^1.0.0
@@ -71,6 +72,8 @@ dependencies:
   table_calendar: ^3.0.8
   file: ^6.1.4
   package_info_plus: 3.1.2
+  jwt_decoder: 2.0.1
+  flutter_reorderable_grid_view: 4.0.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.3

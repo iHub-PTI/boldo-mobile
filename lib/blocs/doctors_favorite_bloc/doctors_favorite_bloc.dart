@@ -1,5 +1,6 @@
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
+import 'package:boldo/models/PagList.dart';
 import 'package:boldo/network/doctor_repository.dart';
 import 'package:boldo/utils/organization_helpers.dart';
 import 'package:dartz/dartz.dart';
@@ -35,11 +36,11 @@ class FavoriteDoctorsBloc extends Bloc<FavoriteDoctorsEvent, FavoriteDoctorsStat
           _post.leftMap((l) => response = l.message);
           emit(FailedFavoriteDoctors(response: response));
         } else {
-          late List<Doctor> doctors = [];
-          _post.foldRight(Doctor, (a, previous) => doctors = a);
+          late PagList<Doctor> result;
+          _post.foldRight(Doctor, (a, previous) => result = a);
 
           //sort each doctor's organizations by availability
-          doctors = doctors.map(
+          result.items = result.items?.map(
                   (e) {
                 e.organizations?.sort(orderByAvailability);
                 return e;
@@ -47,8 +48,8 @@ class FavoriteDoctorsBloc extends Bloc<FavoriteDoctorsEvent, FavoriteDoctorsStat
           ).toList();
 
           //sort doctors by first availability
-          doctors.sort(orderByOrganizationAvailability);
-          emit(FavoriteDoctorsLoaded(doctors: doctors));
+          result.items?.sort(orderByOrganizationAvailability);
+          emit(FavoriteDoctorsLoaded(doctors: result));
           emit(SuccessFavoriteDoctors());
         }
       }
@@ -73,11 +74,11 @@ class FavoriteDoctorsBloc extends Bloc<FavoriteDoctorsEvent, FavoriteDoctorsStat
           _post.leftMap((l) => response = l.message);
           emit(FailedFavoriteDoctors(response: response));
         } else {
-          late List<Doctor> doctors = [];
-          _post.foldRight(Doctor, (a, previous) => doctors = a);
+          late PagList<Doctor> result;
+          _post.foldRight(Doctor, (a, previous) => result = a);
 
           //sort each doctor's organizations by availability
-          doctors = doctors.map(
+          result.items = result.items?.map(
                   (e) {
                 e.organizations?.sort(orderByAvailability);
                 return e;
@@ -85,8 +86,8 @@ class FavoriteDoctorsBloc extends Bloc<FavoriteDoctorsEvent, FavoriteDoctorsStat
           ).toList();
 
           //sort doctors by first availability
-          doctors.sort(orderByOrganizationAvailability);
-          emit(MoreFavoriteDoctorsLoaded(doctors: doctors));
+          result.items?.sort(orderByOrganizationAvailability);
+          emit(MoreFavoriteDoctorsLoaded(doctors: result));
           emit(SuccessFavoriteDoctors());
         }
       }

@@ -3,6 +3,7 @@ import 'package:boldo/constants.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/passport/passport_detail_screen.dart';
 import 'package:boldo/screens/passport/vaccine_filter.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -189,20 +190,7 @@ class _PassportTabState extends State<PassportTab> {
                         // button and label for go to back
                         Row(
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.chevron_left_rounded,
-                                    size: 25,
-                                    color: Constants.extraColor400,
-                                  ),
-                                ],
-                              ),
-                            ),
+                            BackButtonLabel(),
                             Expanded(
                               child: header("Mis Vacunas", "Vacunas"),
                             ),

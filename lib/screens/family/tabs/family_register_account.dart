@@ -5,6 +5,7 @@ import 'package:boldo/screens/take_picture/take_picture_screen.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/loading_helper.dart';
 import 'package:boldo/utils/photos_helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -151,15 +152,23 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                   if (state is Loading) {
                     return const LoadingHelper();
                   }
-                    return Align(
-                      alignment: Alignment.topCenter,
+                    return SafeArea(
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: SingleChildScrollView(
                           child: Column(
                             children: [
-                              Padding(
-                                  padding: const EdgeInsets.only(top: 60.0),
+                              Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    BackButtonLabel(
+                                      iconType: BackIcon.backClose,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
                                   child: SvgPicture.asset(
                                     'assets/icon/logo_text.svg',
                                     height: 100,
@@ -171,7 +180,10 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                               Text(
                                 'verificá tu identidad',
                                 textAlign: TextAlign.center,
-                                style: boldoSubTextStyle.copyWith(fontSize: 25),
+                                style: boldoSubTextStyle.copyWith(
+                                  fontSize: 25,
+                                  color: ConstantsV2.activeText
+                                ),
                               ),
                               const SizedBox(
                                 height: 20,
@@ -188,6 +200,7 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                                         ? 'A continuación, subí una foto de la cara frontal de tu cédula de identidad paraguaya.'
                                         : 'Genial! Ahora una foto de la cara posterior de tu cédula de identidad paraguaya.',
                                     style: boldoSubTextStyle.copyWith(
+                                        color: ConstantsV2.activeText,
                                         fontWeight: FontWeight.w400),
                                   ),
                                 ),
@@ -199,7 +212,7 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
                                   style: TextStyle(
                                       fontSize: 16,
                                       decoration: TextDecoration.underline,
-                                      color: ConstantsV2.focuseBorder)),
+                                      color: ConstantsV2.activeText)),
                               const SizedBox(
                                 height: 20,
                               ),

@@ -1,3 +1,4 @@
+import 'package:boldo/widgets/back_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../widgets/wrapper.dart';
@@ -64,19 +65,8 @@ class _TermsOfServicesState extends State<TermsOfServices> {
   Widget build(BuildContext context) {
     return CustomWrapper(children: [
       const SizedBox(height: 24),
-      TextButton.icon(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        icon: const Icon(
-          Icons.chevron_left_rounded,
-          size: 25,
-          color: Constants.extraColor400,
-        ),
-        label: Text(
-          'Término de servicio',
-          style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-        ),
+      BackButtonLabel(
+        labelText: 'Término de servicio',
       ),
       Padding(
         padding: const EdgeInsets.all(8.0),

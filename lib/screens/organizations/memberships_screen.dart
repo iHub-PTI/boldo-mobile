@@ -12,6 +12,7 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -97,23 +98,14 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SingleChildScrollView(
+                    padding: const EdgeInsets.only(top: 16),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TextButton.icon(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(
-                            Icons.arrow_back_rounded,
-                            size: 25,
-                            color: ConstantsV2.primaryRegular,
-                          ),
-                          label: Text(
-                            'Centros Asistenciales',
-                            style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                          ),
+                        BackButtonLabel(
+                          iconType: BackIcon.backArrow,
+                          labelText: 'Centros Asistenciales',
                         ),
 
                         const SizedBox(height: 10),
@@ -370,6 +362,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                 )
               ],
               child: SingleChildScrollView(
+                padding: const EdgeInsets.only(top: 16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -379,24 +372,9 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                         Expanded(
                           child: Row(
                             children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Icon(
-                                  Icons.chevron_left_rounded,
-                                  size: 25,
-                                  color: Constants.extraColor400,
-                                ),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Text(
-                                    'Centros Asistenciales',
-                                    style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                                  ),
-                                ),
+                              BackButtonLabel(
+                                iconType: BackIcon.backArrow,
+                                labelText: 'Centros Asistenciales',
                               ),
                             ],
                           ),

@@ -2,6 +2,7 @@ import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
+import 'package:boldo/models/PagList.dart';
 import 'package:boldo/network/doctor_repository.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/utils/organization_helpers.dart';
@@ -32,9 +33,13 @@ class DoctorsAvailableBloc
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
         } else {
-          late List<Doctor> doctors = [];
-          _post.foldRight(Doctor, (a, previous) => doctors = a);
-          emit(DoctorsLoaded(doctors: doctors));
+          late PagList<Doctor> result;
+          _post.foldRight(Doctor, (a, previous) => result = a);
+
+
+          //sort doctors by first availability
+          result.items?.sort(orderByOrganizationAvailability);
+          emit(DoctorsLoaded(doctors: result));
           emit(Success());
         }
       } else if (event is GetMoreDoctorsAvailable) {
@@ -50,9 +55,20 @@ class DoctorsAvailableBloc
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
         } else {
-          late List<Doctor> doctors = [];
-          _post.foldRight(Doctor, (a, previous) => doctors = a);
-          emit(MoreDoctorsLoaded(doctors: doctors));
+          late PagList<Doctor> result;
+          _post.foldRight(Doctor, (a, previous) => result = a);
+
+          //sort each doctor's organizations by availability
+          result.items = result.items?.map(
+                  (e) {
+                e.organizations?.sort(orderByAvailability);
+                return e;
+              }
+          ).toList();
+
+          //sort doctors by first availability
+          result.items?.sort(orderByOrganizationAvailability);
+          emit(MoreDoctorsLoaded(doctors: result));
         }
       } else if(event is GetMoreFilterDoctor) {
         var _post;
@@ -76,15 +92,26 @@ class DoctorsAvailableBloc
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
         } else {
-          late List<Doctor> doctors = [];
-          _post.foldRight(Doctor, (a, previous) => doctors = a);
-          emit(MoreDoctorsLoaded(doctors: doctors));
+          late PagList<Doctor> result;
+          _post.foldRight(Doctor, (a, previous) => result = a);
+
+          //sort each doctor's organizations by availability
+          result.items = result.items?.map(
+                  (e) {
+                e.organizations?.sort(orderByAvailability);
+                return e;
+              }
+          ).toList();
+
+          //sort doctors by first availability
+          result.items?.sort(orderByOrganizationAvailability);
+          emit(MoreDoctorsLoaded(doctors: result));
         }
       }else if (event is ReloadDoctorsAvailable) {
         emit(FilterLoading());
         await Future.delayed(const Duration(seconds: 1));
-        emit(FilterLoaded(doctors: Provider.of<DoctorFilterProvider>(navKey.currentState!.context, listen: false)
-            .getDoctorsSaved));
+        // emit(FilterLoaded(doctors: Provider.of<DoctorFilterProvider>(navKey.currentState!.context, listen: false)
+        //     .getDoctorsSaved));
         emit(FilterSucces());
       } else if (event is GetDoctorFilter) {
         emit(FilterLoading());
@@ -106,20 +133,21 @@ class DoctorsAvailableBloc
           _post.leftMap((l) => response = l.message);
           emit(FilterFailed(response: response));
         } else {
-          late List<Doctor> doctors = [];
-          _post.foldRight(Doctor, (a, previous) => doctors = a);
+          late PagList<Doctor> result;
+          _post.foldRight(Doctor, (a, previous) => result = a);
 
           //sort each doctor's organizations by availability
-          doctors = doctors.map(
-            (e) {
-              e.organizations?.sort(orderByAvailability);
-              return e;
-            }
+          result.items = result.items?.map(
+                  (e) {
+                e.organizations?.sort(orderByAvailability);
+                return e;
+              }
           ).toList();
 
           //sort doctors by first availability
-          doctors.sort(orderByOrganizationAvailability);
-          emit(DoctorsLoaded(doctors: doctors));
+          result.items?.sort(orderByOrganizationAvailability);
+
+          emit(DoctorsLoaded(doctors: result));
           emit(FilterSucces());
         }
       } else if (event is GetDoctorFilterInDoctorList) {
@@ -142,10 +170,11 @@ class DoctorsAvailableBloc
           _post.leftMap((l) => response = l.message);
           emit(FilterFailedInDoctorList(response: response));
         } else {
-          late List<Doctor> doctors = [];
-          _post.foldRight(Doctor, (a, previous) => doctors = a);
+          late PagList<Doctor> result;
+          _post.foldRight(Doctor, (a, previous) => result = a);
+
           //sort each doctor's organizations by availability
-          doctors = doctors.map(
+          result.items = result.items?.map(
                   (e) {
                 e.organizations?.sort(orderByAvailability);
                 return e;
@@ -153,8 +182,8 @@ class DoctorsAvailableBloc
           ).toList();
 
           //sort doctors by first availability
-          doctors.sort(orderByOrganizationAvailability);
-          emit(FilterLoadedInDoctorList(doctors: doctors));
+          result.items?.sort(orderByOrganizationAvailability);
+          emit(FilterLoadedInDoctorList(doctors: result));
           emit(FilterSuccesInDoctorList());
         }
       }

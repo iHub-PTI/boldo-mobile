@@ -11,6 +11,7 @@ import 'package:boldo/models/Organization.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -179,19 +180,9 @@ class _DoctorFilterState extends State<DoctorFilter> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: const Icon(
-                          Icons.chevron_left_rounded,
-                          size: 25,
-                          color: Constants.extraColor400,
-                        ),
-                        label: Text(
-                          'Filtros',
-                          style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                        ),
+                      BackButtonLabel(
+                        padding: null,
+                        labelText: 'Filtros',
                       ),
                       ImageViewTypeForm(
                         height: 44,

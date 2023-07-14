@@ -4,6 +4,7 @@ import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -190,195 +191,206 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                 ),
               ),
               _relationLoaded
-                  ? Padding(
-                      padding: const EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0, bottom: 85.0),
-                      child: Form(
-                        key: _formKey,
-                        child: SingleChildScrollView(
-                          child: Column(
+                  ? SafeArea(
+                  child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0),
+                child: Form(
+                  key: _formKey,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 30.0),
-                                child: SvgPicture.asset(
-                                    'assets/icon/logo_text.svg'),
+                              BackButtonLabel(
+                                iconType: BackIcon.backClose,
                               ),
-                              const SizedBox(height: 40),
-                              TextFormField(
-                                controller: _nameController,
-                                decoration:
-                                    const InputDecoration(hintText: "Nombre"),
-                                keyboardType: TextInputType.name,
-                                onChanged: (value) {
-                                  givenName = value;
-                                },
-                                validator: (value) {
-                                  //remove unnecessary spaces
-                                  value = value?.trimLeft().trimRight() ?? '';
-                                  _nameController.text =
-                                      value.trimLeft().trimRight() ?? '';
-                                  if (value == null || value.isEmpty) {
-                                    return "Ingrese al menos un nombre";
-                                  }
-                                },
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              TextFormField(
-                                controller: _familyNameController,
-                                decoration:
-                                    const InputDecoration(hintText: "Apellido"),
-                                keyboardType: TextInputType.name,
-                                onChanged: (value) {
-                                  familyName = value;
-                                },
-                                validator: (value) {
-                                  //remove unnecessary spaces
-                                  value = value?.trimLeft().trimRight() ?? '';
-                                  _familyNameController.text =
-                                      value.trimLeft().trimRight() ?? '';
-                                  if (value == null || value.isEmpty) {
-                                    return "Ingrese al menos un apellido";
-                                  }
-                                },
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              TextFormField(
-                                controller: _fecha,
-                                inputFormatters: [
-                                  UpperCaseTextFormatter(),
-                                  DateTextFormatter()
-                                ],
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  hintText: DateFormat('dd/MM/yyyy').format(DateTime.now()),
-                                  labelText: "Fecha de nacimiento (dd/mm/yyyy)",
-                                  suffixIcon: Align(
-                                    widthFactor: 1.0,
-                                    heightFactor: 1.0,
-                                    child: SvgPicture.asset(
-                                      'assets/icon/calendar.svg',
-                                      color: Constants.primaryColor100,
-                                      height: 20,
-                                    ),
-                                  ),
-                                ),
-                                onChanged: (value) {
-                                  birthDate = value;
-                                },
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Ingrese la fecha de nacimiento";
-                                  } else {
-                                    try {
-                                      var inputFormat = DateFormat('dd/MM/yyy');
-                                      var outputFormat =
-                                          DateFormat('yyyy-MM-dd');
-                                      var date1 = inputFormat
-                                          .parseStrict(value.toString().trim());
-
-                                      if(date1.isBefore(minDate)){
-                                        throw Failure('Fecha inferior al minimo ${inputFormat.format(minDate)}');
-                                      }else if(date1.isAfter(DateTime.now())){
-                                        throw Failure('Fecha superior a la actual');
-                                      }
-                                      var date2 = outputFormat.format(date1);
-                                      birthDate = date2;
-                                    } on Failure catch (e) {
-                                      return e.message;
-                                    } catch (e) {
-                                      return 'El formato debe ser "dd/mm/yyyy" ';
-                                    }
-                                  }
-                                },
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              DropdownButtonFormField<String>(
-                                  value: genderSelected,
-                                  hint: Text(
-                                    "Sexo",
-                                    style: boldoSubTextMediumStyle.copyWith(
-                                        color: ConstantsV2.activeText),
-                                  ),
-                                  style: boldoSubTextMediumStyle.copyWith(
-                                      color: Colors.black),
-                                  dropdownColor: Colors.white.withOpacity(0.85),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      genderSelected = value!;
-                                      value == "masculino"
-                                          ? gender = "male"
-                                          : value == "femenino"
-                                              ? gender = "female"
-                                              : gender = "other";
-                                    });
-                                  },
-                                  items: genders
-                                      .map((gender) => DropdownMenuItem<String>(
-                                            child: Text(gender),
-                                            value: gender,
-                                          ))
-                                      .toList(),
-                                  isExpanded: true,
-                                  validator: (value) {
-                                    if (value == null || value == "sexo") {
-                                      return "Seleccione el sexo";
-                                    }
-                                  }),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              _relationLoaded
-                                  ? DropdownButtonFormField<String>(
-                                      value: relationSelected,
-                                      hint: Text(
-                                        "Relación",
-                                        style: boldoSubTextMediumStyle.copyWith(
-                                            color: ConstantsV2.activeText),
-                                      ),
-                                      alignment: AlignmentDirectional.center,
-                                      style: boldoSubTextMediumStyle.copyWith(
-                                          color: Colors.black),
-                                      dropdownColor:
-                                          Colors.white.withOpacity(0.85),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          relationSelected = value!;
-                                          // save to send
-                                          relation = relationTypes
-                                              .where((element) =>
-                                                  element.displaySpan ==
-                                                  value)
-                                              .toList()
-                                              .first
-                                              .code!;
-                                        });
-                                      },
-                                      items: relations
-                                          .map((relationship) =>
-                                              DropdownMenuItem<String>(
-                                                child: Text(relationship),
-                                                value: relationship,
-                                              ))
-                                          .toList(),
-                                      isExpanded: true,
-                                      validator: (value) {
-                                        if (value == null ||
-                                            value == "relación") {
-                                          return "Seleccione la relación que tiene el dependiente";
-                                        }
-                                      })
-                                  : Container(),
                             ],
                           ),
                         ),
-                      ),
-                    )
+                        Padding(
+                          padding: const EdgeInsets.only(top: 30.0),
+                          child: SvgPicture.asset(
+                              'assets/icon/logo_text.svg'),
+                        ),
+                        const SizedBox(height: 40),
+                        TextFormField(
+                          controller: _nameController,
+                          decoration:
+                          const InputDecoration(hintText: "Nombre"),
+                          keyboardType: TextInputType.name,
+                          onChanged: (value) {
+                            givenName = value;
+                          },
+                          validator: (value) {
+                            //remove unnecessary spaces
+                            value = value?.trimLeft().trimRight() ?? '';
+                            _nameController.text =
+                                value.trimLeft().trimRight() ?? '';
+                            if (value == null || value.isEmpty) {
+                              return "Ingrese al menos un nombre";
+                            }
+                          },
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        TextFormField(
+                          controller: _familyNameController,
+                          decoration:
+                          const InputDecoration(hintText: "Apellido"),
+                          keyboardType: TextInputType.name,
+                          onChanged: (value) {
+                            familyName = value;
+                          },
+                          validator: (value) {
+                            //remove unnecessary spaces
+                            value = value?.trimLeft().trimRight() ?? '';
+                            _familyNameController.text =
+                                value.trimLeft().trimRight() ?? '';
+                            if (value == null || value.isEmpty) {
+                              return "Ingrese al menos un apellido";
+                            }
+                          },
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        TextFormField(
+                          controller: _fecha,
+                          inputFormatters: [
+                            UpperCaseTextFormatter(),
+                            DateTextFormatter()
+                          ],
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            hintText: DateFormat('dd/MM/yyyy').format(DateTime.now()),
+                            labelText: "Fecha de nacimiento (dd/mm/yyyy)",
+                            suffixIcon: Align(
+                              widthFactor: 1.0,
+                              heightFactor: 1.0,
+                              child: SvgPicture.asset(
+                                'assets/icon/calendar.svg',
+                                color: Constants.primaryColor100,
+                                height: 20,
+                              ),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            birthDate = value;
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Ingrese la fecha de nacimiento";
+                            } else {
+                              try {
+                                var inputFormat = DateFormat('dd/MM/yyy');
+                                var outputFormat =
+                                DateFormat('yyyy-MM-dd');
+                                var date1 = inputFormat
+                                    .parseStrict(value.toString().trim());
+
+                                if(date1.isBefore(minDate)){
+                                  throw Failure('Fecha inferior al minimo ${inputFormat.format(minDate)}');
+                                }else if(date1.isAfter(DateTime.now())){
+                                  throw Failure('Fecha superior a la actual');
+                                }
+                                var date2 = outputFormat.format(date1);
+                                birthDate = date2;
+                              } on Failure catch (e) {
+                                return e.message;
+                              } catch (e) {
+                                return 'El formato debe ser "dd/mm/yyyy" ';
+                              }
+                            }
+                          },
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        DropdownButtonFormField<String>(
+                            value: genderSelected,
+                            hint: Text(
+                              "Sexo",
+                              style: boldoSubTextMediumStyle.copyWith(
+                                  color: ConstantsV2.activeText),
+                            ),
+                            style: boldoSubTextMediumStyle.copyWith(
+                                color: Colors.black),
+                            dropdownColor: Colors.white.withOpacity(0.85),
+                            onChanged: (value) {
+                              setState(() {
+                                genderSelected = value!;
+                                value == "masculino"
+                                    ? gender = "male"
+                                    : value == "femenino"
+                                    ? gender = "female"
+                                    : gender = "other";
+                              });
+                            },
+                            items: genders
+                                .map((gender) => DropdownMenuItem<String>(
+                              child: Text(gender),
+                              value: gender,
+                            ))
+                                .toList(),
+                            isExpanded: true,
+                            validator: (value) {
+                              if (value == null || value == "sexo") {
+                                return "Seleccione el sexo";
+                              }
+                            }),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        _relationLoaded
+                            ? DropdownButtonFormField<String>(
+                            value: relationSelected,
+                            hint: Text(
+                              "Relación",
+                              style: boldoSubTextMediumStyle.copyWith(
+                                  color: ConstantsV2.activeText),
+                            ),
+                            alignment: AlignmentDirectional.center,
+                            style: boldoSubTextMediumStyle.copyWith(
+                                color: Colors.black),
+                            dropdownColor:
+                            Colors.white.withOpacity(0.85),
+                            onChanged: (value) {
+                              setState(() {
+                                relationSelected = value!;
+                                // save to send
+                                relation = relationTypes
+                                    .where((element) =>
+                                element.displaySpan ==
+                                    value)
+                                    .toList()
+                                    .first
+                                    .code!;
+                              });
+                            },
+                            items: relations
+                                .map((relationship) =>
+                                DropdownMenuItem<String>(
+                                  child: Text(relationship),
+                                  value: relationship,
+                                ))
+                                .toList(),
+                            isExpanded: true,
+                            validator: (value) {
+                              if (value == null ||
+                                  value == "relación") {
+                                return "Seleccione la relación que tiene el dependiente";
+                              }
+                            })
+                            : Container(),
+                      ],
+                    ),
+                  ),
+                ),
+              ))
                   : const Center(child: CircularProgressIndicator()),
             ]),
           )),

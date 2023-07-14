@@ -4,6 +4,7 @@ import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -108,23 +109,11 @@ class _NewStudyState extends State<NewStudy> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-               
                const SizedBox(
-                  height: 10,
+                  height: 16,
                 ),
-                TextButton.icon(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(
-                    Icons.chevron_left_rounded,
-                    size: 25,
-                    color: Constants.extraColor400,
-                  ),
-                  label: Text(
-                    'Nuevo estudio',
-                    style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                  ),
+                BackButtonLabel(
+                  labelText: 'Nuevo Estudio',
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16),
@@ -295,7 +284,7 @@ class _NewStudyState extends State<NewStudy> {
                                   if(_formKey.currentState!.validate()){
                                     DiagnosticReport newDiagnosticReport = DiagnosticReport(
                                         description: nombre,
-                                        patientNotes: notas,
+                                        notes: notas,
                                         effectiveDate: fecha,
                                         type: type);
                                     Navigator.push(

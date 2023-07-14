@@ -32,6 +32,11 @@ class FirebaseRemoteConfigService {
         "DEFAULT_APP_URL_DOWNLOAD": appConfig.DEFAULT_APP_URL_DOWNLOAD,
         "LAST_AVAILABLE_VERSION": appConfig.LAST_AVAILABLE_VERSION,
         "LAST_STABLE_VERSION": appConfig.LAST_STABLE_VERSION,
+        "TRACE_RATE_ERROR": appConfig.TRACE_RATE_ERROR?? 0.2,
+        "ALL_DOCTORS_PAGE_COUNT": appConfig.ALL_DOCTORS_PAGE_COUNT,
+        "ACCESS_ADD_DEPENDENT_CI": appConfig.ACCESS_ADD_DEPENDENT_CI,
+        "ACCESS_ADD_DEPENDENT_QR": appConfig.ACCESS_ADD_DEPENDENT_QR,
+        "ACCESS_ADD_DEPENDENT_WITHOUT_CI": appConfig.ACCESS_ADD_DEPENDENT_WITHOUT_CI,
       });
 
       // get values from server
@@ -49,6 +54,11 @@ class FirebaseRemoteConfigService {
       appConfig.updateDefaultAppUrlDownloadValue(firebaseRemoteConfig.getString("DEFAULT_APP_URL_DOWNLOAD"));
       appConfig.updateLastAvailableVersionValue(firebaseRemoteConfig.getString("LAST_AVAILABLE_VERSION"));
       appConfig.updateLastStableVersionValue(firebaseRemoteConfig.getString("LAST_STABLE_VERSION"));
+      appConfig.updateTraceRateErrorValue(firebaseRemoteConfig.getDouble("TRACE_RATE_ERROR"));
+      appConfig.updateAllDoctorsPageCountValue(firebaseRemoteConfig.getInt("ALL_DOCTORS_PAGE_COUNT"));
+      appConfig.updateAccessAddDependentCIValue(firebaseRemoteConfig.getBool("ACCESS_ADD_DEPENDENT_CI"));
+      appConfig.updateAccessAddDependentQRValue(firebaseRemoteConfig.getBool("ACCESS_ADD_DEPENDENT_QR"));
+      appConfig.updateAccessAddDependentWithoutCIValue(firebaseRemoteConfig.getBool("ACCESS_ADD_DEPENDENT_WITHOUT_CI"));
 
       // listen remote changes
       firebaseRemoteConfig.onConfigUpdated.listen((event) async {
@@ -105,6 +115,26 @@ class FirebaseRemoteConfigService {
         if(event.updatedKeys.contains("LAST_STABLE_VERSION")){
           // set new value
           appConfig.updateLastStableVersionValue(firebaseRemoteConfig.getString("LAST_STABLE_VERSION"));
+        }
+        if(event.updatedKeys.contains("TRACE_RATE_ERROR")){
+          // set new value
+          appConfig.updateTraceRateErrorValue(firebaseRemoteConfig.getDouble("TRACE_RATE_ERROR"));
+        }
+        if(event.updatedKeys.contains("ALL_DOCTORS_PAGE_COUNT")){
+          // set new value
+          appConfig.updateAllDoctorsPageCountValue(firebaseRemoteConfig.getInt("ALL_DOCTORS_PAGE_COUNT"));
+        }
+        if(event.updatedKeys.contains("ACCESS_ADD_DEPENDENT_CI")){
+          // set new value
+          appConfig.updateAccessAddDependentCIValue(firebaseRemoteConfig.getBool("ACCESS_ADD_DEPENDENT_CI"));
+        }
+        if(event.updatedKeys.contains("ACCESS_ADD_DEPENDENT_QR")){
+          // set new value
+          appConfig.updateAccessAddDependentQRValue(firebaseRemoteConfig.getBool("ACCESS_ADD_DEPENDENT_QR"));
+        }
+        if(event.updatedKeys.contains("ACCESS_ADD_DEPENDENT_WITHOUT_CI")){
+          // set new value
+          appConfig.updateAccessAddDependentWithoutCIValue(firebaseRemoteConfig.getBool("ACCESS_ADD_DEPENDENT_WITHOUT_CI"));
         }
       });
     } on FirebaseException catch (exception, stackTrace){
