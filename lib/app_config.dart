@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:boldo/utils/string_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -80,6 +81,38 @@ class AppConfig {
       );
     }
 
+    if(envApp.maybeGet("ACCESS_ADD_DEPENDENT_CI") == null){
+      throw Exception("ACCESS_ADD_DEPENDENT_CI is not defined");
+    }
+
+    ACCESS_ADD_DEPENDENT_CI = bool.fromEnvironment(
+        'ACCESS_ADD_DEPENDENT_CI',
+        defaultValue: envApp.env['ACCESS_ADD_DEPENDENT_CI']!.parseBool()
+    );
+
+    if(envApp.maybeGet("ACCESS_ADD_DEPENDENT_QR") == null){
+      throw Exception("ACCESS_ADD_DEPENDENT_QR is not defined");
+    }
+
+    ACCESS_ADD_DEPENDENT_QR = bool.fromEnvironment(
+        'ACCESS_ADD_DEPENDENT_QR',
+        defaultValue: envApp.env['ACCESS_ADD_DEPENDENT_QR']!.parseBool()
+    );
+
+    if(envApp.maybeGet("ACCESS_ADD_DEPENDENT_WITHOUT_CI") == null){
+      throw Exception("ACCESS_ADD_DEPENDENT_WITHOUT_CI is not defined");
+    }
+
+    print(bool.fromEnvironment(
+        'ACCESS_ADD_DEPENDENT_CI',
+        defaultValue: envApp.env['ACCESS_ADD_DEPENDENT_CI']!.parseBool()
+    ));
+
+    ACCESS_ADD_DEPENDENT_WITHOUT_CI = bool.fromEnvironment(
+        'ACCESS_ADD_DEPENDENT_WITHOUT_CI',
+        defaultValue: envApp.env['ACCESS_ADD_DEPENDENT_WITHOUT_CI']!.parseBool()
+    );
+
   }
 
   // stream controllers to update values
@@ -89,6 +122,9 @@ class AppConfig {
   StreamController<String> _lastAvailableVersionController = StreamController<String>.broadcast();
   StreamController<double> _traceRateErrorController = StreamController<double>.broadcast();
   StreamController<int> _allDoctorsPageCountController = StreamController<int>.broadcast();
+  StreamController<bool> _accessAddDependentCIController = StreamController<bool>.broadcast();
+  StreamController<bool> _accessAddDependentQRController = StreamController<bool>.broadcast();
+  StreamController<bool> _accessAddDependentWithoutCIController = StreamController<bool>.broadcast();
 
   // streams to emit values to listeners
   Stream<String> get streamAppUrlDownload => _appUrlDownloadController.stream;
@@ -97,6 +133,9 @@ class AppConfig {
   Stream<String> get streamLastAvailableVersion => _lastAvailableVersionController.stream;
   Stream<double> get streamTraceRateError => _traceRateErrorController.stream;
   Stream<int> get streamAllDoctorsPageCount => _allDoctorsPageCountController.stream;
+  Stream<bool> get streamAccessAddDependentCI => _accessAddDependentCIController.stream;
+  Stream<bool> get streamAccessAddDependentQR => _accessAddDependentQRController.stream;
+  Stream<bool> get streamAccessAddDependentWithoutCI => _accessAddDependentWithoutCIController.stream;
 
   void updateAppUrlDownloadValue(String value){
     APP_URL_DOWNLOAD = value;
@@ -128,6 +167,21 @@ class AppConfig {
     _allDoctorsPageCountController.sink.add(value);
   }
 
+  void updateAccessAddDependentCIValue(bool value){
+    ACCESS_ADD_DEPENDENT_CI = value;
+    _accessAddDependentCIController.sink.add(value);
+  }
+
+  void updateAccessAddDependentQRValue(bool value){
+    ACCESS_ADD_DEPENDENT_QR = value;
+    _accessAddDependentQRController.sink.add(value);
+  }
+
+  void updateAccessAddDependentWithoutCIValue(bool value){
+    ACCESS_ADD_DEPENDENT_WITHOUT_CI = value;
+    _accessAddDependentWithoutCIController.sink.add(value);
+  }
+
   /// This value can change remotely, you must be subscribe to [streamAppUrlDownload]
   /// to listen changes dynamically
   late String APP_URL_DOWNLOAD;
@@ -151,5 +205,11 @@ class AppConfig {
   /// This value can change remotely, you must be subscribe to [streamAllDoctorsPageCount]
   /// to listen changes dynamically
   late int ALL_DOCTORS_PAGE_COUNT;
+
+  late bool ACCESS_ADD_DEPENDENT_CI = true;
+
+  late bool ACCESS_ADD_DEPENDENT_QR = true;
+
+  late bool ACCESS_ADD_DEPENDENT_WITHOUT_CI = true;
 
 }
