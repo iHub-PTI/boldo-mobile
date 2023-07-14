@@ -196,9 +196,11 @@ class _AppointmentCardState extends State<AppointmentCard> {
                               children: [
                                 Row(
                                   children: [
-                                    Text(
-                                      "${getDoctorPrefix(widget.appointment.doctor!.gender!)}${widget.appointment.doctor?.givenName?.split(" ")[0]?? ''} ${widget.appointment.doctor?.familyName?.split(" ")[0]?? ''}",
-                                      style: boldoSubTextMediumStyle,
+                                    Flexible(
+                                      child: Text(
+                                        "${getDoctorPrefix(widget.appointment.doctor!.gender!)}${widget.appointment.doctor?.givenName?.split(" ")[0]?? ''} ${widget.appointment.doctor?.familyName?.split(" ")[0]?? ''}",
+                                        style: boldoSubTextMediumStyle,
+                                      ),
                                     ),
                                   ],
                                 ),
