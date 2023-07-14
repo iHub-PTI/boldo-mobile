@@ -1,7 +1,9 @@
+import 'package:boldo/app_config.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/screens/family/tabs/QR_scanner.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/background.dart';
+import 'package:boldo/widgets/service_offline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -100,10 +102,14 @@ class FamilyMetodsAdd extends StatelessWidget {
                         color: ConstantsV2.lightAndClear.withOpacity(0.80),
                         child: InkWell(
                           onTap: () async {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => QRScanner()),
-                            );
+                            // enable access
+                            if(appConfig.ACCESS_ADD_DEPENDENT_QR)
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => QRScanner()),
+                              );
+                            else
+                              serviceOfflinePopUp(context: context);
                           },
                           child: Container(
                               padding: const EdgeInsets.all(8),
@@ -144,7 +150,11 @@ class FamilyMetodsAdd extends StatelessWidget {
                         color: ConstantsV2.lightAndClear.withOpacity(0.80),
                         child: InkWell(
                           onTap: () {
-                            Navigator.pushNamed(context, '/familyDniRegister');
+                            // enable access
+                            if(appConfig.ACCESS_ADD_DEPENDENT_CI)
+                              Navigator.pushNamed(context, '/familyDniRegister');
+                            else
+                              serviceOfflinePopUp(context: context);
                           },
                           child: Container(
                               padding: const EdgeInsets.all(8),
@@ -185,7 +195,11 @@ class FamilyMetodsAdd extends StatelessWidget {
                         color: ConstantsV2.lightAndClear.withOpacity(0.80),
                         child: InkWell(
                           onTap: () {
-                            Navigator.pushNamed(context, '/familyWithoutDniRegister');
+                            // enable access
+                            if(appConfig.ACCESS_ADD_DEPENDENT_WITHOUT_CI)
+                              Navigator.pushNamed(context, '/familyWithoutDniRegister');
+                            else
+                              serviceOfflinePopUp(context: context);
                           },
                           child: Container(
                               padding: const EdgeInsets.all(8),
