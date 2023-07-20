@@ -8,6 +8,7 @@ import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
+import 'package:boldo/models/PagList.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
@@ -38,7 +39,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
 
   List<Organization> organizations = [];
   List<Organization> organizationsSelected = [];
-  List<Doctor>? doctors;
+  PagList<Doctor>? doctors;
   List<Specializations> specializations = [];
   List<Specializations> specializationsSelected = [];
   List<Specializations>? specializationsSelectedCopy;
@@ -532,7 +533,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                       child: GestureDetector(
                         onTap: () {
                           // to disable the button
-                          if (doctors != null && doctors!.length > 0) {
+                          if (doctors != null && doctors!.items!.length > 0) {
                             Provider.of<DoctorFilterProvider>(context,
                                 listen: false)
                                 .filterApplied(
@@ -547,7 +548,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                             );
                             Provider.of<DoctorFilterProvider>(context,
                                 listen: false)
-                                .setDoctors(doctors: doctors!);
+                                .setDoctors(doctors: doctors!.items!);
                             BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
                                 names: names,
                                 specializations: specializationsSelected,
@@ -587,7 +588,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                       context,
                                       listen: false).getFilterState
                                       ? ConstantsV2.gray
-                                      : (doctors?.length?? 0) > 0
+                                      : (doctors?.total?? 0) > 0
                                       ? ConstantsV2
                                       .buttonPrimaryColor100
                                       : ConstantsV2.gray,
@@ -619,11 +620,11 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                         color: ConstantsV2
                                             .inactiveText),
                                   )
-                                      : (doctors?.length?? 0) > 0
+                                      : (doctors?.total?? 0) > 0
                                       ? Row(
                                     children: [
                                       Text(
-                                        'ver ${(doctors?.length?? 0)} ${(doctors?.length?? 0) == 1 ? 'coincidencia' : 'coincidencias'}',
+                                        'ver ${(doctors?.total?? 0)} ${(doctors?.total?? 0) == 1 ? 'coincidencia' : 'coincidencias'}',
                                         style:
                                         boldoCorpMediumBlackTextStyle
                                             .copyWith(

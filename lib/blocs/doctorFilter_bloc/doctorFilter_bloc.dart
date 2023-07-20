@@ -1,5 +1,6 @@
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
+import 'package:boldo/models/PagList.dart';
 import 'package:boldo/network/doctor_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
@@ -41,13 +42,14 @@ class DoctorFilterBloc extends Bloc<DoctorFilterEvent, DoctorFilterState> {
             _post.leftMap((l) => response = l.message);
             emit(FailedDoctorFilter(response: response));
           } else {
-            late List<Doctor> _doctorsList = [];
+            late PagList<Doctor> _doctorsList;
             _post.foldRight(
                 NextAvailability, (a, previous) => _doctorsList = a);
             emit(SuccessDoctorFilter(doctorList: _doctorsList));
           }
         }else{
-          emit(SuccessDoctorFilter(doctorList: []));
+          PagList<Doctor> doctors = PagList<Doctor>(total: 0, items: []);
+          emit(SuccessDoctorFilter(doctorList: doctors));
         }
       }
     }

@@ -13,6 +13,6 @@ class FailedDoctorFilter extends DoctorFilterState {
 }
 
 class SuccessDoctorFilter extends DoctorFilterState {
-  final List<Doctor> doctorList;
+  final PagList<Doctor> doctorList;
   SuccessDoctorFilter({required this.doctorList});
 }
