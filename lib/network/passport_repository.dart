@@ -167,6 +167,7 @@ class PassportRepository {
       }
       if (response.statusCode == 200) {
         verificationCode = response.data;
+        return verificationCode;
       } else if (response.statusCode == 404) {
         throw Failure('Usuario sin registro vacunatorio');
       } else {
@@ -192,6 +193,5 @@ class PassportRepository {
       );
       throw Failure(genericError);
     }
-    return verificationCode;
   }
 }
