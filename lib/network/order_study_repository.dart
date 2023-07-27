@@ -34,7 +34,7 @@ class StudiesOrdersRepository {
         // return empty list
         return List<StudyOrder>.from([]);
       }
-      throw Failure(genericError);
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
       captureError(
         exception: exception,
@@ -79,7 +79,7 @@ class StudiesOrdersRepository {
       if (response.statusCode == 200) {
         return StudyOrder.fromJson(response.data);
       } // no study orders
-      throw Failure(genericError);
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
       captureError(
         exception: exception,
@@ -128,6 +128,8 @@ class StudiesOrdersRepository {
                     : 'image/jpeg',
           );
           attachmentUrls.add(value);
+        }else {
+          throw Failure('Unknown StatusCode ${url.statusCode}', response: url);
         }
       }
       return attachmentUrls;
@@ -223,44 +225,10 @@ class StudiesOrdersRepository {
           if (response2.statusCode == 200) {
             return Appointment.fromJson(response2.data);
           }
-          await Sentry.captureMessage(
-            "Status code unknown",
-            params: [
-              {
-                "path": response2.requestOptions.path,
-                "data": response2.data, //ex.requestOptions.data,
-                "patient": prefs.getString("userId"),
-                'access_token': await storage.read(key: 'access_token')
-              }
-            ],
-          );
-          throw Failure('No fue posible obtener la cita');
+          throw Failure('Unknown StatusCode ${response2.statusCode}', response: response2);
         }
-        await Sentry.captureMessage(
-          "Cant get encounter",
-          params: [
-            {
-              "path": response1.requestOptions.path,
-              "data": response1.data, //ex.requestOptions.data,
-              "patient": prefs.getString("userId"),
-              'access_token': await storage.read(key: 'access_token')
-            }
-          ],
-        );
-        throw Failure('No fue posible obtener la cita');
       }
-      await Sentry.captureMessage(
-        "Status code unknown",
-        params: [
-          {
-            "path": response1.requestOptions.path,
-            "data": response1.data, //ex.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            'access_token': await storage.read(key: 'access_token')
-          }
-        ],
-      );
-      throw Failure('No fue posible obtener la cita');
+      throw Failure('Unknown StatusCode ${response1.statusCode}', response: response1);
     } on DioError catch(exception, stackTrace){
       captureError(
         exception: exception,
@@ -303,18 +271,7 @@ class StudiesOrdersRepository {
       if (response.statusCode == 200) {
         return ServiceRequest.fromJson(response.data);
       } // no study orders
-      await Sentry.captureMessage(
-        "Status code unknown",
-        params: [
-          {
-            "path": response.requestOptions.path,
-            "data": response.data, //ex.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            'access_token': await storage.read(key: 'access_token')
-          }
-        ],
-      );
-      throw Failure(genericError);
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
       captureError(
         exception: exception,

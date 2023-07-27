@@ -44,7 +44,7 @@ class OrganizationRepository {
       }
 
       // throw an error if isn't a know status code
-      throw Failure('Unknown StatusCode ${response.statusCode}');
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
       captureError(
         exception: exception,
@@ -87,21 +87,7 @@ class OrganizationRepository {
         // return empty list
         return List<Organization>.from([]);
       }
-
-      // throw an error if isn't a know status code
-      await Sentry.captureMessage(
-        "unknownError ${response.statusCode}",
-        params: [
-          {
-            "path": response.requestOptions.path,
-            "data": response.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          }
-        ],
-      );
-      throw Failure('Unknown StatusCode ${response.statusCode}');
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
 
     } on DioError catch(exception, stackTrace){
       captureError(
@@ -151,21 +137,7 @@ class OrganizationRepository {
         // return empty list
         return List<Organization>.from([]);
       }
-
-      // throw an error if isn't a know status code
-      await Sentry.captureMessage(
-        "unknownError ${response.statusCode}",
-        params: [
-          {
-            "path": response.requestOptions.path,
-            "data": response.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          }
-        ],
-      );
-      throw Failure('Unknown StatusCode ${response.statusCode}');
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
 
     } on DioError catch(exception, stackTrace){
       captureError(

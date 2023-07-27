@@ -20,31 +20,6 @@ import 'package:path/path.dart' as p;
 import 'http.dart';
 
 class MyStudesRepository {
-  Future<List<String>>? getPatientStudies() async {
-    try {
-      List<String> estudiosPrueba = [];
-
-      estudiosPrueba.add("Estudio 1");
-      estudiosPrueba.add("Estudio 2");
-      estudiosPrueba.add("Estudio 3");
-
-      return estudiosPrueba;
-      //await Future.delayed(const Duration(seconds: 2));
-      //throw Failure('NO se pudo obtener los datos');
-      // return None();
-      //TODO: agregar endpoint para obtener la lista de estudios
-      // Response response = await dio.get("/profile/patient/diagnosticReports");
-      // if (response.statusCode == 200) {
-      //   // return List<Patient>.from(
-      //   //     response.data.map((i) => Patient.fromJson(i)));
-      // } else if (response.statusCode == 204) {
-      //   return List<Patient>.from([]);
-      // }
-      // throw Failure(genericError);
-    } catch (e) {
-      throw Failure(genericError);
-    }
-  }
 
   Future<List<DiagnosticReport>>? getDiagnosticReports() async {
     try {
@@ -60,8 +35,7 @@ class MyStudesRepository {
       } else if (response.statusCode == 204) {
         return List<DiagnosticReport>.from([]);
       } else {
-        throw Failure(
-            "Falló la obtención de los estudios: Error ${response.statusCode}");
+        throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
       }
     } on DioError catch(exception, stackTrace){
       captureError(
@@ -99,8 +73,7 @@ class MyStudesRepository {
       } else if (response.statusCode == 204) {
         throw Failure('El dependiente ya no forma parte de su famila');
       } else {
-        throw Failure(
-            "Falló la obtención de los estudios: Error ${response.statusCode}");
+        throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
       }
     } on DioError catch(exception, stackTrace){
       captureError(

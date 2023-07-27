@@ -769,7 +769,7 @@ class UserRepository {
         return MedicalRecord.fromJson(
             responsePrescriptions.data['encounter']);
       }
-      throw Failure("Response code ${responsePrescriptions.statusCode}");
+      throw Failure('Unknown StatusCode ${responsePrescriptions.statusCode}', response: responsePrescriptions);
     } on DioError catch(exception, stackTrace){
       captureError(
         exception: exception,
