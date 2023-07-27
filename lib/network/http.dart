@@ -43,7 +43,7 @@ void initDio(
   }
 
   String? accessToken;
-  FlutterAppAuth appAuth = FlutterAppAuth();
+  FlutterAppAuth appAuth = const FlutterAppAuth();
 
   ISentrySpan? transaction;
 
