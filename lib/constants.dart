@@ -293,10 +293,11 @@ const BigButton = TextStyle(
   fontFamily: 'Montserrat',
 );
 
-BoxShadow shadowRegular = BoxShadow(
-  offset: const Offset(0, 2),
-  color: Colors.black.withOpacity(0.05),
+BoxShadow shadowRegular = const BoxShadow(
+  color: Color(0x0C000000),
   blurRadius: 4,
+  offset: Offset(0, 2),
+  spreadRadius: 0,
 );
 
 BoxShadow shadowHeader = const BoxShadow(
