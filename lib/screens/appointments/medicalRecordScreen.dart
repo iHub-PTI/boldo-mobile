@@ -8,7 +8,9 @@ import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/PresciptionMedicalRecord.dart';
 import 'package:boldo/models/Soep.dart';
 import 'package:boldo/models/StudyOrder.dart';
+import 'package:boldo/network/appointment_repository.dart';
 import 'package:boldo/network/http.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
 import 'package:boldo/screens/my_studies/estudy_screen.dart';
@@ -654,7 +656,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
     } on Failure catch(exception){
       emitSnackBar(
           context: context,
-          text: 'No se pudo cancelar la cita',
+          text: exception.message,
           status: ActionStatus.Fail
       );
     } on Exception catch (exception, stackTrace) {
