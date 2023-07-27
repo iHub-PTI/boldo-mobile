@@ -98,6 +98,10 @@ void initDio(
 
           //check role patient
           if(!roles.contains('patient')){
+            transaction?.throwable = error;
+            transaction?.finish(
+                status: SpanStatus.fromHttpStatusCode(error.response?.statusCode?? -1)
+            );
             //return error 401
             return handle.next(error);
           }
@@ -193,6 +197,10 @@ void initDio(
                     (route) => false,
               );
             }
+            transaction?.throwable = error;
+            transaction?.finish(
+                status: SpanStatus.fromHttpStatusCode(error.response?.statusCode?? -1)
+            );
             return handle.next(exception);
           }
         } catch (e) {
@@ -205,6 +213,10 @@ void initDio(
               builder: (context) => HeroScreenV2(),
             ),
             (route) => false,
+          );
+          transaction?.throwable = error;
+          transaction?.finish(
+              status: SpanStatus.fromHttpStatusCode(error.response?.statusCode?? -1)
           );
           return handle.next(error);
         }
