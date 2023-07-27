@@ -54,7 +54,7 @@ void initDio(
       options.headers["authorization"] = "bearer $accessToken";
       transaction = Sentry.startTransaction(
         options.path,
-        'request',
+        options.method,
         bindToScope: true,
       );
       return handler.next(options);
