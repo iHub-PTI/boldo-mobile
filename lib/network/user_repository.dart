@@ -5,11 +5,7 @@ import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/environment.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/MedicalRecord.dart';
-import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Patient.dart';
-import 'package:boldo/models/Prescription.dart';
-import 'package:boldo/models/QRCode.dart';
-import 'package:boldo/models/Relationship.dart';
 import 'package:boldo/models/User.dart';
 import 'package:boldo/models/upload_url_model.dart';
 import 'package:boldo/network/repository_helper.dart';
@@ -20,54 +16,13 @@ import 'package:camera/camera.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart';
 import '../main.dart';
 import '../models/Appointment.dart';
-import '../models/Doctor.dart';
-import '../provider/auth_provider.dart';
-import '../provider/user_provider.dart';
 import 'http.dart';
 
 class UserRepository {
-  final List<String> errorInFrontSide = [
-    "The front of the IdCardParaguay card could not be validated",
-    "Invalid name",
-    "Invalid last name",
-    "Invalid sex",
-    "Invalid birthDate",
-  ];
-
-  final List<String> errorInBackSide = [
-    "The back of the IdCardParaguay card could not be validated",
-    "Invalid IC",
-    "Invalid Document number",
-    "Invalid nationality",
-  ];
-
-  final List<String> errorInSelfie = [
-    "Face could not be validated",
-  ];
-
-  final List<String> patientAndDependentAreTheSameErrors = [
-    'The dependent and the caretaker are the same'
-  ];
-
-  final List<String> relationshipWithDependentAlreadyExistErrors = [
-    'Relationship of dependence with the patient is already exists'
-  ];
-
-  final Map<String,String> errorInQrValidation = {
-    "The dependent and the caretaker are the same": "El Código pertenece al mismo paciente",
-    "QR code does not exist":"El código QR no existe",
-    "Invalid QR code":"El código QR no es válido",
-    "Expired QR code":"El código QR ya expiró",
-  };
 
   Future<None>? getPatient(String? id) async {
     try {
