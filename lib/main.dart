@@ -36,6 +36,7 @@ import 'package:boldo/services/firebase/FirebaseRemoteConfigService.dart';
 import 'package:boldo/utils/app_helper.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:camera/camera.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
@@ -136,7 +137,7 @@ Future<void> main() async {
 
   initDio(navKey: navKey, dio: dio, passport: false);
   initDio(navKey: navKey, dio: dioPassport, passport: true);
-  dioByteInstance();
+  initDio(navKey: navKey, dio: dioDownloader, passport: true, responseType: ResponseType.bytes);
   const storage = FlutterSecureStorage();
   String? session;
   try {

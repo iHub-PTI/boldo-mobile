@@ -21,7 +21,9 @@ var dioDownloader = Dio();
 void initDio(
     {required GlobalKey<NavigatorState> navKey,
     required Dio dio,
-    required bool passport}) {
+    required bool passport,
+    ResponseType responseType = ResponseType.json,
+    }) {
   String baseUrl = "";
   if (passport) {
     baseUrl = environment.SERVER_ADDRESS_PASSPORT;
@@ -32,6 +34,13 @@ void initDio(
   }
 
   dio.options.baseUrl = baseUrl;
+  dio.options.responseType = responseType;
+
+  // limit time for download files
+  if(responseType == ResponseType.bytes){
+    dio.options.connectTimeout = const Duration(milliseconds: 20000);
+    dio.options.receiveTimeout = const Duration(milliseconds: 20000);
+  }
 
   String? accessToken;
   FlutterAppAuth appAuth = FlutterAppAuth();
@@ -286,109 +295,4 @@ Future<void> _showInternetFailedDialog() async {
       },
     );
   }
-}
-
-void dioByteInstance() async {
-  String baseUrl = environment.SERVER_ADDRESS_PASSPORT;
-  dioDownloader.options.baseUrl = baseUrl;
-  dioDownloader.options.connectTimeout = const Duration(milliseconds: 20000);
-  dioDownloader.options.receiveTimeout = const Duration(milliseconds: 20000);
-  dioDownloader.options.responseType = ResponseType.bytes;
-
-  String? accessToken;
-  FlutterAppAuth appAuth = FlutterAppAuth();
-
-  //setup interceptors
-  dioDownloader.interceptors.add(QueuedInterceptorsWrapper(
-    onRequest: (options, handler) async {
-      accessToken = (await storage.read(key: "access_token"))!;
-      options.headers["authorization"] = "bearer $accessToken";
-
-      return handler.next(options);
-    },
-    onError: (DioError error, handle) async {
-      if (error.response?.statusCode == 403) {
-        try {
-          await storage.deleteAll();
-          accessToken = null;
-
-          navKey.currentState!.pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) => HeroScreenV2(),
-            ),
-            (route) => false,
-          );
-        } catch (e) {
-          print(e);
-        }
-      } else if (error.response?.statusCode == 401) {
-        if (accessToken == null) {
-          await storage.deleteAll();
-
-          return handle.next(error);
-        }
-
-        RequestOptions options = error.response!.requestOptions;
-        Options optionsDio = Options(
-            contentType: options.contentType,
-            followRedirects: options.followRedirects,
-            extra: options.extra,
-            headers: options.headers,
-            listFormat: options.listFormat,
-            maxRedirects: options.maxRedirects,
-            method: options.method,
-            receiveDataWhenStatusError: options.receiveDataWhenStatusError,
-            receiveTimeout: options.receiveTimeout,
-            requestEncoder: options.requestEncoder,
-            responseDecoder: options.responseDecoder,
-            responseType: options.responseType,
-            sendTimeout: options.sendTimeout,
-            validateStatus: options.validateStatus);
-        if ("bearer $accessToken" != options.headers["authorization"]) {
-          options.headers["authorization"] = "bearer $accessToken";
-          handle.resolve(
-              await dioDownloader.request(options.path, data: options.data, options: optionsDio, queryParameters: options.queryParameters));
-        }
-        String keycloakRealmAddress = environment.KEYCLOAK_REALM_ADDRESS;
-        final String? refreshToken = await storage.read(key: "refresh_token");
-
-        try {
-          final TokenResponse? result = await appAuth.token(TokenRequest(
-            'boldo-patient', 'py.org.pti.boldo:/login',
-            discoveryUrl:
-                '$keycloakRealmAddress/.well-known/openid-configuration',
-            refreshToken: refreshToken,
-            scopes: ['openid', 'offline_access']));
-          await storage.write(key: "access_token", value: result!.accessToken);
-          await storage.write(key: "refresh_token", value: result.refreshToken);
-          accessToken = result.accessToken;
-          //retry request
-          return handle.resolve(
-              await dioDownloader.request(options.path, data: options.data, options: optionsDio, queryParameters: options.queryParameters));
-        } catch (e) {
-          accessToken = null;
-
-          navKey.currentState!.pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) => HeroScreenV2(),
-            ),
-            (route) => false,
-          );
-          return handle.next(error);
-        }
-      }
-      ConnectionStatusSingleton connectionStatus =
-          ConnectionStatusSingleton.getInstance();
-      bool hasInternet = await connectionStatus.checkConnection();
-      if (!hasInternet) {
-        _showInternetFailedDialog();
-        // navKey.currentState!.push(
-        //   MaterialPageRoute(
-        //     builder: (context) => const OfflineScreen(),
-        //   ),
-        // );
-      }
-      return handle.next(error);
-    },
-  ));
 }
