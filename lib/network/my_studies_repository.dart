@@ -145,6 +145,8 @@ class MyStudesRepository {
                 : p.extension(file.path).toLowerCase() == '.png' ? 'image/png' : 'image/jpeg',
           };
           attachmentUrls.add(value);
+        }else{
+          throw Failure('Unknown StatusCode ${url.statusCode}', response: url);
         }
       }
       Map<String, dynamic> diagnostic = diagnosticReport.toJson();
@@ -156,7 +158,12 @@ class MyStudesRepository {
       } else {
         await dio.post('/profile/patient/diagnosticReport', data: diagnostic);
       }
-      return None();
+      if(response.statusCode == 201){
+        return const None();
+      }else if(response.statusCode == 204){
+        throw Failure ("No se pudo subir el estudio");
+      }
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
       captureError(
         exception: exception,

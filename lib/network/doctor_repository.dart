@@ -34,6 +34,8 @@ class DoctorRepository {
       if (response.statusCode == 200) {
         return List<Doctor>.from(
             response.data['items'].map((i) => Doctor.fromJson(i)));
+      } else if (response.statusCode == 204) {
+        return List<Doctor>.from([]);
       }
       throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
@@ -130,6 +132,8 @@ class DoctorRepository {
             )
         );
         return result;
+      }else if(response.statusCode == 204){
+        return PagList<Doctor>(total: 0, items: []);
       }
       throw Failure('No se pudo obtener la lista de médicos');
     } on DioError catch(exception, stackTrace){
@@ -222,6 +226,8 @@ class DoctorRepository {
         List<Doctor> doctors = List<Doctor>.from(
             response.data['items'].map((i) => Doctor.fromJson(i)));
         return doctors;
+      } else if (response.statusCode == 204){
+        return [];
       }
       throw Failure('No se pudo obtener la lista de médicos');
     } on DioError catch(exception, stackTrace){

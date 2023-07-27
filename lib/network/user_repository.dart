@@ -195,8 +195,8 @@ class UserRepository {
       await dio.put("/profile/patient/inactivate/caretaker/$id");
       if (response.statusCode == 200) {
         return const None();
-      } else if (response.statusCode == 204) {
-        throw Failure("El gestor ya fue borrado con anterioridad");
+      }else if(response.statusCode == 204){
+        throw Failure("No se puede actualizar los datos");
       }
       throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
