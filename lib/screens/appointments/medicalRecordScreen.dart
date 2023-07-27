@@ -14,6 +14,7 @@ import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
 import 'package:boldo/screens/my_studies/estudy_screen.dart';
 import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
 import 'package:boldo/screens/studies_orders/StudyOrderScreen.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:date_format/date_format.dart';
@@ -22,7 +23,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../constants.dart';
 import 'anotations_details.dart';
@@ -657,16 +657,10 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
           text: 'No se pudo cancelar la cita',
           status: ActionStatus.Fail
       );
-    }catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-          exception.toString(),
-          params: [
-            {
-              'patient': prefs.getString("userId"),
-              'access_token': await storage.read(key: 'access_token')
-            },
-            stackTrace
-          ]
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       emitSnackBar(
           context: context,

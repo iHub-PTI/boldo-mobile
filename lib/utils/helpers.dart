@@ -14,7 +14,8 @@ import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+
+import 'errors.dart';
 
 String getDoctorPrefix(String gender) {
   if (gender == "female") return "Dra. ";
@@ -57,8 +58,11 @@ String? getTypeFromContentType(String? content) {
     }
     var words = content.split("/");
     return words[1];
-  }catch (e){
-    Sentry.captureException(e);
+  }on Exception catch (exception, stackTrace){
+    captureError(
+      exception: exception,
+      stackTrace: stackTrace,
+    );
     return null;
   }
 }
@@ -194,17 +198,11 @@ async {
           maxWidth: maxWidth,
           maxHeight: maxHeight,
           imageQuality: imageQuality);
-    }on PlatformException catch (e){
+    }on PlatformException catch (exception, stackTrace){
       // control permission to access camera
-      await Sentry.captureMessage(
-        e.toString(),
-        params: [
-          {
-            "status": status,
-            "patient": prefs.getString("userId"),
-            'access_token': await storage.read(key: 'access_token')
-          }
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
     }
     return image;
@@ -237,16 +235,10 @@ async {
         allowedExtensions: allowedExtensions,
       );
       return result;
-    }on PlatformException catch (ex){
-      await Sentry.captureMessage(
-        ex.toString(),
-        params: [
-          {
-            "status": status,
-            "patient": prefs.getString("userId"),
-            'access_token': await storage.read(key: 'access_token')
-          }
-        ],
+    }on PlatformException catch (exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
     }
   }

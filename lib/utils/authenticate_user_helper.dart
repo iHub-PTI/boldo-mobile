@@ -6,11 +6,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../constants.dart';
 import '../main.dart';
+import 'errors.dart';
 import 'helpers.dart';
 
 class LoginWebViewHelper extends StatefulWidget {
@@ -118,32 +117,15 @@ Future<int> authenticateUser({required BuildContext context}) async {
     }
     if (!err.message!.contains('User cancelled flow')) {
       print(err);
-      await Sentry.captureMessage(
-        err.toString(),
-        params: [
-          {
-            'responseError': err.message,
-            'patient': patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          s
-        ]
+      captureError(
+        exception: err,
+        stackTrace: s,
       );
     }
   } on DioError catch(exception, stackTrace){
-    await Sentry.captureMessage(
-      exception.toString(),
-      params: [
-        {
-          "path": exception.requestOptions.path,
-          "data": exception.requestOptions.data,
-          "patient": prefs.getString("userId"),
-          "dependentId": patient.id,
-          "responseError": exception.response,
-          'access_token': await storage.read(key: 'access_token')
-        },
-        stackTrace
-      ],
+    captureError(
+      exception: exception,
+      stackTrace: stackTrace,
     );
     if(exception.response?.statusCode == 401){
       emitSnackBar(
@@ -153,17 +135,11 @@ Future<int> authenticateUser({required BuildContext context}) async {
           status: ActionStatus.Fail
       );
     }
-  } catch (err, stackTrace) {
+  } on Exception catch (err, stackTrace) {
     print(err);
-    await Sentry.captureMessage(
-        err.toString(),
-        params: [
-          {
-            'patient': patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ]
+    captureError(
+      exception: err,
+      stackTrace: stackTrace,
     );
   }
   return 0;

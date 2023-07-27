@@ -1,10 +1,10 @@
 import 'package:boldo/environment.dart';
 import 'package:boldo/main.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../widgets/wrapper.dart';
 
@@ -131,42 +131,26 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
         loading = false;
       });
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       setState(() {
         _errorMessage = exception.response!.statusCode == 400
             ? "Contraseña incorrecta"
-            : "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
+            : genericError;
         loading = false;
       });
-    } catch (exception, stackTrace) {
+    } on Exception catch (exception, stackTrace) {
       print(exception);
       setState(() {
         _errorMessage =
             "Algo salió mal. Por favor, inténtalo de nuevo más tarde.";
         loading = false;
       });
-      await Sentry.captureMessage(
-          exception.toString(),
-          params: [
-            {
-              'patient': prefs.getString("userId"),
-              'access_token': await storage.read(key: 'access_token')
-            },
-            stackTrace
-          ]
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
     }
     String baseUrlServer = environment.SERVER_ADDRESS;

@@ -5,15 +5,14 @@ import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:boldo/screens/pre_register_notify/pre_register_success_screen.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../main.dart';
-import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/offline/offline_screen.dart';
 
 var dio = Dio();
@@ -93,9 +92,9 @@ void initDio(
             //return error 401
             return handle.next(error);
           }
-        }catch(exception, stacktrace){
-          Sentry.captureException(
-            exception,
+        }on Exception catch (exception, stacktrace){
+          captureError(
+            exception: exception,
             stackTrace: stacktrace,
           );
         }

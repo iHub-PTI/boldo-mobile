@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/photos_helpers.dart';
 import 'package:dio/dio.dart';
@@ -13,7 +14,6 @@ import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../main.dart';
 import '../../../network/http.dart';
 
@@ -122,7 +122,7 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                       setState(() {
                         _isLoading = false;
                       });
-                    } catch (exception, stackTrace) {
+                    } on Exception catch (exception, stackTrace) {
                       setState(() {
                         _isLoading = false;
                       });
@@ -131,16 +131,9 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                           text: genericError,
                           status: ActionStatus.Fail
                       );
-                      print(exception);
-                      await Sentry.captureMessage(
-                          exception.toString(),
-                          params: [
-                            {
-                              'patient': prefs.getString("userId"),
-                              'access_token': await storage.read(key: 'access_token')
-                            },
-                            stackTrace
-                          ]
+                      captureError(
+                        exception: exception,
+                        stackTrace: stackTrace,
                       );
                     }
                   }

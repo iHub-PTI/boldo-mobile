@@ -5,13 +5,13 @@ import 'dart:io';
 import 'package:boldo/constants.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/network/repository_helper.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:open_filex/open_filex.dart' as open;
 
 import '../main.dart';
@@ -36,33 +36,30 @@ class PassportRepository {
         diseaseUserList = [];
       }
       return None();
-    } on DioError catch (e) {
-      if (e.response!.statusCode == 404) {
+    } on DioError catch (exception, stackTrace) {
+      if (exception.response!.statusCode == 404) {
         diseaseUserList = [];
         return None();
+      }else {
+        captureError(
+          exception: exception,
+          stackTrace: stackTrace,
+        );
       }
-      await Sentry.captureMessage(
-        e.toString(),
-        params: [
-          {
-            "path": e.requestOptions.path,
-            "data": e.requestOptions.data,
-            "patient": patient.id,
-            "responseError": e.response,
-          }
-        ],
+      throw Failure(genericError);
+    } on Failure catch (exception, stackTrace){
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
       );
-      try{
-        throw Failure(e.response?.data['message']);
-      }catch (exception ){
-        throw Failure(genericError);
-      }
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
+      throw Failure(genericError);
+    } on Exception catch (exception, stackTrace){
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
-      throw Failure('Ocurrio un error indesperado');
+      throw Failure(genericError);
     }
   }
 
@@ -115,31 +112,25 @@ class PassportRepository {
 
       open.OpenFilex.open(file.path);
       return None();
-    } on DioError catch (e) {
-      await Sentry.captureMessage(
-        e.toString(),
-        params: [
-          {
-            "path": e.requestOptions.path,
-            "data": e.requestOptions.data,
-            "patient": patient.id,
-            "responseError": e.response,
-          }
-        ],
-      );
-      // try to show backend error message
-      try{
-        String errorMsg = e.response?.data['message'];
-        throw Failure(errorMsg);
-      }catch(exception){
-        throw Failure(genericError);
-      }
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
+    } on DioError catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
-      throw Failure('Ocurrio un error indesperado');
+      throw Failure(genericError);
+    } on Failure catch (exception, stackTrace){
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      throw Failure(genericError);
+    } on Exception catch (exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -165,31 +156,25 @@ class PassportRepository {
       } else {
         throw Failure('Ocurrió un error inesperado');
       }
-    } on DioError catch (e) {
-      await Sentry.captureMessage(
-        e.toString(),
-        params: [
-          {
-            "path": e.requestOptions.path,
-            "data": e.requestOptions.data,
-            "patient": patient.id,
-            "responseError": e.response,
-          }
-        ],
-      );
-      // try to show backend error message
-      try{
-        String errorMsg = e.response?.data['message'];
-        throw Failure(errorMsg);
-      }catch(exception){
-        throw Failure(genericError);
-      }
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
+    } on DioError catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
-      throw Failure('Ocurrio un error indesperado');
+      throw Failure(genericError);
+    } on Failure catch (exception, stackTrace){
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      throw Failure(genericError);
+    } on Exception catch (exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
     return verificationCode;
   }

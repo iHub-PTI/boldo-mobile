@@ -6,9 +6,9 @@ import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/network/repository_helper.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 class OrganizationRepository {
 
@@ -46,32 +46,26 @@ class OrganizationRepository {
       // throw an error if isn't a know status code
       throw Failure('Unknown StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure("No se pueden obtener las Organizaciones");
-    } catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure(genericError);
     }
@@ -110,32 +104,26 @@ class OrganizationRepository {
       throw Failure('Unknown StatusCode ${response.statusCode}');
 
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure("No se pueden obtener las Organizaciones");
-    } catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure(genericError);
     }
@@ -180,32 +168,26 @@ class OrganizationRepository {
       throw Failure('Unknown StatusCode ${response.statusCode}');
 
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure("No se pueden obtener las Organizaciones disponibles");
-    } catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure(genericError);
     }
@@ -237,32 +219,16 @@ class OrganizationRepository {
       // throw an error if isn't a know status code
       throw Failure('Unknown StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure("No se pueden obtener las Organizaciones pendientes");
-    } catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
       );
       throw Failure(genericError);
     }
@@ -280,39 +246,10 @@ class OrganizationRepository {
         response = await dio
             .get('/profile/patient/encounter/${id}/serviceRequests');
       }
-      // there are an organization
-      if (response.statusCode == 200) {
-        return Organization.fromJson(response.data);
-      } // no organization
-      // throw an error if isn't a know status code
-      throw Failure('Unknown StatusCode ${response.statusCode}');
-    } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
-      );
-      throw Failure("No se puede obtener la oganizacion");
-    } catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure(genericError);
     }
@@ -333,32 +270,26 @@ class OrganizationRepository {
       // throw an error if isn't a know status code
       throw Failure('Unknown StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure('No se pudo suscribir a la Organización');
-    } catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure(genericError);
     }
@@ -389,32 +320,26 @@ class OrganizationRepository {
       throw Failure('Unknown StatusCode ${response.statusCode}');
 
     } on DioError catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure('No se pudo suscribir a la Organización');
-    } catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure(genericError);
     }
@@ -440,19 +365,9 @@ class OrganizationRepository {
       // throw an error if isn't a know status code
       throw Failure('Unknown StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
     //   o	Si la organización no es de tipo BMO para el id indicado: "Organization {idOrganization}  is not BoldoMultiOrganization type"
     // o	Si se intenta eliminar una organización en la cual el paciente no tiene suscripción: "The patient {idPatient} is not part of the organization {idOrganization}"
@@ -468,17 +383,21 @@ class OrganizationRepository {
       }catch(e){
         throw Failure(genericError);
       }
-    } catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure(genericError);
     }
@@ -504,19 +423,9 @@ class OrganizationRepository {
       // throw an error if isn't a know status code
       throw Failure('Unknown StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       try {
         if (exception.response?.data['message']?.contains(
@@ -534,29 +443,20 @@ class OrganizationRepository {
         throw Failure(genericError);
       }
     } on Failure catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
       );
-      throw Failure(exception.message);
-    }catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure(genericError);
     }
@@ -590,45 +490,26 @@ class OrganizationRepository {
       // throw an error if isn't a know status code
       throw Failure('Unknown StatusCode ${response.statusCode}');
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure("No se puede establecer la prioridad");
     } on Failure catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
       );
-      throw Failure(exception.message);
-    } catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure(genericError);
     }
