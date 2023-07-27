@@ -123,10 +123,18 @@ class OrganizationRepository {
       // the query is made
       if (patientSelected.id != prefs.getString('userId')) {
         response = await dio.get(
-            '/profile/caretaker/dependent/${patientSelected.id}/organizations?subscribed=false');
+            '/profile/caretaker/dependent/${patientSelected.id}/organizations',
+          queryParameters: {
+            "subscribed": false,
+          }
+        );
       } else {
         response = await dio
-            .get('/profile/patient/organizations?subscribed=false');
+            .get('/profile/patient/organizations',
+            queryParameters: {
+              "subscribed": false,
+            }
+        );
       }
       // there are organizations
       if (response.statusCode == 200) {
@@ -172,10 +180,18 @@ class OrganizationRepository {
     try {
       if (patientSelected.id != prefs.getString('userId')) {
         response = await dio
-            .get('/profile/caretaker/dependent/${patientSelected.id}/subscriptionRequests?status=PD');
+            .get('/profile/caretaker/dependent/${patientSelected.id}/subscriptionRequests',
+            queryParameters: {
+              "status": "PD",
+            }
+        );
       } else {
         // the query is made
-        response = await dio.get('/profile/patient/subscriptionRequests?status=PD');
+        response = await dio.get('/profile/patient/subscriptionRequests',
+            queryParameters: {
+              "status": "PD",
+            }
+        );
       }
       // there are organizations
       if (response.statusCode == 200) {

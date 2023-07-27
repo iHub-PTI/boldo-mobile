@@ -149,7 +149,11 @@ class UserRepository {
     try {
       final String cellPhone = user.phone!;
       Response response =
-          await dio.post("/preRegister/sedCode?cellphone=%2B$cellPhone");
+          await dio.post("/preRegister/sedCode",
+            queryParameters: {
+              "cellphone": "%2B$cellPhone",
+            }
+          );
       if (response.statusCode == 201) {
         return const None();
       }
@@ -197,22 +201,26 @@ class UserRepository {
       switch (urlUploadType) {
         case UrlUploadType.frontal:
           url = isLogged == null
-              ? "/preRegister/s3/validateDocument/idCardParaguay/side1/uploadPresigned?hash=$hash"
+              ? "/preRegister/s3/validateDocument/idCardParaguay/side1/uploadPresigned"
               : "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side1/uploadPresigned";
           break;
         case UrlUploadType.back:
           url = isLogged == null
-              ? "/preRegister/s3/validateDocument/idCardParaguay/side2/uploadPresigned?hash=$hash"
-              : "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side2/uploadPresigned?hash=$hash";
+              ? "/preRegister/s3/validateDocument/idCardParaguay/side2/uploadPresigned"
+              : "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side2/uploadPresigned";
           break;
         case UrlUploadType.selfie:
           url = isLogged == null
-              ? "/preRegister/s4/validateSelfie/uploadPresigned?hash=$hash"
-              : "/profile/caretaker/dependent/s4/validateSelfie/uploadPresigned?hash=$hash";
+              ? "/preRegister/s4/validateSelfie/uploadPresigned"
+              : "/profile/caretaker/dependent/s4/validateSelfie/uploadPresigned";
           break;
         default:
       }
-      Response response = await dio.get(url);
+      Response response = await dio.get(url,
+        queryParameters: {
+          "hash": urlUploadType == UrlUploadType.frontal? null: hash,
+        },
+      );
       if (response.statusCode == 200) {
         switch (urlUploadType) {
           case UrlUploadType.frontal:
@@ -270,7 +278,12 @@ class UserRepository {
       final String phone = user.phone!;
       //final String password = user.password!;
       Response response =
-          await dio.post("preRegister/validateCode?hash=$hash&phone=$phone");
+          await dio.post("preRegister/validateCode",
+            queryParameters: {
+              "hash": hash,
+              "phone": phone,
+            }
+          );
       if (response.statusCode == 200) {
         return const None();
       }
@@ -350,25 +363,29 @@ class UserRepository {
         switch (urlUploadType) {
           case UrlUploadType.frontal:
             _url = isLogged == null
-                ? "/preRegister/s3/validateDocument/idCardParaguay/side1/validate?hash=$hash"
-                : "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side1/validate?hash=$hash";
+                ? "/preRegister/s3/validateDocument/idCardParaguay/side1/validate"
+                : "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side1/validate";
             break;
           case UrlUploadType.back:
             _url = isLogged == null
-                ? "/preRegister/s3/validateDocument/idCardParaguay/side2/validate?hash=$hash"
-                : "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side2/validate?hash=$hash";
+                ? "/preRegister/s3/validateDocument/idCardParaguay/side2/validate"
+                : "/profile/caretaker/dependent/s3/validateDocument/idCardParaguay/side2/validate";
             break;
           case UrlUploadType.selfie:
             _url = isLogged == null
-                ? "/preRegister/s4/validateSelfie/validate?hash=$hash"
-                : "/profile/caretaker/dependent/s4/validateSelfie/validate?hash=$hash";
+                ? "/preRegister/s4/validateSelfie/validate"
+                : "/profile/caretaker/dependent/s4/validateSelfie/validate";
             break;
           default:
         }
         final _finalUrl =
             '${environment.SERVER_ADDRESS}$_url';
         print(_finalUrl);
-        var response = await dio.post(_finalUrl);
+        var response = await dio.post(_finalUrl,
+          queryParameters: {
+            "hash": hash,
+          }
+        );
         print(response.statusCode);
         if (response.statusCode == 200) {
           print(response.data);
@@ -418,7 +435,12 @@ class UserRepository {
       final hash = await storage.read(key: "hash");
       final String password = user.password!;
       Response response = await dio
-          .post("preRegister/s5/registerUser?hash=$hash&pass=$password");
+          .post("preRegister/s5/registerUser",
+        queryParameters: {
+          "hash": hash,
+          "pass": password,
+        }
+      );
       if (response.statusCode == 201) {
         return const None();
       }
@@ -572,23 +594,31 @@ class UserRepository {
     try {
       if (!(prefs.getBool(isFamily)?? false))
         responseAppointments = await dio.get(
-            "/profile/patient/appointments?start=${DateTime(DateTime
+            "/profile/patient/appointments",
+          queryParameters: {
+            "start": DateTime(DateTime
                 .now()
                 .year, DateTime
                 .now()
                 .month, DateTime
                 .now()
-                .day).toUtc().toIso8601String()}");
+                .day).toUtc().toIso8601String()
+          },
+        );
       else
         responseAppointments = await dio.get(
             "/profile/caretaker/dependent/${patient
-                .id}/appointments?start=${DateTime(DateTime
+                .id}/appointments",
+          queryParameters: {
+            "start": DateTime(DateTime
                 .now()
                 .year, DateTime
                 .now()
                 .month, DateTime
                 .now()
-                .day).toUtc().toIso8601String()}");
+                .day).toUtc().toIso8601String()
+          },
+        );
 
       if (responseAppointments.statusCode == 200) {
         return List<Appointment>.from(

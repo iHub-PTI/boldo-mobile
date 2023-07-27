@@ -25,10 +25,22 @@ class PassportRepository {
       Response response;
       if (prefs.getBool(isFamily) ?? false) {
         response = await dioPassport.get(
-            'profile/caretaker/dependent/${patient.id}/vaccines/vaccinationRegistry/list?all=true&sync=$needSync&groupByDisease=false');
+            'profile/caretaker/dependent/${patient.id}/vaccines/vaccinationRegistry/list',
+          queryParameters: {
+            "all": true,
+            "sync": needSync,
+            "groupByDisease": false,
+          },
+        );
       } else {
         response = await dioPassport.get(
-            'profile/patient/vaccines/vaccinationRegistry/list?all=true&sync=$needSync&groupByDisease=false');
+            'profile/patient/vaccines/vaccinationRegistry/list',
+          queryParameters: {
+            "all": true,
+            "sync": needSync,
+            "groupByDisease": false,
+          },
+        );
       }
       if (response.statusCode == 200) {
         diseaseUserList = userVaccinateFromJson(response.data);
@@ -142,11 +154,17 @@ class PassportRepository {
       Response response;
       if (prefs.getBool(isFamily) ?? false) {
         response = await dioPassport.post(
-            "profile/caretaker/dependent/${patient.id}/vaccinationRegistry/create?all=$allVaccination",
+            "profile/caretaker/dependent/${patient.id}/vaccinationRegistry/create",
+            queryParameters: {
+              "all": allVaccination,
+            },
             data: dataToPass);
       } else {
         response = await dioPassport.post(
-            "profile/patient/vaccines/vaccinationRegistry/create?all=$allVaccination",
+            "profile/patient/vaccines/vaccinationRegistry/create",
+            queryParameters: {
+              "all": allVaccination,
+            },
             data: dataToPass);
       }
       if (response.statusCode == 200) {
