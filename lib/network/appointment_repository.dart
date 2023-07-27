@@ -252,4 +252,69 @@ class AppointmentRepository {
     }
   }
 
+
+  Future<List<Appointment>>? getAppointments() async {
+    Response responseAppointments;
+    try {
+      if (!(prefs.getBool(isFamily)?? false))
+        responseAppointments = await dio.get(
+          "/profile/patient/appointments",
+          queryParameters: {
+            "start": DateTime(DateTime
+                .now()
+                .year, DateTime
+                .now()
+                .month, DateTime
+                .now()
+                .day).toUtc().toIso8601String()
+          },
+        );
+      else
+        responseAppointments = await dio.get(
+          "/profile/caretaker/dependent/${patient
+              .id}/appointments",
+          queryParameters: {
+            "start": DateTime(DateTime
+                .now()
+                .year, DateTime
+                .now()
+                .month, DateTime
+                .now()
+                .day).toUtc().toIso8601String()
+          },
+        );
+
+      if (responseAppointments.statusCode == 200) {
+        return List<Appointment>.from(
+            responseAppointments.data["appointments"]
+                .map((i) => Appointment.fromJson(i)));
+      } else {
+        throw Failure("Status ${responseAppointments.statusCode}");
+      }
+    } on DioError catch(exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure("No se puede obtener las citas");
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    }
+  }
+
 }
