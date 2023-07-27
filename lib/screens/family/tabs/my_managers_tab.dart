@@ -59,7 +59,7 @@ class _MyManagersTabState extends State<MyManagersTab> {
             emitSnackBar(
                 context: context,
                 text: state.response,
-                status: ActionStatus.Success
+                status: ActionStatus.Fail
             );
             _dataLoading = false;
           }else if(state is Loading){
