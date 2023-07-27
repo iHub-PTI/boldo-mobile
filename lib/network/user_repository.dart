@@ -82,118 +82,30 @@ class UserRepository {
   Future<None>? editProfile(Patient patientData) async {
     try {
 
+      Response response;
+
       //copy data to add international code
       patientData = Patient.fromJson(patientData.toJson());
 
       // add international py code
       patientData.phone = addInternationalPyNumber(patientData.phone);
       if(!(prefs.getBool(isFamily)?? false))
-        await dio.post("/profile/patient", data: patientData.toJson());
+        response = await dio.post("/profile/patient", data: patientData.toJson());
       else
-        await dio.put("/profile/caretaker/dependent/${patient.id}", data: patientData.toJson());
+        response = await dio.put("/profile/caretaker/dependent/${patient.id}", data: patientData.toJson());
 
-      // Set new profile info
-      patient = Patient.fromJson(patientData.toJson());
+      if(response.statusCode == 200) {
+        // Set new profile info
+        patient = Patient.fromJson(patientData.toJson());
 
-      // Update prefs in Principal Patient
-      if(!(prefs.getBool(isFamily)?? false))
-        prefs.setString("profile_url", patient.photoUrl?? '');
-      return const None();
-    } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
-      );
-      throw Failure("No se puede actualizar los datos");
-    } catch (e) {
-      throw Failure("Ocurrio un error");
-    }
-  }
-
-  Future<None>? getDependents() async {
-    try {
-      Response response = await dio.get("/profile/caretaker/dependents");
-      print(response.data);
-      print(response.statusCode);
-      if (response.statusCode == 200) {
-        print(response.data.map((i) => Patient.fromJson(i)));
-        families =
-            List<Patient>.from(response.data.map((i) => Patient.fromJson(i)));
-        return const None();
-      } else if (response.statusCode == 204) {
-        families = List<Patient>.from([]);
-        return const None();
-      }
-      families = List<Patient>.from([]);
-      throw Failure(genericError);
-    } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
-      );
-      throw Failure("No se puede obtener los familiares");
-    } catch (e) {
-      families = List<Patient>.from([]);
-      throw Failure(genericError);
-    }
-  }
-
-  Future<List<Patient>>? getManagements() async {
-    try {
-      Response response = await dio.get("/profile/patient/caretakers");
-      if (response.statusCode == 200) {
-        return List<Patient>.from(
-            response.data.map((i) => Patient.fromJson(i)));
-      } else if (response.statusCode == 204) {
-        return List<Patient>.from([]);
-      }
-      throw Failure(genericError);
-    } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
-      );
-      throw Failure("No se puede obtener los gestores");
-    } catch (e) {
-      throw Failure(genericError);
-    }
-  }
-
-  Future<None>? unlinkCaretaker(String id) async {
-    try {
-      Response response =
-      await dio.put("/profile/patient/inactivate/caretaker/$id");
-      if (response.statusCode == 200) {
+        // Update prefs in Principal Patient
+        if (!(prefs.getBool(isFamily) ?? false)) {
+          await prefs.setString("profile_url", patient.photoUrl ?? '');
+          await prefs.setString("userId", patient.id ?? '');
+          await prefs.setString("name", response.data['givenName']!= null ? toLowerCase(response.data['givenName']!) : '');
+          await prefs.setString("lastName", response.data['familyName']!= null ? toLowerCase(response.data['familyName']!) : '');
+          await prefs.setString("identifier", response.data['identifier'] ?? '');
+        }
         return const None();
       }else if(response.statusCode == 204){
         throw Failure("No se puede actualizar los datos");
