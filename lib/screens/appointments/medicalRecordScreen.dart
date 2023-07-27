@@ -643,32 +643,15 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
 
   void cancelAppointmentAction() async {
     try{
-      final response = await dio.post(
-          !(prefs.getBool(isFamily)?? false) ?
-          "/profile/patient/appointments/cancel/${widget.appointment.id}"
-              : "/profile/caretaker/appointments/cancel/${widget.appointment.id}");
-      if (response.statusCode == 200) {
-        setState(() {
-          widget.appointment.status="cancelled";
-        });
-        BlocProvider.of<HomeBloc>(context).add(ReloadHome());
-        Navigator.of(context).popUntil(ModalRoute.withName('/home'));
-      }
-    } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
-      );
+      await AppointmentRepository().cancelAppointment(appointment: widget.appointment);
+
+      setState(() {
+        widget.appointment.status="cancelled";
+      });
+      BlocProvider.of<HomeBloc>(context).add(ReloadHome());
+      Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+
+    } on Failure catch(exception){
       emitSnackBar(
           context: context,
           text: 'No se pudo cancelar la cita',

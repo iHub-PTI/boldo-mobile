@@ -1,5 +1,8 @@
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Organization.dart';
+import 'package:boldo/network/appointment_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,7 +11,6 @@ import 'package:dio/dio.dart';
 
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/widgets/custom_form_button.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../network/http.dart';
 import '../../widgets/wrapper.dart';
 import '../../constants.dart';
@@ -93,87 +95,42 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                   _loading = true;
                   _error = "";
                 });
-                if(!(prefs.getBool(isFamily)?? false))
-                  response = await dio.post("/profile/patient/appointments", data: {
-                    'start': DateTime.parse(widget.bookingDate.availability!)
-                        .toUtc()
-                        .toIso8601String(),
-                    "doctorId": widget.doctor.id,
-                    "appointmentType":widget.bookingDate.appointmentType,
-                    "organizationId" : widget.organization.idOrganization
-                  });
-                else
-                  response = await dio.post("/profile/caretaker/dependent/${patient.id}/appointments", data: {
-                    'start': DateTime.parse(widget.bookingDate.availability!)
-                        .toUtc()
-                        .toIso8601String(),
-                    "doctorId": widget.doctor.id,
-                    "appointmentType":widget.bookingDate.appointmentType,
-                    "organizationId" : widget.organization.idOrganization
-                  });
-                if(response.statusCode == 200) {
-                  setState(() {
-                    _loading = false;
-                    _error = "";
-                  });
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => BookingFinalScreen(
-                      doctor: widget.doctor,
-                      bookingDate: widget.bookingDate,
-                      organization: widget.organization,
-                    )),
-                  );
-                } else if (response.statusCode == 400) {
-                  setState(() {
-                    _loading = false;
-                    _error = "El turno ya no está disponible";
-                  });
-                } else {
-                  setState(() {
-                    _loading = false;
-                    _error = response.data['message'];
-                  });
-                }
+                await AppointmentRepository().bookingAppointment(
+                  doctor: widget.doctor,
+                  bookingDate: widget.bookingDate,
+                  organization: widget.organization,
+                );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BookingFinalScreen(
+                    doctor: widget.doctor,
+                    bookingDate: widget.bookingDate,
+                    organization: widget.organization,
+                  )),
+                );
 
-              } on DioError catch(exception, stackTrace){
-                await Sentry.captureMessage(
-                  exception.toString(),
-                  params: [
-                    {
-                      "path": exception.requestOptions.path,
-                      "data": exception.requestOptions.data,
-                      "patient": prefs.getString("userId"),
-                      "dependentId": patient.id,
-                      "responseError": exception.response,
-                      'access_token': await storage.read(key: 'access_token')
-                    },
-                    stackTrace
-                  ],
+
+              } on Failure catch(exception, stackTrace){
+                setState(() {
+                  _loading = false;
+                });
+                emitSnackBar(
+                    context: context,
+                    text: exception.message,
+                    status: ActionStatus.Fail
+                );
+              } on Exception catch (exception, stackTrace) {
+                emitSnackBar(
+                    context: context,
+                    text: genericError,
+                    status: ActionStatus.Fail
                 );
                 setState(() {
                   _loading = false;
-                  if(exception.response?.statusCode == 400) {
-                    _error = "El turno ya no está disponible";
-                  } else {
-                    _error = exception.response?.data['message'];
-                  }
                 });
-              } catch (exception, stackTrace) {
-                print(exception);
-                setState(() {
-                  _loading = false;
-                  _error = "Intente nuevamente, por favor";
-                });
-                await Sentry.captureMessage(
-                    exception.toString(),
-                    params: [
-                      {
-                        'patient': prefs.getString("userId"),
-                        'access_token': await storage.read(key: 'access_token')
-                      },
-                      stackTrace
-                    ]
+                captureError(
+                  exception: exception,
+                  stackTrace: stackTrace,
                 );
               }
             },

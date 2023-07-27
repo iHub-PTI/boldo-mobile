@@ -1,7 +1,7 @@
 
 import 'package:boldo/models/Appointment.dart';
+import 'package:boldo/network/appointment_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
-import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +12,7 @@ part 'appointmentEvent.dart';
 part 'appointmentState.dart';
 
 class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
-  final UserRepository _patientRepository = UserRepository();
+  final AppointmentRepository _appointmentRepository = AppointmentRepository();
   DateTime _initialDate = DateTime(DateTime.now().year-1,DateTime.now().month,DateTime.now().day);
   DateTime? _finalDate = DateTime.now();
 
@@ -50,7 +50,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.getPastAppointments(event.date)!)
+        _appointmentRepository.getPastAppointments(event.date)!)
             .attempt()
             .mapLeftToFailure()
             .run()
@@ -73,7 +73,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.getPastAppointmentsBetweenDates(_initialDate, _finalDate)!)
+        _appointmentRepository.getPastAppointmentsBetweenDates(_initialDate, _finalDate)!)
             .attempt()
             .mapLeftToFailure()
             .run()
