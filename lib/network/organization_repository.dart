@@ -216,21 +216,10 @@ class OrganizationRepository {
         stackTrace: stackTrace,
         response: exception.response,
       );
-      throw Failure(genericError);
-    }
-  }
-
-  Future<Organization>? getOrganizationId(String id, Patient patientSelected) async {
-    Response response;
-
-    try {
-      // the query is made
-      if (patientSelected.id != prefs.getString('userId')) {
-        response = await dio.get(
-            '/profile/caretaker/dependent/${patientSelected.id}/encounter/${id}/serviceRequests');
-      } else {
-        response = await dio
-            .get('/profile/patient/encounter/${id}/serviceRequests');
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
       }
     } on Exception catch (exception, stackTrace) {
       captureError(
