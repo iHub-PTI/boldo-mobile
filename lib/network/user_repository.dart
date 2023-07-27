@@ -87,7 +87,7 @@ class UserRepository {
         }
         return const None();
       }
-      throw Failure(genericError);
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
@@ -228,7 +228,7 @@ class UserRepository {
       } else if (response.statusCode == 204) {
         throw Failure("El gestor ya fue borrado con anterioridad");
       }
-      throw Failure(genericError);
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
@@ -644,7 +644,7 @@ class UserRepository {
 
         return const None();
       }
-      throw Failure(genericError);
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
@@ -753,10 +753,10 @@ class UserRepository {
           return const None();
         } else {
           print(response.data);
-          return throw Failure(response.data);
+          throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
         }
       }
-      throw Failure(genericError);
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
@@ -1081,7 +1081,7 @@ class UserRepository {
         medicalRecord = MedicalRecord.fromJson(response.data['encounter']);
         return medicalRecord;
       }
-      throw Failure("Response status desconocido ${response.statusCode}");
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
@@ -1115,7 +1115,7 @@ class UserRepository {
         medicalRecord = MedicalRecord.fromJson(response.data['encounter']);
         return medicalRecord;
       }
-      throw Failure("Response status desconocido ${response.statusCode}");
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
         exception.toString(),
@@ -1165,7 +1165,7 @@ class UserRepository {
             responseAppointments.data["appointments"]
                 .map((i) => Appointment.fromJson(i)));
       } else {
-        throw Failure("Status ${responseAppointments.statusCode}");
+        throw Failure('Unknown StatusCode ${responseAppointments.statusCode}', response: responseAppointments);
       }
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
@@ -1205,7 +1205,7 @@ class UserRepository {
       } else if(responseAppointments.statusCode == 204) {
         return [];
       }else{
-        throw Failure("Status ${responseAppointments.statusCode}");
+        throw Failure('Unknown StatusCode ${responseAppointments.statusCode}', response: responseAppointments);
       }
     } on DioError catch(exception, stackTrace){
       await Sentry.captureMessage(
