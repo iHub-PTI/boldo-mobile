@@ -13,7 +13,9 @@ import 'package:boldo/models/Relationship.dart';
 import 'package:boldo/models/User.dart';
 import 'package:boldo/models/upload_url_model.dart';
 import 'package:boldo/network/repository_helper.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/utils/translate_backend_message.dart';
 import 'package:camera/camera.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
@@ -89,23 +91,36 @@ class UserRepository {
       }
       throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure("No se puede obtener el usuario");
-    } catch (e) {
-      throw Failure("No se puede obtener el usuario");
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null) {
+        // if has a response the status is unknown
+        throw Failure(genericError);
+      }else {
+        // if doesn't have response, is a unknown failure
+        throw Failure(exception.message);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace){
+      captureMessage(
+        message: exception.toString(),
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -230,81 +245,34 @@ class UserRepository {
       }
       throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
-      throw Failure("No se puede borrar el gestor");
-    } catch (e) {
+      throw Failure("No se puede actualizar los datos");
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null) {
+        // if has a response the status is unknown
+        throw Failure(genericError);
+      }else {
+        // if doesn't have response, is a unknown failure
+        throw Failure(exception.message);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
       throw Failure(genericError);
-    }
-  }
-
-  /// set [user] in the main the patient obtained with his [QrCode]
-  Future<None>? getDependent(String qrCode) async {
-    try {
-      Response response =
-          await dio.get("/profile/caretaker/dependent/qrcode/decode?qr=$qrCode");
-      if (response.statusCode == 200) {
-        // set the user obtained from the server
-        user = User.fromJson(response.data);
-        return const None();
-      }
-      // throw an error if isn't a know status code
-      throw Failure('Unknown StatusCode ${response.statusCode}');
-    } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
-      );
-      try {
-        // check if has message error
-        if (exception.response?.data['messages'].isNotEmpty)
-          // get the first message error and search a coincidence into [errorInQrValidation]
-          // that we know locally
-          if (errorInQrValidation.containsKey(
-              exception.response?.data['messages'].first))
-            // set the error
-            throw Failure(
-                errorInQrValidation[exception.response?.data['messages']
-                    .first] ?? genericError
-            );
-        throw Failure(genericError);
-      }catch(exception) {
-        // throw a generic error if we not know the message error obtained from the server
-        throw Failure(genericError);
-      }
-    } catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+    } catch (exception, stackTrace){
+      captureMessage(
+        message: exception.toString(),
+        stackTrace: stackTrace,
       );
       throw Failure(genericError);
     }
@@ -596,8 +564,37 @@ class UserRepository {
       if (response.statusCode == 201) {
         return const None();
       }
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
+    } on DioError catch(exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure("No se enviar el código");
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null) {
+        // if has a response the status is unknown
+        throw Failure(genericError);
+      }else {
+        // if doesn't have response, is a unknown failure
+        throw Failure(exception.message);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
       throw Failure(genericError);
-    } catch (e) {
+    } catch (exception, stackTrace){
+      captureMessage(
+        message: exception.toString(),
+        stackTrace: stackTrace,
+      );
       throw Failure(genericError);
     }
   }
@@ -646,22 +643,35 @@ class UserRepository {
       }
       throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
-      throw Failure("No se puede donde subir la foto");
-    } catch (e) {
+      throw Failure("No se puede subir los datos al servidor");
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null) {
+        // if has a response the status is unknown
+        throw Failure(genericError);
+      }else {
+        // if doesn't have response, is a unknown failure
+        throw Failure(exception.message);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace){
+      captureMessage(
+        message: exception.toString(),
+        stackTrace: stackTrace,
+      );
       throw Failure(genericError);
     }
   }
@@ -675,9 +685,38 @@ class UserRepository {
       if (response.statusCode == 200) {
         return const None();
       }
-      throw Failure('No fue posible validad el número, intente nuevamente');
-    } catch (e) {
-      throw Failure('No fue posible validad el número, intente nuevamente');
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
+    } on DioError catch(exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure("No fue posible validar el número, intente nuevamente");
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null) {
+        // if has a response the status is unknown
+        throw Failure(genericError);
+      }else {
+        // if doesn't have response, is a unknown failure
+        throw Failure(exception.message);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace){
+      captureMessage(
+        message: exception.toString(),
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -758,49 +797,30 @@ class UserRepository {
       }
       throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
-      try{
-        if (errorInFrontSide.contains(exception.response?.data['messages'].join())) {
-          photoStage = UrlUploadType.frontal;
-          throw Failure("Error al validar la parte frontal");
-        } else if (errorInBackSide
-            .contains(exception.response?.data['messages'].join())) {
-          photoStage = UrlUploadType.back;
-          throw Failure("Error al validar la parte posterior");
-        } else if (errorInSelfie.contains(exception.response?.data['messages'].join())) {
-          photoStage = UrlUploadType.selfie;
-          throw Failure("Error al validar la selfie");
-        }
+      throw Failure(translateBackendMessage(exception.response));
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null) {
+        // if has a response the status is unknown
         throw Failure(genericError);
-      }catch(exception){
-        throw Failure(genericError);
+      }else {
+        // if doesn't have response, is a unknown failure
+        throw Failure(exception.message);
       }
-    } catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-          exception.toString(),
-          params: [
-            {
-              'responseError': exception,
-              'patient': prefs.getString("userId"),
-              'access_token': await storage.read(key: 'access_token')
-            },
-            stackTrace
-          ]
+    } on Exception catch(exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
-      throw Failure('${exception.toString().length > 60 ? '$genericError' : exception}');
+      throw Failure(genericError);
     }
   }
 
@@ -813,8 +833,25 @@ class UserRepository {
       if (response.statusCode == 201) {
         return const None();
       }
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
+    } on DioError catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
       throw Failure(genericError);
-    } catch (e) {
+    } on Failure catch (exception, stackTrace){
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      throw Failure(genericError);
+    } on Exception catch (exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
       throw Failure(genericError);
     }
   }
@@ -849,32 +886,15 @@ class UserRepository {
       }
       return const None();
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure("No se pudo cerrar la sesion de forma adecuada");
-    } catch (exception, stackTrace) {
-      print(exception);
-      await Sentry.captureMessage(
-          exception.toString(),
-          params: [
-            {
-              'patient': prefs.getString("userId"),
-              'access_token': await storage.read(key: 'access_token')
-            },
-            stackTrace
-          ]
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure("No se pudo cerrar la sesion de forma adecuada");
     }
@@ -1083,22 +1103,27 @@ class UserRepository {
       }
       throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure("No se puede obtener el registro médico");
-    } catch (e) {
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
       throw Failure(genericError);
     }
   }
@@ -1117,22 +1142,27 @@ class UserRepository {
       }
       throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure("No se puede obtener el registro médico");
-    } catch (e) {
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
       throw Failure(genericError);
     }
   }
@@ -1168,23 +1198,28 @@ class UserRepository {
         throw Failure('Unknown StatusCode ${responseAppointments.statusCode}', response: responseAppointments);
       }
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure("No se puede obtener las citas");
-    } catch (e) {
-      throw Failure("Error al obtener las citas");
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -1208,69 +1243,28 @@ class UserRepository {
         throw Failure('Unknown StatusCode ${responseAppointments.statusCode}', response: responseAppointments);
       }
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure("No se pudo obtener los estudios medicos");
-    } catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-          exception.toString(),
-          params: [
-            {
-              'patient': prefs.getString("userId"),
-              'access_token': await storage.read(key: 'access_token')
-            },
-            stackTrace
-          ]
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
       );
-      throw Failure("Error al obtener los estudios medicos");
-    }
-  }
-
-  Future<List<Prescription>>? getPrescriptions() async {
-    try{
-      Response responsePrescriptions;
-      if (!(prefs.getBool(isFamily)?? false))
-        responsePrescriptions = await dio.get("/profile/patient/prescriptions");
-      else
-      responsePrescriptions = await dio
-          .get("/profile/caretaker/dependent/${patient.id}/prescriptions");
-
-      if(responsePrescriptions.statusCode == 200) {
-        return List<Prescription>.from(
-            responsePrescriptions.data["prescriptions"]
-                .map((i) => Prescription.fromJson(i)));
-      }else if(responsePrescriptions.statusCode == 204){
-        return [];
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
       }
-      throw Failure("Response code ${responsePrescriptions.statusCode}");
-    } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
-      throw Failure("No fue posible obtener las recetas");
+      throw Failure(genericError);
     }
   }
 
@@ -1289,63 +1283,27 @@ class UserRepository {
       }
       throw Failure("Response code ${responsePrescriptions.statusCode}");
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure("No fue posible obtener la receta");
-    }catch (exception, stackTrace){
-      await Sentry.captureMessage(
-          exception.toString(),
-          params: [
-            {
-              'patient': prefs.getString("userId"),
-              'access_token': await storage.read(key: 'access_token')
-            },
-            stackTrace
-          ]
+    }on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
       );
-      throw Failure("No fue posible obtener la receta");
-    }
-  }
-
-  Future<QRCode>? getQrCode() async {
-    try {
-      String url = '/profile/patient/qrcode/generate';
-      QRCode qrCode;
-      Response response = await dio.post(url);
-      if (response.statusCode == 200) {
-        qrCode = QRCode.fromJson(response.data);
-        return qrCode;
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
       }
-      throw Failure("Response status desconocido ${response.statusCode}");
-    } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
-      throw Failure("No se puede obtener el óodigo Qr");
-    } catch (e) {
       throw Failure(genericError);
     }
   }
