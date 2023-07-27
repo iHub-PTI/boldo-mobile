@@ -1,17 +1,10 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/main.dart';
-import 'package:boldo/models/MedicalRecord.dart';
-import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/errors.dart';
-import 'package:camera/camera.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import '../constants.dart';
 import '../models/DiagnosticReport.dart';

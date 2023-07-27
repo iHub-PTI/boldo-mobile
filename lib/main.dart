@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:boldo/app_config.dart';
-import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/blocs/doctor_more_availability_bloc/doctor_more_availability_bloc.dart';
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/doctors_favorite_bloc/doctors_favorite_bloc.dart';
@@ -11,8 +10,6 @@ import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/logout_bloc/userLogoutBloc.dart';
-import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
-import 'package:boldo/blocs/prescriptions_bloc/prescriptionsBloc.dart';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/blocs/specializationFilter_bloc/specializationFilter_bloc.dart';
 import 'package:boldo/provider/auth_provider.dart';
@@ -20,8 +17,6 @@ import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/appointments/pastAppointments_screen.dart';
-import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
-import 'package:boldo/screens/doctor_search/doctors_available.dart';
 import 'package:boldo/screens/family/family_tab.dart';
 import 'package:boldo/screens/family/tabs/defined_relationship_screen.dart';
 import 'package:boldo/screens/family/tabs/familyConnectTransition.dart';

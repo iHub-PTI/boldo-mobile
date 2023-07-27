@@ -1,18 +1,15 @@
 import 'dart:convert';
 
 import 'package:boldo/environment.dart';
-import 'package:boldo/main.dart';
 import 'package:boldo/screens/about/about_screen.dart';
 import 'package:boldo/screens/contact/contact_screen.dart';
 import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:boldo/provider/user_provider.dart';

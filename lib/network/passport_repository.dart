@@ -1,5 +1,4 @@
 // get vaccine
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:boldo/constants.dart';
@@ -9,7 +8,6 @@ import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart' as open;

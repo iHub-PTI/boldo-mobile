@@ -1,17 +1,13 @@
-import 'package:boldo/blocs/user_bloc/patient_bloc.dart'as patient_bloc;
 import 'package:boldo/blocs/doctor_availability_bloc/doctor_availability_bloc.dart';
 import 'package:boldo/blocs/doctor_more_availability_bloc/doctor_more_availability_bloc.dart' as more_availabilities;
-import 'package:boldo/main.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
-import 'package:boldo/screens/booking/booking_screen.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/expandable_card/expandable_card.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:boldo/widgets/in-person-virtual-switch.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
