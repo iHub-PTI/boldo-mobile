@@ -74,7 +74,7 @@ void initDio(
 
           navKey.currentState!.pushAndRemoveUntil(
             MaterialPageRoute(
-              builder: (context) => DashboardScreen(setLoggedOut: true),
+              builder: (context) => HeroScreenV2(),
             ),
             (route) => false,
           );
