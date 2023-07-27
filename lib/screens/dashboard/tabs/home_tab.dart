@@ -10,7 +10,6 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/divider_feed_secction_home.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
-import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/organizations/memberships_screen.dart';
 import 'package:boldo/screens/doctor_search/doctors_available.dart';
 import 'package:boldo/screens/passport/passport.dart';
