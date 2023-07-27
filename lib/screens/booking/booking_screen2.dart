@@ -809,3 +809,10 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
 
 }
 
+class AppoinmentWithDateAndType {
+  final DateTime dateTime;
+  final String appoinmentType;
+
+  AppoinmentWithDateAndType(
+      {required this.dateTime, required this.appoinmentType});
+}
