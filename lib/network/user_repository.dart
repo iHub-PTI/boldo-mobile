@@ -36,8 +36,8 @@ class UserRepository {
         patient = Patient.fromJson(response.data);
         // Update prefs in Principal Patient
         if(!(prefs.getBool(isFamily)?? false)) {
-          prefs.setString("profile_url", patient.photoUrl ?? '');
-          prefs.setString("userId", patient.id ?? '');
+          await prefs.setString("profile_url", patient.photoUrl ?? '');
+          await prefs.setString("userId", patient.id ?? '');
           await prefs.setString("name", response.data['givenName']!= null ? toLowerCase(response.data['givenName']!) : '');
           await prefs.setString("lastName", response.data['familyName']!= null ? toLowerCase(response.data['familyName']!) : '');
           await prefs.setString("identifier", response.data['identifier'] ?? '');
