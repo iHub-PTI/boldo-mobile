@@ -4,6 +4,7 @@ import 'package:boldo/environment.dart';
 import 'package:boldo/screens/about/about_screen.dart';
 import 'package:boldo/screens/contact/contact_screen.dart';
 import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -209,31 +210,14 @@ class _SettingsTabState extends State<SettingsTab> {
 
                     Navigator.of(context).pushNamedAndRemoveUntil('/onboarding', (Route<dynamic> route) => false);
                   } on DioError catch(exception, stackTrace){
-                    await Sentry.captureMessage(
-                      exception.toString(),
-                      params: [
-                        {
-                          "path": exception.requestOptions.path,
-                          "data": exception.requestOptions.data,
-                          "patient": prefs.getString("userId"),
-                          "dependentId": patient.id,
-                          "responseError": exception.response,
-                          'access_token': await storage.read(key: 'access_token')
-                        },
-                        stackTrace
-                      ],
+                    captureError(
+                      exception: exception,
+                      stackTrace: stackTrace,
                     );
-                  } catch (exception, stackTrace) {
-                    print(exception);
-                    await Sentry.captureMessage(
-                        exception.toString(),
-                        params: [
-                          {
-                            'patient': prefs.getString("userId"),
-                            'access_token': await storage.read(key: 'access_token')
-                          },
-                          stackTrace
-                        ]
+                  } on Exception catch (exception, stackTrace) {
+                    captureError(
+                      exception: exception,
+                      stackTrace: stackTrace,
                     );
                   }
                 },
