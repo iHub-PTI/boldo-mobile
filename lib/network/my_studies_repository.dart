@@ -117,12 +117,13 @@ class MyStudesRepository {
       }
       Map<String, dynamic> diagnostic = diagnosticReport.toJson();
       diagnostic['attachmentUrls'] = attachmentUrls;
+      Response response;
       if (prefs.getBool(isFamily) ?? false) {
-        await dio.post(
+        response = await dio.post(
             '/profile/caretaker/dependent/${patient.id}/diagnosticReport',
             data: diagnostic);
       } else {
-        await dio.post('/profile/patient/diagnosticReport', data: diagnostic);
+        response = await dio.post('/profile/patient/diagnosticReport', data: diagnostic);
       }
       if(response.statusCode == 201){
         return const None();
