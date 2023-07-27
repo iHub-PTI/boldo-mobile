@@ -69,9 +69,9 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
     userImageSelected = await pickImage(
         context: context,
         source: ImageSource.gallery,
-        maxWidth: 500,
-        maxHeight: 500,
-        imageQuality: 50,
+        maxWidth: 1000,
+        maxHeight: 1000,
+        imageQuality: 100,
         permissionDescription: 'Se requiere acceso para seleccionar una foto'
     );
     if (userImageSelected != null) {
