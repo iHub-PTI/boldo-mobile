@@ -43,6 +43,8 @@ class UserRepository {
           await prefs.setString("identifier", response.data['identifier'] ?? '');
         }
         return const None();
+      }else if(response.statusCode == 204){
+        throw Failure("No se puede obtener el usuario");
       }
       throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
