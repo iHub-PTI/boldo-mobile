@@ -1,8 +1,9 @@
 
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/Prescription.dart';
+import 'package:boldo/network/appointment_repository.dart';
+import 'package:boldo/network/prescription_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
-import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,7 +14,8 @@ part 'prescriptionsEvent.dart';
 part 'prescriptionsState.dart';
 
 class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
-  final UserRepository _patientRepository = UserRepository();
+  final AppointmentRepository _appointmentRepository = AppointmentRepository();
+  final PrescriptionRepository _prescriptionRepository = PrescriptionRepository();
   DateTime _initialDate = DateTime(DateTime.now().year-1,DateTime.now().month,DateTime.now().day);
   DateTime? _finalDate = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day, 23, 59, 59);
 
@@ -34,7 +36,7 @@ class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.getPastAppointments(event.date)!)
+        _appointmentRepository.getPastAppointments(event.date)!)
             .attempt()
             .mapLeftToFailure()
             .run()
@@ -57,7 +59,7 @@ class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.getPastAppointmentsBetweenDates(_initialDate, _finalDate)!)
+        _appointmentRepository.getPastAppointmentsBetweenDates(_initialDate, _finalDate)!)
             .attempt()
             .mapLeftToFailure()
             .run()
@@ -76,7 +78,7 @@ class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
           appointments.sort((a, b) =>
               DateTime.parse(b.start!).compareTo(DateTime.parse(a.start!)));
           await Task(() =>
-          _patientRepository.getPrescriptions()!)
+          _prescriptionRepository.getPrescriptions()!)
               .attempt()
               .mapLeftToFailure()
               .run()

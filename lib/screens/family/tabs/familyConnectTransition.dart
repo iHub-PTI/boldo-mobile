@@ -1,5 +1,5 @@
 import 'package:boldo/models/Patient.dart';
-import 'package:boldo/network/user_repository.dart';
+import 'package:boldo/network/family_repository.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +36,7 @@ class _FamilyConnectTransitionTransitionState extends State<FamilyConnectTransit
     await Future.delayed(const Duration(seconds: 3));
     //init animation
     _colorController.forward();
-    await UserRepository().getRelationships();
+    await FamilyRepository().getRelationships();
     await Future.delayed(const Duration(seconds: 2));
     Navigator.pushNamed(context, '/defineRelationship');
   }

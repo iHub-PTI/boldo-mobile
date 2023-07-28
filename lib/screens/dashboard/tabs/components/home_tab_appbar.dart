@@ -456,35 +456,32 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
 
   BoxDecoration _decoration(){
     if((prefs.getBool(isFamily)?? false)){
-      return const BoxDecoration(
-          borderRadius: BorderRadius.only(bottomRight: Radius.circular(24)),
+      return BoxDecoration(
+          borderRadius: const BorderRadius.only(bottomRight: Radius.circular(24)),
           gradient: RadialGradient(
-              radius: 4,
-              center: Alignment(
-                1.80,
-                0.77,
-              ),
+              center: const Alignment(1.04, 0.77),
+              radius: 2*MediaQuery.of(context).size.width/360,
               colors: <Color>[
                 ConstantsV2.familyAppBarColor100,
                 ConstantsV2.familyAppBarColor200,
-                ConstantsV2.familyAppBarColor200,
+                ConstantsV2.familyAppBarColor300,
               ],
               stops: <double>[
                 ConstantsV2.familyAppBarStop100,
                 ConstantsV2.familyAppBarStop200,
                 ConstantsV2.familyAppBarStop300,
               ]
-          )
+          ),
+        boxShadow: [
+          shadowRegular
+        ],
       );
     }else{
-      return const BoxDecoration(
-          borderRadius: BorderRadius.only(bottomRight: Radius.circular(24)),
+      return BoxDecoration(
+          borderRadius: const BorderRadius.only(bottomRight: Radius.circular(24)),
           gradient: RadialGradient(
-              radius: 4,
-              center: Alignment(
-                1.80,
-                0.77,
-              ),
+              center: const Alignment(1.04, 0.77),
+              radius: 2*MediaQuery.of(context).size.width/360,
               colors: <Color>[
                 ConstantsV2.patientAppBarColor100,
                 ConstantsV2.patientAppBarColor200,
@@ -495,7 +492,10 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                 ConstantsV2.patientAppBarStop200,
                 ConstantsV2.patientAppBarStop300,
               ]
-          )
+          ),
+        boxShadow: [
+          shadowRegular
+        ],
       );
     }
   }

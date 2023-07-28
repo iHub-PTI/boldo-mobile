@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:boldo/constants.dart';
@@ -8,12 +7,11 @@ import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/network/repository_helper.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 class StudiesOrdersRepository {
   Future<List<StudyOrder>>? getStudiesOrders() async {
@@ -35,26 +33,33 @@ class StudiesOrdersRepository {
         // return empty list
         return List<StudyOrder>.from([]);
       }
-      throw Failure(genericError);
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+        data: exception.response?.data
       );
       throw Failure("No se pueden obtener las órdenes de estudio");
-    } catch (e) {
-      throw Failure(e.toString());
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
+
   }
 
   Future<StudyOrder>? getStudiesOrdersId(String encounter) async {
@@ -73,25 +78,30 @@ class StudiesOrdersRepository {
       if (response.statusCode == 200) {
         return StudyOrder.fromJson(response.data);
       } // no study orders
-      throw Failure(genericError);
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure("No se pueden obtener las órdenes de estudio");
-    } catch (e) {
-      throw Failure(e.toString());
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -117,54 +127,32 @@ class StudiesOrdersRepository {
                     : 'image/jpeg',
           );
           attachmentUrls.add(value);
+        }else {
+          throw Failure('Unknown StatusCode ${url.statusCode}', response: url);
         }
       }
       return attachmentUrls;
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
-      // try to show backend error message
-      try{
-        String errorMsg = exception.response?.data['message'];
-        throw Failure(errorMsg);
-      }catch(exception){
+      throw Failure(genericError);
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
         throw Failure(genericError);
       }
-    } on Failure catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-          exception.toString(),
-          params: [
-            {
-              'responseError': exception.message,
-              'patient': prefs.getString("userId"),
-              'access_token': await storage.read(key: 'access_token')
-            },
-            stackTrace
-          ]
-      );
-      throw Failure(exception.message);
-    }catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-          exception.toString(),
-          params: [
-            {
-              'patient': prefs.getString("userId"),
-              'access_token': await storage.read(key: 'access_token')
-            },
-            stackTrace
-          ]
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure(genericError);
     }
@@ -173,48 +161,43 @@ class StudiesOrdersRepository {
   Future<None>? sendDiagnosticReport(DiagnosticReport diagnosticReport) async {
     try {
       Map<String, dynamic> diagnostic = diagnosticReport.toJson();
+      Response response;
       if (prefs.getBool(isFamily) ?? false) {
-        await dio.post(
+        response = await dio.post(
             '/profile/caretaker/dependent/${patient.id}/diagnosticReport',
             data: diagnostic);
       } else {
-        await dio.post('/profile/patient/diagnosticReport', data: diagnostic);
+        response = await dio.post('/profile/patient/diagnosticReport', data: diagnostic);
       }
-      return None();
+      if(response.statusCode == 201){
+        return const None();
+      }else if(response.statusCode == 204){
+        throw Failure("No se pudo subir el estudio");
+      }
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
-      // try to show backend error message
-      try{
-        String errorMsg = exception.response?.data['message'];
-        throw Failure(errorMsg);
-      }catch(exception){
+      throw Failure(genericError);
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
         throw Failure(genericError);
       }
-    } catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-          exception.toString(),
-          params: [
-            {
-              'patient': prefs.getString("userId"),
-              'access_token': await storage.read(key: 'access_token')
-            },
-            stackTrace
-          ]
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
-      throw Failure('Ocurrio un error indesperado');
+      throw Failure(genericError);
     }
   }
 
@@ -242,70 +225,31 @@ class StudiesOrdersRepository {
           if (response2.statusCode == 200) {
             return Appointment.fromJson(response2.data);
           }
-          await Sentry.captureMessage(
-            "Status code unknown",
-            params: [
-              {
-                "path": response2.requestOptions.path,
-                "data": response2.data, //ex.requestOptions.data,
-                "patient": prefs.getString("userId"),
-                'access_token': await storage.read(key: 'access_token')
-              }
-            ],
-          );
-          throw Failure('No fue posible obtener la cita');
+          throw Failure('Unknown StatusCode ${response2.statusCode}', response: response2);
         }
-        await Sentry.captureMessage(
-          "Cant get encounter",
-          params: [
-            {
-              "path": response1.requestOptions.path,
-              "data": response1.data, //ex.requestOptions.data,
-              "patient": prefs.getString("userId"),
-              'access_token': await storage.read(key: 'access_token')
-            }
-          ],
-        );
-        throw Failure('No fue posible obtener la cita');
       }
-      await Sentry.captureMessage(
-        "Status code unknown",
-        params: [
-          {
-            "path": response1.requestOptions.path,
-            "data": response1.data, //ex.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            'access_token': await storage.read(key: 'access_token')
-          }
-        ],
-      );
-      throw Failure('No fue posible obtener la cita');
+      throw Failure('Unknown StatusCode ${response1.statusCode}', response: response1);
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure('No fue posible obtener la cita');
-    }catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-          exception.toString(),
-          params: [
-            {
-              'patient': prefs.getString("userId"),
-              'access_token': await storage.read(key: 'access_token')
-            },
-            stackTrace
-          ]
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure(genericError);
     }
@@ -327,44 +271,28 @@ class StudiesOrdersRepository {
       if (response.statusCode == 200) {
         return ServiceRequest.fromJson(response.data);
       } // no study orders
-      await Sentry.captureMessage(
-        "Status code unknown",
-        params: [
-          {
-            "path": response.requestOptions.path,
-            "data": response.data, //ex.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            'access_token': await storage.read(key: 'access_token')
-          }
-        ],
-      );
-      throw Failure(genericError);
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure("No se pueden obtener la orden de estudio");
-    }catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-          exception.toString(),
-          params: [
-            {
-              'patient': prefs.getString("userId"),
-              'access_token': await storage.read(key: 'access_token')
-            },
-            stackTrace
-          ]
+    }on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure(genericError);
     }

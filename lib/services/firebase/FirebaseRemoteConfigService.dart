@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:boldo/app_config.dart';
 import 'package:boldo/environment.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 class FirebaseRemoteConfigService {
 
@@ -138,13 +138,13 @@ class FirebaseRemoteConfigService {
         }
       });
     } on FirebaseException catch (exception, stackTrace){
-      await Sentry.captureException(
-        exception,
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
-    } catch (exception, stackTrace){
-      await Sentry.captureException(
-        exception,
+    } on Exception catch (exception, stackTrace){
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
     }

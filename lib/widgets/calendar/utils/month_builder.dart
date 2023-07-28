@@ -1,5 +1,5 @@
 
-import 'package:boldo/screens/booking/booking_screen.dart';
+import 'package:boldo/screens/booking/booking_screen2.dart';
 
 import '../../../models/CalendarItem.dart';
 

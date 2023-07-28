@@ -70,7 +70,9 @@ class _QRScannerState extends State<QRScanner> {
                 }
                 if(state is QrDecoded){
                   user.isNew = false;
-                  Navigator.pushNamed(context, '/familyConnectTransition');
+                  Navigator.pushNamedAndRemoveUntil(context, '/familyConnectTransition',
+                      ModalRoute.withName('/methods')
+                  );
                 }
                 if(state is Loading){
                   _dataLoading = true;

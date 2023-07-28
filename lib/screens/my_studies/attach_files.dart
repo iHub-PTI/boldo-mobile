@@ -7,15 +7,12 @@ import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/photos_helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
-import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:path/path.dart' as p;
-import 'package:http/http.dart' as http;
 
 import '../../constants.dart';
 import '../../models/DiagnosticReport.dart';

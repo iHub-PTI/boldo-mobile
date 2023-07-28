@@ -1,12 +1,12 @@
 import 'dart:core';
 import 'package:boldo/constants.dart';
 import 'package:boldo/environment.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:dio/dio.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:wakelock/wakelock.dart';
 
@@ -90,32 +90,15 @@ class _VideoCallState extends State<VideoCall> {
         _loading = false;
       });
     } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       Navigator.of(context).pop({"tokenError": true});
-    } catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       Navigator.of(context).pop({"tokenError": true});
     }

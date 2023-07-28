@@ -10,18 +10,6 @@ class ChangeUser extends PatientEvent {
 
 class ReloadHome extends PatientEvent {}
 
-class ValidateQr extends PatientEvent {
-  final String id;
-  ValidateQr({required this.id});
-}
-
-class LinkFamily extends PatientEvent {}
-
-class UnlinkDependent extends PatientEvent {
-  final String id;
-  UnlinkDependent({required this.id});
-}
-
 class LogoutPatientPressed extends PatientEvent {}
 
 class EditProfile extends PatientEvent {

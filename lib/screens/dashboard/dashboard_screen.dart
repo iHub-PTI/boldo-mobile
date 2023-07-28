@@ -1,12 +1,10 @@
+import 'package:boldo/screens/appointments/pastAppointments_screen.dart';
 import 'package:boldo/screens/doctor_search/doctors_available.dart';
-import 'package:boldo/screens/medical_records/medical_records_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 
 import 'package:boldo/screens/dashboard/tabs/home_tab.dart';
-import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
 import 'package:boldo/screens/dashboard/tabs/settings_tab.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:move_to_background/move_to_background.dart';
 
 import '../../main.dart';
@@ -39,7 +37,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return DoctorsAvailable(callFromHome: true,);
     }
     if (index == 2) {
-      return MedicalRecordScreen();
+      return const PastAppointmentsScreen();
     }
     if (index == 3) {
       return SettingsTab();

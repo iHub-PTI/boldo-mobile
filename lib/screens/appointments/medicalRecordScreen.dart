@@ -8,12 +8,15 @@ import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/PresciptionMedicalRecord.dart';
 import 'package:boldo/models/Soep.dart';
 import 'package:boldo/models/StudyOrder.dart';
+import 'package:boldo/network/appointment_repository.dart';
 import 'package:boldo/network/http.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
 import 'package:boldo/screens/my_studies/estudy_screen.dart';
 import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
 import 'package:boldo/screens/studies_orders/StudyOrderScreen.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:date_format/date_format.dart';
@@ -22,7 +25,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../constants.dart';
 import 'anotations_details.dart';
@@ -643,47 +645,24 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
 
   void cancelAppointmentAction() async {
     try{
-      final response = await dio.post(
-          !(prefs.getBool(isFamily)?? false) ?
-          "/profile/patient/appointments/cancel/${widget.appointment.id}"
-              : "/profile/caretaker/appointments/cancel/${widget.appointment.id}");
-      if (response.statusCode == 200) {
-        setState(() {
-          widget.appointment.status="cancelled";
-        });
-        BlocProvider.of<HomeBloc>(context).add(ReloadHome());
-        Navigator.of(context).popUntil(ModalRoute.withName('/home'));
-      }
-    } on DioError catch(exception, stackTrace){
-      await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            "path": exception.requestOptions.path,
-            "data": exception.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "dependentId": patient.id,
-            "responseError": exception.response,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ],
-      );
+      await AppointmentRepository().cancelAppointment(appointment: widget.appointment);
+
+      setState(() {
+        widget.appointment.status="cancelled";
+      });
+      BlocProvider.of<HomeBloc>(context).add(ReloadHome());
+      Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+
+    } on Failure catch(exception){
       emitSnackBar(
           context: context,
-          text: 'No se pudo cancelar la cita',
+          text: exception.message,
           status: ActionStatus.Fail
       );
-    }catch (exception, stackTrace) {
-      await Sentry.captureMessage(
-          exception.toString(),
-          params: [
-            {
-              'patient': prefs.getString("userId"),
-              'access_token': await storage.read(key: 'access_token')
-            },
-            stackTrace
-          ]
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       emitSnackBar(
           context: context,

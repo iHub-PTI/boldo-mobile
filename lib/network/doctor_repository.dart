@@ -6,9 +6,10 @@ import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/PagList.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/network/repository_helper.dart';
+import 'package:boldo/utils/errors.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 class DoctorRepository {
   Future<List<Doctor>>? getAllDoctors(int offset) async {
@@ -33,10 +34,41 @@ class DoctorRepository {
       if (response.statusCode == 200) {
         return List<Doctor>.from(
             response.data['items'].map((i) => Doctor.fromJson(i)));
+      } else if (response.statusCode == 204) {
+        return List<Doctor>.from([]);
       }
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
+    } on DioError catch(exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
       throw Failure('No se pudo obtener la lista de médicos');
-    } catch (e) {
-      throw Failure('No se pudo obtener la lista de médicos');
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null) {
+        // if has a response the status is unknown
+        throw Failure(genericError);
+      }else {
+        // if doesn't have response, is a unknown failure
+        throw Failure(exception.message);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace){
+      captureMessage(
+        message: exception.toString(),
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -100,24 +132,38 @@ class DoctorRepository {
             )
         );
         return result;
+      }else if(response.statusCode == 204){
+        return PagList<Doctor>(total: 0, items: []);
       }
       throw Failure('No se pudo obtener la lista de médicos');
-    } on DioError catch(ex) {
-      await Sentry.captureMessage(
-        ex.toString(),
-        params: [
-          {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "responseError": ex.response,
-          }
-        ],
+    } on DioError catch(exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure('No se pudo obtener la lista de médicos');
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null) {
+        // if has a response the status is unknown
+        throw Failure(genericError);
+      }else {
+        // if doesn't have response, is a unknown failure
+        throw Failure(exception.message);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace){
+      captureMessage(
+        message: exception.toString(),
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
@@ -180,24 +226,38 @@ class DoctorRepository {
         List<Doctor> doctors = List<Doctor>.from(
             response.data['items'].map((i) => Doctor.fromJson(i)));
         return doctors;
+      } else if (response.statusCode == 204){
+        return [];
       }
       throw Failure('No se pudo obtener la lista de médicos');
-    } on DioError catch(ex) {
-      await Sentry.captureMessage(
-        ex.toString(),
-        params: [
-          {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "responseError": ex.response,
-          }
-        ],
+    } on DioError catch(exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure('No se pudo obtener la lista de médicos');
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null) {
+        // if has a response the status is unknown
+        throw Failure(genericError);
+      }else {
+        // if doesn't have response, is a unknown failure
+        throw Failure(exception.message);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace){
+      captureMessage(
+        message: exception.toString(),
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
@@ -228,23 +288,34 @@ class DoctorRepository {
         );
       }
       return const None();
-    } on DioError catch(ex) {
-      await Sentry.captureMessage(
-        ex.toString(),
-        params: [
-          {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "responseError": ex.response,
-          }
-        ],
+    } on DioError catch(exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
-      print(ex.response?.data);
       throw Failure('No se establecer como favorito');
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null) {
+        // if has a response the status is unknown
+        throw Failure(genericError);
+      }else {
+        // if doesn't have response, is a unknown failure
+        throw Failure(exception.message);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace){
+      captureMessage(
+        message: exception.toString(),
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
@@ -313,22 +384,128 @@ class DoctorRepository {
         return result;
       }
       throw Failure('No se pudo obtener los médicos recientes');
-    } on DioError catch(ex) {
-      await Sentry.captureMessage(
-        ex.toString(),
-        params: [
-          {
-            "path": ex.requestOptions.path,
-            "data": ex.requestOptions.data,
-            "patient": prefs.getString("userId"),
-            "responseError": ex.response,
-          }
-        ],
+    } on DioError catch(exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
       throw Failure('No se pudo obtener los médicos recientes');
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null) {
+        // if has a response the status is unknown
+        throw Failure(genericError);
+      }else {
+        // if doesn't have response, is a unknown failure
+        throw Failure(exception.message);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace){
+      captureMessage(
+        message: exception.toString(),
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    }
+  }
+
+  Future<List<OrganizationWithAvailabilities>>? getAvailabilities({
+    AppointmentType? appointmentType,
+    required String id,
+    required DateTime startDate,
+    required DateTime endDate,
+    required List<Organization?>? organizations}) async {
+
+    String? _organizations = organizations?.map((e) => e?.id?? "").toList().join(",");
+    try {
+
+
+      String? appointmentTypeString = appointmentType == AppointmentType.InPerson
+          ? "A": appointmentType == AppointmentType.Virtual ?"V": null;
+
+      //subtract a second to get to 23:59:59 time until 00:00:00 next day
+      endDate = endDate.subtract(const Duration(seconds: 1));
+
+      dynamic queryParams = {
+        'appointmentType': appointmentTypeString,
+        'start': startDate.toIso8601String(),
+        'end': endDate.toIso8601String(),
+        'organizationIdList': _organizations,
+      };
+
+      // remove null values to solve null compare in server
+      queryParams.removeWhere((key, value) => value == null);
+
+      Response response;
+      if (prefs.getBool('isFamily') ?? false) {
+        response = await dio.get('/profile/caretaker/dependent/${patient.id}/doctors/$id/availability',
+            queryParameters: queryParams
+        );
+      } else {
+        // the query is made
+        response = await dio.get('/profile/patient/doctors/$id/availability',
+            queryParameters: queryParams
+        );
+      }
+      if (response.statusCode == 200) {
+        List<OrganizationWithAvailabilities>? allAvailabilities = [];
+        response.data.forEach((v) {
+          allAvailabilities.add(OrganizationWithAvailabilities.fromJson(v));
+        });
+        // set nextAvailability to local time
+        for ( OrganizationWithAvailabilities availability in allAvailabilities){
+          availability.nextAvailability?.availability = DateTime.parse(
+              availability.nextAvailability?.availability?? DateTime.now().toString()
+          ).toLocal().toString();
+          // set list of availabilities to local time
+          for(NextAvailability? nextAvailability in availability.availabilities){
+            nextAvailability?.availability = DateTime.parse(
+                nextAvailability.availability?? DateTime.now().toString()
+            ).toLocal().toString();
+          }
+        }
+        return allAvailabilities;
+      } else if (response.statusCode == 204) {
+        throw Failure("No se encuentra disponible");
+      }
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
+    } on DioError catch(exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure("No se encuentra disponible");
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null) {
+        // if has a response the status is unknown
+        throw Failure(genericError);
+      }else {
+        // if doesn't have response, is a unknown failure
+        throw Failure(exception.message);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace){
+      captureMessage(
+        message: exception.toString(),
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
