@@ -1,15 +1,16 @@
 import 'dart:io';
 
 import 'package:boldo/main.dart';
+import 'package:boldo/models/upload_url_model.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
 import '../constants.dart';
 import '../models/DiagnosticReport.dart';
 import 'package:path/path.dart' as p;
 
+import 'files_repository.dart';
 import 'http.dart';
 
 class MyStudesRepository {
@@ -95,25 +96,20 @@ class MyStudesRepository {
       List<Map<String, dynamic>> attachmentUrls = [];
       for (File file in files) {
         // get url to upload file
-        Response url = await dio.get("/presigned");
-        var response2 = await http.put(Uri.parse(url.data["uploadUrl"]),
-            body: file.readAsBytesSync()
+        UploadUrl response = await FilesRepository().getUploadURL();
+
+        await FilesRepository().uploadFile(
+          file: file,
+          url: response.uploadUrl?? '',
         );
-        // if file is too large to upload
-        if (response2.statusCode == 413) {
-          throw Failure(
-              'El archivo ${p.basename(file.path)} es demasiado grande');
-        } else if (response2.statusCode == 201) {
-          var value = {
-            "url": url.data["location"],
-            "contentType": p.extension(file.path).toLowerCase() == '.pdf'
-                ? 'application/pdf'
-                : p.extension(file.path).toLowerCase() == '.png' ? 'image/png' : 'image/jpeg',
-          };
-          attachmentUrls.add(value);
-        }else{
-          throw Failure('Unknown StatusCode ${url.statusCode}', response: url);
-        }
+        var value = {
+          "url": response.location,
+          "contentType": p.extension(file.path).toLowerCase() == '.pdf'
+              ? 'application/pdf'
+              : p.extension(file.path).toLowerCase() == '.png' ? 'image/png' : 'image/jpeg',
+        };
+        attachmentUrls.add(value);
+
       }
       Map<String, dynamic> diagnostic = diagnosticReport.toJson();
       diagnostic['attachmentUrls'] = attachmentUrls;

@@ -2,6 +2,9 @@ import 'dart:ui';
 
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/models/upload_url_model.dart';
+import 'package:boldo/network/files_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/photos_helpers.dart';
@@ -9,13 +12,10 @@ import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import '../../../main.dart';
-import '../../../network/http.dart';
 
 class ProfileImageEdit extends StatefulWidget {
   const ProfileImageEdit({Key? key}) : super(key: key);
@@ -98,30 +98,46 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                       setState(() {
                         _isLoading = true;
                       });
-                      Response response = await dio.get("/presigned");
+                      UploadUrl response = await FilesRepository().getUploadURL();
 
                       imageCache!.clear();
 
-                      var response2  = await http.put(Uri.parse(response.data["uploadUrl"]),
-                          body: croppedFile.readAsBytesSync());
-                      if(response2.statusCode == 413){
-                        emitSnackBar(
-                            context: context,
-                            text: "El tamaño de la foto es muy grande",
-                            status: ActionStatus.Fail
-                        );
-                      }else if(response2.statusCode == 201){
-                        editingPatient.photoUrl = response.data["location"];
-                      }else{
-                        emitSnackBar(
-                            context: context,
-                            text: genericError,
-                            status: ActionStatus.Fail
-                        );
-                      }
+                      await FilesRepository().uploadFile(
+                        file: File(result.path),
+                        url: response.uploadUrl?? '',
+                      );
+
+                      editingPatient.photoUrl = response.location;
                       setState(() {
                         _isLoading = false;
                       });
+                    } on Failure catch (exception, stackTrace) {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      emitSnackBar(
+                          context: context,
+                          text: exception.message,
+                          status: ActionStatus.Fail
+                      );
+                      captureMessage(
+                        message: exception.message,
+                        stackTrace: stackTrace,
+                        response: exception.response,
+                      );
+                    } on DioError catch (exception, stackTrace) {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      emitSnackBar(
+                          context: context,
+                          text: exception.message,
+                          status: ActionStatus.Fail
+                      );
+                      captureError(
+                        exception: exception,
+                        stackTrace: stackTrace,
+                      );
                     } on Exception catch (exception, stackTrace) {
                       setState(() {
                         _isLoading = false;
