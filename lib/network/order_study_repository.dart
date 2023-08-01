@@ -5,13 +5,15 @@ import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/StudyOrder.dart';
+import 'package:boldo/models/upload_url_model.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:dartz/dartz.dart';
-import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:path/path.dart' as p;
+
+import 'files_repository.dart';
 
 class StudiesOrdersRepository {
   Future<List<StudyOrder>>? getStudiesOrders() async {
@@ -110,26 +112,23 @@ class StudiesOrdersRepository {
       List<AttachmentUrl> attachmentUrls = [];
       for (File file in files) {
         // get url to upload file
-        Response url = await dio.get("/presigned");
-        var response2 = await http.put(Uri.parse(url.data["uploadUrl"]),
-            body: file.readAsBytesSync());
-        // if file is too large to upload
-        if (response2.statusCode == 413) {
-          throw Failure(
-              'El archivo ${p.basename(file.path)} es demasiado grande');
-        } else if (response2.statusCode == 201) {
-          AttachmentUrl value = AttachmentUrl(
-            url: url.data["location"],
-            contentType: p.extension(file.path).toLowerCase() == '.pdf'
-                ? 'application/pdf'
-                : p.extension(file.path).toLowerCase() == '.png'
-                    ? 'image/png'
-                    : 'image/jpeg',
-          );
-          attachmentUrls.add(value);
-        }else {
-          throw Failure('Unknown StatusCode ${url.statusCode}', response: url);
-        }
+        UploadUrl response = await FilesRepository().getUploadURL();
+
+        await FilesRepository().uploadFile(
+          file: file,
+          url: response.uploadUrl?? '',
+        );
+
+        AttachmentUrl value = AttachmentUrl(
+          url: response.location,
+          contentType: p.extension(file.path).toLowerCase() == '.pdf'
+              ? 'application/pdf'
+              : p.extension(file.path).toLowerCase() == '.png'
+                  ? 'image/png'
+                  : 'image/jpeg',
+        );
+        attachmentUrls.add(value);
+
       }
       return attachmentUrls;
     } on DioError catch(exception, stackTrace){
