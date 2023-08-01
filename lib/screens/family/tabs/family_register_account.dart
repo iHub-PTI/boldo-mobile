@@ -75,6 +75,10 @@ class _DniFamilyRegisterState extends State<DniFamilyRegister> {
         permissionDescription: 'Se requiere acceso para seleccionar una foto'
     );
     if (userImageSelected != null) {
+      File? croppedFile = await cropPhoto(file: userImageSelected!);
+      userImageSelected = croppedFile != null ? XFile(croppedFile.path) : null;
+    }
+    if (userImageSelected != null) {
       BlocProvider.of<PatientRegisterBloc>(context).add(
           UploadPhoto(urlUploadType: photoStage, image: userImageSelected));
     } else {
