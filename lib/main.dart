@@ -332,7 +332,6 @@ class FullApp extends StatelessWidget {
         '/FamilyTransition' : (context) => FamilyTransition(),
         '/familyDniRegister' : (context) => DniFamilyRegister(),
         '/my_studies' : (context) => MyStudies(),
-        '/doctorsTab' : (context) => DoctorsTab(),
         '/pastAppointmentsScreen' : (context) => const PastAppointmentsScreen(),
         '/prescriptionsScreen' : (context) => const PrescriptionsScreen(),
         '/user_qr_detail': (context) => UserQrDetail(),
