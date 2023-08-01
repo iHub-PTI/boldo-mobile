@@ -28,7 +28,7 @@ Future <void> captureError({
 
   await sendSentryError(
     exception: exception,
-    stackTrace: stackTrace,
+    stackTrace: exception is DioError? exception.stackTrace : stackTrace,
     tags: tags,
   );
 }
