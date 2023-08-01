@@ -5,7 +5,7 @@ import 'package:boldo/services/sentry/send_message.dart';
 import 'package:dio/dio.dart';
 
 Future <void> captureError({
-  required Exception exception,
+  required dynamic exception,
   StackTrace? stackTrace,
   dynamic ? data,
 }) async{
