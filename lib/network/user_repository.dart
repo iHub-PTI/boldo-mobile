@@ -72,9 +72,9 @@ class UserRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
-    } catch (exception, stackTrace){
-      captureMessage(
-        message: exception.toString(),
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
@@ -138,9 +138,9 @@ class UserRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
-    } catch (exception, stackTrace){
-      captureMessage(
-        message: exception.toString(),
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
@@ -185,9 +185,9 @@ class UserRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
-    } catch (exception, stackTrace){
-      captureMessage(
-        message: exception.toString(),
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
@@ -266,9 +266,9 @@ class UserRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
-    } catch (exception, stackTrace){
-      captureMessage(
-        message: exception.toString(),
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
@@ -429,6 +429,12 @@ class UserRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -461,6 +467,12 @@ class UserRepository {
       );
       throw Failure(genericError);
     } on Exception catch (exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,
@@ -510,6 +522,12 @@ class UserRepository {
         stackTrace: stackTrace,
       );
       throw Failure("No se pudo cerrar la sesion de forma adecuada");
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -549,6 +567,12 @@ class UserRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -583,6 +607,12 @@ class UserRepository {
         throw Failure(genericError);
       }
     } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,
@@ -652,6 +682,12 @@ class UserRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -697,6 +733,12 @@ class UserRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -732,6 +774,12 @@ class UserRepository {
         throw Failure(genericError);
       }
     } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,

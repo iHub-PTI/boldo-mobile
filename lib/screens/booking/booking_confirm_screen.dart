@@ -119,7 +119,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                     text: exception.message,
                     status: ActionStatus.Fail
                 );
-              } on Exception catch (exception, stackTrace) {
+              } catch (exception, stackTrace) {
                 emitSnackBar(
                     context: context,
                     text: genericError,

@@ -70,6 +70,12 @@ class PassportRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -141,6 +147,12 @@ class PassportRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -187,6 +199,12 @@ class PassportRepository {
       );
       throw Failure(genericError);
     } on Exception catch (exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,

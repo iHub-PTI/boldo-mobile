@@ -101,6 +101,12 @@ class _VideoCallState extends State<VideoCall> {
         stackTrace: stackTrace,
       );
       Navigator.of(context).pop({"tokenError": true});
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      Navigator.of(context).pop({"tokenError": true});
     }
   }
 

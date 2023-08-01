@@ -45,6 +45,12 @@ class PrescriptionRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 

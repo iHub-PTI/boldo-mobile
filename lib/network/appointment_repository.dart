@@ -47,6 +47,12 @@ class AppointmentRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -84,7 +90,7 @@ class AppointmentRepository {
 
       captureError(
         exception: exception,
-        stackTrace: exception.stackTrace,
+        stackTrace: stackTrace,
       );
       throw Failure(translateBackendMessage(exception.response));
     } on Failure catch (exception, stackTrace) {
@@ -95,6 +101,12 @@ class AppointmentRepository {
       );
       throw Failure(genericError);
     } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,
@@ -152,6 +164,12 @@ class AppointmentRepository {
       );
       throw Failure(genericError);
     } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,
@@ -217,6 +235,12 @@ class AppointmentRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -244,6 +268,12 @@ class AppointmentRepository {
       );
       throw Failure(genericError);
     } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,
@@ -309,6 +339,12 @@ class AppointmentRepository {
         throw Failure(genericError);
       }
     } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,
