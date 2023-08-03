@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:boldo/constants.dart';
-
 import '../../main.dart';
 import '../../utils/loading_helper.dart';
 
@@ -23,6 +21,8 @@ class FamilyScreen extends StatefulWidget {
 
 class _FamilyScreenState extends State<FamilyScreen> {
   bool _loading = false;
+
+  double familySpacingCards = 8;
 
   @override
   void initState() {
@@ -90,36 +90,37 @@ class _FamilyScreenState extends State<FamilyScreen> {
                       ),
                     ),
                     Expanded(
-                      child: Container(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            children: [
-                              Container(
-                                  width: MediaQuery.of(context).size.width-16,
-                                  child: Column(children: [
-                                    const FamilyRectangleCard(isDependent: false)
-                                  ])),
-                              Container(
-                                height: MediaQuery.of(context).size.height * 0.60,
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                alignment: Alignment.topLeft,
-                                child: families.length > 0
-                                    ? ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: families.length,
-                                  padding: const EdgeInsets.all(8),
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder: _buildItem,
-                                )
-                                    : const EmptyStateV2(
-                                  picture: "Helping old man 1.svg",
-                                  textBottom:
-                                  "Aún no agregaste ningún perfil para gestionar",
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Container(
+                                    child: Column(children: [
+                                      const FamilyRectangleCard(isDependent: false)
+                                    ])),
+                                const SizedBox(height: 16,),
+                                Flexible(
+                                  child: Container(
+                                    alignment: Alignment.topLeft,
+                                    child: families.length > 0
+                                        ? ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: families.length,
+                                      padding: const EdgeInsets.symmetric(vertical: 16),
+                                      scrollDirection: Axis.vertical,
+                                      itemBuilder: _buildItem,
+                                    )
+                                        : const EmptyStateV2(
+                                      picture: "Helping old man 1.svg",
+                                      textBottom:
+                                      "Aún no agregaste ningún perfil para gestionar",
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           const SizedBox(
                             height: 10,
@@ -139,7 +140,6 @@ class _FamilyScreenState extends State<FamilyScreen> {
                         ],
                       ),
                     ),
-                    ),
                   ],
                 ),
               ),
@@ -158,9 +158,12 @@ class _FamilyScreenState extends State<FamilyScreen> {
   }
 
   Widget _buildItem(BuildContext context, int index) {
-    return FamilyRectangleCard(
-      patient: families[index],
-      isDependent: true,
+    return Container(
+      padding: EdgeInsets.only(bottom: familySpacingCards),
+      child: FamilyRectangleCard(
+        patient: families[index],
+        isDependent: true,
+      ),
     );
   }
 }

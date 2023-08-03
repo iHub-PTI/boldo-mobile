@@ -345,7 +345,7 @@ ThemeData boldoTheme = ThemeData(
         ),
       ),
       padding: MaterialStateProperty.all(
-        const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       ),
       backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
         if (states.contains(MaterialState.disabled)) {
@@ -364,7 +364,7 @@ ThemeData boldoTheme = ThemeData(
     style: TextButton.styleFrom(
       foregroundColor: ConstantsV2.secondaryRegular,
       textStyle: boldoSubTextMediumStyle.copyWith(color: ConstantsV2.secondaryRegular),
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
     ),
   ),
   toggleableActiveColor: ConstantsV2.orange,
@@ -378,7 +378,7 @@ ThemeData boldoTheme = ThemeData(
   floatingActionButtonTheme: FloatingActionButtonThemeData(
     extendedTextStyle:
         const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-    extendedPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+    extendedPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
     backgroundColor: ConstantsV2.orange,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(100),
@@ -386,12 +386,16 @@ ThemeData boldoTheme = ThemeData(
   ),
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       textStyle: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: ConstantsV2.orange),
       foregroundColor: ConstantsV2.orange,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(100),
       ),
+      side: const BorderSide(
+        color: ConstantsV2.orange,
+        width: 1,
+      )
     ),
   ),
   inputDecorationTheme: InputDecorationTheme(

@@ -29,6 +29,8 @@ class _MyManagersTabState extends State<MyManagersTab> {
 
   bool _dataLoading = true;
 
+  double familySpacingCards = 8;
+
   @override
   void initState() {
     super.initState();
@@ -77,95 +79,102 @@ class _MyManagersTabState extends State<MyManagersTab> {
                   child: Container(
                     child: Column(
                       children: [
-                        Container(
-                          margin: const EdgeInsets.only(top: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              BackButtonLabel(
-                                labelText: 'Mis gestores',
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
+                        Expanded(
                           child: Column(
-                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Flexible(
-                                child: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Text(
-                                      'Las siguientes personas pueden gestionar tu'
-                                          ' perfil. Esto significa que pueden ver '
-                                          'tu historia clinica y realizar gestiones '
-                                          'como marcar y cancelar consultas en tu '
-                                          'nombre, entre otras funciónes.',
-                                    style: boldoCorpMediumTextStyle.copyWith(
-                                      color: Colors.black
+                              Container(
+                                margin: const EdgeInsets.only(top: 16),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    BackButtonLabel(
+                                      labelText: 'Mis gestores',
                                     ),
-                                  )
+                                  ],
                                 ),
                               ),
-                              Container(
-                                alignment: Alignment.topLeft,
-                                child: managers.length > 0 
-                                  ? ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: managers.length,
-                                    padding: const EdgeInsets.symmetric(vertical: 8),
-                                    scrollDirection: Axis.vertical,
-                                    itemBuilder: _buildItem,
-                                  ) 
+                              Flexible(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if(managers.length > 0)
+                                        Flexible(
+                                          child: Container(
+                                              padding: const EdgeInsets.all(16),
+                                              child: Text(
+                                                'Las siguientes personas pueden gestionar tu'
+                                                    ' perfil. Esto significa que pueden ver '
+                                                    'tu historia clinica y realizar gestiones '
+                                                    'como marcar y cancelar consultas en tu '
+                                                    'nombre, entre otras funciónes.',
+                                                style: boldoCorpMediumTextStyle.copyWith(
+                                                    color: Colors.black
+                                                ),
+                                              )
+                                          ),
+                                        ),
+                                      Container(
+                                        alignment: Alignment.topLeft,
+                                        child: managers.length > 0
+                                            ? ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: managers.length,
+                                          padding: const EdgeInsets.symmetric(vertical: 8),
+                                          scrollDirection: Axis.vertical,
+                                          itemBuilder: _buildItem,
+                                        )
+                                            : _dataLoading
+                                            ? Container()
+                                            : const EmptyStateV2(picture: "Helping old man 1.svg", textBottom: "aún no tienes ningún gestor"),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              managers.length > 0
+                                  ? Container()
                                   : _dataLoading
-                                    ? Container()
-                                    : const EmptyStateV2(picture: "Helping old man 1.svg", textBottom: "aún no tienes ningún gestor"),
+                                  ? Container()
+                                  : Container(
+                                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                                child: const Text("Aquí apareceran las personas a quienes des "
+                                    "permiso como gestor. Esto significa que van a poder "
+                                    "ver tu historia clinica y realizar gestiones como "
+                                    "marcar y cancelar consultas en tu nombre, entre otras "
+                                    "funciones"
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        managers.length > 0 
-                          ? Container()
-                          : _dataLoading 
-                            ? Container() 
-                            : Container(
-                              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                              child: const Text("Aquí apareceran las personas a quienes des "
-                                "permiso como gestor. Esto significa que van a poder "
-                                "ver tu historia clinica y realizar gestiones como "
-                                "marcar y cancelar consultas en tu nombre, entre otras "
-                                "funciones"
-                            ),
-                          ),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: (){
-                                          Navigator.push(context, MaterialPageRoute(
-                                              builder: (context) => const QRGenerator()
-                                          ));
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            const Text("vincular con QR"),
-                                            const SizedBox(width: 10,),
-                                            SvgPicture.asset(
-                                              'assets/icon/qrcode.svg',
-                                              color: ConstantsV2.lightGrey,
-                                            ),
-                                          ],
-                                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: (){
+                                        Navigator.push(context, MaterialPageRoute(
+                                            builder: (context) => const QRGenerator()
+                                        ));
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const Text("vincular con QR"),
+                                          const SizedBox(width: 10,),
+                                          SvgPicture.asset(
+                                            'assets/icon/qrcode.svg',
+                                            color: ConstantsV2.lightGrey,
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ]
-                              ),
+                                  ),
+                                ]
                             ),
                           ),
                         ),
@@ -182,7 +191,10 @@ class _MyManagersTabState extends State<MyManagersTab> {
   }
 
   Widget _buildItem(BuildContext context, int index){
-    return CaretakerRectangleCard(patient: managers[index], isDependent: true,);
+    return Container(
+      padding: EdgeInsets.only(bottom: familySpacingCards),
+      child: CaretakerRectangleCard(patient: managers[index], isDependent: true,),
+    );
   }
 
 }

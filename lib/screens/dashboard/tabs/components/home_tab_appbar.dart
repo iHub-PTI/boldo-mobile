@@ -253,7 +253,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                               children: [
                                 !expand
                                   ? Container(
-                                    height: 60,
+                                    height: 54,
                                     margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
                                     // screen rotation control
                                     width: MediaQuery.of(context).size.width*0.7,
@@ -378,6 +378,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
     double height = type == "rounded"? 54 : 85;
     double width = type == "rounded"? 54 : 120;
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       constraints: const BoxConstraints(maxHeight: 125, maxWidth: 120),
       child: GestureDetector(
         child: type == "square"? Column(
