@@ -66,6 +66,12 @@ class OrganizationRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -105,6 +111,12 @@ class OrganizationRepository {
         throw Failure(genericError);
       }
     } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,
@@ -163,6 +175,12 @@ class OrganizationRepository {
         throw Failure(genericError);
       }
     } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,
@@ -227,6 +245,12 @@ class OrganizationRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -262,6 +286,12 @@ class OrganizationRepository {
         throw Failure(genericError);
       }
     } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,
@@ -312,6 +342,12 @@ class OrganizationRepository {
         throw Failure(genericError);
       }
     } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,
@@ -370,6 +406,12 @@ class OrganizationRepository {
         throw Failure(genericError);
       }
     } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,
@@ -434,6 +476,12 @@ class OrganizationRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -482,6 +530,12 @@ class OrganizationRepository {
         throw Failure(genericError);
       }
     } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,

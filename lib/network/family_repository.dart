@@ -52,8 +52,8 @@ class FamilyRepository {
       throw Failure(genericError);
     } catch (exception, stackTrace) {
       families = List<Patient>.from([]);
-      captureMessage(
-        message: exception.toString(),
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
@@ -94,8 +94,8 @@ class FamilyRepository {
       throw Failure(genericError);
     } catch (exception, stackTrace) {
       families = List<Patient>.from([]);
-      captureMessage(
-        message: exception.toString(),
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
@@ -125,8 +125,8 @@ class FamilyRepository {
       );
       throw Failure(genericError);
     } catch (exception, stackTrace) {
-      captureMessage(
-        message: exception.toString(),
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
@@ -188,8 +188,8 @@ class FamilyRepository {
         );
         throw Failure(genericError);
       } catch (exception, stackTrace) {
-        captureMessage(
-          message: exception.toString(),
+        captureError(
+          exception: exception,
           stackTrace: stackTrace,
         );
         throw Failure(genericError);
@@ -202,6 +202,12 @@ class FamilyRepository {
       );
       throw Failure(exception.message);
     } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,
@@ -223,7 +229,7 @@ class FamilyRepository {
     } on DioError catch (exception, stackTrace){
       captureError(
         exception: exception,
-        stackTrace: exception.stackTrace,
+        stackTrace: stackTrace,
       );
       throw Failure(translateBackendMessage(exception.response));
     } on Failure catch (exception, stackTrace) {
@@ -234,6 +240,12 @@ class FamilyRepository {
       );
       throw Failure(genericError);
     } on Exception catch (exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,
@@ -279,6 +291,12 @@ class FamilyRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -318,6 +336,12 @@ class FamilyRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 
@@ -345,6 +369,12 @@ class FamilyRepository {
       );
       throw Failure(genericError);
     } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,

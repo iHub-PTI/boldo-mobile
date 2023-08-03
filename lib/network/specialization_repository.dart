@@ -1,5 +1,7 @@
+import 'package:boldo/constants.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/network/repository_helper.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:dio/dio.dart';
 
 import 'http.dart';
@@ -14,8 +16,18 @@ class SpecializationRepository{
             response.data.map((i) => Specializations.fromJson(i)));
       }
       throw Failure('No fue posible obtener las especializaciones');
-    } catch (e) {
+    } on DioError catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
       throw Failure('No fue posible obtener las especializaciones');
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
     }
   }
 

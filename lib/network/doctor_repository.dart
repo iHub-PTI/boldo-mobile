@@ -64,8 +64,8 @@ class DoctorRepository {
       );
       throw Failure(genericError);
     } catch (exception, stackTrace){
-      captureMessage(
-        message: exception.toString(),
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
@@ -161,9 +161,9 @@ class DoctorRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
-    } catch (exception, stackTrace){
-      captureMessage(
-        message: exception.toString(),
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
@@ -255,9 +255,9 @@ class DoctorRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
-    } catch (exception, stackTrace){
-      captureMessage(
-        message: exception.toString(),
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
@@ -313,9 +313,9 @@ class DoctorRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
-    } catch (exception, stackTrace){
-      captureMessage(
-        message: exception.toString(),
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
@@ -409,9 +409,9 @@ class DoctorRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
-    } catch (exception, stackTrace){
-      captureMessage(
-        message: exception.toString(),
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
@@ -503,9 +503,9 @@ class DoctorRepository {
         stackTrace: stackTrace,
       );
       throw Failure(genericError);
-    } catch (exception, stackTrace){
-      captureMessage(
-        message: exception.toString(),
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
       throw Failure(genericError);

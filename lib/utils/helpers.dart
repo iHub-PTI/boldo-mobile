@@ -64,6 +64,12 @@ String? getTypeFromContentType(String? content) {
       stackTrace: stackTrace,
     );
     return null;
+  } catch (exception, stackTrace) {
+    captureError(
+      exception: exception,
+      stackTrace: stackTrace,
+    );
+    return null;
   }
 }
 
@@ -204,6 +210,11 @@ async {
         exception: exception,
         stackTrace: stackTrace,
       );
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
     }
     return image;
   }
@@ -236,6 +247,11 @@ async {
       );
       return result;
     }on PlatformException catch (exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,

@@ -2,7 +2,7 @@ import 'package:boldo/main.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 Future <void> sendSentryError({
-  required Exception exception,
+  required dynamic exception,
   StackTrace? stackTrace,
   Map<String, String>? tags,
 }) async{
