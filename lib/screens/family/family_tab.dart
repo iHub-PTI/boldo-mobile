@@ -24,6 +24,8 @@ class FamilyScreen extends StatefulWidget {
 class _FamilyScreenState extends State<FamilyScreen> {
   bool _loading = false;
 
+  double familySpacingCards = 8;
+
   @override
   void initState() {
     BlocProvider.of<FamilyBloc>(context).add(GetFamilyList());
@@ -158,9 +160,12 @@ class _FamilyScreenState extends State<FamilyScreen> {
   }
 
   Widget _buildItem(BuildContext context, int index) {
-    return FamilyRectangleCard(
-      patient: families[index],
-      isDependent: true,
+    return Container(
+      padding: EdgeInsets.only(bottom: familySpacingCards),
+      child: FamilyRectangleCard(
+        patient: families[index],
+        isDependent: true,
+      ),
     );
   }
 }

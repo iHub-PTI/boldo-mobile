@@ -29,6 +29,8 @@ class _MyManagersTabState extends State<MyManagersTab> {
 
   bool _dataLoading = true;
 
+  double familySpacingCards = 8;
+
   @override
   void initState() {
     super.initState();
@@ -182,7 +184,10 @@ class _MyManagersTabState extends State<MyManagersTab> {
   }
 
   Widget _buildItem(BuildContext context, int index){
-    return CaretakerRectangleCard(patient: managers[index], isDependent: true,);
+    return Container(
+      padding: EdgeInsets.only(bottom: familySpacingCards),
+      child: CaretakerRectangleCard(patient: managers[index], isDependent: true,),
+    );
   }
 
 }
