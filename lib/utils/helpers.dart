@@ -2,8 +2,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:boldo/constants.dart';
-import 'package:boldo/main.dart';
 import 'package:camera/camera.dart';
+import 'package:date_format/date_format.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 import 'errors.dart';
 
@@ -503,6 +501,18 @@ void emitSnackBar({required BuildContext context, String? text, ActionStatus? st
       ),
       backgroundColor: color,
     ),
+  );
+}
+
+/// [date] must be a valid date on string mode
+/// if [date] is an invalid format, this will return an empty string
+String? formatDateToString(String date){
+  return formatDate(
+    DateTime.parse(
+        date
+    ),
+    [d, '/', mm, '/', yyyy],
+    locale: const SpanishDateLocale(),
   );
 }
 
