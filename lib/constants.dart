@@ -392,6 +392,10 @@ ThemeData boldoTheme = ThemeData(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(100),
       ),
+      side: const BorderSide(
+        color: ConstantsV2.orange,
+        width: 1,
+      )
     ),
   ),
   inputDecorationTheme: InputDecorationTheme(
