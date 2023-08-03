@@ -253,7 +253,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                               children: [
                                 !expand
                                   ? Container(
-                                    height: 60,
+                                    height: 54,
                                     margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
                                     // screen rotation control
                                     width: MediaQuery.of(context).size.width*0.7,
