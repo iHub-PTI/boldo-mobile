@@ -9,6 +9,7 @@ import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/User.dart';
 import 'package:boldo/models/upload_url_model.dart';
 import 'package:boldo/network/repository_helper.dart';
+import 'package:boldo/services/sentry/tags.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/translate_backend_message.dart';
@@ -41,6 +42,7 @@ class UserRepository {
           await prefs.setString("name", response.data['givenName']!= null ? toLowerCase(response.data['givenName']!) : '');
           await prefs.setString("lastName", response.data['familyName']!= null ? toLowerCase(response.data['familyName']!) : '');
           await prefs.setString("identifier", response.data['identifier'] ?? '');
+          setUser(patient);
         }
         return const None();
       }else if(response.statusCode == 204){
