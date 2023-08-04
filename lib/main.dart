@@ -135,9 +135,9 @@ Future<void> main() async {
   prefs = await SharedPreferences.getInstance();
   prefs.setBool(isFamily, false);
 
-  initDio(navKey: navKey, dio: dio, passport: false);
-  initDio(navKey: navKey, dio: dioPassport, passport: true);
-  initDio(navKey: navKey, dio: dioDownloader, passport: true, responseType: ResponseType.bytes);
+  initDio(navKey: navKey, dio: dio, baseUrl: environment.SERVER_ADDRESS, header: dioHeader);
+  initDio(navKey: navKey, dio: dioPassport, baseUrl: environment.SERVER_ADDRESS_PASSPORT);
+  initDio(navKey: navKey, dio: dioDownloader, baseUrl: environment.SERVER_ADDRESS_PASSPORT, responseType: ResponseType.bytes);
   const storage = FlutterSecureStorage();
   String? session;
   try {
