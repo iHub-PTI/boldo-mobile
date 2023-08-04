@@ -13,21 +13,6 @@ Future <void> sendSentryError({
       tags?.forEach((key, value) {
         scope.setTag(key, value);
       });
-      scope.setTag('access_token',  await storage.read(key: 'access_token')?? '');
-
-      if( scope.user!= null) {
-        scope.setUser(
-            scope.user?.copyWith(
-              id: prefs.getString("userId"),
-              username: prefs.getString("identifier"),
-            )
-        );
-      }else{
-        scope.setUser(SentryUser(
-          id: prefs.getString("userId"),
-          username: prefs.getString("identifier"),
-        ));
-      }
     }
   );
 }
