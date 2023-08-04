@@ -16,24 +16,25 @@ import '../main.dart';
 import '../screens/offline/offline_screen.dart';
 
 var dio = Dio();
+Map<String, dynamic> dioHeader = {
+  'content-Type': 'application/json',
+  'accept': 'application/json',
+};
 var dioPassport = Dio();
 var dioDownloader = Dio();
 void initDio(
     {required GlobalKey<NavigatorState> navKey,
-    required Dio dio,
-    required bool passport,
-    ResponseType responseType = ResponseType.json,
+      required Dio dio,
+      String? baseUrl,
+      ResponseType responseType = ResponseType.json,
+      Map<String, dynamic>? header,
     }) {
-  String baseUrl = "";
-  if (passport) {
-    baseUrl = environment.SERVER_ADDRESS_PASSPORT;
-  } else {
-    baseUrl = environment.SERVER_ADDRESS;
-        dio.options.headers['content-Type'] = 'application/json';
-        dio.options.headers['accept'] = 'application/json';
+  if(header != null) {
+    dio.options.headers = header;
   }
-
-  dio.options.baseUrl = baseUrl;
+  if(baseUrl != null) {
+    dio.options.baseUrl = baseUrl;
+  }
   dio.options.responseType = responseType;
 
   // limit time for download files
@@ -132,7 +133,7 @@ void initDio(
           options.headers["authorization"] = "bearer $accessToken";
           // New dio connection to handle new errors
           Dio _dio = Dio();
-          initDio(navKey: navKey, dio: _dio, passport: passport);
+          initDio(navKey: navKey, dio: _dio, baseUrl: baseUrl, header: header, responseType: responseType);
           //retry request
           return handle.resolve(await _dio.request(options.path,
               data: options.data, options: optionsDio, queryParameters: options.queryParameters));
@@ -153,7 +154,7 @@ void initDio(
           accessToken = result.accessToken;
           // New dio connection to handle new errors
           Dio _dio = Dio();
-          initDio(navKey: navKey, dio: _dio, passport: passport);
+          initDio(navKey: navKey, dio: _dio, baseUrl: baseUrl, header: header, responseType: responseType);
           //retry request
           return handle.resolve(await _dio.request(options.path,
               data: options.data, options: optionsDio, queryParameters: options.queryParameters));
@@ -179,10 +180,9 @@ void initDio(
 
               case 2:
                 Dio _dio = Dio();
-                initDio(navKey: navKey, dio: _dio, passport: passport);
+                initDio(navKey: navKey, dio: _dio, baseUrl: baseUrl, header: header, responseType: responseType);
                 return handle.resolve(await _dio.request(options.path,
                     data: options.data, options: optionsDio, queryParameters: options.queryParameters));
-                break;
               default:
             }
           }
@@ -247,7 +247,7 @@ void initDio(
             sendTimeout: options.sendTimeout,
             validateStatus: options.validateStatus);
         Dio _dio = Dio();
-        initDio(navKey: navKey, dio: _dio, passport: passport);
+        initDio(navKey: navKey, dio: _dio, baseUrl: baseUrl, header: header, responseType: responseType);
         return handle.resolve(await _dio.request(options.path,
             data: options.data, options: optionsDio, queryParameters: options.queryParameters));
       }
