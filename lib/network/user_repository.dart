@@ -503,6 +503,9 @@ class UserRepository {
       patient = Patient();
       families = [];
 
+      //remove User from Sentry tags
+      removeUser();
+
       // this will be failed if the user change environment
       // the context was removed in the dio handle error
       try{
