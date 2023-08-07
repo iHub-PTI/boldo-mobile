@@ -1,7 +1,7 @@
 import 'package:boldo/blocs/doctorFilter_bloc/doctorFilter_bloc.dart';
-import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,6 +38,16 @@ class DoctorFilterProvider with ChangeNotifier {
       inPersonAppointment ||
       _selectedSpecializations.isNotEmpty ||
       _selectedOrganizations.isNotEmpty || _selectedNames.isNotEmpty;
+
+  AppointmentType  getAppointmentType () {
+    if(virtualAppointment && inPersonAppointment)
+      return AppointmentType.Both;
+    if(virtualAppointment)
+      return AppointmentType.Virtual;
+    if(inPersonAppointment)
+      return AppointmentType.InPerson;
+    return AppointmentType.None;
+  }
 
   // get specializations
   List<Specializations> get getSpecializations => _selectedSpecializations;
