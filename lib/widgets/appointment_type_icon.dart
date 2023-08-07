@@ -29,6 +29,7 @@ Widget showAppointmentTypeIcon(AppointmentType? appointmentType) {
       );
       break;
     case null:
+    default:
       icon = const Icon(Icons.error);
       break;
   }
