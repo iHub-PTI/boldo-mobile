@@ -275,6 +275,22 @@ class DoctorFilterProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void removeAppointmentType({required context}) {
+    inPersonAppointment = false;
+    virtualAppointment = false;
+    // call bloc event
+    BlocProvider.of<DoctorFilterBloc>(context).add(
+        GetDoctorsPreview(
+          organizations: _selectedOrganizations,
+          specializations: _selectedSpecializations,
+          virtualAppointment: virtualAppointment,
+          inPersonAppointment: inPersonAppointment,
+          names: _selectedNames,
+        )
+    );
+    notifyListeners();
+  }
+
   void setDoctors({required List<Doctor> doctors}) {
     _doctorsSaved = doctors;
     notifyListeners();
