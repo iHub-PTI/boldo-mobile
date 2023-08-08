@@ -1,3 +1,4 @@
+import 'package:boldo/environment.dart';
 import 'package:boldo/main.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -113,8 +114,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
     });
 
     try {
-      String baseUrlKeyCloack = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
-          defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
+      String baseUrlKeyCloack = environment.KEYCLOAK_REALM_ADDRESS;
       dio.options.baseUrl = baseUrlKeyCloack;
 
       await dio.post(
@@ -169,8 +169,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
           ]
       );
     }
-    String baseUrlServer = String.fromEnvironment('SERVER_ADDRESS',
-        defaultValue: dotenv.env['SERVER_ADDRESS']!);
+    String baseUrlServer = environment.SERVER_ADDRESS;
     dio.options.baseUrl = baseUrlServer;
   }
 

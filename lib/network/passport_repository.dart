@@ -127,7 +127,13 @@ class PassportRepository {
           }
         ],
       );
-      throw Failure(e.response?.data['message']);
+      // try to show backend error message
+      try{
+        String errorMsg = e.response?.data['message'];
+        throw Failure(errorMsg);
+      }catch(exception){
+        throw Failure(genericError);
+      }
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
@@ -171,7 +177,13 @@ class PassportRepository {
           }
         ],
       );
-      throw Failure(e.response?.data['message']);
+      // try to show backend error message
+      try{
+        String errorMsg = e.response?.data['message'];
+        throw Failure(errorMsg);
+      }catch(exception){
+        throw Failure(genericError);
+      }
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,

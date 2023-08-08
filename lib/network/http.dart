@@ -1,4 +1,5 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/environment.dart';
 import 'package:boldo/network/connection_status.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
@@ -8,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../main.dart';
 import '../screens/dashboard/dashboard_screen.dart';
@@ -22,11 +25,9 @@ void initDio(
     required bool passport}) {
   String baseUrl = "";
   if (passport) {
-    baseUrl = String.fromEnvironment('SERVER_ADDRESS_PASSPORT',
-        defaultValue: dotenv.env['SERVER_ADDRESS_PASSPORT']!);
+    baseUrl = environment.SERVER_ADDRESS_PASSPORT;
   } else {
-    baseUrl = String.fromEnvironment('SERVER_ADDRESS',
-        defaultValue: dotenv.env['SERVER_ADDRESS']!);
+    baseUrl = environment.SERVER_ADDRESS;
         dio.options.headers['content-Type'] = 'application/json';
         dio.options.headers['accept'] = 'application/json';
   }
@@ -35,13 +36,26 @@ void initDio(
 
   String? accessToken;
   FlutterAppAuth appAuth = FlutterAppAuth();
+
+  ISentrySpan? transaction;
+
   //setup interceptors
   dio.interceptors.add(QueuedInterceptorsWrapper(
     onRequest: (options, handler) async {
       accessToken = (await storage.read(key: "access_token") ?? '');
       options.headers["authorization"] = "bearer $accessToken";
-
+      transaction = Sentry.startTransaction(
+        options.path,
+        'request',
+        bindToScope: true,
+      );
       return handler.next(options);
+    },
+    onResponse: (response, handler){
+      transaction?.finish(
+        status: SpanStatus.fromHttpStatusCode(response.statusCode?? -1)
+      );
+      return handler.next(response);
     },
     onError: (DioError error, handle) async {
       if (error.response?.statusCode == 403) {
@@ -64,6 +78,26 @@ void initDio(
         if (accessToken == null) {
           await storage.deleteAll();
           return handle.next(error);
+        }
+
+        //check role permission
+        try{
+          // decode access token
+          Map<String, dynamic> decodedToken = JwtDecoder.decode(accessToken?? '');
+
+          //get roles list
+          List<dynamic> roles = decodedToken['realm_access']['roles'];
+
+          //check role patient
+          if(!roles.contains('patient')){
+            //return error 401
+            return handle.next(error);
+          }
+        }catch(exception, stacktrace){
+          Sentry.captureException(
+            exception,
+            stackTrace: stacktrace,
+          );
         }
 
         RequestOptions options = error.response!.requestOptions;
@@ -91,13 +125,8 @@ void initDio(
           return handle.resolve(await _dio.request(options.path,
               data: options.data, options: optionsDio, queryParameters: options.queryParameters));
         }
-        dio.lock();
-        dio.interceptors.responseLock.lock();
-        dio.interceptors.errorLock.lock();
 
-        String keycloakRealmAddress = String.fromEnvironment(
-            'KEYCLOAK_REALM_ADDRESS',
-            defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
+        String keycloakRealmAddress = environment.KEYCLOAK_REALM_ADDRESS;
         final String? refreshToken = await storage.read(key: "refresh_token");
 
         try {
@@ -110,9 +139,6 @@ void initDio(
           await storage.write(key: "access_token", value: result!.accessToken);
           await storage.write(key: "refresh_token", value: result.refreshToken);
           accessToken = result.accessToken;
-          dio.unlock();
-          dio.interceptors.responseLock.unlock();
-          dio.interceptors.errorLock.unlock();
           // New dio connection to handle new errors
           Dio _dio = Dio();
           initDio(navKey: navKey, dio: _dio, passport: passport);
@@ -163,9 +189,6 @@ void initDio(
           }
         } catch (e) {
           print(e);
-          dio.unlock();
-          dio.interceptors.responseLock.unlock();
-          dio.interceptors.errorLock.unlock();
           await storage.deleteAll();
           accessToken = null;
 
@@ -208,6 +231,10 @@ void initDio(
         return handle.resolve(await _dio.request(options.path,
             data: options.data, options: optionsDio, queryParameters: options.queryParameters));
       }
+      transaction?.throwable = error;
+      transaction?.finish(
+        status: SpanStatus.fromHttpStatusCode(error.response?.statusCode?? -1)
+      );
       return handle.next(error);
     },
   ));
@@ -263,11 +290,10 @@ Future<void> _showInternetFailedDialog() async {
 }
 
 void dioByteInstance() async {
-  String baseUrl = String.fromEnvironment('SERVER_ADDRESS_PASSPORT',
-      defaultValue: dotenv.env['SERVER_ADDRESS_PASSPORT']!);
+  String baseUrl = environment.SERVER_ADDRESS_PASSPORT;
   dioDownloader.options.baseUrl = baseUrl;
-  dioDownloader.options.connectTimeout = 20000;
-  dioDownloader.options.receiveTimeout = 20000;
+  dioDownloader.options.connectTimeout = const Duration(milliseconds: 20000);
+  dioDownloader.options.receiveTimeout = const Duration(milliseconds: 20000);
   dioDownloader.options.responseType = ResponseType.bytes;
 
   String? accessToken;
@@ -322,14 +348,9 @@ void dioByteInstance() async {
         if ("bearer $accessToken" != options.headers["authorization"]) {
           options.headers["authorization"] = "bearer $accessToken";
           handle.resolve(
-              await dioDownloader.request(options.path, options: optionsDio));
+              await dioDownloader.request(options.path, data: options.data, options: optionsDio, queryParameters: options.queryParameters));
         }
-        dioDownloader.lock();
-        dioDownloader.interceptors.responseLock.lock();
-        dioDownloader.interceptors.errorLock.lock();
-        String keycloakRealmAddress = String.fromEnvironment(
-            'KEYCLOAK_REALM_ADDRESS',
-            defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
+        String keycloakRealmAddress = environment.KEYCLOAK_REALM_ADDRESS;
         final String? refreshToken = await storage.read(key: "refresh_token");
 
         try {
@@ -342,17 +363,10 @@ void dioByteInstance() async {
           await storage.write(key: "access_token", value: result!.accessToken);
           await storage.write(key: "refresh_token", value: result.refreshToken);
           accessToken = result.accessToken;
-          dioDownloader.unlock();
-          dioDownloader.interceptors.responseLock.unlock();
-          dioDownloader.interceptors.errorLock.unlock();
           //retry request
           return handle.resolve(
-              await dioDownloader.request(options.path, options: optionsDio));
+              await dioDownloader.request(options.path, data: options.data, options: optionsDio, queryParameters: options.queryParameters));
         } catch (e) {
-          dioDownloader.unlock();
-          dioDownloader.interceptors.responseLock.unlock();
-          dioDownloader.interceptors.errorLock.unlock();
-          await storage.deleteAll();
           accessToken = null;
 
           navKey.currentState!.pushAndRemoveUntil(

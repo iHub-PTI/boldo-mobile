@@ -90,7 +90,7 @@ const bodyMediumRegular = TextStyle(
   color: ConstantsV2.lightest,
   fontStyle: FontStyle.normal,
   fontSize: 12,
-  fontWeight: FontWeight.w400,
+  fontWeight: FontWeight.w300,
   fontFamily: 'Montserrat',
 );
 
@@ -297,6 +297,20 @@ BoxShadow shadowRegular = BoxShadow(
   offset: const Offset(0, 2),
   color: Colors.black.withOpacity(0.05),
   blurRadius: 4,
+);
+
+BoxShadow shadowHeader = const BoxShadow(
+  color: Color(0x07000000),
+  blurRadius: 10,
+  offset: Offset(0, 4),
+  spreadRadius: 0,
+);
+
+BoxShadow shadowAttachStudy = const BoxShadow(
+  color: Color(0x0C000000),
+  blurRadius: 4,
+  offset: Offset(0, 2),
+  spreadRadius: 0,
 );
 
 const BoxDecoration buttonFXSecondaryStyle = BoxDecoration(
@@ -538,6 +552,7 @@ class ConstantsV2 {
 
   static const Color systemSuccess = Color(0xff4AB648);
   static const Color systemFail = Color(0xffC53030);
+  static const Color accentRegular = Color(0xffF9D620);
 
   // home heights
   static double homeAppBarMaxHeight = 132.0;
@@ -572,3 +587,4 @@ DateTime minDateDigit = DateTime(1000, 1, 1);
 enum StatusRequestOrganization  {Approved, Pending, Rejected}
 const int timeToShowAppointmentsOnHoldInMonth = 1;
 const int timeToShowStudyOrderInMonth = 1;
+const Duration appearWidgetDuration = Duration(seconds: 1);

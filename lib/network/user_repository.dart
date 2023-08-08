@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
+import 'package:boldo/environment.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Organization.dart';
@@ -276,19 +277,23 @@ class UserRepository {
           stackTrace
         ],
       );
-
-      // check if has message error
-      if(exception.response?.data['messages'].isNotEmpty)
-        // get the first message error and search a coincidence into [errorInQrValidation]
-        // that we know locally
-        if( errorInQrValidation.containsKey(exception.response?.data['messages'].first))
-          // set the error
-          throw Failure(
-            errorInQrValidation[exception.response?.data['messages'].first]?? genericError
-          );
-
-      // throw a generic error if we not know the message error obtained from the server
-      throw Failure(genericError);
+      try {
+        // check if has message error
+        if (exception.response?.data['messages'].isNotEmpty)
+          // get the first message error and search a coincidence into [errorInQrValidation]
+          // that we know locally
+          if (errorInQrValidation.containsKey(
+              exception.response?.data['messages'].first))
+            // set the error
+            throw Failure(
+                errorInQrValidation[exception.response?.data['messages']
+                    .first] ?? genericError
+            );
+        throw Failure(genericError);
+      }catch(exception) {
+        // throw a generic error if we not know the message error obtained from the server
+        throw Failure(genericError);
+      }
     } catch (exception, stackTrace) {
       await Sentry.captureMessage(
         exception.toString(),
@@ -377,11 +382,6 @@ class UserRepository {
       }
       throw Failure(genericError);
     } on DioError catch (exception, stackTrace){
-      if(patientAndDependentAreTheSameErrors.contains(exception.response?.data['messages'].join())){
-        throw Failure("El familiar no puede ser el mismo que el principal");
-      }else if(relationshipWithDependentAlreadyExistErrors.contains(exception.response?.data['messages'].join())){
-        throw Failure("El familiar ya se encuentra asignado");
-      }
       await Sentry.captureMessage(
         exception.toString(),
         params: [
@@ -396,7 +396,18 @@ class UserRepository {
           stackTrace
         ],
       );
-      throw Failure("Error al asociar al familiar");
+      try {
+        if (patientAndDependentAreTheSameErrors.contains(
+            exception.response?.data['messages'].join())) {
+          throw Failure("El familiar no puede ser el mismo que el principal");
+        } else if (relationshipWithDependentAlreadyExistErrors.contains(
+            exception.response?.data['messages'].join())) {
+          throw Failure("El familiar ya se encuentra asignado");
+        }
+        throw Failure(genericError);
+      }catch (error){
+        throw Failure("Error al asociar al familiar");
+      }
     } catch (e) {
       throw Failure(genericError);
     }
@@ -727,7 +738,7 @@ class UserRepository {
           default:
         }
         final _finalUrl =
-            '${String.fromEnvironment('SERVER_ADDRESS', defaultValue: dotenv.env['SERVER_ADDRESS']!)}$_url';
+            '${environment.SERVER_ADDRESS}$_url';
         print(_finalUrl);
         var response = await dio.post(_finalUrl);
         print(response.statusCode);
@@ -761,18 +772,22 @@ class UserRepository {
           stackTrace
         ],
       );
-      if (errorInFrontSide.contains(exception.response?.data['messages'].join())) {
-        photoStage = UrlUploadType.frontal;
-        throw Failure("Error al validar la parte frontal");
-      } else if (errorInBackSide
-          .contains(exception.response?.data['messages'].join())) {
-        photoStage = UrlUploadType.back;
-        throw Failure("Error al validar la parte posterior");
-      } else if (errorInSelfie.contains(exception.response?.data['messages'].join())) {
-        photoStage = UrlUploadType.selfie;
-        throw Failure("Error al validar la selfie");
+      try{
+        if (errorInFrontSide.contains(exception.response?.data['messages'].join())) {
+          photoStage = UrlUploadType.frontal;
+          throw Failure("Error al validar la parte frontal");
+        } else if (errorInBackSide
+            .contains(exception.response?.data['messages'].join())) {
+          photoStage = UrlUploadType.back;
+          throw Failure("Error al validar la parte posterior");
+        } else if (errorInSelfie.contains(exception.response?.data['messages'].join())) {
+          photoStage = UrlUploadType.selfie;
+          throw Failure("Error al validar la selfie");
+        }
+        throw Failure(genericError);
+      }catch(exception){
+        throw Failure(genericError);
       }
-      throw Failure(genericError);
     } catch (exception, stackTrace) {
       await Sentry.captureMessage(
           exception.toString(),
@@ -806,8 +821,7 @@ class UserRepository {
 
   Future<None>? logout(BuildContext context) async {
     try {
-      String baseUrlKeyCloack = String.fromEnvironment('KEYCLOAK_REALM_ADDRESS',
-          defaultValue: dotenv.env['KEYCLOAK_REALM_ADDRESS']!);
+      String baseUrlKeyCloack = environment.KEYCLOAK_REALM_ADDRESS;
 
       String? refreshToken = await storage.read(key: "refresh_token");
       Map<String, dynamic> body = {

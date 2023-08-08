@@ -1,6 +1,7 @@
 import 'package:boldo/blocs/qr_bloc/qr_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,11 +28,8 @@ class QRGenerator extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text(
-                                "Mi Familia",
-                                style: boldoTitleBlackTextStyle.copyWith(
-                                    color: ConstantsV2.activeText
-                                ),
+                              BackButtonLabel(
+                                labelText: 'Mi Familia',
                               ),
                             ],
                           ),

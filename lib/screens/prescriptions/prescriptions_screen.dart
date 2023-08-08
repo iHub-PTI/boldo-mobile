@@ -8,6 +8,7 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -68,18 +69,12 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                       Expanded(
                         child: Row(
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Icon(
-                                Icons.chevron_left_rounded,
-                                size: 25,
-                                color: Constants.extraColor400,
-                              ),
-                            ),
+                            BackButtonLabel(),
                             Expanded(
-                              child: header("Mis Recetas", "Recetas"),
+                              child: header(
+                                "Mis Recetas",
+                                "Recetas",
+                              ),
                             ),
                           ],
                         ),

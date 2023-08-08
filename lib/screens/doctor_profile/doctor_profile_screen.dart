@@ -11,6 +11,7 @@ import 'package:boldo/screens/booking/booking_screen.dart';
 import 'package:boldo/screens/booking/booking_screen2.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/expandable_card/expandable_card.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -199,14 +200,12 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                             child: Align(
                                               widthFactor: 1.0,
                                               heightFactor: 1.0,
-                                              child: GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: SvgPicture.asset(
-                                                    'assets/icon/close_black.svg',
-                                                    height: 17,)
-                                              ),)
+                                              child: BackButtonLabel(
+                                                padding: null,
+                                                iconType: BackIcon.backClose,
+                                                iconSize: 24,
+                                              ),
+                                            )
                                         ),
                                       ),
                                     ],

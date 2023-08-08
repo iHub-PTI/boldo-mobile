@@ -1,5 +1,7 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/button_action_helper.dart';
+import 'package:boldo/widgets/header_page.dart';
 import 'package:boldo/widgets/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -77,22 +79,13 @@ class _VaccineFilterState extends State<VaccineFilter> {
       body: CustomWrapper(
         children: [
           // button and label for go to back
-          Padding(
-            padding: const EdgeInsets.only(left: 16, top: 16),
-            child: TextButton.icon(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: const Icon(
-                Icons.chevron_left_rounded,
-                size: 25,
-                color: Constants.extraColor400,
+          Row(
+            children: [
+              BackButtonLabel(),
+              Expanded(
+                child: header("Mis Vacunas", "Vacunas"),
               ),
-              label: Text(
-                'Pasaporte',
-                style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-              )
-            ),
+            ],
           ),
           
           const SizedBox(

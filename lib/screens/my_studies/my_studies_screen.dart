@@ -4,6 +4,7 @@ import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,8 +48,7 @@ class _MyStudiesState extends State<MyStudies> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
+        child: Container(
           child: BlocListener<MyStudiesBloc, MyStudiesState>(
             listener: (context, state) {
               if (state is Loading) {
@@ -106,87 +106,56 @@ class _MyStudiesState extends State<MyStudies> {
                           )));
               }
             },
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Icon(
-                                Icons.chevron_left_rounded,
-                                size: 25,
-                                color: Constants.extraColor400,
-                              ),
-                            ),
-                            Expanded(
-                              child: header("Mis Estudios", "Estudios"),
-                            ),
-                          ],
-                        ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          BackButtonLabel(),
+                          Expanded(
+                            child: header("Mis Estudios", "Estudios"),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     Navigator.pop(context);
-                  //   },
-                  //   child: Row(
-                  //     children: [
-                  //       const Icon(
-                  //         Icons.chevron_left_rounded,
-                  //         size: 25,
-                  //         color: Constants.extraColor400,
-                  //       ),
-                  //       Text(
-                  //         'Estudios',
-                  //         style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
-
-                  const SizedBox(height: 10),
-                  Text(
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
                     'En esta sección podés subir archivos y fotos de los resultados de tus estudios y los de tu familia.',
                     style: boldoHeadingTextStyle.copyWith(fontSize: 12),
                   ),
-                  // const SizedBox(
-                  //   height: 15,
-                  // ),
-                  // Text(
-                  //   'Mis estudios',
-                  //   style: boldoSubTextStyle.copyWith(
-                  //       color: ConstantsV2.inactiveText),
-                  // ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  _loading
-                    ? const Center(
-                      child: CircularProgressIndicator(
-                        valueColor:
-                        AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                        backgroundColor: Constants.primaryColor600,
-                      )
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                _loading
+                  ? const Center(
+                    child: CircularProgressIndicator(
+                      valueColor:
+                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                      backgroundColor: Constants.primaryColor600,
                     )
-                    : diagnosticReport.isEmpty
-                      ? const EmptyStateV2(
-                        picture: "empty_studies.svg",
-                        titleBottom: "Aún no tenés estudios",
-                        textBottom:
-                        "A medida en que uses la aplicación podrás ir viendo tus estudios",
-                      )
-                          : showDiagnosticList(),
-                    ],
-              ),
+                )
+                    : Expanded(
+                    child: SingleChildScrollView(
+                      child: diagnosticReport.isEmpty
+                        ? const EmptyStateV2(
+                          picture: "empty_studies.svg",
+                          titleBottom: "Aún no tenés estudios",
+                          textBottom:
+                          "A medida en que uses la aplicación podrás ir viendo tus estudios",
+                        )
+                        : showDiagnosticList(),
+                    )
+                )
+              ],
             ),
           ),
         ),
@@ -264,19 +233,16 @@ class _MyStudiesState extends State<MyStudies> {
   // }
 
   Widget showDiagnosticList() {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height - 200,
-      // width: 300,
-      child: ListView.separated(
-        separatorBuilder: (BuildContext context, int index) => const Divider(
-          color: Colors.transparent,
-          height: 5,
-        ),
-        itemCount: diagnosticReport.length,
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemBuilder: showStudy,
+    return ListView.separated(
+      physics: const ClampingScrollPhysics(),
+      separatorBuilder: (BuildContext context, int index) => const Divider(
+        color: Colors.transparent,
+        height: 5,
       ),
+      itemCount: diagnosticReport.length,
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemBuilder: showStudy,
     );
   }
 
@@ -344,42 +310,36 @@ class _MyStudiesState extends State<MyStudies> {
                             color: Constants.secondaryColor100,
                             child: Padding(
                               padding: const EdgeInsets.only(
-                                  left: 10.0,
-                                  top: 2.0,
-                                  bottom: 2.0,
-                                  right: 8.0),
-                              child: diagnosticReport[index].sourceID ==
+                                left: 10.0,
+                                top: 2.0,
+                                bottom: 2.0,
+                                right: 8.0,
+                              ),
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/icon/cloud.svg',
+                                  ),
+                                  const SizedBox(width: 6),
+                                  diagnosticReport[index].sourceID ==
                                       (prefs.getString('userId') ?? '')
-                                  ? Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/icon/cloud.svg',
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          "subido por usted",
-                                          style:
-                                              boldoCorpSmallTextStyle.copyWith(
-                                                  color: ConstantsV2.darkBlue),
-                                        ),
-                                      ],
-                                    )
-                                  : Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/icon/inbox-in.svg',
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          diagnosticReport[index].source != null
-                                              ? "subido por ${diagnosticReport[index].source?.split(' ')[0]}"
-                                              : 'Boldo',
-                                          style:
-                                              boldoCorpSmallTextStyle.copyWith(
-                                                  color: ConstantsV2.darkBlue),
-                                        ),
-                                      ],
-                                    ),
+                                      ?
+                                  Text(
+                                    "subido por usted",
+                                    style:
+                                        boldoCorpSmallTextStyle.copyWith(
+                                            color: ConstantsV2.darkBlue),
+                                  ):Text(
+                                    diagnosticReport[index].source != null
+                                        ? "subido por ${diagnosticReport[index].sourceType == 'Practitioner'? 'Dr/a.': '' } "
+                                        "${diagnosticReport[index].source?.split(' ')[0]}"
+                                        : 'Boldo',
+                                    style:
+                                    boldoCorpSmallTextStyle.copyWith(
+                                        color: ConstantsV2.darkBlue),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           Text(

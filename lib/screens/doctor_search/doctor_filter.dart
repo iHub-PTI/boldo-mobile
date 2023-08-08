@@ -1,14 +1,18 @@
 import 'package:boldo/blocs/doctorFilter_bloc/doctorFilter_bloc.dart';
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
+import 'package:boldo/blocs/doctors_favorite_bloc/doctors_favorite_bloc.dart';
+import 'package:boldo/blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
 import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/specializationFilter_bloc/specializationFilter_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
+import 'package:boldo/models/PagList.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,7 +39,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
 
   List<Organization> organizations = [];
   List<Organization> organizationsSelected = [];
-  List<Doctor>? doctors;
+  PagList<Doctor>? doctors;
   List<Specializations> specializations = [];
   List<Specializations> specializationsSelected = [];
   List<Specializations>? specializationsSelectedCopy;
@@ -177,19 +181,9 @@ class _DoctorFilterState extends State<DoctorFilter> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: const Icon(
-                          Icons.chevron_left_rounded,
-                          size: 25,
-                          color: Constants.extraColor400,
-                        ),
-                        label: Text(
-                          'Filtros',
-                          style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                        ),
+                      BackButtonLabel(
+                        padding: null,
+                        labelText: 'Filtros',
                       ),
                       ImageViewTypeForm(
                         height: 44,
@@ -507,6 +501,24 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                   virtualAppointment: false,
                                   inPersonAppointment: false,
                                   organizations: []));
+                              BlocProvider.of<RecentDoctorsBloc>(context).add(
+                                  GetRecentDoctors(
+                                    names: [],
+                                    specializations: [],
+                                    virtualAppointment: false,
+                                    inPersonAppointment: false,
+                                    organizations: [],
+                                  )
+                              );
+                              BlocProvider.of<FavoriteDoctorsBloc>(context)
+                                  .add(GetFavoriteDoctors(
+                                names: [],
+                                specializations: [],
+                                virtualAppointment: false,
+                                inPersonAppointment: false,
+                                organizations: [],
+                              ),
+                              );
                               // call doctor list page
                               Navigator.pop(context);
                             },
@@ -521,7 +533,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                       child: GestureDetector(
                         onTap: () {
                           // to disable the button
-                          if (doctors != null && doctors!.length > 0) {
+                          if (doctors != null && doctors!.items!.length > 0) {
                             Provider.of<DoctorFilterProvider>(context,
                                 listen: false)
                                 .filterApplied(
@@ -536,13 +548,31 @@ class _DoctorFilterState extends State<DoctorFilter> {
                             );
                             Provider.of<DoctorFilterProvider>(context,
                                 listen: false)
-                                .setDoctors(doctors: doctors!);
+                                .setDoctors(doctors: doctors!.items!);
                             BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
                                 names: names,
                                 specializations: specializationsSelected,
                                 virtualAppointment: virtualAppointment,
                                 inPersonAppointment: inPersonAppointment,
                                 organizations: organizationsSelected));
+                            BlocProvider.of<RecentDoctorsBloc>(context).add(
+                                GetRecentDoctors(
+                                names: names,
+                                specializations: specializationsSelected,
+                                virtualAppointment: virtualAppointment,
+                                inPersonAppointment: inPersonAppointment,
+                                organizations: organizationsSelected,
+                              )
+                            );
+                            BlocProvider.of<FavoriteDoctorsBloc>(context)
+                                .add(GetFavoriteDoctors(
+                              names: names,
+                              specializations: specializationsSelected,
+                              virtualAppointment: virtualAppointment,
+                              inPersonAppointment: inPersonAppointment,
+                              organizations: organizationsSelected,
+                            ),
+                            );
                             // call doctor list page
                             Navigator.pop(context);
                           }
@@ -558,7 +588,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                       context,
                                       listen: false).getFilterState
                                       ? ConstantsV2.gray
-                                      : (doctors?.length?? 0) > 0
+                                      : (doctors?.total?? 0) > 0
                                       ? ConstantsV2
                                       .buttonPrimaryColor100
                                       : ConstantsV2.gray,
@@ -590,11 +620,11 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                         color: ConstantsV2
                                             .inactiveText),
                                   )
-                                      : (doctors?.length?? 0) > 0
+                                      : (doctors?.total?? 0) > 0
                                       ? Row(
                                     children: [
                                       Text(
-                                        'ver ${(doctors?.length?? 0)} ${(doctors?.length?? 0) == 1 ? 'coincidencia' : 'coincidencias'}',
+                                        'ver ${(doctors?.total?? 0)} ${(doctors?.total?? 0) == 1 ? 'coincidencia' : 'coincidencias'}',
                                         style:
                                         boldoCorpMediumBlackTextStyle
                                             .copyWith(

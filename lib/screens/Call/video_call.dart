@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'package:boldo/constants.dart';
+import 'package:boldo/environment.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -41,8 +42,7 @@ class _VideoCallState extends State<VideoCall> {
 
   MediaStream? localStream;
 
-  String socketsAddress = String.fromEnvironment('SOCKETS_ADDRESS',
-      defaultValue: dotenv.env['SOCKETS_ADDRESS']!);
+  String socketsAddress = environment.SOCKETS_ADDRESS;
 
   @override
   void initState() {
@@ -172,6 +172,11 @@ class _VideoCallState extends State<VideoCall> {
             setState(() {
               isDisconnected = true;
             });
+            // notify again that the patient is waiting in room to repeat negotiation
+            if (socket != null) {
+              socket!.emit('patient ready',
+                  {"room": widget.appointment.id, "token": token});
+            }
             break;
           }
         case CallState.CallClosed:
@@ -203,7 +208,7 @@ class _VideoCallState extends State<VideoCall> {
     socket!.on('sdp offer', (message) async {
       print('offer');
 
-      if (peerConnection != null) peerConnection!.cleanup();
+      //if (peerConnection != null) peerConnection!.cleanup();
 
       if (localStream != null && socket != null && token != null) {
         //initialize the peer connection

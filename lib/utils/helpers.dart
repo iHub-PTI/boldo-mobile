@@ -142,7 +142,7 @@ String? dateBetween({DateTime? date, String? afterText}) {
           return 'Faltan ${year.abs()} años ${afterText?? ''}';
         }
       }else if(difference> 0 ) {
-        int month = date.month - today.month;
+        int month = date.month - today.month + (date.year - today.year)*12;
         if(difference >60){
           return 'Faltan ${month.abs()} meses ${afterText?? ''}';
         }else if(difference >31){
@@ -464,7 +464,7 @@ void emitSnackBar({required BuildContext context, String? text, ActionStatus? st
     case ActionStatus.Fail:
       message = message?? "Acción fallida";
       color = color?? ConstantsV2.systemFail;
-      icon = icon?? SvgPicture.asset('assets/icon/close_black.svg', color: const Color(0xffFBFBFB),);
+      icon = icon?? SvgPicture.asset('assets/icon/error_icon.svg', color: const Color(0xffFBFBFB),);
       break;
     default: // Without this, you see a WARNING.
       message = message?? "Acción con estado desconocido";

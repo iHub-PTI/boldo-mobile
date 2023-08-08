@@ -165,7 +165,7 @@ class _PassportDetailState extends State<PassportDetail> {
                       ),
                       // health passport
                       const Text(
-                        'Pasaporte de Salud',
+                        'Vacunaciones',
                         style: boldoTitleBlackTextStyle,
                       ),
                       // space between profile photo and boldo logo
@@ -319,7 +319,7 @@ class _PassportDetailState extends State<PassportDetail> {
                             // mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               const Text(
-                                'Pasaporte de Salud',
+                                'Vacunaciones',
                                 style: boldoTitleBlackTextStyle,
                               ),
                               const SizedBox(

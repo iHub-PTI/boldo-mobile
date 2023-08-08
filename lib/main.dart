@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:boldo/app_config.dart';
 import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/blocs/doctor_more_availability_bloc/doctor_more_availability_bloc.dart';
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
+import 'package:boldo/blocs/doctors_favorite_bloc/doctors_favorite_bloc.dart';
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
@@ -34,8 +36,13 @@ import 'package:boldo/screens/passport/user_qr_screen.dart';
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
 import 'package:boldo/screens/profile/profile_screen.dart';
 import 'package:boldo/screens/sing_in/sing_in_transition.dart';
+import 'package:boldo/screens/update/UpdateAvailable.dart';
+import 'package:boldo/services/firebase/FirebaseRemoteConfigService.dart';
+import 'package:boldo/utils/app_helper.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:camera/camera.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -46,6 +53,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sentry_dio/sentry_dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -58,10 +66,13 @@ import 'blocs/attach_study_order_bloc/attachStudyOrder_bloc.dart';
 import 'blocs/doctorFilter_bloc/doctorFilter_bloc.dart';
 import 'blocs/doctor_availability_bloc/doctor_availability_bloc.dart';
 import 'blocs/doctor_bloc/doctor_bloc.dart';
+import 'blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
 import 'blocs/passport_bloc/passportBloc.dart';
 import 'blocs/prescription_bloc/prescriptionBloc.dart';
 import 'blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
+import 'environment.dart';
+import 'firebase_options.dart';
 import 'models/MedicalRecord.dart';
 import 'models/Organization.dart';
 import 'models/Patient.dart';
@@ -93,8 +104,31 @@ late UploadUrl userSelfieUrl;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
-  // await dotenv.load(fileName: '.env');
+  await environment.init();
+  await appConfig.init();
+
+  // comment these lines if you doesn't have a firebase project
+  // init firebase config
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  // set remoteConfigService
+  final firebaseRemoteConfigService = FirebaseRemoteConfigService(
+    firebaseRemoteConfig: FirebaseRemoteConfig.instance,
+  );
+  //init remoteConfigService with firebase
+  await firebaseRemoteConfigService.init();
+
+  // listen changes of serverAddress
+  environment.streamServerAddress.listen((event) {
+    dio.options.baseUrl = event;
+  });
+
+  // listen changes of passportServerAddress
+  environment.streamPassportServerAddress.listen((event) {
+    dioPassport.options.baseUrl = event;
+    dioDownloader.options.baseUrl = event;
+  });
 
   //GestureBinding.instance!.resamplingEnabled = true;
   ByteData data = await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
@@ -116,29 +150,58 @@ Future<void> main() async {
     storage.deleteAll();
   }
 
-  if (kReleaseMode) {
-    String sentryDSN = String.fromEnvironment('SENTRY_DSN',
-        defaultValue: dotenv.env['SENTRY_DSN']!);
-    await SentryFlutter.init(
-      (options) {
-        options.environment = String.fromEnvironment('SENTRY_ENV',
-            defaultValue: dotenv.env['SENTRY_ENV']!);
-        options.dsn = sentryDSN;
-      },
-    );
-  }
+  bool hasUpdate = await checkUpdated();
+  bool hasRequiredUpdate = await checkRequiredUpdated();
 
-  SystemChrome.setPreferredOrientations([
+  await SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeRight,
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
-  ]).then((value) => runApp(MyApp(session: session ?? '')));
+  ]);
+
+  if (kReleaseMode) {
+    String? sentryDSN = environment.SENTRY_DSN;
+    await SentryFlutter.init(
+      (options) {
+        options.environment = environment.SENTRY_ENV;
+        options.dsn = sentryDSN;
+        options.tracesSampleRate = appConfig.TRACE_RATE_ERROR;
+        options.captureFailedRequests = true;
+      },
+      appRunner: ()=>{
+
+        dio.addSentry(),
+        dioDownloader.addSentry(),
+        dioPassport.addSentry(),
+
+        runApp(MyApp(
+          session: session ?? '',
+          hasUpdate: hasUpdate,
+          hasRequiredUpdate: hasRequiredUpdate,
+        ))
+      },
+    );
+  }else{
+    runApp(MyApp(
+      session: session ?? '',
+      hasUpdate: hasUpdate,
+      hasRequiredUpdate: hasRequiredUpdate,
+    ));
+  }
+
 }
 
 class MyApp extends StatefulWidget {
   final String session;
-  const MyApp({Key? key, required this.session}) : super(key: key);
+  final bool hasUpdate;
+  final bool hasRequiredUpdate;
+  const MyApp({
+    Key? key,
+    required this.session,
+    required this.hasUpdate,
+    required this.hasRequiredUpdate,
+  }) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -203,6 +266,12 @@ class _MyAppState extends State<MyApp> {
           BlocProvider<DoctorMoreAvailabilityBloc>(
             create: (BuildContext context) => DoctorMoreAvailabilityBloc(),
           ),
+          BlocProvider<RecentDoctorsBloc>(
+            create: (BuildContext context) => RecentDoctorsBloc(),
+          ),
+          BlocProvider<FavoriteDoctorsBloc>(
+            create: (BuildContext context) => FavoriteDoctorsBloc(),
+          ),
         ],
         child: MultiProvider(
           providers: [
@@ -215,7 +284,11 @@ class _MyAppState extends State<MyApp> {
                     AuthProvider(widget.session != null ? true : false)),
             ChangeNotifierProvider<DoctorFilterProvider>(create: (_) => DoctorFilterProvider())
           ],
-          child: FullApp(onboardingCompleted: widget.session),
+          child: FullApp(
+            onboardingCompleted: widget.session,
+            hasUpdate: widget.hasUpdate,
+            hasRequiredUpdate: widget.hasRequiredUpdate,
+          ),
         ));
   }
 }
@@ -224,9 +297,13 @@ class FullApp extends StatelessWidget {
   const FullApp({
     Key? key,
     required this.onboardingCompleted,
+    required this.hasUpdate,
+    required this.hasRequiredUpdate,
   }) : super(key: key);
 
   final String onboardingCompleted;
+  final bool hasUpdate;
+  final bool hasRequiredUpdate;
 
   @override
   Widget build(BuildContext context) {
@@ -245,7 +322,7 @@ class FullApp extends StatelessWidget {
       navigatorKey: navKey,
       title: 'Boldo',
       theme: boldoTheme,
-      initialRoute:
+      initialRoute: hasUpdate? '/updateAvailable' :
           onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
       routes: {
         '/onboarding': (context) => HeroScreenV2(),
@@ -266,6 +343,10 @@ class FullApp extends StatelessWidget {
         '/familyConnectTransition': (context) => FamilyConnectTransition(),
         '/familyWithoutDniRegister': (context) => WithoutDniFamilyRegister(),
         '/profileScreen': (context) => const ProfileScreen(),
+        '/updateAvailable': (context) => UpdateAvailable(
+          onboardingCompleted: onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
+          isRequiredUpdate: hasRequiredUpdate,
+        ),
       },
     );
   }
