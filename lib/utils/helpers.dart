@@ -517,4 +517,4 @@ String? formatDateToString(String date){
 }
 
 
-enum AppointmentType {InPerson, Virtual}
+enum AppointmentType {InPerson, Virtual, Both, None}

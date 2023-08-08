@@ -997,6 +997,7 @@ class FamilySelectorState extends State<FamilySelector>{
     double width = type == "rounded"? 54 : 120;
     bool disable = index == 0 ? widget.patientSelected.id == prefs.getString("userId") ? false : true : widget.patientSelected.id == families[index-1].id ? false : true;
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child:
         index == 0
             ? ImageViewTypeForm(
