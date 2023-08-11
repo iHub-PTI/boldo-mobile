@@ -592,7 +592,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'Aún no contas con membresía en este perfil',
+                  'Aún no perteneces a ningún Centro Asistencial',
                   style: boldoSubTextMediumStyle,
                 )
               )
@@ -802,7 +802,7 @@ class OrganizationPostulationCard extends StatelessWidget {
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Cancelar membresía pendiente'),
+        title: const Text('Cancelar solicitud pendiente'),
         content: Text('¿Desea cancelar la solicitud a ${organization.organizationName}?'),
         actions: <Widget>[
           TextButton(
@@ -920,7 +920,7 @@ class OrganizationSubscribedCard extends StatelessWidget {
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Cancelar membresía'),
+        title: const Text('Desvincular Centro Asistencial'),
         content: Text('¿Desea darse de baja de ${organization.name}?'),
         actions: <Widget>[
           TextButton(
