@@ -764,8 +764,11 @@ class OrganizationPostulationCard extends StatelessWidget {
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children:[
-                            Text(
-                                "${organization.organizationName}"
+                            Flexible(
+                              child: Text(
+                                "${organization.organizationName?? "Sin nombre"}",
+                                style: bodyLargeBlack,
+                              ),
                             ),
                             cancelSubscriptionOption(organization, context),
                           ]
@@ -860,8 +863,11 @@ class OrganizationSubscribedCard extends StatelessWidget {
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:[
-                          Text(
-                              "${organization.name}"
+                          Flexible(
+                            child: Text(
+                              "${organization.name}",
+                              style: bodyLargeBlack,
+                            ),
                           ),
                           moreOptions(organization, context),
                         ]
