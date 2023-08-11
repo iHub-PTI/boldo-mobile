@@ -191,9 +191,29 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
   }
 
   Widget selectOrganizationsBox(BuildContext context, int index){
-    return Card(
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      decoration: ShapeDecoration(
+        color: const Color(0xffEAEAEA),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            width: 1,
+            color: ConstantsV2.grayLightAndClear,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: const ShapeDecoration(
+          color: ConstantsV2.grayLight,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(4),
+              bottomRight: Radius.circular(4),
+            ),
+          ),
+        ),
         child: CheckboxListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(_organizationsNotSubscribed[index].name?? "Sin nombre"),
