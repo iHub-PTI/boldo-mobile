@@ -94,11 +94,11 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
               }
             },
             child: Container(
+              padding: const EdgeInsets.only(top: 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SingleChildScrollView(
-                    padding: const EdgeInsets.only(top: 16),
+                  Expanded(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,15 +156,22 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                                   ),
                                 );
                               }else{
-                                return Container(
-                                  padding: const EdgeInsets.all(16),
-                                  color: ConstantsV2.grayLightest,
-                                  child: _organizationsNotSubscribed.isNotEmpty? ListView.builder(
-                                      physics: const ClampingScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemCount: _organizationsNotSubscribed.length,
-                                      itemBuilder: selectOrganizationsBox
-                                  ): organizationAvailableEmpty(),
+                                return Flexible(
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: ConstantsV2.grayLightest,
+                                      boxShadow: [
+                                        shadowRegular,
+                                      ]
+                                    ),
+                                    child: _organizationsNotSubscribed.isNotEmpty? ListView.builder(
+                                        physics: const ClampingScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemCount: _organizationsNotSubscribed.length,
+                                        itemBuilder: selectOrganizationsBox
+                                    ): organizationAvailableEmpty(),
+                                  ),
                                 );
                               }
                             }
@@ -184,12 +191,35 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
   }
 
   Widget selectOrganizationsBox(BuildContext context, int index){
-    return Card(
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      decoration: ShapeDecoration(
+        color: const Color(0xffEAEAEA),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            width: 1,
+            color: ConstantsV2.grayLightAndClear,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: const ShapeDecoration(
+          color: ConstantsV2.grayLight,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(4),
+              bottomRight: Radius.circular(4),
+            ),
+          ),
+        ),
         child: CheckboxListTile(
           contentPadding: EdgeInsets.zero,
-          title: Text(_organizationsNotSubscribed[index].name?? "Sin nombre"),
+          title: Text(
+            _organizationsNotSubscribed[index].name?? "Sin nombre",
+            style: bodyLargeBlack,
+          ),
           value: _organizationsSelected.contains(_organizationsNotSubscribed[index]),
           activeColor: ConstantsV2.secondaryRegular,
           checkColor: Colors.white,
@@ -565,7 +595,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'Aún no contas con membresía en este perfil',
+                  'Aún no perteneces a ningún Centro Asistencial',
                   style: boldoSubTextMediumStyle,
                 )
               )
@@ -737,8 +767,11 @@ class OrganizationPostulationCard extends StatelessWidget {
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children:[
-                            Text(
-                                "${organization.organizationName}"
+                            Flexible(
+                              child: Text(
+                                "${organization.organizationName?? "Sin nombre"}",
+                                style: bodyLargeBlack,
+                              ),
                             ),
                             cancelSubscriptionOption(organization, context),
                           ]
@@ -775,7 +808,7 @@ class OrganizationPostulationCard extends StatelessWidget {
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Cancelar membresía pendiente'),
+        title: const Text('Cancelar solicitud pendiente'),
         content: Text('¿Desea cancelar la solicitud a ${organization.organizationName}?'),
         actions: <Widget>[
           TextButton(
@@ -833,8 +866,11 @@ class OrganizationSubscribedCard extends StatelessWidget {
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:[
-                          Text(
-                              "${organization.name}"
+                          Flexible(
+                            child: Text(
+                              "${organization.name}",
+                              style: bodyLargeBlack,
+                            ),
                           ),
                           moreOptions(organization, context),
                         ]
@@ -893,7 +929,7 @@ class OrganizationSubscribedCard extends StatelessWidget {
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Cancelar membresía'),
+        title: const Text('Desvincular Centro Asistencial'),
         content: Text('¿Desea darse de baja de ${organization.name}?'),
         actions: <Widget>[
           TextButton(
