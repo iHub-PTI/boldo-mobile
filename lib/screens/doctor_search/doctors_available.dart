@@ -976,92 +976,85 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
               ),
             ),
             // the second item in stack is the column of details
-            Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        child: favoriteIcon(doctor),
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: Container(
-                      child: SingleChildScrollView(
-                        physics: const ClampingScrollPhysics(),
-                        reverse: true,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.end,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      child: favoriteIcon(doctor),
+                    ),
+                  ],
+                ),
+                Flexible(
+                  child: SingleChildScrollView(
+                    physics: const ClampingScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        // name of the doctor
+                        Row(
                           children: [
-                            // name of the doctor
-                            Row(
-                              children: [
-                                // this for jump if there is overflow
-                                Flexible(
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 8.0, right: 16, bottom: 2),
-                                          child: Text(
-                                            '${doctor.gender == 'female' ? 'Dra.' : 'Dr.'} ${doctor.givenName!.split(" ")[0]} ${doctor.familyName!.split(" ")[0]}',
-                                            style: boldoCardHeadingTextStyle,
-                                          ),
-                                        ),
-                                      ],
-                                    ))
-                              ],
-                            ),
-                            // specializations
-                            doctor.specializations != null
-                                ? doctor.specializations!.length > 0
-                                ? Container(
-                              child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0,
+                            // this for jump if there is overflow
+                            Flexible(
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8.0, right: 16, bottom: 2),
+                                      child: Text(
+                                        '${doctor.gender == 'female' ? 'Dra.' : 'Dr.'} ${doctor.givenName!.split(" ")[0]} ${doctor.familyName!.split(" ")[0]}',
+                                        style: boldoCardHeadingTextStyle,
+                                      ),
                                     ),
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        for (int i = 0;
-                                        i <
-                                            doctor
-                                                .specializations!
-                                                .length;
-                                        i++)
-                                          Text(
-                                            "${doctor.specializations![i].description}${doctor.specializations!.length-1 != i  ? ", " : ""}",
-                                            style: boldoBodyLRegularTextStyle
-                                                .copyWith(
-                                              color: ConstantsV2
-                                                  .buttonPrimaryColor100,
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  )),
-                            )
-                                : Container()
-                                : Container(),
-                            Container(
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0, bottom: 4),
-                                child: _availabilityHourCard(doctor.organizations?.first),
-                              ),
-                            ),
+                                  ],
+                                ))
                           ],
                         ),
-                      ),
+                        // specializations
+                        doctor.specializations != null
+                            ? doctor.specializations!.length > 0
+                            ? Container(
+                          child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0,
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    for (int i = 0;
+                                    i <
+                                        doctor
+                                            .specializations!
+                                            .length;
+                                    i++)
+                                      Text(
+                                        "${doctor.specializations![i].description}${doctor.specializations!.length-1 != i  ? ", " : ""}",
+                                        style: boldoBodyLRegularTextStyle
+                                            .copyWith(
+                                          color: ConstantsV2
+                                              .buttonPrimaryColor100,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              )),
+                        )
+                            : Container()
+                            : Container(),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0, bottom: 4),
+                          child: _availabilityHourCard(doctor.organizations?.first),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            )
+                ),
+              ],
+            ),
           ],
         ),
       ),
