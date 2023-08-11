@@ -94,11 +94,11 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
               }
             },
             child: Container(
+              padding: const EdgeInsets.only(top: 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SingleChildScrollView(
-                    padding: const EdgeInsets.only(top: 16),
+                  Expanded(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,15 +156,22 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                                   ),
                                 );
                               }else{
-                                return Container(
-                                  padding: const EdgeInsets.all(16),
-                                  color: ConstantsV2.grayLightest,
-                                  child: _organizationsNotSubscribed.isNotEmpty? ListView.builder(
-                                      physics: const ClampingScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemCount: _organizationsNotSubscribed.length,
-                                      itemBuilder: selectOrganizationsBox
-                                  ): organizationAvailableEmpty(),
+                                return Flexible(
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: ConstantsV2.grayLightest,
+                                      boxShadow: [
+                                        shadowRegular,
+                                      ]
+                                    ),
+                                    child: _organizationsNotSubscribed.isNotEmpty? ListView.builder(
+                                        physics: const ClampingScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemCount: _organizationsNotSubscribed.length,
+                                        itemBuilder: selectOrganizationsBox
+                                    ): organizationAvailableEmpty(),
+                                  ),
                                 );
                               }
                             }
