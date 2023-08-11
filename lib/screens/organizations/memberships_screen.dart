@@ -216,7 +216,10 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
         ),
         child: CheckboxListTile(
           contentPadding: EdgeInsets.zero,
-          title: Text(_organizationsNotSubscribed[index].name?? "Sin nombre"),
+          title: Text(
+            _organizationsNotSubscribed[index].name?? "Sin nombre",
+            style: bodyLargeBlack,
+          ),
           value: _organizationsSelected.contains(_organizationsNotSubscribed[index]),
           activeColor: ConstantsV2.secondaryRegular,
           checkColor: Colors.white,
