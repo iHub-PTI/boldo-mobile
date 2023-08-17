@@ -122,12 +122,13 @@ Future<void> mainCommon({
 
   // comment these lines if you doesn't have a firebase project
   // init firebase config
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+  FirebaseApp firebaseApp = await Firebase.initializeApp(
+    name: flavor.appName,
+    options: firebaseOptions,
   );
   // set remoteConfigService
   final firebaseRemoteConfigService = FirebaseRemoteConfigService(
-    firebaseRemoteConfig: FirebaseRemoteConfig.instance,
+    firebaseRemoteConfig: FirebaseRemoteConfig.instanceFor(app: firebaseApp),
   );
   //init remoteConfigService with firebase
   await firebaseRemoteConfigService.init();
