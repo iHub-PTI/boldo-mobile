@@ -12,6 +12,7 @@ import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/logout_bloc/userLogoutBloc.dart';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/blocs/specializationFilter_bloc/specializationFilter_bloc.dart';
+import 'package:boldo/flavors.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/provider/user_provider.dart';
@@ -95,6 +96,16 @@ late UploadUrl backDniUrl;
 late UploadUrl userSelfieUrl;
 
 Future<void> main() async {
+  await mainCommon(
+    flavor: Flavors.dev,
+    firebaseOptions: DefaultFirebaseOptions.currentPlatform,
+  );
+}
+
+Future<void> mainCommon({
+  required Flavors flavor,
+  required FirebaseOptions firebaseOptions,
+}) async {
   WidgetsFlutterBinding.ensureInitialized();
 
   environment = Environment(
