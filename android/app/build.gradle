@@ -70,6 +70,23 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    flavorDimensions "default"
+    productFlavors {
+        prod {
+            dimension "default"
+            resValue "string", "app_name", "Flutter Demo Prod"
+        }
+        qa {
+            dimension "default"
+            resValue "string", "app_name", "Flutter Demo Test"
+        }
+        dev {
+            dimension "default"
+            resValue "string", "app_name", "Flutter Demo Dev"
+        }
+    }
+
 }
 
 flutter {
