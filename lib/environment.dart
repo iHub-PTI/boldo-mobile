@@ -3,10 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-Environment environment = Environment(
-    envFile: ".env",
-    envIceServerFile: ".env_ice_server_config",
-);
+late Environment environment;
 
 class Environment {
   bool _isInitialized = false;

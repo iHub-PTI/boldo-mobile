@@ -4,9 +4,7 @@ import 'package:boldo/utils/string_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-AppConfig appConfig = AppConfig(
-  envFile: ".env_app_config",
-);
+late AppConfig appConfig ;
 
 class AppConfig {
   final envFile;
