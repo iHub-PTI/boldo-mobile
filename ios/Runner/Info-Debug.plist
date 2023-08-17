@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CF Bundle Display Name</key>
+	<string>$(PRODUCT_NAME)</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Allow flutter to conect and debug the application</string>
 	<key>CFBundleDevelopmentRegion</key>
