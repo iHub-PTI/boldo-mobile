@@ -12,6 +12,9 @@ class QRGenerator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    double widthQr = 244;
+
     return Scaffold(
         body: BlocProvider(
           create: (context) => QrBloc()..add(GetQRCode()), // <-- first event,
@@ -69,7 +72,7 @@ class QRGenerator extends StatelessWidget {
                                     if(state is QrObtained){
                                       return Container(
                                         alignment: Alignment.center,
-                                        margin: const EdgeInsets.symmetric(vertical: 80, horizontal: 58),
+                                        margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                                         child: QrImage(
                                           data: state.qrCode.qrCode?? "empty code",
                                           embeddedImage: const AssetImage('assets/images/logo.png'),
@@ -81,6 +84,7 @@ class QRGenerator extends StatelessWidget {
                                             dataModuleShape: QrDataModuleShape.circle,
                                             color: Colors.black,
                                           ),
+                                          size: widthQr*(MediaQuery.of(context).size.width/360),
                                         ),
                                       );
                                     }else if(state is Failed){
