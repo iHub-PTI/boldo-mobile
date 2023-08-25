@@ -603,10 +603,11 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
             ),
           ),
           Container(
+            width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            constraints: BoxConstraints(maxHeight: 45),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Container(
                   child: organizationsWithAvailabilites[index].availabilities.isNotEmpty?
