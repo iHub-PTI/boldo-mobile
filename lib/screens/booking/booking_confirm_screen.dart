@@ -271,102 +271,100 @@ class _DoctorProfileWidget extends StatelessWidget {
         side: const BorderSide(color: Colors.white70, width: 1),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Column(
-        children: [
-          Container(
-            padding:
-                const EdgeInsets.only(top: 24, right: 19, bottom: 24, left: 19),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Container(
+        padding:
+        const EdgeInsets.only(top: 24, right: 19, bottom: 24, left: 19),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: SizedBox(
-                        height: 72,
-                        width: 72,
-                        child: doctor.photoUrl == null
-                            ? SvgPicture.asset(
-                                doctor.gender == "female"
-                                    ? 'assets/images/femaleDoctor.svg'
-                                    : 'assets/images/maleDoctor.svg',
-                                fit: BoxFit.cover)
-                            : CachedNetworkImage(
-                                fit: BoxFit.cover,
-                                imageUrl: doctor.photoUrl!,
-                                progressIndicatorBuilder:
-                                    (context, url, downloadProgress) => Padding(
-                                  padding: const EdgeInsets.all(26.0),
-                                  child: CircularProgressIndicator(
-                                    value: downloadProgress.progress,
-                                    valueColor:
-                                        const AlwaysStoppedAnimation<Color>(
-                                            Constants.primaryColor400),
-                                    backgroundColor: Constants.primaryColor600,
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
-                              ),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: SizedBox(
+                    height: 72,
+                    width: 72,
+                    child: doctor.photoUrl == null
+                        ? SvgPicture.asset(
+                        doctor.gender == "female"
+                            ? 'assets/images/femaleDoctor.svg'
+                            : 'assets/images/maleDoctor.svg',
+                        fit: BoxFit.cover)
+                        : CachedNetworkImage(
+                      fit: BoxFit.cover,
+                      imageUrl: doctor.photoUrl!,
+                      progressIndicatorBuilder:
+                          (context, url, downloadProgress) => Padding(
+                        padding: const EdgeInsets.all(26.0),
+                        child: CircularProgressIndicator(
+                          value: downloadProgress.progress,
+                          valueColor:
+                          const AlwaysStoppedAnimation<Color>(
+                              Constants.primaryColor400),
+                          backgroundColor: Constants.primaryColor600,
+                        ),
                       ),
+                      errorWidget: (context, url, error) =>
+                      const Icon(Icons.error),
                     ),
-                    const SizedBox(
-                      width: 16,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.55,
-                          child: Text(
-                              "${getDoctorPrefix(doctor.gender!)}${doctor.givenName} ${doctor.familyName}",
-                              style: boldoHeadingTextStyle.copyWith(
-                                  fontWeight: FontWeight.normal),
-                            ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        if (doctor.specializations != null &&
-                            doctor.specializations!.isNotEmpty)
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.55,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.vertical,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  for (int i = 0;
-                                      i < doctor.specializations!.length;
-                                      i++)
-                                    Text(
-                                      "${doctor.specializations![i].description}${doctor.specializations!.length-1 != i  ? ", " : ""}",
-                                      style: boldoSubTextStyle.copyWith(
-                                          color: Constants.otherColor100,fontSize: 12),
-                                    ),
-                                ],
-                              ),
-                            ),
-                          )
-                      ],
-                    )
-                  ],
+                  ),
                 ),
                 const SizedBox(
-                  height: 16,
+                  width: 16,
                 ),
-                if (doctor.biography != null)
-                  Text(doctor.biography!,
-                      style: boldoSubTextStyle.copyWith(
-                          fontSize: 16, height: 1.5)),
+                Flexible(
+                  child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(child: Text(
+                          "${getDoctorPrefix(doctor.gender!)}${doctor.givenName} ${doctor.familyName}",
+                          style: boldoHeadingTextStyle.copyWith(
+                              fontWeight: FontWeight.normal),
+                        ),)
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    if (doctor.specializations != null &&
+                        doctor.specializations!.isNotEmpty)
+                      SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            for (int i = 0;
+                            i < doctor.specializations!.length;
+                            i++)
+                              Text(
+                                "${doctor.specializations![i].description}${doctor.specializations!.length-1 != i  ? ", " : ""}",
+                                style: boldoSubTextStyle.copyWith(
+                                    color: Constants.otherColor100,fontSize: 12),
+                              ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+                ),
               ],
             ),
-          ),
-        ],
+            const SizedBox(
+              height: 16,
+            ),
+            if (doctor.biography != null)
+              Text(doctor.biography!,
+                  style: boldoSubTextStyle.copyWith(
+                      fontSize: 16, height: 1.5)),
+          ],
+        ),
       ),
     );
   }
