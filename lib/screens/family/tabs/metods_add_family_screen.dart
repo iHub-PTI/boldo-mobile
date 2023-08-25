@@ -3,6 +3,7 @@ import 'package:boldo/constants.dart';
 import 'package:boldo/screens/family/tabs/QR_scanner.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/background.dart';
+import 'package:boldo/widgets/info_card.dart';
 import 'package:boldo/widgets/service_offline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -73,157 +74,135 @@ class FamilyMetodsAdd extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: MediaQuery.of(context).size.height >= 600
-                                ? MediaQuery.of(context).size.height*0.02
-                                : 0,
-                            right: 16.0,
-                            left: 16.0
-                        ),
-                        child: Text(
-                          "Elegí uno de los siguiente métodos",
-                          style: boldoCorpMediumBlackTextStyle.copyWith(
-                              color: ConstantsV2.activeText),
-                        ),
-                      ),
-                      Card(
-                        margin:  EdgeInsets.only(
-                            top: 16,
-                            right: 16,
-                            left: 16,
-                            bottom: MediaQuery.of(context).size.height >= 600
-                                ? MediaQuery.of(context).size.height*0.01
-                                : 0
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        color: ConstantsV2.lightAndClear.withOpacity(0.80),
-                        child: InkWell(
-                          onTap: () async {
-                            // enable access
-                            if(appConfig.ACCESS_ADD_DEPENDENT_QR)
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => QRScanner()),
-                              );
-                            else
-                              serviceOfflinePopUp(context: context);
-                          },
-                          child: Container(
-                              padding: const EdgeInsets.all(8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/icon/qrcode.svg',
-                                    color: ConstantsV2.activeText,
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                      child: Text(
-                                        "Si la persona a la que querés agregar ya cuenta con un perfil en Boldo, pedile que genere una QR dentro de la app. Escaneá y listo.",
-                                        style: boldoCorpMediumTextStyle.copyWith(
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              child: Text(
+                                "Elegí uno de los siguiente métodos",
+                                style: boldoCorpMediumBlackTextStyle.copyWith(
+                                    color: ConstantsV2.activeText),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            InfoCard(
+                              child: InkWell(
+                                onTap: () async {
+                                  // enable access
+                                  if(appConfig.ACCESS_ADD_DEPENDENT_QR)
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => QRScanner()),
+                                    );
+                                  else
+                                    serviceOfflinePopUp(context: context);
+                                },
+                                child: Container(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/icon/qrcode.svg',
                                           color: ConstantsV2.activeText,
+                                          width: 24,
+                                          height: 24,
                                         ),
-                                      ))
-                                ],
-                              )),
-                        ),
-                      ),
-                      Card(
-                        margin:  EdgeInsets.only(
-                            top: 16,
-                            right: 16,
-                            left: 16,
-                            bottom: MediaQuery.of(context).size.height >= 600
-                                ? MediaQuery.of(context).size.height*0.01
-                                : 0
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        color: ConstantsV2.lightAndClear.withOpacity(0.80),
-                        child: InkWell(
-                          onTap: () {
-                            // enable access
-                            if(appConfig.ACCESS_ADD_DEPENDENT_CI)
-                              Navigator.pushNamed(context, '/familyDniRegister');
-                            else
-                              serviceOfflinePopUp(context: context);
-                          },
-                          child: Container(
-                              padding: const EdgeInsets.all(8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/icon/identification.svg',
-                                    color: ConstantsV2.activeText,
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                      child: Text(
-                                        "Si la persona aún no cuenta con un perfil, deberás realizar el proceso de verificación de identidad.",
-                                        style: boldoCorpMediumTextStyle.copyWith(
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                            child: Text(
+                                              "Si la persona a la que querés agregar ya cuenta con un perfil en Boldo, pedile que genere una QR dentro de la app. Escaneá y listo.",
+                                              style: boldoCorpMediumTextStyle.copyWith(
+                                                color: ConstantsV2.activeText,
+                                              ),
+                                            ))
+                                      ],
+                                    )),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            InfoCard(
+                              child: InkWell(
+                                onTap: () {
+                                  // enable access
+                                  if(appConfig.ACCESS_ADD_DEPENDENT_CI)
+                                    Navigator.pushNamed(context, '/familyDniRegister');
+                                  else
+                                    serviceOfflinePopUp(context: context);
+                                },
+                                child: Container(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/icon/identification.svg',
                                           color: ConstantsV2.activeText,
+                                          width: 24,
+                                          height: 24,
                                         ),
-                                      ))
-                                ],
-                              )),
-                        ),
-                      ),
-                      Card(
-                        margin:  EdgeInsets.only(
-                            top: 16,
-                            right: 16,
-                            left: 16,
-                            bottom: MediaQuery.of(context).size.height >= 600
-                                ? MediaQuery.of(context).size.height*0.01
-                                : 0
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        color: ConstantsV2.lightAndClear.withOpacity(0.80),
-                        child: InkWell(
-                          onTap: () {
-                            // enable access
-                            if(appConfig.ACCESS_ADD_DEPENDENT_WITHOUT_CI)
-                              Navigator.pushNamed(context, '/familyWithoutDniRegister');
-                            else
-                              serviceOfflinePopUp(context: context);
-                          },
-                          child: Container(
-                              padding: const EdgeInsets.all(8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/icon/form.svg',
-                                    color: ConstantsV2.activeText,
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                      child: Text(
-                                        "Si la persona aún no cuenta con un perfil y tampoco con cédula de identidad, deberás completar el siguiente formulario.",
-                                        style: boldoCorpMediumTextStyle.copyWith(
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                            child: Text(
+                                              "Si la persona aún no cuenta con un perfil, deberás realizar el proceso de verificación de identidad.",
+                                              style: boldoCorpMediumTextStyle.copyWith(
+                                                color: ConstantsV2.activeText,
+                                              ),
+                                            ))
+                                      ],
+                                    )),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            InfoCard(
+                              child: InkWell(
+                                onTap: () {
+                                  // enable access
+                                  if(appConfig.ACCESS_ADD_DEPENDENT_WITHOUT_CI)
+                                    Navigator.pushNamed(context, '/familyWithoutDniRegister');
+                                  else
+                                    serviceOfflinePopUp(context: context);
+                                },
+                                child: Container(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/icon/form.svg',
                                           color: ConstantsV2.activeText,
+                                          width: 24,
+                                          height: 24,
                                         ),
-                                      ))
-                                ],
-                              )
-                          ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                            child: Text(
+                                              "Si la persona aún no cuenta con un perfil y tampoco con cédula de identidad, deberás completar el siguiente formulario.",
+                                              style: boldoCorpMediumTextStyle.copyWith(
+                                                color: ConstantsV2.activeText,
+                                              ),
+                                            ))
+                                      ],
+                                    )
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ]
