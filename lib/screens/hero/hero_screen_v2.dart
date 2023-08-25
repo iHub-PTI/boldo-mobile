@@ -14,8 +14,8 @@ class HeroScreenV2 extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       index: 0,
       title: 'Consultas remotas',
-      description: 'Con Boldo podés agendar, gestionar y asistir a consultas'
-          'remotas. Todo desde donde estés.',
+      description: 'Con Boldo podés agendar, gestionar y asistir a consultas '
+          'remotas. Todo desde donde estés. remotas. Todo desde donde estés. remotas. Todo desde donde estés.',
       //no implemented yet
       // secondaryText: 'ver doctores disponibles',
       secondaryText: '',
