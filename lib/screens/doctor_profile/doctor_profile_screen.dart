@@ -405,18 +405,23 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         Container(
           constraints: BoxConstraints(maxHeight: 45),
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          width: double.infinity,
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
             children: [
               Container(
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: organizationsWithAvailabilites[index].availabilities.length > 3
-                        ? 3: organizationsWithAvailabilites[index].availabilities.length,
-                    itemBuilder: (BuildContext context, int indexAvailable){
-                      return _availabilityHourCard(index, indexAvailable);
-                    }
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for(
+                      int indexAvailable=0;
+                      indexAvailable<organizationsWithAvailabilites[index]
+                          .availabilities.length && indexAvailable<3;
+                      indexAvailable++)
+                        _availabilityHourCard(index, indexAvailable)
+                    ],
+                  ),
                 ),
               ),
               Container(
