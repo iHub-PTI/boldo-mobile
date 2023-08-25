@@ -147,6 +147,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                   ),
                                   Container(
                                     decoration: BoxDecoration(
+                                      color: ConstantsV2.lightest,
                                       boxShadow: [
                                         shadowRegular
                                       ],
