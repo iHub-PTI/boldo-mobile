@@ -407,7 +407,6 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
             ),),
         ),
         Container(
-          constraints: BoxConstraints(maxHeight: 45),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           width: double.infinity,
           child: Wrap(
@@ -429,6 +428,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                 ),
               ),
               Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -440,26 +440,25 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                       ),
                     );
                   },
-                  child: Card(
-                    elevation: 0.0,
-                    margin: EdgeInsets.zero,
-                    color: ConstantsV2.grayLightAndClear,
-                    shape: RoundedRectangleBorder(
+                  child:  Container(
+                    decoration: ShapeDecoration(
+                      color: ConstantsV2.grayLightAndClear,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(100),
+                      ),
                     ),
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      child: Row(
-                        children: [
-                          Text("Más opciones",
-                            style: GoogleFonts.inter().copyWith(
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("Más opciones",
+                          style: GoogleFonts.inter().copyWith(
                               color: ConstantsV2.secondaryRegular,
                               fontWeight: FontWeight.w500,
                               fontSize: 16
-                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -477,6 +476,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
     OrganizationWithAvailabilities organization = organizationsWithAvailabilites[indexOrganization];
 
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       child: GestureDetector(
         onTapDown: (TapDownDetails details) async {
           DateTime parsedAvailability = DateTime.parse(organizationsWithAvailabilites[indexOrganization].availabilities[index]?.availability?? DateTime.now().toString());
@@ -511,21 +511,23 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                 availability: parsedAvailability.toString()));
           }
         },
-        child:Card(
-          elevation: 0.0,
-          color: ConstantsV2.grayLightAndClear,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: ConstantsV2.grayLightAndClear, width: 1),
-            borderRadius: BorderRadius.circular(100),
-          ),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Row(
-              children: [
-                Text("${DateFormat('HH:mm').format(DateTime.parse(organizationsWithAvailabilites[indexOrganization].availabilities[index]?.availability?? DateTime.now().toString()))}",
-                style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.secondaryRegular),),
-              ],
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: ShapeDecoration(
+            color: ConstantsV2.grayLightAndClear,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: ConstantsV2.grayLightAndClear, width: 1),
+              borderRadius: BorderRadius.circular(100),
             ),
+            shadows: [
+              shadowHourAvailable,
+            ]
+          ),
+          child: Row(
+            children: [
+              Text("${DateFormat('HH:mm').format(DateTime.parse(organizationsWithAvailabilites[indexOrganization].availabilities[index]?.availability?? DateTime.now().toString()))}",
+                style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.secondaryRegular),),
+            ],
           ),
         ),
       )
