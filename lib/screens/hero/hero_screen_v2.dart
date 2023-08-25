@@ -120,6 +120,7 @@ class HeroScreenV2 extends StatelessWidget {
                             child: Container(
                               height: MediaQuery.of(context).size.height*.50,
                               child: ListView.builder(
+                                physics: const ClampingScrollPhysics(),
                                 shrinkWrap: true,
                                 itemCount: items.length*2+1,
                                 scrollDirection: Axis.horizontal,
@@ -369,84 +370,76 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated> with SingleTick
                         children: [
                           Align(
                             alignment: Alignment.bottomCenter,
-                            child: AnimatedOpacity(
-                              opacity: textAppear! ? 0 : 1,
-                              duration: Duration(milliseconds: textAppear! ? 200 : 200),
-                              child:
-                              Text(
-                                carouselSlide!.title,
-                                style: const TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.normal,
-                                  fontStyle: FontStyle.normal,
-                                  fontFamily: 'Montserrat',
-                                  color: Color(0xffF5F5F5),
+                            child: Visibility(
+                              visible: !(textAppear?? true),
+                              child: AnimatedOpacity(
+                                opacity: textAppear! ? 0 : 1,
+                                duration: Duration(milliseconds: textAppear! ? 200 : 200),
+                                child:
+                                Text(
+                                  carouselSlide!.title,
+                                  style: const TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.normal,
+                                    fontStyle: FontStyle.normal,
+                                    fontFamily: 'Montserrat',
+                                    color: Color(0xffF5F5F5),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                          Align(
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              child: AnimatedOpacity(
-                                opacity: textAppear! ? 1 : 0,
-                                duration: Duration(milliseconds: textAppear! ? 400 : 100),
-                                curve: Curves.easeOut,
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        carouselSlide!.title,
-                                        style: const TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.normal,
-                                          fontStyle: FontStyle.normal,
-                                          fontFamily: 'Montserrat',
-                                          color: Color(0xffF5F5F5),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            child: AnimatedOpacity(
+                              opacity: textAppear! ? 1 : 0,
+                              duration: Duration(milliseconds: textAppear! ? 400 : 100),
+                              curve: Curves.easeOut,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    carouselSlide!.title,
+                                    style: boldoCardSubtitleTextStyle,
+                                  ),
+                                  Flexible(
+                                    child: SingleChildScrollView(
+                                      physics: const BouncingScrollPhysics(),
                                       child: Text(
                                         carouselSlide!.description,
-                                        style: const TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.normal,
-                                          fontStyle: FontStyle.normal,
-                                          fontFamily: 'Montserrat',
-                                          color: Color(0xffF5F5F5),
-                                        ),
+                                        style: boldoCardSubtitleTextStyle,
                                       ),
                                     ),
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          elevation: 0.0,
-                                          primary: Constants.primaryColor500.withOpacity(0),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(6),
-                                          ),
-                                        ),
-                                        onPressed: () async {
-
-                                        },
-                                        child: Text(
-                                          carouselSlide!.secondaryText,
-                                          style: const TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.normal,
-                                            fontFamily: 'Montserrat',
-                                            color: Color(0xffF5F5F5),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                  // Expanded(
+                                  //   child: ElevatedButton(
+                                  //     style: ElevatedButton.styleFrom(
+                                  //       elevation: 0.0,
+                                  //       primary: Constants.primaryColor500.withOpacity(0),
+                                  //       shape: RoundedRectangleBorder(
+                                  //         borderRadius: BorderRadius.circular(6),
+                                  //       ),
+                                  //     ),
+                                  //     onPressed: () async {
+                                  //
+                                  //     },
+                                  //     child: Text(
+                                  //       carouselSlide!.secondaryText,
+                                  //       style: const TextStyle(
+                                  //         fontSize: 16.0,
+                                  //         fontWeight: FontWeight.normal,
+                                  //         fontStyle: FontStyle.normal,
+                                  //         fontFamily: 'Montserrat',
+                                  //         color: Color(0xffF5F5F5),
+                                  //       ),
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                ],
                               ),
                             ),
                           ),
+
                         ]
                     )
                 ),
