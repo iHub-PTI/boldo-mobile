@@ -371,14 +371,16 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                           DateTime.parse(organizationsWithAvailabilites[index].nextAvailability?.availability?? DateTime.now().toString()).month,
                           DateTime.parse(organizationsWithAvailabilites[index].nextAvailability?.availability?? DateTime.now().toString()).day) ==
                           DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day))
-                        Flexible(
+                        Expanded(
                           child: Text(
                             "Hoy - $organizationName",
-                            style: boldoScreenSubtitleTextStyle.copyWith(color: ConstantsV2.grayLightest),
+                            style: boldoScreenSubtitleTextStyle.copyWith(
+                              color: ConstantsV2.grayLightest,
+                            ),
                           ),
                         )
                       else
-                        Flexible(
+                        Expanded(
                           child: Text("Disponible el ${DateFormat('dd/MM')
                               .format(DateTime.parse(
                               organizationsWithAvailabilites[index]
@@ -389,7 +391,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                           )
                         )
                     else
-                      Flexible(
+                      Expanded(
                         child: Text(
                           "No disponible en los proximos 30 dias - $organizationName",
                         style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),
