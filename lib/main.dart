@@ -12,6 +12,7 @@ import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/logout_bloc/userLogoutBloc.dart';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/blocs/specializationFilter_bloc/specializationFilter_bloc.dart';
+import 'package:boldo/flavors.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/provider/user_provider.dart';
@@ -43,11 +44,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_dio/sentry_dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -61,7 +59,6 @@ import 'package:boldo/constants.dart';
 import 'blocs/attach_study_order_bloc/attachStudyOrder_bloc.dart';
 import 'blocs/doctorFilter_bloc/doctorFilter_bloc.dart';
 import 'blocs/doctor_availability_bloc/doctor_availability_bloc.dart';
-import 'blocs/doctor_bloc/doctor_bloc.dart';
 import 'blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
 import 'blocs/passport_bloc/passportBloc.dart';
 import 'blocs/prescription_bloc/prescriptionBloc.dart';
@@ -99,18 +96,39 @@ late UploadUrl backDniUrl;
 late UploadUrl userSelfieUrl;
 
 Future<void> main() async {
+  await mainCommon(
+    flavor: Flavors.dev,
+    firebaseOptions: DefaultFirebaseOptions.currentPlatform,
+  );
+}
+
+Future<void> mainCommon({
+  required Flavors flavor,
+  required FirebaseOptions firebaseOptions,
+}) async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  environment = Environment(
+    envFile: flavor.envFile,
+    envIceServerFile: flavor.iceServerConfigFile,
+  );
+
+  appConfig = AppConfig(
+    envFile: flavor.appConfigFile,
+  );
+
   await environment.init();
   await appConfig.init();
 
   // comment these lines if you doesn't have a firebase project
   // init firebase config
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+  FirebaseApp firebaseApp = await Firebase.initializeApp(
+    name: flavor.appName,
+    options: firebaseOptions,
   );
   // set remoteConfigService
   final firebaseRemoteConfigService = FirebaseRemoteConfigService(
-    firebaseRemoteConfig: FirebaseRemoteConfig.instance,
+    firebaseRemoteConfig: FirebaseRemoteConfig.instanceFor(app: firebaseApp),
   );
   //init remoteConfigService with firebase
   await firebaseRemoteConfigService.init();

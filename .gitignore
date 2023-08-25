@@ -2,6 +2,11 @@
 android/app/release
 ios/build
 
+#Firebase keys
+/lib/firebase_options*.dart
+/ios/firebase_app_id_file*.json
+/ios/Runner/**/GoogleService-Info.plist
+/android/app/**/google-services.json
 
 # Miscellaneous
 *.class

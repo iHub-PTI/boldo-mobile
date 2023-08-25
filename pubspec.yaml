@@ -151,8 +151,17 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - .env
+    - .env-dev
+    - .env-qa
+    - .env-prod
     - .env_ice_server_config
+    - .env_ice_server_config-dev
+    - .env_ice_server_config-qa
+    - .env_ice_server_config-prod
     - .env_app_config
+    - .env_app_config-dev
+    - .env_app_config-qa
+    - .env_app_config-prod
     - assets/
     - assets/icon/
     - assets/images/
