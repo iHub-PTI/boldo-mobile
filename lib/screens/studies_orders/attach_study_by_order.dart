@@ -550,9 +550,11 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                     },
                   child: Row(
                     children: [
-                      Text(
-                        'agregar un comentario',
-                        style: boldoSubTextMediumStyle.copyWith(decoration: TextDecoration.underline,),
+                      Flexible(
+                        child: Text(
+                          'agregar un comentario',
+                          style: boldoSubTextMediumStyle.copyWith(decoration: TextDecoration.underline,),
+                        ),
                       ),
                       const SizedBox(
                         width: 4,
@@ -942,7 +944,8 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
+                    Flexible(
+                      child: Container(
                         child: Row(
                           children: [
                             SvgPicture.asset(p.extension(file.path).toLowerCase() == '.pdf'
@@ -953,8 +956,8 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                             const SizedBox(
                               width: 8,
                             ),
-                            Container(
-                                width: MediaQuery.of(context).size.width * 0.7,
+                            Flexible(
+                              child: Container(
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -971,9 +974,11 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                                     SvgPicture.asset('assets/icon/chevron-right.svg'),
                                   ],
                                 )
+                              ),
                             ),
                           ],
-                        )
+                        ),
+                      ),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -1111,12 +1116,15 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                       color: ConstantsV2.activeText, shape: BoxShape.circle),
                 ),
               ),
-              Text(
-                studiesCodes.display?? '',
-                style: const TextStyle(
+              Flexible(child:
+                Text(
+                  studiesCodes.display?? '',
+                  style: const TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 14,
-                    color: ConstantsV2.inactiveText),
+                    color: ConstantsV2.inactiveText,
+                  ),
+                ),
               ),
             ],
           ),
@@ -1124,11 +1132,13 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  studiesCodes.note?? '',
-                  style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText)
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    studiesCodes.note?? '',
+                    style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText)
+                  ),
                 ),
               ),
             ],
