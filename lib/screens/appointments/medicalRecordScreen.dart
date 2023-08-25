@@ -151,30 +151,21 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                         shadowRegular
                                       ],
                                     ),
-                                    child: Card(
-                                      elevation: 0,
-                                      margin: const EdgeInsets.symmetric(vertical: 4),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          // doctor and patient profile
-                                          Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                            children: [
-                                              // doctor
-                                              ProfileDescription(
-                                                  doctor: widget.appointment.doctor,
-                                                  type: "doctor"),
-                                              const SizedBox(height: 20),
-                                              // patient
-                                              ProfileDescription(
-                                                  patient: patient, type: "patient"),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                      children: [
+                                        // doctor
+                                        ProfileDescription(
+                                          doctor: widget.appointment.doctor,
+                                          type: "doctor",
+                                        ),
+                                        const SizedBox(height: 20),
+                                        // patient
+                                        ProfileDescription(
+                                          patient: patient, type: "patient",
+                                        ),
+                                      ],
                                     ),
                                   ),
                                   const SizedBox(
