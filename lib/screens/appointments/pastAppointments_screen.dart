@@ -213,8 +213,10 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                                 ),
                                 Row(
                                   children: [
-                                    const Text(
-                                      'Anteriores',
+                                    const Flexible(
+                                      child: Text(
+                                        'Anteriores',
+                                      ),
                                     ),
                                     if(_selectedIndex == 1)
                                       Padding(
