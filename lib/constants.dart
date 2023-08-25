@@ -478,8 +478,8 @@ class ConstantsV2 {
   static const Color secondaryCardHeroColor100 = Color(0xffFDA57D);
 
   // stops hero cards background colors
-  static const double secondaryCardStop100 = 0.82;
-  static const double secondaryCardStop200 = 1.46;
+  static const double secondaryCardStop100 = 0.84;
+  static const double secondaryCardStop200 = 1;
 
   // Text color
   static const Color primaryColor = Color(0xffF5F5F5);
