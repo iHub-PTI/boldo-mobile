@@ -1,4 +1,5 @@
 import 'package:boldo/screens/pre_register_notify/pre_register_screen.dart';
+import 'package:boldo/widgets/background.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
@@ -242,7 +243,7 @@ class CustomCardAnimated extends StatefulWidget {
   State<CustomCardAnimated> createState() => _CustomCardAnimatedState(carouselSlide: carouselSlide);
 }
 
-class _CustomCardAnimatedState extends State<CustomCardAnimated>{
+class _CustomCardAnimatedState extends State<CustomCardAnimated> with SingleTickerProviderStateMixin {
   // colors and stops that define a visual state of the card
   Color? color100;
   Color? color200;
@@ -260,11 +261,18 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated>{
     required this.carouselSlide
   });
 
+  // controller to animate background
+  late AnimationController _colorController;
+
   @override
   void initState() {
     animate = false;
     textAppear = false;
     showInfoPlayer(animate!);
+    _colorController = AnimationController(
+        duration: const Duration(milliseconds: 500),
+        vsync: this
+    );
     super.initState();
   }
 
@@ -283,7 +291,7 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated>{
           });
         });
       } else {
-        color100 = ConstantsV2.primaryCardHeroColor100.withOpacity(0.81);
+        color100 = ConstantsV2.primaryCardHeroColor100.withOpacity(0.97);
         color200 = ConstantsV2.primaryCardHeroColor100.withOpacity(0);
         stopColor100 = ConstantsV2.primaryCardStop100;
         stopColor200 = ConstantsV2.primaryCardStop200;
@@ -296,22 +304,27 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated>{
   Widget build(BuildContext context) {
     return Card(
       clipBehavior: Clip.antiAlias,
-      elevation: 6,
+      elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(24),
       ),
       child: InkWell(
         onTap: () {
-          if(!(animate!))
+          if(!(animate!)) {
+            //init animation
+            _colorController.forward();
             setState(() {
               animate = true;
               showInfoPlayer(animate!);
             });
-          else
+          }else {
+            //init animation
+            _colorController.reverse();
             setState(() {
               animate = false;
               showInfoPlayer(animate!);
             });
+          }
         },
         child: AspectRatio(
           aspectRatio: 3/5,
@@ -329,21 +342,24 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated>{
                 ),
 
                 // Container that define the linear gradient background
-                Container(
-                  decoration: BoxDecoration( // Back ground linear gradient
-                    gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: <Color> [
-                          color100!,
-                          color200!,
-                        ],
-                        stops: <double> [
-                          stopColor100!,
-                          stopColor200!,
-                        ]
-                    ),
-                  ),
+                BackgroundLinearGradientTransition(
+                  initialColors: [
+                    ConstantsV2.secondaryCardHeroColor100.withOpacity(0.97),
+                    ConstantsV2.secondaryCardHeroColor100.withOpacity(0),
+                  ],
+                  finalColors: [
+                    ConstantsV2.primaryCardHeroColor100.withOpacity(0.97),
+                    ConstantsV2.primaryCardHeroColor100.withOpacity(0.5),
+                  ],
+                  initialStops: [
+                    ConstantsV2.primaryCardStop100,
+                    ConstantsV2.primaryCardStop200,
+                  ],
+                  finalStops: [
+                    ConstantsV2.secondaryCardStop100,
+                    ConstantsV2.secondaryCardStop200,
+                  ],
+                  animationController: _colorController,
                 ),
 
                 // Container used for group text info
