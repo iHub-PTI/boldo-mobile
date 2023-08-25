@@ -314,6 +314,13 @@ BoxShadow shadowAttachStudy = const BoxShadow(
   spreadRadius: 0,
 );
 
+BoxShadow shadowHourAvailable = BoxShadow(
+  color: ConstantsV2.primaryColor300.withOpacity(.1),
+  blurRadius: 4,
+  offset: const Offset(0, 2),
+  spreadRadius: 0,
+);
+
 const BoxDecoration buttonFXSecondaryStyle = BoxDecoration(
   boxShadow: [
     BoxShadow(
