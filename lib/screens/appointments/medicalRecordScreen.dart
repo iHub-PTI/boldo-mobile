@@ -192,18 +192,20 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                                 width: 24,
                                               ),
                                               const SizedBox(width: 16,),
-                                              Text(
-                                                  formatDate(
-                                                    DateTime.parse(widget.appointment.start?? DateTime.now().toString())
-                                                        .toLocal(),
-                                                    [ DD, ' ', d, ' de ', MM, ' del ', yyyy, ' a las ', HH, ':', nn, 'hs'],
-                                                    locale: const SpanishDateLocale(),
-                                                  ),
-                                                  style: boldoCardHeadingTextStyle.copyWith(
-                                                      color: ConstantsV2.activeText,
-                                                      fontSize: 14
-                                                  )
-                                              )
+                                              Flexible(
+                                                child: Text(
+                                                    formatDate(
+                                                      DateTime.parse(widget.appointment.start?? DateTime.now().toString())
+                                                          .toLocal(),
+                                                      [ DD, ' ', d, ' de ', MM, ' del ', yyyy, ' a las ', HH, ':', nn, 'hs'],
+                                                      locale: const SpanishDateLocale(),
+                                                    ),
+                                                    style: boldoCardHeadingTextStyle.copyWith(
+                                                        color: ConstantsV2.activeText,
+                                                        fontSize: 14
+                                                    )
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -238,13 +240,15 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                                 width: 24,
                                               ),
                                               const SizedBox(width: 16,),
-                                              Text(
+                                              Flexible(
+                                                child: Text(
                                                   widget.appointment.organization?.name?? 'Ubicacion desconocida',
                                                   style: boldoCardHeadingTextStyle.copyWith(
                                                       color: ConstantsV2.activeText,
                                                       fontSize: 14
-                                                  )
-                                              )
+                                                  ),
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -260,13 +264,15 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                                 width: 24,
                                               ),
                                               const SizedBox(width: 16,),
-                                              Text(
+                                              Flexible(
+                                                child: Text(
                                                   appointmentType == AppointmentType.InPerson? 'Modalidad presencial' : 'Modalidad virtual',
                                                   style: boldoCardHeadingTextStyle.copyWith(
                                                       color: ConstantsV2.activeText,
                                                       fontSize: 14
-                                                  )
-                                              )
+                                                  ),
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
