@@ -118,6 +118,7 @@ class _MyManagersTabState extends State<MyManagersTab> {
                                         alignment: Alignment.topLeft,
                                         child: managers.length > 0
                                             ? ListView.builder(
+                                          physics: const ClampingScrollPhysics(),
                                           shrinkWrap: true,
                                           itemCount: managers.length,
                                           padding: const EdgeInsets.symmetric(vertical: 8),

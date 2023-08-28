@@ -314,6 +314,13 @@ BoxShadow shadowAttachStudy = const BoxShadow(
   spreadRadius: 0,
 );
 
+BoxShadow shadowHourAvailable = BoxShadow(
+  color: ConstantsV2.primaryColor300.withOpacity(.1),
+  blurRadius: 4,
+  offset: const Offset(0, 2),
+  spreadRadius: 0,
+);
+
 const BoxDecoration buttonFXSecondaryStyle = BoxDecoration(
   boxShadow: [
     BoxShadow(
@@ -471,8 +478,8 @@ class ConstantsV2 {
   static const Color secondaryCardHeroColor100 = Color(0xffFDA57D);
 
   // stops hero cards background colors
-  static const double secondaryCardStop100 = 0.82;
-  static const double secondaryCardStop200 = 1.46;
+  static const double secondaryCardStop100 = 0.84;
+  static const double secondaryCardStop200 = 1;
 
   // Text color
   static const Color primaryColor = Color(0xffF5F5F5);

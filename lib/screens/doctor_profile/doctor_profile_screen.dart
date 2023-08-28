@@ -210,121 +210,125 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                 )
                               ],
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                BlocBuilder<last_appointment_bloc.LastAppointmentBloc, last_appointment_bloc.LastAppointmentState>(
-                                  builder: (context, state){
-                                    return AnimatedOpacity(
-                                      duration: const Duration(milliseconds: 1000),
-                                      opacity: state is last_appointment_bloc.LastAppointmentLoadedState && lastAppointment != null? 1.0: 0.0, // 1 is to get visible
-                                      child: Visibility(
-                                        visible: lastAppointment != null,
-                                        child: Card(
-                                          color: ConstantsV2.grayLightAndClear,
-                                          shape: RoundedRectangleBorder(
-                                            side: const BorderSide(color: ConstantsV2.grayLightest, width: 1),
-                                            borderRadius: BorderRadius.circular(16),
-                                          ),
-                                          child: Container(
-                                            padding: const EdgeInsets.all(8),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                ImageViewTypeForm(
-                                                  height: 44,
-                                                  width: 44,
-                                                  border: true,
-                                                  borderColor: ConstantsV2.secondaryRegular,
-                                                  gender: lastAppointment?.patient?.gender,
-                                                  url: lastAppointment?.patient?.photoUrl,
+                            Flexible(
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    BlocBuilder<last_appointment_bloc.LastAppointmentBloc, last_appointment_bloc.LastAppointmentState>(
+                                        builder: (context, state){
+                                          return AnimatedOpacity(
+                                            duration: const Duration(milliseconds: 1000),
+                                            opacity: state is last_appointment_bloc.LastAppointmentLoadedState && lastAppointment != null? 1.0: 0.0, // 1 is to get visible
+                                            child: Visibility(
+                                              visible: lastAppointment != null,
+                                              child: Card(
+                                                color: ConstantsV2.grayLightAndClear,
+                                                shape: RoundedRectangleBorder(
+                                                  side: const BorderSide(color: ConstantsV2.grayLightest, width: 1),
+                                                  borderRadius: BorderRadius.circular(16),
                                                 ),
-                                                if(lastAppointment?.patient?.id == prefs.getString("userId"))
-                                                  Text(
-                                                    "consultaste",
-                                                    style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText),
-                                                  )
-                                                else
-                                                  RichText(
-                                                    text: TextSpan(
-                                                        children: [
-                                                          TextSpan(
-                                                              text: lastAppointment?.patient?.givenName?.split(" ")[0]?? "Desconocido",
-                                                              style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText)
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(8),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      ImageViewTypeForm(
+                                                        height: 44,
+                                                        width: 44,
+                                                        border: true,
+                                                        borderColor: ConstantsV2.secondaryRegular,
+                                                        gender: lastAppointment?.patient?.gender,
+                                                        url: lastAppointment?.patient?.photoUrl,
+                                                      ),
+                                                      if(lastAppointment?.patient?.id == prefs.getString("userId"))
+                                                        Text(
+                                                          "consultaste",
+                                                          style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText),
+                                                        )
+                                                      else
+                                                        RichText(
+                                                          text: TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                    text: lastAppointment?.patient?.givenName?.split(" ")[0]?? "Desconocido",
+                                                                    style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText)
+                                                                ),
+                                                                TextSpan(
+                                                                    text: " consultó",
+                                                                    style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText)
+                                                                ),
+                                                              ]
                                                           ),
-                                                          TextSpan(
-                                                              text: " consultó",
-                                                              style: bodyLargeBlack.copyWith(color: ConstantsV2.activeText)
-                                                          ),
-                                                        ]
-                                                    ),
+                                                        ),
+                                                      Text(
+                                                          passedDays(daysBetween(DateTime.parse(
+                                                              lastAppointment?.start?? DateTime.now()
+                                                                  .toString()),
+                                                              DateTime.now()
+                                                          )),
+                                                          style: bodyP.copyWith(color: ConstantsV2.activeText)
+                                                      )
+                                                    ],
                                                   ),
-                                                Text(
-                                                    passedDays(daysBetween(DateTime.parse(
-                                                        lastAppointment?.start?? DateTime.now()
-                                                            .toString()),
-                                                        DateTime.now()
-                                                    )),
-                                                    style: bodyP.copyWith(color: ConstantsV2.activeText)
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                ),
-                                if(widget.showAvailability)
-                                  BlocBuilder<doctor_bloc.DoctorBloc, doctor_bloc.DoctorState>(builder: (context, state) {
-                                    if(state is doctor_bloc.AvailabilitiesObtained){
-                                      if(organizationsWithAvailabilites.isNotEmpty)
-                                        return ClipRect(
-                                          child: Container(
-                                            padding: const EdgeInsets.only(bottom: 16),
-                                            decoration: BoxDecoration(
-                                              borderRadius: const BorderRadius.only(
-                                                topLeft: Radius.circular(15.0),
-                                                topRight: Radius.circular(15.0),
-                                              ),
-                                              gradient: LinearGradient(
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomCenter,
-                                                colors: <Color> [
-                                                  Colors.black.withOpacity(0),
-                                                  const Color(0xA7A7A7).withOpacity(1),
-                                                ],
-                                              ),
-                                            ),
-                                            child: BackdropFilter(
-                                                blendMode: BlendMode.src,
-                                                filter: ImageFilter.blur(
-                                                    sigmaX: 5,
-                                                    sigmaY: 5
                                                 ),
-                                                child: organizationsWithAvailabilites.isNotEmpty ?
-                                                _organizationAvailabilities(context, 0) :
-                                                null
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      else
-                                        return familyListWithAccess();
-                                    }else if(state is doctor_bloc.Loading){
-                                      return Container(
-                                          child: const Center(
-                                              child: CircularProgressIndicator(
-                                                valueColor:
-                                                AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                                                backgroundColor: Constants.primaryColor600,
+                                          );
+                                        }
+                                    ),
+                                    if(widget.showAvailability)
+                                      BlocBuilder<doctor_bloc.DoctorBloc, doctor_bloc.DoctorState>(builder: (context, state) {
+                                        if(state is doctor_bloc.AvailabilitiesObtained){
+                                          if(organizationsWithAvailabilites.isNotEmpty)
+                                            return ClipRect(
+                                              child: Container(
+                                                padding: const EdgeInsets.only(bottom: 16),
+                                                decoration: BoxDecoration(
+                                                  borderRadius: const BorderRadius.only(
+                                                    topLeft: Radius.circular(15.0),
+                                                    topRight: Radius.circular(15.0),
+                                                  ),
+                                                  gradient: LinearGradient(
+                                                    begin: Alignment.topLeft,
+                                                    end: Alignment.bottomCenter,
+                                                    colors: <Color> [
+                                                      Colors.black.withOpacity(0),
+                                                      const Color(0xA7A7A7).withOpacity(1),
+                                                    ],
+                                                  ),
+                                                ),
+                                                child: BackdropFilter(
+                                                    blendMode: BlendMode.src,
+                                                    filter: ImageFilter.blur(
+                                                        sigmaX: 5,
+                                                        sigmaY: 5
+                                                    ),
+                                                    child: organizationsWithAvailabilites.isNotEmpty ?
+                                                    _organizationAvailabilities(context, 0) :
+                                                    null
+                                                ),
+                                              ),
+                                            );
+                                          else
+                                            return familyListWithAccess();
+                                        }else if(state is doctor_bloc.Loading){
+                                          return Container(
+                                              child: const Center(
+                                                  child: CircularProgressIndicator(
+                                                    valueColor:
+                                                    AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                                                    backgroundColor: Constants.primaryColor600,
+                                                  )
                                               )
-                                          )
-                                      );
-                                    }else{
-                                      return Container();
-                                    }
-                                  }),
-                              ],
+                                          );
+                                        }else{
+                                          return Container();
+                                        }
+                                      }),
+                                  ],
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -371,14 +375,16 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                           DateTime.parse(organizationsWithAvailabilites[index].nextAvailability?.availability?? DateTime.now().toString()).month,
                           DateTime.parse(organizationsWithAvailabilites[index].nextAvailability?.availability?? DateTime.now().toString()).day) ==
                           DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day))
-                        Flexible(
+                        Expanded(
                           child: Text(
                             "Hoy - $organizationName",
-                            style: boldoScreenSubtitleTextStyle.copyWith(color: ConstantsV2.grayLightest),
+                            style: boldoScreenSubtitleTextStyle.copyWith(
+                              color: ConstantsV2.grayLightest,
+                            ),
                           ),
                         )
                       else
-                        Flexible(
+                        Expanded(
                           child: Text("Disponible el ${DateFormat('dd/MM')
                               .format(DateTime.parse(
                               organizationsWithAvailabilites[index]
@@ -389,7 +395,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                           )
                         )
                     else
-                      Flexible(
+                      Expanded(
                         child: Text(
                           "No disponible en los proximos 30 dias - $organizationName",
                         style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.activeText),
@@ -401,23 +407,28 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
             ),),
         ),
         Container(
-          constraints: BoxConstraints(maxHeight: 45),
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          width: double.infinity,
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
             children: [
               Container(
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: organizationsWithAvailabilites[index].availabilities.length > 3
-                        ? 3: organizationsWithAvailabilites[index].availabilities.length,
-                    itemBuilder: (BuildContext context, int indexAvailable){
-                      return _availabilityHourCard(index, indexAvailable);
-                    }
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for(
+                      int indexAvailable=0;
+                      indexAvailable<organizationsWithAvailabilites[index]
+                          .availabilities.length && indexAvailable<3;
+                      indexAvailable++)
+                        _availabilityHourCard(index, indexAvailable)
+                    ],
+                  ),
                 ),
               ),
               Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -429,26 +440,25 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                       ),
                     );
                   },
-                  child: Card(
-                    elevation: 0.0,
-                    margin: EdgeInsets.zero,
-                    color: ConstantsV2.grayLightAndClear,
-                    shape: RoundedRectangleBorder(
+                  child:  Container(
+                    decoration: ShapeDecoration(
+                      color: ConstantsV2.grayLightAndClear,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(100),
+                      ),
                     ),
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      child: Row(
-                        children: [
-                          Text("Más opciones",
-                            style: GoogleFonts.inter().copyWith(
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("Más opciones",
+                          style: GoogleFonts.inter().copyWith(
                               color: ConstantsV2.secondaryRegular,
                               fontWeight: FontWeight.w500,
                               fontSize: 16
-                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -466,6 +476,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
     OrganizationWithAvailabilities organization = organizationsWithAvailabilites[indexOrganization];
 
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       child: GestureDetector(
         onTapDown: (TapDownDetails details) async {
           DateTime parsedAvailability = DateTime.parse(organizationsWithAvailabilites[indexOrganization].availabilities[index]?.availability?? DateTime.now().toString());
@@ -500,21 +511,23 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                 availability: parsedAvailability.toString()));
           }
         },
-        child:Card(
-          elevation: 0.0,
-          color: ConstantsV2.grayLightAndClear,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: ConstantsV2.grayLightAndClear, width: 1),
-            borderRadius: BorderRadius.circular(100),
-          ),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Row(
-              children: [
-                Text("${DateFormat('HH:mm').format(DateTime.parse(organizationsWithAvailabilites[indexOrganization].availabilities[index]?.availability?? DateTime.now().toString()))}",
-                style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.secondaryRegular),),
-              ],
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: ShapeDecoration(
+            color: ConstantsV2.grayLightAndClear,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: ConstantsV2.grayLightAndClear, width: 1),
+              borderRadius: BorderRadius.circular(100),
             ),
+            shadows: [
+              shadowHourAvailable,
+            ]
+          ),
+          child: Row(
+            children: [
+              Text("${DateFormat('HH:mm').format(DateTime.parse(organizationsWithAvailabilites[indexOrganization].availabilities[index]?.availability?? DateTime.now().toString()))}",
+                style: boldoCorpMediumBlackTextStyle.copyWith(color: ConstantsV2.secondaryRegular),),
+            ],
           ),
         ),
       )

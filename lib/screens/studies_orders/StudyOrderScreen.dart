@@ -143,7 +143,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                               children: [
                                 // doctor and patient profile
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     // doctor
                                     ProfileDescription(

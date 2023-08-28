@@ -133,7 +133,7 @@ class _AttachFilesState extends State<AttachFiles> {
                             child: Center(
                               child: Container(
                                 width: 216,
-                                child: Column(
+                                child: ListView(
                                   children: [
                                     ElevatedButton(
                                         style: ElevatedButton.styleFrom(
