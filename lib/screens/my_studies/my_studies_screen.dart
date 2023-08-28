@@ -301,46 +301,54 @@ class _MyStudiesState extends State<MyStudies> {
                       Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            margin: EdgeInsets.zero,
-                            color: Constants.secondaryColor100,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                left: 10.0,
-                                top: 2.0,
-                                bottom: 2.0,
-                                right: 8.0,
+                          Flexible(
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    'assets/icon/cloud.svg',
-                                  ),
-                                  const SizedBox(width: 6),
-                                  diagnosticReport[index].sourceID ==
-                                      (prefs.getString('userId') ?? '')
-                                      ?
-                                  Text(
-                                    "subido por usted",
-                                    style:
+                              margin: EdgeInsets.zero,
+                              color: Constants.secondaryColor100,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 1,
+                                  horizontal: 8
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icon/cloud.svg',
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Flexible(
+                                      child: diagnosticReport[index].sourceID ==
+                                          (prefs.getString('userId') ?? '')
+                                          ?
+                                      Text(
+                                        "subido por usted",
+                                        style:
                                         boldoCorpSmallTextStyle.copyWith(
                                             color: ConstantsV2.darkBlue),
-                                  ):Text(
-                                    diagnosticReport[index].source != null
-                                        ? "subido por ${diagnosticReport[index].sourceType == 'Practitioner'? 'Dr/a.': '' } "
-                                        "${diagnosticReport[index].source?.split(' ')[0]}"
-                                        : 'Boldo',
-                                    style:
-                                    boldoCorpSmallTextStyle.copyWith(
-                                        color: ConstantsV2.darkBlue),
-                                  ),
-                                ],
+                                      ):Text(
+                                        diagnosticReport[index].source != null
+                                            ? "subido por ${diagnosticReport[index].sourceType == 'Practitioner'? 'Dr/a.': '' } "
+                                            "${diagnosticReport[index].source?.split(' ')[0]}"
+                                            : 'Boldo',
+                                        style:
+                                        boldoCorpSmallTextStyle.copyWith(
+                                            color: ConstantsV2.darkBlue),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
+                          ),
+                          const SizedBox(
+                            width: 8,
                           ),
                           Text(
                             "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport[index].effectiveDate!).toLocal())}",
