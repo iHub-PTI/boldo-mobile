@@ -443,6 +443,28 @@ ThemeData boldoTheme = ThemeData(
   visualDensity: VisualDensity.adaptivePlatformDensity,
 );
 
+ButtonStyle elevatedButtonStyleSecondary = ButtonStyle(
+  textStyle: MaterialStateProperty.all(
+    const TextStyle(fontWeight: FontWeight.w500, fontSize: 16,
+        color: ConstantsV2.BGNeutral
+    ),
+  ),
+  padding: MaterialStateProperty.all(
+    const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+  ),
+  backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+    if (states.contains(MaterialState.disabled)) {
+      return ConstantsV2.gray; // Disabled color
+    }
+    return Constants.primaryColor500; // Regular color
+  }),
+  shape: MaterialStateProperty.all(
+    RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(100),
+    ),
+  ),
+);
+
 // Colors Boldo V2
 class ConstantsV2 {
   // background colors palette
