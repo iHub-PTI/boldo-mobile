@@ -1,10 +1,11 @@
 import 'dart:core';
+import 'dart:io';
 import 'package:boldo/constants.dart';
 import 'package:boldo/environment.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/backdrop_modal/backdrop_modal.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:dio/dio.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
@@ -44,9 +45,20 @@ class _VideoCallState extends State<VideoCall> {
 
   String socketsAddress = environment.SOCKETS_ADDRESS;
 
+  List<MediaDeviceInfo> _mediaDevicesList = [];
+
   @override
   void initState() {
     super.initState();
+    navigator.mediaDevices.ondevicechange = (event) async {
+
+      // get news devices
+      await updateDevices();
+
+      setState(() {
+
+      });
+    };
     _getCallToken();
     Wakelock.enable();
   }
@@ -130,10 +142,14 @@ class _VideoCallState extends State<VideoCall> {
       Navigator.of(context)
           .pop({"error": "You have to give access to your camera."});
     }
+
+    // get devices available
+    await updateDevices();
+
     if(localStream == null){
       return;
     }
-    if (localStream!.getAudioTracks() != null) {
+    if (localStream?.getAudioTracks() != null) {
       localStream!.getAudioTracks().forEach((track) {
         track.enableSpeakerphone(true);
       });
@@ -260,6 +276,11 @@ class _VideoCallState extends State<VideoCall> {
   void switchCamera() {
     if (localStream == null) return;
     localStream!.getVideoTracks()[0].switchCamera();
+  }
+
+  Future<void> updateDevices() async {
+    //set devices available
+    _mediaDevicesList = await navigator.mediaDevices.enumerateDevices();
   }
 
   void muteMic() {
