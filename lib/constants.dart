@@ -507,6 +507,8 @@ class ConstantsV2 {
   static const Color primaryColor = Color(0xffF5F5F5);
   static const Color inactiveText = Color(0xff707882);
   static const Color activeText = Color(0xff424649);
+  static const Color disableText = Color(0xFFABAEB5);
+  static const Color darkText = Color(0xFF364152);
 
   // Input line border
   static const Color enableBorded = Color(0xff424649);
