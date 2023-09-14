@@ -480,4 +480,29 @@ class _VideoCallState extends State<VideoCall> {
                 ),
     );
   }
+
+  String translateInputDevice({required String label}){
+    try {
+      if (label.toUpperCase().contains("Speaker".toUpperCase())) {
+        return "Altavoz";
+      } else if (label.toUpperCase().contains("Earpiece".toUpperCase())) {
+        return "Telefono";
+      } else if (label.toUpperCase().contains("Headset".toUpperCase())) {
+        return "Auricular";
+      } else {
+        return label;
+      }
+    }catch (exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+        data: {
+          'entrada': label,
+          'so': Platform.operatingSystem,
+        },
+      );
+      return 'Desconocido';
+    }
+  }
+
 }
