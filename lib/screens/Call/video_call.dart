@@ -301,7 +301,7 @@ class _VideoCallState extends State<VideoCall> {
         children: [
           Flexible(
             child: Visibility(
-              visible: (_mediaDevicesList.where((element) => element.kind == 'audiooutput').length?? 0) > 0,
+              visible: (_mediaDevicesList.where((element) => element.kind == 'audiooutput').length?? 0) > 1,
               child: ElevatedButton(
                 style: buttonStyle?? elevatedButtonStyleSecondary,
                 onPressed: (){
