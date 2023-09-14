@@ -1,12 +1,14 @@
 import 'dart:core';
+import 'dart:io';
 import 'package:boldo/constants.dart';
 import 'package:boldo/environment.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/backdrop_modal/backdrop_modal.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:dio/dio.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:wakelock/wakelock.dart';
 
@@ -32,6 +34,8 @@ class _VideoCallState extends State<VideoCall> {
 
   bool callStatus = false;
   bool isDisconnected = false;
+  String? selectedAudioOutput;
+  bool interactAudioOutputs = false;
 
   PeerConnection? peerConnection;
 
@@ -44,9 +48,20 @@ class _VideoCallState extends State<VideoCall> {
 
   String socketsAddress = environment.SOCKETS_ADDRESS;
 
+  List<MediaDeviceInfo> _mediaDevicesList = [];
+
   @override
   void initState() {
     super.initState();
+    navigator.mediaDevices.ondevicechange = (event) async {
+
+      // get news devices
+      await updateDevices();
+
+      setState(() {
+
+      });
+    };
     _getCallToken();
     Wakelock.enable();
   }
@@ -130,10 +145,14 @@ class _VideoCallState extends State<VideoCall> {
       Navigator.of(context)
           .pop({"error": "You have to give access to your camera."});
     }
+
+    // get devices available
+    await updateDevices();
+
     if(localStream == null){
       return;
     }
-    if (localStream!.getAudioTracks() != null) {
+    if (localStream?.getAudioTracks() != null) {
       localStream!.getAudioTracks().forEach((track) {
         track.enableSpeakerphone(true);
       });
@@ -259,12 +278,166 @@ class _VideoCallState extends State<VideoCall> {
 
   void switchCamera() {
     if (localStream == null) return;
-    localStream!.getVideoTracks()[0].switchCamera();
+    Helper.switchCamera(localStream!.getVideoTracks()[0]);
+  }
+
+  Future<void> updateDevices() async {
+    //set devices available
+    _mediaDevicesList = await navigator.mediaDevices.enumerateDevices();
   }
 
   void muteMic() {
     final newState = !localStream!.getAudioTracks()[0].enabled;
     localStream!.getAudioTracks()[0].enabled = newState;
+  }
+
+  Widget configIcon({ButtonStyle? buttonStyle}){
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Flexible(
+            child: Visibility(
+              visible: (_mediaDevicesList.where((element) => element.kind == 'audiooutput').length?? 0) > 1,
+              child: ElevatedButton(
+                style: buttonStyle?? elevatedButtonStyleSecondary,
+                onPressed: (){
+                  setState(() {
+                    interactAudioOutputs = true;
+                  });
+                  List<Widget> audioOutputs =_mediaDevicesList
+                      .where((device) => device.kind == 'audiooutput')
+                      .map((device) {
+                    return PopupMenuItem<String>(
+                      onTap: () => _selectAudioOutput(device.deviceId),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        child: Row(
+                          children: [
+                            Icon(
+                              selectedAudioOutput == device.deviceId
+                                  ? Icons.radio_button_checked_sharp
+                                  : Icons.radio_button_unchecked_sharp,
+                              color: selectedAudioOutput == device.deviceId
+                                  ? ConstantsV2.secondaryRegular
+                                  : ConstantsV2.activeText,
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Text(
+                              translateInputDevice(label: device.label),
+                              style: boldoCardSubtitleTextStyle.copyWith(
+                                color: ConstantsV2.darkText,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList();
+                  Navigator.push(
+                    context,
+                    BackdropModalRoute<void>(
+                      overlayContentBuilder: (context) {
+                        Helper.audiooutputs.then((value) => {
+                          value.forEach((element) {
+                            print(element.label);
+                          })
+                        }
+                        );
+
+                        return Container(
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                child: Text(
+                                  "Seleccione la salida de audio",
+                                  style: boldoScreenTitleTextStyle.copyWith(
+                                      color: ConstantsV2.activeText
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: ShapeDecoration(
+                                  color: ConstantsV2.BGNeutral,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                ),
+                                child: Column(
+                                  children: audioOutputs,
+                                ),
+                                margin: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: 16
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+                child: Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.volume_up_sharp,
+                        color: ConstantsV2.lightest,
+                      ),
+                      if(!interactAudioOutputs)
+                        const SizedBox(width: 8,),
+                      Flexible(
+                        child: AnimatedSize(
+                          duration: const Duration(seconds: 1),
+                          child: Container(
+                            width: !interactAudioOutputs? null: 0.0,
+                            child: Visibility(
+                              visible: !interactAudioOutputs,
+                              child: Text(
+                                "Seleccione la salida de audio",
+                                style: GoogleFonts.montserrat().copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 6,
+                                  color: ConstantsV2.grayLightest,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  decoration: const ShapeDecoration(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(100)),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _selectAudioOutput(String deviceId) {
+    //change audio output
+    Helper.selectAudioOutput(deviceId);
+
+    // set audioOutput to show device selected
+    selectedAudioOutput = deviceId;
   }
 
   void muteVideo() {
@@ -275,36 +448,69 @@ class _VideoCallState extends State<VideoCall> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : callStatus
-              ? Stack(
-                  children: [
-                    Call(
-                      muteVideo: muteVideo,
-                      initialVideoState:
-                          localStream!.getVideoTracks()[0].enabled,
-                      initialMicState: localStream!.getAudioTracks()[0].enabled,
-                      muteMic: muteMic,
-                      localRenderer: localRenderer,
-                      remoteRenderer: remoteRenderer,
-                      hangUp: hangUp,
-                      switchCamera: switchCamera,
-                      appointment: widget.appointment,
-                    ),
-                    if (isDisconnected)
-                      const Align(
-                        alignment: Alignment.center,
-                        child: ConnectionProblemPopup(),
-                      )
-                  ],
-                )
-              : WaitingRoom(
-                  localRenderer: localRenderer,
-                  appointment: widget.appointment,
-                  muteMic: muteMic,
+      body: SafeArea(
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : Stack(
+          children: [
+            callStatus
+                ? Stack(
+              children: [
+                Call(
                   muteVideo: muteVideo,
+                  initialVideoState:
+                  localStream!.getVideoTracks()[0].enabled,
+                  initialMicState: localStream!.getAudioTracks()[0].enabled,
+                  muteMic: muteMic,
+                  localRenderer: localRenderer,
+                  remoteRenderer: remoteRenderer,
+                  hangUp: hangUp,
+                  switchCamera: switchCamera,
+                  appointment: widget.appointment,
+                  configAudioOutput: configIcon(),
                 ),
+                if (isDisconnected)
+                  const Align(
+                    alignment: Alignment.center,
+                    child: ConnectionProblemPopup(),
+                  )
+              ],
+            )
+                : WaitingRoom(
+              localRenderer: localRenderer,
+              appointment: widget.appointment,
+              muteMic: muteMic,
+              muteVideo: muteVideo,
+              configIcon: configIcon(),
+            ),
+          ],
+        )
+      ),
     );
   }
+
+  String translateInputDevice({required String label}){
+    try {
+      if (label.toUpperCase().contains("Speaker".toUpperCase())) {
+        return "Altavoz";
+      } else if (label.toUpperCase().contains("Earpiece".toUpperCase())) {
+        return "Telefono";
+      } else if (label.toUpperCase().contains("Headset".toUpperCase())) {
+        return "Auricular";
+      } else {
+        return label;
+      }
+    }catch (exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+        data: {
+          'entrada': label,
+          'so': Platform.operatingSystem,
+        },
+      );
+      return 'Desconocido';
+    }
+  }
+
 }

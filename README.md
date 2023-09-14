@@ -9,7 +9,7 @@ The mobile app is specifically for patients.
 
 1. This project has the following dependencies:
 
-   - flutter (latest version)
+   - flutter 3.13.1
 
 2. Install dependencies: `flutter pub get` (normally happens automatically)
 
