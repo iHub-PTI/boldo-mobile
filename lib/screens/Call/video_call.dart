@@ -8,6 +8,7 @@ import 'package:boldo/widgets/backdrop_modal/backdrop_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:dio/dio.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:wakelock/wakelock.dart';
 
@@ -33,6 +34,8 @@ class _VideoCallState extends State<VideoCall> {
 
   bool callStatus = false;
   bool isDisconnected = false;
+  String? selectedAudioOutput;
+  bool interactAudioOutputs = false;
 
   PeerConnection? peerConnection;
 
@@ -286,6 +289,155 @@ class _VideoCallState extends State<VideoCall> {
   void muteMic() {
     final newState = !localStream!.getAudioTracks()[0].enabled;
     localStream!.getAudioTracks()[0].enabled = newState;
+  }
+
+  Widget configIcon({ButtonStyle? buttonStyle}){
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Flexible(
+            child: Visibility(
+              visible: (_mediaDevicesList.where((element) => element.kind == 'audiooutput').length?? 0) > 0,
+              child: ElevatedButton(
+                style: buttonStyle?? elevatedButtonStyleSecondary,
+                onPressed: (){
+                  setState(() {
+                    interactAudioOutputs = true;
+                  });
+                  List<Widget> audioOutputs =_mediaDevicesList
+                      .where((device) => device.kind == 'audiooutput')
+                      .map((device) {
+                    return PopupMenuItem<String>(
+                      onTap: () => _selectAudioOutput(device.deviceId),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        child: Row(
+                          children: [
+                            Icon(
+                              selectedAudioOutput == device.deviceId
+                                  ? Icons.radio_button_checked_sharp
+                                  : Icons.radio_button_unchecked_sharp,
+                              color: selectedAudioOutput == device.deviceId
+                                  ? ConstantsV2.secondaryRegular
+                                  : ConstantsV2.activeText,
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Text(
+                              translateInputDevice(label: device.label),
+                              style: boldoCardSubtitleTextStyle.copyWith(
+                                color: ConstantsV2.darkText,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList();
+                  Navigator.push(
+                    context,
+                    BackdropModalRoute<void>(
+                      overlayContentBuilder: (context) {
+                        Helper.audiooutputs.then((value) => {
+                          value.forEach((element) {
+                            print(element.label);
+                          })
+                        }
+                        );
+
+                        return Container(
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                child: Text(
+                                  "Seleccione la salida de audio",
+                                  style: boldoScreenTitleTextStyle.copyWith(
+                                      color: ConstantsV2.activeText
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: ShapeDecoration(
+                                  color: ConstantsV2.BGNeutral,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                ),
+                                child: Column(
+                                  children: audioOutputs,
+                                ),
+                                margin: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: 16
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+                child: Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.volume_up_sharp,
+                        color: ConstantsV2.lightest,
+                      ),
+                      if(!interactAudioOutputs)
+                        const SizedBox(width: 8,),
+                      Flexible(
+                        child: AnimatedSize(
+                          duration: const Duration(seconds: 1),
+                          child: Container(
+                            width: !interactAudioOutputs? null: 0.0,
+                            child: Visibility(
+                              visible: !interactAudioOutputs,
+                              child: Text(
+                                "Seleccione la salida de audio",
+                                style: GoogleFonts.montserrat().copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 6,
+                                  color: ConstantsV2.grayLightest,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  decoration: const ShapeDecoration(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(100)),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _selectAudioOutput(String deviceId) {
+    //change audio output
+    Helper.selectAudioOutput(deviceId);
+
+    // set audioOutput to show device selected
+    selectedAudioOutput = deviceId;
   }
 
   void muteVideo() {
