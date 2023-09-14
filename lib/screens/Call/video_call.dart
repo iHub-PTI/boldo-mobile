@@ -448,36 +448,44 @@ class _VideoCallState extends State<VideoCall> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : callStatus
-              ? Stack(
-                  children: [
-                    Call(
-                      muteVideo: muteVideo,
-                      initialVideoState:
-                          localStream!.getVideoTracks()[0].enabled,
-                      initialMicState: localStream!.getAudioTracks()[0].enabled,
-                      muteMic: muteMic,
-                      localRenderer: localRenderer,
-                      remoteRenderer: remoteRenderer,
-                      hangUp: hangUp,
-                      switchCamera: switchCamera,
-                      appointment: widget.appointment,
-                    ),
-                    if (isDisconnected)
-                      const Align(
-                        alignment: Alignment.center,
-                        child: ConnectionProblemPopup(),
-                      )
-                  ],
-                )
-              : WaitingRoom(
-                  localRenderer: localRenderer,
-                  appointment: widget.appointment,
-                  muteMic: muteMic,
+      body: SafeArea(
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : Stack(
+          children: [
+            callStatus
+                ? Stack(
+              children: [
+                Call(
                   muteVideo: muteVideo,
+                  initialVideoState:
+                  localStream!.getVideoTracks()[0].enabled,
+                  initialMicState: localStream!.getAudioTracks()[0].enabled,
+                  muteMic: muteMic,
+                  localRenderer: localRenderer,
+                  remoteRenderer: remoteRenderer,
+                  hangUp: hangUp,
+                  switchCamera: switchCamera,
+                  appointment: widget.appointment,
+                  configAudioOutput: configIcon(),
                 ),
+                if (isDisconnected)
+                  const Align(
+                    alignment: Alignment.center,
+                    child: ConnectionProblemPopup(),
+                  )
+              ],
+            )
+                : WaitingRoom(
+              localRenderer: localRenderer,
+              appointment: widget.appointment,
+              muteMic: muteMic,
+              muteVideo: muteVideo,
+              configIcon: configIcon(),
+            ),
+          ],
+        )
+      ),
     );
   }
 
