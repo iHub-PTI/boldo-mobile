@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/goToTop_bloc/goToTop_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
@@ -139,17 +140,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       length: 1,
       vsync: this,
     );
-    homeScroll.addListener(() {
-      double offset = 10.0; // or the value you want
-      if (homeScroll.offset > offset) {
-        showAnimatedButton = true;
-        // this we use to get update the state
-        setState(() {});
-      } else {
-        showAnimatedButton = false;
-        setState(() {});
-      }
-    });
     // get organizations
     BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed());
     super.initState();
@@ -171,98 +161,106 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ConstantsV2.grayLight,
-      floatingActionButton:
-          buttonGoTop(homeScroll, 1000, 500, showAnimatedButton),
-      body: SafeArea(
-        child: MultiBlocListener(
-          listeners: [
-            BlocListener<HomeOrganizationBloc, HomeOrganizationBlocState>(
-              listener: (context, state) {
-                if (state is HomeOrganizationFailed) {
+    return BlocProvider(
+      create: (BuildContext context){
+        return GoToTopBloc();
+      },
+      child: Scaffold(
+        backgroundColor: ConstantsV2.grayLight,
+        floatingActionButton: ButtonGoTop(
+        scrollController: homeScroll,
+        animationDuration: 1000,
+        scrollDuration: 500,
+        showAnimatedButton: showAnimatedButton,
+      ),
+        body: SafeArea(
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<HomeOrganizationBloc, HomeOrganizationBlocState>(
+                listener: (context, state) {
+                  if (state is HomeOrganizationFailed) {
 
-                  // set normal height
-                  _heightExpandableBarMax = ConstantsV2.homeExpandedMaxHeight;
-                  _heightExpandableBarMin = ConstantsV2.homeExpandedMinHeight;
-
-                  emitSnackBar(
-                      context: context,
-                      text: state.response,
-                      status: ActionStatus.Fail
-                  );
-                  if (_refreshControllerOrganizationsCheck != null) {
-                    _refreshControllerOrganizationsCheck!.refreshCompleted();
-                    _refreshControllerOrganizationsCheck!.loadComplete();
-                  }
-                }
-                if (state is OrganizationsObtained) {
-                  // establish in Patient Bloc his/her list of subscribing organizations
-                  BlocProvider.of<patientBloc.PatientBloc>(context)
-                      .setOrganizations(state.organizationsList);
-
-                  // reduce height to remove header for news
-                  if(state.organizationsList.isEmpty) {
-                    _heightExpandableBarMax = ConstantsV2.homeExpandedMaxHeight -
-                        ConstantsV2.homeFeedTitleContainerMaxHeight;
-                    _heightExpandableBarMin = ConstantsV2.homeExpandedMinHeight -
-                        ConstantsV2.homeFeedTitleContainerMinHeight;
-                  }else{
                     // set normal height
                     _heightExpandableBarMax = ConstantsV2.homeExpandedMaxHeight;
                     _heightExpandableBarMin = ConstantsV2.homeExpandedMinHeight;
-                    BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
+
+                    emitSnackBar(
+                        context: context,
+                        text: state.response,
+                        status: ActionStatus.Fail
+                    );
+                    if (_refreshControllerOrganizationsCheck != null) {
+                      _refreshControllerOrganizationsCheck!.refreshCompleted();
+                      _refreshControllerOrganizationsCheck!.loadComplete();
+                    }
                   }
+                  if (state is OrganizationsObtained) {
+                    // establish in Patient Bloc his/her list of subscribing organizations
+                    BlocProvider.of<patientBloc.PatientBloc>(context)
+                        .setOrganizations(state.organizationsList);
+
+                    // reduce height to remove header for news
+                    if(state.organizationsList.isEmpty) {
+                      _heightExpandableBarMax = ConstantsV2.homeExpandedMaxHeight -
+                          ConstantsV2.homeFeedTitleContainerMaxHeight;
+                      _heightExpandableBarMin = ConstantsV2.homeExpandedMinHeight -
+                          ConstantsV2.homeFeedTitleContainerMinHeight;
+                    }else{
+                      // set normal height
+                      _heightExpandableBarMax = ConstantsV2.homeExpandedMaxHeight;
+                      _heightExpandableBarMin = ConstantsV2.homeExpandedMinHeight;
+                      BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
+                    }
 
 
-                  if (_refreshControllerOrganizationsCheck != null) {
-                    _refreshControllerOrganizationsCheck!.refreshCompleted();
-                    _refreshControllerOrganizationsCheck!.loadComplete();
+                    if (_refreshControllerOrganizationsCheck != null) {
+                      _refreshControllerOrganizationsCheck!.refreshCompleted();
+                      _refreshControllerOrganizationsCheck!.loadComplete();
+                    }
+                    BlocProvider.of<HomeBloc>(context).add(ReloadHome());
                   }
-                  BlocProvider.of<HomeBloc>(context).add(ReloadHome());
-                }
-                if (state is HomeOrganizationLoading) {
-                  // set normal height
-                  _heightExpandableBarMax = ConstantsV2.homeExpandedMaxHeight;
-                  _heightExpandableBarMin = ConstantsV2.homeExpandedMinHeight;
-                }
-              },
-            ),
-            BlocListener<HomeBloc, HomeState>(
-              listener: (context, state) {
-                if (state is ReloadHome) {
-                  setState(() {
+                  if (state is HomeOrganizationLoading) {
+                    // set normal height
+                    _heightExpandableBarMax = ConstantsV2.homeExpandedMaxHeight;
+                    _heightExpandableBarMin = ConstantsV2.homeExpandedMinHeight;
+                  }
+                },
+              ),
+              BlocListener<HomeBloc, HomeState>(
+                listener: (context, state) {
+                  if (state is ReloadHome) {
+                    setState(() {
 
-                  });
-                }
-              },
-            ),
-            BlocListener<HomeNewsBloc, HomeNewsState>(
-              listener: (context, state) {
-                if (state is FailedLoadedNews) {
-                  emitSnackBar(
-                      context: context,
-                      text: state.response,
-                      status: ActionStatus.Fail
-                  );
-                  if (_refreshControllerNews != null) {
-                    _refreshControllerNews!.refreshCompleted();
-                    _refreshControllerNews!.loadComplete();
+                    });
                   }
-                }
-                if (state is NewsLoaded) {
-                  //diagnosticReports = state.news;
-                  news = state.news;
-                  if (_refreshControllerNews != null) {
-                    _refreshControllerNews!.refreshCompleted();
-                    _refreshControllerNews!.loadComplete();
+                },
+              ),
+              BlocListener<HomeNewsBloc, HomeNewsState>(
+                listener: (context, state) {
+                  if (state is FailedLoadedNews) {
+                    emitSnackBar(
+                        context: context,
+                        text: state.response,
+                        status: ActionStatus.Fail
+                    );
+                    if (_refreshControllerNews != null) {
+                      _refreshControllerNews!.refreshCompleted();
+                      _refreshControllerNews!.loadComplete();
+                    }
                   }
-                }
-              },
-            ),
-          ],
-          child: NestedScrollView(
-            controller: homeScroll,
+                  if (state is NewsLoaded) {
+                    //diagnosticReports = state.news;
+                    news = state.news;
+                    if (_refreshControllerNews != null) {
+                      _refreshControllerNews!.refreshCompleted();
+                      _refreshControllerNews!.loadComplete();
+                    }
+                  }
+                },
+              ),
+            ],
+            child: NestedScrollView(
+              controller: homeScroll,
               headerSliverBuilder: (context, innerBoxScrolled) => [
                 BlocBuilder<HomeOrganizationBloc,HomeOrganizationBlocState>(
                   builder: (context, state){
@@ -421,10 +419,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                                 // fill the height between carousel and tabview
                                 // with container with lightGrey color
                                 return Container(
-                                    width: double.maxFinite,
-                                    height: ConstantsV2.homeFeedTitleContainerMinHeight,
-                                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                                    decoration: const BoxDecoration(
+                                  width: double.maxFinite,
+                                  height: ConstantsV2.homeFeedTitleContainerMinHeight,
+                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  decoration: const BoxDecoration(
                                     color: ConstantsV2.lightGrey,
                                   ),
                                 );
@@ -466,6 +464,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                 },
               ),
             ),
+          ),
         ),
       ),
     );

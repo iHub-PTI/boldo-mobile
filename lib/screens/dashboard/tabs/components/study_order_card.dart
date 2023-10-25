@@ -88,183 +88,192 @@ class _StudyOrderCardCardState extends State<StudyOrderCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Card(
-            elevation: 4,
-            margin: const EdgeInsets.only(bottom: 4),
+    return Container(
+      decoration: ShapeDecoration(
+        color: ConstantsV2.lightest,
+        shape: const RoundedRectangleBorder(
+          side: BorderSide(
+            width: 0.50,
+            color: ConstantsV2.lightGrey,
+          ),
+        ),
+        shadows: [
+          shadowRegular,
+        ],
+      ),
+      margin: const EdgeInsets.only(bottom: 4),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
             child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Estudios pendientes",
-                            style: boldoCorpSmallTextStyle.copyWith(
-                                color: ConstantsV2.darkBlue),
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Estudios pendientes",
+                      style: boldoCorpSmallTextStyle.copyWith(
+                          color: ConstantsV2.darkBlue),
+                    ),
+                    Text(
+                      passedDays(daysDifference, showPrefixText: true),
+                      style: boldoCorpSmallTextStyle.copyWith(
+                          color: ConstantsV2.veryLightBlue),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7),
+                      child: ClipOval(
+                        child: SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: widget.studyOrder.doctor?.photoUrl ==
+                              null
+                              ? SvgPicture.asset(
+                              widget.studyOrder.doctor!.gender ==
+                                  "female"
+                                  ? 'assets/images/femaleDoctor.svg'
+                                  : 'assets/images/maleDoctor.svg',
+                              fit: BoxFit.cover)
+                              : CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl: widget
+                                .studyOrder.doctor!.photoUrl ??
+                                '',
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) =>
+                                Padding(
+                                  padding: const EdgeInsets.all(26.0),
+                                  child: LinearProgressIndicator(
+                                    value: downloadProgress.progress,
+                                    valueColor:
+                                    const AlwaysStoppedAnimation<
+                                        Color>(
+                                        Constants.primaryColor400),
+                                    backgroundColor:
+                                    Constants.primaryColor600,
+                                  ),
+                                ),
+                            errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
                           ),
-                          Text(
-                            passedDays(daysDifference, showPrefixText: true),
-                            style: boldoCorpSmallTextStyle.copyWith(
-                                color: ConstantsV2.veryLightBlue),
-                          ),
-                        ],
+                        ),
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Expanded(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 7),
-                            child: ClipOval(
-                              child: SizedBox(
-                                width: 40,
-                                height: 40,
-                                child: widget.studyOrder.doctor?.photoUrl ==
-                                        null
-                                    ? SvgPicture.asset(
-                                        widget.studyOrder.doctor!.gender ==
-                                                "female"
-                                            ? 'assets/images/femaleDoctor.svg'
-                                            : 'assets/images/maleDoctor.svg',
-                                        fit: BoxFit.cover)
-                                    : CachedNetworkImage(
-                                        fit: BoxFit.cover,
-                                        imageUrl: widget
-                                                .studyOrder.doctor!.photoUrl ??
-                                            '',
-                                        progressIndicatorBuilder:
-                                            (context, url, downloadProgress) =>
-                                                Padding(
-                                          padding: const EdgeInsets.all(26.0),
-                                          child: LinearProgressIndicator(
-                                            value: downloadProgress.progress,
-                                            valueColor:
-                                                const AlwaysStoppedAnimation<
-                                                        Color>(
-                                                    Constants.primaryColor400),
-                                            backgroundColor:
-                                                Constants.primaryColor600,
-                                          ),
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            const Icon(Icons.error),
-                                      ),
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  "${getDoctorPrefix(widget.studyOrder.doctor!.gender!)}${widget.studyOrder.doctor?.givenName?.split(" ")[0]?? ''} ${widget.studyOrder.doctor?.familyName?.split(" ")[0]?? ''}",
+                                  style: boldoSubTextMediumStyle,
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                           const SizedBox(
-                            width: 8,
+                            height: 4,
                           ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                          if (widget.studyOrder.doctor!.specializations !=
+                              null &&
+                              widget.studyOrder.doctor!.specializations!
+                                  .isNotEmpty)
+                            Wrap(
                               children: [
-                                Row(
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        "${getDoctorPrefix(widget.studyOrder.doctor!.gender!)}${widget.studyOrder.doctor?.givenName?.split(" ")[0]?? ''} ${widget.studyOrder.doctor?.familyName?.split(" ")[0]?? ''}",
-                                        style: boldoSubTextMediumStyle,
-                                      ),
+                                for (int i = 0;
+                                i <
+                                    widget.studyOrder.doctor!
+                                        .specializations!.length;
+                                i++)
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        right: i == 0 ? 0 : 3.0, bottom: 5),
+                                    child: Text(
+                                      "${widget.studyOrder.doctor!.specializations![i].description}${widget.studyOrder.doctor!.specializations!.length-1 != i  ? ", " : ""}",
+                                      style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 4,
-                                ),
-                                if (widget.studyOrder.doctor!.specializations !=
-                                    null &&
-                                    widget.studyOrder.doctor!.specializations!
-                                        .isNotEmpty)
-                                  Wrap(
-                                    children: [
-                                      for (int i = 0;
-                                      i <
-                                          widget.studyOrder.doctor!
-                                              .specializations!.length;
-                                      i++)
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              right: i == 0 ? 0 : 3.0, bottom: 5),
-                                          child: Text(
-                                            "${widget.studyOrder.doctor!.specializations![i].description}${widget.studyOrder.doctor!.specializations!.length-1 != i  ? ", " : ""}",
-                                            style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.inactiveText),
-                                          ),
-                                        ),
-                                    ],
                                   ),
                               ],
                             ),
-                          ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Container(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          _ordersIconsContainer(),
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                            child: GestureDetector(
-                              onTap: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => StudyOrderScreen(
-                                        callFromHome: true,
-                                        encounterId:
-                                            widget.studyOrder.encounterId),
-                                  ),
-                                );
-                                BlocProvider.of<StudyOrderBloc>(context).add(InitialEventStudyOrder());
-                              },
-                              child: Card(
-                                  margin: EdgeInsets.zero,
-                                  clipBehavior: Clip.antiAlias,
-                                  elevation: 0,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(5)),
-                                  ),
-                                  color: ConstantsV2.orange.withOpacity(0.10),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 7),
-                                    child: const Text("ver"),
-                                  )),
+              ],
+            ),
+          ),
+          Container(
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    _ordersIconsContainer(),
+                  ],
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      child: GestureDetector(
+                        onTap: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => StudyOrderScreen(
+                                  callFromHome: true,
+                                  encounterId:
+                                  widget.studyOrder.encounterId),
+                              settings: RouteSettings(name: (StudyOrderScreen).toString()),
                             ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
+                          );
+                          BlocProvider.of<StudyOrderBloc>(context).add(InitialEventStudyOrder());
+                        },
+                        child: Card(
+                            margin: EdgeInsets.zero,
+                            clipBehavior: Clip.antiAlias,
+                            elevation: 0,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(5)),
+                            ),
+                            color: ConstantsV2.orange.withOpacity(0.10),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 7),
+                              child: const Text("ver"),
+                            )),
+                      ),
+                    ),
+                  ],
                 )
               ],
-            )),
-      ],
+            ),
+          )
+        ],
+      )
     );
   }
 

@@ -13,10 +13,6 @@ class Failed extends AppointmentState {
 }
 
 class AppointmentLoadedState extends AppointmentState {
-  final List<Appointment> appointments;
-  AppointmentLoadedState({required this.appointments});
+  final Appointment appointment;
+  AppointmentLoadedState({required this.appointment});
 }
-
-class RedirectNextScreen extends AppointmentState {}
-
-class Success extends AppointmentState {}

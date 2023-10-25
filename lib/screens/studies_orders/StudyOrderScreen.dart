@@ -8,6 +8,7 @@ import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
 import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
+import 'package:boldo/screens/studies_orders/components/studyOrderCard.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:date_format/date_format.dart';
@@ -89,7 +90,9 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              MedicalRecordsScreen(appointment: appointment!, fromOrderStudy: true,)),
+                              MedicalRecordsScreen(appointment: appointment!),
+                        settings: RouteSettings(name: (MedicalRecordsScreen).toString()),
+                      ),
                     );
                   }
 
@@ -135,87 +138,6 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                           const SizedBox(
                             height: 16,
                           ),
-                          // here show the profile views
-                          Card(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // doctor and patient profile
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    // doctor
-                                    ProfileDescription(
-                                        doctor: studiesOrders?.doctor,
-                                        type: "doctor"),
-                                    const SizedBox(height: 20),
-                                    // patient
-                                    ProfileDescription(
-                                        patient: patient, type: "patient"),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    // here button to origin consult
-                                    widget.callFromHome
-                                        ? Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 30, right: 30, bottom: 30),
-                                            child: GestureDetector(
-                                                onTap: () async {
-                                                  BlocProvider.of<
-                                                              StudyOrderBloc>(
-                                                          context)
-                                                      .add(GetAppointment(
-                                                          encounter: widget
-                                                              .encounterId!));
-                                                },
-                                                child: BlocBuilder<StudyOrderBloc, StudyOrderState>(
-                                                  builder: (context, state) {
-                                                    if (state is LoadingAppointment) {
-                                                      return Container(
-                                                          child: const Center(
-                                                              child: CircularProgressIndicator(
-                                                                valueColor: AlwaysStoppedAnimation<Color>(
-                                                                    Constants.primaryColor400),
-                                                                backgroundColor: Constants.primaryColor600,
-                                                              )));
-                                                    } else {
-                                                      return Row(
-                                                        children: [
-                                                          const Text(
-                                                            'ver consulta de origen',
-                                                            style: TextStyle(
-                                                                decoration:
-                                                                TextDecoration
-                                                                    .underline,
-                                                                fontFamily:
-                                                                'Montserrat',
-                                                                fontSize: 16),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 15,
-                                                          ),
-                                                          SvgPicture.asset(
-                                                            'assets/icon/chevron-right.svg',
-                                                            height: 12,
-                                                          )
-                                                        ],
-                                                      );
-                                                    }
-                                                  }
-                                                ),
-                                            )
-                                          )
-                                        : Container()
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 10),
                           studiesOrders?.serviceRequests?.isEmpty ?? true
                               ? showEmptyList()
                               : showDiagnosticList()
@@ -271,156 +193,8 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
   }
 
   Widget showStudy(BuildContext context, int index) {
-    return Card(
-      elevation: 1,
-      margin: const EdgeInsets.only(bottom: 4),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => AttachStudyByOrderScreen(
-                        studyOrder: studiesOrders!.serviceRequests![index],
-                      )));
-        },
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            children: [
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            child: Text(
-                              'Nro de orden: ${studiesOrders!.serviceRequests![index].orderNumber}',
-                              style: boldoBodySBlackTextStyle.copyWith(color: ConstantsV2.activeText),
-                            ),
-                          ),
-                          const SizedBox(height: 5,),
-                          Container(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                SvgPicture.asset(
-                                  studiesOrders?.serviceRequests![index].category ==
-                                      "Laboratory"
-                                      ? 'assets/icon/lab-dark.svg'
-                                      : studiesOrders?.serviceRequests![index]
-                                      .category ==
-                                      "Diagnostic Imaging"
-                                      ? 'assets/icon/image-dark.svg'
-                                      : studiesOrders?.serviceRequests![index]
-                                      .category ==
-                                      "Other"
-                                      ? 'assets/icon/other.svg'
-                                      : 'assets/images/LogoIcon.svg',
-                                  width: 24,
-                                  height: 24,
-                                ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  "${studiesOrders?.serviceRequests![index].category == "Laboratory" ? 'Laboratorio' : studiesOrders?.serviceRequests![index].category == "Diagnostic Imaging" ? 'Imágenes' : studiesOrders?.serviceRequests![index].category == "Other" ? 'Otros' : 'Desconocido'}",
-                                  style: boldoCorpSmallTextStyle.copyWith(
-                                      color: ConstantsV2.darkBlue),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        studiesOrders?.serviceRequests?[index].urgent ?? false
-                            ? Card(
-                                elevation: 0,
-                                margin: EdgeInsets.zero,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10.0,
-                                      top: 2.0,
-                                      bottom: 2.0,
-                                      right: 8.0),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "urgente",
-                                        style: boldoCorpSmallTextStyle.copyWith(
-                                            color: ConstantsV2.orange),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      SvgPicture.asset(
-                                        'assets/icon/warning.svg',
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            : Container(),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              Container(
-                padding: const EdgeInsets.only(left: 24),
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      listStudiesDisplay(
-                          studiesOrders!.serviceRequests![index]),
-                      Text(
-                        "${studiesOrders?.serviceRequests![index].notes ?? 'Sin notas'}",
-                        style: boldoCorpSmallTextStyle.copyWith(
-                            color: ConstantsV2.inactiveText),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      Text(
-                        "Impresión diagnóstica: ${studiesOrders?.serviceRequests![index].diagnosis}",
-                        style: boldoCorpSmallTextStyle.copyWith(
-                            color: ConstantsV2.darkBlue),
-                      ),
-                      Container(
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icon/attach-file.svg',
-                            ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              "${(studiesOrders?.serviceRequests?[index].diagnosticReportCount?? 0)} ${(studiesOrders?.serviceRequests?[index].diagnosticReportCount?? 0) == 1? "archivo adjunto" : "archivos adjuntos"}",
-                              style: boldoCorpSmallTextStyle.copyWith(
-                                  color: ConstantsV2.darkBlue),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return ServiceRequestCard(
+      serviceRequest: studiesOrders!.serviceRequests![index],
     );
   }
 
@@ -434,8 +208,10 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
         // if ((studyOrder.studiesCodes?.length ?? 0) > 2)
         //   Text("... + ${(studyOrder.studiesCodes?.length ?? 0) - 2}"),
         if(studyOrder.description != null)
-        Text(
-          "${studyOrder.description}",
+        Flexible(
+          child: Text(
+            "${studyOrder.description}",
+          ),
         ),
       ],
     );

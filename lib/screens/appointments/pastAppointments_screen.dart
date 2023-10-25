@@ -1,4 +1,4 @@
-import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
+import 'package:boldo/blocs/appointments_bloc/appointmentsBloc.dart';
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart'as medical;
 import 'package:boldo/constants.dart';
@@ -81,16 +81,16 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
       dateOffset = DateTime.now().subtract(const Duration(days: 30));
     });
     // monitor network fetch
-    BlocProvider.of<AppointmentBloc>(context).add(GetPastAppointmentBetweenDatesList());
+    BlocProvider.of<AppointmentsBloc>(context).add(GetPastAppointmentsBetweenDatesList());
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AppointmentBloc>(
-      create: (BuildContext context) => AppointmentBloc()..add(GetPastAppointmentBetweenDatesList()),
+    return BlocProvider<AppointmentsBloc>(
+      create: (BuildContext context) => AppointmentsBloc()..add(GetPastAppointmentsBetweenDatesList()),
       child: MultiBlocListener(
           listeners: [
-            BlocListener<AppointmentBloc, AppointmentState>(
+            BlocListener<AppointmentsBloc, AppointmentsState>(
                 listener: (context, state) {
                   if (state is Success) {
                     setState(() {
@@ -109,7 +109,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                     }
                     _dataLoading = false;
                     _dataLoaded = false;
-                  } else if (state is AppointmentLoadedState) {
+                  } else if (state is AppointmentsLoadedState) {
                     allAppointments = state.appointments;
                     if (_refreshFutureAppointmentController != null) {
                       _refreshPastAppointmentController!.refreshCompleted();
@@ -141,7 +141,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
               },
             ),
           ],
-          child: BlocBuilder<AppointmentBloc, AppointmentState>(
+          child: BlocBuilder<AppointmentsBloc, AppointmentsState>(
               builder: (context, state) {
                 return Scaffold(
                   appBar: AppBar(
@@ -364,7 +364,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
             );
           },
         ),
-        child: BlocBuilder<AppointmentBloc, AppointmentState>(builder: (context, state) {
+        child: BlocBuilder<AppointmentsBloc, AppointmentsState>(builder: (context, state) {
           if(state is Success){
             return allAppointments.isNotEmpty
                 ? ListView.builder(
@@ -399,9 +399,9 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
           }else if(state is Failed){
             return Container(
               child: DataFetchErrorWidget(
-                retryCallback: () => BlocProvider.of<AppointmentBloc>(context)
+                retryCallback: () => BlocProvider.of<AppointmentsBloc>(context)
                   .add(
-                  GetPastAppointmentBetweenDatesList()
+                  GetPastAppointmentsBetweenDatesList()
                 )
               )
             );
@@ -433,10 +433,10 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
         TextEditingController dateTextController = TextEditingController();
         TextEditingController date2TextController = TextEditingController();
         var inputFormat = DateFormat('dd/MM/yyyy');
-        DateTime date1 = BlocProvider.of<AppointmentBloc>(contextPage).getInitialDate();
-        DateTime? date2 = BlocProvider.of<AppointmentBloc>(contextPage).getFinalDate();
-        bool virtual = BlocProvider.of<AppointmentBloc>(contextPage).getVirtualStatus();
-        bool inPerson = BlocProvider.of<AppointmentBloc>(contextPage).getInPersonStatus();
+        DateTime date1 = BlocProvider.of<AppointmentsBloc>(contextPage).getInitialDate();
+        DateTime? date2 = BlocProvider.of<AppointmentsBloc>(contextPage).getFinalDate();
+        bool virtual = BlocProvider.of<AppointmentsBloc>(contextPage).getVirtualStatus();
+        bool inPerson = BlocProvider.of<AppointmentsBloc>(contextPage).getInPersonStatus();
 
         dateTextController.text = inputFormat.format(date1);
         date2TextController.text = date2 != null? inputFormat.format(date2) :'';
@@ -706,11 +706,11 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                           children: [
                             ElevatedButton(
                               onPressed:() {
-                                BlocProvider.of<AppointmentBloc>(contextPage).setInitialDate(date1);
-                                BlocProvider.of<AppointmentBloc>(contextPage).setFinalDate(date2);
-                                BlocProvider.of<AppointmentBloc>(contextPage).setInPersonStatus(inPerson);
-                                BlocProvider.of<AppointmentBloc>(contextPage).setVirtualStatus(virtual);
-                                BlocProvider.of<AppointmentBloc>(contextPage).add(GetPastAppointmentBetweenDatesList());
+                                BlocProvider.of<AppointmentsBloc>(contextPage).setInitialDate(date1);
+                                BlocProvider.of<AppointmentsBloc>(contextPage).setFinalDate(date2);
+                                BlocProvider.of<AppointmentsBloc>(contextPage).setInPersonStatus(inPerson);
+                                BlocProvider.of<AppointmentsBloc>(contextPage).setVirtualStatus(virtual);
+                                BlocProvider.of<AppointmentsBloc>(contextPage).add(GetPastAppointmentsBetweenDatesList());
                                 Navigator.pop(context);
                               },
                               child: Row(
@@ -774,7 +774,9 @@ class PastAppointmentCard extends StatelessWidget {
                   MedicalRecordsScreen(
                       appointment:
                       appointment
-                          )),
+                          ),
+            settings: RouteSettings(name: (MedicalRecordsScreen).toString()),
+          ),
         );
       },
       child: Container(

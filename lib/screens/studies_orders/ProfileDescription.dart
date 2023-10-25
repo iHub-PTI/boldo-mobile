@@ -1,84 +1,58 @@
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/screens/profile/components/profile_image.dart';
 
 import 'package:boldo/utils/helpers.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class ProfileDescription extends StatelessWidget {
   final Patient? patient;
   final Doctor? doctor;
   final String type;
+  final double height;
+  final double width;
+  final bool border;
+  final Color borderColor;
+  final EdgeInsetsGeometry padding;
 
-  ProfileDescription({this.patient, this.doctor, required this.type});
+  /// show the description in the bottom of de picture or right of the picture
+  final bool horizontalDescription;
+
+  ProfileDescription({this.patient,
+    this.doctor,
+    required this.type,
+    this.horizontalDescription = false,
+    this.height = 54,
+    this.width = 54,
+    this.border = true,
+    this.borderColor = ConstantsV2.orange,
+    this.padding = const EdgeInsets.all(16)
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // profile picture
-            ClipOval(
-              child: SizedBox(
-                width: 60,
-                height: 60,
-                child: type == "doctor"
-                    ? doctor?.photoUrl == null
-                    ? SvgPicture.asset(
-                    doctor?.gender == "female"
-                        ? 'assets/images/femaleDoctor.svg'
-                        : 'assets/images/maleDoctor.svg',
-                    fit: BoxFit.cover)
-                    : CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: doctor!.photoUrl!,
-                  progressIndicatorBuilder:
-                      (context, url, downloadProgress) => Padding(
-                    padding: const EdgeInsets.all(26.0),
-                    child: LinearProgressIndicator(
-                      value: downloadProgress.progress,
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                          Constants.primaryColor400),
-                      backgroundColor: Constants.primaryColor600,
-                    ),
-                  ),
-                  errorWidget: (context, url, error) =>
-                  const Icon(Icons.error),
-                )
-                    : patient?.photoUrl == null
-                    ? SvgPicture.asset(
-                    patient?.gender == "female"
-                        ? 'assets/images/femalePatient.svg'
-                        : 'assets/images/malePatient.svg',
-                    fit: BoxFit.cover)
-                    : CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: patient!.photoUrl!,
-                  progressIndicatorBuilder:
-                      (context, url, downloadProgress) => Padding(
-                    padding: const EdgeInsets.all(26.0),
-                    child: LinearProgressIndicator(
-                      value: downloadProgress.progress,
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                          Constants.primaryColor400),
-                      backgroundColor: Constants.primaryColor600,
-                    ),
-                  ),
-                  errorWidget: (context, url, error) =>
-                  const Icon(Icons.error),
-                ),
-              ),
-            ),
-            const SizedBox(height: 10,),
-            // first name and last name
+
+    List<Widget> elements = [
+      // profile picture
+      ImageViewTypeForm(
+        height: height,
+        width: width,
+        border: border,
+        url: type=='doctor'? doctor?.photoUrl : patient?.photoUrl,
+        gender: type=='doctor'? doctor?.gender : patient?.gender,
+        borderColor: borderColor,
+        isPatient: type=='doctor',
+      ),
+      if(doctor != null || patient != null)
+        const SizedBox(height: 10, width: 10,),
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if(doctor != null || patient != null)
+          // first name and last name
             Flexible(child: Text(
                 doctor != null
                     ? doctor!.gender == 'female'
@@ -90,7 +64,8 @@ class ProfileDescription extends StatelessWidget {
                 style:
                 boldoCorpMediumTextStyle.copyWith(color: Colors.black)
             ),),
-            // decription
+          // decription
+          if(doctor != null || patient != null)
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -104,8 +79,21 @@ class ProfileDescription extends StatelessWidget {
                 ),
               ],
             ),
-          ],
-        ),
+        ],
+      ),
+    ];
+
+    Widget child = horizontalDescription? Row(
+      children: elements,
+    ): Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: elements,
+    );
+
+    return Flexible(
+      child: Container(
+        padding: padding,
+        child: child,
       ),
     );
   }

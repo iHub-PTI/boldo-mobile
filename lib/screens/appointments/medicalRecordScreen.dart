@@ -1,4 +1,3 @@
-import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
@@ -9,22 +8,19 @@ import 'package:boldo/models/PresciptionMedicalRecord.dart';
 import 'package:boldo/models/Soep.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/network/appointment_repository.dart';
-import 'package:boldo/network/http.dart';
 import 'package:boldo/network/repository_helper.dart';
+import 'package:boldo/observers/navigatorObserver.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
-import 'package:boldo/screens/my_studies/estudy_screen.dart';
 import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
 import 'package:boldo/screens/studies_orders/StudyOrderScreen.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:date_format/date_format.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 
 import '../../constants.dart';
 import 'anotations_details.dart';
@@ -32,12 +28,9 @@ import 'anotations_details.dart';
 /// Show annotations in SOEP, prescriptions and StudyOrders emitted in an encounter
 /// The encounter will be got by the id of the [appointment]
 class MedicalRecordsScreen extends StatefulWidget {
-  /// make [fromOrderStudy] true if call this screen from a StudyOrder to disable
-  /// button to go at the StudyOrder again
-  final bool fromOrderStudy;
   final Appointment appointment;
 
-  const MedicalRecordsScreen({required this.appointment, this.fromOrderStudy = false});
+  const MedicalRecordsScreen({required this.appointment});
 
   @override
   _MedicalRecordsScreenState createState() => _MedicalRecordsScreenState();
@@ -46,6 +39,10 @@ class MedicalRecordsScreen extends StatefulWidget {
 class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
   MedicalRecord? medicalRecord;
   AppointmentType? appointmentType;
+
+
+  final bool fromOrderStudy = AppNavigatorObserver.containRoute(routeName: (StudyOrderScreen).toString());
+
   @override
   void initState() {
     //set the appointment type
@@ -585,7 +582,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
           // show button to go at the order screen if
           // contains elements and is not coming
           // from a study order screen
-              ? medicalRecord!.serviceRequests!.length > 0 && !widget.fromOrderStudy
+              ? medicalRecord!.serviceRequests!.length > 0 && !fromOrderStudy
               ? Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -596,7 +593,8 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              StudyOrderScreen(callFromHome: false, encounterId: medicalRecord?.id?? "0")
+                              StudyOrderScreen(callFromHome: false, encounterId: medicalRecord?.id?? "0"),
+                        settings: RouteSettings(name: (StudyOrderScreen).toString()),
                       ),
                     );
                   },

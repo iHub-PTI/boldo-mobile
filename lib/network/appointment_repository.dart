@@ -353,4 +353,64 @@ class AppointmentRepository {
     }
   }
 
+  static Future<Appointment?>? getAppointmentByEncounterId({required String encounterId}) async {
+    try {
+      Response response1;
+      if(prefs.getBool(isFamily) ?? false) {
+        response1 =
+        await dio.get('/profile/caretaker/dependent/${patient.id}/encounters/${encounterId}');
+      }else{
+        response1 =
+        await dio.get('/profile/patient/encounters/${encounterId}');
+      }
+      if (response1.statusCode == 200) {
+        if (response1.data["encounter"]["appointmentId"] != null) {
+          String appointmentId = response1.data["encounter"]["appointmentId"];
+          Response response2;
+          if(prefs.getBool(isFamily) ?? false) {
+            response2 =
+            await dio.get('/profile/caretaker/dependent/${patient.id}/appointments/${appointmentId}');
+          }else{
+            response2 =
+            await dio.get('/profile/patient/appointments/${appointmentId}');
+          }
+          if (response2.statusCode == 200) {
+            return Appointment.fromJson(response2.data);
+          }
+          throw Failure('Unknown StatusCode ${response2.statusCode}', response: response2);
+        }
+      }
+      throw Failure('Unknown StatusCode ${response1.statusCode}', response: response1);
+    } on DioError catch(exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure('No fue posible obtener la cita');
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    }
+  }
+
 }

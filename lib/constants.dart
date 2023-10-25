@@ -160,6 +160,12 @@ TextStyle labelMedium = GoogleFonts.workSans().copyWith(
   fontStyle: FontStyle.normal,
 );
 
+TextStyle bigButton = GoogleFonts.montserrat().copyWith(
+  fontWeight: FontWeight.w300,
+  fontSize: 15,
+  fontStyle: FontStyle.normal,
+);
+
 const boldoInfoTextStyle = TextStyle(
   color: ConstantsV2.activeText,
   fontFamily: 'Montserrat',
@@ -238,6 +244,14 @@ const boldoCorpSmallTextStyle = TextStyle(
   fontStyle: FontStyle.normal,
   fontSize: 10,
   fontWeight: FontWeight.w300,
+  fontFamily: 'Montserrat',
+);
+
+const CorpPMediumTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 10,
+  fontWeight: FontWeight.w500,
   fontFamily: 'Montserrat',
 );
 
@@ -622,5 +636,5 @@ DateTime minDate = DateTime(1900, 1, 1);
 DateTime minDateDigit = DateTime(1000, 1, 1);
 enum StatusRequestOrganization  {Approved, Pending, Rejected}
 const int timeToShowAppointmentsOnHoldInMonth = 1;
-const int timeToShowStudyOrderInMonth = 1;
+const int timeToShowStudyOrderInMonth = 2;
 const Duration appearWidgetDuration = Duration(seconds: 1);

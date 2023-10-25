@@ -86,13 +86,8 @@ Future<int> authenticateUser({required BuildContext context}) async {
     await prefs.setBool("isLogged", true);
     await prefs.setBool("onboardingCompleted", true);
 
-    Response response = await dio.get("/profile/patient");
-    print("DATOS ${response.data}");
-    await prefs.setString("profile_url", response.data["photoUrl"] ?? '');
-    await prefs.setString("gender", response.data["gender"]);
-    await prefs.setString("name", response.data['givenName']!= null ? toLowerCase(response.data['givenName']!) : '');
-    await prefs.setString("lastName", response.data['familyName']!= null ? toLowerCase(response.data['familyName']!) : '');
-    await prefs.setBool(isFamily, false);
+    // get principal patient
+    await UserRepository().getPatient(null);
     /*
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     userProvider.setUserData(
