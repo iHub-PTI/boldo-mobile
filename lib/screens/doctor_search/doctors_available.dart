@@ -711,11 +711,23 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
             );
           }else{
             return
-              recentDoctors.isNotEmpty? Column(
+              recentDoctors.isNotEmpty? Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    color: ConstantsV2.grayLightest,
+                  Expanded(
+                    child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration:const BoxDecoration(
+                      color: ConstantsV2.grayLightest,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0x0C000000),
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                          spreadRadius: 0,
+                        )
+                      ],
+                    ),
                     height: 250,
                     child: GridView.builder(
                       padding:
@@ -734,6 +746,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                         return doctorItem(context, recentDoctors[index]);
                       },
                     ),
+                  ),
                   ),
                 ],
               ): _emptyRecentDoctors();
@@ -757,7 +770,17 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
           ),
         ),
         Container(
-          color: ConstantsV2.grayLightest,
+          decoration: const BoxDecoration(
+            color: ConstantsV2.grayLightest,
+            boxShadow: [
+              BoxShadow(
+                color: Color(0x0C000000),
+                blurRadius: 4,
+                offset: Offset(0, 2),
+                spreadRadius: 0,
+              )
+            ],
+          ),
           padding:
           const EdgeInsets.all(16),
           child: ReorderableBuilder(
