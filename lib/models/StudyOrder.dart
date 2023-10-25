@@ -29,7 +29,9 @@ class StudyOrder extends News {
 
   factory StudyOrder.fromJson(Map<String, dynamic> json) => StudyOrder(
         authoredDate: json["authoredDate"],
-        doctor: Doctor.fromJson(json["doctor"]),
+        doctor: json["doctor"] == null
+            ? null
+            : Doctor.fromJson(json["doctor"]),
         encounterId: json["encounterId"] == null ? null : json["encounterId"],
         serviceRequests: json["serviceRequests"] == null
             ? null
@@ -90,6 +92,7 @@ class ServiceRequest {
     this.studiesCodes,
     this.diagnosticReports,
     this.orderNumber,
+    this.doctor,
   });
 
   String? id;
@@ -103,6 +106,8 @@ class ServiceRequest {
   String? notes;
   int? diagnosticReportCount;
   String? orderNumber;
+
+  Doctor? doctor;
 
   List<DiagnosticReport>? diagnosticReports;
   List<StudiesCodes>? studiesCodes;
@@ -126,6 +131,9 @@ class ServiceRequest {
         ? List<DiagnosticReport>.from(json["diagnosticReports"]
           .map((x) => DiagnosticReport.fromJson(x)))
           : null,
+      doctor: json['doctor'] != null
+        ? Doctor.fromJson(json["doctor"])
+        : null,
     orderNumber: json['orderNumber'],
   );
 
