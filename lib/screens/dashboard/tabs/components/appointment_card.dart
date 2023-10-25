@@ -2,15 +2,12 @@ import 'dart:async';
 
 import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
-import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/Call/video_call.dart';
-import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/appointment_location_icon.dart';
 import 'package:boldo/widgets/appointment_type_icon.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,8 +16,6 @@ import 'package:intl/intl.dart';
 
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
-
-import '../../../../main.dart';
 
 class AppointmentCard extends StatefulWidget {
   final Appointment appointment;
@@ -379,7 +374,9 @@ class _AppointmentCardState extends State<AppointmentCard> {
                           MaterialPageRoute(
                               builder: (context) => MedicalRecordsScreen(
                                   appointment: widget.appointment
-                              )),
+                              ),
+                            settings: RouteSettings(name: (MedicalRecordsScreen).toString()),
+                          ),
                         );
                       },
                       child: Card(
