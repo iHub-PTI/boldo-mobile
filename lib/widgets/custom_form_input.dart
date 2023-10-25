@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
@@ -117,14 +116,18 @@ class _CustomFormInputState extends State<CustomFormInput> {
                   Provider.of<UserProvider>(context, listen: false)
                       .getBirthDate;
 
-              await DatePicker.showDatePicker(context,
-                  locale: LocaleType.es,
-                  currentTime: DateTime.parse(birthDate ?? "1980-01-01"),
-                  showTitleActions: true, onConfirm: (DateTime dt) {
+              DateTime? dt = await showDatePicker(
+                context: context,
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+                locale: const Locale("es", "ES"),
+                initialDate: DateTime.parse(birthDate ?? "1980-01-01"),
+              );
+              if(dt!= null){
                 _textEditingController.text =
                     DateFormat('dd.MM.yyyy').format(dt).toString();
                 widget.onChanged!(dt.toString());
-              });
+              }
             },
             child: Container(
               color: Colors.transparent,

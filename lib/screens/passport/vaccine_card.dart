@@ -86,7 +86,7 @@ class _VaccinateCardState extends State<VaccinateCard> {
                       : (MediaQuery.of(context).size.height * 0.35) - 95
                   : (MediaQuery.of(context).size.height * 0.4) - 95,
           child: Scrollbar(
-            isAlwaysShown: true,
+            thumbVisibility: true,
             child: ListView.builder(
                 dragStartBehavior: DragStartBehavior.down,
                 reverse: false,
