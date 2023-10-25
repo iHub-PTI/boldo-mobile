@@ -1,5 +1,6 @@
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/StudyOrder.dart';
+import 'package:boldo/network/appointment_repository.dart';
 import 'package:boldo/network/order_study_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
@@ -53,7 +54,7 @@ class StudyOrderBloc extends Bloc<StudyOrderEvent, StudyOrderState> {
       } else if (event is GetAppointment) {
         emit(LoadingAppointment());
         var _post;
-        await Task(() => _ordersRepository.getAppointment(event.encounter)!)
+        await Task(() => AppointmentRepository.getAppointmentByEncounterId(encounterId: event.encounter)!)
             .attempt()
             .run()
             .then((value) {
