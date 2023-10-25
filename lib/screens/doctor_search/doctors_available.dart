@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:boldo/app_config.dart';
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/doctors_favorite_bloc/doctors_favorite_bloc.dart';
@@ -380,7 +378,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
 
   Widget _recentDoctorTab(){
     return Container(
-      //color: ConstantsV2.grayLightest,
       child: SmartRefresher(
         physics: const ClampingScrollPhysics(),
         controller: _refreshDoctorController,
@@ -393,6 +390,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
           shrinkWrap: true,
           physics: const ClampingScrollPhysics(),
           children: [
+            const SizedBox(height: 16,),
             _recentDoctors(),
             const SizedBox(height: 24,),
             _allDoctors(),
@@ -445,7 +443,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
 
   Widget _favoriteDoctorTab(){
     return Container(
-      color: ConstantsV2.grayLightest,
+      padding: const EdgeInsets.all(16),
       child: SmartRefresher(
         physics: const ClampingScrollPhysics(),
         controller: _refreshFavoriteDoctorController,
@@ -761,7 +759,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         Container(
           color: ConstantsV2.grayLightest,
           padding:
-          const EdgeInsets.only(right: 16, left: 16),
+          const EdgeInsets.all(16),
           child: ReorderableBuilder(
             enableDraggable: false,
             children: doctors.map((e) => doctorItem(context, e)).toList(),
