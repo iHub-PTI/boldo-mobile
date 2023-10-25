@@ -81,21 +81,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   void initState() {
     _myProvider = Provider.of<DoctorFilterProvider>(context, listen: false);
     getDoctors();
-    scrollDoctorList.addListener(() {
-    double offset = 10.0; // or the value you want
-    if (scrollDoctorList.offset > offset){
-      showAnimatedButton = true;
-      // this we use to get update the state
-      setState((){
-
-      });
-    } else {
-      showAnimatedButton = false;
-      setState((){
-
-      });
-    }
-  });
 
     _tabController = TabController(
       length: 2,
