@@ -448,7 +448,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                       selectedDayPredicate: (day) => isSameDay(day, date),
                                       calendarFormat: _expandCalendar? CalendarFormat.month : CalendarFormat.week,
                                       firstDay: DateTime.now(),
-                                      lastDay: DateTime(date.year, date.month + 1, 7),
+                                      lastDay: DateTime.now().add(const Duration(days: 30)),
                                       currentDay: DateTime.now(),
                                       focusedDay: date,
                                     ),
