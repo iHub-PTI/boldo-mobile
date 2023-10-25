@@ -62,15 +62,15 @@ class ServiceRequestCard extends StatelessWidget {
                                     child: SvgPicture.asset(
                                       serviceRequest.category ==
                                           "Laboratory"
-                                          ? 'assets/icon/lab-dark.svg'
+                                          ? 'assets/icon/lab.svg'
                                           : serviceRequest.category ==
                                           "Diagnostic Imaging"
-                                          ? 'assets/icon/image-dark.svg'
+                                          ? 'assets/icon/image.svg'
                                           : serviceRequest.category ==
                                           "Other"
                                           ? 'assets/icon/other.svg'
                                           : 'assets/images/LogoIcon.svg',
-                                      color: ConstantsV2.activeText,
+                                      color: ConstantsV2.inactiveText,
                                     ),
                                   ),
                                   const SizedBox(height: 3),

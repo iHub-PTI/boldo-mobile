@@ -359,7 +359,7 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
                                     : diagnosticReport[index].type == "OTHER"
                                     ? 'assets/icon/other.svg'
                                     : 'assets/images/LogoIcon.svg',
-                                color: ConstantsV2.activeText,
+                                color: ConstantsV2.inactiveText,
                               ),
                             ),
                             const SizedBox(height: 3),
