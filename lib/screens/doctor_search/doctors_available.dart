@@ -316,11 +316,16 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     return Expanded(
       child: NestedScrollView(
         controller: scrollDoctorList,
+        floatHeaderSlivers: false,
         physics: const NeverScrollableScrollPhysics(),
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
-            SliverToBoxAdapter(
-              child: _tabBar(),
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              forceElevated: innerBoxIsScrolled,
+              pinned: true,
+              floating: false,
+              flexibleSpace: _tabBar(),
             ),
           ];
         },
