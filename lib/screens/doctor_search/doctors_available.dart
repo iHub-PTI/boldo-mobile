@@ -349,23 +349,32 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     return Container(
       padding: const EdgeInsets.all(12),
       color: ConstantsV2.grayLightest,
-      child: TabBar(
-        labelStyle: boldoTabHeaderSelectedTextStyle,
-        unselectedLabelStyle: boldoTabHeaderUnselectedTextStyle,
-        indicatorColor: Colors.transparent,
-        unselectedLabelColor:
-        const Color.fromRGBO(119, 119, 119, 1),
-        labelColor: ConstantsV2.activeText,
-        controller: _tabController,
-        tabs: [
-          const Text(
-            'Recientes',
+      child: Stack(
+        children: [
+          Center(
+              child: SvgPicture.asset(
+                'assets/decorations/line_separator.svg',
+              )
           ),
-          const Text(
-            'Favoritos',
+          TabBar(
+            labelStyle: boldoTabHeaderSelectedTextStyle,
+            unselectedLabelStyle: boldoTabHeaderUnselectedTextStyle,
+            indicatorColor: Colors.transparent,
+            unselectedLabelColor:
+            const Color.fromRGBO(119, 119, 119, 1),
+            labelColor: ConstantsV2.activeText,
+            controller: _tabController,
+            tabs: [
+              const Text(
+                'Recientes',
+              ),
+              const Text(
+                'Favoritos',
+              ),
+            ],
           ),
         ],
-      ),
+      )
     );
   }
 
