@@ -3,6 +3,7 @@ import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/doctors_favorite_bloc/doctors_favorite_bloc.dart';
 import 'package:boldo/blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
 import 'package:boldo/blocs/favorite_action_bloc/favorite_action_bloc.dart';
+import 'package:boldo/blocs/goToTop_bloc/goToTop_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
