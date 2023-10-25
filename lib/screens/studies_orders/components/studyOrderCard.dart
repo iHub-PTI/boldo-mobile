@@ -233,7 +233,6 @@ class ServiceRequestCard extends StatelessWidget {
                       ),
                     ),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
                       child: Text(
                         "Adjuntar archivo",
                         style: bigButton,
