@@ -756,9 +756,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   }
 
   Widget _allDoctors(){
-    return ListView(
-      physics: const ClampingScrollPhysics(),
-      shrinkWrap: true,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
@@ -823,24 +822,26 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
           }else{
             return
               favoritesDoctors.isNotEmpty
-                  ? AnimatedGrid(
-                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                key: gridFavoriteDoctorsKey,
-                physics: const ClampingScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                gridDelegate:
-                const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    childAspectRatio: 5 / 4,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20),
-                initialItemCount: favoritesDoctors.length,
-                itemBuilder: (context, index, animation){
-                  return FadeTransition(
-                    opacity: animation,
-                    child: doctorItem(context, favoritesDoctors[index]),
-                  );
-                },
+                  ? Container(
+                child: AnimatedGrid(
+                  key: gridFavoriteDoctorsKey,
+                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  physics: const ClampingScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  gridDelegate:
+                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 200,
+                      childAspectRatio: 5 / 4,
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20),
+                  initialItemCount: favoritesDoctors.length,
+                  itemBuilder: (context, index, animation){
+                    return FadeTransition(
+                      opacity: animation,
+                      child: doctorItem(context, favoritesDoctors[index]),
+                    );
+                  },
+                ),
               )
                   : _emptyFavoriteDoctors();
           }
