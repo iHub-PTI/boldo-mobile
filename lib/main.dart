@@ -73,6 +73,7 @@ import 'models/Relationship.dart';
 import 'models/User.dart';
 import 'models/UserVaccinate.dart';
 import 'models/upload_url_model.dart';
+import 'observers/navigatorObserver.dart';
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 final Patient patientModel = Patient();
@@ -326,6 +327,9 @@ class FullApp extends StatelessWidget {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
+      ],
+      navigatorObservers: [
+        AppNavigatorObserver(),
       ],
       supportedLocales: [
         const Locale("es", 'ES'),
