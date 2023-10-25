@@ -19,6 +19,7 @@ ios/build
 .history
 .svn/
 .env*
+**/**._*
 # IntelliJ related
 *.iml
 *.ipr
