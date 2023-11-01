@@ -206,24 +206,13 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
   }
 
   Widget body() {
-    return Expanded(
-      child: NestedScrollView(
-        floatHeaderSlivers: false,
-        physics: const NeverScrollableScrollPhysics(),
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return [
-            SliverAppBar(
-              automaticallyImplyLeading: false,
-              forceElevated: innerBoxIsScrolled,
-              pinned: true,
-              floating: false,
-              flexibleSpace: tab(),
-              backgroundColor: ConstantsV2.BGNeutral,
-            ),
-          ];
-        },
-        body: _tabs(),
-      ),
+    return Column(
+      children: [
+        tab(),
+        Expanded(
+          child: _tabs(),
+        ),
+      ],
     );
   }
 
