@@ -1,7 +1,10 @@
+import 'package:boldo/blocs/download_studies_orders_bloc/download_studies_orders_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/screens/studies_orders/components/studyOrderCard.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SelectableServiceRequest extends StatefulWidget {
@@ -45,43 +48,46 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        tabDownload(),
-        const SizedBox(
-          height: 10,
-        ),
-        Expanded(
-          child: ListView.separated(
-          physics: const ClampingScrollPhysics(),
-          separatorBuilder: (BuildContext context, int index) => const Divider(
-            color: Colors.transparent,
+    return BlocProvider<DownloadStudiesOrdersBloc>(
+      create: (BuildContext context) => DownloadStudiesOrdersBloc(),
+      child: Column(
+        children: [
+          tabDownload(),
+          const SizedBox(
             height: 10,
           ),
-          itemCount: listSelectableElements.length,
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemBuilder: (BuildContext context, int index){
-            ServiceRequest serviceRequest = listSelectableElements.keys.elementAt(index);
-            bool? value = listSelectableElements[serviceRequest];
-            return ServiceRequestCard(
-              serviceRequest: serviceRequest,
-              selected: value?? false,
-              selectedFunction: (){
-                listSelectableElements[serviceRequest] = true;
-                checkHeader();
+          Expanded(
+            child: ListView.separated(
+              physics: const ClampingScrollPhysics(),
+              separatorBuilder: (BuildContext context, int index) => const Divider(
+                color: Colors.transparent,
+                height: 10,
+              ),
+              itemCount: listSelectableElements.length,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemBuilder: (BuildContext context, int index){
+                ServiceRequest serviceRequest = listSelectableElements.keys.elementAt(index);
+                bool? value = listSelectableElements[serviceRequest];
+                return ServiceRequestCard(
+                  serviceRequest: serviceRequest,
+                  selected: value?? false,
+                  selectedFunction: (){
+                    listSelectableElements[serviceRequest] = true;
+                    checkHeader();
 
+                  },
+                  unselectedFunction: (){
+                    listSelectableElements[serviceRequest] = false;
+                    checkHeader();
+                  },
+                  durationEffect: durationEffect,
+                );
               },
-              unselectedFunction: (){
-                listSelectableElements[serviceRequest] = false;
-                checkHeader();
-              },
-              durationEffect: durationEffect,
-            );
-          },
-        ),
-        ),
-      ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -168,32 +174,46 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
                         ),
                       ],
                     ),
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: (){
-                        },
-                        child: Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              const Icon(
-                                Icons.save_alt_rounded,
-                                color: ConstantsV2.grayDark,
-                              ),
-                              const SizedBox(width: 8,),
-                              Text(
-                                "Descargar",
-                                style: GoogleFonts.inter(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 0.15,
+                    BlocBuilder<DownloadStudiesOrdersBloc, DownloadStudiesOrdersState>(
+                      builder: (BuildContext context, state){
+                        if(state is Loading){
+                          return loadingStatus();
+                        }else{
+                          return Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: (){
+                                BlocProvider.of<DownloadStudiesOrdersBloc>(context).add(
+                                  DownloadStudiesOrders(
+                                    listOfIds: listSelectableElements.entries.where(
+                                            (element) => element.value== true).map((e) => e.key.id).toList(),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    const Icon(
+                                      Icons.save_alt_rounded,
+                                      color: ConstantsV2.grayDark,
+                                    ),
+                                    const SizedBox(width: 8,),
+                                    Text(
+                                      "Descargar",
+                                      style: GoogleFonts.inter(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        letterSpacing: 0.15,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ],
                 ),
