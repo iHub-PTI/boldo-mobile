@@ -3,8 +3,8 @@ import 'package:boldo/main.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
-import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
+import 'package:boldo/screens/studies_orders/components/selectableStudiesOrders.dart';
 import 'package:boldo/screens/studies_orders/components/studyOrderCard.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
@@ -285,26 +285,14 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
     return BlocBuilder<studies_orders_bloc.StudiesOrdersBloc, studies_orders_bloc.StudiesOrdersState>(
       builder: (BuildContext context, state){
         if(state is studies_orders_bloc.StudiesOrdersLoaded){
-          return state.studiesOrders.isNotEmpty ? ListView.separated(
-            physics: const ClampingScrollPhysics(),
-            separatorBuilder: (BuildContext context, int index) => const Divider(
-              color: Colors.transparent,
-              height: 5,
-            ),
-            itemCount: state.studiesOrders.length,
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemBuilder: (BuildContext context, int index){
-              return showStudyOrder(serviceRequest: state.studiesOrders[index]);
-            },
+          return state.studiesOrders.isNotEmpty ? SelectableServiceRequest(
+            servicesRequests: state.studiesOrders,
           ) : const Expanded(
-        child: SingleChildScrollView(
         child: EmptyStateV2(
-        picture: "empty_studies.svg",
-        titleBottom: "Aún no tenés estudios",
-        textBottom:
-        "A medida en que uses la aplicación podrás ir viendo tus estudios",
-        )
+          picture: "empty_studies.svg",
+          titleBottom: "Aún no tenés estudios",
+          textBottom:
+          "A medida en que uses la aplicación podrás ir viendo tus estudios",
         ));
         } else if(state is studies_orders_bloc.LoadingOrders) {
           return loadingStatus();
