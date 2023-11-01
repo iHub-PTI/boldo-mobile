@@ -148,7 +148,7 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
                   const SizedBox(
                     height: 15,
                   ),
-                  body(),
+                  Expanded(child: body()),
                 ],
               ),
             ),
