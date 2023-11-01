@@ -25,7 +25,7 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
   Map<ServiceRequest, bool> listSelectableElements = {};
   late AnimationController _controller;
 
-  Duration durationEffect = const Duration(milliseconds: 300);
+  Duration durationEffect = const Duration(milliseconds: 100);
 
   @override
   void initState(){
@@ -76,6 +76,7 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
                 listSelectableElements[serviceRequest] = false;
                 checkHeader();
               },
+              durationEffect: durationEffect,
             );
           },
         ),
