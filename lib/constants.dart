@@ -356,6 +356,24 @@ const BoxDecoration buttonFXSecondaryStyle = BoxDecoration(
   ]
 );
 
+const BoxDecoration selectedCardDecoration = BoxDecoration(
+  color: Color(0xFFF3FAF7),
+  boxShadow: [
+    BoxShadow(
+      color: Color(0x21FFFFFF),
+      blurRadius: 4,
+      offset: Offset(4, -4),
+      spreadRadius: 1,
+    ),
+    BoxShadow(
+      color: Color(0x3F000000),
+      blurRadius: 4,
+      offset: Offset(0, 4),
+      spreadRadius: 0,
+    )
+  ],
+);
+
 ThemeData boldoTheme = ThemeData(
   fontFamily: 'Montserrat',
   elevatedButtonTheme: ElevatedButtonThemeData(
