@@ -16,6 +16,7 @@ class ServiceRequestCard extends StatefulWidget {
   final Function? selectedFunction;
   final Function? unselectedFunction;
   final bool selected;
+  final Duration durationEffect;
 
   ServiceRequestCard({
     Key? key,
@@ -23,6 +24,7 @@ class ServiceRequestCard extends StatefulWidget {
     this.selectedFunction,
     this.unselectedFunction,
     this.selected = false,
+    this.durationEffect = const Duration(seconds: 1),
   }) : super(key: key);
 
   @override
@@ -73,7 +75,7 @@ class ServiceRequestCardState extends State<ServiceRequestCard> with TickerProvi
     );
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 1),
+      duration: widget.durationEffect,
     );
     super.initState();
   }
@@ -301,7 +303,7 @@ class ServiceRequestCardState extends State<ServiceRequestCard> with TickerProvi
 
   Widget unselectButton({required BuildContext context}){
     return AnimatedOpacity(
-      duration: const Duration(seconds: 1),
+      duration: widget.durationEffect,
       opacity: selected? 1 : 0,
       child: Visibility(
         visible: selected,
