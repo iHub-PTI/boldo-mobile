@@ -85,7 +85,15 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
   }
 
   void checkHeader(){
+    //check if someone elements is selected to init animation
     if(listSelectableElements.containsValue(true)){
+
+      //if all elements is selected set selectAll to true
+      if(listSelectableElements.values.every((element) => element==true)){
+        selectAll = true;
+      }else{
+        selectAll = false;
+      }
       _controller.forward().then((value) => setState(() {
 
       }));
