@@ -18,8 +18,8 @@ import 'package:intl/intl.dart';
 
 import '../../constants.dart';
 import '../../models/DiagnosticReport.dart';
+import 'components/new_study_button.dart';
 import 'estudy_screen.dart';
-import 'new_study.dart';
 
 class MyStudies extends StatefulWidget {
   MyStudies({Key? key}) : super(key: key);
@@ -155,53 +155,7 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
           ),
         ),
       ),
-      floatingActionButton: ElevatedButton(
-        onPressed: () {
-          if(BlocProvider.of<MyStudiesBloc>(context).state is Loading){
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Favor aguardar durante la carga."),
-                backgroundColor: Colors.redAccent,
-              ),
-            );
-          }else{
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => NewStudy()
-                )
-            );
-          }
-        },
-        child: BlocBuilder<MyStudiesBloc, MyStudiesState>(
-          builder: (BuildContext context, state) {
-            if(state is Loading){
-              return const CircularProgressIndicator(
-                valueColor:
-                AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                backgroundColor: Constants.primaryColor600,
-              );
-            }else{
-              return Container(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'nuevo estudio',
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      SvgPicture.asset(
-                        'assets/icon/upload.svg',
-                      ),
-                    ],
-                  )
-              );
-            }
-          },
-        ),
-      ),
+      floatingActionButton: NewStudyButton(listener: _tabStudiesController,),
     );
   }
 
