@@ -49,7 +49,7 @@ void initDio(
   ISentrySpan? transaction;
 
   //setup interceptors
-  dio.interceptors.add(QueuedInterceptorsWrapper(
+  dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) async {
       accessToken = (await storage.read(key: "access_token") ?? '');
       options.headers["authorization"] = "bearer $accessToken";
