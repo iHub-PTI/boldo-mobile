@@ -2,8 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
-import 'package:boldo/main.dart';
-import 'package:boldo/network/files_repository.dart';
+import 'package:boldo/network/order_study_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/files_helpers.dart';
 import 'package:dartz/dartz.dart';
@@ -18,8 +17,7 @@ class DownloadStudiesOrdersBloc extends Bloc<DownloadStudiesOrdersEvent, Downloa
       if (event is DownloadStudiesOrders) {
         emit(Loading());
         var _post;
-        // TODO: set correct function of StudiesOrdersRepository to download
-        await Task(() => FilesRepository.getFile(url: patient.photoUrl))
+        await Task(() => StudiesOrdersRepository.downloadStudiesOrders(studiesOrdersId: event.listOfIds))
             .attempt()
             .mapLeftToFailure()
             .run()
