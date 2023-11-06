@@ -8,6 +8,7 @@ import 'package:boldo/screens/studies_orders/components/selectableStudiesOrders.
 import 'package:boldo/screens/studies_orders/components/studyOrderCard.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:boldo/widgets/card_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
@@ -412,29 +413,18 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
                 ? Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Container(
-                  child: GestureDetector(
-                    onTap: (){
-                      BlocProvider.of<MyStudiesBloc>(context)
-                          .add(GetServiceRequests(serviceRequestId: diagnosticReport[index]
-                          .serviceRequestId!));
-                    },
-                    child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-                        clipBehavior: Clip.antiAlias,
-                        decoration: ShapeDecoration(
-                          color: ConstantsV2.orange.withOpacity(0.10),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(6)),
-                          ),
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-                          child: Text(
-                            "Ver orden",
-                            style: bigButton,
-                          ),
-                        )),
+                CardButton(
+                  function: (){
+                    BlocProvider.of<MyStudiesBloc>(context)
+                        .add(GetServiceRequests(serviceRequestId: diagnosticReport[index]
+                        .serviceRequestId!));
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+                    child: Text(
+                      "Ver orden",
+                      style: bigButton,
+                    ),
                   ),
                 ),
               ],
