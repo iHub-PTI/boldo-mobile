@@ -66,7 +66,7 @@ class FilesRepository {
         data = await http.get(Uri.parse(url));
       }
 
-      Uint8List bytes = data.bodyBytes;
+      Uint8List bytes = data.data;
       return bytes;
     } catch (exception, stackTrace) {
       captureError(
