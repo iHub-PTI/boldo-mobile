@@ -283,7 +283,7 @@ class StudiesOrdersRepository {
 
       // remove null ids
       Map<String, dynamic> queryParams ={
-        'id': studiesOrdersId.where((element) => element != null),
+        'ids': studiesOrdersId.where((element) => element != null).toList(),
       };
 
       // declare a connection to download with access token and urlBase
