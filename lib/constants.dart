@@ -307,6 +307,14 @@ const BigButton = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const regularText = TextStyle(
+  fontStyle: FontStyle.normal,
+  fontSize: 10,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
+  height: 0,
+);
+
 BoxShadow shadowRegular = const BoxShadow(
   color: Color(0x0C000000),
   blurRadius: 4,
@@ -604,6 +612,9 @@ class ConstantsV2 {
   static const Color blueDark = Color(0xff364F6B);
   static const Color blueLight = Color(0xffB1C3D7);
   static const Color orange = Color(0xffEB8B76);
+
+  /// orange with 10% of opacity
+  static const Color veryLightOrange = Color(0x19EB8B76);
   static const Color lightAndClear = Color(0xffF5F5F5);
   static const Color gray = Color(0xffCFCFCF);
   static const Color grayLight = Color(0xffF8F8F8);
@@ -639,8 +650,8 @@ class ConstantsV2 {
   static double homeFeedTitleContainerMinHeight = 32.0;
   static double homeCarouselPadding = 24.0;
 
-  static double homeExpandedMaxHeight = homeAppBarMaxHeight + homeCarouselContainerMaxHeight + homeCarouselTitleContainerMaxHeight + homeFeedTitleContainerMaxHeight + homeCarouselPadding + homeCarouselPadding;
-  static double homeExpandedMinHeight = homeAppBarMinHeight + homeCarouselContainerMinHeight + homeCarouselTitleContainerMinHeight + homeFeedTitleContainerMinHeight + homeCarouselPadding + homeCarouselPadding;
+  static double homeExpandedMaxHeight = homeAppBarMaxHeight;
+  static double homeExpandedMinHeight = homeAppBarMinHeight;
 
 }
 
