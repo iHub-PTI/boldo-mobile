@@ -364,6 +364,13 @@ const BoxDecoration buttonFXSecondaryStyle = BoxDecoration(
   ]
 );
 
+BoxDecoration cardDecoration = BoxDecoration(
+  color: ConstantsV2.lightest,
+  boxShadow: [
+    shadowRegular
+  ],
+);
+
 const BoxDecoration selectedCardDecoration = BoxDecoration(
   color: Color(0xFFF3FAF7),
   boxShadow: [
