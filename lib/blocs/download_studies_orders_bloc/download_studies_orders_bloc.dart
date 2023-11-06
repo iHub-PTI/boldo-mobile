@@ -33,9 +33,7 @@ class DownloadStudiesOrdersBloc extends Bloc<DownloadStudiesOrdersEvent, Downloa
           _post.foldRight(Uint8List, (a, previous) => file = a);
 
           //open the file
-
-          // TODO: set correct file extension to Studies orders document
-          FilesHelpers.openFile(file: file, extension: '.jpeg');
+          FilesHelpers.openFile(file: file, extension: '.pdf');
           emit(Success(file: file));
         }
       }
