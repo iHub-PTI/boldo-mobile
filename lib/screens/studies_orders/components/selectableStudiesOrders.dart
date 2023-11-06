@@ -53,9 +53,6 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
       child: Column(
         children: [
           tabDownload(),
-          const SizedBox(
-            height: 10,
-          ),
           Expanded(
             child: ListView.separated(
               physics: const ClampingScrollPhysics(),
@@ -127,6 +124,7 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
           );
         },
         child: Container(
+          margin: const EdgeInsets.only(bottom: 10),
           key: _controller.isAnimating || _controller.isCompleted? Key('header') : null,
           decoration: ShapeDecoration(
             color: Colors.white,
