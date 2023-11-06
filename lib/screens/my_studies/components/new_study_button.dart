@@ -37,8 +37,11 @@ class _NewStudyButtonState extends State<NewStudyButton>{
   Widget build(BuildContext context){
 
     return AnimatedCrossFade(
-      firstChild: Container(
-      ),
+      firstChild: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+
+      ],),
       secondChild: ElevatedButton(
         onPressed: () {
           if(BlocProvider.of<MyStudiesBloc>(context).state is Loading){
