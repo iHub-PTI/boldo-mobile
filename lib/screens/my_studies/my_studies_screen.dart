@@ -269,7 +269,7 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
             physics: const ClampingScrollPhysics(),
             separatorBuilder: (BuildContext context, int index) => const Divider(
               color: Colors.transparent,
-              height: 5,
+              height: 10,
             ),
             itemCount: diagnosticReport.length,
             scrollDirection: Axis.vertical,
@@ -303,9 +303,8 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
   }
 
   Widget showStudy(BuildContext context, int index) {
-    return Card(
-      elevation: 1,
-      margin: const EdgeInsets.only(bottom: 4),
+    return Container(
+      decoration: cardDecoration,
       child: InkWell(
         onTap: () {
           Navigator.push(
