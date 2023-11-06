@@ -274,7 +274,7 @@ class StudiesOrdersRepository {
     }
   }
 
-  Future<Uint8List> downloadStudiesOrders ({
+  static Future<Uint8List> downloadStudiesOrders ({
     required List<String?> studiesOrdersId,
   }) async {
     try {
@@ -290,12 +290,11 @@ class StudiesOrdersRepository {
       Dio _dioDownloader = Dio();
       initDio(navKey: navKey, dio: _dioDownloader, baseUrl: environment.SERVER_ADDRESS, responseType: ResponseType.bytes);
 
-      // TODO: change url path according to Backend service
       // the query is made
       if(prefs.getBool(isFamily) ?? false) {
-        url = '/profile/caretaker/dependent/${patient.id}/serviceRequest/download/';
+        url = '/profile/caretaker/dependent/${patient.id}/serviceRequests/reports/';
       }else{
-        url = '/profile/patient/serviceRequest/download';
+        url = '/profile/patient/serviceRequests/reports';
       }
       Uint8List file = await FilesRepository.getFile(
         localDio: _dioDownloader,
