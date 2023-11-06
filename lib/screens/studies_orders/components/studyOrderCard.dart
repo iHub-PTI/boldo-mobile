@@ -4,6 +4,7 @@ import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/card_button.dart';
 import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -63,18 +64,8 @@ class ServiceRequestCardState extends State<ServiceRequestCard> with TickerProvi
   void initState(){
     selected = widget.selected;
     decorationTween = DecorationTween(
-      begin: selected? selectedCardDecoration: BoxDecoration(
-        color: ConstantsV2.lightest,
-        boxShadow: [
-          shadowRegular
-        ],
-      ),
-      end: selected? BoxDecoration(
-        color: ConstantsV2.lightest,
-        boxShadow: [
-          shadowRegular
-        ],
-      ) : selectedCardDecoration,
+      begin: selected? selectedCardDecoration: cardDecoration,
+      end: selected? cardDecoration: selectedCardDecoration,
     );
     _controller = AnimationController(
       vsync: this,
@@ -114,12 +105,48 @@ class ServiceRequestCardState extends State<ServiceRequestCard> with TickerProvi
                       child: Column(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                             child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                Flexible(
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          "Nro de orden: ${widget.serviceRequest.orderNumber}",
+                                          style:
+                                          regularText.copyWith(
+                                            color: ConstantsV2.darkBlue,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                if(widget.serviceRequest.authoredDate != null)
+                                  Text(
+                                    "${DateFormat('dd/MM/yy').format(DateTime.parse(widget.serviceRequest.authoredDate!).toLocal())}",
+                                    style: regularText.copyWith(
+                                      color: ConstantsV2.inactiveText,
+                                    ),
+                                  )
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                            child: Row(
+                              children: [
                                 Container(
-                                  padding: const EdgeInsets.only(left: 6, right: 4),
+                                  padding: const EdgeInsets.only(left: 2, right: 1,),
                                   child: ClipRect(
                                     child: Column(
                                       children: [
@@ -144,7 +171,8 @@ class ServiceRequestCardState extends State<ServiceRequestCard> with TickerProvi
                                         Text(
                                           "${widget.serviceRequest.category == "Laboratory" ? 'lab.' : widget.serviceRequest.category == "Diagnostic Imaging" ? 'img.' : widget.serviceRequest.category == "Other" ? 'other.' : 'Desconocido'}",
                                           style: boldoCorpMediumBlackTextStyle.copyWith(
-                                              color: ConstantsV2.activeText),
+                                            color: ConstantsV2.activeText,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -156,51 +184,17 @@ class ServiceRequestCardState extends State<ServiceRequestCard> with TickerProvi
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
-                                      Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Flexible(
-                                            child: Row(
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Flexible(
-                                                  child: Text(
-                                                    "Nro de orden: ${widget.serviceRequest.orderNumber}",
-                                                    style:
-                                                    CorpPMediumTextStyle.copyWith(
-                                                        color: ConstantsV2.darkBlue),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            width: 8,
-                                          ),
-                                          if(widget.serviceRequest.authoredDate != null)
-                                            Text(
-                                              "${DateFormat('dd/MM/yy').format(DateTime.parse(widget.serviceRequest.authoredDate!).toLocal())}",
-                                              style: boldoCorpSmallTextStyle.copyWith(
-                                                color: ConstantsV2.darkBlue,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            )
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 8,
-                                      ),
                                       Text(
                                         "${widget.serviceRequest.description?? "Sin descripción"}",
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.montserrat().copyWith(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 12,
-                                            color: ConstantsV2.activeText
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 12,
+                                          color: ConstantsV2.activeText,
                                         ),
                                       ),
                                     ],
@@ -345,23 +339,21 @@ class ServiceRequestCardState extends State<ServiceRequestCard> with TickerProvi
             if(state is Loading){
               return loadingStatus();
             }else{
-              return Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    BlocProvider.of<DownloadStudiesOrdersBloc>(context).add(
-                      DownloadStudiesOrders(
-                        listOfIds: [widget.serviceRequest.id],
-                      ),
-                    );
-                  },
+              return CardButton(
+                function: (){
+                  BlocProvider.of<DownloadStudiesOrdersBloc>(context).add(
+                    DownloadStudiesOrders(
+                      listOfIds: [widget.serviceRequest.id],
+                    ),
+                  );
+                },
+                decoration: null,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-                    child: Container(
-                      child: Text(
-                        "Descargar",
-                        style: bigButton,
-                      ),
+                    child: Text(
+                      "Descargar",
+                      style: bigButton,
                     ),
                   ),
                 ),
@@ -369,34 +361,24 @@ class ServiceRequestCardState extends State<ServiceRequestCard> with TickerProvi
             }
           },
         ),
-        Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => AttachStudyByOrderScreen(
-                        studyOrder: widget.serviceRequest,
-                        doctor: widget.serviceRequest.doctor,
-                      )
+        CardButton(
+          function: (){
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => AttachStudyByOrderScreen(
+                    studyOrder: widget.serviceRequest,
+                    doctor: widget.serviceRequest.doctor,
                   )
-              );
-            },
+              )
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-              clipBehavior: Clip.antiAlias,
-              decoration: ShapeDecoration(
-                color: ConstantsV2.orange.withOpacity(0.10),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(6)),
-                ),
-              ),
-              child: Container(
-                child: Text(
-                  "Adjuntar archivo",
-                  style: bigButton,
-                ),
+              child: Text(
+                "Adjuntar archivo",
+                style: bigButton,
               ),
             ),
           ),
