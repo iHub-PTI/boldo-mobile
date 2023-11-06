@@ -2,6 +2,7 @@ import 'package:boldo/blocs/download_studies_orders_bloc/download_studies_orders
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/screens/studies_orders/components/studyOrderCard.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,40 +51,50 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
   Widget build(BuildContext context) {
     return BlocProvider<DownloadStudiesOrdersBloc>(
       create: (BuildContext context) => DownloadStudiesOrdersBloc(),
-      child: Column(
-        children: [
-          tabDownload(),
-          Expanded(
-            child: ListView.separated(
-              physics: const ClampingScrollPhysics(),
-              separatorBuilder: (BuildContext context, int index) => const Divider(
-                color: Colors.transparent,
-                height: 10,
+      child: BlocListener<DownloadStudiesOrdersBloc, DownloadStudiesOrdersState>(
+        listener: (context, state){
+          if(state is Failed){
+            emitSnackBar(
+                context: context,
+                text: state.msg,
+                status: ActionStatus.Fail
+            );
+          }
+        },
+        child: Column(
+          children: [
+            tabDownload(),
+            Expanded(
+              child: ListView.separated(
+                physics: const ClampingScrollPhysics(),
+                separatorBuilder: (BuildContext context, int index) => const Divider(
+                  color: Colors.transparent,
+                  height: 10,
+                ),
+                itemCount: listSelectableElements.length,
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemBuilder: (BuildContext context, int index){
+                  ServiceRequest serviceRequest = listSelectableElements.keys.elementAt(index);
+                  bool? value = listSelectableElements[serviceRequest];
+                  return ServiceRequestCard(
+                    serviceRequest: serviceRequest,
+                    selected: value?? false,
+                    selectedFunction: (){
+                      listSelectableElements[serviceRequest] = true;
+                      checkHeader();
+                    },
+                    unselectedFunction: (){
+                      listSelectableElements[serviceRequest] = false;
+                      checkHeader();
+                    },
+                    durationEffect: durationEffect,
+                  );
+                },
               ),
-              itemCount: listSelectableElements.length,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemBuilder: (BuildContext context, int index){
-                ServiceRequest serviceRequest = listSelectableElements.keys.elementAt(index);
-                bool? value = listSelectableElements[serviceRequest];
-                return ServiceRequestCard(
-                  serviceRequest: serviceRequest,
-                  selected: value?? false,
-                  selectedFunction: (){
-                    listSelectableElements[serviceRequest] = true;
-                    checkHeader();
-
-                  },
-                  unselectedFunction: (){
-                    listSelectableElements[serviceRequest] = false;
-                    checkHeader();
-                  },
-                  durationEffect: durationEffect,
-                );
-              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
