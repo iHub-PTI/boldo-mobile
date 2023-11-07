@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:boldo/app_config.dart';
 import 'package:boldo/models/upload_url_model.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/errors.dart';
@@ -68,6 +69,18 @@ class FilesRepository {
 
       Uint8List bytes = data.data;
       return bytes;
+    } on DioError catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+        data: {
+          'url': url,
+        },
+      );
+      if(exception.type == DioErrorType.receiveTimeout || exception.response?.statusCode == 502){
+        throw Failure(appConfig.TIMEOUT_MESSAGE_DOWNLOAD_FILES.getValue);
+      }
+      throw Failure("Error al descargar el archivo");
     } catch (exception, stackTrace) {
       captureError(
         exception: exception,
