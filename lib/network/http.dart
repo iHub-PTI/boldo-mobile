@@ -1,3 +1,4 @@
+import 'package:boldo/app_config.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/environment.dart';
 import 'package:boldo/network/connection_status.dart';
@@ -39,8 +40,12 @@ void initDio(
 
   // limit time for download files
   if(responseType == ResponseType.bytes){
-    dio.options.connectTimeout = const Duration(milliseconds: 20000);
-    dio.options.receiveTimeout = const Duration(milliseconds: 20000);
+    int milliseconds = appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.getValue;
+    dio.options.connectTimeout = const Duration(milliseconds: 1000*60);
+    dio.options.receiveTimeout = Duration(milliseconds: milliseconds);
+    appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.listenValue((value) =>
+      dio.options.receiveTimeout = Duration(milliseconds: value)
+    );
   }
 
   String? accessToken;
