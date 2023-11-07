@@ -37,6 +37,8 @@ class FirebaseRemoteConfigService {
         "ACCESS_ADD_DEPENDENT_CI": appConfig.ACCESS_ADD_DEPENDENT_CI,
         "ACCESS_ADD_DEPENDENT_QR": appConfig.ACCESS_ADD_DEPENDENT_QR,
         "ACCESS_ADD_DEPENDENT_WITHOUT_CI": appConfig.ACCESS_ADD_DEPENDENT_WITHOUT_CI,
+        "TIME_OUT_MESSAGE_DOWNLOAD_FILES": appConfig.TIMEOUT_MESSAGE_DOWNLOAD_FILES.getValue,
+        "RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES": appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.getValue,
       });
 
       // get values from server
@@ -59,6 +61,8 @@ class FirebaseRemoteConfigService {
       appConfig.updateAccessAddDependentCIValue(firebaseRemoteConfig.getBool("ACCESS_ADD_DEPENDENT_CI"));
       appConfig.updateAccessAddDependentQRValue(firebaseRemoteConfig.getBool("ACCESS_ADD_DEPENDENT_QR"));
       appConfig.updateAccessAddDependentWithoutCIValue(firebaseRemoteConfig.getBool("ACCESS_ADD_DEPENDENT_WITHOUT_CI"));
+      appConfig.TIMEOUT_MESSAGE_DOWNLOAD_FILES.updateValue(firebaseRemoteConfig.getString("TIMEOUT_MESSAGE_DOWNLOAD_FILES"));
+      appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.updateValue(firebaseRemoteConfig.getInt("RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES"));
 
       // listen remote changes
       firebaseRemoteConfig.onConfigUpdated.listen((event) async {
@@ -136,6 +140,14 @@ class FirebaseRemoteConfigService {
           // set new value
           appConfig.updateAccessAddDependentWithoutCIValue(firebaseRemoteConfig.getBool("ACCESS_ADD_DEPENDENT_WITHOUT_CI"));
         }
+        if(event.updatedKeys.contains("TIMEOUT_MESSAGE_DOWNLOAD_FILES")){
+          // set new value
+          appConfig.TIMEOUT_MESSAGE_DOWNLOAD_FILES.updateValue(firebaseRemoteConfig.getString("TIMEOUT_MESSAGE_DOWNLOAD_FILES"));
+        }
+        if(event.updatedKeys.contains("RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES")){
+          // set new value
+          appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.updateValue(firebaseRemoteConfig.getInt("RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES"));
+        }
       });
     } on FirebaseException catch (exception, stackTrace){
       captureError(
@@ -143,6 +155,11 @@ class FirebaseRemoteConfigService {
         stackTrace: stackTrace,
       );
     } on Exception catch (exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+    } catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,

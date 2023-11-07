@@ -3,11 +3,13 @@ import 'package:boldo/main.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
-import 'package:boldo/screens/profile/components/profile_image.dart';
+import 'package:boldo/screens/my_studies/components/study_result_card.dart';
 import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
+import 'package:boldo/screens/studies_orders/components/selectableStudiesOrders.dart';
 import 'package:boldo/screens/studies_orders/components/studyOrderCard.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:boldo/widgets/card_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +20,8 @@ import 'package:intl/intl.dart';
 
 import '../../constants.dart';
 import '../../models/DiagnosticReport.dart';
+import 'components/new_study_button.dart';
 import 'estudy_screen.dart';
-import 'new_study.dart';
 
 class MyStudies extends StatefulWidget {
   MyStudies({Key? key}) : super(key: key);
@@ -148,82 +150,25 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
                   const SizedBox(
                     height: 15,
                   ),
-                  body(),
+                  Expanded(child: body()),
                 ],
               ),
             ),
           ),
         ),
       ),
-      floatingActionButton: ElevatedButton(
-        onPressed: () {
-          if(BlocProvider.of<MyStudiesBloc>(context).state is Loading){
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Favor aguardar durante la carga."),
-                backgroundColor: Colors.redAccent,
-              ),
-            );
-          }else{
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => NewStudy()
-                )
-            );
-          }
-        },
-        child: BlocBuilder<MyStudiesBloc, MyStudiesState>(
-          builder: (BuildContext context, state) {
-            if(state is Loading){
-              return const CircularProgressIndicator(
-                valueColor:
-                AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                backgroundColor: Constants.primaryColor600,
-              );
-            }else{
-              return Container(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'nuevo estudio',
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      SvgPicture.asset(
-                        'assets/icon/upload.svg',
-                      ),
-                    ],
-                  )
-              );
-            }
-          },
-        ),
-      ),
+      floatingActionButton: NewStudyButton(listener: _tabStudiesController,),
     );
   }
 
   Widget body() {
-    return Expanded(
-      child: NestedScrollView(
-        floatHeaderSlivers: false,
-        physics: const NeverScrollableScrollPhysics(),
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return [
-            SliverAppBar(
-              automaticallyImplyLeading: false,
-              forceElevated: innerBoxIsScrolled,
-              pinned: true,
-              floating: false,
-              flexibleSpace: tab(),
-              backgroundColor: ConstantsV2.BGNeutral,
-            ),
-          ];
-        },
-        body: _tabs(),
-      ),
+    return Column(
+      children: [
+        tab(),
+        Expanded(
+          child: _tabs(),
+        ),
+      ],
     );
   }
 
@@ -280,7 +225,7 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
             physics: const ClampingScrollPhysics(),
             separatorBuilder: (BuildContext context, int index) => const Divider(
               color: Colors.transparent,
-              height: 5,
+              height: 10,
             ),
             itemCount: diagnosticReport.length,
             scrollDirection: Axis.vertical,
@@ -296,26 +241,14 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
     return BlocBuilder<studies_orders_bloc.StudiesOrdersBloc, studies_orders_bloc.StudiesOrdersState>(
       builder: (BuildContext context, state){
         if(state is studies_orders_bloc.StudiesOrdersLoaded){
-          return state.studiesOrders.isNotEmpty ? ListView.separated(
-            physics: const ClampingScrollPhysics(),
-            separatorBuilder: (BuildContext context, int index) => const Divider(
-              color: Colors.transparent,
-              height: 5,
-            ),
-            itemCount: state.studiesOrders.length,
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemBuilder: (BuildContext context, int index){
-              return showStudyOrder(serviceRequest: state.studiesOrders[index]);
-            },
+          return state.studiesOrders.isNotEmpty ? SelectableServiceRequest(
+            servicesRequests: state.studiesOrders,
           ) : const Expanded(
-        child: SingleChildScrollView(
         child: EmptyStateV2(
-        picture: "empty_studies.svg",
-        titleBottom: "Aún no tenés estudios",
-        textBottom:
-        "A medida en que uses la aplicación podrás ir viendo tus estudios",
-        )
+          picture: "empty_studies.svg",
+          titleBottom: "Aún no tenés estudios",
+          textBottom:
+          "A medida en que uses la aplicación podrás ir viendo tus estudios",
         ));
         } else if(state is studies_orders_bloc.LoadingOrders) {
           return loadingStatus();
@@ -326,193 +259,8 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
   }
 
   Widget showStudy(BuildContext context, int index) {
-    return Card(
-      elevation: 1,
-      margin: const EdgeInsets.only(bottom: 4),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => Study(
-                        id: diagnosticReport[index].id ?? '0',
-                      )));
-        },
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7),
-                    child: ClipRect(
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 27,
-                              child: SvgPicture.asset(
-                                diagnosticReport[index].type == "LABORATORY"
-                                    ? 'assets/icon/lab.svg'
-                                    : diagnosticReport[index].type == "IMAGE"
-                                    ? 'assets/icon/image.svg'
-                                    : diagnosticReport[index].type == "OTHER"
-                                    ? 'assets/icon/other.svg'
-                                    : 'assets/images/LogoIcon.svg',
-                                color: ConstantsV2.inactiveText,
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              "${diagnosticReport[index].type == "LABORATORY" ? 'lab.' : diagnosticReport[index].type == "IMAGE" ? 'img.' : diagnosticReport[index].type == "OTHER" ? 'otros' : 'desconocido'}",
-                              style: boldoCorpMediumBlackTextStyle.copyWith(
-                                  color: ConstantsV2.activeText),
-                            ),
-                          ],
-                        )),
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Expanded(
-                    child: Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Flexible(
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
-                                  decoration: ShapeDecoration(
-                                    color: Constants.secondaryColor100,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(100),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      SvgPicture.asset(
-                                        'assets/icon/cloud.svg',
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Flexible(
-                                        child: diagnosticReport[index].sourceID ==
-                                            (prefs.getString('userId') ?? '')
-                                            ?
-                                        Text(
-                                          "subido por usted",
-                                          style:
-                                          boldoCorpSmallTextStyle.copyWith(
-                                              color: ConstantsV2.darkBlue),
-                                        ):Text(
-                                          diagnosticReport[index].source != null
-                                              ? "subido por ${diagnosticReport[index].sourceType == 'Practitioner'? 'Dr/a.': '' } "
-                                              "${diagnosticReport[index].source?.split(' ')[0]}"
-                                              : 'Boldo',
-                                          style:
-                                          boldoCorpSmallTextStyle.copyWith(
-                                              color: ConstantsV2.darkBlue),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              Text(
-                                "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport[index].effectiveDate!).toLocal())}",
-                                style: boldoCorpSmallTextStyle.copyWith(
-                                  color: ConstantsV2.darkBlue,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              )
-                            ],
-                          ),
-
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          Text(
-                            "${diagnosticReport[index].description}",
-                            style: GoogleFonts.montserrat().copyWith(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 12,
-                                color: ConstantsV2.activeText
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icon/attach-file.svg',
-                                    ),
-                                    const SizedBox(
-                                      width: 4,
-                                    ),
-                                    Text(
-                                      "${diagnosticReport[index].attachmentNumber} ${diagnosticReport[index].attachmentNumber == "1" ? "archivo adjunto" : "archivos adjuntos"}",
-                                      style: boldoCorpSmallTextStyle.copyWith(
-                                          color: ConstantsV2.darkBlue),
-                                    )
-                                  ],
-                                ),
-                              ]
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            diagnosticReport[index].serviceRequestId != null
-                ? Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  child: GestureDetector(
-                    onTap: (){
-                      BlocProvider.of<MyStudiesBloc>(context)
-                          .add(GetServiceRequests(serviceRequestId: diagnosticReport[index]
-                          .serviceRequestId!));
-                    },
-                    child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-                        clipBehavior: Clip.antiAlias,
-                        decoration: ShapeDecoration(
-                          color: ConstantsV2.orange.withOpacity(0.10),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(6)),
-                          ),
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-                          child: Text(
-                            "Ver orden",
-                            style: bigButton,
-                          ),
-                        )),
-                  ),
-                ),
-              ],
-            )
-                : Container()
-          ],
-        )
-      ),
+    return StudyResultCard(
+      diagnosticReport: diagnosticReport[index],
     );
   }
 

@@ -17,6 +17,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../constants.dart';
+import 'components/selectableStudiesOrders.dart';
 
 class StudyOrderScreen extends StatefulWidget {
   final String? encounterId;
@@ -106,7 +107,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                 },
               ),
             ],
-            child: SingleChildScrollView(
+            child: Container(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,52 +116,56 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                     labelText: 'Órdenes de estudio',
                   ),
                   const SizedBox(height: 10),
-                  BlocBuilder<StudyOrderBloc, StudyOrderState>(
+                  Expanded(
+                    child: BlocBuilder<StudyOrderBloc, StudyOrderState>(
                       builder: (context, state) {
-                    if (state is StudyOrderLoaded || state is AppointmentLoaded
-                    || state is LoadingAppointment) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              '${formatDate(
-                                DateTime.parse(studiesOrders?.authoredDate ??
-                                    DateTime.now().toString()),
-                                [d, ' de ', MM, ' de ', yyyy],
-                                locale: const SpanishDateLocale(),
-                              )} (${passedDays(_daysBetween, showDateFormat: false)})',
-                              style: boldoCorpMediumTextStyle.copyWith(
-                                  color: ConstantsV2.darkBlue),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          studiesOrders?.serviceRequests?.isEmpty ?? true
-                              ? showEmptyList()
-                              : showDiagnosticList()
-                        ],
-                      );
-                    } else if (state is LoadingOrders) {
-                      return Container(
-                          child: const Center(
-                              child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            Constants.primaryColor400),
-                        backgroundColor: Constants.primaryColor600,
-                      )));
-                    } else if (state is FailedLoadedOrders) {
-                      return Container(
-                          child: DataFetchErrorWidget(
-                              retryCallback: () =>
-                                  BlocProvider.of<StudyOrderBloc>(context)
-                                      .add(GetNews())));
-                    } else {
-                      return Container();
-                    }
-                  }),
+                        if (state is StudyOrderLoaded || state is AppointmentLoaded
+                            || state is LoadingAppointment) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  '${formatDate(
+                                    DateTime.parse(studiesOrders?.authoredDate ??
+                                        DateTime.now().toString()),
+                                    [d, ' de ', MM, ' de ', yyyy],
+                                    locale: const SpanishDateLocale(),
+                                  )} (${passedDays(_daysBetween, showDateFormat: false)})',
+                                  style: boldoCorpMediumTextStyle.copyWith(
+                                      color: ConstantsV2.darkBlue),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              Expanded(
+                                child: studiesOrders?.serviceRequests?.isEmpty ?? true
+                                    ? showEmptyList()
+                                    : showDiagnosticList(),
+                              ),
+                            ],
+                          );
+                        } else if (state is LoadingOrders) {
+                          return Container(
+                              child: const Center(
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Constants.primaryColor400),
+                                    backgroundColor: Constants.primaryColor600,
+                                  )));
+                        } else if (state is FailedLoadedOrders) {
+                          return Container(
+                              child: DataFetchErrorWidget(
+                                  retryCallback: () =>
+                                      BlocProvider.of<StudyOrderBloc>(context)
+                                          .add(GetNews())));
+                        } else {
+                          return Container();
+                        }
+                      }),
+                  ),
                 ],
               ),
             ),
@@ -183,18 +188,10 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
   }
 
   Widget showDiagnosticList() {
-    return ListView.builder(
-      itemCount: studiesOrders?.serviceRequests?.length ?? 0,
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemBuilder: showStudy,
-      physics: const ClampingScrollPhysics(),
-    );
-  }
-
-  Widget showStudy(BuildContext context, int index) {
-    return ServiceRequestCard(
-      serviceRequest: studiesOrders!.serviceRequests![index],
+    return Container(
+      child: SelectableServiceRequest(
+        servicesRequests: studiesOrders?.serviceRequests?? [],
+      ),
     );
   }
 

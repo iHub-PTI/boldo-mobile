@@ -22,7 +22,6 @@ class MyStudiesBloc extends Bloc<MyStudiesEvent, MyStudiesState> {
   MyStudiesBloc() : super(MyStudiesInitial()) {
     on<MyStudiesEvent>((event, emit) async {
       if (event is GetPatientStudiesFromServer) {
-        print('GetPatientStudiesFromServer capturado');
         emit(Loading());
         var _post;
         await Task(() => _myStudiesRepository.getDiagnosticReports()!)

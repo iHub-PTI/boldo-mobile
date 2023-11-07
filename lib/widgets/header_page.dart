@@ -7,7 +7,7 @@ Widget header(String? text, String? patientText,
     {double? height,
       double? width,
       bool border = true,
-      Color? borderColor,
+      Color? borderColor = ConstantsV2.orange,
       EdgeInsetsGeometry? padding = const EdgeInsets.all(16)}
     ) {
   return Container(

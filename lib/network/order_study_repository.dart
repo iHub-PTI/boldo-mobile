@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:boldo/constants.dart';
+import 'package:boldo/environment.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/StudyOrder.dart';
@@ -271,4 +273,44 @@ class StudiesOrdersRepository {
       throw Failure(genericError);
     }
   }
+
+  static Future<Uint8List> downloadStudiesOrders ({
+    required List<String?> studiesOrdersId,
+  }) async {
+    try {
+
+      String url;
+
+      // remove null ids
+      Map<String, dynamic> queryParams ={
+        'ids': studiesOrdersId.where((element) => element != null).toList(),
+      };
+
+      // declare a connection to download with access token and urlBase
+      Dio _dioDownloader = Dio();
+      initDio(navKey: navKey, dio: _dioDownloader, baseUrl: environment.SERVER_ADDRESS, responseType: ResponseType.bytes);
+
+      // the query is made
+      if(prefs.getBool(isFamily) ?? false) {
+        url = '/profile/caretaker/dependent/${patient.id}/serviceRequests/reports/';
+      }else{
+        url = '/profile/patient/serviceRequests/reports';
+      }
+      Uint8List file = await FilesRepository.getFile(
+        localDio: _dioDownloader,
+        queryParams: queryParams,
+        url: url,
+      );
+      return file;
+    } on Failure catch (exception, stackTrace){
+      throw exception;
+    }catch (exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    }
+  }
+
 }

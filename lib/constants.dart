@@ -307,6 +307,14 @@ const BigButton = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const regularText = TextStyle(
+  fontStyle: FontStyle.normal,
+  fontSize: 10,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
+  height: 0,
+);
+
 BoxShadow shadowRegular = const BoxShadow(
   color: Color(0x0C000000),
   blurRadius: 4,
@@ -354,6 +362,31 @@ const BoxDecoration buttonFXSecondaryStyle = BoxDecoration(
       blurRadius: 4,
     )
   ]
+);
+
+BoxDecoration cardDecoration = BoxDecoration(
+  color: ConstantsV2.lightest,
+  boxShadow: [
+    shadowRegular
+  ],
+);
+
+const BoxDecoration selectedCardDecoration = BoxDecoration(
+  color: Color(0xFFF3FAF7),
+  boxShadow: [
+    BoxShadow(
+      color: Color(0x21FFFFFF),
+      blurRadius: 4,
+      offset: Offset(4, -4),
+      spreadRadius: 1,
+    ),
+    BoxShadow(
+      color: Color(0x3F000000),
+      blurRadius: 4,
+      offset: Offset(0, 4),
+      spreadRadius: 0,
+    )
+  ],
 );
 
 ThemeData boldoTheme = ThemeData(
@@ -586,6 +619,9 @@ class ConstantsV2 {
   static const Color blueDark = Color(0xff364F6B);
   static const Color blueLight = Color(0xffB1C3D7);
   static const Color orange = Color(0xffEB8B76);
+
+  /// orange with 10% of opacity
+  static const Color veryLightOrange = Color(0x19EB8B76);
   static const Color lightAndClear = Color(0xffF5F5F5);
   static const Color gray = Color(0xffCFCFCF);
   static const Color grayLight = Color(0xffF8F8F8);
