@@ -44,7 +44,7 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
               element.id == element2.id)
           ).toList();
 
-          emit(OrganizationsObtained(organizationsList: allOrganizations));
+          emit(AllOrganizationsObtained(organizationsList: allOrganizations));
         }
       }else if(event is SubscribeToAnManyOrganizations) {
         emit(Loading());
