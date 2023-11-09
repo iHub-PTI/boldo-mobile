@@ -1,6 +1,7 @@
 import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Organization.dart';
+import 'package:boldo/models/PagList.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/network/repository_helper.dart';
@@ -518,6 +519,78 @@ class OrganizationRepository {
         stackTrace: stackTrace,
       );
       throw Failure("No se puede establecer la prioridad");
+    } on Failure catch (exception, stackTrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stackTrace,
+        response: exception.response,
+      );
+      if(exception.response != null){
+        throw Failure(exception.message);
+      }else {
+        throw Failure(genericError);
+      }
+    } on Exception catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    }
+  }
+
+  /// get all organizations by type
+  Future<PagList<Organization>>? getOrganizationsByType({
+    required OrganizationType organizationType,
+    String? name
+  }) async {
+    Response response;
+
+    try {
+
+      Map<String, dynamic> queryParameters = {
+        "active": true,
+        "name": name,
+      };
+
+      // remove null values
+      queryParameters.removeWhere((key, value) => value==null);
+
+
+      // the query is made
+
+      response = await dioBCM.get(
+        '/profile/patient/organization/type/${organizationType.codeType}',
+        queryParameters: queryParameters,
+      );
+      // there are organizations
+      if (response.statusCode == 200) {
+        PagList<Organization> result = PagList.fromJson(
+            response.data,
+            List<Organization>.from(
+                response.data['items'].map((i) => Organization.fromJson(i))
+            )
+        );
+        return result;
+      } // doesn't have any organization
+      else if (response.statusCode == 204) {
+        // return empty list
+        return PagList<Organization>(total: 0, items: []);
+      }
+      throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
+
+    } on DioError catch(exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure("No se pueden obtener las Organizaciones disponibles");
     } on Failure catch (exception, stackTrace) {
       captureMessage(
         message: exception.message,
