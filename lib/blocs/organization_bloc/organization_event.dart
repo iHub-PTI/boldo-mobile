@@ -19,6 +19,12 @@ class GetOrganizationById extends OrganizationBlocEvent {
   GetOrganizationById({required this.id});
 }
 
+class GetAllOrganizationsByType extends OrganizationBlocEvent {
+  final OrganizationType type;
+  final String? name;
+  GetAllOrganizationsByType({required this.type, this.name});
+}
+
 class GetAllOrganizations extends OrganizationBlocEvent {
   final Patient patientSelected;
   GetAllOrganizations({required this.patientSelected});
