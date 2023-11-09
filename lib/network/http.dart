@@ -23,6 +23,7 @@ Map<String, dynamic> dioHeader = {
 };
 var dioPassport = Dio();
 var dioDownloader = Dio();
+var dioBCM = Dio();
 void initDio(
     {required GlobalKey<NavigatorState> navKey,
       required Dio dio,
