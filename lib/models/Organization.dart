@@ -1,11 +1,24 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/models/Contact.dart';
+import 'package:boldo/screens/organizations/memberships_screen.dart';
+import 'package:boldo/screens/pharmacy/pharmacy_availables.dart';
+import 'package:flutter/material.dart';
 
 class Organization {
 
   String? id,
-  name, type, coloCode;
+      name,
+      type,
+      coloCode,
+      logoUrl,
+      typeDisplay,
+      visibilityDisplay,
+      visibility
+  ;
 
   bool? active;
+
+  List<Contact>? contactList;
 
   /// integer that define the user preference to get doctors by organization
   int? priority;
@@ -17,6 +30,7 @@ class Organization {
     this.type,
     this.coloCode,
     this.priority,
+    this.contactList,
   });
 
   Organization.fromJson(Map<String, dynamic> json) {
@@ -26,6 +40,17 @@ class Organization {
     type = json['type'];
     coloCode = json['colorCode'];
     priority = json['priority'];
+    if (json['contactDtoList'] != null) {
+      contactList = [];
+      json['contactDtoList'].forEach((v) {
+        contactList!.add(Contact.fromJson(v));
+      });
+    }
+    logoUrl = json['logoUrl'];
+    typeDisplay = json['typeDisplay'];
+    visibilityDisplay = json['visibilityDisplay'];
+    visibility = json['logoUvisibilityrl'];
+
   }
 
   Map<String, dynamic> toJson() {
