@@ -1,9 +1,9 @@
 import 'package:boldo/constants.dart';
 import 'package:flutter/material.dart';
 
-class InfoCard extends StatelessWidget{
+class InformationCard extends StatelessWidget{
 
-  const InfoCard({
+  const InformationCard({
 
     required this.child,
   });
