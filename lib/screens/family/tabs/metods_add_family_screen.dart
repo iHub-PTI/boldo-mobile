@@ -3,7 +3,7 @@ import 'package:boldo/constants.dart';
 import 'package:boldo/screens/family/tabs/QR_scanner.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/background.dart';
-import 'package:boldo/widgets/info_card.dart';
+import 'package:boldo/widgets/information_card.dart';
 import 'package:boldo/widgets/service_offline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -90,7 +90,7 @@ class FamilyMetodsAdd extends StatelessWidget {
                             const SizedBox(
                               height: 16,
                             ),
-                            InfoCard(
+                            InformationCard(
                               child: InkWell(
                                 onTap: () async {
                                   // enable access
@@ -130,7 +130,7 @@ class FamilyMetodsAdd extends StatelessWidget {
                             const SizedBox(
                               height: 16,
                             ),
-                            InfoCard(
+                            InformationCard(
                               child: InkWell(
                                 onTap: () {
                                   // enable access
@@ -167,7 +167,7 @@ class FamilyMetodsAdd extends StatelessWidget {
                             const SizedBox(
                               height: 16,
                             ),
-                            InfoCard(
+                            InformationCard(
                               child: InkWell(
                                 onTap: () {
                                   // enable access

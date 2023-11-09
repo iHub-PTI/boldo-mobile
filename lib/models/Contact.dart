@@ -1,65 +1,26 @@
 import 'package:boldo/constants.dart';
-import 'package:boldo/models/Contact.dart';
 import 'package:boldo/screens/organizations/memberships_screen.dart';
 import 'package:boldo/screens/pharmacy/pharmacy_availables.dart';
 import 'package:flutter/material.dart';
 
-class Organization {
+class Contact {
 
-  OrganizationType? organizationType;
+  String? type, value;
 
-  String? id,
-      name,
-      type,
-      coloCode,
-      logoUrl,
-      typeDisplay,
-      visibilityDisplay,
-      visibility
-  ;
-
-  bool? active;
-
-  List<Contact>? contactList;
-
-  /// integer that define the user preference to get doctors by organization
-  int? priority;
-
-  Organization({
-    this.active,
-    this.id,
-    this.name,
+  Contact({
     this.type,
-    this.coloCode,
-    this.priority,
-    this.contactList,
+    this.value,
   });
 
-  Organization.fromJson(Map<String, dynamic> json) {
-    active = json['active'];
-    id = json['id'];
-    name = json['name'];
+  Contact.fromJson(Map<String, dynamic> json) {
     type = json['type'];
-    organizationType = OrganizationType.values.firstWhere((element) => element.codeType == type, orElse: null);
-    coloCode = json['colorCode'];
-    priority = json['priority'];
-    if (json['contactDtoList'] != null) {
-      contactList = [];
-      json['contactDtoList'].forEach((v) {
-        contactList!.add(Contact.fromJson(v));
-      });
-    }
-    logoUrl = json['logoUrl'];
-    typeDisplay = json['typeDisplay'];
-    visibilityDisplay = json['visibilityDisplay'];
-    visibility = json['logoUvisibilityrl'];
-
+    value = json['value'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['id'] = id;
-    data['name'] = name;
+    data['type'] = type;
+    data['value'] = value;
     return data;
   }
 }
@@ -114,16 +75,16 @@ class OrganizationRequest {
 
 enum OrganizationType {
   pharmacy(
-    svgPath: 'assets/icon/local-pharmacy.svg',
-    infoCardTitle: 'Farmacias adheridas',
-    page: PharmaciesScreen(),
-    codeType: 'PHARMACY'
+      svgPath: 'assets/icon/local-pharmacy.svg',
+      infoCardTitle: 'Farmacias adheridas',
+      page: PharmaciesScreen(),
+      codeType: 'PHARMACY'
   ),
   hospital(
-    svgPath: 'assets/icon/local-hospital.svg',
-    infoCardTitle: 'Centros asistenciales',
-    page: OrganizationsSubscribedScreen(),
-    codeType: 'HOSPITAL'
+      svgPath: 'assets/icon/local-hospital.svg',
+      infoCardTitle: 'Centros asistenciales',
+      page: OrganizationsSubscribedScreen(),
+      codeType: 'HOSPITAL'
   );
 
   const OrganizationType({

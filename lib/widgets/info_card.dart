@@ -1,28 +1,28 @@
 import 'package:boldo/constants.dart';
 import 'package:flutter/material.dart';
 
-class InfoCard extends StatelessWidget{
+class InfoCard extends StatelessWidget {
 
-  const InfoCard({
+  final Widget? child;
+  final Function()? onTap;
 
-    required this.child,
+  InfoCard({
+    this.child,
+    this.onTap,
   });
 
-  final Widget child;
-
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(
-          8
-      ),
-      decoration: ShapeDecoration(
-        color: ConstantsV2.lightAndClear.withOpacity(0.80),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+  Widget build(BuildContext context){
+    return Material(
+      color: ConstantsV2.lightest,
+      shape:  RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+      child: InkWell(
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          child: child,
         ),
+        onTap: onTap,
       ),
-      child: child,
     );
   }
 

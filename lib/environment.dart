@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:boldo/models/ValueEmitter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -132,8 +133,21 @@ class Environment {
       )
     };
 
+    if(env.maybeGet("BCM_SERVER_ADDRESS") == null){
+      throw Exception("BCM_SERVER_ADDRESS is not defined");
+    }
+
+    BCM_SERVER_ADDRESS = ValueEmitter(
+      value: String.fromEnvironment(
+        'BCM_SERVER_ADDRESS',
+        defaultValue: env.env['BCM_SERVER_ADDRESS']?? "",
+      ),
+    );
+
     _isInitialized = true;
   }
+
+  late ValueEmitter<String> BCM_SERVER_ADDRESS;
 
   // stream controllers to update values
   StreamController<String> _serverAddressController = StreamController<String>.broadcast();

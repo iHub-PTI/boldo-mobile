@@ -106,9 +106,9 @@ class UserRepository {
         if (!(prefs.getBool(isFamily) ?? false)) {
           await prefs.setString("profile_url", patient.photoUrl ?? '');
           await prefs.setString("userId", patient.id ?? '');
-          await prefs.setString("name", response.data['givenName']!= null ? toLowerCase(response.data['givenName']!) : '');
-          await prefs.setString("lastName", response.data['familyName']!= null ? toLowerCase(response.data['familyName']!) : '');
-          await prefs.setString("identifier", response.data['identifier'] ?? '');
+          await prefs.setString("name", patient.givenName?? '');
+          await prefs.setString("lastName", patient.familyName?? '');
+          await prefs.setString("identifier", patient.identifier?? '');
         }
         return const None();
       }else if(response.statusCode == 204){
