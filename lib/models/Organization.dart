@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 
 class Organization {
 
+  OrganizationType? organizationType;
+
   String? id,
       name,
       type,
@@ -38,6 +40,7 @@ class Organization {
     id = json['id'];
     name = json['name'];
     type = json['type'];
+    organizationType = OrganizationType.values.firstWhere((element) => element.codeType == type, orElse: null);
     coloCode = json['colorCode'];
     priority = json['priority'];
     if (json['contactDtoList'] != null) {
@@ -107,4 +110,32 @@ class OrganizationRequest {
     }
 
   }
+}
+
+enum OrganizationType {
+  pharmacy(
+    svgPath: 'assets/icon/local-pharmacy.svg',
+    infoCardTitle: 'Farmacias adheridas',
+    page: PharmaciesScreen(),
+    codeType: 'PHARMACY'
+  ),
+  hospital(
+    svgPath: 'assets/icon/local-hospital.svg',
+    infoCardTitle: 'Centros asistenciales',
+    page: OrganizationsSubscribedScreen(),
+    codeType: 'HOSPITAL'
+  );
+
+  const OrganizationType({
+    required this.svgPath,
+    required this.infoCardTitle,
+    this.iconColor = ConstantsV2.activeText,
+    this.page,
+    required this.codeType,
+  });
+  final String svgPath;
+  final String infoCardTitle;
+  final Color iconColor;
+  final Widget? page;
+  final String codeType;
 }
