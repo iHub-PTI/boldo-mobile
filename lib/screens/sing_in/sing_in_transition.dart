@@ -7,7 +7,6 @@ import 'package:boldo/utils/loading_helper.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 
 import 'package:boldo/constants.dart';
