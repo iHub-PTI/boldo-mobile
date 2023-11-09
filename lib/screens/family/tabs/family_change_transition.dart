@@ -75,7 +75,8 @@ class _FamilyTransitionState extends State<FamilyTransition> with SingleTickerPr
             }
             if(state is Success){
               _dataLoading = false;
-              BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed());
+              //Fixme: this causes to get news in home, and news must be local vars not bloc vars
+              //BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed());
               //init animation
               _colorController.forward();
 
