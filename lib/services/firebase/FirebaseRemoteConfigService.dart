@@ -39,6 +39,7 @@ class FirebaseRemoteConfigService {
         "ACCESS_ADD_DEPENDENT_WITHOUT_CI": appConfig.ACCESS_ADD_DEPENDENT_WITHOUT_CI,
         "TIME_OUT_MESSAGE_DOWNLOAD_FILES": appConfig.TIMEOUT_MESSAGE_DOWNLOAD_FILES.getValue,
         "RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES": appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.getValue,
+        "BCM_SERVER_ADDRESS": environment.BCM_SERVER_ADDRESS.getValue,
       });
 
       // get values from server
@@ -52,6 +53,7 @@ class FirebaseRemoteConfigService {
       environment.updateSentryDSNValue(firebaseRemoteConfig.getString("SENTRY_DSN"));
       environment.updateIceServerTurnConfigValue(jsonDecode(firebaseRemoteConfig.getString("ICE_SERVER_TURN")));
       environment.updateIceServerStunConfig(jsonDecode(firebaseRemoteConfig.getString("ICE_SERVER_STUN")));
+      environment.BCM_SERVER_ADDRESS.updateValue(firebaseRemoteConfig.getString("BCM_SERVER_ADDRESS"));
       appConfig.updateAppUrlDownloadValue(firebaseRemoteConfig.getString("APP_URL_DOWNLOAD"));
       appConfig.updateDefaultAppUrlDownloadValue(firebaseRemoteConfig.getString("DEFAULT_APP_URL_DOWNLOAD"));
       appConfig.updateLastAvailableVersionValue(firebaseRemoteConfig.getString("LAST_AVAILABLE_VERSION"));
@@ -148,6 +150,11 @@ class FirebaseRemoteConfigService {
           // set new value
           appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.updateValue(firebaseRemoteConfig.getInt("RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES"));
         }
+        if(event.updatedKeys.contains("BCM_SERVER_ADDRESS")){
+          // set new value
+          environment.BCM_SERVER_ADDRESS.updateValue(firebaseRemoteConfig.getString("BCM_SERVER_ADDRESS"));
+        }
+
       });
     } on FirebaseException catch (exception, stackTrace){
       captureError(
