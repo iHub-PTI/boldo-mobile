@@ -263,6 +263,7 @@ class BackgroundRadialGradientTransition extends StatefulWidget {
   final double initialRadius;
   final double finalRadius;
   final AnimationController animationController;
+  final Widget? child;
   const BackgroundRadialGradientTransition({
     Key? key,
     required this.initialColors,
@@ -272,6 +273,7 @@ class BackgroundRadialGradientTransition extends StatefulWidget {
     this.initialRadius = 1,
     this.finalRadius = 1,
     required this.animationController,
+    this.child,
   }) : super(key: key);
 
   @override
@@ -339,6 +341,7 @@ class _BackgroundColorTransitionState extends State<BackgroundRadialGradientTran
               stops: animationStops.map((e) => e.value?? 1).toList()
           )
       ),
+      child: widget.child,
     );
   }
 
@@ -352,6 +355,7 @@ class BackgroundLinearGradientTransition extends StatefulWidget {
   final Alignment begin;
   final Alignment end;
   final AnimationController animationController;
+  final Widget? child;
   const BackgroundLinearGradientTransition({
     Key? key,
     required this.initialColors,
@@ -361,6 +365,7 @@ class BackgroundLinearGradientTransition extends StatefulWidget {
     this.begin = Alignment.bottomCenter,
     this.end = Alignment.topCenter,
     required this.animationController,
+    this.child,
   }) : super(key: key);
 
   @override
@@ -418,6 +423,7 @@ class _BackgroundLinearColorTransitionState extends State<BackgroundLinearGradie
           stops: animationStops.map((e) => e.value?? 1).toList(),
         ),
       ),
+      child: widget.child,
     );
   }
 
