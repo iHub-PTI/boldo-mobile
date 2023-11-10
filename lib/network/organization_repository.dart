@@ -548,7 +548,9 @@ class OrganizationRepository {
   /// get all organizations by type
   Future<PagList<Organization>>? getOrganizationsByType({
     required OrganizationType organizationType,
-    String? name
+    String? name,
+    required int page,
+    required int pageSize,
   }) async {
     Response response;
 
@@ -557,6 +559,8 @@ class OrganizationRepository {
       Map<String, dynamic> queryParameters = {
         "active": true,
         "name": name,
+        "page": page,
+        "pageSize": pageSize,
       };
 
       // remove null values
