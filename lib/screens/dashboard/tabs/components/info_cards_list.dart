@@ -58,11 +58,11 @@ class InfoCardList extends StatelessWidget{
           ),
         ],
       ),
-      onTap: OrganizationType.pharmacy.page != null? (){
+      onTap: OrganizationType.hospital.page != null? (){
         Navigator.push(
           navKey.currentState!.context,
           MaterialPageRoute(
-            builder: (context) => OrganizationType.pharmacy.page!,
+            builder: (context) => OrganizationType.hospital.page!,
           ),
         );
       }: null,

@@ -94,6 +94,7 @@ class PharmacyAvailableCard extends StatelessWidget {
 
   Widget organizationDirection({required Organization organization}){
     return Container(
+      padding: const EdgeInsets.only(right: 5, bottom: 5),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -156,7 +157,9 @@ class PharmacyAvailableCard extends StatelessWidget {
 
     Widget? child;
 
-    String? text = organization.name?.split(" ").sublist(0, 2).map((e) => e[0]).join();
+    int countOfWords = organization.name?.split(" ").length?? 0;
+
+    String? text = organization.name?.split(" ").sublist(0, countOfWords < 2? countOfWords : 2).map((e) => e[0]).join();
 
     child = ImageViewTypeForm(
       height: 30,

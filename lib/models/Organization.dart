@@ -40,7 +40,13 @@ class Organization {
     id = json['id'];
     name = json['name'];
     type = json['type'];
-    organizationType = OrganizationType.values.firstWhere((element) => element.codeType == type, orElse: null);
+    try {
+      organizationType =
+          OrganizationType.values.firstWhere((element) => element.codeType ==
+              type);
+    }on StateError catch(exception, stacktrace) {
+      // if not has a Type defined
+    }
     coloCode = json['colorCode'];
     priority = json['priority'];
     if (json['contactDtoList'] != null) {
