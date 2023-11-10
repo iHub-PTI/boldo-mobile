@@ -1,3 +1,4 @@
+import 'package:boldo/app_config.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/PagList.dart';
 import 'package:boldo/models/Patient.dart';
@@ -44,7 +45,9 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
               element.id == element2.id)
           ).toList();
 
-          emit(AllOrganizationsObtained(organizationsList: allOrganizations));
+          PagList<Organization> _organizationsPage = PagList<Organization>(total: allOrganizations.length, items: allOrganizations);
+
+          emit(AllOrganizationsObtained(organizationsList: _organizationsPage));
         }
       }else if(event is SubscribeToAnManyOrganizations) {
         emit(Loading());
@@ -74,7 +77,12 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
 
         //get organizations that the patient is subscribed
         await Task(() =>
-        _organizationRepository.getOrganizationsByType(organizationType: event.type, name: event.name)!)
+        _organizationRepository.getOrganizationsByType(
+          organizationType: event.type,
+          name: event.name,
+          page: event.page,
+          pageSize: event.pageSize?? appConfig.ALL_ORGANIZATION_PAGE_SIZE.getValue,
+        )!)
             .attempt()
             .run()
             .then((value) {
@@ -90,7 +98,7 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
           late PagList<Organization> allOrganizations;
           _post.foldRight(
               PagList<Organization>, (a, previous) => allOrganizations = a);
-          emit(AllOrganizationsObtained(organizationsList: allOrganizations.items?? []));
+          emit(AllOrganizationsObtained(organizationsList: allOrganizations));
 
 
         }

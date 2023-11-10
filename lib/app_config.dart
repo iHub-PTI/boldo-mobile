@@ -121,6 +121,10 @@ class AppConfig {
     value: 1000,
   );
 
+  ValueEmitter<int> ALL_ORGANIZATION_PAGE_SIZE = ValueEmitter(
+    value: 20,
+  );
+
   // stream controllers to update values
   StreamController<String> _appUrlDownloadController = StreamController<String>.broadcast();
   StreamController<String> _defaultAppUrlDownloadController = StreamController<String>.broadcast();
