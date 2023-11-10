@@ -62,7 +62,15 @@ class FilesRepository {
       var data;
 
       if(localDio!= null){
-        data = await localDio.get(url, queryParameters: queryParams);
+        CancelToken _cancelToken = CancelToken();
+        data = await localDio.get(url, queryParameters: queryParams, cancelToken: _cancelToken).
+          timeout(Duration(milliseconds: appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.getValue), onTimeout: (){
+            _cancelToken.cancel();
+            throw DioError.receiveTimeout(
+                timeout: Duration(milliseconds: appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.getValue), requestOptions: _cancelToken.requestOptions?? RequestOptions()
+            );
+        }
+        );
       }else{
         data = await http.get(Uri.parse(url));
       }
