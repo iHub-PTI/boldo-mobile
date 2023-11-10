@@ -65,7 +65,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
           child: BlocListener<OrganizationBloc, OrganizationBlocState>(
             listener: (context, state) {
               if (state is AllOrganizationsObtained) {
-                _organizationsNotSubscribed = state.organizationsList;
+                _organizationsNotSubscribed = state.organizationsList.items?? [];
 
               }
               if(state is SuccessSubscribed){

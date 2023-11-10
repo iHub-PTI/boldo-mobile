@@ -11,6 +11,7 @@ import 'package:boldo/widgets/searh_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class PharmaciesScreen extends StatefulWidget {
   const PharmaciesScreen({
@@ -23,6 +24,11 @@ class PharmaciesScreen extends StatefulWidget {
 
 class _OrganizationsScreenState extends State<PharmaciesScreen> {
 
+  RefreshController _pharmaciesPageController = RefreshController();
+
+  List<Organization> _pharmacies = [];
+  int _totalPharmacies = 0;
+  int _page = 1;
 
   String? nameFiltered;
 
@@ -92,6 +98,15 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                                   if (state is Failed){
                                     return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizationsByType(type: OrganizationType.pharmacy)));
                                   } else if(state is AllOrganizationsObtained){
+
+                                    _totalPharmacies = state.organizationsList.total?? 0;
+
+                                    if(_page <= 1){
+                                      _pharmacies = state.organizationsList.items ?? [];
+                                    }else{
+                                      _pharmacies.addAll(state.organizationsList.items?? []);
+                                    }
+
                                     return Flexible(
                                       child: Container(
                                       padding: const EdgeInsets.all(16),
@@ -143,7 +158,10 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                                           const SizedBox(
                                             height: 16,
                                           ),
-                                          state.organizationsList.isNotEmpty? listPharmacies(state) : organizationAvailableEmpty(),
+                                          _pharmacies.isNotEmpty? listPharmacies(
+                                            pharmacies: _pharmacies,
+                                            context: context,
+                                          ) : organizationAvailableEmpty(),
                                         ],
                                       ),
                                     ),
@@ -173,48 +191,77 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
     );
   }
   
-  Widget listPharmacies(AllOrganizationsObtained state){
+  Widget listPharmacies({
+    required List<Organization> pharmacies,
+    required BuildContext context,
+  }){
     return Flexible(
-      child: ListView.separated(
+      child: SmartRefresher(
         physics: const ClampingScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: state.organizationsList.length,
-        itemBuilder: (BuildContext context, int index){
-          return Container(
-            child: Row(
-              children: [
-                Center(
-                  child: ImageViewTypeForm(
-                    height: 30,
-                    width: 30,
-                    border: false,
-                    elevation: 0,
-                    text: (index+ 1).toString(),
-                    backgroundColor: ConstantsV2.secondaryLightAndClear,
-                    textStyle: const TextStyle(
-                      color: ConstantsV2.grayDark,
-                      fontSize: 14,
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w500,
-                      height: 0,
+        enablePullUp: pharmacies.length < _totalPharmacies,
+        enablePullDown: true,
+        header: const MaterialClassicHeader(
+          color: Constants.primaryColor800,
+        ),
+        controller: _pharmaciesPageController,
+        child: ListView.separated(
+          physics: const ClampingScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: pharmacies.length,
+          itemBuilder: (BuildContext context, int index){
+            return Container(
+              child: Row(
+                children: [
+                  Center(
+                    child: ImageViewTypeForm(
+                      height: 30,
+                      width: 30,
+                      border: false,
+                      elevation: 0,
+                      text: (index+ 1).toString(),
+                      backgroundColor: ConstantsV2.secondaryLightAndClear,
+                      textStyle: const TextStyle(
+                        color: ConstantsV2.grayDark,
+                        fontSize: 14,
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w500,
+                        height: 0,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12,),
-                Expanded(
-                  child: pharmacyAvailable(state.organizationsList[index]),
-                ),
-              ],
-            ),
-          );
+                  const SizedBox(width: 12,),
+                  Expanded(
+                    child: pharmacyAvailable(pharmacies[index]),
+                  ),
+                ],
+              ),
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return const SizedBox(
+              height: 16,
+            );
+          },
+        ),
+        onRefresh: () {
+          _page = 1;
+          getPharmacies(context: context);
         },
-        separatorBuilder: (BuildContext context, int index) {
-          return const SizedBox(
-            height: 16,
-          );
+        // this for load more doctors
+        onLoading: () {
+          _page++;
+          getPharmacies(context: context);
         },
       ),
     );
+  }
+
+  void getPharmacies({required BuildContext context}){
+    BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizationsByType(
+      type: OrganizationType.pharmacy,
+      page: _page,
+      name: nameFiltered,
+    ));
   }
 
   Widget pharmacyAvailable(Organization organization){
@@ -230,11 +277,10 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
           child: Column(
             children: [
               const EmptyStateV2(
-                picture: "undraw_add_files.svg",
-                titleBottom: "No hay organizaciones",
+                picture: "empty_pharmacies.svg",
+                titleBottom: "No hay farmacias",
                 textBottom:
-                "La lista de organizaciones aparecerá "
-                    "aquí una vez que estén disponibles.",
+                "La lista de farmacias aparecerá aquí una vez que estén disponibles",
               ),
             ],
           ),
