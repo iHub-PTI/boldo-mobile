@@ -40,7 +40,7 @@ class FirebaseRemoteConfigService {
         "TIME_OUT_MESSAGE_DOWNLOAD_FILES": appConfig.TIMEOUT_MESSAGE_DOWNLOAD_FILES.getValue,
         "RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES": appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.getValue,
         "BCM_SERVER_ADDRESS": environment.BCM_SERVER_ADDRESS.getValue,
-        "ALL_PHARMACIES_PAGE_SIZE": appConfig.ALL_PHARMACIES_PAGE_SIZE.getValue,
+        "ALL_ORGANIZATION_PAGE_SIZE": appConfig.ALL_ORGANIZATION_PAGE_SIZE.getValue,
       });
 
       // get values from server
@@ -66,7 +66,7 @@ class FirebaseRemoteConfigService {
       appConfig.updateAccessAddDependentWithoutCIValue(firebaseRemoteConfig.getBool("ACCESS_ADD_DEPENDENT_WITHOUT_CI"));
       appConfig.TIMEOUT_MESSAGE_DOWNLOAD_FILES.updateValue(firebaseRemoteConfig.getString("TIMEOUT_MESSAGE_DOWNLOAD_FILES"));
       appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.updateValue(firebaseRemoteConfig.getInt("RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES"));
-      appConfig.ALL_PHARMACIES_PAGE_SIZE.updateValue(firebaseRemoteConfig.getInt("ALL_PHARMACIES_PAGE_SIZE"));
+      appConfig.ALL_ORGANIZATION_PAGE_SIZE.updateValue(firebaseRemoteConfig.getInt("ALL_ORGANIZATION_PAGE_SIZE"));
 
 
       // listen remote changes
@@ -157,9 +157,9 @@ class FirebaseRemoteConfigService {
           // set new value
           environment.BCM_SERVER_ADDRESS.updateValue(firebaseRemoteConfig.getString("BCM_SERVER_ADDRESS"));
         }
-        if(event.updatedKeys.contains("ALL_PHARMACIES_PAGE_SIZE")){
+        if(event.updatedKeys.contains("ALL_ORGANIZATION_PAGE_SIZE")){
           // set new value
-          appConfig.ALL_PHARMACIES_PAGE_SIZE.updateValue(firebaseRemoteConfig.getInt("ALL_PHARMACIES_PAGE_SIZE"));
+          appConfig.ALL_ORGANIZATION_PAGE_SIZE.updateValue(firebaseRemoteConfig.getInt("ALL_ORGANIZATION_PAGE_SIZE"));
         }
 
       });
