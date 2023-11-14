@@ -1,16 +1,11 @@
-import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
 import 'package:boldo/blocs/prescriptions_bloc/prescriptionsBloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
 
-import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
-import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
-import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
