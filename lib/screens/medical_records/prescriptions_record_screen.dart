@@ -52,66 +52,50 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
                 semanticsLabel: 'BOLDO Logo'),
           ),
         ),
-        body: Background(
-          child: BlocListener<PrescriptionBloc, PrescriptionState>(
-            listener: (context, state) {
-              if(state is PrescriptionLoaded){
-                medicalRecord = state.prescription;
-              }else if(state is FailedLoadPrescription){
-                emitSnackBar(
-                    context: context,
-                    text: state.response,
-                    status: ActionStatus.Fail
-                );
-              }
-            },
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  BackButtonLabel(
-                    labelText: 'Detalles de la receta',
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  BlocBuilder<PrescriptionBloc, PrescriptionState>(builder: (context, state){
-                    if( state is PrescriptionLoaded){
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Diagnóstico",
-                                style: boldoHeadingTextStyle,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                medicalRecord?.diagnosis ?? '',
-                                style: boldoSubTextStyle.copyWith(fontSize: 16),
-                              ),
-                              const SizedBox(height: 24),
-                              const Text(
-                                "Indicaciones",
-                                style: boldoHeadingTextStyle,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                medicalRecord?.instructions ?? '',
-                                style: boldoSubTextStyle.copyWith(fontSize: 16),
-                              ),
-                              const SizedBox(height: 26),
-                              for (int i = 0;
-                              i < medicalRecord!.prescription!.length;
-                              i++)
-                                Column(
+        body: BlocListener<PrescriptionBloc, PrescriptionState>(
+          listener: (context, state) {
+            if(state is PrescriptionLoaded){
+              medicalRecord = state.prescription;
+            }else if(state is FailedLoadPrescription){
+              emitSnackBar(
+                  context: context,
+                  text: state.response,
+                  status: ActionStatus.Fail
+              );
+            }
+          },
+          child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 24,
+                ),
+                BackButtonLabel(
+                  labelText: 'Detalles de la receta',
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                BlocBuilder<PrescriptionBloc, PrescriptionState>(builder: (context, state){
+                  if( state is PrescriptionLoaded){
+                    return Flexible(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                                decoration: BoxDecoration(
+                                    boxShadow: [
+                                      shadowRegular,
+                                    ],
+                                    color: ConstantsV2.lightest
+                                ),
+                                padding: const EdgeInsets.all(8),
+                                child: Container(
+                                  child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Container(
