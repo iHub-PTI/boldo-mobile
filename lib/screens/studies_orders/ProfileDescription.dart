@@ -43,6 +43,7 @@ class ProfileDescription extends StatelessWidget {
         gender: type=='doctor'? doctor?.gender : patient?.gender,
         borderColor: borderColor,
         isPatient: type=='doctor',
+        elevation: 0,
       ),
       if(doctor != null || patient != null)
         const SizedBox(height: 10, width: 10,),
