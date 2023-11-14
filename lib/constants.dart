@@ -160,6 +160,12 @@ TextStyle labelMedium = GoogleFonts.workSans().copyWith(
   fontStyle: FontStyle.normal,
 );
 
+TextStyle label = GoogleFonts.inter().copyWith(
+  fontWeight: FontWeight.w500,
+  fontSize: 16,
+  fontStyle: FontStyle.normal,
+);
+
 TextStyle bigButton = GoogleFonts.montserrat().copyWith(
   fontWeight: FontWeight.w300,
   fontSize: 15,
@@ -313,6 +319,14 @@ const regularText = TextStyle(
   fontWeight: FontWeight.w400,
   fontFamily: 'Montserrat',
   height: 0,
+);
+
+const medicationTextStyle = TextStyle(
+  color: ConstantsV2.darkBlue,
+  fontStyle: FontStyle.normal,
+  fontSize: 12,
+  fontWeight: FontWeight.w500,
+  fontFamily: 'Montserrat',
 );
 
 BoxShadow shadowRegular = const BoxShadow(
