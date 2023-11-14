@@ -16,7 +16,7 @@ class MedicalRecord {
   Soep? soep;
   String? startTimeDate;
   String? status;
-  List<PrescriptionMedicalRecord>? prescription;
+  List<Prescription>? prescription;
   List<ServiceRequest>? serviceRequests;
   
   MedicalRecord({
@@ -39,8 +39,8 @@ class MedicalRecord {
     soep = json['soep'] != null ? Soep.fromJson(json['soep']) : null;
     startTimeDate = json['startTimeDate'];
     prescription = json['prescriptions'] != null
-        ? List<PrescriptionMedicalRecord>.from(json["prescriptions"]
-            .map((x) => PrescriptionMedicalRecord.fromJson(x)))
+        ? List<Prescription>.from(json["prescriptions"]
+            .map((x) => Prescription.fromJson(x)))
         : null;
     serviceRequests = json["serviceRequests"] == null
             ? List<ServiceRequest>.from([])

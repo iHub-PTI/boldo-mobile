@@ -777,7 +777,7 @@ Widget ShowStudy(BuildContext context, ServiceRequest study) {
   );
 }
 
-Widget ShowPrescription (BuildContext context, PrescriptionMedicalRecord prescription) {
+Widget ShowPrescription (BuildContext context, Prescription prescription) {
   return Column(
     children: [
       Row(
