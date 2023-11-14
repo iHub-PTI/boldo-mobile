@@ -4,7 +4,7 @@ import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/MedicalRecord.dart';
-import 'package:boldo/models/PresciptionMedicalRecord.dart';
+import 'package:boldo/models/Prescription.dart';
 import 'package:boldo/models/Soep.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/network/appointment_repository.dart';

@@ -1,4 +1,4 @@
-import 'package:boldo/models/PresciptionMedicalRecord.dart';
+import 'package:boldo/models/Prescription.dart';
 import 'package:boldo/models/Soep.dart';
 import 'package:boldo/models/StudyOrder.dart';
 
