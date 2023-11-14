@@ -177,27 +177,20 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 4),
                                         child: Text(
-                                          "Medicamento ${i + 1}",
-                                          style: boldoHeadingTextStyle.copyWith(
-                                            fontSize: 14,
+                                          'Diagnóstico:',
+                                          style: CorpPMediumTextStyle.copyWith(
+                                              color: ConstantsV2.darkBlue
                                           ),
                                         ),
                                       ),
                                       Container(
-                                        margin: const EdgeInsets.only(
-                                          bottom: 0,
-                                          top: 7,
-                                          left: 0,
-                                          right: 0,
+                                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                                        child: Text(
+                                          medicalRecord?.diagnosis?? 'Sin diagnóstico',
+                                          style: boldoCorpMediumWithLineSeparationLargeTextStyle.copyWith(
+                                              color: ConstantsV2.darkBlue
+                                          ),
                                         ),
-                                        width: double.infinity,
-                                        color: const Color(0xffE5E7EB),
-                                        height: 1,
-                                      ),
-                                      const SizedBox(height: 12),
-                                      const Text(
-                                        "Nombre",
-                                        style: boldoHeadingTextStyle,
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
