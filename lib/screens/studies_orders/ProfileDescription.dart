@@ -15,6 +15,10 @@ class ProfileDescription extends StatelessWidget {
   final bool border;
   final Color borderColor;
   final EdgeInsetsGeometry padding;
+  final TextStyle nameStyle;
+  final Color nameColor;
+  final TextStyle descriptionStyle;
+  final Color descriptionColor;
 
   /// show the description in the bottom of de picture or right of the picture
   final bool horizontalDescription;
@@ -27,7 +31,11 @@ class ProfileDescription extends StatelessWidget {
     this.width = 54,
     this.border = true,
     this.borderColor = ConstantsV2.orange,
-    this.padding = const EdgeInsets.all(16)
+    this.padding = const EdgeInsets.all(16),
+    this.nameStyle = boldoCorpMediumTextStyle,
+    this.nameColor = Colors.black,
+    this.descriptionStyle = boldoCorpMediumTextStyle,
+    this.descriptionColor = Constants.otherColor100,
   });
 
   @override
@@ -63,7 +71,7 @@ class ProfileDescription extends StatelessWidget {
                     ? '${toLowerCase(patient!.givenName!).trim().split(RegExp(' +'))[0]} ${toLowerCase(patient!.familyName!).trim().split(RegExp(' +'))[0]}'
                     : '',
                 style:
-                boldoCorpMediumTextStyle.copyWith(color: Colors.black)
+                nameStyle.copyWith(color: nameColor)
             ),),
           // decription
           if(doctor != null || patient != null)
@@ -76,7 +84,7 @@ class ProfileDescription extends StatelessWidget {
                       : patient != null
                       ? 'Paciente'
                       : '',
-                  style: boldoCorpMediumTextStyle.copyWith(color: Constants.otherColor100),
+                  style: descriptionStyle.copyWith(color: descriptionColor),
                 ),
               ],
             ),
@@ -85,6 +93,7 @@ class ProfileDescription extends StatelessWidget {
     ];
 
     Widget child = horizontalDescription? Row(
+      mainAxisSize: MainAxisSize.min,
       children: elements,
     ): Column(
       crossAxisAlignment: CrossAxisAlignment.start,
