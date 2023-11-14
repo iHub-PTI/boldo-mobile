@@ -91,6 +91,32 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                       ),
                     ],
                   ),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton.icon(
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    OrganizationType.pharmacy.page?? Container(),
+                            ),
+                          ),
+                          icon: SvgPicture.asset(
+                            OrganizationType.pharmacy.svgPath,
+                            color: ConstantsV2.blueDark,
+                          ),
+                          label: Text(
+                            'Ver Farmacias',
+                            style: label.copyWith(
+                              color: ConstantsV2.blueDark,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                   BlocBuilder<PrescriptionsBloc, PrescriptionsState>(builder: (context, state){
                     if(state is AppointmentWithPrescriptionsLoadedState){
                       if(allAppointments.isEmpty){
