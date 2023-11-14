@@ -158,6 +158,7 @@ TextStyle labelMedium = GoogleFonts.workSans().copyWith(
   fontWeight: FontWeight.w500,
   fontSize: 14,
   fontStyle: FontStyle.normal,
+  letterSpacing: 0.15,
 );
 
 TextStyle label = GoogleFonts.inter().copyWith(
