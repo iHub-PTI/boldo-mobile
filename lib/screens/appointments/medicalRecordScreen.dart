@@ -3,6 +3,7 @@ import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
+import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Prescription.dart';
 import 'package:boldo/models/Soep.dart';
@@ -488,7 +489,9 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => PrescriptionRecordScreen(
-                                medicalRecordId: medicalRecord?.appointmentId ?? '')),
+                                medicalRecordId: medicalRecord?.appointmentId ?? '',
+                              doctor: widget.appointment.doctor?? Doctor(),
+                            )),
                       );
                       BlocProvider.of<PrescriptionBloc>(context)
                           .add(InitialPrescriptionEvent());
