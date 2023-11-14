@@ -311,6 +311,7 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
 
 }
 
+@deprecated
 class Background extends StatelessWidget {
   final Widget child;
   const Background({
