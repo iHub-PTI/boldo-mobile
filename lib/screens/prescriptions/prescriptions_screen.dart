@@ -102,7 +102,10 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                         );
                       }else{
                         return Expanded(
-                          child: ListView.builder(
+                          child: ListView.separated(
+                            separatorBuilder: (BuildContext context, int index){
+                              return const SizedBox(height: 10,);
+                            },
                             itemCount: allAppointments.length,
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
