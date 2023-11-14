@@ -8,6 +8,8 @@ import 'package:boldo/observers/navigatorObserver.dart';
 import 'package:boldo/screens/appointments/components/showAppointmentOrigin.dart';
 import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
+import 'package:boldo/screens/prescriptions/components/medication_name.dart';
+import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:date_format/date_format.dart';
@@ -222,6 +224,91 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
         ),
     );
   }
+
+  Widget content(){
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 24,
+              bottom: 16,
+            ),
+            child: const Text(
+              "Medicamentos",
+              style: boldoHeadingTextStyle,
+            ),
+          ),
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              decoration: ShapeDecoration(
+                color: ConstantsV2.lightest,
+                shape: const RoundedRectangleBorder(
+                  side: BorderSide(width: 0.50, color: Color(0xFFF7F7F7)),
+                ),
+                shadows: [
+                  shadowRegular,
+                ],
+              ),
+              child: ListView.separated(
+                padding: const EdgeInsets.all(8),
+                physics: const ClampingScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (BuildContext context, int i){
+                  return Container(
+                    padding: const EdgeInsets.all(8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        MedicationName(
+                          prescription: medicalRecord?.prescription?[i]?? Prescription(),
+                          spacing: 11,
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Text(
+                              medicalRecord
+                                  ?.prescription?[i].instructions?? 'Sin instrucciones',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 11,
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w300,
+                                height: 0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index){
+                  return Container(
+                    margin: const EdgeInsets.only(
+                      bottom: 10,
+                    ),
+                    width: double.infinity,
+                    color: const Color(0xffE5E7EB),
+                    height: 1,
+                  );
+                },
+                itemCount: medicalRecord?.prescription?.length?? 0,
+              ),
+            ),
+          ),
+
+        ],
+      ),
+    );
+  }
+
+
 }
 
 class Background extends StatelessWidget {
