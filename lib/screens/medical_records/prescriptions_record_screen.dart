@@ -1,18 +1,29 @@
 import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
 import 'package:boldo/constants.dart';
+import 'package:boldo/models/Doctor.dart';
 
 import 'package:boldo/models/MedicalRecord.dart';
+import 'package:boldo/models/Prescription.dart';
+import 'package:boldo/observers/navigatorObserver.dart';
+import 'package:boldo/screens/appointments/components/showAppointmentOrigin.dart';
+import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class PrescriptionRecordScreen extends StatefulWidget {
-  const PrescriptionRecordScreen({required this.medicalRecordId}) : super();
+  const PrescriptionRecordScreen({
+    Key? key,
+    required this.medicalRecordId,
+    required this.doctor,
+  }) : super(key: key);
 
   final String medicalRecordId;
+  final Doctor doctor;
 
   @override
   _PrescriptionScreenState createState() => _PrescriptionScreenState();
@@ -21,6 +32,7 @@ class PrescriptionRecordScreen extends StatefulWidget {
 class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
 
   MedicalRecord? medicalRecord;
+  bool fromAppointmentDetail = AppNavigatorObserver.containRoute(routeName: (MedicalRecordsScreen).toString()) ;
 
   @override
   void initState() {
@@ -102,8 +114,68 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
                                 Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Align(
-                                        alignment: Alignment.centerLeft,
+                                      Container(
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            ProfileDescription(
+                                              doctor: widget.doctor,
+                                              type: "doctor",
+                                              border: false,
+                                              horizontalDescription: true,
+                                              padding: EdgeInsets.zero,
+                                            ),
+                                            Container(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment: CrossAxisAlignment.end,
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                    child: Text(
+                                                      "Emitido el",
+                                                      style: boldoCorpSmallSTextStyle.copyWith(
+                                                          color: ConstantsV2.inactiveText
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    child: BlocBuilder<PrescriptionBloc, PrescriptionState>(
+                                                        builder: (context, state) {
+                                                          // in case of loading data
+                                                          if(state is LoadingPrescription){
+                                                            return Text(
+                                                              'Cargando',
+                                                              style: boldoSubTextMediumStyle.copyWith(
+                                                                  color: ConstantsV2.inactiveText
+                                                              ),
+                                                            );
+                                                          }else {
+                                                            // show if not loading
+                                                            return Text(
+                                                              '${formatDate(
+                                                                DateTime.parse(medicalRecord?.startTimeDate ??
+                                                                    DateTime.now().toString()),
+                                                                [d, '/', m, '/', yyyy],
+                                                              )}',
+                                                              style: boldoSubTextMediumStyle.copyWith(
+                                                                  color: ConstantsV2.inactiveText
+                                                              ),
+                                                            );
+                                                          }
+                                                        }
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8,),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 4),
                                         child: Text(
                                           "Medicamento ${i + 1}",
                                           style: boldoHeadingTextStyle.copyWith(
