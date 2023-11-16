@@ -30,11 +30,21 @@ class CustomSearchInput extends StatefulWidget {
 
 class _StateCustomSearchInput extends State<CustomSearchInput> {
 
+  bool showClearIcon = false;
+  TextEditingController _controller = TextEditingController();
+
+  @override
+  void initState(){
+    _controller.text = widget.initialText?? '';
+    super.initState();
+    widget.initialText?.isEmpty?? true? showClearIcon = false : showClearIcon = true;
+  }
+
   @override
   Widget build(BuildContext context) {
 
     Widget form = TextFormField(
-      initialValue: widget.initialText,
+      controller: _controller,
       style: const TextStyle(
         color: ConstantsV2.activeText,
         fontSize: 12,
