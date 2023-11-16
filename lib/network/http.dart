@@ -1,3 +1,4 @@
+import 'package:boldo/app_config.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/environment.dart';
 import 'package:boldo/network/connection_status.dart';
@@ -5,48 +6,62 @@ import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:boldo/screens/pre_register_notify/pre_register_success_screen.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../main.dart';
-import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/offline/offline_screen.dart';
 
 var dio = Dio();
+Map<String, dynamic> dioHeader = {
+  'content-Type': 'application/json',
+  'accept': 'application/json',
+};
 var dioPassport = Dio();
 var dioDownloader = Dio();
+var dioBCM = Dio();
 void initDio(
     {required GlobalKey<NavigatorState> navKey,
-    required Dio dio,
-    required bool passport}) {
-  String baseUrl = "";
-  if (passport) {
-    baseUrl = environment.SERVER_ADDRESS_PASSPORT;
-  } else {
-    baseUrl = environment.SERVER_ADDRESS;
-        dio.options.headers['content-Type'] = 'application/json';
-        dio.options.headers['accept'] = 'application/json';
+      required Dio dio,
+      String? baseUrl,
+      ResponseType responseType = ResponseType.json,
+      Map<String, dynamic>? header,
+    }) {
+  if(header != null) {
+    dio.options.headers = header;
+  }
+  if(baseUrl != null) {
+    dio.options.baseUrl = baseUrl;
+  }
+  dio.options.responseType = responseType;
+
+  // limit time for download files
+  if(responseType == ResponseType.bytes){
+    int milliseconds = appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.getValue;
+    dio.options.connectTimeout = const Duration(milliseconds: 1000*60);
+    dio.options.receiveTimeout = Duration(milliseconds: milliseconds);
+    appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.listenValue((value) =>
+      dio.options.receiveTimeout = Duration(milliseconds: value)
+    );
   }
 
-  dio.options.baseUrl = baseUrl;
-
   String? accessToken;
-  FlutterAppAuth appAuth = FlutterAppAuth();
+  FlutterAppAuth appAuth = const FlutterAppAuth();
 
   ISentrySpan? transaction;
 
   //setup interceptors
-  dio.interceptors.add(QueuedInterceptorsWrapper(
+  dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) async {
       accessToken = (await storage.read(key: "access_token") ?? '');
       options.headers["authorization"] = "bearer $accessToken";
       transaction = Sentry.startTransaction(
         options.path,
-        'request',
+        options.method,
         bindToScope: true,
       );
       return handler.next(options);
@@ -66,7 +81,7 @@ void initDio(
 
           navKey.currentState!.pushAndRemoveUntil(
             MaterialPageRoute(
-              builder: (context) => DashboardScreen(setLoggedOut: true),
+              builder: (context) => HeroScreenV2(),
             ),
             (route) => false,
           );
@@ -90,12 +105,16 @@ void initDio(
 
           //check role patient
           if(!roles.contains('patient')){
+            transaction?.throwable = error;
+            transaction?.finish(
+                status: SpanStatus.fromHttpStatusCode(error.response?.statusCode?? -1)
+            );
             //return error 401
             return handle.next(error);
           }
-        }catch(exception, stacktrace){
-          Sentry.captureException(
-            exception,
+        }on Exception catch (exception, stacktrace){
+          captureError(
+            exception: exception,
             stackTrace: stacktrace,
           );
         }
@@ -120,7 +139,7 @@ void initDio(
           options.headers["authorization"] = "bearer $accessToken";
           // New dio connection to handle new errors
           Dio _dio = Dio();
-          initDio(navKey: navKey, dio: _dio, passport: passport);
+          initDio(navKey: navKey, dio: _dio, baseUrl: baseUrl, header: header, responseType: responseType);
           //retry request
           return handle.resolve(await _dio.request(options.path,
               data: options.data, options: optionsDio, queryParameters: options.queryParameters));
@@ -141,7 +160,7 @@ void initDio(
           accessToken = result.accessToken;
           // New dio connection to handle new errors
           Dio _dio = Dio();
-          initDio(navKey: navKey, dio: _dio, passport: passport);
+          initDio(navKey: navKey, dio: _dio, baseUrl: baseUrl, header: header, responseType: responseType);
           //retry request
           return handle.resolve(await _dio.request(options.path,
               data: options.data, options: optionsDio, queryParameters: options.queryParameters));
@@ -167,10 +186,9 @@ void initDio(
 
               case 2:
                 Dio _dio = Dio();
-                initDio(navKey: navKey, dio: _dio, passport: passport);
+                initDio(navKey: navKey, dio: _dio, baseUrl: baseUrl, header: header, responseType: responseType);
                 return handle.resolve(await _dio.request(options.path,
                     data: options.data, options: optionsDio, queryParameters: options.queryParameters));
-                break;
               default:
             }
           }
@@ -185,6 +203,10 @@ void initDio(
                     (route) => false,
               );
             }
+            transaction?.throwable = error;
+            transaction?.finish(
+                status: SpanStatus.fromHttpStatusCode(error.response?.statusCode?? -1)
+            );
             return handle.next(exception);
           }
         } catch (e) {
@@ -197,6 +219,10 @@ void initDio(
               builder: (context) => HeroScreenV2(),
             ),
             (route) => false,
+          );
+          transaction?.throwable = error;
+          transaction?.finish(
+              status: SpanStatus.fromHttpStatusCode(error.response?.statusCode?? -1)
           );
           return handle.next(error);
         }
@@ -227,7 +253,7 @@ void initDio(
             sendTimeout: options.sendTimeout,
             validateStatus: options.validateStatus);
         Dio _dio = Dio();
-        initDio(navKey: navKey, dio: _dio, passport: passport);
+        initDio(navKey: navKey, dio: _dio, baseUrl: baseUrl, header: header, responseType: responseType);
         return handle.resolve(await _dio.request(options.path,
             data: options.data, options: optionsDio, queryParameters: options.queryParameters));
       }
@@ -287,109 +313,4 @@ Future<void> _showInternetFailedDialog() async {
       },
     );
   }
-}
-
-void dioByteInstance() async {
-  String baseUrl = environment.SERVER_ADDRESS_PASSPORT;
-  dioDownloader.options.baseUrl = baseUrl;
-  dioDownloader.options.connectTimeout = const Duration(milliseconds: 20000);
-  dioDownloader.options.receiveTimeout = const Duration(milliseconds: 20000);
-  dioDownloader.options.responseType = ResponseType.bytes;
-
-  String? accessToken;
-  FlutterAppAuth appAuth = FlutterAppAuth();
-
-  //setup interceptors
-  dioDownloader.interceptors.add(QueuedInterceptorsWrapper(
-    onRequest: (options, handler) async {
-      accessToken = (await storage.read(key: "access_token"))!;
-      options.headers["authorization"] = "bearer $accessToken";
-
-      return handler.next(options);
-    },
-    onError: (DioError error, handle) async {
-      if (error.response?.statusCode == 403) {
-        try {
-          await storage.deleteAll();
-          accessToken = null;
-
-          navKey.currentState!.pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) => HeroScreenV2(),
-            ),
-            (route) => false,
-          );
-        } catch (e) {
-          print(e);
-        }
-      } else if (error.response?.statusCode == 401) {
-        if (accessToken == null) {
-          await storage.deleteAll();
-
-          return handle.next(error);
-        }
-
-        RequestOptions options = error.response!.requestOptions;
-        Options optionsDio = Options(
-            contentType: options.contentType,
-            followRedirects: options.followRedirects,
-            extra: options.extra,
-            headers: options.headers,
-            listFormat: options.listFormat,
-            maxRedirects: options.maxRedirects,
-            method: options.method,
-            receiveDataWhenStatusError: options.receiveDataWhenStatusError,
-            receiveTimeout: options.receiveTimeout,
-            requestEncoder: options.requestEncoder,
-            responseDecoder: options.responseDecoder,
-            responseType: options.responseType,
-            sendTimeout: options.sendTimeout,
-            validateStatus: options.validateStatus);
-        if ("bearer $accessToken" != options.headers["authorization"]) {
-          options.headers["authorization"] = "bearer $accessToken";
-          handle.resolve(
-              await dioDownloader.request(options.path, data: options.data, options: optionsDio, queryParameters: options.queryParameters));
-        }
-        String keycloakRealmAddress = environment.KEYCLOAK_REALM_ADDRESS;
-        final String? refreshToken = await storage.read(key: "refresh_token");
-
-        try {
-          final TokenResponse? result = await appAuth.token(TokenRequest(
-            'boldo-patient', 'py.org.pti.boldo:/login',
-            discoveryUrl:
-                '$keycloakRealmAddress/.well-known/openid-configuration',
-            refreshToken: refreshToken,
-            scopes: ['openid', 'offline_access']));
-          await storage.write(key: "access_token", value: result!.accessToken);
-          await storage.write(key: "refresh_token", value: result.refreshToken);
-          accessToken = result.accessToken;
-          //retry request
-          return handle.resolve(
-              await dioDownloader.request(options.path, data: options.data, options: optionsDio, queryParameters: options.queryParameters));
-        } catch (e) {
-          accessToken = null;
-
-          navKey.currentState!.pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) => HeroScreenV2(),
-            ),
-            (route) => false,
-          );
-          return handle.next(error);
-        }
-      }
-      ConnectionStatusSingleton connectionStatus =
-          ConnectionStatusSingleton.getInstance();
-      bool hasInternet = await connectionStatus.checkConnection();
-      if (!hasInternet) {
-        _showInternetFailedDialog();
-        // navKey.currentState!.push(
-        //   MaterialPageRoute(
-        //     builder: (context) => const OfflineScreen(),
-        //   ),
-        // );
-      }
-      return handle.next(error);
-    },
-  ));
 }

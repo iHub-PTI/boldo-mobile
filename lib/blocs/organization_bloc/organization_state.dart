@@ -16,12 +16,7 @@ class Success extends OrganizationBlocState {}
 
 class SuccessSubscribed extends OrganizationBlocState {}
 
-class OrganizationsObtained extends OrganizationBlocState {
-  final List<Organization> organizationsList;
-  OrganizationsObtained({required this.organizationsList});
-}
-
 class AllOrganizationsObtained extends OrganizationBlocState {
-  final List<Organization> organizationsList;
+  final PagList<Organization> organizationsList;
   AllOrganizationsObtained({required this.organizationsList});
 }

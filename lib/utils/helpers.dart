@@ -2,8 +2,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:boldo/constants.dart';
-import 'package:boldo/main.dart';
 import 'package:camera/camera.dart';
+import 'package:date_format/date_format.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +11,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+
+import 'errors.dart';
 
 String getDoctorPrefix(String gender) {
   if (gender == "female") return "Dra. ";
@@ -57,8 +56,17 @@ String? getTypeFromContentType(String? content) {
     }
     var words = content.split("/");
     return words[1];
-  }catch (e){
-    Sentry.captureException(e);
+  }on Exception catch (exception, stackTrace){
+    captureError(
+      exception: exception,
+      stackTrace: stackTrace,
+    );
+    return null;
+  } catch (exception, stackTrace) {
+    captureError(
+      exception: exception,
+      stackTrace: stackTrace,
+    );
     return null;
   }
 }
@@ -194,17 +202,16 @@ async {
           maxWidth: maxWidth,
           maxHeight: maxHeight,
           imageQuality: imageQuality);
-    }on PlatformException catch (e){
+    }on PlatformException catch (exception, stackTrace){
       // control permission to access camera
-      await Sentry.captureMessage(
-        e.toString(),
-        params: [
-          {
-            "status": status,
-            "patient": prefs.getString("userId"),
-            'access_token': await storage.read(key: 'access_token')
-          }
-        ],
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
     }
     return image;
@@ -237,16 +244,15 @@ async {
         allowedExtensions: allowedExtensions,
       );
       return result;
-    }on PlatformException catch (ex){
-      await Sentry.captureMessage(
-        ex.toString(),
-        params: [
-          {
-            "status": status,
-            "patient": prefs.getString("userId"),
-            'access_token': await storage.read(key: 'access_token')
-          }
-        ],
+    }on PlatformException catch (exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
       );
     }
   }
@@ -498,5 +504,17 @@ void emitSnackBar({required BuildContext context, String? text, ActionStatus? st
   );
 }
 
+/// [date] must be a valid date on string mode
+/// if [date] is an invalid format, this will return an empty string
+String? formatDateToString(String date){
+  return formatDate(
+    DateTime.parse(
+        date
+    ),
+    [d, '/', mm, '/', yyyy],
+    locale: const SpanishDateLocale(),
+  );
+}
 
-enum AppointmentType {InPerson, Virtual}
+
+enum AppointmentType {InPerson, Virtual, Both, None}

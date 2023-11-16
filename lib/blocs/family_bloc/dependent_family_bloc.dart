@@ -1,7 +1,6 @@
 
 import 'package:boldo/models/Patient.dart';
-import 'package:boldo/models/Relationship.dart';
-import 'package:boldo/network/user_repository.dart';
+import 'package:boldo/network/family_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,14 +12,14 @@ part 'dependent_family_event.dart';
 part 'dependent_family_state.dart';
 
 class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
-  final UserRepository _patientRepository = UserRepository();
+  final FamilyRepository _familyRepository = FamilyRepository();
   FamilyBloc() : super(FamilyInitial()) {
     on<FamilyEvent>((event, emit) async {
       if(event is LinkFamily) {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.setDependent(user.isNew)!)
+        _familyRepository.setDependent(user.isNew)!)
             .attempt()
             .run()
             .then((value) {
@@ -34,7 +33,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
         }else{
           emit(Success());
           await Task(() =>
-          _patientRepository.getDependents()!)
+          _familyRepository.getDependents()!)
               .attempt()
               .run()
               .then((value) {
@@ -56,7 +55,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.unlinkDependent(event.id)!)
+        _familyRepository.unlinkDependent(event.id)!)
             .attempt()
             .run()
             .then((value) {
@@ -71,7 +70,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
           emit(DependentEliminated());
           emit(Success());
           await Task(() =>
-          _patientRepository.getDependents()!)
+          _familyRepository.getDependents()!)
               .attempt()
               .run()
               .then((value) {
@@ -91,7 +90,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.getDependents()!)
+        _familyRepository.getDependents()!)
             .attempt()
             .run()
             .then((value) {
@@ -110,7 +109,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.getManagements()!)
+        _familyRepository.getManagements()!)
             .attempt()
             .run()
             .then((value) {
@@ -132,7 +131,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.unlinkCaretaker(event.id)!)
+        _familyRepository.unlinkCaretaker(event.id)!)
             .attempt()
             .run()
             .then((value) {
@@ -146,7 +145,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
         }else {
           emit(Success());
           await Task(() =>
-          _patientRepository.getManagements()!)
+          _familyRepository.getManagements()!)
               .attempt()
               .run()
               .then((value) {
@@ -169,7 +168,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
       if (event is LinkWithoutCi) {
         emit(Loading());
         var _post;
-        await Task(() => _patientRepository.linkWithoutCi(event.givenName, event.familyName, event.birthDate, event.gender, event.identifier, event.relationShipCode)!)
+        await Task(() => _familyRepository.linkWithoutCi(event.givenName, event.familyName, event.birthDate, event.gender, event.identifier, event.relationShipCode)!)
             .attempt()
             .run()
             .then((value) {
@@ -186,7 +185,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
       if (event is GetRelationShipCodes) {
         emit(RelationLoading());
         var _post;
-        await Task(() => _patientRepository.getRelationships()!)
+        await Task(() => _familyRepository.getRelationships()!)
             .attempt()
             .run()
             .then((value) {

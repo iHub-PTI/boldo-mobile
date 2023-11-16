@@ -263,6 +263,7 @@ class BackgroundRadialGradientTransition extends StatefulWidget {
   final double initialRadius;
   final double finalRadius;
   final AnimationController animationController;
+  final Widget? child;
   const BackgroundRadialGradientTransition({
     Key? key,
     required this.initialColors,
@@ -272,6 +273,7 @@ class BackgroundRadialGradientTransition extends StatefulWidget {
     this.initialRadius = 1,
     this.finalRadius = 1,
     required this.animationController,
+    this.child,
   }) : super(key: key);
 
   @override
@@ -339,6 +341,89 @@ class _BackgroundColorTransitionState extends State<BackgroundRadialGradientTran
               stops: animationStops.map((e) => e.value?? 1).toList()
           )
       ),
+      child: widget.child,
+    );
+  }
+
+}
+
+class BackgroundLinearGradientTransition extends StatefulWidget {
+  final List<Color> initialColors;
+  final List<Color> finalColors;
+  final List<double> initialStops;
+  final List<double> finalStops;
+  final Alignment begin;
+  final Alignment end;
+  final AnimationController animationController;
+  final Widget? child;
+  const BackgroundLinearGradientTransition({
+    Key? key,
+    required this.initialColors,
+    required this.finalColors,
+    required this.initialStops,
+    required this.finalStops,
+    this.begin = Alignment.bottomCenter,
+    this.end = Alignment.topCenter,
+    required this.animationController,
+    this.child,
+  }) : super(key: key);
+
+  @override
+  _BackgroundLinearColorTransitionState createState() => _BackgroundLinearColorTransitionState();
+}
+
+class _BackgroundLinearColorTransitionState extends State<BackgroundLinearGradientTransition>{
+
+  List<Animation<Color?>> animationColors = [];
+
+  List<Animation<double?>> animationStops = [];
+
+  @override
+  void initState() {
+
+    // initialize animation duration
+    widget.animationController..addListener(() {
+      // change screen with animation
+      setState(() {
+
+      });
+    });
+
+    //initialize colors values
+    widget.initialColors.asMap().entries.forEach((element) {
+      animationColors.add(ColorTween(
+          begin: element.value,
+          end: widget.finalColors[element.key])
+          .animate(
+          CurvedAnimation(parent: widget.animationController, curve: Curves.linear)
+      ));
+    });
+
+    //initialize stops values
+    widget.initialStops.asMap().entries.forEach((element) {
+      animationStops.add(Tween<double?>(
+          begin: element.value,
+          end: widget.finalStops[element.key]
+      ).animate(
+          CurvedAnimation(parent: widget.animationController, curve: Curves.linear)
+      ));
+    });
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: widget.begin,
+            end: widget.end,
+          colors: animationColors.map((e) => e.value?? ConstantsV2.primaryColor).toList(),
+          stops: animationStops.map((e) => e.value?? 1).toList(),
+        ),
+      ),
+      child: widget.child,
     );
   }
 

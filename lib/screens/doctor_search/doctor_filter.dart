@@ -12,6 +12,7 @@ import 'package:boldo/models/PagList.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -205,8 +206,10 @@ class _DoctorFilterState extends State<DoctorFilter> {
                           child: Consumer<DoctorFilterProvider>(
                             builder: (_, doctorFilterProvider, __) {
                               List<dynamic> products = [];
+                              products = [...products,...doctorFilterProvider.getOrganizations];
                               products = [...products,...doctorFilterProvider.getNames];
                               products = [...products,...doctorFilterProvider.getSpecializations];
+                              products = [...products,doctorFilterProvider.getAppointmentType() ];
                               return Wrap(
                                   children: products.map(buildSubscriptionButtons).toList()
                               );
@@ -404,7 +407,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                                 width: 4,
                                               ),
                                               SvgPicture.asset(
-                                                'assets/icon/person.svg',
+                                                'assets/icon/in_person.svg',
                                                 color: ConstantsV2.green,
                                               ),
                                             ],
@@ -666,106 +669,6 @@ class _DoctorFilterState extends State<DoctorFilter> {
     );
   }
 
-  Future<Specializations?>? _showPopupMenu(Offset offset) async {
-    double left = offset.dx;
-    double top = offset.dy;
-    return await showMenu(
-      context: context,
-      position: RelativeRect.fromLTRB(left, top , MediaQuery.of(context).size.width- left, 0),
-      items: specializations.sublist(0,10).map((Specializations popupRoute) {
-        return PopupMenuItem<Specializations>(
-          child: Container(
-              decoration: const BoxDecoration(color: Constants.accordionbg),
-              child: Container(
-                height: 50,
-                child: ListTile(
-                  title: Text(popupRoute.description?? ''),
-                ),
-              )),
-          value: popupRoute,
-          padding:
-          const EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 5),
-        );
-      }).toList(),
-      elevation: 8.0,
-    );
-  }
-
-  Widget _specialization(BuildContext context, index) {
-    return Padding(
-      padding:
-          const EdgeInsets.only(top: 26.0, bottom: 26, left: 16, right: 16),
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            if (specializationsSelected
-                .any((element) => element.id == specializations[index].id)) {
-              // delete item from specialization selected list
-              Provider.of<DoctorFilterProvider>(context, listen: false)
-                  .removeSpecialization(
-                      specializationId: specializations[index].id?? "0",
-                      context: context);
-              // get the update list
-              specializationsSelected =
-                  Provider.of<DoctorFilterProvider>(context, listen: false)
-                      .getSpecializations;
-            } else {
-              Provider.of<DoctorFilterProvider>(context, listen: false)
-                  .addSpecializations(
-                      specialization: specializations[index],
-                      context: context);
-              // get the update list
-              specializationsSelected =
-                  Provider.of<DoctorFilterProvider>(context, listen: false)
-                      .getSpecializations;
-            }
-          });
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle ,
-            borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-            color: specializationsSelected.any(
-                    (element) => element.id == specializations[index].id)
-                ? ConstantsV2.orange.withOpacity(.8)
-                : Colors.transparent
-          ),
-          width: 100,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Card(
-                shape: StadiumBorder(),
-                color: ConstantsV2.orange,
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  padding: EdgeInsets.all(16),
-                  child: Center(
-                    child: Text("${specializations[index].description?[0]?? ""}"),
-                  ),
-                )
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Flexible(
-                      child: Column(
-                    children: [
-                      Text(
-                          '${specializations[index].description != null ? specializations[index].description : 'Sin descripción'}')
-                    ],
-                  ))
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _organizationSelector(BuildContext context, index) {
 
     return
@@ -816,187 +719,148 @@ class _DoctorFilterState extends State<DoctorFilter> {
       );
   }
 
-  // show all specializations popup
-  Future<void> _showSpecializations() async {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return StatefulBuilder(
-            builder: (BuildContext context, setState) {
-              return AlertDialog(
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.55,
-                      child: Row(
-                        children: [
-                          Flexible(
-                              child: Column(
-                            children: [
-                              const Text("Seleccione las especialidades")
-                            ],
-                          ))
-                        ],
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context, 'Cancel');
-                      },
-                      child: SvgPicture.asset(
-                        'assets/icon/close.svg',
-                        color: ConstantsV2.inactiveText,
-                        height: 36,
-                        width: 36,
-                      ),
-                    )
-                  ],
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                actionsAlignment: MainAxisAlignment.end,
-                actionsPadding: const EdgeInsets.only(right: 16.0, bottom: 16),
-                actions: [
-                  GestureDetector(
-                    onTap: () {
-                      Provider.of<DoctorFilterProvider>(context, listen: false)
-                          .setSpecializations(
-                              specializationsSelectedCopy:
-                                  specializationsSelectedCopy!,
-                              context: context);
-                      Navigator.pop(context, 'OK');
-                    },
-                    child: Container(
-                      width: 115,
-                      decoration: BoxDecoration(
-                          color: ConstantsV2.buttonPrimaryColor100,
-                          borderRadius: BorderRadius.circular(100)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          children: [
-                            Text(
-                              'aplicar',
-                              style: boldoCorpMediumBlackTextStyle.copyWith(
-                                  fontSize: 16),
-                            ),
-                            const SizedBox(width: 8),
-                            SvgPicture.asset(
-                              'assets/icon/check-green.svg',
-                              color: Colors.white,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-                content: Container(
-                  height: MediaQuery.of(context).size.height * 0.6,
-                  width: MediaQuery.of(context).size.height * 0.8,
-                  child: RawScrollbar(
-                      radius: const Radius.circular(8),
-                      thickness: 6,
-                      isAlwaysShown: true,
-                      thumbColor: ConstantsV2.buttonPrimaryColor100,
-                      child: ListView.builder(
-                          itemCount: specializations!.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.only(bottom: 8, right: 16),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(16)),
-                                  color: specializationsSelectedCopy!.any(
-                                          (element) =>
-                                              element.id ==
-                                              specializations![index].id)
-                                      ? ConstantsV2.buttonPrimaryColor100
-                                          .withOpacity(0.1)
-                                      : Colors.white,
-                                ),
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      if (specializationsSelectedCopy!.any(
-                                          (element) =>
-                                              element.id ==
-                                              specializations![index].id)) {
-                                        // delete item from specialization selected copy
-                                        specializationsSelectedCopy =
-                                            specializationsSelectedCopy!
-                                                .where((element) =>
-                                                    element.id !=
-                                                    specializations![index].id)
-                                                .toList();
-                                      } else {
-                                        specializationsSelectedCopy!
-                                            .add(specializations![index]);
-                                      }
-                                    });
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.center,
-                                      children: [
-                                        Card(
-                                            shape: StadiumBorder(),
-                                            color: ConstantsV2.orange,
-                                            child: Container(
-                                              width: 50,
-                                              height: 50,
-                                              padding: EdgeInsets.all(16),
-                                              child: Center(
-                                                child: Text("${specializations[index].description?[0]?? ""}"),
-                                              ),
-                                            )
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          child: Text(
-                                            '${specializations![index].description}',
-                                            style: boldoTitleBlackTextStyle
-                                                .copyWith(
-                                              fontSize: 16,
-                                              color: specializationsSelectedCopy!
-                                                  .any((element) =>
-                                              element.id ==
-                                                  specializations![
-                                                  index]
-                                                      .id)
-                                                  ? ConstantsV2
-                                                  .buttonPrimaryColor100
-                                                  : ConstantsV2
-                                                  .inactiveText,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          })),
-                ),
-              );
-            },
-          );
-        });
-  }
-
   Widget buildSubscriptionButtons(dynamic product) {
+
+    Widget child = Container(
+      width: 10,
+      height: 10,
+      color: Colors.orange,
+    );
+
     if(product.runtimeType == Specializations().runtimeType)
+
+      child = Row(
+        children: [
+          Expanded(
+            child: Text(product?.description?? ''),
+          ),
+          InkWell(
+            onTap: (){
+              Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .removeSpecialization(
+                  specializationId: product?.id?? "0",
+                  context: context);
+              // get the update list
+              specializationsSelected =
+                  Provider.of<DoctorFilterProvider>(context, listen: false)
+                      .getSpecializations;
+            },
+            child: SvgPicture.asset(
+              'assets/icon/close.svg',
+              width: 24,
+              height: 24,
+              color: ConstantsV2.inactiveText,
+            ),
+          ),
+        ],
+      );
+
+    if(product.runtimeType == "".runtimeType)
+
+      child = Row(
+        children: [
+          Expanded(
+            child: Text(product?? ''),
+          ),
+          InkWell(
+            onTap: (){
+              Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .removeName(
+                  name: product?? "",
+                  context: context);
+              // get the update list
+              names =
+                  Provider.of<DoctorFilterProvider>(context, listen: false)
+                      .getNames;
+            },
+            child: SvgPicture.asset(
+              'assets/icon/close.svg',
+              width: 24,
+              height: 24,
+              color: ConstantsV2.inactiveText,
+            ),
+          ),
+        ],
+      );
+
+    if(product.runtimeType == Organization().runtimeType)
+
+      child = Row(
+        children: [
+          Expanded(
+            child: Text(product?.name?? ''),
+          ),
+          InkWell(
+            onTap: (){
+              Provider.of<DoctorFilterProvider>(context, listen: false)
+                .removeOrganization(
+                organizationId: product.id?? "",
+                context: context,
+              );
+              // get the update list
+              names =
+                  Provider.of<DoctorFilterProvider>(context, listen: false)
+                      .getNames;
+            },
+            child: SvgPicture.asset(
+              'assets/icon/close.svg',
+              width: 24,
+              height: 24,
+              color: ConstantsV2.inactiveText,
+            ),
+          ),
+        ],
+      );
+
+    if(product.runtimeType == AppointmentType) {
+      if(AppointmentType.None== product ){
+        return Container();
+      }
+      child = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              SvgPicture.asset(
+                'assets/icon/in_person.svg',
+                color: AppointmentType.Both== product || AppointmentType.InPerson== product?
+                ConstantsV2.primaryRegular : ConstantsV2.blueLight,
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+              ),
+              SvgPicture.asset(
+                'assets/icon/videocam.svg',
+                  color: AppointmentType.Both== product || AppointmentType.Virtual== product?
+                  ConstantsV2.secondaryRegular : ConstantsV2.blueLight,
+              ),
+            ],
+          ),
+          InkWell(
+            onTap: () {
+              Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .removeOrganization(
+                organizationId: product.id ?? "",
+                context: context,
+              );
+              // get the update list
+              names =
+                  Provider
+                      .of<DoctorFilterProvider>(context, listen: false)
+                      .getNames;
+            },
+            child: SvgPicture.asset(
+              'assets/icon/close.svg',
+              width: 24,
+              height: 24,
+              color: ConstantsV2.inactiveText,
+            ),
+          ),
+        ],
+      );
+    }
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(100),
       ),
@@ -1004,76 +868,9 @@ class _DoctorFilterState extends State<DoctorFilter> {
       color: ConstantsV2.primaryColor300.withOpacity(.1),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(product?.description?? ''),
-            ),
-            InkWell(
-              onTap: (){
-                Provider.of<DoctorFilterProvider>(context, listen: false)
-                    .removeSpecialization(
-                    specializationId: product?.id?? "0",
-                    context: context);
-                // get the update list
-                specializationsSelected =
-                    Provider.of<DoctorFilterProvider>(context, listen: false)
-                        .getSpecializations;
-              },
-              child: SvgPicture.asset(
-                'assets/icon/close.svg',
-                width: 24,
-                height: 24,
-                color: ConstantsV2.inactiveText,
-              ),
-            ),
-          ],
-        ),
+        child: child,
         constraints: const BoxConstraints(maxWidth: 157),
       ),
-    );
-    if(product.runtimeType == "".runtimeType)
-      return Card(
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(100),
-        ),
-        elevation: 0,
-        color: ConstantsV2.primaryColor300.withOpacity(.1),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(product?? ''),
-              ),
-              InkWell(
-                onTap: (){
-                  Provider.of<DoctorFilterProvider>(context, listen: false)
-                      .removeName(
-                      name: product?? "",
-                      context: context);
-                  // get the update list
-                  names =
-                      Provider.of<DoctorFilterProvider>(context, listen: false)
-                          .getNames;
-                },
-                child: SvgPicture.asset(
-                  'assets/icon/close.svg',
-                  width: 24,
-                  height: 24,
-                  color: ConstantsV2.inactiveText,
-                ),
-              ),
-            ],
-          ),
-          constraints: const BoxConstraints(maxWidth: 157),
-        ),
-      );
-    return Container(
-      width: 10,
-      height: 10,
-      color: Colors.orange,
     );
   }
 }

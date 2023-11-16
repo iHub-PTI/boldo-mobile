@@ -1,17 +1,13 @@
-import 'package:boldo/blocs/user_bloc/patient_bloc.dart'as patient_bloc;
 import 'package:boldo/blocs/doctor_availability_bloc/doctor_availability_bloc.dart';
 import 'package:boldo/blocs/doctor_more_availability_bloc/doctor_more_availability_bloc.dart' as more_availabilities;
-import 'package:boldo/main.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
-import 'package:boldo/screens/booking/booking_screen.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/expandable_card/expandable_card.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:boldo/widgets/in-person-virtual-switch.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -452,7 +448,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                       selectedDayPredicate: (day) => isSameDay(day, date),
                                       calendarFormat: _expandCalendar? CalendarFormat.month : CalendarFormat.week,
                                       firstDay: DateTime.now(),
-                                      lastDay: DateTime(date.year, date.month + 1, 7),
+                                      lastDay: DateTime.now().add(const Duration(days: 30)),
                                       currentDay: DateTime.now(),
                                       focusedDay: date,
                                     ),
@@ -607,59 +603,63 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
             ),
           ),
           Container(
+            width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            constraints: BoxConstraints(maxHeight: 45),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Container(
-                  child: organizationsWithAvailabilites[index].availabilities.isNotEmpty?
-                  ListView.builder(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(right: 16),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: organizationsWithAvailabilites[index].availabilities.length > 3
-                          ? 3: organizationsWithAvailabilites[index].availabilities.length,
-                      itemBuilder: (BuildContext context, int indexAvailable){
-                        return _availabilityHourCard(index, indexAvailable);
-                      }
-                  ):Flexible(
-                    child: Text(
-                      "No disponible en los proximos 30 dias",
-                      style: boldoBodyLRegularTextStyle.copyWith(color: ConstantsV2.activeText),
+                  child: organizationsWithAvailabilites[index].availabilities.isNotEmpty?SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for(
+                        int indexAvailable=0;
+                        indexAvailable<organizationsWithAvailabilites[index]
+                            .availabilities.length && indexAvailable<3;
+                        indexAvailable++)
+                          _availabilityHourCard(index, indexAvailable)
+                      ],
                     ),
+                  ):Text(
+                    "No disponible en los proximos 30 dias",
+                    style: boldoBodyLRegularTextStyle.copyWith(color: ConstantsV2.activeText),
                   ),
                 ),
-                Container(
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedOrganization = organizationsWithAvailabilites[index];
-                        _selectedBookingHour = null;
-                        _hideCalendar = false;
-                        date = DateTime.now();
-                        BlocProvider.of<more_availabilities.DoctorMoreAvailabilityBloc>(context).add(more_availabilities.GetAvailability(
-                          id: widget.doctor.id?? '',
-                          startDate: date.toUtc(),
-                          endDate: DateTime(date.year, date.month, date.day+1).toLocal(),
-                          organizations: [Organization(id: _selectedOrganization?.idOrganization, name: _selectedOrganization?.nameOrganization)],
-                          appointmentType: selectedType,
-                        ));
-                      });
-                    },
-                    child: Card(
-                      elevation: 0.0,
-                      color: ConstantsV2.secondaryLightAndClear,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100),
-                        side: BorderSide(
-                          color: ConstantsV2.secondaryRegular.withOpacity(.1),
-                          width: 1.0,
-                        ),
-                      ),
-                      child: Container(
-                          decoration: BoxDecoration(
-                            boxShadow: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedOrganization = organizationsWithAvailabilites[index];
+                            _selectedBookingHour = null;
+                            _hideCalendar = false;
+                            date = DateTime.now();
+                            BlocProvider.of<more_availabilities.DoctorMoreAvailabilityBloc>(context).add(more_availabilities.GetAvailability(
+                              id: widget.doctor.id?? '',
+                              startDate: date.toUtc(),
+                              endDate: DateTime(date.year, date.month, date.day+1).toLocal(),
+                              organizations: [Organization(id: _selectedOrganization?.idOrganization, name: _selectedOrganization?.nameOrganization)],
+                              appointmentType: selectedType,
+                            ));
+                          });
+                        },
+                        child: Container(
+                          decoration: ShapeDecoration(
+                            color: ConstantsV2.secondaryLightAndClear,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(100),
+                              side: BorderSide(
+                                color: ConstantsV2.secondaryRegular.withOpacity(.1),
+                                width: 1.0,
+                              ),
+                            ),
+                            shadows: [
                               BoxShadow(
                                 offset: const Offset(0, 2),
                                 color: const Color(0xffFDA57D).withOpacity(.1),
@@ -667,14 +667,27 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                               ),
                             ],
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 6.5, vertical: 10),
-                          child: Center(
-                            child: SvgPicture.asset('assets/icon/more-horiz.svg',
-                              color: ConstantsV2.secondaryRegular,),
-                          )
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6.5),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Stack(
+                                children: [
+                                  SvgPicture.asset('assets/icon/more-horiz.svg',
+                                    width: 24,
+                                    height: 24,
+                                    color: ConstantsV2.secondaryRegular,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
@@ -690,6 +703,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
     String? appointmentType = organizationsWithAvailabilites[indexOrganization].availabilities[index]?.appointmentType;
 
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
         child: GestureDetector(
           onTap: appointmentType?.contains(selectedType == AppointmentType.Virtual ? "V" : "A")?? false ?() {
             setState(() {
@@ -698,49 +712,47 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
             });
 
           }: null,
-          child:Card(
-            elevation: 0.0,
-            color: appointmentType?.contains(
-                selectedType == AppointmentType.Virtual ? "V" : "A"
-            ) ?? false
-                ? _selected? ConstantsV2.orange : ConstantsV2.secondaryLightAndClear
-                : ConstantsV2.gray,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(100),
-              side: appointmentType?.contains(
+          child:Container(
+            decoration: ShapeDecoration(
+              color: appointmentType?.contains(
                   selectedType == AppointmentType.Virtual ? "V" : "A"
-              ) ?? false ?_selected ? BorderSide.none: BorderSide(
-                color: ConstantsV2.secondaryRegular.withOpacity(.1),
-                width: 1,
-              ) : BorderSide.none,
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                boxShadow: appointmentType?.contains(
+              ) ?? false
+                  ? _selected? ConstantsV2.orange : ConstantsV2.secondaryLightAndClear
+                  : ConstantsV2.gray,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100),
+                side: appointmentType?.contains(
                     selectedType == AppointmentType.Virtual ? "V" : "A"
-                ) ?? false
-                ? [
-                  BoxShadow(
+                ) ?? false ?_selected ? BorderSide.none: BorderSide(
+                  color: ConstantsV2.secondaryRegular.withOpacity(.1),
+                  width: 1,
+                ) : BorderSide.none,
+              ),
+              shadows: appointmentType?.contains(
+                  selectedType == AppointmentType.Virtual ? "V" : "A"
+              ) ?? false
+                  ? [
+                BoxShadow(
                     offset: const Offset(0, 2),
                     color: const Color(0xffFDA57D).withOpacity(.1),
                     blurRadius: 4,
+                    spreadRadius: 0
+                ),
+              ] : null,
+            ),
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              children: [
+                Text("${DateFormat('HH:mm').format(DateTime.parse(organizationsWithAvailabilites[indexOrganization].availabilities[index]?.availability?? DateTime.now().toString()))}",
+                  style: boldoCorpMediumBlackTextStyle.copyWith(
+                      color: appointmentType?.contains(
+                          selectedType == AppointmentType.Virtual ? "V" : "A"
+                      ) ?? false
+                          ?_selected? ConstantsV2.lightGrey.withOpacity(0.80) : ConstantsV2.secondaryRegular
+                          : ConstantsV2.inactiveText
                   ),
-                ] : null,
-              ),
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                children: [
-                  Text("${DateFormat('HH:mm').format(DateTime.parse(organizationsWithAvailabilites[indexOrganization].availabilities[index]?.availability?? DateTime.now().toString()))}",
-                    style: boldoCorpMediumBlackTextStyle.copyWith(
-                        color: appointmentType?.contains(
-                            selectedType == AppointmentType.Virtual ? "V" : "A"
-                        ) ?? false
-                            ?_selected? ConstantsV2.lightGrey.withOpacity(0.80) : ConstantsV2.secondaryRegular
-                            : ConstantsV2.inactiveText
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         )
@@ -813,3 +825,10 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
 
 }
 
+class AppoinmentWithDateAndType {
+  final DateTime dateTime;
+  final String appoinmentType;
+
+  AppoinmentWithDateAndType(
+      {required this.dateTime, required this.appoinmentType});
+}

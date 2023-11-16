@@ -160,6 +160,12 @@ TextStyle labelMedium = GoogleFonts.workSans().copyWith(
   fontStyle: FontStyle.normal,
 );
 
+TextStyle bigButton = GoogleFonts.montserrat().copyWith(
+  fontWeight: FontWeight.w300,
+  fontSize: 15,
+  fontStyle: FontStyle.normal,
+);
+
 const boldoInfoTextStyle = TextStyle(
   color: ConstantsV2.activeText,
   fontFamily: 'Montserrat',
@@ -241,6 +247,14 @@ const boldoCorpSmallTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+const CorpPMediumTextStyle = TextStyle(
+  color: ConstantsV2.lightGrey,
+  fontStyle: FontStyle.normal,
+  fontSize: 10,
+  fontWeight: FontWeight.w500,
+  fontFamily: 'Montserrat',
+);
+
 const boldoCorpSmallSTextStyle = TextStyle(
   color: ConstantsV2.lightGrey,
   fontStyle: FontStyle.normal,
@@ -293,10 +307,19 @@ const BigButton = TextStyle(
   fontFamily: 'Montserrat',
 );
 
-BoxShadow shadowRegular = BoxShadow(
-  offset: const Offset(0, 2),
-  color: Colors.black.withOpacity(0.05),
+const regularText = TextStyle(
+  fontStyle: FontStyle.normal,
+  fontSize: 10,
+  fontWeight: FontWeight.w400,
+  fontFamily: 'Montserrat',
+  height: 0,
+);
+
+BoxShadow shadowRegular = const BoxShadow(
+  color: Color(0x0C000000),
   blurRadius: 4,
+  offset: Offset(0, 2),
+  spreadRadius: 0,
 );
 
 BoxShadow shadowHeader = const BoxShadow(
@@ -310,6 +333,13 @@ BoxShadow shadowAttachStudy = const BoxShadow(
   color: Color(0x0C000000),
   blurRadius: 4,
   offset: Offset(0, 2),
+  spreadRadius: 0,
+);
+
+BoxShadow shadowHourAvailable = BoxShadow(
+  color: ConstantsV2.primaryColor300.withOpacity(.1),
+  blurRadius: 4,
+  offset: const Offset(0, 2),
   spreadRadius: 0,
 );
 
@@ -334,6 +364,31 @@ const BoxDecoration buttonFXSecondaryStyle = BoxDecoration(
   ]
 );
 
+BoxDecoration cardDecoration = BoxDecoration(
+  color: ConstantsV2.lightest,
+  boxShadow: [
+    shadowRegular
+  ],
+);
+
+const BoxDecoration selectedCardDecoration = BoxDecoration(
+  color: Color(0xFFF3FAF7),
+  boxShadow: [
+    BoxShadow(
+      color: Color(0x21FFFFFF),
+      blurRadius: 4,
+      offset: Offset(4, -4),
+      spreadRadius: 1,
+    ),
+    BoxShadow(
+      color: Color(0x3F000000),
+      blurRadius: 4,
+      offset: Offset(0, 4),
+      spreadRadius: 0,
+    )
+  ],
+);
+
 ThemeData boldoTheme = ThemeData(
   fontFamily: 'Montserrat',
   elevatedButtonTheme: ElevatedButtonThemeData(
@@ -344,7 +399,7 @@ ThemeData boldoTheme = ThemeData(
         ),
       ),
       padding: MaterialStateProperty.all(
-        const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       ),
       backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
         if (states.contains(MaterialState.disabled)) {
@@ -363,7 +418,7 @@ ThemeData boldoTheme = ThemeData(
     style: TextButton.styleFrom(
       foregroundColor: ConstantsV2.secondaryRegular,
       textStyle: boldoSubTextMediumStyle.copyWith(color: ConstantsV2.secondaryRegular),
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
     ),
   ),
   toggleableActiveColor: ConstantsV2.orange,
@@ -377,7 +432,7 @@ ThemeData boldoTheme = ThemeData(
   floatingActionButtonTheme: FloatingActionButtonThemeData(
     extendedTextStyle:
         const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-    extendedPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+    extendedPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
     backgroundColor: ConstantsV2.orange,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(100),
@@ -385,12 +440,16 @@ ThemeData boldoTheme = ThemeData(
   ),
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       textStyle: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: ConstantsV2.orange),
       foregroundColor: ConstantsV2.orange,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(100),
       ),
+      side: const BorderSide(
+        color: ConstantsV2.orange,
+        width: 1,
+      )
     ),
   ),
   inputDecorationTheme: InputDecorationTheme(
@@ -431,6 +490,28 @@ ThemeData boldoTheme = ThemeData(
   visualDensity: VisualDensity.adaptivePlatformDensity,
 );
 
+ButtonStyle elevatedButtonStyleSecondary = ButtonStyle(
+  textStyle: MaterialStateProperty.all(
+    const TextStyle(fontWeight: FontWeight.w500, fontSize: 16,
+        color: ConstantsV2.BGNeutral
+    ),
+  ),
+  padding: MaterialStateProperty.all(
+    const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+  ),
+  backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+    if (states.contains(MaterialState.disabled)) {
+      return ConstantsV2.gray; // Disabled color
+    }
+    return Constants.primaryColor500; // Regular color
+  }),
+  shape: MaterialStateProperty.all(
+    RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(100),
+    ),
+  ),
+);
+
 // Colors Boldo V2
 class ConstantsV2 {
   // background colors palette
@@ -466,13 +547,15 @@ class ConstantsV2 {
   static const Color secondaryCardHeroColor100 = Color(0xffFDA57D);
 
   // stops hero cards background colors
-  static const double secondaryCardStop100 = 0.82;
-  static const double secondaryCardStop200 = 1.46;
+  static const double secondaryCardStop100 = 0.84;
+  static const double secondaryCardStop200 = 1;
 
   // Text color
   static const Color primaryColor = Color(0xffF5F5F5);
   static const Color inactiveText = Color(0xff707882);
   static const Color activeText = Color(0xff424649);
+  static const Color disableText = Color(0xFFABAEB5);
+  static const Color darkText = Color(0xFF364152);
 
   // Input line border
   static const Color enableBorded = Color(0xff424649);
@@ -536,6 +619,9 @@ class ConstantsV2 {
   static const Color blueDark = Color(0xff364F6B);
   static const Color blueLight = Color(0xffB1C3D7);
   static const Color orange = Color(0xffEB8B76);
+
+  /// orange with 10% of opacity
+  static const Color veryLightOrange = Color(0x19EB8B76);
   static const Color lightAndClear = Color(0xffF5F5F5);
   static const Color gray = Color(0xffCFCFCF);
   static const Color grayLight = Color(0xffF8F8F8);
@@ -571,8 +657,8 @@ class ConstantsV2 {
   static double homeFeedTitleContainerMinHeight = 32.0;
   static double homeCarouselPadding = 24.0;
 
-  static double homeExpandedMaxHeight = homeAppBarMaxHeight + homeCarouselContainerMaxHeight + homeCarouselTitleContainerMaxHeight + homeFeedTitleContainerMaxHeight + homeCarouselPadding + homeCarouselPadding;
-  static double homeExpandedMinHeight = homeAppBarMinHeight + homeCarouselContainerMinHeight + homeCarouselTitleContainerMinHeight + homeFeedTitleContainerMinHeight + homeCarouselPadding + homeCarouselPadding;
+  static double homeExpandedMaxHeight = homeAppBarMaxHeight ;
+  static double homeExpandedMinHeight = homeAppBarMinHeight ;
 
 }
 
@@ -586,5 +672,5 @@ DateTime minDate = DateTime(1900, 1, 1);
 DateTime minDateDigit = DateTime(1000, 1, 1);
 enum StatusRequestOrganization  {Approved, Pending, Rejected}
 const int timeToShowAppointmentsOnHoldInMonth = 1;
-const int timeToShowStudyOrderInMonth = 1;
+const int timeToShowStudyOrderInMonth = 2;
 const Duration appearWidgetDuration = Duration(seconds: 1);

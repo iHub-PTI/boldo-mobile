@@ -1,18 +1,18 @@
 
 import 'package:boldo/models/Appointment.dart';
+import 'package:boldo/network/appointment_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
-import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 
-part 'appointmentEvent.dart';
-part 'appointmentState.dart';
+part 'appointmentsEvent.dart';
+part 'appointmentsState.dart';
 
-class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
-  final UserRepository _patientRepository = UserRepository();
+class AppointmentsBloc extends Bloc<AppointmentsEvent, AppointmentsState> {
+  final AppointmentRepository _appointmentRepository = AppointmentRepository();
   DateTime _initialDate = DateTime(DateTime.now().year-1,DateTime.now().month,DateTime.now().day);
   DateTime? _finalDate = DateTime.now();
 
@@ -44,13 +44,13 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     _filterInPerson = inPersonStatus;
   }
 
-  AppointmentBloc() : super(AppointmentInitial()) {
-    on<AppointmentEvent>((event, emit) async {
-      if(event is GetPastAppointmentList){
+  AppointmentsBloc() : super(AppointmentsInitial()) {
+    on<AppointmentsEvent>((event, emit) async {
+      if(event is GetPastAppointmentsList){
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.getPastAppointments(event.date)!)
+        _appointmentRepository.getPastAppointments(event.date)!)
             .attempt()
             .mapLeftToFailure()
             .run()
@@ -66,14 +66,14 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
           late List<Appointment> appointments;
           _post.foldRight(
               Appointment, (a, previous) => appointments = a);
-          emit(AppointmentLoadedState(appointments: appointments));
+          emit(AppointmentsLoadedState(appointments: appointments));
           emit(Success());
         }
-      }else if(event is GetPastAppointmentBetweenDatesList){
+      }else if(event is GetPastAppointmentsBetweenDatesList){
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.getPastAppointmentsBetweenDates(_initialDate, _finalDate)!)
+        _appointmentRepository.getPastAppointmentsBetweenDates(_initialDate, _finalDate)!)
             .attempt()
             .mapLeftToFailure()
             .run()
@@ -103,7 +103,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
                   return false;
                 })
               .toList();
-          emit(AppointmentLoadedState(appointments: appointments));
+          emit(AppointmentsLoadedState(appointments: appointments));
           emit(Success());
         }
       }

@@ -2,11 +2,11 @@ import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../network/http.dart';
 
@@ -25,33 +25,17 @@ Future<Map<String, String>> updateProfile(
       prefs.setString("profile_url", patient.photoUrl?? '');
     return {"successMessage": "Perfil actualizado con éxito."};
   } on DioError catch(exception, stackTrace){
-    await Sentry.captureMessage(
-      exception.toString(),
-      params: [
-        {
-          "path": exception.requestOptions.path,
-          "data": exception.requestOptions.data,
-          "patient": prefs.getString("userId"),
-          "dependentId": patient.id,
-          "responseError": exception.response,
-          'access_token': await storage.read(key: 'access_token')
-        },
-        stackTrace
-      ],
+    captureError(
+      exception: exception,
+      stackTrace: stackTrace,
     );
     return {
       "errorMessage": "Algo salió mal. Por favor, inténtalo de nuevo más tarde."
     };
-  } catch (exception, stackTrace) {
-    await Sentry.captureMessage(
-        exception.toString(),
-        params: [
-          {
-            'patient': prefs.getString("userId"),
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ]
+  } on Exception catch (exception, stackTrace) {
+    captureError(
+      exception: exception,
+      stackTrace: stackTrace,
     );
     print(exception);
     return {

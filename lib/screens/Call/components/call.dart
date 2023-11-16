@@ -17,6 +17,7 @@ class Call extends StatelessWidget {
   final bool initialVideoState;
   final Function() muteMic;
   final Function() muteVideo;
+  final Widget configAudioOutput;
 
   const Call({
     Key? key,
@@ -29,6 +30,7 @@ class Call extends StatelessWidget {
     required this.initialVideoState,
     required this.switchCamera,
     required this.appointment,
+    required this.configAudioOutput,
   }) : super(key: key);
 
   @override
@@ -37,7 +39,6 @@ class Call extends StatelessWidget {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        titleSpacing: 32,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -54,10 +55,19 @@ class Call extends StatelessWidget {
         toolbarHeight: 80,
         title: Padding(
           padding: const EdgeInsets.only(bottom: 24.0),
-          child: Text(
-            "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName!}",
-            style: const TextStyle(color: Constants.grayColor800),
-          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor!.familyName!}",
+                style: const TextStyle(color: Constants.grayColor800),
+              ),
+              Flexible(
+                child: configAudioOutput,
+              ),
+            ],
+          )
         ),
         elevation: 0,
         automaticallyImplyLeading: false,

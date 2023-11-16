@@ -161,26 +161,34 @@ class _StudyState extends State<Study> {
                               ],
                             ),
                           ),
-                          Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'fecha de realización',
-                                  style: boldoCorpSmallInterTextStyle.copyWith(
-                                      color: ConstantsV2.activeText),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Container(
-                                  child: Text(
-                                    "${DateFormat('dd/MM/yy').format(DateTime.parse(diagnosticReport?.effectiveDate ?? "2000-01-01").toLocal())}",
-                                    style: boldoSubTextMediumStyle.copyWith(
+                          Flexible(
+                            child: Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'fecha de realización',
+                                    style: boldoCorpSmallInterTextStyle.copyWith(
                                         color: ConstantsV2.activeText),
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Container(
+                                    child: Text(
+                                      "${DateFormat('dd/MM/yy').format(
+                                        DateTime.parse(
+                                          diagnosticReport?.effectiveDate
+                                              ?? "2000-01-01",
+                                        ).toLocal(),
+                                      )}",
+                                      style: boldoSubTextMediumStyle.copyWith(
+                                        color: ConstantsV2.activeText,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],

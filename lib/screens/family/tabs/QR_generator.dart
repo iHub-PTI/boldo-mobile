@@ -7,13 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import '../../../main.dart';
-
 class QRGenerator extends StatelessWidget {
   const QRGenerator({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
+    double widthQr = 244;
+
     return Scaffold(
         body: BlocProvider(
           create: (context) => QrBloc()..add(GetQRCode()), // <-- first event,
@@ -23,80 +24,121 @@ class QRGenerator extends StatelessWidget {
                 SafeArea(
                   child: Column(
                       children: [
-                        Container(
-                          margin: const EdgeInsets.all(16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              BackButtonLabel(
-                                labelText: 'Mi Familia',
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.all(16),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  "Boldo te permite designar a una persona de tu "
-                                      "confianza para la gestión de tu perfil de salud.",
-                                  style: boldoSubTextMediumStyle.copyWith(
-                                      color: ConstantsV2.activeText
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 20,),
-                              Flexible(
-                                child: Text(
-                                  "Mostrale este código para darle acceso",
-                                  style: boldoSubTextMediumStyle.copyWith(
-                                      color: ConstantsV2.activeText
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
                         Expanded(
-                          child:BlocBuilder<QrBloc, QrBlocState>(
-                            builder: (BuildContext context, state) {
-                              if(state is QrObtained){
-                                return Container(
-                                  alignment: Alignment.center,
-                                  margin: const EdgeInsets.symmetric(vertical: 80, horizontal: 58),
-                                  child: QrImage(
-                                    data: state.qrCode.qrCode?? "empty code",
-                                    embeddedImage: const AssetImage('assets/images/logo.png'),
-                                    eyeStyle: const QrEyeStyle(
-                                      eyeShape: QrEyeShape.circle,
-                                      color: Colors.black,
+                          child: Column(
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.all(16),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    BackButtonLabel(
+                                      labelText: 'Mi Familia',
+                                      iconColor: ConstantsV2.activeText,
                                     ),
-                                    dataModuleStyle: const QrDataModuleStyle(
-                                      dataModuleShape: QrDataModuleShape.circle,
-                                      color: Colors.black,
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.all(16),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        "Boldo te permite designar a una persona de tu "
+                                            "confianza para la gestión de tu perfil de salud.",
+                                        style: boldoSubTextMediumStyle.copyWith(
+                                            color: ConstantsV2.activeText
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }else if(state is Failed){
-                                return DataFetchErrorWidget(
-                                  retryCallback: () =>
-                                    BlocProvider.of<QrBloc>(context).add(
-                                        GetQRCode()
+                                    const SizedBox(height: 20,),
+                                    Flexible(
+                                      child: Text(
+                                        "Mostrale este código para darle acceso",
+                                        style: boldoSubTextMediumStyle.copyWith(
+                                            color: ConstantsV2.activeText
+                                        ),
+                                      ),
                                     )
-                                );
-                              }else {
-                                return const Center(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                                    backgroundColor: Constants.primaryColor600,
-                                  ),
-                                );
-                              }
-                            },
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child:BlocBuilder<QrBloc, QrBlocState>(
+                                  builder: (BuildContext context, state) {
+                                    if(state is QrObtained){
+                                      return Container(
+                                        alignment: Alignment.center,
+                                        margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                                        child: QrImage(
+                                          data: state.qrCode.qrCode?? "empty code",
+                                          embeddedImage: const AssetImage('assets/images/logo.png'),
+                                          eyeStyle: const QrEyeStyle(
+                                            eyeShape: QrEyeShape.circle,
+                                            color: Colors.black,
+                                          ),
+                                          dataModuleStyle: const QrDataModuleStyle(
+                                            dataModuleShape: QrDataModuleShape.circle,
+                                            color: Colors.black,
+                                          ),
+                                          size: widthQr*(MediaQuery.of(context).size.width/360),
+                                        ),
+                                      );
+                                    }else if(state is Failed){
+                                      return DataFetchErrorWidget(
+                                          retryCallback: () =>
+                                              BlocProvider.of<QrBloc>(context).add(
+                                                  GetQRCode()
+                                              )
+                                      );
+                                    }else {
+                                      return const Center(
+                                        child: CircularProgressIndicator(
+                                          valueColor: AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+                                          backgroundColor: Constants.primaryColor600,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(
+                            bottom: 24,
+                            left: 16,
+                            right: 16,
+                            top: 16,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              OutlinedButton(
+                                onPressed: (){
+                                  Navigator.pop(context);
+                                },
+                                child: Row(
+                                  children: [
+                                    const Text(
+                                      'cancelar',
+                                    ),
+                                    const SizedBox(
+                                      width: 8,
+                                    ),
+                                    const Icon(
+                                      Icons.cancel_rounded,
+                                      size: 20,
+                                      color: ConstantsV2.orange,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ]

@@ -3,6 +3,7 @@ import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/doctors_favorite_bloc/doctors_favorite_bloc.dart';
 import 'package:boldo/blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
 import 'package:boldo/blocs/favorite_action_bloc/favorite_action_bloc.dart';
+import 'package:boldo/blocs/goToTop_bloc/goToTop_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
@@ -78,21 +79,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   void initState() {
     _myProvider = Provider.of<DoctorFilterProvider>(context, listen: false);
     getDoctors();
-    scrollDoctorList.addListener(() {
-    double offset = 10.0; // or the value you want
-    if (scrollDoctorList.offset > offset){
-      showAnimatedButton = true;
-      // this we use to get update the state
-      setState((){
-
-      });
-    } else {
-      showAnimatedButton = false;
-      setState((){
-
-      });
-    }
-  });
 
     _tabController = TabController(
       length: 2,
@@ -114,199 +100,209 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        actions: [],
-        leadingWidth: 200,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child:
-              SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+    return BlocProvider(
+      create: (BuildContext context){
+        return GoToTopBloc();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          actions: [],
+          leadingWidth: 200,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child:
+            SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+          ),
         ),
-      ),
-      floatingActionButton: buttonGoTop(scrollDoctorList, 1000, 500, showAnimatedButton),
-      body: SafeArea(
-        child: MultiBlocListener(
-          listeners: [
-            BlocListener<DoctorsAvailableBloc, DoctorsAvailableState>(
-              listener: (context, state) {
-                if (state is DoctorsLoaded) {
-                  maxSizeAllDoctors = state.doctors.total??0;
-                  setState(() {
-                    doctors = state.doctors.items?? [];
-                  });
-                  getRecentDoctors();
-                  getFavoriteDoctors();
-                } else if (state is MoreDoctorsLoaded) {
-                  if (mounted) {
+        floatingActionButton: ButtonGoTop(
+          scrollController: scrollDoctorList,
+          animationDuration: 1000,
+          scrollDuration: 500,
+          showAnimatedButton: showAnimatedButton,
+        ),
+        body: SafeArea(
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<DoctorsAvailableBloc, DoctorsAvailableState>(
+                listener: (context, state) {
+                  if (state is DoctorsLoaded) {
+                    maxSizeAllDoctors = state.doctors.total??0;
+                    setState(() {
+                      doctors = state.doctors.items?? [];
+                    });
+                    getRecentDoctors();
+                    getFavoriteDoctors();
+                  } else if (state is MoreDoctorsLoaded) {
+                    if (mounted) {
+                      _refreshDoctorController.refreshCompleted();
+                      _refreshDoctorController.loadComplete();
+                      maxSizeAllDoctors = state.doctors.total??0;
+
+                      state.doctors.items?.removeWhere(
+                              (newDoctor) => doctors.any(
+                                  (doctor) => newDoctor.id == doctor.id
+                          )
+                      );
+
+                      setState(() {
+                        doctors = [...doctors, ...state.doctors.items?? [] ];
+                      });
+                    }
+                  } else if (state is FilterLoadedInDoctorList) {
                     _refreshDoctorController.refreshCompleted();
                     _refreshDoctorController.loadComplete();
                     maxSizeAllDoctors = state.doctors.total??0;
-
-                    state.doctors.items?.removeWhere(
-                      (newDoctor) => doctors.any(
-                        (doctor) => newDoctor.id == doctor.id
-                      )
-                    );
-
                     setState(() {
-                      doctors = [...doctors, ...state.doctors.items?? [] ];
+                      doctors = state.doctors.items?? [];
                     });
                   }
-                } else if (state is FilterLoadedInDoctorList) {
-                  _refreshDoctorController.refreshCompleted();
-                  _refreshDoctorController.loadComplete();
-                  maxSizeAllDoctors = state.doctors.total??0;
-                  setState(() {
-                    doctors = state.doctors.items?? [];
-                  });
-                }
-              },
-            ),
-            BlocListener<RecentDoctorsBloc, RecentDoctorsState>(
-              listener: (context, state) {
-                if (state is RecentDoctorsLoaded) {
-                  setState(() {
-                    recentDoctors = state.doctors;
-                  });
-                }
-              },
-            ),
-            BlocListener<FavoriteDoctorsBloc, FavoriteDoctorsState>(
-              listener: (context, state) {
-                if (state is FavoriteDoctorsLoaded) {
-                  _refreshFavoriteDoctorController.refreshCompleted();
-                  _refreshFavoriteDoctorController.loadComplete();
-                  favoritesDoctors.clear();
-                  maxSizeFavoriteDoctors = state.doctors.total??0;
+                },
+              ),
+              BlocListener<RecentDoctorsBloc, RecentDoctorsState>(
+                listener: (context, state) {
+                  if (state is RecentDoctorsLoaded) {
+                    setState(() {
+                      recentDoctors = state.doctors;
+                    });
+                  }
+                },
+              ),
+              BlocListener<FavoriteDoctorsBloc, FavoriteDoctorsState>(
+                listener: (context, state) {
+                  if (state is FavoriteDoctorsLoaded) {
+                    _refreshFavoriteDoctorController.refreshCompleted();
+                    _refreshFavoriteDoctorController.loadComplete();
+                    favoritesDoctors.clear();
+                    maxSizeFavoriteDoctors = state.doctors.total??0;
 
-                  state.doctors.items?.removeWhere(
-                          (newDoctor) => favoritesDoctors.any(
-                              (doctor) => newDoctor.id == doctor.id
-                      )
-                  );
+                    state.doctors.items?.removeWhere(
+                            (newDoctor) => favoritesDoctors.any(
+                                (doctor) => newDoctor.id == doctor.id
+                        )
+                    );
 
-                  state.doctors.items?.forEach((doctor) {
-                    favoritesDoctors.add(doctor);
-                    try {
-                      gridFavoriteDoctorsKey.currentState!.insertItem(
-                        favoritesDoctors.length - 1,
-                        duration: durationFavoriteAction
-                      );
-                    } catch (error) {
-                      //none
-                    }
-                  });
-                }else if (state is MoreFavoriteDoctorsLoaded) {
-                  _refreshFavoriteDoctorController.refreshCompleted();
-                  _refreshFavoriteDoctorController.loadComplete();
-                  maxSizeFavoriteDoctors = state.doctors.total??0;
+                    state.doctors.items?.forEach((doctor) {
+                      favoritesDoctors.add(doctor);
+                      try {
+                        gridFavoriteDoctorsKey.currentState!.insertItem(
+                            favoritesDoctors.length - 1,
+                            duration: durationFavoriteAction
+                        );
+                      } catch (error) {
+                        //none
+                      }
+                    });
+                  }else if (state is MoreFavoriteDoctorsLoaded) {
+                    _refreshFavoriteDoctorController.refreshCompleted();
+                    _refreshFavoriteDoctorController.loadComplete();
+                    maxSizeFavoriteDoctors = state.doctors.total??0;
 
-                  state.doctors.items?.removeWhere(
-                          (newDoctor) => favoritesDoctors.any(
-                              (doctor) => newDoctor.id == doctor.id
-                      )
-                  );
+                    state.doctors.items?.removeWhere(
+                            (newDoctor) => favoritesDoctors.any(
+                                (doctor) => newDoctor.id == doctor.id
+                        )
+                    );
 
-                  state.doctors.items?.forEach((doctor) {
-                    favoritesDoctors.add(doctor);
-                    try {
-                      gridFavoriteDoctorsKey.currentState!.insertItem(
-                        favoritesDoctors.length - 1,
-                        duration: durationFavoriteAction
-                      );
-                    } catch (error) {
-                      //none
-                    }
-                  });
-                  // reloadScreen
-                  setState(() {
+                    state.doctors.items?.forEach((doctor) {
+                      favoritesDoctors.add(doctor);
+                      try {
+                        gridFavoriteDoctorsKey.currentState!.insertItem(
+                            favoritesDoctors.length - 1,
+                            duration: durationFavoriteAction
+                        );
+                      } catch (error) {
+                        //none
+                      }
+                    });
+                    // reloadScreen
+                    setState(() {
 
-                  });
-                }else if (state is FailedFavoriteDoctors){
-                  _refreshFavoriteDoctorController.refreshCompleted();
-                  _refreshFavoriteDoctorController.loadComplete();
-                }
-              },
-            ),
-          ],
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: ConstantsV2.lightAndClear,
-                    boxShadow: [
-                      shadowHeader,
-                    ]
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      BackButtonLabel(labelText: 'Médicos',padding: null,),
-                      Row(
-                        children: [
-                          ImageViewTypeForm(
-                            height: 44,
-                            width: 44,
-                            url: patient.photoUrl,
-                            gender: patient.gender,
-                            border: true,
-                            borderColor: ConstantsV2.secondaryRegular,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DoctorFilter(),
+                    });
+                  }else if (state is FailedFavoriteDoctors){
+                    _refreshFavoriteDoctorController.refreshCompleted();
+                    _refreshFavoriteDoctorController.loadComplete();
+                  }
+                },
+              ),
+            ],
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                        color: ConstantsV2.lightAndClear,
+                        boxShadow: [
+                          shadowHeader,
+                        ]
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        BackButtonLabel(labelText: 'Médicos',padding: null,),
+                        Row(
+                          children: [
+                            ImageViewTypeForm(
+                              height: 44,
+                              width: 44,
+                              url: patient.photoUrl,
+                              gender: patient.gender,
+                              border: true,
+                              borderColor: ConstantsV2.secondaryRegular,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DoctorFilter(),
+                                  ),
+                                );
+                              },
+                              child:Card(
+                                color: ConstantsV2.secondaryRegular,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(100)),
                                 ),
-                              );
-                            },
-                            child:Card(
-                              color: ConstantsV2.secondaryRegular,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(100)),
-                              ),
-                              child: Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: buttonFXSecondaryStyle.copyWith(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: SvgPicture.asset(
-                                  'assets/icon/search.svg',
+                                child: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: buttonFXSecondaryStyle.copyWith(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: SvgPicture.asset(
+                                    'assets/icon/search.svg',
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                BlocBuilder<DoctorsAvailableBloc, DoctorsAvailableState>(
-                  builder: (context, state){
-                    if(state is Loading || state is FilterLoading)
-                      return const Center(child: CircularProgressIndicator());
-                    else if(state is Failed){
-                      return DataFetchErrorWidget(
-                          retryCallback: (){ getDoctors(); }
-                        );
-                      }else{
-                        return
-                          doctors.isNotEmpty
-                              ? _body()
-                              : _emptyDoctor();
+                  BlocBuilder<DoctorsAvailableBloc, DoctorsAvailableState>(
+                      builder: (context, state){
+                        if(state is Loading || state is FilterLoading)
+                          return const Center(child: CircularProgressIndicator());
+                        else if(state is Failed){
+                          return DataFetchErrorWidget(
+                              retryCallback: (){ getDoctors(); }
+                          );
+                        }else{
+                          return
+                            doctors.isNotEmpty
+                                ? _body()
+                                : _emptyDoctor();
+                        }
                       }
-                    }
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -318,11 +314,16 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     return Expanded(
       child: NestedScrollView(
         controller: scrollDoctorList,
+        floatHeaderSlivers: false,
         physics: const NeverScrollableScrollPhysics(),
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
-            SliverToBoxAdapter(
-              child: _tabBar(),
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              forceElevated: innerBoxIsScrolled,
+              pinned: true,
+              floating: false,
+              flexibleSpace: _tabBar(),
             ),
           ];
         },
@@ -346,29 +347,37 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     return Container(
       padding: const EdgeInsets.all(12),
       color: ConstantsV2.grayLightest,
-      child: TabBar(
-        labelStyle: boldoTabHeaderSelectedTextStyle,
-        unselectedLabelStyle: boldoTabHeaderUnselectedTextStyle,
-        indicatorColor: Colors.transparent,
-        unselectedLabelColor:
-        const Color.fromRGBO(119, 119, 119, 1),
-        labelColor: ConstantsV2.activeText,
-        controller: _tabController,
-        tabs: [
-          const Text(
-            'Recientes',
+      child: Stack(
+        children: [
+          Center(
+              child: SvgPicture.asset(
+                'assets/decorations/line_separator.svg',
+              )
           ),
-          const Text(
-            'Favoritos',
+          TabBar(
+            labelStyle: boldoTabHeaderSelectedTextStyle,
+            unselectedLabelStyle: boldoTabHeaderUnselectedTextStyle,
+            indicatorColor: Colors.transparent,
+            unselectedLabelColor:
+            const Color.fromRGBO(119, 119, 119, 1),
+            labelColor: ConstantsV2.activeText,
+            controller: _tabController,
+            tabs: [
+              const Text(
+                'Recientes',
+              ),
+              const Text(
+                'Favoritos',
+              ),
+            ],
           ),
         ],
-      ),
+      )
     );
   }
 
   Widget _recentDoctorTab(){
     return Container(
-      //color: ConstantsV2.grayLightest,
       child: SmartRefresher(
         physics: const ClampingScrollPhysics(),
         controller: _refreshDoctorController,
@@ -381,6 +390,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
           shrinkWrap: true,
           physics: const ClampingScrollPhysics(),
           children: [
+            const SizedBox(height: 16,),
             _recentDoctors(),
             const SizedBox(height: 24,),
             _allDoctors(),
@@ -433,7 +443,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
 
   Widget _favoriteDoctorTab(){
     return Container(
-      color: ConstantsV2.grayLightest,
+      padding: const EdgeInsets.all(16),
       child: SmartRefresher(
         physics: const ClampingScrollPhysics(),
         controller: _refreshFavoriteDoctorController,
@@ -701,11 +711,23 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
             );
           }else{
             return
-              recentDoctors.isNotEmpty? Column(
+              recentDoctors.isNotEmpty? Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    color: ConstantsV2.grayLightest,
+                  Expanded(
+                    child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration:const BoxDecoration(
+                      color: ConstantsV2.grayLightest,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0x0C000000),
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                          spreadRadius: 0,
+                        )
+                      ],
+                    ),
                     height: 250,
                     child: GridView.builder(
                       padding:
@@ -725,6 +747,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                       },
                     ),
                   ),
+                  ),
                 ],
               ): _emptyRecentDoctors();
           }
@@ -733,9 +756,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   }
 
   Widget _allDoctors(){
-    return ListView(
-      physics: const ClampingScrollPhysics(),
-      shrinkWrap: true,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
@@ -747,9 +769,19 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
           ),
         ),
         Container(
-          color: ConstantsV2.grayLightest,
+          decoration: const BoxDecoration(
+            color: ConstantsV2.grayLightest,
+            boxShadow: [
+              BoxShadow(
+                color: Color(0x0C000000),
+                blurRadius: 4,
+                offset: Offset(0, 2),
+                spreadRadius: 0,
+              )
+            ],
+          ),
           padding:
-          const EdgeInsets.only(right: 16, left: 16),
+          const EdgeInsets.all(16),
           child: ReorderableBuilder(
             enableDraggable: false,
             children: doctors.map((e) => doctorItem(context, e)).toList(),
@@ -790,24 +822,26 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
           }else{
             return
               favoritesDoctors.isNotEmpty
-                  ? AnimatedGrid(
-                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                key: gridFavoriteDoctorsKey,
-                physics: const ClampingScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                gridDelegate:
-                const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    childAspectRatio: 5 / 4,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20),
-                initialItemCount: favoritesDoctors.length,
-                itemBuilder: (context, index, animation){
-                  return FadeTransition(
-                    opacity: animation,
-                    child: doctorItem(context, favoritesDoctors[index]),
-                  );
-                },
+                  ? Container(
+                child: AnimatedGrid(
+                  key: gridFavoriteDoctorsKey,
+                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  physics: const ClampingScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  gridDelegate:
+                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 200,
+                      childAspectRatio: 5 / 4,
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20),
+                  initialItemCount: favoritesDoctors.length,
+                  itemBuilder: (context, index, animation){
+                    return FadeTransition(
+                      opacity: animation,
+                      child: doctorItem(context, favoritesDoctors[index]),
+                    );
+                  },
+                ),
               )
                   : _emptyFavoriteDoctors();
           }

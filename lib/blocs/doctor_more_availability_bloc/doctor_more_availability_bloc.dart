@@ -1,5 +1,6 @@
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/Organization.dart';
+import 'package:boldo/network/doctor_repository.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:dartz/dartz.dart';
@@ -14,13 +15,14 @@ part 'doctor_more_availability_state.dart';
 
 class DoctorMoreAvailabilityBloc extends Bloc<DoctorMoreAvailabilityEvent, DoctorMoreAvailabilityState> {
   final UserRepository _patientRepository = UserRepository();
+  final DoctorRepository _doctorRepository = DoctorRepository();
   DoctorMoreAvailabilityBloc() : super(DoctorAvailabilityInitial()) {
     on<DoctorMoreAvailabilityEvent>((event, emit) async {
       if(event is GetAvailability) {
         emit(Loading());
         var _post;
         await Task(() =>
-        _patientRepository.getAvailabilities(
+        _doctorRepository.getAvailabilities(
           id: event.id,
           startDate: event.startDate,
           endDate: event.endDate,

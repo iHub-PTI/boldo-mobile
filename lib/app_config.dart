@@ -1,12 +1,11 @@
 import 'dart:async';
 
+import 'package:boldo/models/ValueEmitter.dart';
 import 'package:boldo/utils/string_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-AppConfig appConfig = AppConfig(
-  envFile: ".env_app_config",
-);
+late AppConfig appConfig ;
 
 class AppConfig {
   final envFile;
@@ -114,6 +113,17 @@ class AppConfig {
     );
 
   }
+
+  ValueEmitter<String> TIMEOUT_MESSAGE_DOWNLOAD_FILES = ValueEmitter(
+    value: "El servicio tardó demasiado en responder, procure seleccionar menos archivos",
+  );
+  ValueEmitter<int> RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES = ValueEmitter(
+    value: 1000,
+  );
+
+  ValueEmitter<int> ALL_ORGANIZATION_PAGE_SIZE = ValueEmitter(
+    value: 20,
+  );
 
   // stream controllers to update values
   StreamController<String> _appUrlDownloadController = StreamController<String>.broadcast();

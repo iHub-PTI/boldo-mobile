@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:boldo/app_config.dart';
 import 'package:boldo/environment.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 class FirebaseRemoteConfigService {
 
@@ -37,6 +37,10 @@ class FirebaseRemoteConfigService {
         "ACCESS_ADD_DEPENDENT_CI": appConfig.ACCESS_ADD_DEPENDENT_CI,
         "ACCESS_ADD_DEPENDENT_QR": appConfig.ACCESS_ADD_DEPENDENT_QR,
         "ACCESS_ADD_DEPENDENT_WITHOUT_CI": appConfig.ACCESS_ADD_DEPENDENT_WITHOUT_CI,
+        "TIME_OUT_MESSAGE_DOWNLOAD_FILES": appConfig.TIMEOUT_MESSAGE_DOWNLOAD_FILES.getValue,
+        "RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES": appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.getValue,
+        "BCM_SERVER_ADDRESS": environment.BCM_SERVER_ADDRESS.getValue,
+        "ALL_ORGANIZATION_PAGE_SIZE": appConfig.ALL_ORGANIZATION_PAGE_SIZE.getValue,
       });
 
       // get values from server
@@ -50,6 +54,7 @@ class FirebaseRemoteConfigService {
       environment.updateSentryDSNValue(firebaseRemoteConfig.getString("SENTRY_DSN"));
       environment.updateIceServerTurnConfigValue(jsonDecode(firebaseRemoteConfig.getString("ICE_SERVER_TURN")));
       environment.updateIceServerStunConfig(jsonDecode(firebaseRemoteConfig.getString("ICE_SERVER_STUN")));
+      environment.BCM_SERVER_ADDRESS.updateValue(firebaseRemoteConfig.getString("BCM_SERVER_ADDRESS"));
       appConfig.updateAppUrlDownloadValue(firebaseRemoteConfig.getString("APP_URL_DOWNLOAD"));
       appConfig.updateDefaultAppUrlDownloadValue(firebaseRemoteConfig.getString("DEFAULT_APP_URL_DOWNLOAD"));
       appConfig.updateLastAvailableVersionValue(firebaseRemoteConfig.getString("LAST_AVAILABLE_VERSION"));
@@ -59,6 +64,10 @@ class FirebaseRemoteConfigService {
       appConfig.updateAccessAddDependentCIValue(firebaseRemoteConfig.getBool("ACCESS_ADD_DEPENDENT_CI"));
       appConfig.updateAccessAddDependentQRValue(firebaseRemoteConfig.getBool("ACCESS_ADD_DEPENDENT_QR"));
       appConfig.updateAccessAddDependentWithoutCIValue(firebaseRemoteConfig.getBool("ACCESS_ADD_DEPENDENT_WITHOUT_CI"));
+      appConfig.TIMEOUT_MESSAGE_DOWNLOAD_FILES.updateValue(firebaseRemoteConfig.getString("TIMEOUT_MESSAGE_DOWNLOAD_FILES"));
+      appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.updateValue(firebaseRemoteConfig.getInt("RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES"));
+      appConfig.ALL_ORGANIZATION_PAGE_SIZE.updateValue(firebaseRemoteConfig.getInt("ALL_ORGANIZATION_PAGE_SIZE"));
+
 
       // listen remote changes
       firebaseRemoteConfig.onConfigUpdated.listen((event) async {
@@ -136,15 +145,37 @@ class FirebaseRemoteConfigService {
           // set new value
           appConfig.updateAccessAddDependentWithoutCIValue(firebaseRemoteConfig.getBool("ACCESS_ADD_DEPENDENT_WITHOUT_CI"));
         }
+        if(event.updatedKeys.contains("TIMEOUT_MESSAGE_DOWNLOAD_FILES")){
+          // set new value
+          appConfig.TIMEOUT_MESSAGE_DOWNLOAD_FILES.updateValue(firebaseRemoteConfig.getString("TIMEOUT_MESSAGE_DOWNLOAD_FILES"));
+        }
+        if(event.updatedKeys.contains("RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES")){
+          // set new value
+          appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.updateValue(firebaseRemoteConfig.getInt("RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES"));
+        }
+        if(event.updatedKeys.contains("BCM_SERVER_ADDRESS")){
+          // set new value
+          environment.BCM_SERVER_ADDRESS.updateValue(firebaseRemoteConfig.getString("BCM_SERVER_ADDRESS"));
+        }
+        if(event.updatedKeys.contains("ALL_ORGANIZATION_PAGE_SIZE")){
+          // set new value
+          appConfig.ALL_ORGANIZATION_PAGE_SIZE.updateValue(firebaseRemoteConfig.getInt("ALL_ORGANIZATION_PAGE_SIZE"));
+        }
+
       });
     } on FirebaseException catch (exception, stackTrace){
-      await Sentry.captureException(
-        exception,
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
-    } catch (exception, stackTrace){
-      await Sentry.captureException(
-        exception,
+    } on Exception catch (exception, stackTrace){
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+    } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
         stackTrace: stackTrace,
       );
     }

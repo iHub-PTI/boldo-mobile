@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:boldo/app_config.dart';
-import 'package:boldo/blocs/appointmet_bloc/appointmentBloc.dart';
 import 'package:boldo/blocs/doctor_more_availability_bloc/doctor_more_availability_bloc.dart';
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/doctors_favorite_bloc/doctors_favorite_bloc.dart';
@@ -11,17 +10,14 @@ import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/logout_bloc/userLogoutBloc.dart';
-import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
-import 'package:boldo/blocs/prescriptions_bloc/prescriptionsBloc.dart';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/blocs/specializationFilter_bloc/specializationFilter_bloc.dart';
+import 'package:boldo/flavors.dart';
 import 'package:boldo/provider/auth_provider.dart';
 import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/appointments/pastAppointments_screen.dart';
-import 'package:boldo/screens/dashboard/tabs/doctors_tab.dart';
-import 'package:boldo/screens/doctor_search/doctors_available.dart';
 import 'package:boldo/screens/family/family_tab.dart';
 import 'package:boldo/screens/family/tabs/defined_relationship_screen.dart';
 import 'package:boldo/screens/family/tabs/familyConnectTransition.dart';
@@ -41,17 +37,15 @@ import 'package:boldo/services/firebase/FirebaseRemoteConfigService.dart';
 import 'package:boldo/utils/app_helper.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:camera/camera.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_dio/sentry_dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -65,7 +59,6 @@ import 'package:boldo/constants.dart';
 import 'blocs/attach_study_order_bloc/attachStudyOrder_bloc.dart';
 import 'blocs/doctorFilter_bloc/doctorFilter_bloc.dart';
 import 'blocs/doctor_availability_bloc/doctor_availability_bloc.dart';
-import 'blocs/doctor_bloc/doctor_bloc.dart';
 import 'blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
 import 'blocs/passport_bloc/passportBloc.dart';
 import 'blocs/prescription_bloc/prescriptionBloc.dart';
@@ -80,6 +73,7 @@ import 'models/Relationship.dart';
 import 'models/User.dart';
 import 'models/UserVaccinate.dart';
 import 'models/upload_url_model.dart';
+import 'observers/navigatorObserver.dart';
 
 final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
 final Patient patientModel = Patient();
@@ -103,18 +97,39 @@ late UploadUrl backDniUrl;
 late UploadUrl userSelfieUrl;
 
 Future<void> main() async {
+  await mainCommon(
+    flavor: Flavors.dev,
+    firebaseOptions: DefaultFirebaseOptions.currentPlatform,
+  );
+}
+
+Future<void> mainCommon({
+  required Flavors flavor,
+  required FirebaseOptions firebaseOptions,
+}) async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  environment = Environment(
+    envFile: flavor.envFile,
+    envIceServerFile: flavor.iceServerConfigFile,
+  );
+
+  appConfig = AppConfig(
+    envFile: flavor.appConfigFile,
+  );
+
   await environment.init();
   await appConfig.init();
 
   // comment these lines if you doesn't have a firebase project
   // init firebase config
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+  FirebaseApp firebaseApp = await Firebase.initializeApp(
+    name: flavor.appName,
+    options: firebaseOptions,
   );
   // set remoteConfigService
   final firebaseRemoteConfigService = FirebaseRemoteConfigService(
-    firebaseRemoteConfig: FirebaseRemoteConfig.instance,
+    firebaseRemoteConfig: FirebaseRemoteConfig.instanceFor(app: firebaseApp),
   );
   //init remoteConfigService with firebase
   await firebaseRemoteConfigService.init();
@@ -139,9 +154,10 @@ Future<void> main() async {
   prefs = await SharedPreferences.getInstance();
   prefs.setBool(isFamily, false);
 
-  initDio(navKey: navKey, dio: dio, passport: false);
-  initDio(navKey: navKey, dio: dioPassport, passport: true);
-  dioByteInstance();
+  initDio(navKey: navKey, dio: dio, baseUrl: environment.SERVER_ADDRESS, header: dioHeader);
+  initDio(navKey: navKey, dio: dioBCM, baseUrl: environment.BCM_SERVER_ADDRESS.getValue, header: dioHeader);
+  initDio(navKey: navKey, dio: dioPassport, baseUrl: environment.SERVER_ADDRESS_PASSPORT);
+  initDio(navKey: navKey, dio: dioDownloader, baseUrl: environment.SERVER_ADDRESS_PASSPORT, responseType: ResponseType.bytes);
   const storage = FlutterSecureStorage();
   String? session;
   try {
@@ -313,6 +329,9 @@ class FullApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+      navigatorObservers: [
+        AppNavigatorObserver(),
+      ],
       supportedLocales: [
         const Locale("es", 'ES'),
         const Locale('en'),
@@ -336,7 +355,6 @@ class FullApp extends StatelessWidget {
         '/FamilyTransition' : (context) => FamilyTransition(),
         '/familyDniRegister' : (context) => DniFamilyRegister(),
         '/my_studies' : (context) => MyStudies(),
-        '/doctorsTab' : (context) => DoctorsTab(),
         '/pastAppointmentsScreen' : (context) => const PastAppointmentsScreen(),
         '/prescriptionsScreen' : (context) => const PrescriptionsScreen(),
         '/user_qr_detail': (context) => UserQrDetail(),

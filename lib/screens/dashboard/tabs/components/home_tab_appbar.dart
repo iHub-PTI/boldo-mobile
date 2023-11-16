@@ -14,175 +14,162 @@ import '../../../../main.dart';
 import '../../../../utils/loading_helper.dart';
 import '../../menu.dart';
 
-class HomeTabAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final double max;
+class HomeTabAppBar extends StatefulWidget {
+  final Animation<double> controller;
+
   const HomeTabAppBar({
     Key? key,
-    required this.max,
+    required this.controller,
   }) : super(key: key);
 
   @override
-  _HomeTabAppBarState createState() => _HomeTabAppBarState(max);
-  @override
-  Size get preferredSize => const Size.fromHeight(110);
+  _HomeTabAppBarState createState() => _HomeTabAppBarState();
+
 }
 
 class _HomeTabAppBarState extends State<HomeTabAppBar> {
 
-  _HomeTabAppBarState(this.max);
-  double max;
-  Response? response;
-  bool _dataLoading = true;
-  var expanded = true ;
-
   @override
   void initState() {
     super.initState();
-    _getProfileData();
-  }
-
-  Future _getProfileData() async {
-
-    setState(() {
-      _dataLoading = false;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    expanded = widget.max > (ConstantsV2.homeAppBarMaxHeight+ConstantsV2.homeAppBarMinHeight)*0.6;
     return Container(
-      constraints: BoxConstraints(maxHeight: widget.max, minHeight: widget.max),
-      height: widget.max,
+      height: (
+          ConstantsV2.homeAppBarMinHeight+
+              (ConstantsV2.homeAppBarMaxHeight-ConstantsV2.homeAppBarMinHeight)*widget.controller.value
+      ),
       decoration: _decoration(),
       child: BlocListener<PatientBloc, PatientState>(
         listener: (context, state){
           setState(() {
-            if(state is Failed){
-              _dataLoading = false;
-            }
-            if(state is Success){
-              _dataLoading = false;
-            }
-            if(state is Loading){
-              _dataLoading = true;
-            }
+
           });
         },
         child: BlocBuilder<PatientBloc, PatientState>(
-          builder: (context, state) {
-            return Row(
-              children: [
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ProfileScreen(),
-                      ),
-                    );
-                  },
-                  child: ImageViewTypeForm(height: expanded ? 100 : 60,
-                      width: expanded ? 100 : 60,
-                      url: patient.photoUrl,
-                      gender: patient.gender,
-                      border: true),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if((prefs.getBool(isFamily)?? false))
+            builder: (context, state) {
+              return Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProfileScreen(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.all(10),
+                      child: ImageViewTypeForm(
+                          height: 60+(100-60)*widget.controller.value,
+                          width: 60+(100-60)*widget.controller.value,
+                          url: patient.photoUrl,
+                          gender: patient.gender,
+                          border: true),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if((prefs.getBool(isFamily)?? false))
+                          Flexible(
+                            child: Text(
+                              "mostrando a",
+                              style: boldoCorpMediumTextStyle.copyWith(
+                                color: ConstantsV2.lightGrey,
+                                fontSize: 10+(14-10)*widget.controller.value,
+                              ),
+                            ),
+                          ),
                         Flexible(
                           child: Text(
-                            "mostrando a",
-                            style: boldoCorpMediumTextStyle.copyWith(
-                                color: ConstantsV2.lightGrey
+                            "${patient.givenName ?? ''} ${patient.familyName ??
+                                ''}",
+                            style: boldoCardHeadingTextStyle.copyWith(
+                                fontSize: 14+(17-14)*widget.controller.value,
+                                color: ConstantsV2.lightest
                             ),
                           ),
                         ),
-                      Flexible(
-                        child: Text(
-                          "${patient.givenName ?? ''} ${patient.familyName ??
-                              ''}",
-                          style: boldoCardHeadingTextStyle.copyWith(
-                              color: ConstantsV2.lightest
+                        if(!(prefs.getBool(isFamily)?? false))
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  patient.city ?? '',
+                                  style: boldoCorpMediumTextStyle.copyWith(
+                                    fontSize: 10+(14-10)*widget.controller.value,
+                                  ),
+                                ),
+                              ]
                           ),
-                        ),
-                      ),
-                      SizedBox(height: (widget.max /
-                          ConstantsV2.homeAppBarMaxHeight) * 10),
-                      if(!(prefs.getBool(isFamily)?? false))
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              patient.city ?? '',
-                              style: expanded
-                                  ? boldoCorpMediumTextStyle
-                                  : boldoCorpSmallTextStyle,
-                            ),
-                          ]
-                        ),
-
-                      const SizedBox(height: 4),
-                      !(prefs.getBool(isFamily)?? false) ?Text(
-                        formatDate(
-                          DateTime.now(),
-                          [d, ' de ', MM, ' de ', yyyy],
-                          locale: const SpanishDateLocale(),
-                        ),
-                        style: expanded
-                            ? boldoCorpMediumTextStyle
-                            : boldoCorpSmallTextStyle,
-                      ): Flexible(
-                        child: Text(
-                          "${patient.relationshipDisplaySpan?? ''}",
+                        SizedBox(height: 4+(10-4)*widget.controller.value),
+                        !(prefs.getBool(isFamily)?? false) ?Text(
+                          formatDate(
+                            DateTime.now(),
+                            [d, ' de ', MM, ' de ', yyyy],
+                            locale: const SpanishDateLocale(),
+                          ),
                           style: boldoCorpMediumTextStyle.copyWith(
-                              color: ConstantsV2.lightGrey
+                            fontSize: 10+(14-10)*widget.controller.value,
+                          ),
+                        ): Flexible(
+                          child: Text(
+                            "${patient.relationshipDisplaySpan?? ''}",
+                            style: boldoCorpMediumTextStyle.copyWith(
+                              color: ConstantsV2.lightGrey,
+                              fontSize: 10+(14-10)*widget.controller.value,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                   expanded ? IconButton(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (
-                            context) => MenuScreen()));
-                      },
-                      icon: SvgPicture.asset(
-                        'assets/icon/menu-alt-1.svg',
-                        color: ConstantsV2.lightest,
-                      ),
-                    ) : Container(),
-                    Container(
-                      constraints: const BoxConstraints(
-                          maxHeight: 33, maxWidth: 33),
-                      margin: const EdgeInsets.all(16),
-                      child: FloatingActionButton(
-                        onPressed: () {
-                          if(families.length > 0)
-                            _showFamilyBox();
-                          else
-                            Navigator.pushNamed(context, '/methods');
-                        },
-                        backgroundColor: ConstantsV2.orange,
-                        child: SvgPicture.asset('assets/icon/family.svg'),
-                        elevation: 0,
-                      ) ,
-                    ) ,
-                  ],
-                ),
-              ],
-            );
-          }
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 16, right: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizeTransition(
+                          sizeFactor: widget.controller,
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (
+                                  context) => MenuScreen()));
+                            },
+                            icon: SvgPicture.asset(
+                              'assets/icon/menu-alt-1.svg',
+                              color: ConstantsV2.lightest,
+                            ),
+                          ),
+                        ) ,
+                        Container(
+                          constraints: const BoxConstraints(
+                              maxHeight: 33, maxWidth: 33),
+                          child: FloatingActionButton(
+                            onPressed: () {
+                              if(families.length > 0)
+                                _showFamilyBox();
+                              else
+                                Navigator.pushNamed(context, '/methods');
+                            },
+                            backgroundColor: ConstantsV2.orange,
+                            child: SvgPicture.asset('assets/icon/family.svg'),
+                            elevation: 0,
+                          ) ,
+                        ) ,
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            }
         ),
       ),
     );
@@ -253,7 +240,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                               children: [
                                 !expand
                                   ? Container(
-                                    height: 60,
+                                    height: 54,
                                     margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
                                     // screen rotation control
                                     width: MediaQuery.of(context).size.width*0.7,
@@ -378,6 +365,7 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
     double height = type == "rounded"? 54 : 85;
     double width = type == "rounded"? 54 : 120;
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       constraints: const BoxConstraints(maxHeight: 125, maxWidth: 120),
       child: GestureDetector(
         child: type == "square"? Column(
@@ -456,35 +444,32 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
 
   BoxDecoration _decoration(){
     if((prefs.getBool(isFamily)?? false)){
-      return const BoxDecoration(
-          borderRadius: BorderRadius.only(bottomRight: Radius.circular(24)),
+      return BoxDecoration(
+          borderRadius: const BorderRadius.only(bottomRight: Radius.circular(24)),
           gradient: RadialGradient(
-              radius: 4,
-              center: Alignment(
-                1.80,
-                0.77,
-              ),
+              center: const Alignment(1.04, 0.77),
+              radius: 2*MediaQuery.of(context).size.width/360,
               colors: <Color>[
                 ConstantsV2.familyAppBarColor100,
                 ConstantsV2.familyAppBarColor200,
-                ConstantsV2.familyAppBarColor200,
+                ConstantsV2.familyAppBarColor300,
               ],
               stops: <double>[
                 ConstantsV2.familyAppBarStop100,
                 ConstantsV2.familyAppBarStop200,
                 ConstantsV2.familyAppBarStop300,
               ]
-          )
+          ),
+        boxShadow: [
+          shadowRegular
+        ],
       );
     }else{
-      return const BoxDecoration(
-          borderRadius: BorderRadius.only(bottomRight: Radius.circular(24)),
+      return BoxDecoration(
+          borderRadius: const BorderRadius.only(bottomRight: Radius.circular(24)),
           gradient: RadialGradient(
-              radius: 4,
-              center: Alignment(
-                1.80,
-                0.77,
-              ),
+              center: const Alignment(1.04, 0.77),
+              radius: 2*MediaQuery.of(context).size.width/360,
               colors: <Color>[
                 ConstantsV2.patientAppBarColor100,
                 ConstantsV2.patientAppBarColor200,
@@ -495,7 +480,10 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                 ConstantsV2.patientAppBarStop200,
                 ConstantsV2.patientAppBarStop300,
               ]
-          )
+          ),
+        boxShadow: [
+          shadowRegular
+        ],
       );
     }
   }

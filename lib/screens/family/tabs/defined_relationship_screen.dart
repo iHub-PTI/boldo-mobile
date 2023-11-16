@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart' as family_bloc;
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/Relationship.dart';
@@ -189,7 +190,7 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                                             setState(() {
                                               user.relationshipCode = relationship!.code;
                                             });
-                                            BlocProvider.of<PatientBloc>(context).add(LinkFamily());
+                                            BlocProvider.of<family_bloc.FamilyBloc>(context).add(family_bloc.LinkFamily());
                                           } : (){},
                                           child: const Text(
                                             "vincular",

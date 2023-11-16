@@ -6,11 +6,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../constants.dart';
 import '../main.dart';
+import 'errors.dart';
 import 'helpers.dart';
 
 class LoginWebViewHelper extends StatefulWidget {
@@ -87,13 +86,8 @@ Future<int> authenticateUser({required BuildContext context}) async {
     await prefs.setBool("isLogged", true);
     await prefs.setBool("onboardingCompleted", true);
 
-    Response response = await dio.get("/profile/patient");
-    print("DATOS ${response.data}");
-    await prefs.setString("profile_url", response.data["photoUrl"] ?? '');
-    await prefs.setString("gender", response.data["gender"]);
-    await prefs.setString("name", response.data['givenName']!= null ? toLowerCase(response.data['givenName']!) : '');
-    await prefs.setString("lastName", response.data['familyName']!= null ? toLowerCase(response.data['familyName']!) : '');
-    await prefs.setBool(isFamily, false);
+    // get principal patient
+    await UserRepository().getPatient(null);
     /*
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     userProvider.setUserData(
@@ -118,32 +112,15 @@ Future<int> authenticateUser({required BuildContext context}) async {
     }
     if (!err.message!.contains('User cancelled flow')) {
       print(err);
-      await Sentry.captureMessage(
-        err.toString(),
-        params: [
-          {
-            'responseError': err.message,
-            'patient': patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          s
-        ]
+      captureError(
+        exception: err,
+        stackTrace: s,
       );
     }
   } on DioError catch(exception, stackTrace){
-    await Sentry.captureMessage(
-      exception.toString(),
-      params: [
-        {
-          "path": exception.requestOptions.path,
-          "data": exception.requestOptions.data,
-          "patient": prefs.getString("userId"),
-          "dependentId": patient.id,
-          "responseError": exception.response,
-          'access_token': await storage.read(key: 'access_token')
-        },
-        stackTrace
-      ],
+    captureError(
+      exception: exception,
+      stackTrace: stackTrace,
     );
     if(exception.response?.statusCode == 401){
       emitSnackBar(
@@ -153,17 +130,11 @@ Future<int> authenticateUser({required BuildContext context}) async {
           status: ActionStatus.Fail
       );
     }
-  } catch (err, stackTrace) {
+  } on Exception catch (err, stackTrace) {
     print(err);
-    await Sentry.captureMessage(
-        err.toString(),
-        params: [
-          {
-            'patient': patient.id,
-            'access_token': await storage.read(key: 'access_token')
-          },
-          stackTrace
-        ]
+    captureError(
+      exception: err,
+      stackTrace: stackTrace,
     );
   }
   return 0;

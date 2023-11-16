@@ -64,8 +64,8 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
         child: Container(
           child: BlocListener<OrganizationBloc, OrganizationBlocState>(
             listener: (context, state) {
-              if (state is OrganizationsObtained) {
-                _organizationsNotSubscribed = state.organizationsList;
+              if (state is AllOrganizationsObtained) {
+                _organizationsNotSubscribed = state.organizationsList.items?? [];
 
               }
               if(state is SuccessSubscribed){
@@ -1033,6 +1033,7 @@ class FamilySelectorState extends State<FamilySelector>{
     double width = type == "rounded"? 54 : 120;
     bool disable = index == 0 ? widget.patientSelected.id == prefs.getString("userId") ? false : true : widget.patientSelected.id == families[index-1].id ? false : true;
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child:
         index == 0
             ? ImageViewTypeForm(
