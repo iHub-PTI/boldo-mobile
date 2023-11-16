@@ -84,7 +84,12 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
       ),
       keyboardType: TextInputType.name,
       onFieldSubmitted: widget.onEditingComplete,
-      onChanged: widget.onChange,
+      onChanged: (String value){
+        widget.onChange?.call(value);
+        setState(() {
+          showClearIcon = value.isNotEmpty;
+        });
+      },
       validator: (value) {
         //remove unnecessary spaces
         value = value?.trimLeft().trimRight() ?? '';
