@@ -3,8 +3,9 @@ import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
+import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/MedicalRecord.dart';
-import 'package:boldo/models/PresciptionMedicalRecord.dart';
+import 'package:boldo/models/Prescription.dart';
 import 'package:boldo/models/Soep.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/network/appointment_repository.dart';
@@ -488,7 +489,9 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => PrescriptionRecordScreen(
-                                medicalRecordId: medicalRecord?.appointmentId ?? '')),
+                                medicalRecordId: medicalRecord?.appointmentId ?? '',
+                              doctor: widget.appointment.doctor?? Doctor(),
+                            )),
                       );
                       BlocProvider.of<PrescriptionBloc>(context)
                           .add(InitialPrescriptionEvent());
@@ -777,7 +780,7 @@ Widget ShowStudy(BuildContext context, ServiceRequest study) {
   );
 }
 
-Widget ShowPrescription (BuildContext context, PrescriptionMedicalRecord prescription) {
+Widget ShowPrescription (BuildContext context, Prescription prescription) {
   return Column(
     children: [
       Row(
@@ -932,75 +935,3 @@ class SoepScreen extends StatelessWidget {
   }
 }
 
-class PrescriptionPreview extends StatelessWidget {
-  final List<PrescriptionMedicalRecord>? prescriptionList;
-  final String? appointmentId;
-  PrescriptionPreview(
-      {required this.prescriptionList, required this.appointmentId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 0.0),
-      child: Container(
-        child: GestureDetector(
-          onTap: prescriptionList != null && prescriptionList!.length > 0
-              ? () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PrescriptionRecordScreen(
-                            medicalRecordId: appointmentId ?? '')),
-                  );
-                  BlocProvider.of<PrescriptionBloc>(context)
-                      .add(InitialPrescriptionEvent());
-                }
-              : null,
-          child: Card(
-            color: Colors.transparent,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(0.0),
-              child: prescriptionList != null && prescriptionList!.length > 0
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (prescriptionList!.length > 1)
-                          prescriptionIndividual(prescriptionList![0]),
-                        if (prescriptionList!.length > 2)
-                          prescriptionIndividual(prescriptionList![1]),
-                        if (prescriptionList!.length > 2) const Text('ver más'),
-                      ],
-                    )
-                  : Text(
-                      'No posee medicamentos recetados',
-                      style: boldoCorpMediumTextStyle.copyWith(
-                          color: ConstantsV2.darkBlue),
-                    ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget prescriptionIndividual(PrescriptionMedicalRecord prescription) {
-    return Row(
-      children: [
-        const Icon(
-          Icons.circle,
-          color: ConstantsV2.orange,
-        ),
-        Column(
-          children: [
-            Text("${prescription.medicationName}"),
-            Text("${prescription.instructions}"),
-          ],
-        )
-      ],
-    );
-  }
-}

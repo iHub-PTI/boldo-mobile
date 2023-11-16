@@ -30,11 +30,21 @@ class CustomSearchInput extends StatefulWidget {
 
 class _StateCustomSearchInput extends State<CustomSearchInput> {
 
+  bool showClearIcon = false;
+  TextEditingController _controller = TextEditingController();
+
+  @override
+  void initState(){
+    _controller.text = widget.initialText?? '';
+    super.initState();
+    widget.initialText?.isEmpty?? true? showClearIcon = false : showClearIcon = true;
+  }
+
   @override
   Widget build(BuildContext context) {
 
     Widget form = TextFormField(
-      initialValue: widget.initialText,
+      controller: _controller,
       style: const TextStyle(
         color: ConstantsV2.activeText,
         fontSize: 12,
@@ -43,11 +53,30 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
         height: 0,
       ),
       decoration: InputDecoration(
-        icon: const Icon(
-          Icons.search_outlined,
-          size: 12,
-          color: ConstantsV2.grayDark,
+        prefixIcon: InkWell(
+          onTap: (){
+            widget.onEditingComplete?.call(_controller.text);
+          },
+          child: const Icon(
+            Icons.search_outlined,
+            size: 12,
+            color: ConstantsV2.grayDark,
+          ),
         ),
+        suffixIcon: showClearIcon? InkWell(
+          onTap: (){
+            _controller.text = '';
+            widget.onEditingComplete?.call('');
+            setState(() {
+
+            });
+          },
+          child: const Icon(
+            Icons.clear,
+            size: 12,
+            color: ConstantsV2.grayDark,
+          ),
+        ): null,
         hintText: widget.hintText,
         hintStyle: const TextStyle(
           color: ConstantsV2.gray,
@@ -56,13 +85,30 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
           fontWeight: FontWeight.w400,
           height: 0,
         ),
-        enabledBorder: InputBorder.none,
-        focusedBorder: InputBorder.none,
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(
+                width: 1,
+                color: Color(0xFFAFBACA),
+            )
+        ),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(
+                width: 1,
+                color: ConstantsV2.blueDark,
+            )
+        ),
         fillColor: const Color(0xFFF9FAFB),
       ),
       keyboardType: TextInputType.name,
       onFieldSubmitted: widget.onEditingComplete,
-      onChanged: widget.onChange,
+      onChanged: (String value){
+        widget.onChange?.call(value);
+        setState(() {
+          showClearIcon = value.isNotEmpty;
+        });
+      },
       validator: (value) {
         //remove unnecessary spaces
         value = value?.trimLeft().trimRight() ?? '';
@@ -83,15 +129,6 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: ShapeDecoration(
-        shape: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(
-                width: 1,
-                color: Colors.black54
-            )
-        ),
-      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

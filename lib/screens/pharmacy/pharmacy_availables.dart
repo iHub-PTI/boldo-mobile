@@ -150,7 +150,10 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                                                 initialText: nameFiltered,
                                                 maxWidth: 168,
                                                 hintText: "Buscar por nombre",
-                                                onEditingComplete: (value)=> BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizationsByType(type: OrganizationType.pharmacy, name: value)),
+                                                onEditingComplete: (value){
+                                                  BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizationsByType(type: OrganizationType.pharmacy, name: value.trimLeft().trimRight()));
+                                                  nameFiltered = value;
+                                                },
                                                 onChange: (value) => nameFiltered = value,
                                               ),
                                             ],
