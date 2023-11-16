@@ -66,8 +66,20 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
           fontWeight: FontWeight.w400,
           height: 0,
         ),
-        enabledBorder: InputBorder.none,
-        focusedBorder: InputBorder.none,
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(
+                width: 1,
+                color: Color(0xFFAFBACA),
+            )
+        ),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(
+                width: 1,
+                color: ConstantsV2.blueDark,
+            )
+        ),
         fillColor: const Color(0xFFF9FAFB),
       ),
       keyboardType: TextInputType.name,
@@ -93,15 +105,6 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: ShapeDecoration(
-        shape: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(
-                width: 1,
-                color: Colors.black54
-            )
-        ),
-      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
