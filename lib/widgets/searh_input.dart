@@ -53,11 +53,30 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
         height: 0,
       ),
       decoration: InputDecoration(
-        icon: const Icon(
-          Icons.search_outlined,
-          size: 12,
-          color: ConstantsV2.grayDark,
+        prefixIcon: InkWell(
+          onTap: (){
+            widget.onEditingComplete?.call(_controller.text);
+          },
+          child: const Icon(
+            Icons.search_outlined,
+            size: 12,
+            color: ConstantsV2.grayDark,
+          ),
         ),
+        suffixIcon: showClearIcon? InkWell(
+          onTap: (){
+            _controller.text = '';
+            widget.onEditingComplete?.call('');
+            setState(() {
+
+            });
+          },
+          child: const Icon(
+            Icons.clear,
+            size: 12,
+            color: ConstantsV2.grayDark,
+          ),
+        ): null,
         hintText: widget.hintText,
         hintStyle: const TextStyle(
           color: ConstantsV2.gray,
