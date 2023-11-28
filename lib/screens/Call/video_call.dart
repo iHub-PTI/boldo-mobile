@@ -326,8 +326,8 @@ class _VideoCallState extends State<VideoCall> {
   }
 
   void muteMic() {
-    final newState = !localStream!.getAudioTracks()[0].enabled;
-    localStream!.getAudioTracks()[0].enabled = newState;
+    final newState = !(localStream?.getAudioTracks()[0].enabled?? true);
+    localStream?.getAudioTracks()[0].enabled = newState;
   }
 
   Widget configIcon({ButtonStyle? buttonStyle}){
