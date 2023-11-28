@@ -254,6 +254,19 @@ class _VideoCallState extends State<VideoCall> {
                 event: CallSignalsEmit.PatientReadyToConnect,
               );
             }
+
+            // reconnect with Socket on disconnect call for iOS
+            if(WebRTC.platformIsIOS) {
+              socket?.onConnect(callback: (){
+                socket?.emit(
+                  event: CallSignalsEmit.InWaitingRoom,
+                );
+                socket?.emit(
+                  event: CallSignalsEmit.PatientReadyToConnect,
+                );
+              });
+            }
+
             break;
           }
         default:
