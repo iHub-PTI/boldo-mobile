@@ -1,6 +1,5 @@
 import 'package:boldo/environment.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:socket_io_client/socket_io_client.dart' as io;
 
 Map<String, dynamic> _iceServers = {
   "sdpSemantics": "plan-b",
@@ -20,18 +19,22 @@ class PeerConnection {
   RTCPeerConnection? peerConnection;
 
   MediaStream localStream;
-  io.Socket socket;
-  String room;
-  String token;
 
-  late Function(MediaStream) onRemoteStream;
-  late Function(CallState) onStateChange;
+  late Function(MediaStream) _onRemoteStream;
+  late Function(CallState) _onStateChange;
+  late Function(RTCIceCandidate?) _onIceCandidateChange;
 
-  PeerConnection(
-      {required this.localStream,
-      required this.token,
-      required this.room,
-      required this.socket});
+  PeerConnection({
+    required this.localStream,
+    required Function(MediaStream) onRemoteStream,
+    required Function(CallState) onStateChange,
+    required Function(RTCIceCandidate?) onIceCandidateChange,
+  }){
+    _onRemoteStream = onRemoteStream;
+    _onStateChange = onStateChange;
+    _onIceCandidateChange = onIceCandidateChange;
+  }
+
 
   Future<void> init() async {
     peerConnection = await createPeerConnection(
@@ -48,7 +51,7 @@ class PeerConnection {
 
     // Handle incoming tracks
     void onAddStream(MediaStream stream) {
-      onRemoteStream(stream);
+      _onRemoteStream(stream);
     }
 
     //
@@ -66,22 +69,9 @@ class PeerConnection {
     // Handle outgoing candidates
     void onIceCandidate(RTCIceCandidate? candidate) {
       // RTCIceCandidate
-      if (candidate != null) {
-        socket.emit('ice candidate',
-            {'room': room, 'ice': candidate.toMap(), "token": token});
-      }
+
+      _onIceCandidateChange(candidate);
     }
-
-    // Handle incoming candidates
-    socket.on('ice candidate', (message) async {
-      // The last ICE candidate is always null
-      if (message["ice"] == null) return;
-
-      RTCIceCandidate candidate = RTCIceCandidate(message["ice"]['candidate'],
-          message["ice"]['sdpMid'], message["ice"]['sdpMLineIndex'] ?? 1);
-
-      await peerConnection?.addCandidate(candidate);
-    });
 
     //
     // 4.
@@ -101,18 +91,18 @@ class PeerConnection {
         case RTCIceConnectionState.RTCIceConnectionStateCompleted:
         case RTCIceConnectionState.RTCIceConnectionStateConnected:
           {
-            onStateChange(CallState.CallConnected);
+            _onStateChange(CallState.CallConnected);
             break;
           }
         case RTCIceConnectionState.RTCIceConnectionStateDisconnected:
           {
-            onStateChange(CallState.CallDisconnected);
+            _onStateChange(CallState.CallDisconnected);
             break;
           }
         case RTCIceConnectionState.RTCIceConnectionStateClosed:
         case RTCIceConnectionState.RTCIceConnectionStateFailed:
           {
-            onStateChange(CallState.CallClosed);
+            _onStateChange(CallState.CallClosed);
             break;
           }
         default:
@@ -125,7 +115,7 @@ class PeerConnection {
     peerConnection?.onIceConnectionState = onIceConnectionState;
   }
 
-  Future<void> setSdpOffer(message) async {
+  Future<RTCSessionDescription?> setSdpOffer(message) async {
     RTCSessionDescription description =
         RTCSessionDescription(message["sdp"]['sdp'], message["sdp"]['type']);
     await peerConnection?.setRemoteDescription(description);
@@ -139,17 +129,23 @@ class PeerConnection {
         'optional': []
       });
       peerConnection?.setLocalDescription(s);
-      socket.emit('sdp offer', {
-        'room': room,
-        'sdp': {'sdp': s.sdp, 'type': s.type},
-        "token": token
-      });
+      return s;
     }
   }
 
+  Future<void> onIceCandidateReceive(dynamic message) async {
+    // The last ICE candidate is always null
+    if (message["ice"] == null) return;
+
+    RTCIceCandidate candidate = RTCIceCandidate(message["ice"]['candidate'],
+        message["ice"]['sdpMid'], message["ice"]['sdpMLineIndex'] ?? 1);
+
+    await peerConnection?.addCandidate(candidate);
+  }
+
+
   void cleanup() async {
     print('🧹🧹🧹 CLEANUP 🧹🧹🧹');
-    socket.off('ice candidate');
 
     await peerConnection?.close();
 
