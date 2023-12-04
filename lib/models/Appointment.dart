@@ -18,6 +18,8 @@ class Appointment extends News {
   Organization? organization;
   List<Prescription>? prescriptions;
 
+  AppointmentStatus? _appointmentStatus;
+
   Appointment({
     this.id,
     this.start,
@@ -65,4 +67,16 @@ class Appointment extends News {
     );
   }
 
+  static Map<String, AppointmentStatus> statusesValid = {
+    'upcoming': AppointmentStatus.Upcoming,
+    'open': AppointmentStatus.Open,
+    'closed': AppointmentStatus.Closed,
+    'locked': AppointmentStatus.Locked,
+    'cancelled': AppointmentStatus.Cancelled,
+  };
+
+  static MapEntry<String, AppointmentStatus>statusDefault = const MapEntry<String, AppointmentStatus>('closed', AppointmentStatus.Locked,);
+
 }
+
+enum AppointmentStatus {Upcoming, Open, Closed, Locked, Cancelled}
