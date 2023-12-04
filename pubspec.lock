@@ -997,6 +997,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.27.3"
+  scheduled_timer:
+    dependency: "direct main"
+    description:
+      name: scheduled_timer
+      sha256: "36c218fcf553e71fe45e3a48387eb6d4f5e242b6067800e3701a391df17c2556"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   sentry:
     dependency: transitive
     description:
