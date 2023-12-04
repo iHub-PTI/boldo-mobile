@@ -16,6 +16,7 @@ import 'package:intl/intl.dart';
 
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
+import 'package:scheduled_timer/scheduled_timer.dart';
 
 class AppointmentCard extends StatefulWidget {
   final Appointment appointment;
