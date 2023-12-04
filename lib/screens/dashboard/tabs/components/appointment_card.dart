@@ -48,13 +48,13 @@ class _AppointmentCardState extends State<AppointmentCard> {
   void didUpdateWidget(AppointmentCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.appointment != oldWidget.appointment) {
-      isCancelled = widget.appointment.status!.contains('cancelled');
+      isCancelled = widget.appointment.status == AppointmentStatus.Cancelled;
       actualDay = DateTime.now();
       appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
       daysDifference = daysBetween(actualDay,appointmentDay);
       minutes = appointmentDay.difference(actualDay).inMinutes + 1;
       isToday = daysDifference == 0 &&
-          !["closed", "locked"].contains(widget.appointment.status);
+          ![AppointmentStatus.Closed, AppointmentStatus.Locked].contains(widget.appointment.status);
 
       //set the appointment type
       appointmentType = widget.appointment.appointmentType == 'V'
@@ -69,13 +69,13 @@ class _AppointmentCardState extends State<AppointmentCard> {
 
   @override
   void initState() {
-    isCancelled = widget.appointment.status!.contains('cancelled');
+    isCancelled = widget.appointment.status == AppointmentStatus.Cancelled;
     actualDay = DateTime.now();
     appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
     daysDifference = daysBetween(actualDay,appointmentDay);
     minutes = appointmentDay.difference(actualDay).inMinutes + 1;
     isToday = daysDifference == 0 &&
-        !["closed", "locked"].contains(widget.appointment.status);
+        ![AppointmentStatus.Closed, AppointmentStatus.Locked].contains(widget.appointment.status);
 
     //set the appointment type
     appointmentType = widget.appointment.appointmentType == 'V'

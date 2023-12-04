@@ -634,7 +634,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
       await AppointmentRepository().cancelAppointment(appointment: widget.appointment);
 
       setState(() {
-        widget.appointment.status="cancelled";
+        widget.appointment.status=AppointmentStatus.Cancelled;
       });
       BlocProvider.of<HomeBloc>(context).add(ReloadHome());
       Navigator.of(context).popUntil(ModalRoute.withName('/home'));
