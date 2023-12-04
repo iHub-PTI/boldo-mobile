@@ -48,6 +48,18 @@ class Appointment extends News {
     patient = json['patient'] != null ? Patient.fromJson(json['patient']): null;
   }
 
+  factory Appointment.fromJson(Map<String, dynamic> json) => Appointment(
+    id: json['id'],
+    start: json['start'],
+    end: json['end'],
+    description: json['description'],
+    status: json["status"],
+    appointmentType: json["appointmentType"],
+    doctor: json['doctor'] != null ? Doctor.fromJson(json['doctor']) : null,
+    organization: json['organization'] != null ? Organization.fromJson(json['organization']) : null,
+    patient: json['patient'] != null ? Patient.fromJson(json['patient']): null,
+  );
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     data['id'] = id;
