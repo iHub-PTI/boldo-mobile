@@ -41,7 +41,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
   DateTime appointmentCloseDate = DateTime.now();
   AppointmentType? appointmentType;
   String locationDescription = 'Desconocido';
-  String virtualDescription = 'Sala de espera virtual habilitada 15 min. antes de la consulta';
+  String virtualDescription = 'Sala de espera virtual habilitada $minutesToOpenAppointment min. antes de la consulta';
   int daysDifference = 0;
   bool isToday = false;
   int minutes = 0;
