@@ -45,7 +45,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
   int daysDifference = 0;
   bool isToday = false;
   int minutes = 0;
-  Timer? timer;
+  ScheduledTimer? appointmentTimer;
 
   @override
   void didUpdateWidget(AppointmentCard oldWidget) {
@@ -68,8 +68,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
       //message to describe whe is the appointment
       locationDescription = '${widget.appointment.organization?.name?? "Desconocido"}';
     }
-    timer?.cancel();
-    _updateWaitingRoom(1);
+    _appointmentStatusTimer();
   }
 
   @override
@@ -91,51 +90,68 @@ class _AppointmentCardState extends State<AppointmentCard> {
     //message to describe whe is the appointment
     locationDescription = '${widget.appointment.organization?.name?? "Desconocido"}';
     super.initState();
-    _updateWaitingRoom(1);
+    _appointmentStatusTimer();
   }
 
   @override
   void dispose(){
     super.dispose();
-    timer?.cancel();
+    appointmentTimer?.stop();
   }
 
   // asynchronous task to update the remaining minutes to open the waiting room
-  void _updateWaitingRoom(int seconds) async {
-    timer = Timer.periodic(Duration(seconds: seconds), (Timer timer) {
-      if(isCancelled){
-        timer.cancel();
-      }
-      actualDay = DateTime.now();
-      if(mounted)
-      setState(() {
-        minutes = appointmentDay.difference(actualDay).inMinutes + 1;
-      });
-      // deactivate task once the room is close
-      if(minutes <= -minutesToCloseAppointment) {
-        timer.cancel();
-        widget.appointment.status="locked";
-        // notify at home to delete this appointment
-        BlocProvider.of<HomeAppointmentsBloc>(context).add(DeleteAppointmentHome(id: widget.appointment.id));
-        BlocProvider.of<HomeNewsBloc>(context).add(DeleteNews(news: widget.appointment));
-      }
-      else if(minutes <= 0 && minutes > -minutesToCloseAppointment) {
-        timer.cancel();
-        _updateWaitingRoom(1*60); // check every minute
-      }
-      else if(minutes > 60) {
-        timer.cancel();
-        _updateWaitingRoom(30*60); // half hour
-      }
-      else if(minutes <= 60 && minutes > 15) {
-        timer.cancel();
-        _updateWaitingRoom(60); // one minute
-      }
-      else if(minutes <= 15 && minutes > 0) {
-        timer.cancel();
-        _updateWaitingRoom(2); //two seconds
-      }
-    });
+  void _appointmentStatusTimer() {
+    appointmentTimer?.stop();
+    appointmentTimer = ScheduledTimer(
+        id: widget.appointment.id?? '',
+        onExecute: () {
+          if(isCancelled){
+            appointmentTimer?.stop();
+            if(mounted)
+              setState(() {
+
+              });
+            return;
+          }
+          actualDay = DateTime.now();
+          if(mounted)
+            setState(() {
+              minutes = appointmentDay.difference(actualDay).inMinutes + 1;
+            });
+          if(actualDay.isBefore(appointmentOpenDate)){
+            if(mounted)
+            setState(() {
+              widget.appointment.status=AppointmentStatus.Upcoming;
+              appointmentTimer?.schedule(appointmentOpenDate);
+            });
+          }else if(actualDay.isBefore(appointmentDay)){
+            if(mounted)
+            setState(() {
+              widget.appointment.status=AppointmentStatus.Open;
+              appointmentTimer?.schedule(appointmentDay);
+            });
+          }else if(actualDay.isBefore(appointmentCloseDate)){
+            if(mounted)
+            setState(() {
+              widget.appointment.status=AppointmentStatus.Open;
+              appointmentTimer?.schedule(appointmentCloseDate);
+            });
+          }else {
+            if(mounted)
+            // deactivate task once the room is close
+            setState(() {
+              widget.appointment.status=AppointmentStatus.Locked;
+              appointmentTimer?.stop();
+              // notify at home to delete this appointment
+              BlocProvider.of<HomeNewsBloc>(context).add(DeleteNews(news: widget.appointment));
+            });
+          }
+        },
+        defaultScheduledTime: appointmentOpenDate,
+        onMissedSchedule: () {
+          appointmentTimer?.execute();
+        }
+    );
   }
 
   @override
