@@ -37,6 +37,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
   bool isCancelled = false;
   DateTime actualDay = DateTime.now();
   DateTime appointmentDay = DateTime.now();
+  DateTime appointmentOpenDate = DateTime.now();
+  DateTime appointmentCloseDate = DateTime.now();
   AppointmentType? appointmentType;
   String locationDescription = 'Desconocido';
   String virtualDescription = 'Sala de espera virtual habilitada 15 min. antes de la consulta';
@@ -52,6 +54,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
       isCancelled = widget.appointment.status == AppointmentStatus.Cancelled;
       actualDay = DateTime.now();
       appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
+      appointmentOpenDate = appointmentDay.subtract(const Duration(minutes: minutesToOpenAppointment));
+      appointmentCloseDate = appointmentDay.add(const Duration(minutes: minutesToCloseAppointment));
       daysDifference = daysBetween(actualDay,appointmentDay);
       minutes = appointmentDay.difference(actualDay).inMinutes + 1;
       isToday = daysDifference == 0 &&
@@ -73,6 +77,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
     isCancelled = widget.appointment.status == AppointmentStatus.Cancelled;
     actualDay = DateTime.now();
     appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
+    appointmentOpenDate = appointmentDay.subtract(const Duration(minutes: minutesToOpenAppointment));
+    appointmentCloseDate = appointmentDay.add(const Duration(minutes: minutesToCloseAppointment));
     daysDifference = daysBetween(actualDay,appointmentDay);
     minutes = appointmentDay.difference(actualDay).inMinutes + 1;
     isToday = daysDifference == 0 &&
