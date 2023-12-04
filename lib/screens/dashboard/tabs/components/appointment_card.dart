@@ -161,8 +161,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
     return Column(
       children: [
         Card(
-          elevation: 4,
-          margin: const EdgeInsets.only(bottom: 4),
+          margin: const EdgeInsets.all(0),
           child:  Column(
             children: [
               Container(
