@@ -36,16 +36,14 @@ class Appointment extends News {
     _appointmentStatus = statusesValid[status]?? statusDefault.value;
   }
 
-  Appointment.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    start = json['start'];
-    end = json['end'];
-    description = json['description'];
-    status = json["status"];
-    appointmentType = json["appointmentType"];
-    doctor = json['doctor'] != null ? Doctor.fromJson(json['doctor']) : null;
-    organization = json['organization'] != null ? Organization.fromJson(json['organization']) : null;
-    patient = json['patient'] != null ? Patient.fromJson(json['patient']): null;
+  AppointmentStatus? get status => _appointmentStatus;
+  set status(AppointmentStatus? newStatus){
+    _appointmentStatus = newStatus;
+
+    //set string status
+    _status = statusesValid.entries.firstWhere(
+            (element) => element.value == newStatus, orElse: () => statusDefault
+    ).key;
   }
 
   factory Appointment.fromJson(Map<String, dynamic> json) => Appointment(
