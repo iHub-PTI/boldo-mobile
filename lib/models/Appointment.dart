@@ -7,7 +7,7 @@ import './Doctor.dart';
 import 'Patient.dart';
 
 class Appointment extends News {
-  String? status;
+  String? _status;
   String? id;
   String? start;
   String? end;
@@ -26,11 +26,15 @@ class Appointment extends News {
     this.end,
     this.description,
     this.doctor,
-    this.status,
+    String? status,
     this.prescriptions,
     this.organization,
     this.patient,
-  });
+    this.appointmentType,
+  }){
+    _status = status;
+    _appointmentStatus = statusesValid[status]?? statusDefault.value;
+  }
 
   Appointment.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -49,7 +53,7 @@ class Appointment extends News {
     data['id'] = id;
     data['start'] = start;
     data['end'] = end;
-    data["status"] = status;
+    data["status"] = _status;
     data['description'] = description;
     if (doctor != null) {
       data['doctor'] = doctor!.toJson();
@@ -62,7 +66,7 @@ class Appointment extends News {
   Widget show(){
     return AppointmentCard(
       appointment: this,
-      isInWaitingRoom: status == "open",
+      isInWaitingRoom: _status == "open",
       showCancelOption: true,
     );
   }
