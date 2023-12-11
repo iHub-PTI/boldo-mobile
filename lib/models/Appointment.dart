@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/appointment_bloc/appointmentBloc.dart';
 import 'package:boldo/models/News.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Prescription.dart';
@@ -38,7 +39,10 @@ class Appointment extends News {
 
   AppointmentStatus? get status => _appointmentStatus;
   set status(AppointmentStatus? newStatus){
-    _appointmentStatus = newStatus;
+    _appointmentStatus = AppointmentBloc.validChangeStatus(
+      actualState: _appointmentStatus,
+      newState: newStatus,
+    );
 
     //set string status
     _status = statusesValid.entries.firstWhere(
