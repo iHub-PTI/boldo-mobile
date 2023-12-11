@@ -53,6 +53,25 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
 
     );
   }
+
+  /// Validate if the [actualState] can change to [newState] and will return the [newState],
+  /// if can't change this will throw the [InvalidAppointmentStatusChange] Exception
+  ///
+  /// The list of valid states change will be compared with [statusChangeValidatorList]
+  static AppointmentStatus? validChangeStatus({
+    AppointmentStatus? actualState,
+    required AppointmentStatus? newState,
+  }){
+
+    if(statusChangeValidatorList.any((element) =>
+      element.key == actualState && element.value == newState)
+    ){
+      return newState;
+    }
+    throw InvalidAppointmentStatusChange('Invalid status from $actualState to $newState');
+
+  }
+
 }
 
 class InvalidAppointmentStatusChange implements Exception{
