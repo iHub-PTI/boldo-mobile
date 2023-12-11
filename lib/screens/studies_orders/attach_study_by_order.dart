@@ -610,7 +610,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
     );
   }
 
-  getFromCamera() async {
+  void getFromCamera() async {
     XFile? image;
     image = await pickImage(
       context: context,
@@ -631,7 +631,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
     }
   }
 
-  getFromFiles() async {
+  void getFromFiles() async {
     FilePickerResult? result;
     result = await pickFiles(
       context: context,
@@ -654,7 +654,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
     }
   }
 
-  getFromGallery() async {
+  void getFromGallery() async {
     XFile? image;
     image = await pickImage(
       context: context,
