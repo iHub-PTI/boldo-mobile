@@ -140,7 +140,7 @@ class AppointmentRepository {
 
         // Past appointment
         allAppointmets = allAppointmets
-            .where((element) => ["closed", "locked","open"].contains(element.status))
+            .where((element) => [AppointmentStatus.Closed, AppointmentStatus.Locked,AppointmentStatus.Open].contains(element.status))
             .toList();
 
         allAppointmets.sort((a, b) =>
@@ -206,7 +206,7 @@ class AppointmentRepository {
 
         // Past appointment
         allAppointmets = allAppointmets
-            .where((element) => ["closed", "locked","open"].contains(element.status))
+            .where((element) => [AppointmentStatus.Closed, AppointmentStatus.Locked,AppointmentStatus.Open].contains(element.status))
             .toList();
 
         allAppointmets.sort((a, b) =>

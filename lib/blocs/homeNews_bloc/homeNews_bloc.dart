@@ -64,7 +64,7 @@ class HomeNewsBloc extends Bloc<HomeNewsEvent, HomeNewsState> {
           // Clear appointments where appointment is not open
           appointments = appointments
               .where((element) =>
-          !["closed", "locked", "cancelled"].contains(element.status))
+          ![AppointmentStatus.Closed, AppointmentStatus.Locked, AppointmentStatus.Cancelled].contains(element.status))
               .toList();
 
           // date limit to show Appointment before this date
