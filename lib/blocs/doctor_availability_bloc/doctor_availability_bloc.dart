@@ -45,7 +45,7 @@ class DoctorAvailabilityBloc extends Bloc<DoctorAvailabilityEvent, DoctorAvailab
           await _patientRepository.getAppointments();
 
           // canceled or blocked appointments are not necessary
-          appointments?.removeWhere((element) => element.status != 'upcoming');
+          appointments?.removeWhere((element) => element.status != AppointmentStatus.Upcoming);
 
           late List<OrganizationWithAvailabilities> nextAvailability = [];
           _post.foldRight(NextAvailability, (a, previous) => nextAvailability = a);

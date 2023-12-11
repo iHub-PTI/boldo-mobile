@@ -35,7 +35,7 @@ class HomeAppointmentsBloc extends Bloc<HomeAppointmentsEvent, HomeAppointmentsS
         // Clear appointments where appointment is not open
         appointments = appointments
             .where((element) =>
-        !["closed", "locked", "cancelled"].contains(element.status))
+        ![AppointmentStatus.Closed, AppointmentStatus.Locked, AppointmentStatus.Cancelled].contains(element.status))
             .toList();
         emit(AppointmentsHomeLoaded(appointments: appointments));
       }

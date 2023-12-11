@@ -279,7 +279,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                   const SizedBox(
                                     height: 8,
                                   ),
-                                  if(widget.appointment.status != 'upcoming')
+                                  if(widget.appointment.status != AppointmentStatus.Upcoming)
                                   Column(
                                     children: [
                                       notesBox(),
@@ -293,7 +293,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                       studyOrderBox(),
                                     ],
                                   ),
-                                  if(widget.appointment.status == 'upcoming')
+                                  if(widget.appointment.status == AppointmentStatus.Upcoming)
                                     cancelAppointmentBox(),
                                 ],
                               ),

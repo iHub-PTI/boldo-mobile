@@ -416,7 +416,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
   Widget _appointment(BuildContext context, int index) {
     return AppointmentCard(
       appointment: futureAppointments[index],
-      isInWaitingRoom: futureAppointments[index].status == "open",
+      isInWaitingRoom: futureAppointments[index].status == AppointmentStatus.Open,
       showCancelOption: true,
     );
   }
