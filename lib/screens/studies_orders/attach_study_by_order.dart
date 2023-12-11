@@ -612,8 +612,11 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
 
   getFromCamera() async {
     XFile? image;
-    image = await ImagePicker.platform
-        .getImage(source: ImageSource.camera);
+    image = await pickImage(
+      context: context,
+      source: ImageSource.camera,
+      permissionDescription: 'Se requiere acceso para tomar fotos',
+    );
     if(image != null) {
       File? x = await cropPhoto(file: image);
       if (x != null) {
@@ -630,7 +633,8 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
 
   getFromFiles() async {
     FilePickerResult? result;
-    result = await FilePicker.platform.pickFiles(
+    result = await pickFiles(
+      context: context,
       withData: true,
       allowMultiple: true,
       type: FileType.custom,
@@ -652,8 +656,11 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
 
   getFromGallery() async {
     XFile? image;
-    image = await ImagePicker.platform
-        .getImage(source: ImageSource.gallery);
+    image = await pickImage(
+      context: context,
+      source: ImageSource.gallery,
+      permissionDescription: 'Se requiere acceso para subir fotos de la galeria',
+    );
     if(image != null) {
       File? x = await cropPhoto(file: image);
       if (x != null) {
