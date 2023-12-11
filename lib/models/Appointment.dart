@@ -89,7 +89,7 @@ class Appointment extends News {
     'cancelled': AppointmentStatus.Cancelled,
   };
 
-  static MapEntry<String, AppointmentStatus>statusDefault = const MapEntry<String, AppointmentStatus>('closed', AppointmentStatus.Locked,);
+  static MapEntry<String, AppointmentStatus>statusDefault = const MapEntry<String, AppointmentStatus>('locked', AppointmentStatus.Locked,);
 
 }
 
