@@ -54,3 +54,19 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     );
   }
 }
+
+class InvalidAppointmentStatusChange implements Exception{
+
+
+  final String message;
+
+
+  const InvalidAppointmentStatusChange([
+    this.message = "Invalid status change",
+  ]);
+
+  @override
+  String toString(){
+    return message;
+  }
+}
