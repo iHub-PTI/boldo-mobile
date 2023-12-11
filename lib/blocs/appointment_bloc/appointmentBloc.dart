@@ -13,6 +13,20 @@ part 'appointmentState.dart';
 class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
   final AppointmentRepository _appointmentRepository = AppointmentRepository();
 
+  static List<MapEntry<AppointmentStatus, AppointmentStatus>> statusChangeValidatorList = [
+    const MapEntry(AppointmentStatus.Upcoming, AppointmentStatus.Upcoming),
+    const MapEntry(AppointmentStatus.Upcoming, AppointmentStatus.Open),
+    const MapEntry(AppointmentStatus.Upcoming, AppointmentStatus.Cancelled),
+    const MapEntry(AppointmentStatus.Open, AppointmentStatus.Open),
+    const MapEntry(AppointmentStatus.Open, AppointmentStatus.Cancelled),
+    const MapEntry(AppointmentStatus.Open, AppointmentStatus.Closed),
+    const MapEntry(AppointmentStatus.Open, AppointmentStatus.Locked),
+    const MapEntry(AppointmentStatus.Closed, AppointmentStatus.Locked),
+    const MapEntry(AppointmentStatus.Closed, AppointmentStatus.Open),
+    const MapEntry(AppointmentStatus.Closed, AppointmentStatus.Closed),
+    const MapEntry(AppointmentStatus.Locked, AppointmentStatus.Locked),
+  ];
+
   AppointmentBloc() : super(AppointmentInitial()) {
     on<AppointmentEvent>((event, emit) async {
       if(event is GetAppointmentByEcounterId){
