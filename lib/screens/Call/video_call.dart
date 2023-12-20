@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:dio/dio.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../main.dart';
 import '../../network/http.dart';
@@ -63,7 +63,7 @@ class _VideoCallState extends State<VideoCall> {
       });
     };
     _getCallToken();
-    Wakelock.enable();
+    WakelockPlus.enable();
   }
 
   Future _getCallToken() async {
@@ -291,7 +291,7 @@ class _VideoCallState extends State<VideoCall> {
 
   @override
   void dispose() {
-    Wakelock.disable();
+    WakelockPlus.disable();
     //cleanup the socket
     if (socket != null) {
       socket!.clearListeners();
