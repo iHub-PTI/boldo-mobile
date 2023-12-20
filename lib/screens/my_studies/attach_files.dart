@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:boldo/blocs/new_study_bloc/new_study_bloc.dart';
 import 'package:boldo/main.dart';
-import 'package:boldo/network/http.dart';
-import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
+import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart' as studies_bloc;
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/photos_helpers.dart';
@@ -18,8 +18,13 @@ import '../../constants.dart';
 import '../../models/DiagnosticReport.dart';
 
 class AttachFiles extends StatefulWidget {
-  DiagnosticReport diagnosticReport;
-  AttachFiles({Key? key, required this.diagnosticReport}) : super(key: key);
+  final DiagnosticReport diagnosticReport;
+  final NewStudyBloc newStudyBloc;
+  AttachFiles({
+    Key? key,
+    required this.diagnosticReport,
+    required this.newStudyBloc,
+  }) : super(key: key);
 
   @override
   State<AttachFiles> createState() => _AttachFilesState();
@@ -48,7 +53,8 @@ class _AttachFilesState extends State<AttachFiles> {
           ),
         ),
         body: SafeArea(
-          child: BlocListener<MyStudiesBloc, MyStudiesState>(
+          child: BlocListener<NewStudyBloc, NewStudyState>(
+            bloc: widget.newStudyBloc,
             listener: (context, state) {
               if (state is Uploaded) {
                 emitSnackBar(
@@ -58,8 +64,8 @@ class _AttachFilesState extends State<AttachFiles> {
                 );
                 Navigator.of(context)
                     .popUntil(ModalRoute.withName("/my_studies"));
-                BlocProvider.of<MyStudiesBloc>(context)
-                    .add(GetPatientStudiesFromServer());
+                BlocProvider.of<studies_bloc.MyStudiesBloc>(context)
+                    .add(studies_bloc.GetPatientStudiesFromServer());
               }
               if (state is FailedUpload) {
                 print('failed: ${state.msg}');
@@ -125,7 +131,7 @@ class _AttachFilesState extends State<AttachFiles> {
                         color: ConstantsV2.orange),
                   ),
                 ),
-                files.isEmpty
+                widget.newStudyBloc.files.isEmpty
                     ? Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -247,27 +253,16 @@ class _AttachFilesState extends State<AttachFiles> {
                         ),
                       )
                     : Expanded(
-                        child: BlocBuilder<MyStudiesBloc, MyStudiesState>(
-                          builder: (context, state) {
-                            if (state is Uploading) {
-                              return Container(
-                                child: const Center(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Constants.primaryColor400),
-                                    backgroundColor: Constants.primaryColor600,
-                                  ),
-                                ),
-                              );
-                            } else {
-                              return ListView.builder(
-                                padding: EdgeInsets.zero,
-                                shrinkWrap: true,
-                                scrollDirection: Axis.vertical,
-                                itemBuilder: _fileElement,
-                                itemCount: files.length,
-                              );
-                            }
+                        child: ListView.separated(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          scrollDirection: Axis.vertical,
+                          itemBuilder: _fileElement,
+                          itemCount: widget.newStudyBloc.files.length,
+                          separatorBuilder: (_,index) {
+                            return const SizedBox(
+                              height: 4,
+                            );
                           },
                         ),
                       ),
@@ -277,33 +272,45 @@ class _AttachFilesState extends State<AttachFiles> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      files.isEmpty
+                      widget.newStudyBloc.files.isEmpty
                           ? Container()
                           : Container(
                               child: _offsetPopup(),
                             ),
-                      ElevatedButton(
-                        onPressed: files.isNotEmpty
-                            ? () async {
-                                BlocProvider.of<MyStudiesBloc>(context).add(
-                                    SendStudyToServer(
-                                        diagnosticReport:
-                                            widget.diagnosticReport,
-                                        files: files));
-                              }
-                            : null,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text('finalizar'),
-                            const Padding(
-                              padding: EdgeInsets.only(left: 8.0),
-                              child: Icon(
-                                Icons.chevron_right,
-                              ),
-                            )
-                          ],
-                        ),
+                      BlocBuilder<NewStudyBloc, NewStudyState>(
+                        bloc: widget.newStudyBloc,
+                        builder: (BuildContext context, state){
+
+                          Widget child;
+                          if(state is Uploading){
+                            child = loadingStatus();
+                          }else{
+                            child = const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('finalizar'),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 8.0),
+                                  child: Icon(
+                                    Icons.chevron_right,
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                          return ElevatedButton(
+                            onPressed: widget.newStudyBloc.files.isNotEmpty && !(state is Uploading)
+                                ? () async {
+                              widget.newStudyBloc.add(
+                                  SendStudyToServer(
+                                      diagnosticReport:
+                                      widget.diagnosticReport,
+                                      files: widget.newStudyBloc.files));
+                            }
+                                : null,
+                            child: child,
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -333,23 +340,15 @@ class _AttachFilesState extends State<AttachFiles> {
     if(image != null) {
       File? x = await cropPhoto(file: image);
       if (x != null) {
-        setState(() {
-          if (files.isNotEmpty) {
-            BlocProvider.of<MyStudiesBloc>(context).add(
-                AddFiles(
-                    files: [File(x!.path)]
-                )
-            );
-            files = [...files, File(x.path)];
-          } else {
-            BlocProvider.of<MyStudiesBloc>(context).add(
-                AddFiles(
-                    files: [File(x!.path)]
-                )
-            );
-            files = [File(x.path)];
-          }
-        });
+        widget.newStudyBloc.addFiles(
+
+            newFiles: [File(x.path)]
+
+        ).then((value) =>
+            setState(() {
+
+            })
+        );
       }
     }
   }
@@ -364,26 +363,15 @@ class _AttachFilesState extends State<AttachFiles> {
       allowedExtensions: ['jpg', 'pdf', 'jpeg', 'png'],
     );
     if (result != null) {
-      setState(() {
-        if (files.isNotEmpty) {
-          BlocProvider.of<MyStudiesBloc>(context).add(
-              AddFiles(
-                  files: result!.files.map((e) => File(e.path!)).toList()
-              )
-          );
-          files = [
-            ...files,
-            ...result.files.map((e) => File(e.path!)).toList()
-          ];
-        } else {
-          BlocProvider.of<MyStudiesBloc>(context).add(
-              AddFiles(
-                  files: result!.files.map((e) => File(e.path!)).toList()
-              )
-          );
-          files = result.files.map((e) => File(e.path!)).toList();
-        }
-      });
+      widget.newStudyBloc.addFiles(
+
+          newFiles: result!.files.map((e) => File(e.path!)).toList()
+
+      ).then((value) => setState((){
+
+      })
+      );
+
     }
   }
 
@@ -396,23 +384,15 @@ class _AttachFilesState extends State<AttachFiles> {
     if(image != null) {
       File? x = await cropPhoto(file: image);
       if (x != null) {
-        setState(() {
-          if (files.isNotEmpty) {
-            BlocProvider.of<MyStudiesBloc>(context).add(
-                AddFiles(
-                    files: [File(x.path)]
-                )
-            );
-            files = [...files, File(x.path)];
-          } else {
-            BlocProvider.of<MyStudiesBloc>(context).add(
-                AddFiles(
-                    files: [File(x.path)]
-                )
-            );
-            files = [File(x.path)];
-          }
-        });
+        widget.newStudyBloc.addFiles(
+
+            newFiles: [File(x.path)]
+
+        ).then((value) => setState((){
+
+        })
+        );
+
       }
     }
   }
@@ -499,55 +479,27 @@ class _AttachFilesState extends State<AttachFiles> {
   }
 
   Widget _fileElement(BuildContext context, int index) {
-    File file = files[index];
-    return Column(
-      children: [
-        Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0),
-          ),
-          elevation: 1,
-          margin: const EdgeInsets.only(bottom: 4),
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SvgPicture.asset(p.extension(file.path).toLowerCase() == '.pdf'
-                        ? 'assets/icon/picture-as-pdf.svg'
-                        : 'assets/icon/crop-original.svg'),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.7,
-                      child: Text(
-                        p.basename(
-                          file.path,
-                        ),
-                        style: boldoCorpMediumBlackTextStyle.copyWith(
-                            color: ConstantsV2.activeText,
-                            overflow: TextOverflow.ellipsis),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        files.remove(file);
-                        setState(() {});
-                      },
-                      child: SvgPicture.asset(
-                        'assets/icon/trash.svg',
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
+    File file = widget.newStudyBloc.files[index].key;
+
+    String? _errorMessage;
+    if(widget.newStudyBloc.files[index].value.isLeft()){
+      widget.newStudyBloc.files[index].value.leftMap((l) => _errorMessage=  l.message);
+    }
+
+
+    return FileLocaleCard(
+      file: file,
+      deleteAction: (){
+        widget.newStudyBloc.removeFiles(
+
+            filesToRemove: [file]
+
+        ).then((value) => setState((){
+
+        })
+        );
+      },
+      errorMessage: _errorMessage,
     );
   }
 }
