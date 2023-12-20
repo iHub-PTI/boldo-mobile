@@ -456,12 +456,17 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
         child: BlocBuilder<HomeNewsBloc, HomeNewsState>(builder: (context, state) {
           if(state is NewsLoaded){
             return news.isNotEmpty
-                ? ListView.builder(
+                ? ListView.separated(
               shrinkWrap: true,
               itemCount: news.length,
               scrollDirection: Axis.vertical,
               itemBuilder: _newsCard,
               physics: const ClampingScrollPhysics(),
+              separatorBuilder: (BuildContext context, index){
+                return const SizedBox(
+                  height: 10,
+                );
+              },
             )
                 :SingleChildScrollView(
               child: Column(

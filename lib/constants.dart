@@ -168,6 +168,7 @@ TextStyle label = GoogleFonts.inter().copyWith(
 );
 
 TextStyle bigButton = GoogleFonts.montserrat().copyWith(
+  color: ConstantsV2.darkBlue,
   fontWeight: FontWeight.w300,
   fontSize: 15,
   fontStyle: FontStyle.normal,
