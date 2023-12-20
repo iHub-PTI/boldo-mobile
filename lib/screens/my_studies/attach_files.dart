@@ -323,7 +323,7 @@ class _AttachFilesState extends State<AttachFiles> {
         ));
   }
 
-  showEmptyList() {
+  Widget showEmptyList() {
     return Column(
       children: [
         SvgPicture.asset('assets/images/empty_studies.svg', fit: BoxFit.cover),
@@ -332,7 +332,7 @@ class _AttachFilesState extends State<AttachFiles> {
     );
   }
 
-  getFromCamera() async {
+  void getFromCamera() async {
     XFile? image;
     image = await pickImage(
         context: context,
@@ -355,7 +355,7 @@ class _AttachFilesState extends State<AttachFiles> {
     }
   }
 
-  getFromFiles() async {
+  void getFromFiles() async {
     FilePickerResult? result;
     result = await pickFiles(
       context: context,
@@ -377,7 +377,7 @@ class _AttachFilesState extends State<AttachFiles> {
     }
   }
 
-  getFromGallery() async {
+  void getFromGallery() async {
     XFile? image;
     image = await pickImage(
         context: context,
