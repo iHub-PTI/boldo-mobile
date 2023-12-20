@@ -60,7 +60,7 @@ class FilesRepository {
       return MapEntry(file, url);
     }else if(response.statusCode == 413){
       throw Failure(
-          'El archivo ${path.basename(file.path)} es demasiado grande',);
+          'Lo sentimos, el archivo supera el archivo es demasiado grande',);
     }
     throw Failure('Unknown StatusCode ${response.statusCode}',);
   }
