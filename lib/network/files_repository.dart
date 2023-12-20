@@ -65,6 +65,33 @@ class FilesRepository {
     throw Failure('Unknown StatusCode ${response.statusCode}',);
   }
 
+  /// On uploaded the list of files with http put method to pair of urls.
+  static Future<List<MapEntry<File, Either<Failure, MapEntry<File, UploadUrl>>>>> uploadFiles({
+    required List<MapEntry<File, UploadUrl?>> files,
+  }) async {
+
+    List<MapEntry<File, Either<Failure, MapEntry<File, UploadUrl>>>> resultsUploadList = [];
+
+    await Future.forEach(files, (element) async {
+
+      await Task(() async {
+        UploadUrl _uploadUrl = element.value?? await getUploadURL();
+        return uploadFile(
+          file: element.key,
+          url: _uploadUrl ,
+        );
+      })
+          .attempt()
+          .mapLeftToFailure()
+          .run()
+          .then((value) {
+        resultsUploadList.add(MapEntry(element.key, value));
+      });
+    });
+
+    return resultsUploadList;
+  }
+
   /// If [localDio] isn't passed, by default it will download with http
   /// connection
   ///
