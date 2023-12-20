@@ -103,35 +103,15 @@ class MyStudesRepository {
     }
   }
 
-  Future<None>? sendDiagnosticReport(DiagnosticReport diagnosticReport ,List<File> files) async {
+  Future<None>? sendDiagnosticReport(DiagnosticReport diagnosticReport) async {
     try {
-      List<Map<String, dynamic>> attachmentUrls = [];
-      for (File file in files) {
-        // get url to upload file
-        UploadUrl response = await FilesRepository().getUploadURL();
-
-        await FilesRepository().uploadFile(
-          file: file,
-          url: response.uploadUrl?? '',
-        );
-        var value = {
-          "url": response.location,
-          "contentType": p.extension(file.path).toLowerCase() == '.pdf'
-              ? 'application/pdf'
-              : p.extension(file.path).toLowerCase() == '.png' ? 'image/png' : 'image/jpeg',
-        };
-        attachmentUrls.add(value);
-
-      }
-      Map<String, dynamic> diagnostic = diagnosticReport.toJson();
-      diagnostic['attachmentUrls'] = attachmentUrls;
       Response response;
       if (prefs.getBool(isFamily) ?? false) {
         response = await dio.post(
             '/profile/caretaker/dependent/${patient.id}/diagnosticReport',
-            data: diagnostic);
+            data: diagnosticReport.toJson());
       } else {
-        response = await dio.post('/profile/patient/diagnosticReport', data: diagnostic);
+        response = await dio.post('/profile/patient/diagnosticReport', data: diagnosticReport.toJson());
       }
       if(response.statusCode == 201){
         return const None();
