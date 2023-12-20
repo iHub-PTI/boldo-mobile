@@ -28,6 +28,25 @@ class FilesRepository {
     throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
   }
 
+  /// get a list of url to upload File on AzureBlob service, and the url to get the file
+  /// uploaded. In the right side has de [UploadUrl] and the left side has a Failure
+  static Future<List<Either<Failure, UploadUrl>>> getUploadsURL({required int quantity}) async {
+
+    List<Either<Failure, UploadUrl>> uploadUrlList = [];
+
+    for(int i = 0; i < quantity ; i++){
+      await Task(() => getUploadURL())
+          .attempt()
+          .mapLeftToFailure()
+          .run()
+          .then((value) {
+        uploadUrlList.add(value);
+      });
+    }
+
+    return uploadUrlList;
+  }
+
   /// On uploaded the file with http put method, this will return [None] type,
   /// if the file is too large, this will returned a [Failure]
   static Future<MapEntry<File, UploadUrl>> uploadFile({required File file, required UploadUrl url}) async {
