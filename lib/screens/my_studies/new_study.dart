@@ -137,6 +137,12 @@ class _NewStudyState extends State<NewStudy> {
                   child: Form(
                     key: _formKey,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
+                    onChanged: (){
+                      enable = _formKey.currentState?.validate()?? false;
+                      setState(() {
+
+                      });
+                    },
                     child: Column(
                       children: [
                         TextFormField(
@@ -247,58 +253,53 @@ class _NewStudyState extends State<NewStudy> {
                         const SizedBox(
                           height: 40,
                         ),
-                        Container(
-                          height: 76,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: items.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: _buildCarousel,
-                          ),
-                        ),
                         const SizedBox(
                           height: 40,
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              width: 136,
-                              child: ElevatedButton (
-                                onPressed: enable && _formKey.currentState!.validate() ? () async {
-                                  if(_formKey.currentState!.validate()){
-                                    DiagnosticReport newDiagnosticReport = DiagnosticReport(
-                                        description: nombre,
-                                        notes: notas,
-                                        effectiveDate: fecha,
-                                        type: type);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              AttachFiles(
-                                                  diagnosticReport:
-                                                  newDiagnosticReport)),
-                                    );
-                                  }
-                                }: null,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text('siguiente'),
-                                    const Padding(
-                                      padding: EdgeInsets.only(left: 8.0),
-                                      child: Icon(
-                                        Icons.chevron_right,
-                                      ),
-                                    )
-                                  ],
+                        FormField<String>(
+                          validator: (value){
+                            if(value== null || value == '')
+                              return 'Selecione un tipo';
+                            return null;
+                          },
+                          builder: (FormFieldState<String> state){
+
+                            InputBorder? shape;
+
+                            if(state.hasError){
+                              shape = Theme.of(context).inputDecorationTheme.errorBorder;
+                            }
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ListTile(
+                                  shape: shape,
+                                  title: Center(
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: items.asMap().entries.map((e) => _buildCarousel(e.key, state)).toList(),),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        )
+                                if(state.errorText!= null)
+                                  Text(
+                                    state.errorText!,
+                                    style: Theme.of(context).inputDecorationTheme.errorStyle,
+                                  ),
+                              ],
+                            );
+                          },
+                        ),
+                        CompleteFormNewStudy(
+                          formKey: _formKey,
+                          fecha: fecha,
+                          nombre: nombre,
+                          notas: notas,
+                          type: type,
+                          enable: enable,
+                        ),
                       ],
                     ),
                   ),
@@ -320,7 +321,7 @@ class _NewStudyState extends State<NewStudy> {
     );
   }
 
-  Widget _buildCarousel(BuildContext context, int index){
+  Widget _buildCarousel(int index, FormFieldState formState){
     return Container(
       child: Card(
         margin: const EdgeInsets.all(6),
@@ -330,17 +331,13 @@ class _NewStudyState extends State<NewStudy> {
         ),
         child: InkWell(
           onTap:() {
-            setState(() {
               if(type == items[index].value) {
                 type = "";
-                enable = false;
-                _formKey.currentState!.validate();
+                formState.didChange(type);
               }else{
                 type = items[index].value;
-                enable = true;
-                _formKey.currentState!.validate();
+                formState.didChange(type);
               }
-            });
           },
           child: Container(
             color: type != items[index].value ? ConstantsV2.lightest : ConstantsV2.orange,
