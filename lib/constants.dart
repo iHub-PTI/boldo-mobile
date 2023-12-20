@@ -168,6 +168,7 @@ TextStyle label = GoogleFonts.inter().copyWith(
 );
 
 TextStyle bigButton = GoogleFonts.montserrat().copyWith(
+  color: ConstantsV2.darkBlue,
   fontWeight: FontWeight.w300,
   fontSize: 15,
   fontStyle: FontStyle.normal,
@@ -681,6 +682,7 @@ class ConstantsV2 {
 
 const String isFamily = 'isFamily';
 const int minutesToCloseAppointment = 120;
+const int minutesToOpenAppointment = 15;
 const String uploadedStudySuccessfullyMessage = "¡Estudio subido!";
 const String dependentSuccessAdded = '¡Dependiente agregado!';
 DateTime minDate = DateTime(1900, 1, 1);

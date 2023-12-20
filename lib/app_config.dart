@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:boldo/models/FileLimit.dart';
 import 'package:boldo/models/ValueEmitter.dart';
 import 'package:boldo/utils/string_utils.dart';
 import 'package:flutter/foundation.dart';
@@ -123,6 +124,10 @@ class AppConfig {
 
   ValueEmitter<int> ALL_ORGANIZATION_PAGE_SIZE = ValueEmitter(
     value: 20,
+  );
+
+  ValueEmitter<FileLimit> FILE_STUDY_LIMIT = ValueEmitter(
+    value: FileLimit(description: '15Mb', maxSizeBytes: 15485760),
   );
 
   // stream controllers to update values

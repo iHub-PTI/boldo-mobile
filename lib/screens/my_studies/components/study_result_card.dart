@@ -211,7 +211,6 @@ class StudyResultCard extends StatelessWidget {
                             .serviceRequestId!));
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
                         child: Text(
                           "Ver orden",
                           style: bigButton,

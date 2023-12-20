@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:boldo/constants.dart';
 import 'package:boldo/models/StudyOrder.dart';
+import 'package:boldo/models/upload_url_model.dart';
+import 'package:boldo/network/files_repository.dart';
 import 'package:boldo/network/my_studies_repository.dart';
 import 'package:boldo/network/order_study_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
@@ -17,7 +20,7 @@ part 'my_studies_state.dart';
 class MyStudiesBloc extends Bloc<MyStudiesEvent, MyStudiesState> {
   final MyStudesRepository _myStudiesRepository = MyStudesRepository();
   final StudiesOrdersRepository _ordersRepository = StudiesOrdersRepository();
-  List<File> files = [];
+  List<MapEntry<File, AttachmentUrl?>> files = [];
 
   MyStudiesBloc() : super(MyStudiesInitial()) {
     on<MyStudiesEvent>((event, emit) async {
@@ -53,23 +56,6 @@ class MyStudiesBloc extends Bloc<MyStudiesEvent, MyStudiesState> {
         } else {
           emit(DiagnosticStudyLoaded(study: _post.value));
         }
-      } else if (event is SendStudyToServer) {
-        emit(Uploading());
-        var _post;
-        await Task(() => _myStudiesRepository.sendDiagnosticReport(
-                event.diagnosticReport, event.files)!)
-            .attempt()
-            .run()
-            .then((value) {
-          _post = value;
-        });
-        var response;
-        if (_post.isLeft()) {
-          _post.leftMap((l) => response = l.message);
-          emit(FailedUpload(msg: response));
-        } else {
-          emit(Uploaded());
-        }
       } else if (event is GetUserPdfFromUrl) {
         emit(Loading());
         var _post;
@@ -87,22 +73,6 @@ class MyStudiesBloc extends Bloc<MyStudiesEvent, MyStudiesState> {
         } else {
           emit(Success());
         }
-      } else if (event is DeleteFiles) {
-        files = [];
-      } else if (event is AddFiles) {
-        if (files.isNotEmpty) {
-          files = [...files, ...event.files];
-        } else {
-          files = event.files;
-        }
-      } else if (event is AddFile) {
-        if (files.isNotEmpty) {
-          files = [...files, event.file];
-        } else {
-          files = [event.file];
-        }
-      } else if (event is GetFiles) {
-        emit(FilesObtained(files: files));
       } else if (event is GetServiceRequests) {
         emit(Loading());
         var _post;

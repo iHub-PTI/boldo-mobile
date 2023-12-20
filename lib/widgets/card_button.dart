@@ -22,6 +22,7 @@ class CardButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
+      textStyle: bigButton,
       child: InkWell(
         onTap: ()=> function?.call(),
         child: Container(

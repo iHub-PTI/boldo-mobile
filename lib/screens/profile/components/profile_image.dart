@@ -98,13 +98,13 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                       setState(() {
                         _isLoading = true;
                       });
-                      UploadUrl response = await FilesRepository().getUploadURL();
+                      UploadUrl response = await FilesRepository.getUploadURL();
 
                       imageCache!.clear();
 
-                      await FilesRepository().uploadFile(
+                      await FilesRepository.uploadFile(
                         file: File(result.path),
-                        url: response.uploadUrl?? '',
+                        url: response,
                       );
 
                       editingPatient.photoUrl = response.location;
