@@ -16,7 +16,7 @@ class FilesRepository {
 
   /// get a url to upload File on AzureBlob service, and the url to get the file
   /// uploaded, this will throw a Failure if the statusCode is unknown
-  Future<UploadUrl> getUploadURL() async {
+  static Future<UploadUrl> getUploadURL() async {
 
     Response response;
     response = await dio.get('/presigned');
@@ -30,7 +30,7 @@ class FilesRepository {
 
   /// On uploaded the file with http put method, this will return [None] type,
   /// if the file is too large, this will returned a [Failure]
-  Future<None> uploadFile({required File file, required String url}) async {
+  static Future<MapEntry<File, UploadUrl>> uploadFile({required File file, required UploadUrl url}) async {
 
     http.Response response;
     response = await http.put(
