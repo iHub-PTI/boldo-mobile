@@ -13,7 +13,7 @@ class Failure extends Error {
   String toString() => message;
 }
 
-extension TaskX<T extends Either<Object, U>, U> on Task<T> {
+extension TaskX<U> on Task<Either<Object, U>> {
   Task<Either<Failure, U>> mapLeftToFailure() {
     return map(
           (either) => either.leftMap((obj) {
