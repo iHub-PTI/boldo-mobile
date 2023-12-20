@@ -682,6 +682,7 @@ class ConstantsV2 {
 
 const String isFamily = 'isFamily';
 const int minutesToCloseAppointment = 120;
+const int minutesToOpenAppointment = 15;
 const String uploadedStudySuccessfullyMessage = "¡Estudio subido!";
 const String dependentSuccessAdded = '¡Dependiente agregado!';
 DateTime minDate = DateTime(1900, 1, 1);
