@@ -34,11 +34,11 @@ class FilesRepository {
 
     http.Response response;
     response = await http.put(
-      Uri.parse(url), body: file.readAsBytesSync(),
+      Uri.parse(url.uploadUrl?? ''), body: file.readAsBytesSync(),
     );
 
     if(response.statusCode == 201){
-      return const None();
+      return MapEntry(file, url);
     }else if(response.statusCode == 413){
       throw Failure(
           'El archivo ${path.basename(file.path)} es demasiado grande',);
