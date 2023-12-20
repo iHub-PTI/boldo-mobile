@@ -7,12 +7,13 @@ import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/photos_helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:boldo/widgets/file_locale.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as p;
 
 import '../../constants.dart';
 import '../../models/DiagnosticReport.dart';
@@ -31,11 +32,9 @@ class AttachFiles extends StatefulWidget {
 }
 
 class _AttachFilesState extends State<AttachFiles> {
-  List<File> files = [];
 
   @override
   void initState() {
-    BlocProvider.of<MyStudiesBloc>(context).add(GetFiles());
     super.initState();
   }
 
