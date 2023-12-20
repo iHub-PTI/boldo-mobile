@@ -73,9 +73,12 @@ class _AttachFilesState extends State<AttachFiles> {
                     text: state.msg,
                     status: ActionStatus.Fail
                 );
-              }
-              if(state is FilesObtained){
-                files = state.files;
+              } else if (state is FailedUploadFiles) {
+                emitSnackBar(
+                    context: context,
+                    text: 'Algunos archivos no fueron subidos',
+                    status: ActionStatus.Fail
+                );
                 setState(() {
 
                 });
