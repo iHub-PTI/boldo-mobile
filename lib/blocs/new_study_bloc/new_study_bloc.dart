@@ -27,7 +27,7 @@ class NewStudyBloc extends Bloc<NewStudyEvent, NewStudyState> {
       Either<Failure, AttachmentUrl?> _var = await Task(() =>
            Future(() {
              if((file.lengthSync()) >
-                 appConfig.FILE_STUDY_LIMIT.getValue.maxSizeBytes){
+                 (appConfig.FILE_STUDY_LIMIT.getValue.maxSizeBytes?? 10000)){
                throw Failure('Lo sentimos, el archivo supera el límite de ${appConfig.FILE_STUDY_LIMIT.getValue.description}');
              }
                 return null;
@@ -79,7 +79,7 @@ class NewStudyBloc extends Bloc<NewStudyEvent, NewStudyState> {
         ).toList();
 
         _listOfFilesNotUploaded.removeWhere((element) => ((element.key.lengthSync()) >
-            appConfig.FILE_STUDY_LIMIT.getValue.maxSizeBytes));
+            (appConfig.FILE_STUDY_LIMIT.getValue.maxSizeBytes?? 10000)));
 
         // list of <File, urlUploaded>
         List<MapEntry<File, Either<Failure, MapEntry<File, UploadUrl>>>> _uploadsList = await FilesRepository.uploadFiles(

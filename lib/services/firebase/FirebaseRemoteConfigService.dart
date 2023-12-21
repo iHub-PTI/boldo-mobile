@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:boldo/app_config.dart';
 import 'package:boldo/environment.dart';
+import 'package:boldo/models/FileLimit.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -41,6 +42,7 @@ class FirebaseRemoteConfigService {
         "RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES": appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.getValue,
         "BCM_SERVER_ADDRESS": environment.BCM_SERVER_ADDRESS.getValue,
         "ALL_ORGANIZATION_PAGE_SIZE": appConfig.ALL_ORGANIZATION_PAGE_SIZE.getValue,
+        "FILE_STUDY_LIMIT": jsonEncode(appConfig.FILE_STUDY_LIMIT.getValue.toJson()),
       });
 
       // get values from server
@@ -67,7 +69,7 @@ class FirebaseRemoteConfigService {
       appConfig.TIMEOUT_MESSAGE_DOWNLOAD_FILES.updateValue(firebaseRemoteConfig.getString("TIMEOUT_MESSAGE_DOWNLOAD_FILES"));
       appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.updateValue(firebaseRemoteConfig.getInt("RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES"));
       appConfig.ALL_ORGANIZATION_PAGE_SIZE.updateValue(firebaseRemoteConfig.getInt("ALL_ORGANIZATION_PAGE_SIZE"));
-
+      appConfig.FILE_STUDY_LIMIT.updateValue(FileLimit.fromJson(jsonDecode(firebaseRemoteConfig.getString("FILE_STUDY_LIMIT"))));
 
       // listen remote changes
       firebaseRemoteConfig.onConfigUpdated.listen((event) async {
@@ -160,6 +162,10 @@ class FirebaseRemoteConfigService {
         if(event.updatedKeys.contains("ALL_ORGANIZATION_PAGE_SIZE")){
           // set new value
           appConfig.ALL_ORGANIZATION_PAGE_SIZE.updateValue(firebaseRemoteConfig.getInt("ALL_ORGANIZATION_PAGE_SIZE"));
+        }
+        if(event.updatedKeys.contains("FILE_STUDY_LIMIT")){
+          // set new value
+          appConfig.FILE_STUDY_LIMIT.updateValue(FileLimit.fromJson(jsonDecode(firebaseRemoteConfig.getString("FILE_STUDY_LIMIT"))));
         }
 
       });
