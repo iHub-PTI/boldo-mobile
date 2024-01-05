@@ -25,41 +25,44 @@ class EmptyStateV2 extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         width: double.infinity,
-        child: Column(
-          children: [
-            Text(
-              textTop ?? '',
-              style: boldoCorpSmallTextStyle.copyWith(
-                color: ConstantsV2.darkBlue,
-              ),
-            ),
-            picture != null ?Container(
-              padding: const EdgeInsets.only(left: 1, right: 1),
-              child: SvgPicture.asset(
-                'assets/icon/$picture',
-                fit: BoxFit.cover,
-              ),
-            ): Container(),
-            if(picture != null)
-            Container(
-              padding: paddingButtonPicture,
-            ),
-            titleBottom != null
-              ? Text(
-                titleBottom!,
-                style: boldoTitleBlackTextStyle.copyWith(
-                  fontSize: 20,
+        child: SingleChildScrollView(
+          child: Column(
+              children: [
+                Text(
+                  textTop ?? '',
+                  style: boldoCorpSmallTextStyle.copyWith(
+                    color: ConstantsV2.darkBlue,
+                  ),
+                ),
+                picture != null ?Container(
+                  padding: const EdgeInsets.only(left: 1, right: 1),
+                  child: SvgPicture.asset(
+                    'assets/icon/$picture',
+                    fit: BoxFit.cover,
+                  ),
+                ): Container(),
+                if(picture != null)
+                  Container(
+                    padding: paddingButtonPicture,
+                  ),
+                titleBottom != null
+                    ? Text(
+                    titleBottom!,
+                    style: boldoTitleBlackTextStyle.copyWith(
+                      fontSize: 20,
+                    )
                 )
-              )
-              : Container(),
-            SizedBox(height: titleBottom != null ? 10 : 0),
-            Text(
-              textBottom ?? '',
-              style: boldoCorpMediumTextStyle.copyWith(
-                color: ConstantsV2.activeText,
-              ),
-            ),
-          ]
+                    : Container(),
+                SizedBox(height: titleBottom != null ? 10 : 0),
+                Text(
+                  textBottom ?? '',
+                  style: boldoCorpMediumTextStyle.copyWith(
+                    color: ConstantsV2.activeText,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ]
+          ),
         )
       )
     );

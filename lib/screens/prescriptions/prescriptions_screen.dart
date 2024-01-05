@@ -121,11 +121,13 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                   BlocBuilder<PrescriptionsBloc, PrescriptionsState>(builder: (context, state){
                     if(state is AppointmentWithPrescriptionsLoadedState){
                       if(allAppointments.isEmpty){
-                        return const EmptyStateV2(
-                          picture: "empty_prescriptions.svg",
-                          titleBottom: "Aún no tenés recetas",
-                          textBottom:
-                          "A medida en que uses la aplicación podrás ir viendo tus recetas",
+                        return const Expanded(
+                          child:  EmptyStateV2(
+                            picture: "empty_prescriptions.svg",
+                            titleBottom: "Aún no tenés recetas",
+                            textBottom:
+                            "A medida en que uses la aplicación podrás ir viendo tus recetas",
+                          ),
                         );
                       }else{
                         return Expanded(
