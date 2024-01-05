@@ -182,19 +182,11 @@ void initDio(
               data: options.data, options: optionsDio, queryParameters: options.queryParameters));
         }
 
-        String keycloakRealmAddress = environment.KEYCLOAK_REALM_ADDRESS;
-        final String? refreshToken = await storage.read(key: "refresh_token");
 
         try {
-          final TokenResponse? result = await appAuth.token(TokenRequest(
-              'boldo-patient', 'py.org.pti.boldo:/login',
-              discoveryUrl:
-                  '$keycloakRealmAddress/.well-known/openid-configuration',
-              refreshToken: refreshToken,
-              scopes: ['openid', 'offline_access']));
-          await storage.write(key: "access_token", value: result!.accessToken);
-          await storage.write(key: "refresh_token", value: result.refreshToken);
-          accessToken = result.accessToken;
+          Response response = await dioKC.get('/renew');
+          TokenResponse tokenResponse = response.data;
+          accessToken = tokenResponse.accessToken;
           // New dio connection to handle new errors
           Dio _dio = Dio();
           initDio(navKey: navKey, dio: _dio, baseUrl: baseUrl, header: header, responseType: responseType);
