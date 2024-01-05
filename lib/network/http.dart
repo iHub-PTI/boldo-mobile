@@ -24,6 +24,48 @@ Map<String, dynamic> dioHeader = {
 var dioPassport = Dio();
 var dioDownloader = Dio();
 var dioBCM = Dio();
+var dioKC = Dio()..interceptors.add(QueuedInterceptorsWrapper(
+  onRequest: (options, handler) async {
+
+    try{
+      FlutterAppAuth appAuth = const FlutterAppAuth();
+
+      String keycloakRealmAddress = environment.KEYCLOAK_REALM_ADDRESS;
+      final String? refreshToken = await storage.read(key: "refresh_token");
+
+      final TokenResponse? result = await appAuth.token(TokenRequest(
+        'boldo-patient',
+        'py.org.pti.boldo:/login',
+        discoveryUrl: '$keycloakRealmAddress/.well-known/openid-configuration',
+        refreshToken: refreshToken,
+        scopes: ['openid', 'offline_access'],
+      ));
+
+      await storage.write(key: "access_token", value: result!.accessToken);
+      await storage.write(key: "refresh_token", value: result.refreshToken);
+
+      Response response = Response(
+        requestOptions: options,
+        data: result,
+      );
+
+      handler.resolve(response);
+    } catch (exception, stackTrace){
+
+      DioException exceptionDio = DioException(
+        requestOptions: options,
+        error:  exception,
+        stackTrace: stackTrace,
+      );
+
+      handler.reject(exceptionDio);
+    }
+
+  },
+  onError: (dioException, handler){
+    handler.next(dioException);
+  },
+));
 void initDio(
     {required GlobalKey<NavigatorState> navKey,
       required Dio dio,
@@ -49,7 +91,6 @@ void initDio(
     );
   }
 
-  String? accessToken;
   FlutterAppAuth appAuth = const FlutterAppAuth();
 
   ISentrySpan? transaction;
@@ -57,7 +98,7 @@ void initDio(
   //setup interceptors
   dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) async {
-      accessToken = (await storage.read(key: "access_token") ?? '');
+      String? accessToken = (await storage.read(key: "access_token") ?? '');
       options.headers["authorization"] = "bearer $accessToken";
       transaction = Sentry.startTransaction(
         options.path,
@@ -73,11 +114,11 @@ void initDio(
       return handler.next(response);
     },
     onError: (DioError error, handle) async {
+      String? accessToken = (await storage.read(key: "access_token") ?? '');
       if (error.response?.statusCode == 403) {
         try {
           await storage.deleteAll();
           // ignore: null_check_always_fails
-          accessToken = null;
 
           navKey.currentState!.pushAndRemoveUntil(
             MaterialPageRoute(
@@ -90,10 +131,6 @@ void initDio(
         }
       } else if (error.response?.statusCode == 401) {
         print("401 DIO");
-        if (accessToken == null) {
-          await storage.deleteAll();
-          return handle.next(error);
-        }
 
         //check role permission
         try{
@@ -145,19 +182,11 @@ void initDio(
               data: options.data, options: optionsDio, queryParameters: options.queryParameters));
         }
 
-        String keycloakRealmAddress = environment.KEYCLOAK_REALM_ADDRESS;
-        final String? refreshToken = await storage.read(key: "refresh_token");
 
         try {
-          final TokenResponse? result = await appAuth.token(TokenRequest(
-              'boldo-patient', 'py.org.pti.boldo:/login',
-              discoveryUrl:
-                  '$keycloakRealmAddress/.well-known/openid-configuration',
-              refreshToken: refreshToken,
-              scopes: ['openid', 'offline_access']));
-          await storage.write(key: "access_token", value: result!.accessToken);
-          await storage.write(key: "refresh_token", value: result.refreshToken);
-          accessToken = result.accessToken;
+          Response response = await dioKC.get('/renew');
+          TokenResponse tokenResponse = response.data;
+          accessToken = tokenResponse.accessToken;
           // New dio connection to handle new errors
           Dio _dio = Dio();
           initDio(navKey: navKey, dio: _dio, baseUrl: baseUrl, header: header, responseType: responseType);
