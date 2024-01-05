@@ -24,6 +24,48 @@ Map<String, dynamic> dioHeader = {
 var dioPassport = Dio();
 var dioDownloader = Dio();
 var dioBCM = Dio();
+var dioKC = Dio()..interceptors.add(QueuedInterceptorsWrapper(
+  onRequest: (options, handler) async {
+
+    try{
+      FlutterAppAuth appAuth = const FlutterAppAuth();
+
+      String keycloakRealmAddress = environment.KEYCLOAK_REALM_ADDRESS;
+      final String? refreshToken = await storage.read(key: "refresh_token");
+
+      final TokenResponse? result = await appAuth.token(TokenRequest(
+        'boldo-patient',
+        'py.org.pti.boldo:/login',
+        discoveryUrl: '$keycloakRealmAddress/.well-known/openid-configuration',
+        refreshToken: refreshToken,
+        scopes: ['openid', 'offline_access'],
+      ));
+
+      await storage.write(key: "access_token", value: result!.accessToken);
+      await storage.write(key: "refresh_token", value: result.refreshToken);
+
+      Response response = Response(
+        requestOptions: options,
+        data: result,
+      );
+
+      handler.resolve(response);
+    } catch (exception, stackTrace){
+
+      DioException exceptionDio = DioException(
+        requestOptions: options,
+        error:  exception,
+        stackTrace: stackTrace,
+      );
+
+      handler.reject(exceptionDio);
+    }
+
+  },
+  onError: (dioException, handler){
+    handler.next(dioException);
+  },
+));
 void initDio(
     {required GlobalKey<NavigatorState> navKey,
       required Dio dio,
