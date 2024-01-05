@@ -91,7 +91,6 @@ void initDio(
     );
   }
 
-  String? accessToken;
   FlutterAppAuth appAuth = const FlutterAppAuth();
 
   ISentrySpan? transaction;
@@ -99,7 +98,7 @@ void initDio(
   //setup interceptors
   dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) async {
-      accessToken = (await storage.read(key: "access_token") ?? '');
+      String? accessToken = (await storage.read(key: "access_token") ?? '');
       options.headers["authorization"] = "bearer $accessToken";
       transaction = Sentry.startTransaction(
         options.path,
@@ -115,11 +114,11 @@ void initDio(
       return handler.next(response);
     },
     onError: (DioError error, handle) async {
+      String? accessToken = (await storage.read(key: "access_token") ?? '');
       if (error.response?.statusCode == 403) {
         try {
           await storage.deleteAll();
           // ignore: null_check_always_fails
-          accessToken = null;
 
           navKey.currentState!.pushAndRemoveUntil(
             MaterialPageRoute(
@@ -132,10 +131,6 @@ void initDio(
         }
       } else if (error.response?.statusCode == 401) {
         print("401 DIO");
-        if (accessToken == null) {
-          await storage.deleteAll();
-          return handle.next(error);
-        }
 
         //check role permission
         try{
