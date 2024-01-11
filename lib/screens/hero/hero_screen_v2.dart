@@ -107,7 +107,7 @@ class HeroScreenV2 extends StatelessWidget {
                                             fontWeight: FontWeight.normal,
                                             fontStyle: FontStyle.normal,
                                             fontFamily: 'Montserrat',
-                                            color: Color(0xffF5F5F5),
+                                            color: ConstantsV2.lightAndClear,
                                           ),
                                         ),
                                       )
@@ -383,7 +383,7 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated> with SingleTick
                                     fontWeight: FontWeight.normal,
                                     fontStyle: FontStyle.normal,
                                     fontFamily: 'Montserrat',
-                                    color: Color(0xffF5F5F5),
+                                    color: ConstantsV2.lightAndClear,
                                   ),
                                 ),
                               ),
