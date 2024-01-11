@@ -14,6 +14,7 @@ import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
+import 'package:boldo/widgets/organization_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -216,9 +217,23 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
         ),
         child: CheckboxListTile(
           contentPadding: EdgeInsets.zero,
-          title: Text(
-            _organizationsNotSubscribed[index].name?? "Sin nombre",
-            style: bodyLargeBlack,
+          title: Container(
+            child: Row(
+              children: [
+                OrganizationPhoto(
+                  organization: _organizationsNotSubscribed[index],
+                ),
+                const SizedBox(
+                  width: 16,
+                ),
+                Flexible(
+                  child: Text(
+                    _organizationsNotSubscribed[index].name?? "Sin nombre",
+                    style: bodyLargeBlack,
+                  ),
+                ),
+              ],
+            ),
           ),
           value: _organizationsSelected.contains(_organizationsNotSubscribed[index]),
           activeColor: ConstantsV2.secondaryRegular,
@@ -867,9 +882,21 @@ class OrganizationSubscribedCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:[
                           Flexible(
-                            child: Text(
-                              "${organization.name}",
-                              style: bodyLargeBlack,
+                            child: Row(
+                              children: [
+                                OrganizationPhoto(
+                                  organization: organization,
+                                ),
+                                const SizedBox(
+                                  width: 16,
+                                ),
+                                Flexible(
+                                  child: Text(
+                                    "${organization.name}",
+                                    style: bodyLargeBlack,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           moreOptions(organization, context),
