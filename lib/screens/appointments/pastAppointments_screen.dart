@@ -296,17 +296,11 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
               itemBuilder: _appointment,
               physics: const ClampingScrollPhysics(),
             )
-                :SingleChildScrollView(
-              child: Column(
-                children: [
-                  const EmptyStateV2(
-                    picture: "empty_appointments.svg",
-                    titleBottom: "Aún no tenés consultas",
-                    textBottom:
-                    "A medida en que uses la aplicación podrás ir viendo tus consultas",
-                  ),
-                ],
-              ),
+                :const EmptyStateV2(
+              picture: "empty_appointments.svg",
+              titleBottom: "Aún no tenés consultas",
+              textBottom:
+              "A medida en que uses la aplicación podrás ir viendo tus consultas",
             );
           }else if(state is LoadingAppointments){
             return Container(
@@ -374,17 +368,11 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
               itemBuilder: _pastAppointment,
               physics: const ClampingScrollPhysics(),
             )
-                :SingleChildScrollView(
-              child: Column(
-                children: [
-                  const EmptyStateV2(
-                    picture: "empty_appointments.svg",
-                    titleBottom: "Aún no tenés consultas",
-                    textBottom:
-                    "A medida en que uses la aplicación podrás ir viendo tus consultas",
-                  ),
-                ],
-              ),
+                :const EmptyStateV2(
+              picture: "empty_appointments.svg",
+              titleBottom: "Aún no tenés consultas",
+              textBottom:
+              "A medida en que uses la aplicación podrás ir viendo tus consultas",
             );
           }else if(state is Loading){
             return Container(
@@ -416,7 +404,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
   Widget _appointment(BuildContext context, int index) {
     return AppointmentCard(
       appointment: futureAppointments[index],
-      isInWaitingRoom: futureAppointments[index].status == "open",
+      isInWaitingRoom: futureAppointments[index].status == AppointmentStatus.Open,
       showCancelOption: true,
     );
   }

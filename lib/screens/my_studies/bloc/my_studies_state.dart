@@ -25,22 +25,7 @@ class Failed extends MyStudiesState {
   Failed({required this.msg});
 }
 
-class FailedUpload extends MyStudiesState {
-  final String msg;
-
-  FailedUpload({required this.msg});
-}
-
-class Uploading extends MyStudiesState {}
-
-class Uploaded extends MyStudiesState {}
-
 class Success extends MyStudiesState {}
-
-class FilesObtained extends MyStudiesState {
-  final List<File> files;
-  FilesObtained({required this.files});
-}
 
 class ServiceRequestLoaded extends MyStudiesState {
   final ServiceRequest serviceRequest;

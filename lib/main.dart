@@ -36,6 +36,7 @@ import 'package:boldo/screens/update/UpdateAvailable.dart';
 import 'package:boldo/services/firebase/FirebaseRemoteConfigService.dart';
 import 'package:boldo/utils/app_helper.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
+import 'package:boldo/utils/scroll/customScrollBehavior.dart';
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -324,6 +325,7 @@ class FullApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scrollBehavior: CustomBehavior(),
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

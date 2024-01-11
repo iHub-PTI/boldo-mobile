@@ -125,11 +125,11 @@ class StudiesOrdersRepository {
       List<AttachmentUrl> attachmentUrls = [];
       for (File file in files) {
         // get url to upload file
-        UploadUrl response = await FilesRepository().getUploadURL();
+        UploadUrl response = await FilesRepository.getUploadURL();
 
-        await FilesRepository().uploadFile(
+        await FilesRepository.uploadFile(
           file: file,
-          url: response.uploadUrl?? '',
+          url: response,
         );
 
         AttachmentUrl value = AttachmentUrl(

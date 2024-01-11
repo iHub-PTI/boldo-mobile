@@ -1,7 +1,7 @@
+import 'package:boldo/blocs/new_study_bloc/new_study_bloc.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/network/repository_helper.dart';
-import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
@@ -63,8 +63,6 @@ class _NewStudyState extends State<NewStudy> {
 
   @override
   void initState() {
-    // Delete studies
-    BlocProvider.of<MyStudiesBloc>(context).add(DeleteFiles());
     super.initState();
   }
 
@@ -89,20 +87,8 @@ class _NewStudyState extends State<NewStudy> {
           ),
         ),
       body: SafeArea(
-        child: BlocListener<MyStudiesBloc, MyStudiesState>(
-          listener: (context, state) {
-            if (state is Loading) {
-              print('loading');
-            }
-            if (state is Failed) {
-              print('failed: ${state.msg}');
-              emitSnackBar(
-                  context: context,
-                  text: state.msg,
-                  status: ActionStatus.Fail
-              );
-            }
-          },
+        child: BlocProvider<NewStudyBloc>(
+          create: (BuildContext context) => NewStudyBloc(),
           child: SingleChildScrollView(
             //  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Column(
@@ -151,6 +137,12 @@ class _NewStudyState extends State<NewStudy> {
                   child: Form(
                     key: _formKey,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
+                    onChanged: (){
+                      enable = _formKey.currentState?.validate()?? false;
+                      setState(() {
+
+                      });
+                    },
                     child: Column(
                       children: [
                         TextFormField(
@@ -261,58 +253,53 @@ class _NewStudyState extends State<NewStudy> {
                         const SizedBox(
                           height: 40,
                         ),
-                        Container(
-                          height: 76,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: items.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: _buildCarousel,
-                          ),
-                        ),
                         const SizedBox(
                           height: 40,
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              width: 136,
-                              child: ElevatedButton (
-                                onPressed: enable && _formKey.currentState!.validate() ? () async {
-                                  if(_formKey.currentState!.validate()){
-                                    DiagnosticReport newDiagnosticReport = DiagnosticReport(
-                                        description: nombre,
-                                        notes: notas,
-                                        effectiveDate: fecha,
-                                        type: type);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              AttachFiles(
-                                                  diagnosticReport:
-                                                  newDiagnosticReport)),
-                                    );
-                                  }
-                                }: null,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text('siguiente'),
-                                    const Padding(
-                                      padding: EdgeInsets.only(left: 8.0),
-                                      child: Icon(
-                                        Icons.chevron_right,
-                                      ),
-                                    )
-                                  ],
+                        FormField<String>(
+                          validator: (value){
+                            if(value== null || value == '')
+                              return 'Selecione un tipo';
+                            return null;
+                          },
+                          builder: (FormFieldState<String> state){
+
+                            InputBorder? shape;
+
+                            if(state.hasError){
+                              shape = Theme.of(context).inputDecorationTheme.errorBorder;
+                            }
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ListTile(
+                                  shape: shape,
+                                  title: Center(
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: items.asMap().entries.map((e) => _buildCarousel(e.key, state)).toList(),),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        )
+                                if(state.errorText!= null)
+                                  Text(
+                                    state.errorText!,
+                                    style: Theme.of(context).inputDecorationTheme.errorStyle,
+                                  ),
+                              ],
+                            );
+                          },
+                        ),
+                        CompleteFormNewStudy(
+                          formKey: _formKey,
+                          fecha: fecha,
+                          nombre: nombre,
+                          notas: notas,
+                          type: type,
+                          enable: enable,
+                        ),
                       ],
                     ),
                   ),
@@ -334,7 +321,7 @@ class _NewStudyState extends State<NewStudy> {
     );
   }
 
-  Widget _buildCarousel(BuildContext context, int index){
+  Widget _buildCarousel(int index, FormFieldState formState){
     return Container(
       child: Card(
         margin: const EdgeInsets.all(6),
@@ -344,17 +331,13 @@ class _NewStudyState extends State<NewStudy> {
         ),
         child: InkWell(
           onTap:() {
-            setState(() {
               if(type == items[index].value) {
                 type = "";
-                enable = false;
-                _formKey.currentState!.validate();
+                formState.didChange(type);
               }else{
                 type = items[index].value;
-                enable = true;
-                _formKey.currentState!.validate();
+                formState.didChange(type);
               }
-            });
           },
           child: Container(
             color: type != items[index].value ? ConstantsV2.lightest : ConstantsV2.orange,
@@ -416,4 +399,69 @@ class StudiesCards extends StatelessWidget {
   Widget build(BuildContext context) {
     return SvgPicture.asset(image, fit: boxFit, alignment: alignment);
   }
+}
+
+class CompleteFormNewStudy extends StatelessWidget {
+
+  CompleteFormNewStudy({
+    Key? key,
+    required this.formKey,
+    required this.nombre,
+    required this.fecha,
+    required this.notas,
+    this.type,
+    required this.enable,
+  });
+
+  final GlobalKey<FormState> formKey;
+  final String nombre;
+  final String fecha ;
+  final String notas ;
+  final String? type;
+  final bool enable;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+          width: 136,
+          child: ElevatedButton (
+            onPressed: enable ? () async {
+              DiagnosticReport newDiagnosticReport = DiagnosticReport(
+                  description: nombre,
+                  notes: notas,
+                  effectiveDate: fecha,
+                  type: type);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context2) =>
+                      AttachFiles(
+                        diagnosticReport:
+                        newDiagnosticReport,
+                        newStudyBloc: BlocProvider.of<NewStudyBloc>(context),
+                      ),
+                ),
+              );
+            }: null,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('siguiente'),
+                const Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Icon(
+                    Icons.chevron_right,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
 }

@@ -349,7 +349,6 @@ class ServiceRequestCardState extends State<ServiceRequestCard> with TickerProvi
                 },
                 decoration: null,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
                   child: Container(
                     child: Text(
                       "Descargar",
@@ -374,7 +373,6 @@ class ServiceRequestCardState extends State<ServiceRequestCard> with TickerProvi
             );
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
             child: Container(
               child: Text(
                 "Adjuntar archivo",

@@ -4,13 +4,13 @@ import 'package:boldo/constants.dart';
 import 'package:boldo/environment.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/utils/socket.dart';
 import 'package:boldo/widgets/backdrop_modal/backdrop_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:dio/dio.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:socket_io_client/socket_io_client.dart' as io;
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../main.dart';
 import '../../network/http.dart';
@@ -39,7 +39,7 @@ class _VideoCallState extends State<VideoCall> {
 
   PeerConnection? peerConnection;
 
-  io.Socket? socket;
+  CallSocket? socket;
 
   RTCVideoRenderer localRenderer = RTCVideoRenderer();
   RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
@@ -63,7 +63,7 @@ class _VideoCallState extends State<VideoCall> {
       });
     };
     _getCallToken();
-    Wakelock.enable();
+    WakelockPlus.enable();
   }
 
   Future _getCallToken() async {
@@ -85,19 +85,18 @@ class _VideoCallState extends State<VideoCall> {
       token = response.data["token"];
 
       // Manual connection required here. Otherwise socket will not reconnect.
-      socket = io.io(socketsAddress, <String, dynamic>{
-        'transports': ['websocket'],
-        'autoConnect': false
-      });
+      socket = CallSocket(
+        urlSocketServer: socketsAddress,
+        room: widget.appointment.id,
+        token: token,
+      );
       socket!.connect();
 
-      socket!.emit(
-          'patient ready', {"room": widget.appointment.id, "token": token});
-
-      socket!.on('find patient', (data) {
+      socket?.on(event: CallSignalsListen.FindPatient, callback:  (data) {
         if (callStatus) return;
         socket!.emit(
-            'patient ready', {"room": widget.appointment.id, "token": token});
+          event: CallSignalsEmit.InWaitingRoom,
+        );
       });
 
       initCall();
@@ -159,9 +158,60 @@ class _VideoCallState extends State<VideoCall> {
     }
     localRenderer.srcObject = localStream;
 
-    void onRemoteStream(MediaStream stream) {
-      remoteRenderer.srcObject = stream;
-    }
+
+    // Ready. Wait for start.
+    socket?.on(event: CallSignalsListen.SDPOffer, callback:  (message) async {
+
+      if (localStream != null && socket != null && token != null) {
+        //initialize the peer connection
+        peerConnection = PeerConnection(
+          localStream: localStream!,
+          onIceCandidateChange: onIceCandidateChange,
+          onRemoteStream: onRemoteStream,
+          onStateChange: onStateChange,
+        );
+
+        await peerConnection!.init();
+        RTCSessionDescription? sessionDescription = await peerConnection!.setSdpOffer(message);
+        if(sessionDescription != null){
+          socket?.emit(
+            event: CallSignalsEmit.SDPOffer,
+            data: {
+              'sdp': {'sdp': sessionDescription.sdp, 'type': sessionDescription.type},
+            },
+          );
+        }
+      }
+    });
+
+    // Inform Doctor that we are ready.
+    socket?.emit(event: CallSignalsEmit.PatientReadyToConnect,);
+    socket?.on(event: CallSignalsListen.DoctorReady, callback:  (message) {
+      socket?.emit(event: CallSignalsEmit.PatientReadyToConnect,);
+    });
+
+    // Handle incoming candidates
+    socket?.on(event: CallSignalsListen.IceCandidate, callback: (message) async {
+
+
+      await peerConnection?.onIceCandidateReceive(message);
+    });
+
+    socket?.on(
+      event: CallSignalsListen.Disconnect,
+      callback:  (data) {
+        Navigator.of(context).pop({"appointment": widget.appointment});
+      },
+    );
+
+    // This is a rerender for the camera
+    setState(() {});
+  }
+
+
+  void onRemoteStream(MediaStream stream) {
+    remoteRenderer.srcObject = stream;
+  }
 
     void onStateChange(CallState status) {
       switch (status) {
@@ -171,8 +221,9 @@ class _VideoCallState extends State<VideoCall> {
               isDisconnected = false;
               callStatus = true;
             });
-            socket!.emit('patient in call',
-                {"room": widget.appointment.id, "token": token});
+            socket!.emit(
+              event: CallSignalsEmit.Connected,
+            );
             break;
           }
         case CallState.CallDisconnected:
@@ -182,8 +233,9 @@ class _VideoCallState extends State<VideoCall> {
             });
             // notify again that the patient is waiting in room to repeat negotiation
             if (socket != null) {
-              socket!.emit('patient ready',
-                  {"room": widget.appointment.id, "token": token});
+              socket?.emit(
+                event: CallSignalsEmit.InWaitingRoom,
+              );
             }
             break;
           }
@@ -195,11 +247,26 @@ class _VideoCallState extends State<VideoCall> {
             // });
             callStatus = false;
             if (socket != null) {
-              socket!.emit('patient ready',
-                  {"room": widget.appointment.id, "token": token});
-              socket!.emit(
-                  'ready!', {"room": widget.appointment.id, "token": token});
+              socket?.emit(
+                event: CallSignalsEmit.InWaitingRoom,
+              );
+              socket?.emit(
+                event: CallSignalsEmit.PatientReadyToConnect,
+              );
             }
+
+            // reconnect with Socket on disconnect call for iOS
+            if(WebRTC.platformIsIOS) {
+              socket?.onConnect(callback: (){
+                socket?.emit(
+                  event: CallSignalsEmit.InWaitingRoom,
+                );
+                socket?.emit(
+                  event: CallSignalsEmit.PatientReadyToConnect,
+                );
+              });
+            }
+
             break;
           }
         default:
@@ -212,47 +279,19 @@ class _VideoCallState extends State<VideoCall> {
       }
     }
 
-    // Ready. Wait for start.
-    socket!.on('sdp offer', (message) async {
-      print('offer');
-
-      //if (peerConnection != null) peerConnection!.cleanup();
-
-      if (localStream != null && socket != null && token != null) {
-        //initialize the peer connection
-        peerConnection = PeerConnection(
-            localStream: localStream!,
-            room: widget.appointment.id!,
-            socket: socket!,
-            token: token!);
-
-        peerConnection!.onRemoteStream = onRemoteStream;
-        peerConnection!.onStateChange = onStateChange;
-
-        await peerConnection!.init();
-        print('setting description');
-        await peerConnection!.setSdpOffer(message);
-      }
-    });
-
-    // Inform Doctor that we are ready.
-    socket!.emit('ready!', {"room": widget.appointment.id, "token": token});
-    socket!.on('ready?', (message) {
-      print('ready!');
-      socket!.emit('ready!', {"room": widget.appointment.id, "token": token});
-    });
-
-    socket!.on('end call', (data) {
-      Navigator.of(context).pop({"appointment": widget.appointment});
-    });
-
-    // This is a rerender for the camera
-    setState(() {});
+  void onIceCandidateChange(RTCIceCandidate? candidate) {
+    // RTCIceCandidate
+    if (candidate != null) {
+      socket?.emit(
+        event: CallSignalsEmit.IceCandidate,
+        data: {'ice': candidate.toMap(), },
+      );
+    }
   }
 
   @override
   void dispose() {
-    Wakelock.disable();
+    WakelockPlus.disable();
     //cleanup the socket
     if (socket != null) {
       socket!.clearListeners();
@@ -272,7 +311,7 @@ class _VideoCallState extends State<VideoCall> {
   }
 
   Future<void> hangUp() async {
-    socket!.emit('end call', {"room": widget.appointment.id, "token": token});
+    socket?.emit(event: CallSignalsEmit.Disconnect, );
     Navigator.of(context).pop();
   }
 
@@ -287,8 +326,8 @@ class _VideoCallState extends State<VideoCall> {
   }
 
   void muteMic() {
-    final newState = !localStream!.getAudioTracks()[0].enabled;
-    localStream!.getAudioTracks()[0].enabled = newState;
+    final newState = !(localStream?.getAudioTracks()[0].enabled?? true);
+    localStream?.getAudioTracks()[0].enabled = newState;
   }
 
   Widget configIcon({ButtonStyle? buttonStyle}){

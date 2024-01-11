@@ -16,6 +16,7 @@ import 'package:intl/intl.dart';
 
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
+import 'package:scheduled_timer/scheduled_timer.dart';
 
 class AppointmentCard extends StatefulWidget {
   final Appointment appointment;
@@ -36,25 +37,29 @@ class _AppointmentCardState extends State<AppointmentCard> {
   bool isCancelled = false;
   DateTime actualDay = DateTime.now();
   DateTime appointmentDay = DateTime.now();
+  DateTime appointmentOpenDate = DateTime.now();
+  DateTime appointmentCloseDate = DateTime.now();
   AppointmentType? appointmentType;
   String locationDescription = 'Desconocido';
-  String virtualDescription = 'Sala de espera virtual habilitada 15 min. antes de la consulta';
+  String virtualDescription = 'Sala de espera virtual habilitada $minutesToOpenAppointment min. antes de la consulta';
   int daysDifference = 0;
   bool isToday = false;
   int minutes = 0;
-  Timer? timer;
+  ScheduledTimer? appointmentTimer;
 
   @override
   void didUpdateWidget(AppointmentCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.appointment != oldWidget.appointment) {
-      isCancelled = widget.appointment.status!.contains('cancelled');
+      isCancelled = widget.appointment.status == AppointmentStatus.Cancelled;
       actualDay = DateTime.now();
       appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
+      appointmentOpenDate = appointmentDay.subtract(const Duration(minutes: minutesToOpenAppointment));
+      appointmentCloseDate = appointmentDay.add(const Duration(minutes: minutesToCloseAppointment));
       daysDifference = daysBetween(actualDay,appointmentDay);
       minutes = appointmentDay.difference(actualDay).inMinutes + 1;
       isToday = daysDifference == 0 &&
-          !["closed", "locked"].contains(widget.appointment.status);
+          ![AppointmentStatus.Closed, AppointmentStatus.Locked].contains(widget.appointment.status);
 
       //set the appointment type
       appointmentType = widget.appointment.appointmentType == 'V'
@@ -63,19 +68,20 @@ class _AppointmentCardState extends State<AppointmentCard> {
       //message to describe whe is the appointment
       locationDescription = '${widget.appointment.organization?.name?? "Desconocido"}';
     }
-    timer?.cancel();
-    _updateWaitingRoom(1);
+    _appointmentStatusTimer();
   }
 
   @override
   void initState() {
-    isCancelled = widget.appointment.status!.contains('cancelled');
+    isCancelled = widget.appointment.status == AppointmentStatus.Cancelled;
     actualDay = DateTime.now();
     appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
+    appointmentOpenDate = appointmentDay.subtract(const Duration(minutes: minutesToOpenAppointment));
+    appointmentCloseDate = appointmentDay.add(const Duration(minutes: minutesToCloseAppointment));
     daysDifference = daysBetween(actualDay,appointmentDay);
     minutes = appointmentDay.difference(actualDay).inMinutes + 1;
     isToday = daysDifference == 0 &&
-        !["closed", "locked"].contains(widget.appointment.status);
+        ![AppointmentStatus.Closed, AppointmentStatus.Locked].contains(widget.appointment.status);
 
     //set the appointment type
     appointmentType = widget.appointment.appointmentType == 'V'
@@ -84,51 +90,68 @@ class _AppointmentCardState extends State<AppointmentCard> {
     //message to describe whe is the appointment
     locationDescription = '${widget.appointment.organization?.name?? "Desconocido"}';
     super.initState();
-    _updateWaitingRoom(1);
+    _appointmentStatusTimer();
   }
 
   @override
   void dispose(){
     super.dispose();
-    timer?.cancel();
+    appointmentTimer?.stop();
   }
 
   // asynchronous task to update the remaining minutes to open the waiting room
-  void _updateWaitingRoom(int seconds) async {
-    timer = Timer.periodic(Duration(seconds: seconds), (Timer timer) {
-      if(isCancelled){
-        timer.cancel();
-      }
-      actualDay = DateTime.now();
-      if(mounted)
-      setState(() {
-        minutes = appointmentDay.difference(actualDay).inMinutes + 1;
-      });
-      // deactivate task once the room is close
-      if(minutes <= -minutesToCloseAppointment) {
-        timer.cancel();
-        widget.appointment.status="locked";
-        // notify at home to delete this appointment
-        BlocProvider.of<HomeAppointmentsBloc>(context).add(DeleteAppointmentHome(id: widget.appointment.id));
-        BlocProvider.of<HomeNewsBloc>(context).add(DeleteNews(news: widget.appointment));
-      }
-      else if(minutes <= 0 && minutes > -minutesToCloseAppointment) {
-        timer.cancel();
-        _updateWaitingRoom(1*60); // check every minute
-      }
-      else if(minutes > 60) {
-        timer.cancel();
-        _updateWaitingRoom(30*60); // half hour
-      }
-      else if(minutes <= 60 && minutes > 15) {
-        timer.cancel();
-        _updateWaitingRoom(60); // one minute
-      }
-      else if(minutes <= 15 && minutes > 0) {
-        timer.cancel();
-        _updateWaitingRoom(2); //two seconds
-      }
-    });
+  void _appointmentStatusTimer() {
+    appointmentTimer?.stop();
+    appointmentTimer = ScheduledTimer(
+        id: widget.appointment.id?? '',
+        onExecute: () {
+          if(isCancelled){
+            appointmentTimer?.stop();
+            if(mounted)
+              setState(() {
+
+              });
+            return;
+          }
+          actualDay = DateTime.now();
+          if(mounted)
+            setState(() {
+              minutes = appointmentDay.difference(actualDay).inMinutes + 1;
+            });
+          if(actualDay.isBefore(appointmentOpenDate)){
+            if(mounted)
+            setState(() {
+              widget.appointment.status=AppointmentStatus.Upcoming;
+              appointmentTimer?.schedule(appointmentOpenDate);
+            });
+          }else if(actualDay.isBefore(appointmentDay)){
+            if(mounted)
+            setState(() {
+              widget.appointment.status=AppointmentStatus.Open;
+              appointmentTimer?.schedule(appointmentDay);
+            });
+          }else if(actualDay.isBefore(appointmentCloseDate)){
+            if(mounted)
+            setState(() {
+              widget.appointment.status=AppointmentStatus.Open;
+              appointmentTimer?.schedule(appointmentCloseDate);
+            });
+          }else {
+            if(mounted)
+            // deactivate task once the room is close
+            setState(() {
+              widget.appointment.status=AppointmentStatus.Locked;
+              appointmentTimer?.stop();
+              // notify at home to delete this appointment
+              BlocProvider.of<HomeNewsBloc>(context).add(DeleteNews(news: widget.appointment));
+            });
+          }
+        },
+        defaultScheduledTime: appointmentOpenDate,
+        onMissedSchedule: () {
+          appointmentTimer?.execute();
+        }
+    );
   }
 
   @override
@@ -138,8 +161,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
     return Column(
       children: [
         Card(
-          elevation: 4,
-          margin: const EdgeInsets.only(bottom: 4),
+          margin: const EdgeInsets.all(0),
           child:  Column(
             children: [
               Container(

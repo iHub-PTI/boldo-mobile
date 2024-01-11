@@ -16,7 +16,7 @@ class FilesRepository {
 
   /// get a url to upload File on AzureBlob service, and the url to get the file
   /// uploaded, this will throw a Failure if the statusCode is unknown
-  Future<UploadUrl> getUploadURL() async {
+  static Future<UploadUrl> getUploadURL() async {
 
     Response response;
     response = await dio.get('/presigned');
@@ -28,22 +28,68 @@ class FilesRepository {
     throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
   }
 
+  /// get a list of url to upload File on AzureBlob service, and the url to get the file
+  /// uploaded. In the right side has de [UploadUrl] and the left side has a Failure
+  static Future<List<Either<Failure, UploadUrl>>> getUploadsURL({required int quantity}) async {
+
+    List<Either<Failure, UploadUrl>> uploadUrlList = [];
+
+    for(int i = 0; i < quantity ; i++){
+      await Task(() => getUploadURL())
+          .attempt()
+          .mapLeftToFailure()
+          .run()
+          .then((value) {
+        uploadUrlList.add(value);
+      });
+    }
+
+    return uploadUrlList;
+  }
+
   /// On uploaded the file with http put method, this will return [None] type,
   /// if the file is too large, this will returned a [Failure]
-  Future<None> uploadFile({required File file, required String url}) async {
+  static Future<MapEntry<File, UploadUrl>> uploadFile({required File file, required UploadUrl url}) async {
 
     http.Response response;
     response = await http.put(
-      Uri.parse(url), body: file.readAsBytesSync(),
+      Uri.parse(url.uploadUrl?? ''), body: file.readAsBytesSync(),
     );
 
     if(response.statusCode == 201){
-      return const None();
+      return MapEntry(file, url);
     }else if(response.statusCode == 413){
       throw Failure(
-          'El archivo ${path.basename(file.path)} es demasiado grande',);
+          'Lo sentimos, el archivo supera el archivo es demasiado grande',);
     }
     throw Failure('Unknown StatusCode ${response.statusCode}',);
+  }
+
+  /// On uploaded the list of files with http put method to pair of urls.
+  static Future<List<MapEntry<File, Either<Failure, MapEntry<File, UploadUrl>>>>> uploadFiles({
+    required List<MapEntry<File, UploadUrl?>> files,
+  }) async {
+
+    List<MapEntry<File, Either<Failure, MapEntry<File, UploadUrl>>>> resultsUploadList = [];
+
+    await Future.forEach(files, (element) async {
+
+      await Task(() async {
+        UploadUrl _uploadUrl = element.value?? await getUploadURL();
+        return uploadFile(
+          file: element.key,
+          url: _uploadUrl ,
+        );
+      })
+          .attempt()
+          .mapLeftToFailure()
+          .run()
+          .then((value) {
+        resultsUploadList.add(MapEntry(element.key, value));
+      });
+    });
+
+    return resultsUploadList;
   }
 
   /// If [localDio] isn't passed, by default it will download with http

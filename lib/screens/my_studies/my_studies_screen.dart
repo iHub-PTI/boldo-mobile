@@ -221,17 +221,25 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
         if(state is Loading){
           return loadingStatus();
         }else{
-          return ListView.separated(
-            physics: const ClampingScrollPhysics(),
-            separatorBuilder: (BuildContext context, int index) => const Divider(
-              color: Colors.transparent,
-              height: 10,
-            ),
-            itemCount: diagnosticReport.length,
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemBuilder: showStudy,
-          );
+          if(diagnosticReport.isNotEmpty)
+            return ListView.separated(
+              physics: const ClampingScrollPhysics(),
+              separatorBuilder: (BuildContext context, int index) => const Divider(
+                color: Colors.transparent,
+                height: 10,
+              ),
+              itemCount: diagnosticReport.length,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemBuilder: showStudy,
+            );
+          else
+            return const EmptyStateV2(
+              picture: "empty_studies.svg",
+              titleBottom: "Aún no tenés estudios",
+              textBottom:
+              "A medida en que uses la aplicación podrás ir viendo tus estudios",
+            );
         }
       },
     );
@@ -243,13 +251,12 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
         if(state is studies_orders_bloc.StudiesOrdersLoaded){
           return state.studiesOrders.isNotEmpty ? SelectableServiceRequest(
             servicesRequests: state.studiesOrders,
-          ) : const Expanded(
-        child: EmptyStateV2(
-          picture: "empty_studies.svg",
-          titleBottom: "Aún no tenés estudios",
-          textBottom:
-          "A medida en que uses la aplicación podrás ir viendo tus estudios",
-        ));
+          ) : const EmptyStateV2(
+            picture: "empty_studies.svg",
+            titleBottom: "Aún no tenés órdenes",
+            textBottom:
+            "Aquí aparecerán las órdenes de estudios solicitadas",
+          );
         } else if(state is studies_orders_bloc.LoadingOrders) {
           return loadingStatus();
         } else {
