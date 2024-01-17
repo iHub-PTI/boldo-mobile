@@ -3,7 +3,6 @@ import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart' as
 import 'package:boldo/blocs/organizationSubscribed_bloc/organizationSubscribed_bloc.dart' as subscribed;
 import 'package:boldo/blocs/organizationApplied_bloc/organizationApplied_bloc.dart' as applied;
 import 'package:boldo/blocs/organization_bloc/organization_bloc.dart';
-import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
 import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Organization.dart';
@@ -13,7 +12,6 @@ import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
-import 'package:boldo/widgets/header_page.dart';
 import 'package:boldo/widgets/organization_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -124,8 +122,9 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                                         Text(
                                           "Seleccioná los Centros Asistenciales a los que desea "
                                               "enviar una solicitud",
-                                          style: bodyMediumRegular.copyWith(
-                                              color: ConstantsV2.activeText),
+                                          style: medicationTextStyle.copyWith(
+                                            color: ConstantsV2.activeText,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -493,7 +492,9 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                             child: Text(
                                               //'Arrastrá los elementos para establecer el orden de prioridad',
                                               'Gestioná las organizaciones a las cuales perteneces',
-                                              style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.grayDark),
+                                              style: medicationTextStyle.copyWith(
+                                                color: ConstantsV2.activeText,
+                                              ),
                                             ),
                                           ),
                                           const SizedBox(
@@ -586,7 +587,9 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                         Container(
                                           child: Text(
                                             'Centros Asistenciales pendientes de aprobación',
-                                            style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.grayDark),
+                                            style: medicationTextStyle.copyWith(
+                                              color: ConstantsV2.activeText,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -1053,11 +1056,14 @@ class FamilySelectorState extends State<FamilySelector>{
         if(state is family_bloc.Success){
           _families = families;
           child = _families.isNotEmpty? Container(
-            height: 60,
-            child: ListView.builder(
-              itemCount: _families.length + 1, //patient is first element
+            child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              itemBuilder: _buildPictureRoundedFamily
+              child: Row(
+                children: [
+                  _buildPictureRoundedFamily(context, 0),
+                  ..._families.asMap().entries.map((e) => _buildPictureRoundedFamily(context, e.key+1)).toList(),
+                ],
+              ),
             ),
           ) : Container();
         }else if(state is family_bloc.Failed){
@@ -1080,23 +1086,34 @@ class FamilySelectorState extends State<FamilySelector>{
   }
 
   Widget _buildPictureRoundedFamily(BuildContext context, int index){
+    Patient _patient = Patient(
+      id: prefs.getString("userId"),
+      photoUrl: prefs.getString("profile_url"),
+      givenName: prefs.getString("name"),
+      familyName: prefs.getString("lastName"),
+      identifier: prefs.getString("identifier"),
+    );
     return Center(
       child: GestureDetector(
         onTap: () => {
           setState((){
-            Patient _patient = Patient(
-              id: prefs.getString("userId"),
-              photoUrl: prefs.getString("profile_url"),
-              givenName: prefs.getString("name"),
-              familyName: prefs.getString("lastName"),
-              identifier: prefs.getString("identifier"),
-            );
             widget.patientSelected = index==0? _patient : families[index-1];
           }),
           if(widget.actionCallback != null)
             widget.actionCallback!(widget.patientSelected),
         },
-        child: _profileFamily(index, "rounded"),
+        child: Column(
+          children: [
+            _profileFamily(index, "rounded"),
+            const SizedBox(height: 4,),
+            Text(index==0? _patient.givenName?.split(' ').first?? '' : families[index-1].givenName?.split(' ').first?? '',
+              style: medicationTextStyle.copyWith(
+                color: ConstantsV2.activeText,
+                fontWeight: FontWeight.w600,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
