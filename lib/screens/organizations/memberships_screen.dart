@@ -3,7 +3,6 @@ import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart' as
 import 'package:boldo/blocs/organizationSubscribed_bloc/organizationSubscribed_bloc.dart' as subscribed;
 import 'package:boldo/blocs/organizationApplied_bloc/organizationApplied_bloc.dart' as applied;
 import 'package:boldo/blocs/organization_bloc/organization_bloc.dart';
-import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
 import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Organization.dart';
@@ -13,7 +12,6 @@ import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
-import 'package:boldo/widgets/header_page.dart';
 import 'package:boldo/widgets/organization_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
