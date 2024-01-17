@@ -1,11 +1,10 @@
 import 'package:boldo/app_config.dart';
+import 'package:boldo/blocs/login_bloc/userLoginBloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/environment.dart';
 import 'package:boldo/network/connection_status.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
-import 'package:boldo/screens/pre_register_notify/pre_register_success_screen.dart';
-import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -195,30 +194,27 @@ void initDio(
               data: options.data, options: optionsDio, queryParameters: options.queryParameters));
         } on DioError catch(exception){
           if (exception.response?.statusCode == 401){
-            final _result = await authenticateUser(context: navKey.currentState!.context);
-            switch (_result) {
-              case 0:
-                //user canceled or generic error
-                navKey.currentState!.pushNamedAndRemoveUntil(
-                  "/onboarding",
-                  (route) => false,
-                );
-                break;
-              case 1:
-                //new user register
-                navKey.currentState!.pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) => const PreRegisterSuccess()),
-                  (route) => false,
-                );
-                break;
+            bool _enable = await UserLoginBloc.redirectSignIn(
+              context: navKey.currentState!.context,
+            );
 
-              case 2:
-                Dio _dio = Dio();
-                initDio(navKey: navKey, dio: _dio, baseUrl: baseUrl, header: header, responseType: responseType);
-                return handle.resolve(await _dio.request(options.path,
-                    data: options.data, options: optionsDio, queryParameters: options.queryParameters));
-              default:
+            if(_enable) {
+              Dio _dio = Dio();
+              initDio(
+                navKey: navKey,
+                dio: _dio,
+                baseUrl: baseUrl,
+                header: header,
+                responseType: responseType,
+              );
+              return handle.resolve(
+                await _dio.request(
+                  options.path,
+                  data: options.data,
+                  options: optionsDio,
+                  queryParameters: options.queryParameters,
+                ),
+              );
             }
           }
           else{
