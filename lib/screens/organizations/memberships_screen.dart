@@ -1056,11 +1056,14 @@ class FamilySelectorState extends State<FamilySelector>{
         if(state is family_bloc.Success){
           _families = families;
           child = _families.isNotEmpty? Container(
-            height: 60,
-            child: ListView.builder(
-              itemCount: _families.length + 1, //patient is first element
+            child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              itemBuilder: _buildPictureRoundedFamily
+              child: Row(
+                children: [
+                  _buildPictureRoundedFamily(context, 0),
+                  ..._families.asMap().entries.map((e) => _buildPictureRoundedFamily(context, e.key+1)).toList(),
+                ],
+              ),
             ),
           ) : Container();
         }else if(state is family_bloc.Failed){
