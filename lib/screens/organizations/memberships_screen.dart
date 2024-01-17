@@ -124,8 +124,9 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                                         Text(
                                           "Seleccioná los Centros Asistenciales a los que desea "
                                               "enviar una solicitud",
-                                          style: bodyMediumRegular.copyWith(
-                                              color: ConstantsV2.activeText),
+                                          style: medicationTextStyle.copyWith(
+                                            color: ConstantsV2.activeText,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -493,7 +494,9 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                             child: Text(
                                               //'Arrastrá los elementos para establecer el orden de prioridad',
                                               'Gestioná las organizaciones a las cuales perteneces',
-                                              style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.grayDark),
+                                              style: medicationTextStyle.copyWith(
+                                                color: ConstantsV2.activeText,
+                                              ),
                                             ),
                                           ),
                                           const SizedBox(
@@ -586,7 +589,9 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                         Container(
                                           child: Text(
                                             'Centros Asistenciales pendientes de aprobación',
-                                            style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.grayDark),
+                                            style: medicationTextStyle.copyWith(
+                                              color: ConstantsV2.activeText,
+                                            ),
                                           ),
                                         ),
                                       ],
