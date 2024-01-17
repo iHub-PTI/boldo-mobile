@@ -14,9 +14,8 @@ import 'package:boldo/constants.dart';
 import '../../main.dart';
 
 class SingInTransition extends StatefulWidget {
-  final bool setLoggedOut;
 
-  SingInTransition({Key? key, this.setLoggedOut = false}) : super(key: key);
+  SingInTransition({Key? key}) : super(key: key);
 
   @override
   _SingInTransitionState createState() => _SingInTransitionState();
