@@ -1085,17 +1085,17 @@ class FamilySelectorState extends State<FamilySelector>{
   }
 
   Widget _buildPictureRoundedFamily(BuildContext context, int index){
+    Patient _patient = Patient(
+      id: prefs.getString("userId"),
+      photoUrl: prefs.getString("profile_url"),
+      givenName: prefs.getString("name"),
+      familyName: prefs.getString("lastName"),
+      identifier: prefs.getString("identifier"),
+    );
     return Center(
       child: GestureDetector(
         onTap: () => {
           setState((){
-            Patient _patient = Patient(
-              id: prefs.getString("userId"),
-              photoUrl: prefs.getString("profile_url"),
-              givenName: prefs.getString("name"),
-              familyName: prefs.getString("lastName"),
-              identifier: prefs.getString("identifier"),
-            );
             widget.patientSelected = index==0? _patient : families[index-1];
           }),
           if(widget.actionCallback != null)
