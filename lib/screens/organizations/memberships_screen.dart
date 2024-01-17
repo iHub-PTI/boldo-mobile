@@ -1101,7 +1101,18 @@ class FamilySelectorState extends State<FamilySelector>{
           if(widget.actionCallback != null)
             widget.actionCallback!(widget.patientSelected),
         },
-        child: _profileFamily(index, "rounded"),
+        child: Column(
+          children: [
+            _profileFamily(index, "rounded"),
+            const SizedBox(height: 4,),
+            Text(index==0? _patient.givenName?.split(' ').first?? '' : families[index-1].givenName?.split(' ').first?? '',
+              style: medicationTextStyle.copyWith(
+                color: ConstantsV2.activeText,
+                fontWeight: FontWeight.w600,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
