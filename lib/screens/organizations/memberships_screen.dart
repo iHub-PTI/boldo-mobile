@@ -14,6 +14,7 @@ import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
+import 'package:boldo/widgets/organization_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -216,9 +217,23 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
         ),
         child: CheckboxListTile(
           contentPadding: EdgeInsets.zero,
-          title: Text(
-            _organizationsNotSubscribed[index].name?? "Sin nombre",
-            style: bodyLargeBlack,
+          title: Container(
+            child: Row(
+              children: [
+                OrganizationPhoto(
+                  organization: _organizationsNotSubscribed[index],
+                ),
+                const SizedBox(
+                  width: 16,
+                ),
+                Flexible(
+                  child: Text(
+                    _organizationsNotSubscribed[index].name?? "Sin nombre",
+                    style: bodyLargeBlack,
+                  ),
+                ),
+              ],
+            ),
           ),
           value: _organizationsSelected.contains(_organizationsNotSubscribed[index]),
           activeColor: ConstantsV2.secondaryRegular,
@@ -397,35 +412,47 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Row(
+                    Container(
+                      decoration: BoxDecoration(
+                        color: ConstantsV2.lightAndClear,
+                        boxShadow: [
+                          shadowHeader,
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
                             children: [
-                              BackButtonLabel(
-                                iconType: BackIcon.backArrow,
-                                labelText: 'Centros Asistenciales',
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    BackButtonLabel(
+                                      iconType: BackIcon.backArrow,
+                                      labelText: 'Centros Asistenciales',
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      child: Builder(builder: (context){
-                        return FamilySelector(
-                          patientSelected: patientSelected,
-                          actionCallback: (_patientSelected){
-                            setState(() {
-                              patientSelected = _patientSelected;
-                            });
-                            BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected));
-                            BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated(patientSelected: patientSelected));
-                          },
-                        );
-                      })
+                          const SizedBox(height: 4),
+                          Container(
+                              padding: const EdgeInsets.all(16),
+                              child: Builder(builder: (context){
+                                return FamilySelector(
+                                  patientSelected: patientSelected,
+                                  actionCallback: (_patientSelected){
+                                    setState(() {
+                                      patientSelected = _patientSelected;
+                                    });
+                                    BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected));
+                                    BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated(patientSelected: patientSelected));
+                                  },
+                                );
+                              })
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(
                       height: 16,
@@ -449,12 +476,16 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                           } else {
                             child = Container(
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                                color: ConstantsV2.grayLightest,
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFAFAFA),
+                                  boxShadow: [
+                                    shadowRegular,
+                                  ],
+                                ),
                                 child: Column(
                                   children: [
                                     Container(
-                                      width: MediaQuery.of(context).size.width-30,
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
@@ -540,15 +571,19 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                           } else {
                             child = Container(
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                                color: ConstantsV2.grayLightest,
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFAFAFA),
+                                  boxShadow: [
+                                    shadowRegular,
+                                  ],
+                                ),
                                 child: Column(
                                   children: [
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 16.0),
+                                        Container(
                                           child: Text(
                                             'Centros Asistenciales pendientes de aprobación',
                                             style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.grayDark),
@@ -556,7 +591,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 10),
+                                    const SizedBox(height: 16),
                                     ListView.builder(
                                       physics: const ClampingScrollPhysics(),
                                       shrinkWrap: true,
@@ -738,39 +773,54 @@ class OrganizationPostulationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-        child: Card(
-          elevation: 0,
+        child: Container(
           margin: EdgeInsets.zero,
-          color: ConstantsV2.CardBG.withOpacity(0.05),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+          decoration: ShapeDecoration(
+            color: const Color(0x0CEAEAEA),
+            shape: RoundedRectangleBorder(
               side: BorderSide(
+                width: 1,
                 color: ConstantsV2.grayLightAndClear,
-              )
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           child: Container(
             child: Row(
               children: [
                 Expanded(
-                  child: Card(
-                    elevation: 0,
+                  child: Container(
                     margin: EdgeInsets.zero,
-                    color: ConstantsV2.grayLight,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: BorderSide(
-                          color: ConstantsV2.grayLightAndClear,
-                        )
+                    decoration: const ShapeDecoration(
+                      color: Color(0xFFF7F7F7),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(4),
+                          bottomRight: Radius.circular(4),
+                        ),
+                      ),
                     ),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children:[
                             Flexible(
-                              child: Text(
-                                "${organization.organizationName?? "Sin nombre"}",
-                                style: bodyLargeBlack,
+                              child: Row(
+                                children: [
+                                  // OrganizationPhoto(
+                                  //   organization: organization,
+                                  // ),
+                                  // const SizedBox(
+                                  //   width: 16,
+                                  // ),
+                                  Flexible(
+                                    child: Text(
+                                      "${organization.organizationName}",
+                                      style: bodyLargeBlack,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             cancelSubscriptionOption(organization, context),
@@ -800,7 +850,10 @@ class OrganizationPostulationCard extends StatelessWidget {
               .add(applied.UnPostulated(organization: organization, patientSelected: patientSelected));
         }
       },
-      child: SvgPicture.asset('assets/icon/familyTrash.svg'),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        child: SvgPicture.asset('assets/icon/familyTrash.svg'),
+      ),
     );
   }
 
@@ -837,39 +890,53 @@ class OrganizationSubscribedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Card(
-        elevation: 0,
-        margin: EdgeInsets.zero,
-        color: ConstantsV2.CardBG,
-        shape: RoundedRectangleBorder(
+      child: Container(
+        decoration: ShapeDecoration(
+          color: Color(0xFFE9E9E9),
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(
+              width: 1,
+              color: ConstantsV2.BGNeutral,
+            ),
             borderRadius: BorderRadius.circular(8),
-            side: BorderSide(
-              color: ConstantsV2.grayLightAndClear,
-            )
+          ),
         ),
         child: Container(
           child: Row(
             children: [
               Expanded(
-                child: Card(
-                  elevation: 0,
+                child: Container(
                   margin: EdgeInsets.zero,
-                  color: ConstantsV2.grayLight,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(
-                        color: ConstantsV2.grayLightAndClear,
-                      )
+                  decoration: const ShapeDecoration(
+                    color: Color(0xFFF7F7F7),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(4),
+                        bottomRight: Radius.circular(4),
+                      ),
+                    ),
                   ),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:[
                           Flexible(
-                            child: Text(
-                              "${organization.name}",
-                              style: bodyLargeBlack,
+                            child: Row(
+                              children: [
+                                OrganizationPhoto(
+                                  organization: organization,
+                                ),
+                                const SizedBox(
+                                  width: 16,
+                                ),
+                                Flexible(
+                                  child: Text(
+                                    "${organization.name}",
+                                    style: bodyLargeBlack,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           moreOptions(organization, context),
@@ -900,7 +967,13 @@ class OrganizationSubscribedCard extends StatelessWidget {
           }
         }
       },
-      child: SvgPicture.asset('assets/icon/more-horiz.svg'),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        child: SvgPicture.asset(
+          'assets/icon/more-horiz.svg',
+          color: ConstantsV2.inactiveText,
+        ),
+      ),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
         PopupMenuItem<String>(
           value: 'baja',
