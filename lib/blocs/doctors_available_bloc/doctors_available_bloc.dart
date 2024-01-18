@@ -1,15 +1,13 @@
-import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
-import 'package:boldo/main.dart';
+import 'dart:async';
+
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/PagList.dart';
 import 'package:boldo/network/doctor_repository.dart';
-import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/utils/organization_helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 part 'doctors_available_event.dart';
 part 'doctors_available_state.dart';
@@ -19,58 +17,7 @@ class DoctorsAvailableBloc
   final DoctorRepository _doctorRepository = DoctorRepository();
   DoctorsAvailableBloc() : super(DoctorsAvailableInitial()) {
     on<DoctorsAvailableEvent>((event, emit) async {
-      if (event is GetDoctorsAvailable) {
-        emit(Loading());
-        var _post;
-        await Task(() => _doctorRepository.getAllDoctors(event.offset)!)
-            .attempt()
-            .run()
-            .then((value) {
-          _post = value;
-        });
-        var response;
-        if (_post.isLeft()) {
-          _post.leftMap((l) => response = l.message);
-          emit(Failed(response: response));
-        } else {
-          late PagList<Doctor> result;
-          _post.foldRight(Doctor, (a, previous) => result = a);
-
-
-          //sort doctors by first availability
-          result.items?.sort(orderByOrganizationAvailability);
-          emit(DoctorsLoaded(doctors: result));
-          emit(Success());
-        }
-      } else if (event is GetMoreDoctorsAvailable) {
-        var _post;
-        await Task(() => _doctorRepository.getAllDoctors(event.offset)!)
-            .attempt()
-            .run()
-            .then((value) {
-          _post = value;
-        });
-        var response;
-        if (_post.isLeft()) {
-          _post.leftMap((l) => response = l.message);
-          emit(Failed(response: response));
-        } else {
-          late PagList<Doctor> result;
-          _post.foldRight(Doctor, (a, previous) => result = a);
-
-          //sort each doctor's organizations by availability
-          result.items = result.items?.map(
-                  (e) {
-                e.organizations?.sort(orderByAvailability);
-                return e;
-              }
-          ).toList();
-
-          //sort doctors by first availability
-          result.items?.sort(orderByOrganizationAvailability);
-          emit(MoreDoctorsLoaded(doctors: result));
-        }
-      } else if(event is GetMoreFilterDoctor) {
+      if(event is GetMoreFilterDoctor) {
         var _post;
         await Task(() => _doctorRepository
             .getDoctorsFilter(

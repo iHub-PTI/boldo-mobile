@@ -128,6 +128,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 listener: (context, state) {
                   if (state is DoctorsLoaded) {
                     maxSizeAllDoctors = state.doctors.total??0;
+                    offsetAllDoctors = 0;
+                    offsetFavoriteDoctors = 0;
                     setState(() {
                       doctors = state.doctors.items?? [];
                     });
