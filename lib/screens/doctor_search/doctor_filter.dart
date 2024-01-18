@@ -803,8 +803,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
           InkWell(
             onTap: () {
               Provider.of<DoctorFilterProvider>(context, listen: false)
-                  .removeOrganization(
-                organizationId: product.id ?? "",
+                  .removeAppointmentType(
                 context: context,
               );
               // get the update list
