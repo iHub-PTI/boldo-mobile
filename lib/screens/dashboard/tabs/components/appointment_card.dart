@@ -174,7 +174,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Esta cita se aproxima",
+                            widget.appointment.status == AppointmentStatus.Cancelled? "Esta cita se ha cancelado":  "Esta cita se aproxima",
                             style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.darkBlue),
                           ),
                           Text(
