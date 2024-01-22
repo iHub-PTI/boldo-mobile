@@ -458,7 +458,10 @@ class DateTextFormatter extends TextInputFormatter {
 
 enum ActionStatus {Success, Fail}
 
-void emitSnackBar({required BuildContext context, String? text, ActionStatus? status, Widget? icon, Color? color}){
+
+enum SnackBarPosition {TOP, BUTTON}
+
+Future emitSnackBar({required BuildContext context, String? text, ActionStatus? status, Widget? icon, Color? color, SnackBarPosition snackBarPosition = SnackBarPosition.BUTTON}) async {
 
   String? message = text;
 
