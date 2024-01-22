@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:boldo/constants.dart';
 import 'package:camera/camera.dart';
 import 'package:date_format/date_format.dart';
@@ -486,30 +487,19 @@ void emitSnackBar({required BuildContext context, String? text, ActionStatus? st
       color = color?? ConstantsV2.secondaryRegular;
   }
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      elevation: 1,
-      behavior: SnackBarBehavior.floating,
-      margin: const EdgeInsets.symmetric(horizontal: 19, vertical: 10),
-      content: Row(
-        children: [
-          if(icon != null)
-            icon,
-          const Padding(padding: EdgeInsets.only(left: 8)),
-          Expanded(
-            child: Text(
-                message,
-                style: boldoCorpMediumBlackTextStyle
-                    .copyWith(color: ConstantsV2.lightGrey)
-            ),
-          )
-        ],
-      ),
-      backgroundColor: color,
+  Flushbar _flushBar = Flushbar(
+    flushbarPosition: flushBarPosition,
+    borderRadius: BorderRadius.circular(8),
+    flushbarStyle: FlushbarStyle.FLOATING,
+    margin: const EdgeInsets.symmetric(horizontal: 19, vertical: 10),
+    icon: icon,
+    duration: const Duration(seconds: 3),
+    messageText: Text(
+        message,
+        style: boldoCorpMediumBlackTextStyle
+            .copyWith(color: ConstantsV2.lightGrey)
     ),
+    backgroundColor: color,
   );
 }
 
