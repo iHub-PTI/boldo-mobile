@@ -25,6 +25,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     const MapEntry(AppointmentStatus.Closed, AppointmentStatus.Open),
     const MapEntry(AppointmentStatus.Closed, AppointmentStatus.Closed),
     const MapEntry(AppointmentStatus.Locked, AppointmentStatus.Locked),
+    const MapEntry(AppointmentStatus.Cancelled, AppointmentStatus.Cancelled),
   ];
 
   AppointmentBloc() : super(AppointmentInitial()) {
