@@ -387,8 +387,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
                   )
                       : Container(
                     child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        var result = await Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => MedicalRecordsScreen(
@@ -397,6 +397,11 @@ class _AppointmentCardState extends State<AppointmentCard> {
                             settings: RouteSettings(name: (MedicalRecordsScreen).toString()),
                           ),
                         );
+                        if(result == AppointmentStatus.Cancelled){
+                          widget.appointment.status = AppointmentStatus.Cancelled;
+                          setState(() {
+                          });
+                        }
                       },
                       child: Card(
                           margin: EdgeInsets.zero,
