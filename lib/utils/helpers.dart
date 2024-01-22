@@ -504,6 +504,8 @@ Future emitSnackBar({required BuildContext context, String? text, ActionStatus? 
     ),
     backgroundColor: color,
   );
+
+  return _flushBar.show(context);
 }
 
 /// [date] must be a valid date on string mode
