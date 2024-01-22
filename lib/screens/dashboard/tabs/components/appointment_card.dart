@@ -338,7 +338,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                   ),
                                 if (widget.appointment.status == AppointmentStatus.Cancelled)
                                   Text(
-                                    "Cancelado - ${DateFormat('HH:mm').format(DateTime.parse(widget.appointment.start!).toLocal())} hs ",
+                                    widget.appointment.getCancelUserMessage(),
                                     style: const TextStyle(
                                       color: Constants.otherColor300,
                                       fontSize: 12,
