@@ -34,7 +34,6 @@ class AppointmentCard extends StatefulWidget {
 }
 
 class _AppointmentCardState extends State<AppointmentCard> {
-  bool isCancelled = false;
   DateTime actualDay = DateTime.now();
   DateTime appointmentDay = DateTime.now();
   DateTime appointmentOpenDate = DateTime.now();
@@ -51,7 +50,6 @@ class _AppointmentCardState extends State<AppointmentCard> {
   void didUpdateWidget(AppointmentCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.appointment != oldWidget.appointment) {
-      isCancelled = widget.appointment.status == AppointmentStatus.Cancelled;
       actualDay = DateTime.now();
       appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
       appointmentOpenDate = appointmentDay.subtract(const Duration(minutes: minutesToOpenAppointment));
@@ -73,7 +71,6 @@ class _AppointmentCardState extends State<AppointmentCard> {
 
   @override
   void initState() {
-    isCancelled = widget.appointment.status == AppointmentStatus.Cancelled;
     actualDay = DateTime.now();
     appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
     appointmentOpenDate = appointmentDay.subtract(const Duration(minutes: minutesToOpenAppointment));
@@ -105,7 +102,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
     appointmentTimer = ScheduledTimer(
         id: widget.appointment.id?? '',
         onExecute: () {
-          if(isCancelled){
+          if(widget.appointment.status == AppointmentStatus.Cancelled){
             appointmentTimer?.stop();
             if(mounted)
               setState(() {
@@ -339,7 +336,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                       ),
                                     ],
                                   ),
-                                if (isCancelled)
+                                if (widget.appointment.status == AppointmentStatus.Cancelled)
                                   Text(
                                     "Cancelado - ${DateFormat('HH:mm').format(DateTime.parse(widget.appointment.start!).toLocal())} hs ",
                                     style: const TextStyle(
