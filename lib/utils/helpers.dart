@@ -461,6 +461,15 @@ void emitSnackBar({required BuildContext context, String? text, ActionStatus? st
 
   String? message = text;
 
+  FlushbarPosition defaultFlushBarPosition = FlushbarPosition.TOP;
+
+  Map<SnackBarPosition, FlushbarPosition> snackBarPositionMap = {
+    SnackBarPosition.TOP: FlushbarPosition.TOP,
+    SnackBarPosition.BUTTON: FlushbarPosition.BOTTOM,
+  };
+
+  FlushbarPosition flushBarPosition = snackBarPositionMap[snackBarPosition]?? defaultFlushBarPosition;
+
   switch (status) {
     case ActionStatus.Success:
       message = message?? "Acción exitosa";
