@@ -178,20 +178,15 @@ class NextAvailability {
 class OrganizationWithAvailability{
 
   Organization? organization;
-  NextAvailability? nextAvailability;
   List<NextAvailability?>? availabilities;
 
   OrganizationWithAvailability.fromJson(Map<String, dynamic> json) {
     organization = Organization.fromJson(json);
-    if (json['nextAvailability'] != null) {
-      nextAvailability = NextAvailability.fromJson(json["nextAvailability"]);
-    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     data.addAll(organization?.toJson()?? {});
-    data['nextAvailability'] = nextAvailability?.toJson();
     return data;
   }
 
