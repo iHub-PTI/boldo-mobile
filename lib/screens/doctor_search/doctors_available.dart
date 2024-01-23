@@ -883,7 +883,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 // ),
                 Container(
                   child: Text(
-                    "vía ${organization?.organization?.name?? 'Desconocido'}",
+                    "$_firstOrganizationName$_countOfMoreOrganizations",
                     style: boldoBodySRegularTextStyle
                         .copyWith(
                       color: ConstantsV2
