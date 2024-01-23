@@ -860,6 +860,9 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   Widget _availabilityHourCard(List<OrganizationWithAvailability>? organization){
 
 
+    String _firstOrganizationName = "${ ((organization?.isNotEmpty)?? true)? organization?.first.organization?.name?? 'Desconocido' : "Sin org"}";
+    String _countOfMoreOrganizations = "${(organization?.length?? 0) > 1 ? ' +${(organization?.length?? 0)-1}' : '' }";
+
     return Container(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
