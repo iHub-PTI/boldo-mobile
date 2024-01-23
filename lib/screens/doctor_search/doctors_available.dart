@@ -857,7 +857,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     setState(() {});
   }
 
-  Widget _availabilityHourCard(OrganizationWithAvailability? organization){
+  Widget _availabilityHourCard(List<OrganizationWithAvailability>? organization){
 
 
     return Container(
@@ -868,16 +868,16 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  child: Text(
-                    availableText(organization?.nextAvailability),
-                    style: boldoBodySRegularTextStyle
-                        .copyWith(
-                      color: ConstantsV2
-                          .grayLight,
-                    ),
-                  ),
-                ),
+                // Container(
+                //   child: Text(
+                //     availableText(organization?.nextAvailability),
+                //     style: boldoBodySRegularTextStyle
+                //         .copyWith(
+                //       color: ConstantsV2
+                //           .grayLight,
+                //     ),
+                //   ),
+                // ),
                 Container(
                   child: Text(
                     "vía ${organization?.organization?.name?? 'Desconocido'}",
@@ -891,23 +891,23 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
               ],
             ),
           ),
-          if( organization?.nextAvailability?.availability != null ) Card(
-            elevation: 0.0,
-            color: ConstantsV2.grayLightAndClear,
-            shape: RoundedRectangleBorder(
-              side: BorderSide(color: ConstantsV2.grayLightAndClear, width: 1),
-              borderRadius: BorderRadius.circular(100),
-            ),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-              child: Row(
-                children: [
-                  Text("${DateFormat('HH:mm').format(DateTime.parse(organization?.nextAvailability?.availability?? DateTime.now().toString()).toLocal())}",
-                    style: boldoBodySBlackTextStyle.copyWith(color: ConstantsV2.secondaryRegular),),
-                ],
-              ),
-            ),
-          ),
+          // if( organization?.nextAvailability?.availability != null ) Card(
+          //   elevation: 0.0,
+          //   color: ConstantsV2.grayLightAndClear,
+          //   shape: RoundedRectangleBorder(
+          //     side: BorderSide(color: ConstantsV2.grayLightAndClear, width: 1),
+          //     borderRadius: BorderRadius.circular(100),
+          //   ),
+          //   child: Container(
+          //     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+          //     child: Row(
+          //       children: [
+          //         Text("${DateFormat('HH:mm').format(DateTime.parse(organization?.nextAvailability?.availability?? DateTime.now().toString()).toLocal())}",
+          //           style: boldoBodySBlackTextStyle.copyWith(color: ConstantsV2.secondaryRegular),),
+          //       ],
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -1081,7 +1081,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                             : Container(),
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0, bottom: 4),
-                          child: _availabilityHourCard(doctor.organizations?.first),
+                          child: _availabilityHourCard(doctor.organizations),
                         ),
                       ],
                     ),
