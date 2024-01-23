@@ -732,8 +732,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                     ),
                     height: 250,
                     child: GridView.builder(
-                      padding:
-                      const EdgeInsets.only(right: 16, left: 16),
                       physics: const ScrollPhysics(),
                       scrollDirection: Axis.horizontal,
                       shrinkWrap: true,
