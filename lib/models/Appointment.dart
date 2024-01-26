@@ -7,6 +7,8 @@ import 'package:flutter/widgets.dart';
 import './Doctor.dart';
 import 'Patient.dart';
 
+enum CancelUserReason {Patient, Practitioner}
+
 class Appointment extends News {
   String? _status;
   String? id;
@@ -18,6 +20,7 @@ class Appointment extends News {
   Patient? patient;
   Organization? organization;
   List<Prescription>? prescriptions;
+  CancelUserReason? statusAutor;
 
   AppointmentStatus? _appointmentStatus;
 
@@ -32,6 +35,7 @@ class Appointment extends News {
     this.organization,
     this.patient,
     this.appointmentType,
+    this.statusAutor,
   }){
     _status = status;
     _appointmentStatus = statusesValid[status]?? statusDefault.value;
@@ -48,6 +52,10 @@ class Appointment extends News {
     _status = statusesValid.entries.firstWhere(
             (element) => element.value == newStatus, orElse: () => statusDefault
     ).key;
+
+    if(_appointmentStatus == AppointmentStatus.Cancelled){
+      statusAutor = CancelUserReason.Patient;
+    }
   }
 
   factory Appointment.fromJson(Map<String, dynamic> json) => Appointment(
@@ -60,7 +68,26 @@ class Appointment extends News {
     doctor: json['doctor'] != null ? Doctor.fromJson(json['doctor']) : null,
     organization: json['organization'] != null ? Organization.fromJson(json['organization']) : null,
     patient: json['patient'] != null ? Patient.fromJson(json['patient']): null,
+    statusAutor: getCancelUserReason(statusAutor: json['statusAutor'] ),
   );
+
+  static CancelUserReason? getCancelUserReason({String? statusAutor}){
+    Map<String, CancelUserReason> _users = {
+      'Patient': CancelUserReason.Patient,
+      'Practitioner': CancelUserReason.Practitioner,
+    };
+
+    return _users[statusAutor];
+  }
+
+  String getCancelUserMessage(){
+    Map<CancelUserReason, String> _users = {
+      CancelUserReason.Patient: "Cancelado por el paciente",
+      CancelUserReason.Practitioner: "Cancelado por el médico",
+    };
+
+    return _users[statusAutor]?? "Cancelado";
+  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};

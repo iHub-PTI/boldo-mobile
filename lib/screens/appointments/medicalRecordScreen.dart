@@ -633,11 +633,17 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
     try{
       await AppointmentRepository().cancelAppointment(appointment: widget.appointment);
 
-      setState(() {
-        widget.appointment.status=AppointmentStatus.Cancelled;
-      });
-      BlocProvider.of<HomeBloc>(context).add(ReloadHome());
-      Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+      widget.appointment.status=AppointmentStatus.Cancelled;
+
+      //set status to previous page to update view
+      Navigator.of(context).pop(AppointmentStatus.Cancelled);
+
+      emitSnackBar(
+        context: navKey.currentState!.context,
+        text: "Tu consulta ha sido cancelada. Enviaremos la notificación al médico",
+        snackBarPosition: SnackBarPosition.TOP,
+        status: ActionStatus.Success,
+      );
 
     } on Failure catch(exception){
       emitSnackBar(

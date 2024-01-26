@@ -34,7 +34,6 @@ class AppointmentCard extends StatefulWidget {
 }
 
 class _AppointmentCardState extends State<AppointmentCard> {
-  bool isCancelled = false;
   DateTime actualDay = DateTime.now();
   DateTime appointmentDay = DateTime.now();
   DateTime appointmentOpenDate = DateTime.now();
@@ -51,7 +50,6 @@ class _AppointmentCardState extends State<AppointmentCard> {
   void didUpdateWidget(AppointmentCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.appointment != oldWidget.appointment) {
-      isCancelled = widget.appointment.status == AppointmentStatus.Cancelled;
       actualDay = DateTime.now();
       appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
       appointmentOpenDate = appointmentDay.subtract(const Duration(minutes: minutesToOpenAppointment));
@@ -73,7 +71,6 @@ class _AppointmentCardState extends State<AppointmentCard> {
 
   @override
   void initState() {
-    isCancelled = widget.appointment.status == AppointmentStatus.Cancelled;
     actualDay = DateTime.now();
     appointmentDay = DateTime.parse(widget.appointment.start!).toLocal();
     appointmentOpenDate = appointmentDay.subtract(const Duration(minutes: minutesToOpenAppointment));
@@ -105,7 +102,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
     appointmentTimer = ScheduledTimer(
         id: widget.appointment.id?? '',
         onExecute: () {
-          if(isCancelled){
+          if(widget.appointment.status == AppointmentStatus.Cancelled){
             appointmentTimer?.stop();
             if(mounted)
               setState(() {
@@ -177,7 +174,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Esta cita se aproxima",
+                            widget.appointment.status == AppointmentStatus.Cancelled? "Esta cita se ha cancelado":  "Esta cita se aproxima",
                             style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.darkBlue),
                           ),
                           Text(
@@ -339,9 +336,9 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                       ),
                                     ],
                                   ),
-                                if (isCancelled)
+                                if (widget.appointment.status == AppointmentStatus.Cancelled)
                                   Text(
-                                    "Cancelado - ${DateFormat('HH:mm').format(DateTime.parse(widget.appointment.start!).toLocal())} hs ",
+                                    widget.appointment.getCancelUserMessage(),
                                     style: const TextStyle(
                                       color: Constants.otherColor300,
                                       fontSize: 12,
@@ -390,8 +387,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
                   )
                       : Container(
                     child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        var result = await Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => MedicalRecordsScreen(
@@ -400,6 +397,11 @@ class _AppointmentCardState extends State<AppointmentCard> {
                             settings: RouteSettings(name: (MedicalRecordsScreen).toString()),
                           ),
                         );
+                        if(result == AppointmentStatus.Cancelled){
+                          widget.appointment.status = AppointmentStatus.Cancelled;
+                          setState(() {
+                          });
+                        }
                       },
                       child: Card(
                           margin: EdgeInsets.zero,

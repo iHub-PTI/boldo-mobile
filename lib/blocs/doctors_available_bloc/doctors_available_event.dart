@@ -3,23 +3,6 @@ part of 'doctors_available_bloc.dart';
 @immutable
 abstract class DoctorsAvailableEvent {}
 
-class GetDoctorsAvailable extends DoctorsAvailableEvent {
-  final int offset;
-  final List<Organization> organizations;
-  GetDoctorsAvailable({
-    required this.offset,
-    required this.organizations,
-  });
-}
-
-class GetMoreDoctorsAvailable extends DoctorsAvailableEvent {
-  final int offset;
-  final List<Organization> organizations;
-  GetMoreDoctorsAvailable({
-    required this.offset,
-    required this.organizations,
-  });
-}
 
 class GetDoctorFilter extends DoctorsAvailableEvent {
   final List<Organization> organizations;

@@ -2,7 +2,6 @@ import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/PagList.dart';
 import 'package:boldo/network/doctor_repository.dart';
-import 'package:boldo/utils/organization_helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,16 +38,16 @@ class FavoriteDoctorsBloc extends Bloc<FavoriteDoctorsEvent, FavoriteDoctorsStat
           late PagList<Doctor> result;
           _post.foldRight(Doctor, (a, previous) => result = a);
 
-          //sort each doctor's organizations by availability
-          result.items = result.items?.map(
-                  (e) {
-                e.organizations?.sort(orderByAvailability);
-                return e;
-              }
-          ).toList();
-
-          //sort doctors by first availability
-          result.items?.sort(orderByOrganizationAvailability);
+          // //sort each doctor's organizations by availability
+          // result.items = result.items?.map(
+          //         (e) {
+          //       e.organizations?.sort(orderByAvailability);
+          //       return e;
+          //     }
+          // ).toList();
+          //
+          // //sort doctors by first availability
+          // result.items?.sort(orderByOrganizationAvailability);
           emit(FavoriteDoctorsLoaded(doctors: result));
           emit(SuccessFavoriteDoctors());
         }
@@ -77,16 +76,16 @@ class FavoriteDoctorsBloc extends Bloc<FavoriteDoctorsEvent, FavoriteDoctorsStat
           late PagList<Doctor> result;
           _post.foldRight(Doctor, (a, previous) => result = a);
 
-          //sort each doctor's organizations by availability
-          result.items = result.items?.map(
-                  (e) {
-                e.organizations?.sort(orderByAvailability);
-                return e;
-              }
-          ).toList();
-
-          //sort doctors by first availability
-          result.items?.sort(orderByOrganizationAvailability);
+          // //sort each doctor's organizations by availability
+          // result.items = result.items?.map(
+          //         (e) {
+          //       e.organizations?.sort(orderByAvailability);
+          //       return e;
+          //     }
+          // ).toList();
+          //
+          // //sort doctors by first availability
+          // result.items?.sort(orderByOrganizationAvailability);
           emit(MoreFavoriteDoctorsLoaded(doctors: result));
           emit(SuccessFavoriteDoctors());
         }

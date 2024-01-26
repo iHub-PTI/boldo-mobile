@@ -504,24 +504,6 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                   virtualAppointment: false,
                                   inPersonAppointment: false,
                                   organizations: []));
-                              BlocProvider.of<RecentDoctorsBloc>(context).add(
-                                  GetRecentDoctors(
-                                    names: [],
-                                    specializations: [],
-                                    virtualAppointment: false,
-                                    inPersonAppointment: false,
-                                    organizations: [],
-                                  )
-                              );
-                              BlocProvider.of<FavoriteDoctorsBloc>(context)
-                                  .add(GetFavoriteDoctors(
-                                names: [],
-                                specializations: [],
-                                virtualAppointment: false,
-                                inPersonAppointment: false,
-                                organizations: [],
-                              ),
-                              );
                               // call doctor list page
                               Navigator.pop(context);
                             },
@@ -558,24 +540,6 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                 virtualAppointment: virtualAppointment,
                                 inPersonAppointment: inPersonAppointment,
                                 organizations: organizationsSelected));
-                            BlocProvider.of<RecentDoctorsBloc>(context).add(
-                                GetRecentDoctors(
-                                names: names,
-                                specializations: specializationsSelected,
-                                virtualAppointment: virtualAppointment,
-                                inPersonAppointment: inPersonAppointment,
-                                organizations: organizationsSelected,
-                              )
-                            );
-                            BlocProvider.of<FavoriteDoctorsBloc>(context)
-                                .add(GetFavoriteDoctors(
-                              names: names,
-                              specializations: specializationsSelected,
-                              virtualAppointment: virtualAppointment,
-                              inPersonAppointment: inPersonAppointment,
-                              organizations: organizationsSelected,
-                            ),
-                            );
                             // call doctor list page
                             Navigator.pop(context);
                           }
@@ -839,8 +803,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
           InkWell(
             onTap: () {
               Provider.of<DoctorFilterProvider>(context, listen: false)
-                  .removeOrganization(
-                organizationId: product.id ?? "",
+                  .removeAppointmentType(
                 context: context,
               );
               // get the update list

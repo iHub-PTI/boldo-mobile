@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 
-version: 2.14.6+261
+version: 2.14.8+264
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -75,6 +75,7 @@ dependencies:
   flutter_reorderable_grid_view: 4.0.0
   backdrop_modal_route: ^2.0.2
   scheduled_timer: ^2.0.1
+  another_flushbar: ^1.12.30
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.3

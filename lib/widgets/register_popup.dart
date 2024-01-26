@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/login_bloc/userLoginBloc.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
@@ -72,7 +73,7 @@ Future<bool?> notLoggedInPop({required BuildContext context}) async {
                                     setState(() {
                                       _loading = true;
                                     });
-                                    await authenticateUser(
+                                    await UserLoginBloc.redirectSignIn(
                                         context: context);
 
                                     Navigator.of(context).pop(false);
