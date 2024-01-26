@@ -1,6 +1,4 @@
-import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
-import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/Doctor.dart';
@@ -493,8 +491,6 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                               doctor: widget.appointment.doctor?? Doctor(),
                             )),
                       );
-                      BlocProvider.of<PrescriptionBloc>(context)
-                          .add(InitialPrescriptionEvent());
                     }
                         : null,
                     child: Card(

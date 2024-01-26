@@ -39,7 +39,6 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PrescriptionBloc>(context).add(GetPrescription(id: widget.medicalRecordId));
   }
 
   @override

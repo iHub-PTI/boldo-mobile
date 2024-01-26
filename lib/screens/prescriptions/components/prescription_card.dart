@@ -1,4 +1,3 @@
-import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/Doctor.dart';
@@ -7,7 +6,6 @@ import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
 import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
@@ -57,7 +55,6 @@ class PrescriptionCard extends StatelessWidget{
                       ),
                 ),
               );
-              BlocProvider.of<PrescriptionBloc>(context).add(InitialPrescriptionEvent());
             },
             child: Container(
               padding: const EdgeInsets.all(8.0),
