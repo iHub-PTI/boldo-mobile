@@ -259,9 +259,6 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
       child: SmartRefresher(
         enablePullDown: true,
         enablePullUp: true,
-        header: const MaterialClassicHeader(
-          color: Constants.primaryColor800,
-        ),
         controller: _refreshFutureAppointmentController!,
         onRefresh: _onRefreshFutureAppointments,
         footer: CustomFooter(
@@ -328,9 +325,6 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
       child: SmartRefresher(
         enablePullDown: true,
         enablePullUp: true,
-        header: const MaterialClassicHeader(
-          color: Constants.primaryColor800,
-        ),
         controller: _refreshPastAppointmentController!,
         onLoading: () {
           dateOffset = dateOffset.subtract(const Duration(days: 30));

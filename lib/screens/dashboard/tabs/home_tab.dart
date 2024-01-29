@@ -424,9 +424,6 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
         physics: const ClampingScrollPhysics(),
         scrollController: homeScroll,
         enablePullDown: true,
-        header: const MaterialClassicHeader(
-          color: Constants.primaryColor800,
-        ),
         controller: _refreshControllerNews!,
         onLoading: () {
         },
@@ -511,9 +508,6 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
       child: SmartRefresher(
           enablePullDown: true,
           enablePullUp: true,
-          header: const MaterialClassicHeader(
-            color: Constants.primaryColor800,
-          ),
           controller: _refreshControllerOrganizationsCheck!,
           onLoading: () {
           },

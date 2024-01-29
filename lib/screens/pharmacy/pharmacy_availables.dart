@@ -203,9 +203,6 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
         physics: const ClampingScrollPhysics(),
         enablePullUp: pharmacies.length < _totalPharmacies,
         enablePullDown: true,
-        header: const MaterialClassicHeader(
-          color: Constants.primaryColor800,
-        ),
         controller: _pharmaciesPageController,
         child: ListView.separated(
           physics: const ClampingScrollPhysics(),

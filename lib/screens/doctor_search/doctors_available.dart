@@ -385,9 +385,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         controller: _refreshDoctorController,
         enablePullUp: doctors.length< maxSizeAllDoctors,
         enablePullDown: true,
-        header: const MaterialClassicHeader(
-          color: Constants.primaryColor800,
-        ),
         child: ListView(
           shrinkWrap: true,
           physics: const ClampingScrollPhysics(),
