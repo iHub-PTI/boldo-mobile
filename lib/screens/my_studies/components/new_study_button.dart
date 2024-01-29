@@ -47,11 +47,10 @@ class _NewStudyButtonState extends State<NewStudyButton>{
       secondChild: ElevatedButton(
         onPressed: () {
           if(BlocProvider.of<MyStudiesBloc>(context).state is Loading){
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Favor aguardar durante la carga."),
-                backgroundColor: Colors.redAccent,
-              ),
+            emitSnackBar(
+              context: context,
+              text: "Favor aguardar durante la carga.",
+              status: ActionStatus.Fail,
             );
           }else{
             Navigator.push(

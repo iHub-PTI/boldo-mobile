@@ -140,8 +140,11 @@ class _DoctorFilterState extends State<DoctorFilter> {
                       });
                     } else if (state is FilterFailed) {
                       setState(() {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(SnackBar(content: Text(_filterFailed)));
+                        emitSnackBar(
+                          context: context,
+                          text: _filterFailed,
+                          status: ActionStatus.Fail,
+                        );
                       });
                     }
                   }
@@ -152,8 +155,11 @@ class _DoctorFilterState extends State<DoctorFilter> {
                       specializations = state.specializationsList;
                     } else if (state is FailedSpecializationFilter) {
                       setState(() {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(SnackBar(content: Text(_filterFailed)));
+                        emitSnackBar(
+                          context: context,
+                          text: _filterFailed,
+                          status: ActionStatus.Fail,
+                        );
                       });
                     }
                   }

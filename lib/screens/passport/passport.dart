@@ -3,6 +3,7 @@ import 'package:boldo/constants.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/passport/passport_detail_screen.dart';
 import 'package:boldo/screens/passport/vaccine_filter.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -132,11 +133,10 @@ class _PassportTabState extends State<PassportTab> {
           listener: (context, state) {
             if (state is Failed || state is Success) {
               if (state is Failed) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.response),
-                    backgroundColor: Colors.redAccent,
-                  ),
+                emitSnackBar(
+                  context: context,
+                  text: state.response,
+                  status: ActionStatus.Fail,
                 );
                 _failedConectionCounter++;
               } else {
