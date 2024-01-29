@@ -1,12 +1,12 @@
 import 'package:boldo/constants.dart';
 import 'package:flutter/material.dart';
 
-Widget loadingStatus(){
-  return const Center(
-      child: CircularProgressIndicator(
+Widget loadingStatus({double? value}){
+  return Center(
+      child: CircularProgressIndicator.adaptive(
+        value: value,
         valueColor:
-        AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-        backgroundColor: Constants.primaryColor600,
-      )
+        const AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
+      ),
   );
 }

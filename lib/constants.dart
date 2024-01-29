@@ -504,6 +504,10 @@ ThemeData boldoTheme = ThemeData(
   scaffoldBackgroundColor: ConstantsV2.BGNeutral,
   brightness: Brightness.light,
   visualDensity: VisualDensity.adaptivePlatformDensity,
+  progressIndicatorTheme: const ProgressIndicatorThemeData(
+    color: Constants.primaryColor400,
+    circularTrackColor: Constants.primaryColor600,
+  ),
 );
 
 ButtonStyle elevatedButtonStyleSecondary = ButtonStyle(

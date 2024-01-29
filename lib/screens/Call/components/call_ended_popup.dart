@@ -1,4 +1,5 @@
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
@@ -58,12 +59,8 @@ Future<bool?> callEndedPopup(
                                 progressIndicatorBuilder:
                                     (context, url, downloadProgress) => Padding(
                                   padding: const EdgeInsets.all(26.0),
-                                  child: CircularProgressIndicator(
+                                  child: loadingStatus(
                                     value: downloadProgress.progress,
-                                    valueColor:
-                                        const AlwaysStoppedAnimation<Color>(
-                                            Constants.primaryColor400),
-                                    backgroundColor: Constants.primaryColor600,
                                   ),
                                 ),
                                 errorWidget: (context, url, error) =>

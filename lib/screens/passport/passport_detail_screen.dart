@@ -4,6 +4,7 @@ import 'package:boldo/main.dart';
 import 'package:boldo/models/UserVaccinate.dart';
 import 'package:boldo/screens/passport/vaccine_card.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -289,12 +290,7 @@ class _PassportDetailState extends State<PassportDetail> {
                                         // size: 250.0,
                                       ),
                                     )
-                                  : Center(
-                                      child:
-                                          CircularProgressIndicator(
-                                        color: Colors.green[200],
-                                      ),
-                                    ),
+                                  : loadingStatus(),
                             ),
                           ),
                           Padding(
@@ -356,7 +352,7 @@ class _PassportDetailState extends State<PassportDetail> {
                                                         progressIndicatorBuilder: (context,
                                                                 url,
                                                                 downloadProgress) =>
-                                                            CircularProgressIndicator(
+                                                            loadingStatus(
                                                                 value: downloadProgress
                                                                     .progress),
                                                         errorWidget: (context,
@@ -431,12 +427,7 @@ class _PassportDetailState extends State<PassportDetail> {
                                                       // size: 250.0,
                                                     ),
                                                   )
-                                                : Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                      color: Colors.green[200],
-                                                    ),
-                                                  ),
+                                                : loadingStatus(),
                                           ),
                                         ),
                                         Padding(
@@ -500,7 +491,7 @@ class Profile extends StatelessWidget {
                         imageUrl: patient.photoUrl!,
                         progressIndicatorBuilder:
                             (context, url, downloadProgress) =>
-                                CircularProgressIndicator(
+                                loadingStatus(
                                     value: downloadProgress.progress),
                         errorWidget: (context, url, error) =>
                             const Icon(Icons.error),

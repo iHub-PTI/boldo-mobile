@@ -12,6 +12,7 @@ import 'package:boldo/screens/prescriptions/components/medication_name.dart';
 import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -204,13 +205,7 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
                         );
                       }else if(state is LoadingPrescription){
                         return Container(
-                            child: const Center(
-                                child: CircularProgressIndicator(
-                                  valueColor:
-                                  AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                                  backgroundColor: Constants.primaryColor600,
-                                )
-                            )
+                          child: loadingStatus(),
                         );
                       }else if(state is FailedLoadPrescription){
                         return Container(

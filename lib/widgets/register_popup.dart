@@ -1,5 +1,6 @@
 import 'package:boldo/blocs/login_bloc/userLoginBloc.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
 
@@ -25,9 +26,9 @@ Future<bool?> notLoggedInPop({required BuildContext context}) async {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: _loading
-                    ? const Padding(
+                    ? Padding(
                         padding: EdgeInsets.all(34),
-                        child: CircularProgressIndicator(),
+                        child: loadingStatus(),
                       )
                     : Container(
                         width: 256,

@@ -9,6 +9,7 @@ import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/booking/booking_screen2.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -314,13 +315,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                             return familyListWithAccess();
                                         }else if(state is doctor_bloc.Loading){
                                           return Container(
-                                              child: const Center(
-                                                  child: CircularProgressIndicator(
-                                                    valueColor:
-                                                    AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                                                    backgroundColor: Constants.primaryColor600,
-                                                  )
-                                              )
+                                            child: loadingStatus(),
                                           );
                                         }else{
                                           return Container();
@@ -651,13 +646,8 @@ class Background extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(26.0),
                     child: Center(
-                      child: CircularProgressIndicator(
+                      child: loadingStatus(
                         value: downloadProgress.progress,
-                        valueColor:
-                        const AlwaysStoppedAnimation<Color>(
-                            Constants.primaryColor400),
-                        backgroundColor:
-                        Constants.primaryColor600,
                       ),
                     ),
                   ),

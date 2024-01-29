@@ -2,6 +2,7 @@ import 'package:boldo/blocs/qr_bloc/qr_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/loading_helper.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -84,11 +85,7 @@ class _QRScannerState extends State<QRScanner> {
                   return Stack(
                     children: [
                       if(_showScanner== null)
-                        const Center(child: CircularProgressIndicator(
-                          valueColor:
-                          AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                          backgroundColor: Constants.primaryColor600,
-                        ),)
+                        loadingStatus()
                       else
                         if(_showScanner==true)
                           MobileScanner(

@@ -7,6 +7,7 @@ import 'package:boldo/screens/pharmacy/components/pharmacy_available_card.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:boldo/widgets/searh_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -170,13 +171,7 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                                     ),
                                     );
                                   }else {
-                                    return const Center(
-                                      child: CircularProgressIndicator(
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                            Constants.primaryColor400),
-                                        backgroundColor: Constants.primaryColor600,
-                                      ),
-                                    );
+                                    return loadingStatus();
                                   }
                                 }
                             ),
@@ -203,9 +198,6 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
         physics: const ClampingScrollPhysics(),
         enablePullUp: pharmacies.length < _totalPharmacies,
         enablePullDown: true,
-        header: const MaterialClassicHeader(
-          color: Constants.primaryColor800,
-        ),
         controller: _pharmaciesPageController,
         child: ListView.separated(
           physics: const ClampingScrollPhysics(),

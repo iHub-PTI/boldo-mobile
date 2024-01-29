@@ -15,6 +15,7 @@ import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/go_to_top.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -290,7 +291,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                   BlocBuilder<DoctorsAvailableBloc, DoctorsAvailableState>(
                       builder: (context, state){
                         if(state is Loading || state is FilterLoading)
-                          return const Center(child: CircularProgressIndicator());
+                          return loadingStatus();
                         else if(state is Failed){
                           return DataFetchErrorWidget(
                               retryCallback: (){ getDoctors(); }
@@ -385,9 +386,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         controller: _refreshDoctorController,
         enablePullUp: doctors.length< maxSizeAllDoctors,
         enablePullDown: true,
-        header: const MaterialClassicHeader(
-          color: Constants.primaryColor800,
-        ),
         child: ListView(
           shrinkWrap: true,
           physics: const ClampingScrollPhysics(),
@@ -421,7 +419,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
               ],
             );
             if (mode == LoadStatus.loading) {
-              body = const CircularProgressIndicator();
+              body = loadingStatus();
             }
             return Container(
               height: 55.0,
@@ -451,9 +449,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         controller: _refreshFavoriteDoctorController,
         enablePullUp: favoritesDoctors.length< maxSizeFavoriteDoctors,
         enablePullDown: true,
-        header: const MaterialClassicHeader(
-          color: Constants.primaryColor800,
-        ),
         child: _favoritesDoctors(),
         footer: CustomFooter(
           builder:
@@ -478,7 +473,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
               ],
             );
             if (mode == LoadStatus.loading) {
-              body = const CircularProgressIndicator();
+              body = loadingStatus();
             }
             return Container(
               height: 55.0,
@@ -706,7 +701,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     return BlocBuilder<RecentDoctorsBloc, RecentDoctorsState>(
         builder: (context, state){
           if(state is LoadingRecentDoctors)
-            return const Center(child: CircularProgressIndicator());
+            return loadingStatus();
           else if(state is FailedRecentDoctors){
             return DataFetchErrorWidget(
                 retryCallback: () { getRecentDoctors(); }
@@ -814,7 +809,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     return BlocBuilder<FavoriteDoctorsBloc, FavoriteDoctorsState>(
         builder: (context, state){
           if(state is LoadingFavoriteDoctors)
-            return const Center(child: CircularProgressIndicator());
+            return loadingStatus();
           else if(state is FailedFavoriteDoctors){
             return DataFetchErrorWidget(
                 retryCallback: () { getFavoriteDoctors(); }
@@ -970,12 +965,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                   (context, url, downloadProgress) => Padding(
                 padding: const EdgeInsets.all(26.0),
                 child: Center(
-                  child: CircularProgressIndicator(
+                  child: loadingStatus(
                     value: downloadProgress.progress,
-                    valueColor:
-                    const AlwaysStoppedAnimation<Color>(
-                        Constants.primaryColor400),
-                    backgroundColor: Constants.primaryColor600,
                   ),
                 ),
               ),
