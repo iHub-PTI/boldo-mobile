@@ -16,6 +16,7 @@ import 'package:boldo/screens/studies_orders/StudyOrderScreen.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -100,12 +101,8 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                   BlocBuilder<MedicalRecordBloc, MedicalRecordState>(
                     builder: (context, state) {
                       if (state is Loading) {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                Constants.primaryColor400),
-                            backgroundColor: Constants.primaryColor600,
-                          ),
+                        return Center(
+                          child: loadingStatus(),
                         );
                       } else if (state is Success) {
                         return Expanded(

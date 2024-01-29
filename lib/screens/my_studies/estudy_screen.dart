@@ -5,6 +5,7 @@ import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/image_visor.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -94,13 +95,7 @@ class _StudyState extends State<Study> {
                   ),
                   if (_loading)
                     Container(
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              Constants.primaryColor400),
-                          backgroundColor: Constants.primaryColor600,
-                        ),
-                      ),
+                      child: loadingStatus(),
                     ),
                   if (_error)
                     DataFetchErrorWidget(

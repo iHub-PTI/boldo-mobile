@@ -12,6 +12,7 @@ import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:boldo/widgets/organization_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -148,13 +149,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                               if (state is Failed){
                                 return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizations(patientSelected: widget.patientSelected)));
                               } else if(state is Loading){
-                                return const Center(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Constants.primaryColor400),
-                                    backgroundColor: Constants.primaryColor600,
-                                  ),
-                                );
+                                return loadingStatus();
                               }else{
                                 return Flexible(
                                   child: Container(
@@ -419,6 +414,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                         ],
                       ),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
@@ -462,13 +458,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                         if (state is subscribed.Failed){
                           child = DataFetchErrorWidget(retryCallback: () => BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected)));
                         } else if(state is subscribed.Loading){
-                          child = const Center(
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  Constants.primaryColor400),
-                              backgroundColor: Constants.primaryColor600,
-                            ),
-                          );
+                          child = loadingStatus();
                         }else{
                           if ( _organizationsSubscribed.isEmpty ) {
                             child = emptyView(context);
@@ -559,13 +549,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                         if (state is applied.Failed){
                           child = DataFetchErrorWidget(retryCallback: () => BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated(patientSelected: patientSelected)));
                         } else if(state is applied.Loading){
-                          child = const Center(
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  Constants.primaryColor400),
-                              backgroundColor: Constants.primaryColor600,
-                            ),
-                          );
+                          child = loadingStatus();
                         }else{
                           if ( _organizationsPostulated.isEmpty ) {
                             child = Container();
@@ -1069,13 +1053,7 @@ class FamilySelectorState extends State<FamilySelector>{
         }else if(state is family_bloc.Failed){
           child = DataFetchErrorWidget(retryCallback: () => BlocProvider.of<family_bloc.FamilyBloc>(context).add(family_bloc.GetFamilyList()));
         }else {
-          child = const Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(
-                  Constants.primaryColor400),
-              backgroundColor: Constants.primaryColor600,
-            ),
-          );
+          child = loadingStatus();
         }
         return AnimatedSwitcher(
           duration: appearWidgetDuration,

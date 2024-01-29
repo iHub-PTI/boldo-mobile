@@ -20,6 +20,7 @@ import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:boldo/widgets/go_to_top.dart';
 import 'package:boldo/widgets/info_card.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -392,13 +393,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                       return Container(
                           child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed()) ) );
                     } else {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              Constants.primaryColor400),
-                          backgroundColor: Constants.primaryColor600,
-                        ),
-                      );
+                      return loadingStatus();
                     }
                   },
                 ),
@@ -480,13 +475,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
             );
           }else if (state is LoadingNews){
             return Container(
-                child: const Center(
-                    child: CircularProgressIndicator(
-                      valueColor:
-                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                      backgroundColor: Constants.primaryColor600,
-                    )
-                )
+              child: loadingStatus(),
             );
           }else if(state is FailedLoadedNews){
             return Container(
@@ -537,6 +526,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
           child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: ListView(
+                physics: const ClampingScrollPhysics(),
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

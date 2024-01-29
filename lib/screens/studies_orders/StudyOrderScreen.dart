@@ -11,6 +11,7 @@ import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
 import 'package:boldo/screens/studies_orders/components/studyOrderCard.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -149,12 +150,8 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
                           );
                         } else if (state is LoadingOrders) {
                           return Container(
-                              child: const Center(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Constants.primaryColor400),
-                                    backgroundColor: Constants.primaryColor600,
-                                  )));
+                            child: loadingStatus(),
+                          );
                         } else if (state is FailedLoadedOrders) {
                           return Container(
                               child: DataFetchErrorWidget(

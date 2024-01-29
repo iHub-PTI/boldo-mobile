@@ -14,6 +14,7 @@ import 'package:boldo/widgets/appointment_location_icon.dart';
 import 'package:boldo/widgets/appointment_type_icon.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -154,13 +155,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                     ),
                   ),
                   body: _dataLoading == true
-                      ? const Center(
-                    child: CircularProgressIndicator(
-                      valueColor:
-                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                      backgroundColor: Constants.primaryColor600,
-                    ),
-                  )
+                      ? loadingStatus()
                       : Container(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -301,13 +296,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
             );
           }else if(state is LoadingAppointments){
             return Container(
-                child: const Center(
-                    child: CircularProgressIndicator(
-                      valueColor:
-                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                      backgroundColor: Constants.primaryColor600,
-                    )
-                )
+                child: loadingStatus()
             );
           }else if(state is FailedLoadedAppointments){
             return Container(
@@ -370,13 +359,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
             );
           }else if(state is Loading){
             return Container(
-                child: const Center(
-                    child: CircularProgressIndicator(
-                      valueColor:
-                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                      backgroundColor: Constants.primaryColor600,
-                    )
-                )
+                child: loadingStatus()
             );
           }else if(state is Failed){
             return Container(

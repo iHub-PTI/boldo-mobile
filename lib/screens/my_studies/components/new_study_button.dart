@@ -1,6 +1,8 @@
 import 'package:boldo/constants.dart';
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/my_studies/new_study.dart';
+import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -63,11 +65,7 @@ class _NewStudyButtonState extends State<NewStudyButton>{
         child: BlocBuilder<MyStudiesBloc, MyStudiesState>(
           builder: (BuildContext context, state) {
             if(state is Loading){
-              return const CircularProgressIndicator(
-                valueColor:
-                AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                backgroundColor: Constants.primaryColor600,
-              );
+              return loadingStatus();
             }else{
               return Container(
                   child: Row(

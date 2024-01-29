@@ -14,6 +14,7 @@ import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/photos_helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/image_visor.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:date_format/date_format.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -271,13 +272,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                                       // show only if not loading or failed
                                       if (state is UploadingStudy) {
                                         return Container(
-                                          child: const Center(
-                                            child: CircularProgressIndicator(
-                                              valueColor: AlwaysStoppedAnimation<Color>(
-                                                  Constants.primaryColor400),
-                                              backgroundColor: Constants.primaryColor600,
-                                            )
-                                          )
+                                          child: loadingStatus(),
                                         );
                                       } else{
                                         return Row(
@@ -330,13 +325,7 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
                         );
                       }else if(state is LoadingStudies){
                         return Container(
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  Constants.primaryColor400),
-                              backgroundColor: Constants.primaryColor600,
-                            )
-                          )
+                          child: loadingStatus(),
                         );
                       }else if (state is FailedLoadedStudies) {
                         return Container(

@@ -7,6 +7,7 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -146,12 +147,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                         );
                       }
                     }else if(state is Loading){
-                      return const Center(
-                          child: CircularProgressIndicator(
-                            valueColor:
-                            AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                            backgroundColor: Constants.primaryColor600,
-                          ));
+                      return loadingStatus();
                     }else if(state is Failed){
                       return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList()) ) ;
                     }else{

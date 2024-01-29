@@ -1,3 +1,4 @@
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'dart:core';
 
@@ -24,11 +25,7 @@ class ConnectionProblemPopup extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const CircularProgressIndicator(
-                valueColor:
-                    AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                backgroundColor: Constants.primaryColor600,
-              ),
+              loadingStatus(),
               const SizedBox(height: 24),
               const Text(
                 "¡Oops! Conexión perdida",

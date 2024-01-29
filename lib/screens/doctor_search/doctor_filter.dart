@@ -14,6 +14,7 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -163,8 +164,11 @@ class _DoctorFilterState extends State<DoctorFilter> {
                       organizations = state.organizationsList;
                     } else if (state is FailedSpecializationFilter) {
                       setState(() {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(SnackBar(content: Text(_filterFailed)));
+                        emitSnackBar(
+                          context: context,
+                          text: _filterFailed,
+                          status: ActionStatus.Fail,
+                        );
                       });
                     }
                   }
@@ -312,7 +316,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                   ],
                                 );
                               }else{
-                                return  const Center(child: CircularProgressIndicator());
+                                return loadingStatus();
                               }
                             }
                         ),
@@ -479,7 +483,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                   ),
                                 );
                               }else{
-                                return  const Center(child: CircularProgressIndicator());
+                                return loadingStatus();
                               }
                             }
                         ),
@@ -547,7 +551,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                         child: BlocBuilder<DoctorFilterBloc, DoctorFilterState>(
                           builder: (context, state){
                             if(state is LoadingDoctorFilter){
-                              return const Center(child: CircularProgressIndicator());
+                              return loadingStatus();
                             }else if(state is SuccessDoctorFilter || state is DoctorFilterInitial){
                               return Container(
                                 decoration: BoxDecoration(

@@ -5,6 +5,7 @@ import 'package:boldo/constants.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -391,7 +392,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                   ),
                 ),
               ))
-                  : const Center(child: CircularProgressIndicator()),
+                  : loadingStatus(),
             ]),
           )),
       persistentFooterButtons: [
@@ -477,7 +478,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                   ),
                 ),
               )
-            : const Center(child: CircularProgressIndicator()),
+            : loadingStatus(),
       ],
     );
   }

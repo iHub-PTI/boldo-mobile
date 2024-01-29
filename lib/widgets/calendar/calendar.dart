@@ -1,3 +1,4 @@
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -136,12 +137,8 @@ class _CustomCalendarState extends State<CustomCalendar> {
               if (_calendarLoading == true)
                 Container(
                     height: 300,
-                    child: const Center(
-                        child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                          Constants.primaryColor400),
-                      backgroundColor: Constants.primaryColor600,
-                    ))),
+                    child: loadingStatus(),
+                ),
               if (widget.notAvailibleThisMonth)
                 const Padding(
                   padding: EdgeInsets.only(top: 8.0),

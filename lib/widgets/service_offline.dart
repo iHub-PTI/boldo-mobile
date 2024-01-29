@@ -1,4 +1,5 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 
 Future<bool?> serviceOfflinePopUp({required BuildContext context}) async {
@@ -21,9 +22,9 @@ Future<bool?> serviceOfflinePopUp({required BuildContext context}) async {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: _loading
-                    ? const Padding(
-                  padding: EdgeInsets.all(34),
-                  child: CircularProgressIndicator(),
+                    ? Padding(
+                  padding: const EdgeInsets.all(34),
+                  child: loadingStatus(),
                 )
                     : Container(
                   width: 256,

@@ -1,3 +1,4 @@
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
@@ -25,15 +26,10 @@ class CustomFormButton extends StatelessWidget {
             if (loading)
               Row(
                 children: [
-                  const SizedBox(
+                  SizedBox(
                     height: 16,
                     width: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 3,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                          Constants.primaryColor400),
-                      backgroundColor: Constants.primaryColor600,
-                    ),
+                    child: loadingStatus(),
                   ),
                   const SizedBox(width: 12),
                 ],

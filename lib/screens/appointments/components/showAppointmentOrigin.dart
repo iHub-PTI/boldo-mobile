@@ -2,6 +2,7 @@ import 'package:boldo/blocs/appointment_bloc/appointmentBloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,12 +40,7 @@ class ShowAppointmentOrigin extends StatelessWidget {
               builder: (context, state) {
                 if (state is Loading) {
                   return Container(
-                      child: const Center(
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                Constants.primaryColor400),
-                            backgroundColor: Constants.primaryColor600,
-                          )));
+                      child: loadingStatus());
                 } else {
                   return InkWell(
                     onTap: () async {

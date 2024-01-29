@@ -6,6 +6,7 @@ import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/socket.dart';
 import 'package:boldo/widgets/backdrop_modal/backdrop_modal.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:dio/dio.dart';
@@ -489,7 +490,7 @@ class _VideoCallState extends State<VideoCall> {
     return Scaffold(
       body: SafeArea(
         child: _loading
-            ? const Center(child: CircularProgressIndicator())
+            ? loadingStatus()
             : Stack(
           children: [
             callStatus
