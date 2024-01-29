@@ -48,6 +48,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sentry_dio/sentry_dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -320,50 +321,56 @@ class FullApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      scrollBehavior: CustomBehavior(),
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      navigatorObservers: [
-        AppNavigatorObserver(),
-      ],
-      supportedLocales: [
-        const Locale("es", 'ES'),
-        const Locale('en'),
-        const Locale('fr'),
-      ],
-      debugShowCheckedModeBanner: false,
-      navigatorKey: navKey,
-      title: 'Boldo',
-      theme: boldoTheme,
-      initialRoute: hasUpdate? '/updateAvailable' :
-      onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
-      routes: {
-        '/onboarding': (context) => HeroScreenV2(),
-        '/home': (context) => DashboardScreen(),
-        '/login': (context) => const LoginWebViewHelper(),
-        '/methods' : (context) => const FamilyMetodsAdd(),
-        '/familyScreen' : (context) => FamilyScreen(),
-        '/defineRelationship' : (context) => DefinedRelationshipScreen(),
-        '/familyTransition' : (context) => FamilyConnectTransition(),
-        '/SignInSuccess' : (context) => SingInTransition(),
-        '/FamilyTransition' : (context) => FamilyTransition(),
-        '/familyDniRegister' : (context) => DniFamilyRegister(),
-        '/my_studies' : (context) => MyStudies(),
-        '/pastAppointmentsScreen' : (context) => const PastAppointmentsScreen(),
-        '/prescriptionsScreen' : (context) => const PrescriptionsScreen(),
-        '/user_qr_detail': (context) => UserQrDetail(),
-        '/familyConnectTransition': (context) => FamilyConnectTransition(),
-        '/familyWithoutDniRegister': (context) => WithoutDniFamilyRegister(),
-        '/profileScreen': (context) => const ProfileScreen(),
-        '/updateAvailable': (context) => UpdateAvailable(
-          onboardingCompleted: onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
-          isRequiredUpdate: hasRequiredUpdate,
+    return RefreshConfiguration(
+        headerBuilder: () => WaterDropHeader(
+          refresh: Container(),
+        ),        // Configure the default header indicator. If you have the same header indicator for each page, you need to set this
+        child: MaterialApp(
+          scrollBehavior: CustomBehavior(),
+          localizationsDelegates: [
+            RefreshLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          navigatorObservers: [
+            AppNavigatorObserver(),
+          ],
+          supportedLocales: [
+            const Locale("es", 'ES'),
+            const Locale('en'),
+            const Locale('fr'),
+          ],
+          debugShowCheckedModeBanner: false,
+          navigatorKey: navKey,
+          title: 'Boldo',
+          theme: boldoTheme,
+          initialRoute: hasUpdate? '/updateAvailable' :
+          onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
+          routes: {
+            '/onboarding': (context) => HeroScreenV2(),
+            '/home': (context) => DashboardScreen(),
+            '/login': (context) => const LoginWebViewHelper(),
+            '/methods' : (context) => const FamilyMetodsAdd(),
+            '/familyScreen' : (context) => FamilyScreen(),
+            '/defineRelationship' : (context) => DefinedRelationshipScreen(),
+            '/familyTransition' : (context) => FamilyConnectTransition(),
+            '/SignInSuccess' : (context) => SingInTransition(),
+            '/FamilyTransition' : (context) => FamilyTransition(),
+            '/familyDniRegister' : (context) => DniFamilyRegister(),
+            '/my_studies' : (context) => MyStudies(),
+            '/pastAppointmentsScreen' : (context) => const PastAppointmentsScreen(),
+            '/prescriptionsScreen' : (context) => const PrescriptionsScreen(),
+            '/user_qr_detail': (context) => UserQrDetail(),
+            '/familyConnectTransition': (context) => FamilyConnectTransition(),
+            '/familyWithoutDniRegister': (context) => WithoutDniFamilyRegister(),
+            '/profileScreen': (context) => const ProfileScreen(),
+            '/updateAvailable': (context) => UpdateAvailable(
+              onboardingCompleted: onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
+              isRequiredUpdate: hasRequiredUpdate,
+            ),
+          },
         ),
-      },
     );
   }
 }
