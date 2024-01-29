@@ -62,7 +62,6 @@ import 'blocs/doctorFilter_bloc/doctorFilter_bloc.dart';
 import 'blocs/doctor_availability_bloc/doctor_availability_bloc.dart';
 import 'blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
 import 'blocs/passport_bloc/passportBloc.dart';
-import 'blocs/prescription_bloc/prescriptionBloc.dart';
 import 'blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
 import 'environment.dart';
@@ -157,7 +156,7 @@ Future<void> mainCommon({
 
   initDio(navKey: navKey, dio: dio, baseUrl: environment.SERVER_ADDRESS, header: dioHeader);
   initDio(navKey: navKey, dio: dioBCM, baseUrl: environment.BCM_SERVER_ADDRESS.getValue, header: dioHeader);
-  initDio(navKey: navKey, dio: dioPassport, baseUrl: environment.SERVER_ADDRESS_PASSPORT);
+  initDio(navKey: navKey, dio: dioPassport, baseUrl: environment.SERVER_ADDRESS_PASSPORT, );
   initDio(navKey: navKey, dio: dioDownloader, baseUrl: environment.SERVER_ADDRESS_PASSPORT, responseType: ResponseType.bytes);
   const storage = FlutterSecureStorage();
   String? session;
@@ -240,9 +239,6 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<HomeBloc>(
             create: (BuildContext context) => HomeBloc(),
-          ),
-          BlocProvider<PrescriptionBloc>(
-            create: (BuildContext context) => PrescriptionBloc(),
           ),
           BlocProvider<MyStudiesBloc>(
             create: (BuildContext context) => MyStudiesBloc(),
@@ -344,7 +340,7 @@ class FullApp extends StatelessWidget {
       title: 'Boldo',
       theme: boldoTheme,
       initialRoute: hasUpdate? '/updateAvailable' :
-          onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
+      onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
       routes: {
         '/onboarding': (context) => HeroScreenV2(),
         '/home': (context) => DashboardScreen(),
