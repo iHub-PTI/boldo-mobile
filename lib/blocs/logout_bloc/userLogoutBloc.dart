@@ -12,7 +12,7 @@ part 'userLogoutState.dart';
 class UserLogoutBloc extends Bloc<UserLogoutEvent, UserLogoutState> {
   final  UserRepository _userRepository = UserRepository();
   UserLogoutBloc() : super(UserLogoutInitial()){
-    on<GetUserLogout>((event, emit) async {
+    on<UserLogoutEvent>((event, emit) async {
       if (event is GetUserLogout) {
         emit(UserLogoutLoading());
         var _post;
