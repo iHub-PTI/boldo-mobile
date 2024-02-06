@@ -46,7 +46,7 @@ class AttachStudyOrderBloc extends Bloc<AttachStudyOrderEvent, AttachStudyOrderS
             _post2 = value;
           });
           if (_post2.isLeft()) {
-            _post.leftMap((l) => response = l.message);
+            _post2.leftMap((l) => response = l.message);
             emit(FailedUploadFiles(response: response));
           } else {
             emit(SendSuccess());
