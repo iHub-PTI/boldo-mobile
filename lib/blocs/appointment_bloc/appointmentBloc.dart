@@ -32,9 +32,10 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     on<AppointmentEvent>((event, emit) async {
       if(event is GetAppointmentByEcounterId){
         emit(Loading());
-        var _post;
+        late Either<Failure, Appointment> _post;
         await Task(() => AppointmentRepository.getAppointmentByEncounterId(encounterId: event.encounterId)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -45,7 +46,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
           emit(Failed(response: response));
         } else {
           late Appointment appointment;
-          _post.foldRight(Appointment, (a, previous) => appointment = a);
+          appointment = _post.asRight();
 
           emit(AppointmentLoadedState(appointment: appointment));
         }

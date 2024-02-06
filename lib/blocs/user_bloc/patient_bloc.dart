@@ -2,6 +2,7 @@ import 'package:boldo/constants.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/organization_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
@@ -32,6 +33,7 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
         await Task(() =>
         _patientRepository.getPatient(event.id)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;

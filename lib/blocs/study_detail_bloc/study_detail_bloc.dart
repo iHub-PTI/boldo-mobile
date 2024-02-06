@@ -26,6 +26,7 @@ class StudyDetailBloc extends Bloc<StudyDetailEvent, StudyDetailState> {
         var _post;
         await Task(() => _myStudiesRepository.getDiagnosticReport(event.id)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;

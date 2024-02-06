@@ -2,6 +2,7 @@ import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/network/appointment_repository.dart';
 import 'package:boldo/network/order_study_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,6 +38,7 @@ class StudyOrderBloc extends Bloc<StudyOrderEvent, StudyOrderState> {
         var _post;
         await Task(() => _ordersRepository.getStudiesOrdersId(event.encounter)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;

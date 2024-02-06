@@ -3,6 +3,7 @@ import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/PagList.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/organization_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,6 +26,7 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
         await Task(() =>
         _organizationRepository.getUnsubscribedOrganizations(event.patientSelected)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -57,6 +59,7 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
         await Task(() =>
         _organizationRepository.subscribeToManyOrganizations(event.organizations, event.patientSelected)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -84,6 +87,7 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
           pageSize: event.pageSize?? appConfig.ALL_ORGANIZATION_PAGE_SIZE.getValue,
         )!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;

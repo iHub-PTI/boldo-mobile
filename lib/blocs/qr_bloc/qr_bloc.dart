@@ -1,6 +1,7 @@
 import 'package:boldo/models/QRCode.dart';
 import 'package:boldo/network/family_repository.dart';
 import 'package:boldo/network/qr_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +23,7 @@ class QrBloc extends Bloc<QrBlocEvent, QrBlocState> {
         await Task(() =>
         _familyRepository.getDependent(event.qrCode)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -43,6 +45,7 @@ class QrBloc extends Bloc<QrBlocEvent, QrBlocState> {
         await Task(() =>
         _qrRepository.getQrCode()!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;

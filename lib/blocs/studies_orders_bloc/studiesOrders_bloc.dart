@@ -18,6 +18,7 @@ class StudiesOrdersBloc extends Bloc<StudiesOrdersEvent, StudiesOrdersState> {
         var _post;
         _post = await Task(() => _ordersRepository.getStudiesOrders()!)
             .attempt()
+            .mapLeftToFailure()
             .run();
         var response;
         if (_post.isLeft()) {

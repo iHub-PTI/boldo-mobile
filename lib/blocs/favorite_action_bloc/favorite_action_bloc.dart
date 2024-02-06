@@ -1,5 +1,6 @@
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/network/doctor_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,7 +23,9 @@ class FavoriteActionBloc extends Bloc<FavoriteActionEvent, FavoriteActionState> 
                 event.doctor,
                 event.favoriteStatus,
             )
-        ).attempt().run().then((value) {
+        ).attempt()
+            .mapLeftToFailure()
+            .run().then((value) {
           _post = value;
         });
         var response;

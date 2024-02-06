@@ -1,4 +1,5 @@
 import 'package:boldo/models/Doctor.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/network/specialization_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,6 +18,7 @@ class SpecializationFilterBloc extends Bloc<SpecializationsFilterEvent, Speciali
         var _post;
         await Task(() => _specializationRepository.getAllSpecializations()!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;

@@ -1,6 +1,7 @@
 
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/family_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,6 +22,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
         await Task(() =>
         _familyRepository.setDependent(user.isNew)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -35,6 +37,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
           await Task(() =>
           _familyRepository.getDependents()!)
               .attempt()
+              .mapLeftToFailure()
               .run()
               .then((value) {
             _post = value;
@@ -57,6 +60,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
         await Task(() =>
         _familyRepository.unlinkDependent(event.id)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -72,6 +76,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
           await Task(() =>
           _familyRepository.getDependents()!)
               .attempt()
+              .mapLeftToFailure()
               .run()
               .then((value) {
             _post = value;
@@ -92,6 +97,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
         await Task(() =>
         _familyRepository.getDependents()!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -111,6 +117,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
         await Task(() =>
         _familyRepository.getManagements()!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -133,6 +140,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
         await Task(() =>
         _familyRepository.unlinkCaretaker(event.id)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -170,6 +178,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
         var _post;
         await Task(() => _familyRepository.linkWithoutCi(event.givenName, event.familyName, event.birthDate, event.gender, event.identifier, event.relationShipCode)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -187,6 +196,7 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
         var _post;
         await Task(() => _familyRepository.getRelationships()!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;

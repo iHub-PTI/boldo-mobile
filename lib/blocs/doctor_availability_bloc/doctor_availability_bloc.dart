@@ -1,6 +1,7 @@
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/network/doctor_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:dartz/dartz.dart';
@@ -30,6 +31,7 @@ class DoctorAvailabilityBloc extends Bloc<DoctorAvailabilityEvent, DoctorAvailab
           appointmentType: event.appointmentType,
         )!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;

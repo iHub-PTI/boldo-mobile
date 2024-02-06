@@ -4,6 +4,7 @@ import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/PagList.dart';
 import 'package:boldo/network/doctor_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,6 +35,7 @@ class DoctorsAvailableBloc
         )
         )
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -76,7 +78,9 @@ class DoctorsAvailableBloc
             event.organizations,
             event.names
         )
-        ).attempt().run().then((value) {
+        ).attempt()
+            .mapLeftToFailure()
+            .run().then((value) {
           _post = value;
         });
         var response;

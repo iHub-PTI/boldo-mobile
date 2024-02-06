@@ -26,7 +26,9 @@ class RecentDoctorsBloc extends Bloc<RecentDoctorsEvent, RecentDoctorsState> {
                 event.organizations,
                 event.names
             )
-        ).attempt().run().then((value) {
+        ).attempt()
+            .mapLeftToFailure()
+            .run().then((value) {
           _post = value;
         });
         var response;

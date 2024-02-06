@@ -23,6 +23,7 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
         await Task(() =>
         _patientRepository.sendUserPreliminaryProfile(event.context)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -42,6 +43,7 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
         await Task(() =>
         _patientRepository.validateUserPhone(userHash, event.context)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;

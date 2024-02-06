@@ -64,14 +64,13 @@ class AppointmentsBloc extends Bloc<AppointmentsEvent, AppointmentsState> {
           emit(Failed(response: response));
         } else {
           late List<Appointment> appointments;
-          _post.foldRight(
-              Appointment, (a, previous) => appointments = a);
+          appointments = _post.asRight();
           emit(AppointmentsLoadedState(appointments: appointments));
           emit(Success());
         }
       }else if(event is GetPastAppointmentsBetweenDatesList){
         emit(Loading());
-        var _post;
+        late Either<Failure, List<Appointment>> _post;
         await Task(() =>
         _appointmentRepository.getPastAppointmentsBetweenDates(_initialDate, _finalDate)!)
             .attempt()
@@ -87,8 +86,7 @@ class AppointmentsBloc extends Bloc<AppointmentsEvent, AppointmentsState> {
           emit(Failed(response: response));
         } else {
           late List<Appointment> appointments;
-          _post.foldRight(
-              Appointment, (a, previous) => appointments = a);
+          appointments= _post.asRight();
 
           // filter appointmentType
           appointments = appointments

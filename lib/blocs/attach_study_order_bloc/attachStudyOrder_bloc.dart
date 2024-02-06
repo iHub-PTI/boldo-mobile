@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/network/order_study_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +21,7 @@ class AttachStudyOrderBloc extends Bloc<AttachStudyOrderEvent, AttachStudyOrderS
         await Task(() =>
         _ordersRepository.sendFiles(event.files)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -38,6 +40,7 @@ class AttachStudyOrderBloc extends Bloc<AttachStudyOrderEvent, AttachStudyOrderS
           _ordersRepository.sendDiagnosticReport(
               diagnosticReport)!)
               .attempt()
+              .mapLeftToFailure()
               .run()
               .then((value) {
             _post2 = value;
@@ -55,6 +58,7 @@ class AttachStudyOrderBloc extends Bloc<AttachStudyOrderEvent, AttachStudyOrderS
         await Task(() =>
         _ordersRepository.getServiceRequestId(event.serviceRequestId)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;

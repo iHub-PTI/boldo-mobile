@@ -4,6 +4,7 @@ import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/News.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/network/order_study_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
@@ -32,6 +33,7 @@ class HomeNewsBloc extends Bloc<HomeNewsEvent, HomeNewsState> {
         await Task(() =>
         _ordersRepository.getStudiesOrders()!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -42,6 +44,7 @@ class HomeNewsBloc extends Bloc<HomeNewsEvent, HomeNewsState> {
         await Task(() =>
         _patientRepository.getAppointments()!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post2 = value;

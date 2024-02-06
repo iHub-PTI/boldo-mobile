@@ -2,6 +2,7 @@ import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/QRCode.dart';
 import 'package:boldo/network/organization_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
@@ -25,6 +26,7 @@ class OrganizationSubscribedBloc extends Bloc<OrganizationSubscribedBlocEvent, O
         await Task(() =>
         _organizationRepository.getOrganizations(event.patientSelected)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -49,6 +51,7 @@ class OrganizationSubscribedBloc extends Bloc<OrganizationSubscribedBlocEvent, O
         await Task(() =>
         _organizationRepository.unSubscribedOrganization(event.organization, event.patientSelected)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -71,6 +74,7 @@ class OrganizationSubscribedBloc extends Bloc<OrganizationSubscribedBlocEvent, O
         await Task(() =>
         _organizationRepository.reorderByPriority(event.organizations, event.patientSelected)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
