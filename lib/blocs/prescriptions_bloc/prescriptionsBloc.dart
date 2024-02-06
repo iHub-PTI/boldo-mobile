@@ -33,9 +33,7 @@ class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
 
   PrescriptionsBloc() : super(PrescriptionBlocInitial()) {
     on<PrescriptionsEvent>((event, emit) async {
-      if(false){
-
-      }else if(event is GetPastAppointmentWithPrescriptionsList){
+      if(event is GetPastAppointmentWithPrescriptionsList){
         ISentrySpan transaction = Sentry.startTransaction(
           event.runtimeType.toString(),
           'GET',

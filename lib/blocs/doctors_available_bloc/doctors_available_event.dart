@@ -19,21 +19,6 @@ class GetDoctorFilter extends DoctorsAvailableEvent {
   });
 }
 
-class GetDoctorFilterInDoctorList extends DoctorsAvailableEvent {
-  final List<Organization> organizations;
-  final List<Specializations> specializations;
-  final bool virtualAppointment;
-  final bool inPersonAppointment;
-  final List<String> names;
-  GetDoctorFilterInDoctorList({
-    required this.names,
-    required this.specializations,
-    required this.virtualAppointment,
-    required this.inPersonAppointment,
-    required this.organizations,
-  });
-}
-
 class GetMoreFilterDoctor extends DoctorsAvailableEvent {
   final List<Organization> organizations;
   final int offset;
@@ -50,5 +35,3 @@ class GetMoreFilterDoctor extends DoctorsAvailableEvent {
     required this.organizations
   });
 }
-
-class ReloadDoctorsAvailable extends DoctorsAvailableEvent {}
