@@ -20,16 +20,18 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
       if (event is UserLogin) {
         emit(UserLoginLoading());
 
-        await redirectSignIn(
+        bool logged = await redirectSignIn(
           context: event.context,
         );
 
-        Navigator.pushNamed(
-          event.context,
-          '/SignInSuccess',
-        );
+        if (logged) {
+          Navigator.pushNamed(
+            event.context,
+            '/SignInSuccess',
+          );
 
-        emit(UserLoginSuccess());
+          emit(UserLoginSuccess());
+        }
       }
     });
   }
