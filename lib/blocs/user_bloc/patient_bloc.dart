@@ -7,6 +7,7 @@ import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../main.dart';
 
@@ -28,6 +29,12 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
   PatientBloc() : super(PatientInitial()) {
     on<PatientEvent>((event, emit) async {
       if(event is ChangeUser) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          description: 'get patient on change profile',
+          bindToScope: true,
+        );
         emit(Loading());
         var _post;
         await Task(() =>
@@ -45,17 +52,32 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           emit(Failed(response: response));
           await Future.delayed(const Duration(seconds: 2));
           emit(RedirectBackScreen());
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         }else{
           emit(ChangeFamily());
           await Future.delayed(const Duration(seconds: 2));
           emit(RedirectNextScreen());
           emit(Success());
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         }
       }
       if(event is ReloadHome){
         emit(Success());
       }
       if(event is EditProfile) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'PUT',
+          description: 'edit data of patient',
+          bindToScope: true,
+        );
         emit(Loading());
         var _post;
         await Task(() =>
@@ -70,8 +92,17 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         } else {
           emit(Success());
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         }
       }
     }

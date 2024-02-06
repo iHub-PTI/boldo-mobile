@@ -4,7 +4,7 @@ import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 
 part 'favorite_action_event.dart';
@@ -15,6 +15,12 @@ class FavoriteActionBloc extends Bloc<FavoriteActionEvent, FavoriteActionState> 
   FavoriteActionBloc() : super(DoctorAvailabilityInitial()) {
     on<FavoriteActionEvent>((event, emit) async {
       if (event is PutFavoriteStatus) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'PUT',
+          description: 'put favorite doctor status',
+          bindToScope: true,
+        );
         emit(LoadingFavoriteAction());
         var _post;
         await Task(() =>
@@ -32,9 +38,18 @@ class FavoriteActionBloc extends Bloc<FavoriteActionEvent, FavoriteActionState> 
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(FailedFavoriteAction(response: response));
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         } else {
 
           emit(SuccessFavoriteAction());
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         }
       }
     });

@@ -8,7 +8,7 @@ import 'package:boldo/network/repository_helper.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 
 part 'passportEvent.dart';
@@ -20,6 +20,12 @@ class PassportBloc extends Bloc<PassportEvent, PassportState> {
   PassportBloc(): super(PassportInitial()) {
     on<PassportEvent>((event, emit) async{
       if (event is GetUserDiseaseList) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          description: 'get list of vaccines',
+          bindToScope: true,
+        );
         emit(Loading());
         var _post;
         await Task(() => _passportRepository.getUserDiseaseList(false)!)
@@ -33,10 +39,25 @@ class PassportBloc extends Bloc<PassportEvent, PassportState> {
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         } else {
           emit(Success());
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         }
       } else if (event is GetUserDiseaseListSync) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          description: 'sync vaccines from other systems and get then',
+          bindToScope: true,
+        );
           emit(Loading());
           var _post;
           await Task(() => _passportRepository.getUserDiseaseList(true)!)
@@ -50,10 +71,25 @@ class PassportBloc extends Bloc<PassportEvent, PassportState> {
           if (_post.isLeft()) {
             _post.leftMap((l) => response = l.message);
             emit(Failed(response: response));
+            transaction.throwable = _post.asLeft();
+            transaction.finish(
+              status: SpanStatus.fromString(
+                _post.asLeft().message,
+              ),
+            );
           } else {
             emit(Success());
+            transaction.finish(
+              status: const SpanStatus.ok(),
+            );
           }
       } else if (event is GetUserVaccinationPdfPressed) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          description: 'download pdf of vaccines',
+          bindToScope: true,
+        );
         emit(Loading());
         var _post;
         await Task(() => _passportRepository.downloadVacinnationPdf(event.pdfFromHome)!)
@@ -67,15 +103,39 @@ class PassportBloc extends Bloc<PassportEvent, PassportState> {
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         } else {
           emit(Success());
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         }
       } else if(event is GetUserQrCode) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          description: 'download pdf of vaccines',
+          bindToScope: true,
+        );
         try {
           final url = await generateHash();
           emit(QrUrlLoaded(url));
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         } catch (e) {
           emit(Failed(response: 'No fue posible generar el código qr'));
+          transaction.throwable = e;
+          transaction.finish(
+            status: SpanStatus.fromString(
+              e.toString(),
+            ),
+          );
         }
       }
     });

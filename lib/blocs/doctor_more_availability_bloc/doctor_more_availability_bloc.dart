@@ -7,6 +7,7 @@ import 'package:boldo/utils/helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../models/Doctor.dart';
 
@@ -20,6 +21,12 @@ class DoctorMoreAvailabilityBloc extends Bloc<DoctorMoreAvailabilityEvent, Docto
   DoctorMoreAvailabilityBloc() : super(DoctorAvailabilityInitial()) {
     on<DoctorMoreAvailabilityEvent>((event, emit) async {
       if(event is GetAvailability) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          description: 'get doctor availability for booking an appointment in calendar',
+          bindToScope: true,
+        );
         emit(Loading());
         var _post;
         await Task(() =>
@@ -41,6 +48,12 @@ class DoctorMoreAvailabilityBloc extends Bloc<DoctorMoreAvailabilityEvent, Docto
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         }else{
 
           List<Appointment>? appointments =
@@ -68,6 +81,9 @@ class DoctorMoreAvailabilityBloc extends Bloc<DoctorMoreAvailabilityEvent, Docto
           }
 
           emit(AvailabilitiesObtained(availabilities: nextAvailability));
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         }
       }
     }

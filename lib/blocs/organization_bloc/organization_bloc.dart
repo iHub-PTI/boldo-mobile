@@ -7,6 +7,7 @@ import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../main.dart';
 
@@ -19,6 +20,12 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
   OrganizationBloc() : super(OrganizationInitialState()) {
     on<OrganizationBlocEvent>((event, emit) async {
       if(event is GetAllOrganizations) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          description: 'get all organizations unsubscribed',
+          bindToScope: true,
+        );
         emit(Loading());
         var _post;
 
@@ -36,7 +43,12 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
-
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         }else{
 
           List<Organization> allOrganizations = [];
@@ -50,8 +62,17 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
           PagList<Organization> _organizationsPage = PagList<Organization>(total: allOrganizations.length, items: allOrganizations);
 
           emit(AllOrganizationsObtained(organizationsList: _organizationsPage));
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         }
       }else if(event is SubscribeToAnManyOrganizations) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'POST',
+          description: 'post a request to join an organization',
+          bindToScope: true,
+        );
         emit(Loading());
         var _post;
 
@@ -69,12 +90,26 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
-
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         }else{
 
           emit(SuccessSubscribed());
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         }
       }else if(event is GetAllOrganizationsByType) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          "${event.runtimeType.toString()}-${event.type.codeType}",
+          'GET',
+          description: 'get organization by type',
+          bindToScope: true,
+        );
         emit(Loading());
         var _post;
 
@@ -97,13 +132,20 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
-
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         }else{
           late PagList<Organization> allOrganizations;
           _post.foldRight(
               PagList<Organization>, (a, previous) => allOrganizations = a);
           emit(AllOrganizationsObtained(organizationsList: allOrganizations));
-
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
 
         }
       }

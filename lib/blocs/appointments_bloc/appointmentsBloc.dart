@@ -5,6 +5,7 @@ import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 
 
@@ -48,7 +49,12 @@ class AppointmentsBloc extends Bloc<AppointmentsEvent, AppointmentsState> {
     on<AppointmentsEvent>((event, emit) async {
       if(event is GetPastAppointmentsList){
         emit(Loading());
-        var _post;
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          bindToScope: true,
+        );
+        late Either<Failure, List<Appointment>> _post;
         await Task(() =>
         _appointmentRepository.getPastAppointments(event.date)!)
             .attempt()
@@ -62,13 +68,27 @@ class AppointmentsBloc extends Bloc<AppointmentsEvent, AppointmentsState> {
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         } else {
           late List<Appointment> appointments;
           appointments = _post.asRight();
           emit(AppointmentsLoadedState(appointments: appointments));
           emit(Success());
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         }
       }else if(event is GetPastAppointmentsBetweenDatesList){
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          bindToScope: true,
+        );
         emit(Loading());
         late Either<Failure, List<Appointment>> _post;
         await Task(() =>
@@ -84,6 +104,12 @@ class AppointmentsBloc extends Bloc<AppointmentsEvent, AppointmentsState> {
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         } else {
           late List<Appointment> appointments;
           appointments= _post.asRight();
@@ -103,6 +129,9 @@ class AppointmentsBloc extends Bloc<AppointmentsEvent, AppointmentsState> {
               .toList();
           emit(AppointmentsLoadedState(appointments: appointments));
           emit(Success());
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         }
       }
     }

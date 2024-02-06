@@ -1,6 +1,5 @@
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
-import 'package:boldo/models/DiagnosticReport.dart';
 import 'package:boldo/models/News.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/network/order_study_repository.dart';
@@ -9,8 +8,7 @@ import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../main.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 
 part 'homeNews_event.dart';
@@ -24,6 +22,12 @@ class HomeNewsBloc extends Bloc<HomeNewsEvent, HomeNewsState> {
   HomeNewsBloc() : super(HomeNewsInitial()) {
     on<HomeNewsEvent>((event, emit) async {
       if(event is GetNews){
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          description: 'get news, future appointments and study orders',
+          bindToScope: true,
+        );
         emit(LoadingNews());
         news = [];
         var _post;
@@ -57,6 +61,12 @@ class HomeNewsBloc extends Bloc<HomeNewsEvent, HomeNewsState> {
         if (_post2.isLeft()) {
           _post2.leftMap((l) => response = l.message);
           emit(FailedLoadedNews(response: response));
+          transaction.throwable = _post2.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post2.asLeft().message,
+            ),
+          );
         }else{
           late List<Appointment> appointments = [];
           _post2.foldRight(Appointment, (a, previous) => appointments = a);
@@ -104,6 +114,12 @@ class HomeNewsBloc extends Bloc<HomeNewsEvent, HomeNewsState> {
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(FailedLoadedNews(response: response));
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         }else{
           late List<StudyOrder> studiesOrders = [];
           _post.foldRight(StudyOrder, (a, previous) => studiesOrders = a);
@@ -132,11 +148,23 @@ class HomeNewsBloc extends Bloc<HomeNewsEvent, HomeNewsState> {
 
         // emit news
         emit(NewsLoaded(news: news));
+        transaction.finish(
+          status: const SpanStatus.ok(),
+        );
       }if(event is DeleteNews){
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'SELECT',
+          description: 'delete local news',
+          bindToScope: true,
+        );
 
         news = news.where((element) => element != event.news).toList();
 
         emit(NewsLoaded(news: news));
+        transaction.finish(
+          status: const SpanStatus.ok(),
+        );
       }
     });
   }

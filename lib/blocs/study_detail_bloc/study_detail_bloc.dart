@@ -9,6 +9,7 @@ import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../models/DiagnosticReport.dart';
 import 'package:http/http.dart' as http;
 part 'study_detail_event.dart';
@@ -17,11 +18,16 @@ part 'study_detail_state.dart';
 class StudyDetailBloc extends Bloc<StudyDetailEvent, StudyDetailState> {
   final MyStudesRepository _myStudiesRepository = MyStudesRepository();
   final StudiesOrdersRepository _ordersRepository = StudiesOrdersRepository();
-  List<File> files = [];
 
   StudyDetailBloc() : super(StudyDetailInitial()) {
     on<StudyDetailEvent>((event, emit) async {
       if (event is GetPatientStudyFromServer) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          description: 'get a diagnostic report',
+          bindToScope: true,
+        );
         emit(Loading());
         var _post;
         await Task(() => _myStudiesRepository.getDiagnosticReport(event.id)!)
@@ -35,10 +41,25 @@ class StudyDetailBloc extends Bloc<StudyDetailEvent, StudyDetailState> {
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(msg: response));
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         } else {
           emit(DiagnosticStudyLoaded(study: _post.value));
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         }
       }if (event is GetUserPdfFromUrl) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          description: 'download pdf of diagnostic report',
+          bindToScope: true,
+        );
         emit(Loading());
         var _post;
         await Task(() => getUserPdfVisor(event.url)!)
@@ -52,45 +73,17 @@ class StudyDetailBloc extends Bloc<StudyDetailEvent, StudyDetailState> {
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(msg: response));
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         } else {
           emit(Success());
-        }
-      } else if (event is DeleteFiles) {
-        files = [];
-      } else if (event is AddFiles) {
-        if (files.isNotEmpty) {
-          files = [...files, ...event.files];
-        } else {
-          files = event.files;
-        }
-      } else if (event is AddFile) {
-        if (files.isNotEmpty) {
-          files = [...files, event.file];
-        } else {
-          files = [event.file];
-        }
-      } else if (event is GetFiles) {
-        emit(FilesObtained(files: files));
-      } else if (event is GetServiceRequests) {
-        emit(Loading());
-        var _post;
-        await Task(() =>
-                _ordersRepository.getServiceRequestId(event.serviceRequestId)!)
-            .attempt()
-            .mapLeftToFailure()
-            .run()
-            .then((value) {
-          _post = value;
-        });
-        var response;
-        if (_post.isLeft()) {
-          _post.leftMap((l) => response = l.message);
-          emit(Failed(msg: response));
-        } else {
-          late ServiceRequest serviceRequest;
-          _post.foldRight(StudyOrder, (a, previous) => serviceRequest = a);
-          emit(ServiceRequestLoaded(serviceRequest: serviceRequest));
-          emit(Success());
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         }
       }
     });
