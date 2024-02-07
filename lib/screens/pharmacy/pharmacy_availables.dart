@@ -97,8 +97,15 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                             BlocBuilder<OrganizationBloc, OrganizationBlocState>(
                                 builder: (context, state){
                                   if (state is Failed){
+                                    //reset refresh status
+                                    _pharmaciesPageController.loadComplete();
+                                    _pharmaciesPageController.refreshCompleted();
                                     return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizationsByType(type: OrganizationType.pharmacy)));
                                   } else if(state is AllOrganizationsObtained){
+
+                                    //reset refresh status
+                                    _pharmaciesPageController.loadComplete();
+                                    _pharmaciesPageController.refreshCompleted();
 
                                     _totalPharmacies = state.organizationsList.total?? 0;
 
