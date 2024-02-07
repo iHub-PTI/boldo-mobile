@@ -78,8 +78,8 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                     semanticsLabel: 'BOLDO Logo'),
               ),
             ),
-            body: Padding(
-              padding: const EdgeInsets.only(top: 16),
+            body: SafeArea(
+              minimum: const EdgeInsets.only(top: 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,6 +107,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                       } else if (state is Success) {
                         return Expanded(
                           child: SingleChildScrollView(
+                            physics: const ClampingScrollPhysics(),
                             child: Padding(
                               padding: const EdgeInsets.only(top: 16),
                               child: Column(
@@ -146,6 +147,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                       ],
                                     ),
                                     child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       mainAxisAlignment:
                                       MainAxisAlignment.center,
                                       children: [
