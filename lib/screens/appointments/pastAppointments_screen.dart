@@ -1,6 +1,5 @@
 import 'package:boldo/blocs/appointments_bloc/appointmentsBloc.dart';
-import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
-import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart'as medical;
+import 'package:boldo/blocs/homeAppointments_bloc/futureAppointments_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
@@ -59,14 +58,14 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
     });
 
     // get future appointments
-    BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
+    BlocProvider.of<FutureAppointmentsBloc>(context).add(GetAppointmentsHome());
 
     super.initState();
   }
 
   void _onRefreshFutureAppointments() async {
     // monitor network fetch
-    BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome());
+    BlocProvider.of<FutureAppointmentsBloc>(context).add(GetAppointmentsHome());
   }
 
   @override
@@ -119,7 +118,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
                   }
                 }
             ),
-            BlocListener<HomeAppointmentsBloc, HomeAppointmentsState>(
+            BlocListener<FutureAppointmentsBloc, FutureAppointmentsState>(
               listener: (context, state) {
                 if (state is FailedLoadedAppointments) {
                   emitSnackBar(
@@ -278,7 +277,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
             );
           },
         ),
-        child: BlocBuilder<HomeAppointmentsBloc, HomeAppointmentsState>(builder: (context, state) {
+        child: BlocBuilder<FutureAppointmentsBloc, FutureAppointmentsState>(builder: (context, state) {
           if(state is AppointmentsHomeLoaded){
             return futureAppointments.isNotEmpty
                 ? ListView.builder(
@@ -300,7 +299,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen> with Si
             );
           }else if(state is FailedLoadedAppointments){
             return Container(
-                child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeAppointmentsBloc>(context).add(GetAppointmentsHome()) ) );
+                child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<FutureAppointmentsBloc>(context).add(GetAppointmentsHome()) ) );
           }else{
             return Container();
           }
