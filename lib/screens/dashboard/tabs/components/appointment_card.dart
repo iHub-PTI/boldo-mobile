@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/screens/Call/video_call.dart';
 import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
