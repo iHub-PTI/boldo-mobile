@@ -7,6 +7,7 @@ import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 
 
@@ -32,30 +33,13 @@ class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
 
   PrescriptionsBloc() : super(PrescriptionBlocInitial()) {
     on<PrescriptionsEvent>((event, emit) async {
-      if(event is GetPastAppointmentList){
-        emit(Loading());
-        var _post;
-        await Task(() =>
-        _appointmentRepository.getPastAppointments(event.date)!)
-            .attempt()
-            .mapLeftToFailure()
-            .run()
-            .then((value) {
-          _post = value;
-        }
+      if(event is GetPastAppointmentWithPrescriptionsList){
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          description: 'get list of prescriptions',
+          bindToScope: true,
         );
-        var response;
-        if (_post.isLeft()) {
-          _post.leftMap((l) => response = l.message);
-          emit(Failed(response: response));
-        } else {
-          late List<Appointment> appointments;
-          _post.foldRight(
-              Appointment, (a, previous) => appointments = a);
-          emit(AppointmentLoadedState(appointments: appointments));
-          emit(Success());
-        }
-      }else if(event is GetPastAppointmentWithPrescriptionsList){
         emit(Loading());
         var _post;
         await Task(() =>
@@ -71,6 +55,12 @@ class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         } else {
           late List<Appointment> appointments;
           _post.foldRight(
@@ -90,6 +80,12 @@ class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
           if (_post.isLeft()) {
             _post.leftMap((l) => response = l.message);
             emit(Failed(response: response));
+            transaction.throwable = _post.asLeft();
+            transaction.finish(
+              status: SpanStatus.fromString(
+                _post.asLeft().message,
+              ),
+            );
           } else {
             late List<Prescription> prescriptions;
             _post.foldRight(
@@ -113,6 +109,9 @@ class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
                 .where((element) => element.prescriptions != null)
                 .toList();
             emit(AppointmentWithPrescriptionsLoadedState(appointments: appointments));
+            transaction.finish(
+              status: const SpanStatus.ok(),
+            );
           }
         }
 

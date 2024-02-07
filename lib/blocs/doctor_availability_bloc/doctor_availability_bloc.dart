@@ -1,11 +1,13 @@
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/network/doctor_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../models/Doctor.dart';
 
@@ -19,6 +21,12 @@ class DoctorAvailabilityBloc extends Bloc<DoctorAvailabilityEvent, DoctorAvailab
   DoctorAvailabilityBloc() : super(DoctorAvailabilityInitial()) {
     on<DoctorAvailabilityEvent>((event, emit) async {
       if(event is GetAvailability) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          description: 'get doctor availability for booking an appointment',
+          bindToScope: true,
+        );
         emit(Loading());
         var _post;
         await Task(() =>
@@ -30,6 +38,7 @@ class DoctorAvailabilityBloc extends Bloc<DoctorAvailabilityEvent, DoctorAvailab
           appointmentType: event.appointmentType,
         )!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -39,6 +48,12 @@ class DoctorAvailabilityBloc extends Bloc<DoctorAvailabilityEvent, DoctorAvailab
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         }else{
 
           List<Appointment>? appointments =
@@ -67,6 +82,9 @@ class DoctorAvailabilityBloc extends Bloc<DoctorAvailabilityEvent, DoctorAvailab
 
           emit(AvailabilitiesObtained(availabilities: nextAvailability));
           emit(Success());
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         }
       }
     }
