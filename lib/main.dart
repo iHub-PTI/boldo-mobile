@@ -5,7 +5,7 @@ import 'package:boldo/blocs/doctor_more_availability_bloc/doctor_more_availabili
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/doctors_favorite_bloc/doctors_favorite_bloc.dart';
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
-import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
+import 'package:boldo/blocs/homeAppointments_bloc/futureAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
@@ -247,8 +247,8 @@ class _MyAppState extends State<MyApp> {
           BlocProvider<HomeNewsBloc>(
             create: (BuildContext context) => HomeNewsBloc(),
           ),
-          BlocProvider<HomeAppointmentsBloc>(
-            create: (BuildContext context) => HomeAppointmentsBloc(),
+          BlocProvider<FutureAppointmentsBloc>(
+            create: (BuildContext context) => FutureAppointmentsBloc(),
           ),
           BlocProvider<PassportBloc>(
             create: (BuildContext context)=> PassportBloc(),
