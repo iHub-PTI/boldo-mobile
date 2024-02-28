@@ -138,21 +138,22 @@ class OrganizationRepository {
   Future<List<Organization>>? getUnsubscribedOrganizations(Patient patientSelected) async {
     Response response;
 
+    Map<String, dynamic> params = {
+      "subscribed": false,
+      "includeSettings": true,
+    };
+
     try {
       // the query is made
       if (patientSelected.id != prefs.getString('userId')) {
         response = await dio.get(
             '/profile/caretaker/dependent/${patientSelected.id}/organizations',
-          queryParameters: {
-            "subscribed": false,
-          }
+          queryParameters: params,
         );
       } else {
         response = await dio
             .get('/profile/patient/organizations',
-            queryParameters: {
-              "subscribed": false,
-            }
+            queryParameters: params,
         );
       }
       // there are organizations
