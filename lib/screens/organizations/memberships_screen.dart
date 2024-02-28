@@ -540,10 +540,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                             );
                           }
                         }
-                        return AnimatedSwitcher(
-                          duration: appearWidgetDuration,
-                          child: child,
-                        );
+                        return child;
                       }
                     ),
                     const SizedBox(height: 10),
@@ -595,10 +592,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                             );
                           }
                         }
-                        return AnimatedSwitcher(
-                          duration: appearWidgetDuration,
-                          child: child,
-                        );
+                        return child;
                       }
                     ),
                   ],
@@ -1063,10 +1057,7 @@ class FamilySelectorState extends State<FamilySelector>{
         }else {
           child = loadingStatus();
         }
-        return AnimatedSwitcher(
-          duration: appearWidgetDuration,
-          child: child,
-        );
+        return child;
       }
     );
   }
