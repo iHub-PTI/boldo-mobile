@@ -21,14 +21,22 @@ class OrganizationRepository {
 
     try {
 
+      Map<String, dynamic> params = {
+        "subscribed": true,
+      };
+
       List<Organization> _organizationsSubscribed;
 
       if (patientSelected.id != prefs.getString('userId')) {
         response = await dio
-            .get('/profile/caretaker/dependent/${patientSelected.id}/organizations');
+            .get('/profile/caretaker/dependent/${patientSelected.id}/organizations',
+          queryParameters: params,
+        );
       } else {
         // the query is made
-        response = await dio.get('/profile/patient/organizations');
+        response = await dio.get('/profile/patient/organizations',
+          queryParameters: params,
+        );
       }
       // there are organizations
       if (response.statusCode == 200) {
