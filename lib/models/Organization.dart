@@ -20,6 +20,8 @@ class Organization {
 
   bool? active;
 
+  OrganizationSettings? organizationSettings;
+
   List<Contact>? contactList;
 
   /// integer that define the user preference to get doctors by organization
@@ -32,6 +34,7 @@ class Organization {
     this.type,
     this.coloCode,
     this.priority,
+    this.organizationSettings,
     this.contactList,
   });
 
@@ -60,6 +63,9 @@ class Organization {
     typeDisplay = json['typeDisplay'];
     visibilityDisplay = json['visibilityDisplay'];
     visibility = json['visibility'];
+    if( json['organizationSettings'] != null ){
+      organizationSettings = OrganizationSettings.fromJson(json['organizationSettings']);
+    }
 
   }
 
@@ -145,4 +151,58 @@ enum OrganizationType {
   final Color iconColor;
   final Widget? page;
   final String codeType;
+}
+
+class OrganizationSettings {
+
+  bool? setLogoInReports,
+  automaticPatientSubscription;
+  
+  List<OrganizationRequirement>? organizationRequirements;
+
+  OrganizationSettings({
+    this.setLogoInReports,
+    this.automaticPatientSubscription,
+    this.organizationRequirements,
+  });
+
+  factory OrganizationSettings.fromJson(Map<String, dynamic> json,) => OrganizationSettings(
+    setLogoInReports: json["setLogoInReports"],
+    automaticPatientSubscription: json["automaticPatientSubscription"],
+    organizationRequirements: json["organizationRequirements"] != null
+        ? List<OrganizationRequirement>.from(
+        json["organizationRequirements"].map((element) => OrganizationRequirement.fromJson(element))
+    ) : json["automaticPatientSubscription"] ? List<OrganizationRequirement>.from([
+      OrganizationRequirement(
+        title: "¿Cuenta con seguro médico?",
+        description: "Para acceder a los servicios del centro es requisito NO contar con seguro médico",
+        answer: false,
+      ),
+    ]) : null,
+  );
+
+}
+
+class OrganizationRequirement {
+
+  String? title,
+  description,
+  observation;
+
+  bool? answer;
+
+  OrganizationRequirement({
+    this.title,
+    this.description,
+    this.observation,
+    this.answer,
+  });
+
+  factory OrganizationRequirement.fromJson(Map<String, dynamic> json,) => OrganizationRequirement(
+    title: json["title"],
+    description: json["description"],
+    observation: json["observation"],
+    answer: json["answer"],
+  );
+
 }
