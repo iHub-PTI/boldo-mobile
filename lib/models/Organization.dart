@@ -39,6 +39,7 @@ class Organization {
     active = json['active'];
     id = json['id'];
     name = json['name'];
+    name = name?.trimRight().trimLeft();
     type = json['type'];
     try {
       organizationType =
