@@ -225,7 +225,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
               ),
               BlocListener<HomeBloc, HomeState>(
                 listener: (context, state) {
-                  if (state is ReloadHome) {
+                  if (state is HomeSuccess) {
                     setState(() {
 
                     });
