@@ -491,11 +491,15 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                             width: 12,
                                           ),
                                           InkWell(
-                                            onTap: (){
-                                              Navigator.push(
+                                            onTap: () async {
+                                              dynamic result = await Navigator.push(
                                                 context,
                                                 MaterialPageRoute(builder: (context) => OrganizationsScreen(patientSelected: patientSelected)),
                                               );
+                                              if(result == true){
+                                                BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected));
+                                                BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated(patientSelected: patientSelected));
+                                              }
                                             },
                                             child: Card(
                                               elevation: 0,
@@ -645,11 +649,15 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
             Padding(
               padding: EdgeInsets.only(right: 16.0, bottom: 16.0),
               child: ElevatedButton(
-                onPressed:(){
-                  Navigator.push(
+                onPressed:() async {
+                  dynamic result = await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => OrganizationsScreen(patientSelected: patientSelected)),
                   );
+                  if(result == true){
+                    BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected));
+                    BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated(patientSelected: patientSelected));
+                  }
                 },
                 child: Container(
                     child: Row(
