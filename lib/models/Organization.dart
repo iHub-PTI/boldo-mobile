@@ -130,7 +130,7 @@ enum OrganizationType {
     svgPath: 'assets/icon/local-hospital.svg',
     infoCardTitle: 'Centros asistenciales',
     page: OrganizationsSubscribedScreen(),
-    codeType: 'HOSPITAL'
+    codeType: 'HEALTHCARE-PROVIDER'
   );
 
   const OrganizationType({
