@@ -59,7 +59,7 @@ class Organization {
     logoUrl = json['logoUrl'];
     typeDisplay = json['typeDisplay'];
     visibilityDisplay = json['visibilityDisplay'];
-    visibility = json['logoUvisibilityrl'];
+    visibility = json['visibility'];
 
   }
 
