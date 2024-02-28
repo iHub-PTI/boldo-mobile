@@ -318,8 +318,6 @@ class OrganizationRepository {
         response = await dio.post('/profile/patient/subscriptions', data: data);
       }
       if(response.statusCode == 200) {
-        //TODO: persist locally where list of organizations pending accepted isn't developed
-        organizationsPostulated.addAll(organizations);
         return None();
       }
       // throw an error if isn't a know status code

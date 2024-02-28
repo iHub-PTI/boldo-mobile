@@ -54,11 +54,6 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
           List<Organization> allOrganizations = [];
           _post.foldRight(Organization, (a, previous) => allOrganizations = a);
 
-          allOrganizations = allOrganizations.where(
-                  (element) => !organizationsPostulated.any((element2) =>
-              element.id == element2.id)
-          ).toList();
-
           PagList<Organization> _organizationsPage = PagList<Organization>(total: allOrganizations.length, items: allOrganizations);
 
           emit(AllOrganizationsObtained(organizationsList: _organizationsPage));

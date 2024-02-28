@@ -89,7 +89,6 @@ List<UserVaccinate>? diseaseUserList;
 List<UserVaccinate>? vaccineListQR = [];
 XFile? userImageSelected;
 int selectedPageIndex = 0;
-List<Organization> organizationsPostulated = [];
 const storage = FlutterSecureStorage();
 late List<Relationship> relationTypes = [];
 late List<Patient> families = [];
