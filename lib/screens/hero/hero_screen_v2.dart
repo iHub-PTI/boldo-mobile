@@ -400,14 +400,18 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated> with SingleTick
                                 children: [
                                   Text(
                                     carouselSlide!.title,
-                                    style: boldoCardSubtitleTextStyle,
+                                    style: boldoCardSubtitleTextStyle.copyWith(
+                                      color: Colors.white,
+                                    ),
                                   ),
                                   Flexible(
                                     child: SingleChildScrollView(
                                       physics: const BouncingScrollPhysics(),
                                       child: Text(
                                         carouselSlide!.description,
-                                        style: boldoCardSubtitleTextStyle,
+                                        style: boldoCardSubtitleTextStyle.copyWith(
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ),

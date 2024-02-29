@@ -183,7 +183,6 @@ const boldoInfoTextStyle = TextStyle(
 );
 
 const boldoCardHeadingTextStyle = TextStyle(
-  color: Colors.white,
   fontStyle: FontStyle.normal,
   fontSize: 17,
   fontWeight: FontWeight.w600,
@@ -191,7 +190,6 @@ const boldoCardHeadingTextStyle = TextStyle(
 );
 
 const boldoCardSubtitleTextStyle = TextStyle(
-  color: Colors.white,
   fontStyle: FontStyle.normal,
   fontSize: 16,
   fontWeight: FontWeight.w400,
@@ -240,7 +238,6 @@ const boldoBodySBlackTextStyle = TextStyle(
 );
 
 const boldoCorpMediumBlackTextStyle = TextStyle(
-  color: ConstantsV2.lightGrey,
   fontStyle: FontStyle.normal,
   fontSize: 14,
   fontWeight: FontWeight.w500,

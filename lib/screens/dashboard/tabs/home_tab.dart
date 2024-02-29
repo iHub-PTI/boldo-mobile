@@ -741,7 +741,9 @@ class _CustomCardPageState extends State<CustomCardPage> with TickerProviderStat
                           duration: const Duration(milliseconds: 300),
                           child: Text(
                             widget.carouselCard.title,
-                            style: boldoCorpMediumBlackTextStyle,
+                            style: boldoCorpMediumBlackTextStyle.copyWith(
+                              color: ConstantsV2.lightGrey,
+                            ),
                           ),
                         ),
                       ),
