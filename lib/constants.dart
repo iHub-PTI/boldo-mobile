@@ -443,6 +443,11 @@ ThemeData boldoTheme = ThemeData(
       side: const BorderSide(color: ConstantsV2.orange, width: 5),
       borderRadius: BorderRadius.circular(4),
     ),
+    fillColor: MaterialStateProperty.resolveWith((states) {
+      if(states.contains(MaterialState.selected)){
+        return ConstantsV2.orange;
+      }
+    }),
   ),
   unselectedWidgetColor: ConstantsV2.orange,
   floatingActionButtonTheme: FloatingActionButtonThemeData(
