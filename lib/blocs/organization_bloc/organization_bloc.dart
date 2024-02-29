@@ -148,4 +148,41 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
 
     );
   }
+
+  Future<List<MapEntry<Organization, bool?>>> checkOrganizationsRequirements ({
+    required List<Organization> organizations,
+    required BuildContext context,
+  }) async {
+    
+    List<MapEntry<Organization, bool?>> _answers = [];
+
+    await Future.forEach(organizations, (element) async {
+      
+      if(element.organizationSettings?.automaticPatientSubscription?? false)
+        _answers.add(MapEntry(element, await evaluateRequirements(organization: element, context: context)));
+      else
+        _answers.add(MapEntry(element, true));
+
+        
+    });
+
+    return _answers;
+  }
+
+  Future<bool?> evaluateRequirements({
+    required Organization organization,
+    required BuildContext context,
+  }) async {
+
+    bool? expectedValue = await Navigator.of(context).push(
+      MaterialPageRoute (
+        builder: (BuildContext context) => RequestRequirementPostulation(
+          organization: organization,
+        ),
+      ),
+    );
+
+    return expectedValue;
+  }
+
 }
