@@ -11,7 +11,12 @@ class SubscribeToAnOrganization extends OrganizationBlocEvent {
 class SubscribeToAnManyOrganizations extends OrganizationBlocEvent {
   final List<Organization> organizations;
   final Patient patientSelected;
-  SubscribeToAnManyOrganizations({required this.organizations, required this.patientSelected});
+  final BuildContext context;
+  SubscribeToAnManyOrganizations({
+    required this.organizations,
+    required this.patientSelected,
+    required this.context,
+  });
 }
 
 class GetOrganizationById extends OrganizationBlocEvent {
