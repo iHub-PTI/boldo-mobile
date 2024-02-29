@@ -4,12 +4,12 @@ import 'package:boldo/models/PagList.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/network/organization_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
+import 'package:boldo/screens/organizations/request_subscription/RequestRequirementPostulation.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:dartz/dartz.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-
-import '../../main.dart';
 
 
 part 'organization_event.dart';
@@ -71,32 +71,78 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
         emit(Loading());
         var _post;
 
-        //get organizations that the patient is subscribed
-        await Task(() =>
-        _organizationRepository.subscribeToManyOrganizations(event.organizations, event.patientSelected)!)
-            .attempt()
-            .mapLeftToFailure()
-            .run()
-            .then((value) {
-          _post = value;
-        }
-        );
         var response;
-        if (_post.isLeft()) {
-          _post.leftMap((l) => response = l.message);
+
+        Either<Failure, List<MapEntry<Organization, bool?>>>
+        postulationEvaluation = await Task(() =>
+          checkOrganizationsRequirements(
+            organizations: event.organizations,
+            context: event.context,
+          )
+        )
+          .attempt()
+          .mapLeftToFailure()
+          .run();
+
+        if(postulationEvaluation.isLeft()){
+          response = postulationEvaluation.asLeft().message;
           emit(Failed(response: response));
-          transaction.throwable = _post.asLeft();
+          transaction.throwable = postulationEvaluation.asLeft();
           transaction.finish(
             status: SpanStatus.fromString(
-              _post.asLeft().message,
+              response,
             ),
           );
         }else{
+          if(postulationEvaluation.asRight().every((element) => element.value == true)){
 
-          emit(SuccessSubscribed());
-          transaction.finish(
-            status: const SpanStatus.ok(),
-          );
+            // get organizations that the patient is subscribed
+            await Task(() =>
+            _organizationRepository.subscribeToManyOrganizations(event.organizations, event.patientSelected)!)
+                .attempt()
+                .mapLeftToFailure()
+                .run()
+                .then((value) {
+              _post = value;
+            }
+            );
+            if (_post.isLeft()) {
+              _post.leftMap((l) => response = l.message);
+              emit(Failed(response: response));
+              transaction.throwable = _post.asLeft();
+              transaction.finish(
+                status: SpanStatus.fromString(
+                  _post.asLeft().message,
+                ),
+              );
+            }else{
+
+              emit(SuccessSubscribed());
+              transaction.finish(
+                status: const SpanStatus.ok(),
+              );
+            }
+
+            emit(Success());
+          }else{
+
+            String message = postulationEvaluation.asRight().length > 1 ?
+                "No se pudo enviar la solicitud" : "No se pudo enviar las solicitudes";
+
+            message = message + " debido a los requisitos de suscripción no cumplidos";
+
+            emitSnackBar(
+              context: event.context,
+              text: 'No se pudo enviar la(s) solicitud(es) ',
+              status: ActionStatus.Warning,
+            );
+            transaction.finish(
+              status: SpanStatus.fromString(
+                'failed some form to postulate',
+              ),
+            );
+            emit(Success());
+          }
         }
       }else if(event is GetAllOrganizationsByType) {
         ISentrySpan transaction = Sentry.startTransaction(
