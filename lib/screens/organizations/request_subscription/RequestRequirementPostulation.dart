@@ -1,7 +1,7 @@
 import 'package:boldo/blocs/organizationRequirementsValidate_bloc/organizationRequirementsValidate_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Organization.dart';
-import 'package:boldo/screens/organizations/request_suscription/components/confirm_veracity.dart';
+import 'package:boldo/screens/organizations/request_subscription/components/confirm_veracity.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
