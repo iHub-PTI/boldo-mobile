@@ -658,6 +658,7 @@ class ConstantsV2 {
 
   static const Color systemSuccess = Color(0xff4AB648);
   static const Color systemFail = Color(0xffC53030);
+  static const Color systemWarning = Color(0xffF6BC4A);
   static const Color accentRegular = Color(0xffF9D620);
 
   // home heights
