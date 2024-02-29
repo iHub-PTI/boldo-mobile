@@ -1,9 +1,9 @@
+import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart' as home_organization_bloc;
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/QRCode.dart';
 import 'package:boldo/network/organization_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
-import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,6 +52,9 @@ class OrganizationSubscribedBloc extends Bloc<OrganizationSubscribedBlocEvent, O
         }else{
           late List<Organization> organizations;
           _post.foldRight(QRCode, (a, previous) => organizations = a);
+
+          // send signal to get news with latest organizations list
+          BlocProvider.of<home_organization_bloc.HomeOrganizationBloc>(navKey.currentState!.context).add(home_organization_bloc.GetOrganizationsSubscribed());
 
           emit(OrganizationsSubscribedObtained(organizationsList: organizations));
           transaction.finish(

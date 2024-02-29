@@ -225,7 +225,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
               ),
               BlocListener<HomeBloc, HomeState>(
                 listener: (context, state) {
-                  if (state is ReloadHome) {
+                  if (state is HomeSuccess) {
                     setState(() {
 
                     });
@@ -741,7 +741,9 @@ class _CustomCardPageState extends State<CustomCardPage> with TickerProviderStat
                           duration: const Duration(milliseconds: 300),
                           child: Text(
                             widget.carouselCard.title,
-                            style: boldoCorpMediumBlackTextStyle,
+                            style: boldoCorpMediumBlackTextStyle.copyWith(
+                              color: ConstantsV2.lightGrey,
+                            ),
                           ),
                         ),
                       ),

@@ -1033,7 +1033,9 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                                           left: 8.0, right: 16, bottom: 2),
                                       child: Text(
                                         '${doctor.gender == 'female' ? 'Dra.' : 'Dr.'} ${doctor.givenName!.split(" ")[0]} ${doctor.familyName!.split(" ")[0]}',
-                                        style: boldoCardHeadingTextStyle,
+                                        style: boldoCardHeadingTextStyle.copyWith(
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ],

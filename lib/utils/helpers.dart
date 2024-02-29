@@ -456,7 +456,7 @@ class DateTextFormatter extends TextInputFormatter {
   }
 }
 
-enum ActionStatus {Success, Fail}
+enum ActionStatus {Success, Fail, Warning}
 
 
 enum SnackBarPosition {TOP, BUTTON}
@@ -484,6 +484,11 @@ Future emitSnackBar({required BuildContext context, String? text, ActionStatus? 
       message = message?? "Acción fallida";
       color = color?? ConstantsV2.systemFail;
       icon = icon?? SvgPicture.asset('assets/icon/error_icon.svg', color: const Color(0xffFBFBFB),);
+      break;
+    case ActionStatus.Warning:
+      message = message?? "Acción con problemas";
+      color = color?? ConstantsV2.systemWarning;
+      icon = icon?? const Icon(Icons.warning_rounded, color: const Color(0xffFBFBFB),);
       break;
     default: // Without this, you see a WARNING.
       message = message?? "Acción con estado desconocido";

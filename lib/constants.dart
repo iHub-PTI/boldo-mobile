@@ -183,7 +183,6 @@ const boldoInfoTextStyle = TextStyle(
 );
 
 const boldoCardHeadingTextStyle = TextStyle(
-  color: Colors.white,
   fontStyle: FontStyle.normal,
   fontSize: 17,
   fontWeight: FontWeight.w600,
@@ -191,7 +190,6 @@ const boldoCardHeadingTextStyle = TextStyle(
 );
 
 const boldoCardSubtitleTextStyle = TextStyle(
-  color: Colors.white,
   fontStyle: FontStyle.normal,
   fontSize: 16,
   fontWeight: FontWeight.w400,
@@ -240,7 +238,6 @@ const boldoBodySBlackTextStyle = TextStyle(
 );
 
 const boldoCorpMediumBlackTextStyle = TextStyle(
-  color: ConstantsV2.lightGrey,
   fontStyle: FontStyle.normal,
   fontSize: 14,
   fontWeight: FontWeight.w500,
@@ -407,6 +404,9 @@ const BoxDecoration selectedCardDecoration = BoxDecoration(
 
 ThemeData boldoTheme = ThemeData(
   fontFamily: 'Montserrat',
+  listTileTheme: const ListTileThemeData(
+    horizontalTitleGap: 0
+  ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
       textStyle: MaterialStateProperty.all(
@@ -443,6 +443,11 @@ ThemeData boldoTheme = ThemeData(
       side: const BorderSide(color: ConstantsV2.orange, width: 5),
       borderRadius: BorderRadius.circular(4),
     ),
+    fillColor: MaterialStateProperty.resolveWith((states) {
+      if(states.contains(MaterialState.selected)){
+        return ConstantsV2.orange;
+      }
+    }),
   ),
   unselectedWidgetColor: ConstantsV2.orange,
   floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -658,6 +663,7 @@ class ConstantsV2 {
 
   static const Color systemSuccess = Color(0xff4AB648);
   static const Color systemFail = Color(0xffC53030);
+  static const Color systemWarning = Color(0xffF6BC4A);
   static const Color accentRegular = Color(0xffF9D620);
 
   // home heights

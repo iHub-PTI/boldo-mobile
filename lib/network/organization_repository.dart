@@ -21,14 +21,22 @@ class OrganizationRepository {
 
     try {
 
+      Map<String, dynamic> params = {
+        "subscribed": true,
+      };
+
       List<Organization> _organizationsSubscribed;
 
       if (patientSelected.id != prefs.getString('userId')) {
         response = await dio
-            .get('/profile/caretaker/dependent/${patientSelected.id}/organizations');
+            .get('/profile/caretaker/dependent/${patientSelected.id}/organizations',
+          queryParameters: params,
+        );
       } else {
         // the query is made
-        response = await dio.get('/profile/patient/organizations');
+        response = await dio.get('/profile/patient/organizations',
+          queryParameters: params,
+        );
       }
       // there are organizations
       if (response.statusCode == 200) {
@@ -130,21 +138,22 @@ class OrganizationRepository {
   Future<List<Organization>>? getUnsubscribedOrganizations(Patient patientSelected) async {
     Response response;
 
+    Map<String, dynamic> params = {
+      "subscribed": false,
+      "includeSettings": true,
+    };
+
     try {
       // the query is made
       if (patientSelected.id != prefs.getString('userId')) {
         response = await dio.get(
             '/profile/caretaker/dependent/${patientSelected.id}/organizations',
-          queryParameters: {
-            "subscribed": false,
-          }
+          queryParameters: params,
         );
       } else {
         response = await dio
             .get('/profile/patient/organizations',
-            queryParameters: {
-              "subscribed": false,
-            }
+            queryParameters: params,
         );
       }
       // there are organizations
@@ -318,8 +327,6 @@ class OrganizationRepository {
         response = await dio.post('/profile/patient/subscriptions', data: data);
       }
       if(response.statusCode == 200) {
-        //TODO: persist locally where list of organizations pending accepted isn't developed
-        organizationsPostulated.addAll(organizations);
         return None();
       }
       // throw an error if isn't a know status code
