@@ -404,6 +404,9 @@ const BoxDecoration selectedCardDecoration = BoxDecoration(
 
 ThemeData boldoTheme = ThemeData(
   fontFamily: 'Montserrat',
+  listTileTheme: const ListTileThemeData(
+    horizontalTitleGap: 0
+  ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
       textStyle: MaterialStateProperty.all(
