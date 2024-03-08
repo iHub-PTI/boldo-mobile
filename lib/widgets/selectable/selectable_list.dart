@@ -1,32 +1,37 @@
-import 'package:boldo/blocs/download_studies_orders_bloc/download_studies_orders_bloc.dart';
+import 'package:boldo/blocs/download_bloc/download_bloc.dart';
 import 'package:boldo/constants.dart';
-import 'package:boldo/models/StudyOrder.dart';
-import 'package:boldo/screens/studies_orders/components/studyOrderCard.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/loading.dart';
+import 'package:boldo/widgets/selectable/selectableCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class SelectableServiceRequest extends StatefulWidget {
+class SelectableWidgets<T, LoadingState> extends StatefulWidget {
 
-  final List<ServiceRequest> servicesRequests;
+  final List<SelectableWidgetItem<T>> items;
+  final DownloadBloc bloc;
+  final DownloadEvent Function(List<String?> listOfIds) downloadEvent;
+  final bool enableSelectAll;
 
-  SelectableServiceRequest({
+  SelectableWidgets({
     Key? key,
-    required this.servicesRequests,
+    required this.items,
+    required this.bloc,
+    required this.downloadEvent,
+    this.enableSelectAll = true,
   }) : super(key: key);
 
   @override
-  State<SelectableServiceRequest> createState() => SelectableServiceRequestState();
+  State<SelectableWidgets> createState() => _SelectableWidgetsState<T, LoadingState>();
 
 }
 
 
-class SelectableServiceRequestState extends State<SelectableServiceRequest> with TickerProviderStateMixin {
+class _SelectableWidgetsState<T, LoadingState> extends State<SelectableWidgets> with TickerProviderStateMixin {
 
   bool selectAll = false;
-  Map<ServiceRequest, bool> listSelectableElements = {};
+  List<String?> listSelectableElements = [];
   late AnimationController _controller;
 
   Duration durationEffect = const Duration(milliseconds: 100);
@@ -37,7 +42,6 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
       vsync: this,
       duration: durationEffect,
     );
-    widget.servicesRequests.forEach((e) => listSelectableElements[e]= false);
     super.initState();
   }
 
@@ -49,9 +53,9 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<DownloadStudiesOrdersBloc>(
-      create: (BuildContext context) => DownloadStudiesOrdersBloc(),
-      child: BlocListener<DownloadStudiesOrdersBloc, DownloadStudiesOrdersState>(
+    return BlocProvider<DownloadBloc>(
+      create: (BuildContext context) => widget.bloc,
+      child: BlocListener<DownloadBloc, DownloadState>(
         listener: (context, state){
           if(state is Failed){
             emitSnackBar(
@@ -63,7 +67,9 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
         },
         child: Column(
           children: [
-            tabDownload(),
+            tabDownload(
+              enableAll: widget.enableSelectAll,
+            ),
             Expanded(
               child: ListView.separated(
                 physics: const ClampingScrollPhysics(),
@@ -71,21 +77,24 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
                   color: Colors.transparent,
                   height: 10,
                 ),
-                itemCount: listSelectableElements.length,
+                itemCount: widget.items.length,
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index){
-                  ServiceRequest serviceRequest = listSelectableElements.keys.elementAt(index);
-                  bool? value = listSelectableElements[serviceRequest];
-                  return ServiceRequestCard(
-                    serviceRequest: serviceRequest,
+                  bool? value = listSelectableElements.contains(widget.items[index].id);
+                  return SelectableCard<T>(
+                    child: widget.items[index],
                     selected: value?? false,
                     selectedFunction: (){
-                      listSelectableElements[serviceRequest] = true;
+                      listSelectableElements.add(
+                        widget.items[index].id,
+                      );
                       checkHeader();
                     },
                     unselectedFunction: (){
-                      listSelectableElements[serviceRequest] = false;
+                      listSelectableElements.remove(
+                        widget.items[index].id,
+                      );
                       checkHeader();
                     },
                     durationEffect: durationEffect,
@@ -101,10 +110,10 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
 
   void checkHeader(){
     //check if someone elements is selected to init animation
-    if(listSelectableElements.containsValue(true)){
+    if(listSelectableElements.isNotEmpty){
 
       //if all elements is selected set selectAll to true
-      if(listSelectableElements.values.every((element) => element==true)){
+      if(listSelectableElements.length == widget.items.length){
         selectAll = true;
       }else{
         selectAll = false;
@@ -119,7 +128,9 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
     }
   }
 
-  Widget tabDownload(){
+  Widget tabDownload(
+      {bool enableAll = true,
+  }){
     return AnimatedCrossFade(
       crossFadeState: _controller.isAnimating || _controller.isCompleted? CrossFadeState.showSecond: CrossFadeState.showFirst,
       duration: durationEffect,
@@ -158,7 +169,7 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
                           child: InkWell(
                             onTap: (){
                               selectAll =false;
-                              listSelectableElements.updateAll((key, value) => value = selectAll);
+                              listSelectableElements.clear();
                               checkHeader();
                             },
                             child: const Icon(
@@ -173,8 +184,8 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
                           duration: durationEffect,
                           child: Text(
                             //use key to detect change on child o animatedSwitcher
-                            key: Key("${listSelectableElements.values.where((element) => element==true).length}"),
-                            "${listSelectableElements.values.where((element) => element==true).length}",
+                            key: Key("${listSelectableElements.isNotEmpty}"),
+                            "${listSelectableElements.length}",
                             style: GoogleFonts.montserrat(
                               fontWeight: FontWeight.w500,
                               color: ConstantsV2.blueDark,
@@ -183,20 +194,17 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
                         ),
                       ],
                     ),
-                    BlocBuilder<DownloadStudiesOrdersBloc, DownloadStudiesOrdersState>(
+                    BlocBuilder<DownloadBloc, DownloadState>(
                       builder: (BuildContext context, state){
-                        if(state is Loading){
+                        if(state is LoadingState){
                           return loadingStatus();
                         }else{
                           return Material(
                             color: Colors.transparent,
                             child: InkWell(
                               onTap: (){
-                                BlocProvider.of<DownloadStudiesOrdersBloc>(context).add(
-                                  DownloadStudiesOrders(
-                                    listOfIds: listSelectableElements.entries.where(
-                                            (element) => element.value== true).map((e) => e.key.id).toList(),
-                                  ),
+                                BlocProvider.of<DownloadBloc>(context).add(
+                                  widget.downloadEvent(listSelectableElements),
                                 );
                               },
                               child: Container(
@@ -227,35 +235,63 @@ class SelectableServiceRequestState extends State<SelectableServiceRequest> with
                   ],
                 ),
               ),
-              Container(
-                  padding: const EdgeInsets.only(left: 8, right: 8),
-                  child: Row(
-                    children: [
-                      Checkbox(
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        value: selectAll,
-                        activeColor: ConstantsV2.orange,
-                        checkColor: Colors.white,
-                        onChanged: (value) {
-                          selectAll = !selectAll;
-                          listSelectableElements.updateAll((key, value) => value = selectAll);
-                          checkHeader();
-                        },
-                      ),
-                      const Flexible(
-                        child: Text(
-                          chooseAll,
-                          style: TextStyle(color: ConstantsV2.activeText),
+              Visibility(
+                visible: enableAll,
+                child: Container(
+                    padding: const EdgeInsets.only(left: 8, right: 8),
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          value: selectAll,
+                          activeColor: ConstantsV2.orange,
+                          checkColor: Colors.white,
+                          onChanged: enableAll? (value) {
+                            selectAll = !selectAll;
+                            if(selectAll){
+                              listSelectableElements = [];
+                              listSelectableElements.addAll(widget.items.map((e) => e.id));
+                              listSelectableElements = listSelectableElements.toSet().toList();
+                            }else{
+                              listSelectableElements.clear();
+                            }
+                            checkHeader();
+                          } : null,
                         ),
-                      ),
-                    ],
-                  )
+                        const Flexible(
+                          child: Text(
+                            chooseAll,
+                            style: TextStyle(color: ConstantsV2.activeText),
+                          ),
+                        ),
+                      ],
+                    )
+                ),
               ),
             ],
           ) : null,
         ),
       ),
     );
+  }
+
+}
+
+class SelectableWidgetItem<T> extends StatelessWidget {
+
+  final Widget child;
+  final T item;
+  final String? id;
+
+  SelectableWidgetItem({
+    required this.child,
+    required this.item,
+    required this.id,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return child;
   }
 
 }
