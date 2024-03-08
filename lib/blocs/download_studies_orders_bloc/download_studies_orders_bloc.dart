@@ -6,6 +6,7 @@ import 'package:boldo/models/RemoteFile.dart';
 import 'package:boldo/network/order_study_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/files_helpers.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -36,6 +37,11 @@ class DownloadStudiesOrdersBloc extends DownloadBloc<DownloadStudiesOrdersEvent,
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(msg: response));
+          emitSnackBar(
+              context: event.context,
+              text: _post.asLeft().message,
+              status: ActionStatus.Fail
+          );
           transaction.throwable = _post.asLeft();
           transaction.finish(
             status: SpanStatus.fromString(
