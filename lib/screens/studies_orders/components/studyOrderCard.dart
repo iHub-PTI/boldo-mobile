@@ -344,6 +344,7 @@ class ServiceRequestCardState extends State<ServiceRequestCard> with TickerProvi
                   BlocProvider.of<DownloadStudiesOrdersBloc>(context).add(
                     DownloadStudiesOrders(
                       listOfIds: [widget.serviceRequest.id],
+                      context: context,
                     ),
                   );
                 },
