@@ -117,7 +117,21 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
               );
             }else{
 
+              String text = event.organizations.length == 1
+                  ? "Una solicitud enviada correctamente":
+              "${event.organizations.length} solicitudes enviadas correctamente"
+              ;
+
+              await emitSnackBar(
+                  context: event.context,
+                  text: text,
+                  status: ActionStatus.Success
+              ).then((value) =>
+                  Navigator.of(event.context).pop(true)
+              );
+
               emit(SuccessSubscribed());
+
               transaction.finish(
                 status: const SpanStatus.ok(),
               );

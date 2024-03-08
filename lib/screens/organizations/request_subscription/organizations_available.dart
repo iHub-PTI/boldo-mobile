@@ -41,18 +41,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                 }
                 if(state is SuccessSubscribed){
 
-                  String text = _organizationsSelected.length == 1
-                      ? "Una solicitud enviada correctamente":
-                  "${_organizationsSelected.length} solicitudes enviadas correctamente"
-                  ;
 
-                  emitSnackBar(
-                      context: context,
-                      text: text,
-                      status: ActionStatus.Success
-                  ).then((value) =>
-                      Navigator.of(context).pop(true)
-                  );
                 }else if(state is Failed){
                   emitSnackBar(
                       context: context,
