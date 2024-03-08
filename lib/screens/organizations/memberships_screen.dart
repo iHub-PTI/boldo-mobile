@@ -331,9 +331,9 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
     return Column(
       children: [
         // this structure prevent overflow in small screens
-        Row(
+        const Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
@@ -345,9 +345,9 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
           ],
         ),
         const SizedBox(height: 16.0),
-        Row(
+        const Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Padding(
                 padding: EdgeInsets.only(left:16.0, right: 16.0, bottom: 16.0),
                 child: Text(
@@ -363,7 +363,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Padding(
-              padding: EdgeInsets.only(right: 16.0, bottom: 16.0),
+              padding: const EdgeInsets.only(right: 16.0, bottom: 16.0),
               child: ElevatedButton(
                 onPressed:() async {
                   dynamic result = await Navigator.push(
@@ -376,16 +376,16 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                   }
                 },
                 child: Container(
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
+                        Text(
                           'Agregar',
                         ),
-                        const SizedBox(
+                        SizedBox(
                           width: 8,
                         ),
-                        const Icon(
+                        Icon(
                           Icons.arrow_forward_ios_outlined,
                           size: 16,
                         ),
@@ -603,7 +603,7 @@ class OrganizationSubscribedCard extends StatelessWidget {
     return Expanded(
       child: Container(
         decoration: ShapeDecoration(
-          color: Color(0xFFE9E9E9),
+          color: const Color(0xFFE9E9E9),
           shape: RoundedRectangleBorder(
             side: const BorderSide(
               width: 1,

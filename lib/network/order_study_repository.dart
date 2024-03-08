@@ -5,6 +5,7 @@ import 'package:boldo/constants.dart';
 import 'package:boldo/environment.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
+import 'package:boldo/models/RemoteFile.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/models/upload_url_model.dart';
 import 'package:boldo/network/http.dart';
@@ -274,7 +275,7 @@ class StudiesOrdersRepository {
     }
   }
 
-  static Future<Uint8List> downloadStudiesOrders ({
+  static Future<RemoteFile> downloadStudiesOrders ({
     required List<String?> studiesOrdersId,
   }) async {
     try {
@@ -296,7 +297,7 @@ class StudiesOrdersRepository {
       }else{
         url = '/profile/patient/serviceRequests/reports';
       }
-      Uint8List file = await FilesRepository.getFile(
+      RemoteFile file = await FilesRepository.getFile(
         localDio: _dioDownloader,
         queryParams: queryParams,
         url: url,

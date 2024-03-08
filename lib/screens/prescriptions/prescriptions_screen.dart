@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/download_prescriptions_bloc/download_prescriptions_bloc.dart' as download_prescriptions_bloc;
 import 'package:boldo/blocs/prescriptions_bloc/prescriptionsBloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Appointment.dart';
@@ -8,6 +9,7 @@ import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:boldo/widgets/loading.dart';
+import 'package:boldo/widgets/selectable/selectable_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -23,8 +25,6 @@ class PrescriptionsScreen extends StatefulWidget {
 }
 
 class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
-  bool _dataLoading = true;
-  bool _dataLoaded = false;
   late List<Appointment> allAppointments = [];
   @override
   void initState() {
@@ -132,17 +132,24 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                         );
                       }else{
                         return Expanded(
-                          child: ListView.separated(
-                            separatorBuilder: (BuildContext context, int index){
-                              return const SizedBox(height: 10,);
-                            },
-                            itemCount: allAppointments.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return PrescriptionCard(
-                                appointment: allAppointments[index],
+                          child: SelectableWidgets<Appointment, download_prescriptions_bloc.Loading>(
+                            enableSelectAll: false,
+                            downloadEvent: (ids){
+                              return download_prescriptions_bloc.DownloadPrescriptions(
+                                listOfIds: ids,
+                                context: context,
                               );
                             },
+                            bloc: download_prescriptions_bloc.DownloadPrescriptionsBloc(),
+                            items: (allAppointments).map((e) {
+                              return SelectableWidgetItem<Appointment>(
+                                child: PrescriptionCard(
+                                  appointment: e,
+                                ),
+                                item: e,
+                                id: e.prescriptions?.first.encounterId,
+                              );
+                            }).toList(),
                           ),
                         );
                       }

@@ -1,4 +1,5 @@
 class Encounter {
+  String? encounterId;
   String? appointmentId;
   String? diagnosis;
   String? instructions;
@@ -7,12 +8,14 @@ class Encounter {
     this.appointmentId,
     this.diagnosis,
     this.instructions,
+    this.encounterId,
   });
 
   Encounter.fromJson(Map<String, dynamic> json) {
     appointmentId = json['appointmentId'];
     diagnosis = json['diagnosis'];
     instructions = json['instructions'];
+    encounterId = json['encounterId'];
   }
 
   Map<String, dynamic> toJson() {

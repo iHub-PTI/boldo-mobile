@@ -1,10 +1,13 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/environment.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Prescription.dart';
+import 'package:boldo/models/RemoteFile.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:dio/dio.dart';
 
+import 'files_repository.dart';
 import 'http.dart';
 
 class PrescriptionRepository {
@@ -46,6 +49,45 @@ class PrescriptionRepository {
       );
       throw Failure(genericError);
     } catch (exception, stackTrace) {
+      captureError(
+        exception: exception,
+        stackTrace: stackTrace,
+      );
+      throw Failure(genericError);
+    }
+  }
+
+  static Future<RemoteFile> downloadPrescriptions ({
+    required List<String?> prescriptionsId,
+  }) async {
+    try {
+
+      String url;
+
+      // remove null ids
+      Map<String, dynamic> queryParams ={
+        'encounter_ids': prescriptionsId.where((element) => element != null).toList(),
+      };
+
+      // declare a connection to download with access token and urlBase
+      Dio _dioDownloader = Dio();
+      initDio(navKey: navKey, dio: _dioDownloader, baseUrl: environment.SERVER_ADDRESS, responseType: ResponseType.bytes);
+
+      // the query is made
+      if(prefs.getBool(isFamily) ?? false) {
+        url = '/profile/caretaker/dependent/${patient.id}/prescriptions/reports';
+      }else{
+        url = '/profile/patient/prescriptions/reports';
+      }
+      RemoteFile file = await FilesRepository.getFile(
+        localDio: _dioDownloader,
+        queryParams: queryParams,
+        url: url,
+      );
+      return file;
+    } on Failure catch (exception, stackTrace){
+      throw exception;
+    }catch (exception, stackTrace){
       captureError(
         exception: exception,
         stackTrace: stackTrace,

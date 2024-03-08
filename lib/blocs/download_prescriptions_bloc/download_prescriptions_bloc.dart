@@ -3,30 +3,30 @@ import 'dart:typed_data';
 
 import 'package:boldo/blocs/download_bloc/download_bloc.dart';
 import 'package:boldo/models/RemoteFile.dart';
-import 'package:boldo/network/order_study_repository.dart';
+import 'package:boldo/network/prescription_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/files_helpers.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-part 'download_studies_orders_event.dart';
-part 'download_studies_orders_state.dart';
+part 'download_prescriptions_event.dart';
+part 'download_prescriptions_state.dart';
 
-class DownloadStudiesOrdersBloc extends DownloadBloc<DownloadStudiesOrdersEvent, DownloadStudiesOrdersState> {
+class   DownloadPrescriptionsBloc extends DownloadBloc<DownloadPrescriptionsEvent, DownloadPrescriptionsState> {
 
-  DownloadStudiesOrdersBloc() : super(DownloadStudiesOrdersInitial()) {
-    on<DownloadStudiesOrdersEvent>((event, emit) async {
-      if (event is DownloadStudiesOrders) {
+  DownloadPrescriptionsBloc() : super(DownloadPrescriptionsInitial()) {
+    on<DownloadPrescriptionsEvent>((event, emit) async {
+      if (event is DownloadPrescriptions) {
         ISentrySpan transaction = Sentry.startTransaction(
           event.runtimeType.toString(),
           'GET',
-          description: 'get file of studies selected',
+          description: 'get file of prescription selected',
           bindToScope: true,
         );
         emit(Loading());
         late Either<Failure, RemoteFile> _post;
-        await Task(() => StudiesOrdersRepository.downloadStudiesOrders(studiesOrdersId: event.listOfIds))
+        await Task(() => PrescriptionRepository.downloadPrescriptions(prescriptionsId: event.listOfIds))
             .attempt()
             .mapLeftToFailure()
             .run()
@@ -37,27 +37,27 @@ class DownloadStudiesOrdersBloc extends DownloadBloc<DownloadStudiesOrdersEvent,
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(msg: response));
+          transaction.throwable = _post.asLeft();
           emitSnackBar(
               context: event.context,
               text: _post.asLeft().message,
               status: ActionStatus.Fail
           );
-          transaction.throwable = _post.asLeft();
           transaction.finish(
             status: SpanStatus.fromString(
               _post.asLeft().message,
             ),
           );
         } else {
-          RemoteFile file = _post.asRight();
+          Uint8List file = _post.asRight().file;
 
           //open the file
           FilesHelpers.openFile(
-            file: file.file,
+            file: file,
+            fileName: _post.asRight().name,
             extension: '.pdf',
-            fileName: file.name,
           );
-          emit(Success(file: file.file));
+          emit(Success(file: file));
           transaction.finish(
             status: const SpanStatus.ok(),
           );
