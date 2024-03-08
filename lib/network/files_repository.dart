@@ -6,7 +6,7 @@ import 'package:boldo/models/RemoteFile.dart';
 import 'package:boldo/models/upload_url_model.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/errors.dart';
-import 'package:boldo/utils/map_utils.dart';
+import 'package:boldo/utils/map_extension.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:path/path.dart' as path;
