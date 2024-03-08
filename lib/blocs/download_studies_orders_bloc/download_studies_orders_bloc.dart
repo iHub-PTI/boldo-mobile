@@ -25,7 +25,7 @@ class DownloadStudiesOrdersBloc extends DownloadBloc<DownloadStudiesOrdersEvent,
           bindToScope: true,
         );
         emit(Loading());
-        var _post;
+        late Either<Failure, RemoteFile> _post;
         await Task(() => StudiesOrdersRepository.downloadStudiesOrders(studiesOrdersId: event.listOfIds))
             .attempt()
             .mapLeftToFailure()
@@ -49,12 +49,15 @@ class DownloadStudiesOrdersBloc extends DownloadBloc<DownloadStudiesOrdersEvent,
             ),
           );
         } else {
-          late Uint8List file;
-          _post.foldRight(Uint8List, (a, previous) => file = a);
+          RemoteFile file = _post.asRight();
 
           //open the file
-          FilesHelpers.openFile(file: file, extension: '.pdf');
-          emit(Success(file: file));
+          FilesHelpers.openFile(
+            file: file.file,
+            extension: '.pdf',
+            fileName: file.name,
+          );
+          emit(Success(file: file.file));
           transaction.finish(
             status: const SpanStatus.ok(),
           );

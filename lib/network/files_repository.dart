@@ -2,9 +2,11 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:boldo/app_config.dart';
+import 'package:boldo/models/RemoteFile.dart';
 import 'package:boldo/models/upload_url_model.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/errors.dart';
+import 'package:boldo/utils/map_utils.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:path/path.dart' as path;
@@ -98,16 +100,18 @@ class FilesRepository {
   /// [queryParams] is used with [localDio]
   ///
   /// return the file as bytes
-  static Future<Uint8List> getFile({
+  static Future<RemoteFile> getFile({
       Dio? localDio,
       Map<String, dynamic>? queryParams,
       final url,
   }) async {
     try {
 
-      var data;
+      Uint8List bytes;
+      String? filename;
 
       if(localDio!= null){
+        Response data;
         CancelToken _cancelToken = CancelToken();
         data = await localDio.get(url, queryParameters: queryParams, cancelToken: _cancelToken).
           timeout(Duration(milliseconds: appConfig.RECIVE_TIMEOUT_MILLISECONDS_DOWNLOAD_FILES.getValue), onTimeout: (){
@@ -117,12 +121,24 @@ class FilesRepository {
             );
         }
         );
+        bytes = data.data;
+        filename = getFilename(
+          headers: data.headers,
+        );
       }else{
+        http.Response data;
         data = await http.get(Uri.parse(url));
+        bytes = data.bodyBytes;
+        filename = getFilename(
+          headers: data.headers,
+        );
       }
 
-      Uint8List bytes = data.data;
-      return bytes;
+      RemoteFile remoteFile = RemoteFile(
+        file: bytes,
+        name: filename,
+      );
+      return remoteFile;
     } on DioError catch (exception, stackTrace) {
       captureError(
         exception: exception,
@@ -145,6 +161,54 @@ class FilesRepository {
       );
       throw Failure("Error al descargar el archivo");
     }
+  }
+
+  static String? getFilename({
+    required dynamic headers,
+  }){
+
+    String? content;
+    String? filename;
+
+
+    if(headers.runtimeType == Headers){
+      content = headers.value("content-disposition");
+    }else if(headers.runtimeType == <String, String>{}.runtimeType){
+
+      //cast to correct Type to access extension
+      headers = headers as Map<String, String>;
+
+      //fix headers name
+      headers = headers.toLowercaseKeys();
+
+      content = headers["content-disposition"];
+    }else{
+      captureMessage(
+        message: 'unknown content-disposition',
+        data: {
+          'headers': headers,
+        }
+      );
+    }
+
+    //separate contents
+    List<String>? contents = content?.split('; ');
+
+    RegExp regExp = RegExp(r'filename=|name=');
+
+
+    contents?.where(regExp.hasMatch).forEach((element) {
+      List<String> matches = element.split(regExp);
+      if(matches.length > 1){
+        filename = matches[1];
+      }
+    });
+
+    //remove extension file
+    if(filename?.contains('.')?? false)
+      filename = filename?.split('.').first;
+
+    return filename;
   }
 
 }
