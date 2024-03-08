@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:bloc/bloc.dart';
+import 'package:boldo/blocs/download_bloc/download_bloc.dart';
+import 'package:boldo/models/RemoteFile.dart';
 import 'package:boldo/network/order_study_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/files_helpers.dart';
@@ -11,7 +12,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 part 'download_studies_orders_event.dart';
 part 'download_studies_orders_state.dart';
 
-class DownloadStudiesOrdersBloc extends Bloc<DownloadStudiesOrdersEvent, DownloadStudiesOrdersState> {
+class DownloadStudiesOrdersBloc extends DownloadBloc<DownloadStudiesOrdersEvent, DownloadStudiesOrdersState> {
 
   DownloadStudiesOrdersBloc() : super(DownloadStudiesOrdersInitial()) {
     on<DownloadStudiesOrdersEvent>((event, emit) async {
