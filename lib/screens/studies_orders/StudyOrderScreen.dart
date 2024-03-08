@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/download_studies_orders_bloc/download_studies_orders_bloc.dart' as download_studies_orders_bloc;
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'package:boldo/main.dart';
@@ -12,13 +13,13 @@ import 'package:boldo/screens/studies_orders/components/studyOrderCard.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/loading.dart';
+import 'package:boldo/widgets/selectable/selectable_list.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../constants.dart';
-import 'components/selectableStudiesOrders.dart';
 
 class StudyOrderScreen extends StatefulWidget {
   final String? encounterId;
@@ -186,8 +187,23 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
 
   Widget showDiagnosticList() {
     return Container(
-      child: SelectableServiceRequest(
-        servicesRequests: studiesOrders?.serviceRequests?? [],
+      child: SelectableWidgets<ServiceRequest, download_studies_orders_bloc.Loading>(
+        downloadEvent: (ids){
+          return download_studies_orders_bloc.DownloadStudiesOrders(
+            listOfIds: ids,
+            context: context,
+          );
+        },
+        bloc: download_studies_orders_bloc.DownloadStudiesOrdersBloc(),
+        items: (studiesOrders?.serviceRequests?? []).map((e) {
+          return SelectableWidgetItem<ServiceRequest>(
+            child: ServiceRequestCard(
+              serviceRequest: e,
+            ),
+            item: e,
+            id: e.id,
+          );
+        }).toList(),
       ),
     );
   }
