@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/download_prescriptions_bloc/download_prescriptions_bloc.dart';
 import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Doctor.dart';
@@ -192,6 +193,7 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
                                                 ),
                                               ],
                                             ),
+                                          downloadPrescription(),
                                         ],
                                       ),
                                     )
@@ -220,6 +222,56 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
             ),
           ),
         ),
+    );
+  }
+
+  Widget downloadPrescription(){
+    return BlocProvider<DownloadPrescriptionsBloc>(
+      create: (BuildContext context) => DownloadPrescriptionsBloc(),
+      child: BlocBuilder<DownloadPrescriptionsBloc, DownloadPrescriptionsState>(
+        builder: (BuildContext context, state){
+          if(state is Loading){
+            return loadingStatus();
+          }else{
+            return InkWell(
+              onTap: () async {
+                BlocProvider.of<DownloadPrescriptionsBloc>(context).add(
+                  DownloadPrescriptions(
+                    listOfIds: [medicalRecord?.prescription?.first.encounterId],
+                    context: context,
+                  ),
+                );
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text(
+                    'Indicaciones',
+                    style: TextStyle(
+                      decoration:
+                      TextDecoration
+                          .underline,
+                      fontFamily:
+                      'Montserrat',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: ConstantsV2.darkBlue,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  SvgPicture.asset(
+                    'assets/icon/chevron-right.svg',
+                    height: 12,
+                    color: ConstantsV2.darkBlue,
+                  )
+                ],
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 
