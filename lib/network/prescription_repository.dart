@@ -1,8 +1,9 @@
 import 'package:boldo/constants.dart';
 import 'package:boldo/environment.dart';
 import 'package:boldo/main.dart';
-import 'package:boldo/models/Prescription.dart';
+import 'package:boldo/models/Encounter.dart';
 import 'package:boldo/models/RemoteFile.dart';
+import 'package:boldo/models/filters/PrescriptionFilter.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:dio/dio.dart';
@@ -12,19 +13,30 @@ import 'http.dart';
 
 class PrescriptionRepository {
 
-  Future<List<Prescription>>? getPrescriptions() async {
+  static Future<List<Encounter>>? getPrescriptions({
+    required PrescriptionFilter prescriptionFilter,
+  }) async {
+
+    Map<String, dynamic> _queryParameters = prescriptionFilter.toJson();
+
     try{
       Response responsePrescriptions;
       if (!(prefs.getBool(isFamily)?? false))
-        responsePrescriptions = await dio.get("/profile/patient/prescriptions");
+        responsePrescriptions = await dio.get(
+          "/profile/patient/encounters/prescriptions",
+          queryParameters: _queryParameters,
+        );
       else
         responsePrescriptions = await dio
-            .get("/profile/caretaker/dependent/${patient.id}/prescriptions");
+            .get(
+          "/profile/caretaker/dependent/${patient.id}/encounters/prescriptions",
+          queryParameters: _queryParameters,
+        );
 
       if(responsePrescriptions.statusCode == 200) {
-        return List<Prescription>.from(
-            responsePrescriptions.data["prescriptions"]
-                .map((i) => Prescription.fromJson(i)));
+        return List<Encounter>.from(
+            responsePrescriptions.data["encounter"]
+                .map((i) => Encounter.fromJson(i)));
       }else if(responsePrescriptions.statusCode == 204){
         return [];
       }
