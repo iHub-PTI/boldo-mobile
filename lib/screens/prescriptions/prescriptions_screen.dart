@@ -238,14 +238,24 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                     ),
                     Expanded(
                       child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Card(
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.zero,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 16,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                decoration: ShapeDecoration(
+                                    color: ConstantsV2.lightest,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.zero,
+                                    ),
+                                    shadows: [
+                                      shadowRegular,
+                                    ]
                                 ),
-                                color: ConstantsV2.lightest,
                                 child: Container(
                                   padding: const EdgeInsets.all(16),
                                   child: Column(
@@ -383,9 +393,10 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                       ),
                                     ],
                                   ),
-                                )
-                            ),
-                          ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
