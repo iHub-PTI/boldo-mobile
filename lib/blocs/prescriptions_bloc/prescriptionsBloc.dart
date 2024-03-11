@@ -42,10 +42,6 @@ class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
     ));
   }
 
-  void setFinalDate(DateTime? finalDate) {
-    _finalDate = finalDate;
-  }
-
   PrescriptionsBloc() : super(PrescriptionBlocInitial()) {
     on<PrescriptionsEvent>((event, emit) async {
       if(event is GetPastEncounterWithPrescriptionsList){
@@ -56,9 +52,12 @@ class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
           bindToScope: true,
         );
         emit(Loading());
-        var _post;
+        late Either<Failure, List<Encounter>> _post;
+
         await Task(() =>
-        _appointmentRepository.getPastAppointmentsBetweenDates(_initialDate, _finalDate)!)
+        PrescriptionRepository.getPrescriptions(
+          prescriptionFilter: event.prescriptionFilter?? prescriptionFilter,
+        )!)
             .attempt()
             .mapLeftToFailure()
             .run()
