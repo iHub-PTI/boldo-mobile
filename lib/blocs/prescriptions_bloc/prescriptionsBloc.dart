@@ -1,7 +1,6 @@
 
-import 'package:boldo/models/Appointment.dart';
-import 'package:boldo/models/Prescription.dart';
-import 'package:boldo/network/appointment_repository.dart';
+import 'package:boldo/models/Encounter.dart';
+import 'package:boldo/models/filters/PrescriptionFilter.dart';
 import 'package:boldo/network/prescription_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
@@ -15,16 +14,32 @@ part 'prescriptionsEvent.dart';
 part 'prescriptionsState.dart';
 
 class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
-  final AppointmentRepository _appointmentRepository = AppointmentRepository();
-  final PrescriptionRepository _prescriptionRepository = PrescriptionRepository();
-  DateTime _initialDate = DateTime(DateTime.now().year-1,DateTime.now().month,DateTime.now().day);
-  DateTime? _finalDate = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day, 23, 59, 59);
 
-  DateTime getInitialDate() => _initialDate;
-  DateTime? getFinalDate() => _finalDate;
+  PrescriptionFilter _prescriptionFilter = PrescriptionFilter(
+    start: DateTime(DateTime.now().year-1,DateTime.now().month,DateTime.now().day),
+    end: DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day, 23, 59, 59),
+  );
 
-  void setInitialDate(DateTime initialDate) {
-    _initialDate = initialDate;
+  PrescriptionFilter get prescriptionFilter => _prescriptionFilter;
+
+  /// set the filter and call [GetPastAppointmentWithPrescriptionsList] event
+  set prescriptionFilter( PrescriptionFilter newPrescriptionFilter ){
+
+    if(newPrescriptionFilter.end != null) {
+      newPrescriptionFilter.end = DateTime(
+        newPrescriptionFilter.end!.year,
+        newPrescriptionFilter.end!.month,
+        newPrescriptionFilter.end!.day,
+        23,
+        59,
+        59,
+      );
+    }
+
+    _prescriptionFilter = newPrescriptionFilter;
+    add(GetPastEncounterWithPrescriptionsList(
+      prescriptionFilter: prescriptionFilter,
+    ));
   }
 
   void setFinalDate(DateTime? finalDate) {
@@ -33,7 +48,7 @@ class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
 
   PrescriptionsBloc() : super(PrescriptionBlocInitial()) {
     on<PrescriptionsEvent>((event, emit) async {
-      if(event is GetPastAppointmentWithPrescriptionsList){
+      if(event is GetPastEncounterWithPrescriptionsList){
         ISentrySpan transaction = Sentry.startTransaction(
           event.runtimeType.toString(),
           'GET',
