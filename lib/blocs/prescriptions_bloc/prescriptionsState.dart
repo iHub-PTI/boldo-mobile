@@ -12,14 +12,9 @@ class Failed extends PrescriptionsState {
   Failed({required this.response});
 }
 
-class AppointmentLoadedState extends PrescriptionsState {
-  final List<Appointment> appointments;
-  AppointmentLoadedState({required this.appointments});
-}
-
-class AppointmentWithPrescriptionsLoadedState extends PrescriptionsState {
-  final List<Appointment> appointments;
-  AppointmentWithPrescriptionsLoadedState({required this.appointments});
+class EncounterWithPrescriptionsLoadedState extends PrescriptionsState {
+  final List<Encounter> encounters;
+  EncounterWithPrescriptionsLoadedState({required this.encounters});
 }
 
 class RedirectNextScreen extends PrescriptionsState {}

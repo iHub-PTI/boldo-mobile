@@ -1,7 +1,7 @@
 import 'package:boldo/blocs/download_prescriptions_bloc/download_prescriptions_bloc.dart';
 import 'package:boldo/constants.dart';
-import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/Doctor.dart';
+import 'package:boldo/models/Encounter.dart';
 import 'package:boldo/models/Prescription.dart';
 import 'package:boldo/screens/medical_records/prescriptions_record_screen.dart';
 import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
@@ -19,19 +19,17 @@ class PrescriptionCard extends StatelessWidget{
 
   final int maxPrescriptionShow = 4;
 
-  final Appointment appointment;
+  final Encounter encounter;
 
   PrescriptionCard({
     Key? key,
-    required this.appointment,
+    required this.encounter,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
 
-    DateTime prescriptionDate = DateTime.parse(
-        appointment.start?? DateTime.now()
-            .toString()).toLocal();
+    DateTime prescriptionDate = encounter.startTimeDate?? DateTime.now();
 
     int daysDifference = daysBetween(prescriptionDate,
         DateTime.now()
@@ -51,8 +49,8 @@ class PrescriptionCard extends StatelessWidget{
                     builder: (context) =>
                         PrescriptionRecordScreen(
                           medicalRecordId:
-                          appointment.id?? '',
-                          doctor: appointment.doctor?? Doctor(),
+                          encounter.appointmentId?? '',
+                          doctor: encounter.doctor?? Doctor(),
                         ),
                   ),
                 );
@@ -95,20 +93,20 @@ class PrescriptionCard extends StatelessWidget{
                             childAspectRatio: 167/28,
                             crossAxisCount: 2,
                           ),
-                          itemCount: (appointment.prescriptions?.length?? 0) >= maxPrescriptionShow ? maxPrescriptionShow: appointment.prescriptions?.length?? 0 ,
+                          itemCount: (encounter.prescriptions?.length?? 0) >= maxPrescriptionShow ? maxPrescriptionShow: encounter.prescriptions?.length?? 0 ,
                           itemBuilder: (BuildContext context, int index){
-                            if(index == (maxPrescriptionShow-1) && (appointment.prescriptions?.length?? 0) >= maxPrescriptionShow)
+                            if(index == (maxPrescriptionShow-1) && (encounter.prescriptions?.length?? 0) >= maxPrescriptionShow)
                               return Container(
                                 padding: const EdgeInsets.all(4),
                                 child: morePrescription(
-                                  moreQuantity: (appointment.prescriptions?.length?? 0) - (maxPrescriptionShow-1),
+                                  moreQuantity: (encounter.prescriptions?.length?? 0) - (maxPrescriptionShow-1),
                                 ),
                               );
 
                             return Container(
                               padding: const EdgeInsets.all(4),
                               child: MedicationName(
-                                prescription: appointment.prescriptions?[index]?? Prescription(),
+                                prescription: encounter.prescriptions?[index]?? Prescription(),
                               ),
                             );
                           },
@@ -121,7 +119,7 @@ class PrescriptionCard extends StatelessWidget{
                             Container(
                               child: ProfileDescription(
                                 type: 'doctor',
-                                doctor: appointment.doctor,
+                                doctor: encounter.doctor,
                                 height: 27,
                                 width: 27,
                                 border: false,
@@ -172,7 +170,7 @@ class PrescriptionCard extends StatelessWidget{
                 function: (){
                   BlocProvider.of<DownloadPrescriptionsBloc>(context).add(
                     DownloadPrescriptions(
-                      listOfIds: [appointment.prescriptions?.first.encounterId],
+                      listOfIds: [encounter.prescriptions?.first.encounterId],
                       context: context,
                     ),
                   );

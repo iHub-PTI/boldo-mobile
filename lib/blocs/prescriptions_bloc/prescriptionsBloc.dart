@@ -62,57 +62,11 @@ class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
             ),
           );
         } else {
-          late List<Appointment> appointments;
-          _post.foldRight(
-              Appointment, (a, previous) => appointments = a);
-          appointments.sort((a, b) =>
-              DateTime.parse(b.start!).compareTo(DateTime.parse(a.start!)));
-          await Task(() =>
-          _prescriptionRepository.getPrescriptions()!)
-              .attempt()
-              .mapLeftToFailure()
-              .run()
-              .then((value) {
-            _post = value;
-          }
+          late List<Encounter> encounters = _post.asRight();
+          emit(EncounterWithPrescriptionsLoadedState(encounters: encounters));
+          transaction.finish(
+            status: const SpanStatus.ok(),
           );
-          var response;
-          if (_post.isLeft()) {
-            _post.leftMap((l) => response = l.message);
-            emit(Failed(response: response));
-            transaction.throwable = _post.asLeft();
-            transaction.finish(
-              status: SpanStatus.fromString(
-                _post.asLeft().message,
-              ),
-            );
-          } else {
-            late List<Prescription> prescriptions;
-            _post.foldRight(
-                Prescription, (a, previous) => prescriptions = a);
-            for (Appointment appointment in appointments) {
-              for (Prescription prescription in prescriptions) {
-                if (prescription.encounter != null &&
-                    prescription.encounter!.appointmentId == appointment.id) {
-                  if (appointment.prescriptions != null) {
-                    appointment.prescriptions = [
-                      ...appointment.prescriptions!,
-                      prescription
-                    ];
-                  } else {
-                    appointment.prescriptions = [prescription];
-                  }
-                }
-              }
-            }
-            appointments = appointments
-                .where((element) => element.prescriptions != null)
-                .toList();
-            emit(AppointmentWithPrescriptionsLoadedState(appointments: appointments));
-            transaction.finish(
-              status: const SpanStatus.ok(),
-            );
-          }
         }
 
       }

@@ -1,7 +1,7 @@
 import 'package:boldo/blocs/download_prescriptions_bloc/download_prescriptions_bloc.dart' as download_prescriptions_bloc;
 import 'package:boldo/blocs/prescriptions_bloc/prescriptionsBloc.dart';
 import 'package:boldo/constants.dart';
-import 'package:boldo/models/Appointment.dart';
+import 'package:boldo/models/Encounter.dart';
 import 'package:boldo/models/Organization.dart';
 
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
@@ -25,7 +25,7 @@ class PrescriptionsScreen extends StatefulWidget {
 }
 
 class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
-  late List<Appointment> allAppointments = [];
+  late List<Encounter> allEncounters = [];
   @override
   void initState() {
     super.initState();
@@ -52,8 +52,8 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
           ),
           body: BlocListener<PrescriptionsBloc, PrescriptionsState>(
             listener: (context, state) {
-              if(state is AppointmentWithPrescriptionsLoadedState){
-                allAppointments = state.appointments;
+              if(state is EncounterWithPrescriptionsLoadedState){
+                allEncounters = state.encounters;
               }
             },
             child: Container(
@@ -120,8 +120,8 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                     ),
                   ),
                   BlocBuilder<PrescriptionsBloc, PrescriptionsState>(builder: (context, state){
-                    if(state is AppointmentWithPrescriptionsLoadedState){
-                      if(allAppointments.isEmpty){
+                    if(state is EncounterWithPrescriptionsLoadedState){
+                      if(allEncounters.isEmpty){
                         return const Expanded(
                           child:  EmptyStateV2(
                             picture: "empty_prescriptions.svg",
@@ -132,7 +132,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                         );
                       }else{
                         return Expanded(
-                          child: SelectableWidgets<Appointment, download_prescriptions_bloc.Loading>(
+                          child: SelectableWidgets<Encounter, download_prescriptions_bloc.Loading>(
                             enableSelectAll: false,
                             downloadEvent: (ids){
                               return download_prescriptions_bloc.DownloadPrescriptions(
@@ -141,10 +141,10 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                               );
                             },
                             bloc: download_prescriptions_bloc.DownloadPrescriptionsBloc(),
-                            items: (allAppointments).map((e) {
-                              return SelectableWidgetItem<Appointment>(
+                            items: (allEncounters).map((e) {
+                              return SelectableWidgetItem<Encounter>(
                                 child: PrescriptionCard(
-                                  appointment: e,
+                                  encounter: e,
                                 ),
                                 item: e,
                                 id: e.prescriptions?.first.encounterId,
