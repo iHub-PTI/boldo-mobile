@@ -35,7 +35,7 @@ class PrescriptionRepository {
 
       if(responsePrescriptions.statusCode == 200) {
         return List<Encounter>.from(
-            responsePrescriptions.data["encounter"]
+            responsePrescriptions.data
                 .map((i) => Encounter.fromJson(i)));
       }else if(responsePrescriptions.statusCode == 204){
         return [];
