@@ -1,7 +1,6 @@
 
-import 'package:boldo/models/Appointment.dart';
-import 'package:boldo/models/Prescription.dart';
-import 'package:boldo/network/appointment_repository.dart';
+import 'package:boldo/models/Encounter.dart';
+import 'package:boldo/models/filters/PrescriptionFilter.dart';
 import 'package:boldo/network/prescription_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
@@ -15,25 +14,37 @@ part 'prescriptionsEvent.dart';
 part 'prescriptionsState.dart';
 
 class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
-  final AppointmentRepository _appointmentRepository = AppointmentRepository();
-  final PrescriptionRepository _prescriptionRepository = PrescriptionRepository();
-  DateTime _initialDate = DateTime(DateTime.now().year-1,DateTime.now().month,DateTime.now().day);
-  DateTime? _finalDate = DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day, 23, 59, 59);
 
-  DateTime getInitialDate() => _initialDate;
-  DateTime? getFinalDate() => _finalDate;
+  PrescriptionFilter _prescriptionFilter = PrescriptionFilter(
+    start: DateTime(DateTime.now().year-1,DateTime.now().month,DateTime.now().day),
+    end: DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day, 23, 59, 59),
+  );
 
-  void setInitialDate(DateTime initialDate) {
-    _initialDate = initialDate;
-  }
+  PrescriptionFilter get prescriptionFilter => _prescriptionFilter;
 
-  void setFinalDate(DateTime? finalDate) {
-    _finalDate = finalDate;
+  /// set the filter and call [GetPastAppointmentWithPrescriptionsList] event
+  set prescriptionFilter( PrescriptionFilter newPrescriptionFilter ){
+
+    if(newPrescriptionFilter.end != null) {
+      newPrescriptionFilter.end = DateTime(
+        newPrescriptionFilter.end!.year,
+        newPrescriptionFilter.end!.month,
+        newPrescriptionFilter.end!.day,
+        23,
+        59,
+        59,
+      );
+    }
+
+    _prescriptionFilter = newPrescriptionFilter;
+    add(GetPastEncounterWithPrescriptionsList(
+      prescriptionFilter: prescriptionFilter,
+    ));
   }
 
   PrescriptionsBloc() : super(PrescriptionBlocInitial()) {
     on<PrescriptionsEvent>((event, emit) async {
-      if(event is GetPastAppointmentWithPrescriptionsList){
+      if(event is GetPastEncounterWithPrescriptionsList){
         ISentrySpan transaction = Sentry.startTransaction(
           event.runtimeType.toString(),
           'GET',
@@ -41,9 +52,12 @@ class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
           bindToScope: true,
         );
         emit(Loading());
-        var _post;
+        late Either<Failure, List<Encounter>> _post;
+
         await Task(() =>
-        _appointmentRepository.getPastAppointmentsBetweenDates(_initialDate, _finalDate)!)
+        PrescriptionRepository.getPrescriptions(
+          prescriptionFilter: event.prescriptionFilter?? prescriptionFilter,
+        )!)
             .attempt()
             .mapLeftToFailure()
             .run()
@@ -62,57 +76,11 @@ class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
             ),
           );
         } else {
-          late List<Appointment> appointments;
-          _post.foldRight(
-              Appointment, (a, previous) => appointments = a);
-          appointments.sort((a, b) =>
-              DateTime.parse(b.start!).compareTo(DateTime.parse(a.start!)));
-          await Task(() =>
-          _prescriptionRepository.getPrescriptions()!)
-              .attempt()
-              .mapLeftToFailure()
-              .run()
-              .then((value) {
-            _post = value;
-          }
+          late List<Encounter> encounters = _post.asRight();
+          emit(EncounterWithPrescriptionsLoadedState(encounters: encounters));
+          transaction.finish(
+            status: const SpanStatus.ok(),
           );
-          var response;
-          if (_post.isLeft()) {
-            _post.leftMap((l) => response = l.message);
-            emit(Failed(response: response));
-            transaction.throwable = _post.asLeft();
-            transaction.finish(
-              status: SpanStatus.fromString(
-                _post.asLeft().message,
-              ),
-            );
-          } else {
-            late List<Prescription> prescriptions;
-            _post.foldRight(
-                Prescription, (a, previous) => prescriptions = a);
-            for (Appointment appointment in appointments) {
-              for (Prescription prescription in prescriptions) {
-                if (prescription.encounter != null &&
-                    prescription.encounter!.appointmentId == appointment.id) {
-                  if (appointment.prescriptions != null) {
-                    appointment.prescriptions = [
-                      ...appointment.prescriptions!,
-                      prescription
-                    ];
-                  } else {
-                    appointment.prescriptions = [prescription];
-                  }
-                }
-              }
-            }
-            appointments = appointments
-                .where((element) => element.prescriptions != null)
-                .toList();
-            emit(AppointmentWithPrescriptionsLoadedState(appointments: appointments));
-            transaction.finish(
-              status: const SpanStatus.ok(),
-            );
-          }
         }
 
       }

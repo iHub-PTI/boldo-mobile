@@ -1,8 +1,9 @@
 import 'package:boldo/blocs/download_prescriptions_bloc/download_prescriptions_bloc.dart' as download_prescriptions_bloc;
 import 'package:boldo/blocs/prescriptions_bloc/prescriptionsBloc.dart';
 import 'package:boldo/constants.dart';
-import 'package:boldo/models/Appointment.dart';
+import 'package:boldo/models/Encounter.dart';
 import 'package:boldo/models/Organization.dart';
+import 'package:boldo/models/filters/PrescriptionFilter.dart';
 
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
@@ -25,7 +26,7 @@ class PrescriptionsScreen extends StatefulWidget {
 }
 
 class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
-  late List<Appointment> allAppointments = [];
+  late List<Encounter> allEncounters = [];
   @override
   void initState() {
     super.initState();
@@ -33,13 +34,13 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
 
   void _onRefresh() async {
     // monitor network fetch
-    BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList());
+    BlocProvider.of<PrescriptionsBloc>(context).add(GetPastEncounterWithPrescriptionsList());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PrescriptionsBloc>(
-      create: (BuildContext context) => PrescriptionsBloc()..add(GetPastAppointmentWithPrescriptionsList()),
+      create: (BuildContext context) => PrescriptionsBloc()..add(GetPastEncounterWithPrescriptionsList()),
       child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.white,
@@ -52,8 +53,8 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
           ),
           body: BlocListener<PrescriptionsBloc, PrescriptionsState>(
             listener: (context, state) {
-              if(state is AppointmentWithPrescriptionsLoadedState){
-                allAppointments = state.appointments;
+              if(state is EncounterWithPrescriptionsLoadedState){
+                allEncounters = state.encounters;
               }
             },
             child: Container(
@@ -120,8 +121,8 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                     ),
                   ),
                   BlocBuilder<PrescriptionsBloc, PrescriptionsState>(builder: (context, state){
-                    if(state is AppointmentWithPrescriptionsLoadedState){
-                      if(allAppointments.isEmpty){
+                    if(state is EncounterWithPrescriptionsLoadedState){
+                      if(allEncounters.isEmpty){
                         return const Expanded(
                           child:  EmptyStateV2(
                             picture: "empty_prescriptions.svg",
@@ -132,7 +133,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                         );
                       }else{
                         return Expanded(
-                          child: SelectableWidgets<Appointment, download_prescriptions_bloc.Loading>(
+                          child: SelectableWidgets<Encounter, download_prescriptions_bloc.Loading>(
                             enableSelectAll: false,
                             downloadEvent: (ids){
                               return download_prescriptions_bloc.DownloadPrescriptions(
@@ -141,10 +142,10 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                               );
                             },
                             bloc: download_prescriptions_bloc.DownloadPrescriptionsBloc(),
-                            items: (allAppointments).map((e) {
-                              return SelectableWidgetItem<Appointment>(
+                            items: (allEncounters).map((e) {
+                              return SelectableWidgetItem<Encounter>(
                                 child: PrescriptionCard(
-                                  appointment: e,
+                                  encounter: e,
                                 ),
                                 item: e,
                                 id: e.prescriptions?.first.encounterId,
@@ -156,7 +157,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                     }else if(state is Loading){
                       return loadingStatus();
                     }else if(state is Failed){
-                      return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList()) ) ;
+                      return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<PrescriptionsBloc>(context).add(GetPastEncounterWithPrescriptionsList()) ) ;
                     }else{
                       return Container();
                     }
@@ -177,10 +178,18 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
         TextEditingController date2TextController = TextEditingController();
         var inputFormat = DateFormat('dd/MM/yyyy');
         var outputFormat = DateFormat('yyyy-MM-dd');
-        DateTime date1 = BlocProvider.of<PrescriptionsBloc>(prescriptionBlocContext).getInitialDate();
-        DateTime? date2 = BlocProvider.of<PrescriptionsBloc>(prescriptionBlocContext).getFinalDate();
-        dateTextController.text = inputFormat.format(date1);
-        date2TextController.text = date2 != null? inputFormat.format(date2) :'';
+        PrescriptionFilter _prescriptionFilter = BlocProvider.of<PrescriptionsBloc>(prescriptionBlocContext).prescriptionFilter;
+
+        if( _prescriptionFilter.start != null) {
+          dateTextController.text =
+              inputFormat.format(_prescriptionFilter.start!);
+        }
+
+        if( _prescriptionFilter.end != null) {
+          date2TextController.text =
+              inputFormat.format(_prescriptionFilter.end!);
+        }
+
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
@@ -229,14 +238,24 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                     ),
                     Expanded(
                       child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Card(
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.zero,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                            horizontal: 16,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                decoration: ShapeDecoration(
+                                    color: ConstantsV2.lightest,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.zero,
+                                    ),
+                                    shadows: [
+                                      shadowRegular,
+                                    ]
                                 ),
-                                color: ConstantsV2.lightest,
                                 child: Container(
                                   padding: const EdgeInsets.all(16),
                                   child: Column(
@@ -261,9 +280,9 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                     initialEntryMode: DatePickerEntryMode
                                                         .calendarOnly,
                                                     initialDatePickerMode: DatePickerMode.day,
-                                                    initialDate: date1 ?? DateTime.now(),
+                                                    initialDate: _prescriptionFilter.start ?? DateTime.now(),
                                                     firstDate: DateTime(1900),
-                                                    lastDate: date2?? DateTime.now(),
+                                                    lastDate: _prescriptionFilter.end ?? DateTime.now(),
                                                     locale: const Locale("es", "ES"),
                                                     builder: (context, child){
                                                       return Theme(
@@ -286,7 +305,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                     outputFormat.parse(newDate.toString().trim());
                                                     var _date2 = inputFormat.format(_date1);
                                                     dateTextController.text = _date2;
-                                                    date1 = _date1;
+                                                    _prescriptionFilter.start = _date1;
                                                   });
                                                 }
                                               },
@@ -298,7 +317,10 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                     height: 20,
                                                   ),
                                                   const SizedBox(width: 6,),
-                                                  Text('Desde: ${inputFormat.format(date1)}',
+                                                  Text('Desde: ${_prescriptionFilter.start != null
+                                                      ? inputFormat.format(
+                                                      _prescriptionFilter.start!
+                                                  ): '--/--/----'}',
                                                     style: boldoCorpSmallSTextStyle.copyWith(
                                                         color: ConstantsV2.activeText
                                                     ),
@@ -320,8 +342,8 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                     initialEntryMode: DatePickerEntryMode
                                                         .calendarOnly,
                                                     initialDatePickerMode: DatePickerMode.day,
-                                                    initialDate: date2 ?? date1,
-                                                    firstDate: date1,
+                                                    initialDate: _prescriptionFilter.end ?? _prescriptionFilter.start?? DateTime.now(),
+                                                    firstDate: _prescriptionFilter.start?? DateTime.now(),
                                                     lastDate: DateTime.now(),
                                                     locale: const Locale("es", "ES"),
                                                     builder: (context, child){
@@ -345,7 +367,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                     outputFormat.parse(newDate.toString().trim());
                                                     var _date2 = inputFormat.format(_date1);
                                                     date2TextController.text = _date2;
-                                                    date2 = _date1;
+                                                    _prescriptionFilter.end = _date1;
                                                   });
                                                 }
                                               },
@@ -357,8 +379,8 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                                     height: 20,
                                                   ),
                                                   const SizedBox(width: 6,),
-                                                  Text('Hasta: ${date2 != null ? inputFormat.format(
-                                                      date2!) : 'indefinido'}',
+                                                  Text('Hasta: ${_prescriptionFilter.end != null ? inputFormat.format(
+                                                      _prescriptionFilter.end!) : '--/--/----'}',
                                                     style: boldoCorpSmallSTextStyle.copyWith(
                                                         color: ConstantsV2.activeText
                                                     ),
@@ -371,9 +393,10 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                                       ),
                                     ],
                                   ),
-                                )
-                            ),
-                          ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -385,9 +408,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                         children: [
                           ElevatedButton(
                             onPressed:() {
-                              BlocProvider.of<PrescriptionsBloc>(prescriptionBlocContext).setInitialDate(date1);
-                              BlocProvider.of<PrescriptionsBloc>(prescriptionBlocContext).setFinalDate(date2);
-                              BlocProvider.of<PrescriptionsBloc>(prescriptionBlocContext).add(GetPastAppointmentWithPrescriptionsList());
+                              BlocProvider.of<PrescriptionsBloc>(prescriptionBlocContext).prescriptionFilter = _prescriptionFilter;
                               Navigator.pop(context);
                             },
                             child: Row(
