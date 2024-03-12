@@ -17,8 +17,8 @@ class PrescriptionFilter {
 
     _json = {
       'doctors': doctors,
-      'start': start?.toIso8601String(),
-      'end': end?.toIso8601String(),
+      'start': start?.toUtc().toIso8601String(),
+      'end': end?.toUtc().toIso8601String(),
     };
 
     _json.removeWhere((key, value) => value == null);
