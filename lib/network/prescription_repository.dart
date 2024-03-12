@@ -23,13 +23,13 @@ class PrescriptionRepository {
       Response responsePrescriptions;
       if (!(prefs.getBool(isFamily)?? false))
         responsePrescriptions = await dio.get(
-          "/profile/patient/encounters/prescriptions",
+          "/profile/patient/encounter/prescription",
           queryParameters: _queryParameters,
         );
       else
         responsePrescriptions = await dio
             .get(
-          "/profile/caretaker/dependent/${patient.id}/encounters/prescriptions",
+          "/profile/caretaker/dependent/${patient.id}/encounter/prescription",
           queryParameters: _queryParameters,
         );
 
