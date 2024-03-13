@@ -378,58 +378,62 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
   }
 
   Widget actions(){
-    return Container(
-      decoration: BoxDecoration(
-          boxShadow: [
-            shadowRegular,
+    return BlocBuilder<FilterPrescriptionBloc, FilterState>(
+      builder: (context, state){
+        return Container(
+        decoration: BoxDecoration(
+            boxShadow: [
+              shadowRegular,
+            ],
+            color: ConstantsV2.grayLightest
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(
+              onPressed: prescriptionFilter.ifFiltered? () {
+                prescriptionFilter.clearFilter();
+                BlocProvider.of<FilterPrescriptionBloc>(context).add(
+                    ApplyFilter(
+                      filter: prescriptionFilter,
+                      function:
+                          (filter)=> widget.filterCallback(filter as PrescriptionFilter),
+                      context: context,
+                    )
+                );
+              }: null,
+              child: const Row(
+                children: [
+                  Text('Limpiar filtros',
+                  ),
+                ],
+              ),
+            ),
+            TextButton(
+              onPressed: prescriptionFilter != widget.initialFilter? () {
+                BlocProvider.of<FilterPrescriptionBloc>(context).add(
+                    ApplyFilter(
+                        filter: prescriptionFilter,
+                        function:
+                            (filter)=> widget.filterCallback(filter as PrescriptionFilter),
+                        context: context
+                    )
+                );
+              }: null,
+              child: const Row(
+                children: [
+                  const Text('Ver resultados',
+                  ),
+                  Icon(Icons.arrow_forward_rounded)
+                ],
+              ),
+            ),
           ],
-          color: ConstantsV2.grayLightest
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          TextButton(
-            onPressed: prescriptionFilter.ifFiltered? () {
-              prescriptionFilter.clearFilter();
-              BlocProvider.of<FilterPrescriptionBloc>(context).add(
-                  ApplyFilter<PrescriptionFilter>(
-                      filter: prescriptionFilter,
-                      function:
-                          (filter)=> widget.filterCallback(filter),
-                      context: context
-                  )
-              );
-            }: null,
-            child: const Row(
-              children: [
-                Text('Limpiar filtros',
-                ),
-              ],
-            ),
-          ),
-          TextButton(
-            onPressed: prescriptionFilter != widget.initialFilter? () {
-              BlocProvider.of<FilterPrescriptionBloc>(context).add(
-                  ApplyFilter<PrescriptionFilter>(
-                      filter: prescriptionFilter,
-                      function:
-                          (filter)=> widget.filterCallback(filter),
-                      context: context
-                  )
-              );
-            }: null,
-            child: const Row(
-              children: [
-                const Text('Ver resultados',
-                ),
-                Icon(Icons.arrow_forward_rounded)
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      );
+      },
     );
   }
 
