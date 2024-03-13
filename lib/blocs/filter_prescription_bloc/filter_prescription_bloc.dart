@@ -19,7 +19,7 @@ class FilterPrescriptionBloc extends FilterBloc<FilterEvent, FilterState> {
 
     Either<Failure, void> _post =
     await Task(() => Future(
-        event.function(event.filter)
+        () => event.function(event.filter)
     ))
         .attempt()
         .mapLeftToFailure()
