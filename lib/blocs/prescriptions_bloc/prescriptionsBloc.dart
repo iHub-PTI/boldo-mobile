@@ -15,10 +15,7 @@ part 'prescriptionsState.dart';
 
 class PrescriptionsBloc extends Bloc<PrescriptionsEvent, PrescriptionsState> {
 
-  PrescriptionFilter _prescriptionFilter = PrescriptionFilter(
-    start: DateTime(DateTime.now().year-1,DateTime.now().month,DateTime.now().day),
-    end: DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day, 23, 59, 59),
-  );
+  PrescriptionFilter _prescriptionFilter = PrescriptionFilter();
 
   PrescriptionFilter get prescriptionFilter => _prescriptionFilter;
 
