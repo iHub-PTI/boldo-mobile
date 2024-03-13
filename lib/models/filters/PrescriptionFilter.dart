@@ -1,17 +1,45 @@
-class PrescriptionFilter {
+import 'Filter.dart';
+import 'package:collection/collection.dart';
 
-  DateTime? start;
-  DateTime? end;
+
+class PrescriptionFilter  extends Filter {
+
+  DateTime? _start;
+
+  DateTime? get start => _start;
+
+  set start (DateTime? newStartDate){
+    _start = newStartDate;
+  }
+
+  DateTime? _end;
+
+  DateTime? get end => _end;
+
+  set end (DateTime? newStartDate){
+    _end = newStartDate;
+  }
 
   /// List of doctors ids
-  List<String>? doctors;
+  List<String?>? _doctors;
+
+  List<String?>? get doctors => _doctors;
+
+  set doctors (List<String?>? newDoctors){
+    _doctors = newDoctors;
+  }
 
   PrescriptionFilter({
-    this.start,
-    this.end,
-    this.doctors,
-  });
+    DateTime? start,
+    DateTime? end,
+    List<String?>? doctors,
+  }){
+    _start = start;
+    _end = end;
+    _doctors = doctors;
+  }
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> _json;
 
