@@ -1,5 +1,6 @@
 
 
+import 'package:boldo/blocs/filter_bloc/filter_bloc.dart';
 import 'package:boldo/blocs/filter_prescription_bloc/filter_prescription_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/filters/PrescriptionFilter.dart';
@@ -151,6 +152,85 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
     );
   }
 
+  Widget dateFilter(){
+    return Container(
+      decoration: ShapeDecoration(
+        color: ConstantsV2.lightest,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+        ),
+        shadows: [
+          shadowRegular,
+        ],
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Text('Filtrar por fecha',
+                style: boldoCorpSmallSTextStyle.copyWith(
+                    color: ConstantsV2.activeText
+                ),
+              ),
+            ),
+            datePicker(
+              context: context,
+              firstDate: DateTime(1900),
+              initialDate: prescriptionFilter.start ?? DateTime.now(),
+              lastDate: prescriptionFilter.end ?? DateTime.now(),
+              callback: (DateTime newDate){
+                setState(() {
+                  var _date1 =
+                  outputFormat.parse(newDate.toString().trim());
+                  var _date2 = inputFormat.format(_date1);
+                  dateTextController.text = _date2;
+                  prescriptionFilter.start = _date1;
+                });
+              },
+              cancelCallback: (){
+                setState(() {
+                  dateTextController.text = '';
+                  prescriptionFilter.start = null;
+                });
+              },
+              hintText: "Desde",
+              selectedDate: prescriptionFilter.start,
+            ),
+            const SizedBox(
+              height: 4,
+            ),
+            datePicker(
+              context: context,
+              firstDate: prescriptionFilter.start?? DateTime.now(),
+              initialDate: prescriptionFilter.end ?? prescriptionFilter.start?? DateTime.now(),
+              lastDate: DateTime.now(),
+              callback: (DateTime newDate){
+                setState(() {
+                  var _date1 =
+                  outputFormat.parse(newDate.toString().trim());
+                  var _date2 = inputFormat.format(_date1);
+                  date2TextController.text = _date2;
+                  prescriptionFilter.end = _date1;
+                });
+              },
+              cancelCallback: (){
+                setState(() {
+                  date2TextController.text = '';
+                  prescriptionFilter.end = null;
+                });
+              },
+              hintText: "Hasta",
+              selectedDate: prescriptionFilter.end,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<FilterPrescriptionBloc>(
@@ -285,47 +365,7 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
                           ),
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            shadowRegular,
-                          ],
-                          color: ConstantsV2.grayLightest
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            TextButton(
-                              onPressed: prescriptionFilter.ifFiltered? () {
-                                prescriptionFilter.clearFilter();
-                                widget.filterCallback(prescriptionFilter);
-                                Navigator.pop(context);
-                              }: null,
-                              child: const Row(
-                                children: [
-                                  Text('Limpiar filtros',
-                                  ),
-                                ],
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: prescriptionFilter != widget.initialFilter? () {
-                                widget.filterCallback(prescriptionFilter);
-                                Navigator.pop(context);
-                              }: null,
-                              child: const Row(
-                                children: [
-                                  const Text('Ver resultados',
-                                  ),
-                                  Icon(Icons.arrow_forward_rounded)
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      actions(),
                     ],
                   ),
                 ),
@@ -333,6 +373,62 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget actions(){
+    return Container(
+      decoration: BoxDecoration(
+          boxShadow: [
+            shadowRegular,
+          ],
+          color: ConstantsV2.grayLightest
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          TextButton(
+            onPressed: prescriptionFilter.ifFiltered? () {
+              prescriptionFilter.clearFilter();
+              BlocProvider.of<FilterPrescriptionBloc>(context).add(
+                  ApplyFilter<PrescriptionFilter>(
+                      filter: prescriptionFilter,
+                      function:
+                          (filter)=> widget.filterCallback(filter),
+                      context: context
+                  )
+              );
+            }: null,
+            child: const Row(
+              children: [
+                Text('Limpiar filtros',
+                ),
+              ],
+            ),
+          ),
+          TextButton(
+            onPressed: prescriptionFilter != widget.initialFilter? () {
+              BlocProvider.of<FilterPrescriptionBloc>(context).add(
+                  ApplyFilter<PrescriptionFilter>(
+                      filter: prescriptionFilter,
+                      function:
+                          (filter)=> widget.filterCallback(filter),
+                      context: context
+                  )
+              );
+            }: null,
+            child: const Row(
+              children: [
+                const Text('Ver resultados',
+                ),
+                Icon(Icons.arrow_forward_rounded)
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
