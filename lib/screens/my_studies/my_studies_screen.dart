@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/download_studies_orders_bloc/download_studies_orders_bloc.dart' as download_studies_orders_bloc;
 import 'package:boldo/blocs/studies_orders_bloc/studiesOrders_bloc.dart' as studies_orders_bloc;
 import 'package:boldo/main.dart';
 import 'package:boldo/models/StudyOrder.dart';
@@ -5,13 +6,13 @@ import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state
 import 'package:boldo/screens/my_studies/bloc/my_studies_bloc.dart';
 import 'package:boldo/screens/my_studies/components/study_result_card.dart';
 import 'package:boldo/screens/studies_orders/attach_study_by_order.dart';
-import 'package:boldo/screens/studies_orders/components/selectableStudiesOrders.dart';
 import 'package:boldo/screens/studies_orders/components/studyOrderCard.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/card_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:boldo/widgets/loading.dart';
+import 'package:boldo/widgets/selectable/selectable_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -249,9 +250,24 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
     return BlocBuilder<studies_orders_bloc.StudiesOrdersBloc, studies_orders_bloc.StudiesOrdersState>(
       builder: (BuildContext context, state){
         if(state is studies_orders_bloc.StudiesOrdersLoaded){
-          return state.studiesOrders.isNotEmpty ? SelectableServiceRequest(
-            servicesRequests: state.studiesOrders,
-          ) : const EmptyStateV2(
+          return state.studiesOrders.isNotEmpty ? SelectableWidgets<ServiceRequest, download_studies_orders_bloc.Loading>(
+            downloadEvent: (ids){
+              return download_studies_orders_bloc.DownloadStudiesOrders(
+                listOfIds: ids,
+                context: context,
+              );
+            },
+            bloc: download_studies_orders_bloc.DownloadStudiesOrdersBloc(),
+            items: (state.studiesOrders?? []).map((e) {
+              return SelectableWidgetItem<ServiceRequest>(
+                child: ServiceRequestCard(
+                  serviceRequest: e,
+                ),
+                item: e,
+                id: e.id,
+              );
+            }).toList(),
+          ): const EmptyStateV2(
             picture: "empty_studies.svg",
             titleBottom: "Aún no tenés órdenes",
             textBottom:

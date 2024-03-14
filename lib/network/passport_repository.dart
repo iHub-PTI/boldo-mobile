@@ -2,15 +2,14 @@
 import 'dart:io';
 
 import 'package:boldo/constants.dart';
+import 'package:boldo/network/files_repository.dart';
 import 'package:boldo/network/http.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/errors.dart';
-import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/utils/files_helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:open_filex/open_filex.dart' as open;
 
 import '../main.dart';
 import '../models/UserVaccinate.dart';
@@ -83,9 +82,7 @@ class PassportRepository {
     try {
       print('get user downloadVacinnationPdf');
       final appStorage = await getApplicationDocumentsDirectory();
-      var response;
-      final file = File(
-          '${appStorage.path}/vacunacion_${capitalize(patient.givenName!.split(" ")[0].toLowerCase().toString())}_${capitalize(patient.familyName!.split(" ")[0].toLowerCase().toString())}_${DateFormat('dd-MM-yyy').format(DateTime.now())}.pdf');
+      Response response;
       List<String> diseaseCode = [];
       List<UserVaccinate>? vaccine = [];
       if (pdfFromHome == true) {
@@ -122,11 +119,15 @@ class PassportRepository {
         }
       }
 
-      final raf = file.openSync(mode: FileMode.write);
-      raf.writeFromSync(response.data);
-      await raf.close();
+      String? filename = FilesRepository.getFilename(
+        headers: response.headers,
+      );
 
-      open.OpenFilex.open(file.path);
+      FilesHelpers.openFile(
+        file: response.data,
+        fileName: filename,
+        extension: '.pdf',
+      );
       return None();
     } on DioError catch (exception, stackTrace) {
       captureError(

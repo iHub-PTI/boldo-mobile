@@ -3,6 +3,7 @@ import 'package:boldo/constants.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/background.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -95,12 +96,7 @@ class QRGenerator extends StatelessWidget {
                                               )
                                       );
                                     }else {
-                                      return const Center(
-                                        child: CircularProgressIndicator(
-                                          valueColor: AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                                          backgroundColor: Constants.primaryColor600,
-                                        ),
-                                      );
+                                      return loadingStatus();
                                     }
                                   },
                                 ),

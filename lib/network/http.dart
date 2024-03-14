@@ -71,12 +71,16 @@ void initDio(
       String? baseUrl,
       ResponseType responseType = ResponseType.json,
       Map<String, dynamic>? header,
+      String? contentType,
     }) {
   if(header != null) {
     dio.options.headers = header;
   }
   if(baseUrl != null) {
     dio.options.baseUrl = baseUrl;
+  }
+  if(contentType != null) {
+    dio.options.contentType = contentType;
   }
   dio.options.responseType = responseType;
 

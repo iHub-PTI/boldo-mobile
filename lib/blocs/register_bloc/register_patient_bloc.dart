@@ -9,6 +9,7 @@ import 'package:crypto/crypto.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 part 'register_patient_event.dart';
 part 'register_patient_state.dart';
@@ -18,11 +19,18 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
   PatientRegisterBloc() : super(PatientRegisterInitial()) {
     on<PatientRegisterEvent>((event, emit) async {
       if(event is SendPatientPreliminaryProfilePressed) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'POST',
+          description: 'send preliminary user phone',
+          bindToScope: true,
+        );
         emit(Loading());
         var _post;
         await Task(() =>
         _patientRepository.sendUserPreliminaryProfile(event.context)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -32,16 +40,32 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         }else{
           emit(Success());
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         }
       } else if(event is ValidatePatientPhonePressed){
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'POST',
+          description: 'validate user phone',
+          bindToScope: true,
+        );
         emit(Loading());
         final userHash = await generateHash(event.code);
         var _post;
         await Task(() =>
         _patientRepository.validateUserPhone(userHash, event.context)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -51,10 +75,25 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         }else{
           emit(Success());
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
         }
       }else if(event is UploadPhoto){
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'POST',
+          description: 'send user image scan ${event.urlUploadType}',
+          bindToScope: true,
+        );
         print("${event.urlUploadType} and ${event.image!.path}" );
         emit(Loading());
         String? isLogged = await storage.read(key: "access_token");
@@ -67,6 +106,12 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
           File(userImageSelected!.path).delete();
           imageCache!.clearLiveImages();
           imageCache!.clear();
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         }else {
           print("send image");
           await Task(() => _patientRepository.sendImagetoServer(
@@ -86,6 +131,12 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
             userImageSelected = null;
             imageCache!.clearLiveImages();
             imageCache!.clear();
+            transaction.throwable = _post.asLeft();
+            transaction.finish(
+              status: SpanStatus.fromString(
+                _post.asLeft().message,
+              ),
+            );
           } else {
             if (event.urlUploadType == UrlUploadType.selfie) {
               if (isLogged == null) {
@@ -99,6 +150,12 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
                   userImageSelected = null;
                   imageCache!.clearLiveImages();
                   imageCache!.clear();
+                  transaction.throwable = _post.asLeft();
+                  transaction.finish(
+                    status: SpanStatus.fromString(
+                      _post.asLeft().message,
+                    ),
+                  );
                 } else {
                   // succefully inserted password in server, go to login screen, need access token [require webview login]
                   emit(Success());
@@ -110,6 +167,9 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
                   imageCache!.clear();
                   await Future.delayed(const Duration(seconds: 2));
                   emit(NavigateNextAndDeleteUntilScreen(routeName: '/login', untilName: '/onboarding'));
+                  transaction.finish(
+                    status: const SpanStatus.ok(),
+                  );
                 }
               } else {
                 // all images was validated, and is and user logged.
@@ -123,6 +183,9 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
                 imageCache!.clear();
                 await Future.delayed(const Duration(seconds: 2));
                 emit(NavigateNextAndDeleteUntilScreen(routeName: '/familyConnectTransition', untilName: '/methods'));
+                transaction.finish(
+                  status: const SpanStatus.ok(),
+                );
               }
             } else {
               // images was successfully sent to server proceed with take another image [dni or selfie]
@@ -137,6 +200,9 @@ class PatientRegisterBloc extends Bloc<PatientRegisterEvent, PatientRegisterStat
                   actualPhotoStage: event.urlUploadType == UrlUploadType.frontal
                       ? UrlUploadType.back
                       : UrlUploadType.selfie));
+              transaction.finish(
+                status: const SpanStatus.ok(),
+              );
             }
           }
         }

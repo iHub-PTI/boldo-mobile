@@ -353,7 +353,7 @@ class AppointmentRepository {
     }
   }
 
-  static Future<Appointment?>? getAppointmentByEncounterId({required String encounterId}) async {
+  static Future<Appointment>? getAppointmentByEncounterId({required String encounterId}) async {
     try {
       Response response1;
       if(prefs.getBool(isFamily) ?? false) {

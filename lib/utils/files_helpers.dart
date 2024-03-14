@@ -9,11 +9,12 @@ abstract class FilesHelpers{
   ///[extension] must be start with dot ('.') character to interpret as an
   /// extension of a file or the file was saved without extension type like a
   /// byte file
-  static void openFile({
+  static Future<void> openFile({
     required Uint8List file,
-    String fileName = "visor",
+    String? fileName = "visor",
     String? extension,
   }) async{
+    fileName = fileName?? "visor";
     Directory dir = await getAppDirectory();
     File fileDirectory = File("${dir.path}/" + fileName + (extension?? ''));
     //write in memory the file to open

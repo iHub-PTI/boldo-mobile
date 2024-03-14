@@ -11,6 +11,7 @@ import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
+import 'package:sentry_flutter/sentry_flutter.dart';
 part 'new_study_event.dart';
 part 'new_study_state.dart';
 
@@ -63,6 +64,12 @@ class NewStudyBloc extends Bloc<NewStudyEvent, NewStudyState> {
   NewStudyBloc() : super(NewStudyInitial()) {
     on<NewStudyEvent>((event, emit) async {
       if (event is SendStudyToServer) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'POST',
+          description: 'send files and post a new diagnostic report without order',
+          bindToScope: true,
+        );
         emit(Uploading());
 
         // get files that doesn't has AttachmentUrl because this doesn't yet uploaded
@@ -170,11 +177,26 @@ class NewStudyBloc extends Bloc<NewStudyEvent, NewStudyState> {
           if (_post.isLeft()) {
             _post.leftMap((l) => response = l.message);
             emit(FailedUpload(msg: response));
+            transaction.throwable = _post.asLeft();
+            transaction.finish(
+              status: SpanStatus.fromString(
+                _post.asLeft().message,
+              ),
+            );
           } else {
             emit(Uploaded());
+            transaction.finish(
+              status: const SpanStatus.ok(),
+            );
           }
         }else{
           emit(FailedUploadFiles(files: _final));
+          transaction.throwable = _final.firstWhere((element) => element.value.isLeft()).value.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _final.firstWhere((element) => element.value.isLeft()).value.asLeft().message,
+            ),
+          );
         }
 
 

@@ -1,9 +1,11 @@
 
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/network/appointment_repository.dart';
+import 'package:boldo/network/repository_helper.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 
 
@@ -31,10 +33,17 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
   AppointmentBloc() : super(AppointmentInitial()) {
     on<AppointmentEvent>((event, emit) async {
       if(event is GetAppointmentByEcounterId){
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          description: 'To redirect to Appointment detail, ',
+          bindToScope: true,
+        );
         emit(Loading());
-        var _post;
+        late Either<Failure, Appointment> _post;
         await Task(() => AppointmentRepository.getAppointmentByEncounterId(encounterId: event.encounterId)!)
             .attempt()
+            .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
@@ -43,10 +52,19 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
           emit(Failed(response: response));
+          transaction.throwable = _post.asLeft();
+          transaction.finish(
+            status: SpanStatus.fromString(
+              _post.asLeft().message,
+            ),
+          );
         } else {
           late Appointment appointment;
-          _post.foldRight(Appointment, (a, previous) => appointment = a);
+          appointment = _post.asRight();
 
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
           emit(AppointmentLoadedState(appointment: appointment));
         }
       }

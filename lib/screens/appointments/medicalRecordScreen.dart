@@ -1,6 +1,4 @@
-import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
-import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/Doctor.dart';
@@ -18,6 +16,7 @@ import 'package:boldo/screens/studies_orders/StudyOrderScreen.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -79,8 +78,8 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                     semanticsLabel: 'BOLDO Logo'),
               ),
             ),
-            body: Padding(
-              padding: const EdgeInsets.only(top: 16),
+            body: SafeArea(
+              minimum: const EdgeInsets.only(top: 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,16 +101,13 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                   BlocBuilder<MedicalRecordBloc, MedicalRecordState>(
                     builder: (context, state) {
                       if (state is Loading) {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                Constants.primaryColor400),
-                            backgroundColor: Constants.primaryColor600,
-                          ),
+                        return Center(
+                          child: loadingStatus(),
                         );
                       } else if (state is Success) {
                         return Expanded(
                           child: SingleChildScrollView(
+                            physics: const ClampingScrollPhysics(),
                             child: Padding(
                               padding: const EdgeInsets.only(top: 16),
                               child: Column(
@@ -151,6 +147,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                       ],
                                     ),
                                     child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       mainAxisAlignment:
                                       MainAxisAlignment.center,
                                       children: [
@@ -493,8 +490,6 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                               doctor: widget.appointment.doctor?? Doctor(),
                             )),
                       );
-                      BlocProvider.of<PrescriptionBloc>(context)
-                          .add(InitialPrescriptionEvent());
                     }
                         : null,
                     child: Card(

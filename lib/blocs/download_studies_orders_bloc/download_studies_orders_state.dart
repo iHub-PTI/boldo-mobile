@@ -1,7 +1,7 @@
 part of 'download_studies_orders_bloc.dart';
 
 @immutable
-abstract class DownloadStudiesOrdersState {}
+abstract class DownloadStudiesOrdersState extends DownloadState {}
 
 class DownloadStudiesOrdersInitial extends DownloadStudiesOrdersState {}
 

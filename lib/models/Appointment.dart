@@ -3,6 +3,7 @@ import 'package:boldo/models/News.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Prescription.dart';
 import 'package:boldo/screens/dashboard/tabs/components/appointment_card.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:flutter/widgets.dart';
 import './Doctor.dart';
 import 'Patient.dart';
@@ -120,7 +121,31 @@ class Appointment extends News {
     'cancelled': AppointmentStatus.Cancelled,
   };
 
+  static Map<String?, AppointmentType> _typesValid = {
+    'A': AppointmentType.InPerson,
+    'V': AppointmentType.Virtual,
+    'AV': AppointmentType.Both,
+    'VA': AppointmentType.Both,
+    null: AppointmentType.None,
+  };
+
+  static AppointmentType typeFromString({String? type}){
+
+    type = type?.toUpperCase();
+
+    return _typesValid[type]?? AppointmentType.None;
+  }
+
+  static String? typeString({required AppointmentType? type }) {
+    return _typesValid.entries.firstWhere(
+          (element) => element.value == type,
+      orElse: () => const MapEntry(null, AppointmentType.None),
+    ).key;
+  }
+
   static MapEntry<String, AppointmentStatus>statusDefault = const MapEntry<String, AppointmentStatus>('locked', AppointmentStatus.Locked,);
+
+  static MapEntry<String?, AppointmentType> typeDefault = _typesValid.entries.last;
 
 }
 

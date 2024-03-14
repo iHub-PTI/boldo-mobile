@@ -20,6 +20,7 @@ import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:boldo/widgets/go_to_top.dart';
 import 'package:boldo/widgets/info_card.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -224,7 +225,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
               ),
               BlocListener<HomeBloc, HomeState>(
                 listener: (context, state) {
-                  if (state is ReloadHome) {
+                  if (state is HomeSuccess) {
                     setState(() {
 
                     });
@@ -392,13 +393,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                       return Container(
                           child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed()) ) );
                     } else {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              Constants.primaryColor400),
-                          backgroundColor: Constants.primaryColor600,
-                        ),
-                      );
+                      return loadingStatus();
                     }
                   },
                 ),
@@ -424,9 +419,6 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
         physics: const ClampingScrollPhysics(),
         scrollController: homeScroll,
         enablePullDown: true,
-        header: const MaterialClassicHeader(
-          color: Constants.primaryColor800,
-        ),
         controller: _refreshControllerNews!,
         onLoading: () {
         },
@@ -483,13 +475,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
             );
           }else if (state is LoadingNews){
             return Container(
-                child: const Center(
-                    child: CircularProgressIndicator(
-                      valueColor:
-                      AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                      backgroundColor: Constants.primaryColor600,
-                    )
-                )
+              child: loadingStatus(),
             );
           }else if(state is FailedLoadedNews){
             return Container(
@@ -511,9 +497,6 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
       child: SmartRefresher(
           enablePullDown: true,
           enablePullUp: true,
-          header: const MaterialClassicHeader(
-            color: Constants.primaryColor800,
-          ),
           controller: _refreshControllerOrganizationsCheck!,
           onLoading: () {
           },
@@ -543,6 +526,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
           child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: ListView(
+                physics: const ClampingScrollPhysics(),
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -757,7 +741,9 @@ class _CustomCardPageState extends State<CustomCardPage> with TickerProviderStat
                           duration: const Duration(milliseconds: 300),
                           child: Text(
                             widget.carouselCard.title,
-                            style: boldoCorpMediumBlackTextStyle,
+                            style: boldoCorpMediumBlackTextStyle.copyWith(
+                              color: ConstantsV2.lightGrey,
+                            ),
                           ),
                         ),
                       ),

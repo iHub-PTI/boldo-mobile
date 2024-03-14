@@ -8,8 +8,9 @@ Widget header(String? text, String? patientText,
       double? width,
       bool border = true,
       Color? borderColor = ConstantsV2.orange,
-      EdgeInsetsGeometry? padding = const EdgeInsets.all(16)}
-    ) {
+      EdgeInsetsGeometry? padding = const EdgeInsets.all(16),
+      bool showPatientPicture = true,
+    }) {
   return Container(
     padding: padding,
     child: Row(
@@ -45,6 +46,7 @@ Widget header(String? text, String? patientText,
             style: boldoScreenTitleTextStyle.copyWith(color: ConstantsV2.activeText),
           ),
         ),
+        if(showPatientPicture)
         ImageViewTypeForm(
           height: height?? 60,
           width: width?? 60,

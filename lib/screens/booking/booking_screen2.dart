@@ -8,6 +8,7 @@ import 'package:boldo/utils/expandable_card/expandable_card.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:boldo/widgets/in-person-virtual-switch.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -257,13 +258,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                     );
                                   }else if(state is Loading){
                                     return Container(
-                                        child: const Center(
-                                            child: CircularProgressIndicator(
-                                              valueColor:
-                                              AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                                              backgroundColor: Constants.primaryColor600,
-                                            )
-                                        )
+                                      child: loadingStatus(),
                                     );
                                   }else{
                                     return Container();
@@ -487,13 +482,7 @@ class _BookingScreenScreenState extends State<BookingScreen2> {
                                         );
                                       }else if(state is more_availabilities.Loading){
                                         return Container(
-                                            child: const Center(
-                                                child: CircularProgressIndicator(
-                                                  valueColor:
-                                                  AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                                                  backgroundColor: Constants.primaryColor600,
-                                                )
-                                            )
+                                          child: loadingStatus(),
                                         );
                                       }else{
                                         return Container();

@@ -1,3 +1,4 @@
+import 'package:boldo/blocs/download_prescriptions_bloc/download_prescriptions_bloc.dart';
 import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Doctor.dart';
@@ -12,6 +13,7 @@ import 'package:boldo/screens/prescriptions/components/medication_name.dart';
 import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,7 +41,6 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PrescriptionBloc>(context).add(GetPrescription(id: widget.medicalRecordId));
   }
 
   @override
@@ -54,174 +55,223 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
                 semanticsLabel: 'BOLDO Logo'),
           ),
         ),
-        body: BlocListener<PrescriptionBloc, PrescriptionState>(
-          listener: (context, state) {
-            if(state is PrescriptionLoaded){
-              medicalRecord = state.prescription;
-            }else if(state is FailedLoadPrescription){
-              emitSnackBar(
+        body: BlocProvider(
+          create: (BuildContext context) => PrescriptionBloc()..add(GetPrescription(id: widget.medicalRecordId)),
+          child: BlocListener<PrescriptionBloc, PrescriptionState>(
+            listener: (context, state) {
+              if(state is PrescriptionLoaded){
+                medicalRecord = state.prescription;
+              }else if(state is FailedLoadPrescription){
+                emitSnackBar(
                   context: context,
                   text: state.response,
-                  status: ActionStatus.Fail
-              );
-            }
-          },
-          child: Container(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 24,
-                ),
-                BackButtonLabel(
-                  labelText: 'Detalles de la receta',
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                BlocBuilder<PrescriptionBloc, PrescriptionState>(builder: (context, state){
-                  if( state is PrescriptionLoaded){
-                    return Flexible(
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                                decoration: BoxDecoration(
-                                    boxShadow: [
-                                      shadowRegular,
-                                    ],
-                                    color: ConstantsV2.lightest
-                                ),
-                                padding: const EdgeInsets.all(8),
-                                child: Container(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            ProfileDescription(
-                                              doctor: widget.doctor,
-                                              type: "doctor",
-                                              border: false,
-                                              horizontalDescription: true,
-                                              padding: EdgeInsets.zero,
-                                            ),
-                                            Container(
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.max,
-                                                crossAxisAlignment: CrossAxisAlignment.end,
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Container(
-                                                    child: Text(
-                                                      "Emitido el",
-                                                      style: boldoCorpSmallSTextStyle.copyWith(
-                                                          color: ConstantsV2.inactiveText
+                  status: ActionStatus.Fail,
+                );
+              }
+            },
+            child: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  BackButtonLabel(
+                    labelText: 'Detalles de la receta',
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  BlocBuilder<PrescriptionBloc, PrescriptionState>(
+                    builder: (context, state){
+                      if( state is PrescriptionLoaded){
+                        return Flexible(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        shadowRegular,
+                                      ],
+                                      color: ConstantsV2.lightest,
+                                    ),
+                                    padding: const EdgeInsets.all(8),
+                                    child: Container(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                ProfileDescription(
+                                                  doctor: widget.doctor,
+                                                  type: "doctor",
+                                                  border: false,
+                                                  horizontalDescription: true,
+                                                  padding: EdgeInsets.zero,
+                                                ),
+                                                Container(
+                                                  child: Column(
+                                                    mainAxisSize: MainAxisSize.max,
+                                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Container(
+                                                        child: Text(
+                                                          "Emitido el",
+                                                          style: boldoCorpSmallSTextStyle.copyWith(
+                                                              color: ConstantsV2.inactiveText
+                                                          ),
+                                                        ),
                                                       ),
-                                                    ),
+                                                      Container(
+                                                        child: BlocBuilder<PrescriptionBloc, PrescriptionState>(
+                                                          builder: (context, state) {
+                                                            // in case of loading data
+                                                            if(state is LoadingPrescription){
+                                                              return Text(
+                                                                'Cargando',
+                                                                style: boldoSubTextMediumStyle.copyWith(
+                                                                    color: ConstantsV2.inactiveText
+                                                                ),
+                                                              );
+                                                            }else {
+                                                              // show if not loading
+                                                              return Text(
+                                                                '${formatDate(
+                                                                  DateTime.parse(medicalRecord?.startTimeDate ??
+                                                                      DateTime.now().toString()),
+                                                                  [d, '/', m, '/', yyyy],
+                                                                )}',
+                                                                style: boldoSubTextMediumStyle.copyWith(
+                                                                  color: ConstantsV2.inactiveText,
+                                                                ),
+                                                              );
+                                                            }
+                                                          },
+                                                        ),
+                                                      )
+                                                    ],
                                                   ),
-                                                  Container(
-                                                    child: BlocBuilder<PrescriptionBloc, PrescriptionState>(
-                                                        builder: (context, state) {
-                                                          // in case of loading data
-                                                          if(state is LoadingPrescription){
-                                                            return Text(
-                                                              'Cargando',
-                                                              style: boldoSubTextMediumStyle.copyWith(
-                                                                  color: ConstantsV2.inactiveText
-                                                              ),
-                                                            );
-                                                          }else {
-                                                            // show if not loading
-                                                            return Text(
-                                                              '${formatDate(
-                                                                DateTime.parse(medicalRecord?.startTimeDate ??
-                                                                    DateTime.now().toString()),
-                                                                [d, '/', m, '/', yyyy],
-                                                              )}',
-                                                              style: boldoSubTextMediumStyle.copyWith(
-                                                                  color: ConstantsV2.inactiveText
-                                                              ),
-                                                            );
-                                                          }
-                                                        }
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8,),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                                        child: Text(
-                                          'Diagnóstico:',
-                                          style: CorpPMediumTextStyle.copyWith(
-                                              color: ConstantsV2.darkBlue
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                                        child: Text(
-                                          medicalRecord?.diagnosis?? 'Sin diagnóstico',
-                                          style: boldoCorpMediumWithLineSeparationLargeTextStyle.copyWith(
-                                              color: ConstantsV2.darkBlue
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8,),
-                                      if(!fromAppointmentDetail)
-                                        Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: [
-                                            ShowAppointmentOrigin(
-                                              encounterId: medicalRecord?.id?? '0',
+                                                )
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                    ],
-                                  ),
-                                )
+                                          ),
+                                          const SizedBox(height: 8,),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                                            child: Text(
+                                              'Diagnóstico:',
+                                              style: CorpPMediumTextStyle.copyWith(
+                                                color: ConstantsV2.darkBlue,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                                            child: Text(
+                                              medicalRecord?.diagnosis?? 'Sin diagnóstico',
+                                              style: boldoCorpMediumWithLineSeparationLargeTextStyle.copyWith(
+                                                color: ConstantsV2.darkBlue,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8,),
+                                          if(!fromAppointmentDetail)
+                                            Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              children: [
+                                                ShowAppointmentOrigin(
+                                                  encounterId: medicalRecord?.id?? '0',
+                                                ),
+                                              ],
+                                            ),
+                                          downloadPrescription(),
+                                        ],
+                                      ),
+                                    )
+                                ),
+                                Flexible(
+                                  child: content(),
+                                ),
+                              ],
                             ),
-                            Flexible(
-                              child: content(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }else if(state is LoadingPrescription){
-                    return Container(
-                        child: const Center(
-                            child: CircularProgressIndicator(
-                              valueColor:
-                              AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                              backgroundColor: Constants.primaryColor600,
-                            )
-                        )
-                    );
-                  }else if(state is FailedLoadPrescription){
-                    return Container(
-                        child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<PrescriptionBloc>(context).add(GetPrescription(id: widget.medicalRecordId)) ) );
-                  }else{
-                    return Container();
-                  }
-                }
-                ),
-              ],
+                          ),
+                        );
+                      }else if(state is LoadingPrescription){
+                        return Container(
+                          child: loadingStatus(),
+                        );
+                      }else if(state is FailedLoadPrescription){
+                        return Container(
+                            child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<PrescriptionBloc>(context).add(GetPrescription(id: widget.medicalRecordId)) ) );
+                      }else{
+                        return Container();
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
+    );
+  }
+
+  Widget downloadPrescription(){
+    return BlocProvider<DownloadPrescriptionsBloc>(
+      create: (BuildContext context) => DownloadPrescriptionsBloc(),
+      child: BlocBuilder<DownloadPrescriptionsBloc, DownloadPrescriptionsState>(
+        builder: (BuildContext context, state){
+          if(state is Loading){
+            return loadingStatus();
+          }else{
+            return InkWell(
+              onTap: () async {
+                BlocProvider.of<DownloadPrescriptionsBloc>(context).add(
+                  DownloadPrescriptions(
+                    listOfIds: [medicalRecord?.prescription?.first.encounterId],
+                    context: context,
+                  ),
+                );
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text(
+                    'Indicaciones',
+                    style: TextStyle(
+                      decoration:
+                      TextDecoration
+                          .underline,
+                      fontFamily:
+                      'Montserrat',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: ConstantsV2.darkBlue,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  SvgPicture.asset(
+                    'assets/icon/chevron-right.svg',
+                    height: 12,
+                    color: ConstantsV2.darkBlue,
+                  )
+                ],
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 

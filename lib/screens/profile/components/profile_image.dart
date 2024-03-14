@@ -8,6 +8,7 @@ import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/photos_helpers.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -36,13 +37,9 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
           width: 128,
           child: Card(
             child: _isLoading
-            ? const Padding(
-                padding: EdgeInsets.all(26.0),
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      Constants.primaryColor400),
-                  backgroundColor: Constants.primaryColor600,
-                ),
+            ? Padding(
+                padding: const EdgeInsets.all(26.0),
+                child: loadingStatus()
               )
             : ClipOval(
             child: editingPatient.photoUrl == null || editingPatient.photoUrl == ''
@@ -61,12 +58,8 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                   progressIndicatorBuilder:
                       (context, url, downloadProgress) => Padding(
                     padding: const EdgeInsets.all(26.0),
-                    child: CircularProgressIndicator(
+                    child: loadingStatus(
                       value: downloadProgress.progress,
-                      valueColor:
-                      const AlwaysStoppedAnimation<Color>(
-                          Constants.primaryColor400),
-                      backgroundColor: Constants.primaryColor600,
                     ),
                   ),
                   errorWidget: (context, url, error) =>
@@ -215,13 +208,9 @@ class _ProfileImageViewState extends State<ProfileImageView> {
           width: widget.width,
           child: Card(
             child: _isLoading
-              ? const Padding(
-                padding: EdgeInsets.all(26.0),
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      Constants.primaryColor400),
-                  backgroundColor: Constants.primaryColor600,
-                ),
+              ? Padding(
+                padding: const EdgeInsets.all(26.0),
+                child: loadingStatus(),
               )
               : ClipOval(
                 child: patient.photoUrl == null || patient.photoUrl == ''
@@ -240,12 +229,8 @@ class _ProfileImageViewState extends State<ProfileImageView> {
                   progressIndicatorBuilder:
                       (context, url, downloadProgress) => Padding(
                     padding: const EdgeInsets.all(26.0),
-                    child: CircularProgressIndicator(
+                    child: loadingStatus(
                       value: downloadProgress.progress,
-                      valueColor:
-                      const AlwaysStoppedAnimation<Color>(
-                          Constants.primaryColor400),
-                      backgroundColor: Constants.primaryColor600,
                     ),
                   ),
                   errorWidget: (context, url, error) =>
@@ -301,13 +286,9 @@ class _ProfileImageViewState2 extends State<ProfileImageView2> {
           width: widget.width,
           child: Card(
             child: _isLoading
-                ? const Padding(
-              padding: EdgeInsets.all(26.0),
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                    Constants.primaryColor400),
-                backgroundColor: Constants.primaryColor600,
-              ),
+                ? Padding(
+              padding: const EdgeInsets.all(26.0),
+              child: loadingStatus(),
             )
             : ClipOval(
               child: widget.patient != null ? widget.patient!.photoUrl == null || widget.patient!.photoUrl == '' ?
@@ -324,13 +305,7 @@ class _ProfileImageViewState2 extends State<ProfileImageView2> {
                 progressIndicatorBuilder:
                     (context, url, downloadProgress) => Padding(
                   padding: const EdgeInsets.all(26.0),
-                  child: CircularProgressIndicator(
-                    value: downloadProgress.progress,
-                    valueColor:
-                    const AlwaysStoppedAnimation<Color>(
-                        Constants.primaryColor400),
-                    backgroundColor: Constants.primaryColor600,
-                  ),
+                  child: loadingStatus(),
                 ),
                 errorWidget: (context, url, error) =>
                 const Icon(Icons.error),
@@ -415,12 +390,8 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
       progressIndicatorBuilder: (context, url, downloadProgress) =>
           Padding(
             padding: const EdgeInsets.all(26.0),
-            child: CircularProgressIndicator(
+            child: loadingStatus(
               value: downloadProgress.progress,
-              valueColor:
-              const AlwaysStoppedAnimation<Color>(
-                  Constants.primaryColor400),
-              backgroundColor: Constants.primaryColor600,
             ),
           ),
       errorWidget: (context, url, error) => const Icon(Icons.error),

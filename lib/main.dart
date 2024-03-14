@@ -5,7 +5,7 @@ import 'package:boldo/blocs/doctor_more_availability_bloc/doctor_more_availabili
 import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
 import 'package:boldo/blocs/doctors_favorite_bloc/doctors_favorite_bloc.dart';
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
-import 'package:boldo/blocs/homeAppointments_bloc/homeAppointments_bloc.dart';
+import 'package:boldo/blocs/homeAppointments_bloc/futureAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
@@ -48,6 +48,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sentry_dio/sentry_dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -62,7 +63,6 @@ import 'blocs/doctorFilter_bloc/doctorFilter_bloc.dart';
 import 'blocs/doctor_availability_bloc/doctor_availability_bloc.dart';
 import 'blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
 import 'blocs/passport_bloc/passportBloc.dart';
-import 'blocs/prescription_bloc/prescriptionBloc.dart';
 import 'blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
 import 'environment.dart';
@@ -89,7 +89,6 @@ List<UserVaccinate>? diseaseUserList;
 List<UserVaccinate>? vaccineListQR = [];
 XFile? userImageSelected;
 int selectedPageIndex = 0;
-List<Organization> organizationsPostulated = [];
 const storage = FlutterSecureStorage();
 late List<Relationship> relationTypes = [];
 late List<Patient> families = [];
@@ -157,7 +156,7 @@ Future<void> mainCommon({
 
   initDio(navKey: navKey, dio: dio, baseUrl: environment.SERVER_ADDRESS, header: dioHeader);
   initDio(navKey: navKey, dio: dioBCM, baseUrl: environment.BCM_SERVER_ADDRESS.getValue, header: dioHeader);
-  initDio(navKey: navKey, dio: dioPassport, baseUrl: environment.SERVER_ADDRESS_PASSPORT);
+  initDio(navKey: navKey, dio: dioPassport, baseUrl: environment.SERVER_ADDRESS_PASSPORT, contentType: Headers.jsonContentType, );
   initDio(navKey: navKey, dio: dioDownloader, baseUrl: environment.SERVER_ADDRESS_PASSPORT, responseType: ResponseType.bytes);
   const storage = FlutterSecureStorage();
   String? session;
@@ -241,17 +240,14 @@ class _MyAppState extends State<MyApp> {
           BlocProvider<HomeBloc>(
             create: (BuildContext context) => HomeBloc(),
           ),
-          BlocProvider<PrescriptionBloc>(
-            create: (BuildContext context) => PrescriptionBloc(),
-          ),
           BlocProvider<MyStudiesBloc>(
             create: (BuildContext context) => MyStudiesBloc(),
           ),
           BlocProvider<HomeNewsBloc>(
             create: (BuildContext context) => HomeNewsBloc(),
           ),
-          BlocProvider<HomeAppointmentsBloc>(
-            create: (BuildContext context) => HomeAppointmentsBloc(),
+          BlocProvider<FutureAppointmentsBloc>(
+            create: (BuildContext context) => FutureAppointmentsBloc(),
           ),
           BlocProvider<PassportBloc>(
             create: (BuildContext context)=> PassportBloc(),
@@ -324,50 +320,56 @@ class FullApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      scrollBehavior: CustomBehavior(),
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      navigatorObservers: [
-        AppNavigatorObserver(),
-      ],
-      supportedLocales: [
-        const Locale("es", 'ES'),
-        const Locale('en'),
-        const Locale('fr'),
-      ],
-      debugShowCheckedModeBanner: false,
-      navigatorKey: navKey,
-      title: 'Boldo',
-      theme: boldoTheme,
-      initialRoute: hasUpdate? '/updateAvailable' :
+    return RefreshConfiguration(
+        headerBuilder: () => WaterDropHeader(
+          refresh: Container(),
+        ),        // Configure the default header indicator. If you have the same header indicator for each page, you need to set this
+        child: MaterialApp(
+          scrollBehavior: CustomBehavior(),
+          localizationsDelegates: [
+            RefreshLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          navigatorObservers: [
+            AppNavigatorObserver(),
+          ],
+          supportedLocales: [
+            const Locale("es", 'ES'),
+            const Locale('en'),
+            const Locale('fr'),
+          ],
+          debugShowCheckedModeBanner: false,
+          navigatorKey: navKey,
+          title: 'Boldo',
+          theme: boldoTheme,
+          initialRoute: hasUpdate? '/updateAvailable' :
           onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
-      routes: {
-        '/onboarding': (context) => HeroScreenV2(),
-        '/home': (context) => DashboardScreen(),
-        '/login': (context) => const LoginWebViewHelper(),
-        '/methods' : (context) => const FamilyMetodsAdd(),
-        '/familyScreen' : (context) => FamilyScreen(),
-        '/defineRelationship' : (context) => DefinedRelationshipScreen(),
-        '/familyTransition' : (context) => FamilyConnectTransition(),
-        '/SignInSuccess' : (context) => SingInTransition(),
-        '/FamilyTransition' : (context) => FamilyTransition(),
-        '/familyDniRegister' : (context) => DniFamilyRegister(),
-        '/my_studies' : (context) => MyStudies(),
-        '/pastAppointmentsScreen' : (context) => const PastAppointmentsScreen(),
-        '/prescriptionsScreen' : (context) => const PrescriptionsScreen(),
-        '/user_qr_detail': (context) => UserQrDetail(),
-        '/familyConnectTransition': (context) => FamilyConnectTransition(),
-        '/familyWithoutDniRegister': (context) => WithoutDniFamilyRegister(),
-        '/profileScreen': (context) => const ProfileScreen(),
-        '/updateAvailable': (context) => UpdateAvailable(
-          onboardingCompleted: onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
-          isRequiredUpdate: hasRequiredUpdate,
+          routes: {
+            '/onboarding': (context) => HeroScreenV2(),
+            '/home': (context) => DashboardScreen(),
+            '/login': (context) => const LoginWebViewHelper(),
+            '/methods' : (context) => const FamilyMetodsAdd(),
+            '/familyScreen' : (context) => FamilyScreen(),
+            '/defineRelationship' : (context) => DefinedRelationshipScreen(),
+            '/familyTransition' : (context) => FamilyConnectTransition(),
+            '/SignInSuccess' : (context) => SingInTransition(),
+            '/FamilyTransition' : (context) => FamilyTransition(),
+            '/familyDniRegister' : (context) => DniFamilyRegister(),
+            '/my_studies' : (context) => MyStudies(),
+            '/pastAppointmentsScreen' : (context) => const PastAppointmentsScreen(),
+            '/prescriptionsScreen' : (context) => const PrescriptionsScreen(),
+            '/user_qr_detail': (context) => UserQrDetail(),
+            '/familyConnectTransition': (context) => FamilyConnectTransition(),
+            '/familyWithoutDniRegister': (context) => WithoutDniFamilyRegister(),
+            '/profileScreen': (context) => const ProfileScreen(),
+            '/updateAvailable': (context) => UpdateAvailable(
+              onboardingCompleted: onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
+              isRequiredUpdate: hasRequiredUpdate,
+            ),
+          },
         ),
-      },
     );
   }
 }

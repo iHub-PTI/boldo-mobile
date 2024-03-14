@@ -1,3 +1,4 @@
+import 'package:boldo/constants.dart';
 import 'package:boldo/environment.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/network/user_repository.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 
 part 'userLoginEvent.dart';
@@ -18,18 +20,30 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
 
     on<UserLoginEvent>((event, emit) async {
       if (event is UserLogin) {
+        ISentrySpan transaction = Sentry.startTransaction(
+          event.runtimeType.toString(),
+          'GET',
+          description: 'get token with webView',
+          bindToScope: true,
+        );
         emit(UserLoginLoading());
 
-        await redirectSignIn(
+        bool logged = await redirectSignIn(
           context: event.context,
+          transaction: transaction,
         );
 
-        Navigator.pushNamed(
-          event.context,
-          '/SignInSuccess',
-        );
+        if (logged) {
+          Navigator.pushNamed(
+            event.context,
+            '/SignInSuccess',
+          );
 
-        emit(UserLoginSuccess());
+          emit(UserLoginSuccess());
+          transaction.finish(
+            status: const SpanStatus.ok(),
+          );
+        }
       }
     });
   }
@@ -54,7 +68,7 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
     return result;
   }
 
-  static Future<bool> redirectSignIn({ required BuildContext context }) async {
+  static Future<bool> redirectSignIn({ required BuildContext context, ISentrySpan? transaction }) async {
     try{
 
       AuthorizationTokenResponse? tokenResponse = await getToken();
@@ -74,7 +88,11 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
           navKey.currentState?.context?? context,
           MaterialPageRoute(builder: (context) => const PreRegisterSuccess()),
         );
-
+        transaction?.finish(
+          status: SpanStatus.fromString(
+            'new user',
+          ),
+        );
         return false;
       }
       if (!exception.message!.contains('User cancelled flow')) {
@@ -85,6 +103,11 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
         );
       }
       UserRepository().logout(context);
+      transaction?.finish(
+        status: SpanStatus.fromString(
+          exception.message?? genericError,
+        ),
+      );
       //user canceled or generic error
       return false;
     } on Exception catch (exception, stackTrace) {
@@ -92,6 +115,11 @@ class UserLoginBloc extends Bloc<UserLoginEvent, UserLoginState> {
       captureError(
         exception: exception,
         stackTrace: stackTrace,
+      );
+      transaction?.finish(
+        status: SpanStatus.fromString(
+          exception.toString(),
+        ),
       );
       UserRepository().logout(context);
       return false;

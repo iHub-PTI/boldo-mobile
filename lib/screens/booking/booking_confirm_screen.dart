@@ -2,6 +2,7 @@ import 'package:boldo/main.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/network/appointment_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
+import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -281,35 +282,13 @@ class _DoctorProfileWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: SizedBox(
-                    height: 72,
-                    width: 72,
-                    child: doctor.photoUrl == null
-                        ? SvgPicture.asset(
-                        doctor.gender == "female"
-                            ? 'assets/images/femaleDoctor.svg'
-                            : 'assets/images/maleDoctor.svg',
-                        fit: BoxFit.cover)
-                        : CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      imageUrl: doctor.photoUrl!,
-                      progressIndicatorBuilder:
-                          (context, url, downloadProgress) => Padding(
-                        padding: const EdgeInsets.all(26.0),
-                        child: CircularProgressIndicator(
-                          value: downloadProgress.progress,
-                          valueColor:
-                          const AlwaysStoppedAnimation<Color>(
-                              Constants.primaryColor400),
-                          backgroundColor: Constants.primaryColor600,
-                        ),
-                      ),
-                      errorWidget: (context, url, error) =>
-                      const Icon(Icons.error),
-                    ),
-                  ),
+                ImageViewTypeForm(
+                  height: 72,
+                  width: 72,
+                  border: false,
+                  form: 'square',
+                  url: doctor.photoUrl,
+                  gender: doctor.gender,
                 ),
                 const SizedBox(
                   width: 16,

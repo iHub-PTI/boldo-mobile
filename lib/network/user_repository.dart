@@ -33,7 +33,6 @@ class UserRepository {
       if (response.statusCode == 200) {
 
         // clear oldPatient data
-        organizationsPostulated = [];
         patient = Patient.fromJson(response.data);
         // Update prefs in Principal Patient
         if(!(prefs.getBool(isFamily)?? false)) {

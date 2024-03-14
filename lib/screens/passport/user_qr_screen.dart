@@ -4,6 +4,7 @@ import 'package:boldo/main.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/hero/hero_screen_v2.dart';
 import 'package:boldo/utils/loading_helper.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -121,11 +122,7 @@ class _UserQrDetailState extends State<UserQrDetail> {
                                       // size: 250.0,
                                     ),
                                   )
-                                : Center(
-                                    child: CircularProgressIndicator(
-                                      color: Colors.green[200],
-                                    ),
-                                  ),
+                                : loadingStatus(),
                           ),
                         ),
                       ),

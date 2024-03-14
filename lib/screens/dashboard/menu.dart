@@ -5,6 +5,7 @@ import 'package:boldo/screens/organizations/memberships_screen.dart';
 import 'package:boldo/screens/privacy_policy/privacy_policy.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/loading_helper.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/background.dart';
@@ -75,11 +76,10 @@ class _MenuScreenState extends State<MenuScreen> {
     return BlocListener<UserLogoutBloc, UserLogoutState>(
       listener: (context, state) {
         if (state is UserLogoutFailed) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.response!),
-              backgroundColor: Colors.redAccent,
-            ),
+          emitSnackBar(
+            context: context,
+            text: state.response,
+            status: ActionStatus.Fail,
           );
         }
       },

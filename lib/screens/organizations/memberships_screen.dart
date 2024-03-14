@@ -9,13 +9,17 @@ import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
+import 'package:boldo/screens/organizations/request_subscription/components/button_request.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:boldo/widgets/loading.dart';
 import 'package:boldo/widgets/organization_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+
+part 'request_subscription/organizations_available.dart';
 
 class Organizations extends StatelessWidget {
 
@@ -24,293 +28,6 @@ class Organizations extends StatelessWidget {
 
     return OrganizationsSubscribedScreen();
 
-  }
-
-}
-
-class OrganizationsScreen extends StatefulWidget {
-  final Patient patientSelected;
-  const OrganizationsScreen({
-    Key? key,
-    required this.patientSelected,
-  }) : super(key: key);
-
-  @override
-  _OrganizationsScreenState createState() => _OrganizationsScreenState();
-}
-
-class _OrganizationsScreenState extends State<OrganizationsScreen> {
-
-  List<Organization> _organizationsNotSubscribed = [];
-  List<Organization> _organizationsSelected = [];
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider<OrganizationBloc>(
-      create: (context) => OrganizationBloc()..add(GetAllOrganizations(patientSelected: widget.patientSelected)),
-      child: Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        actions: [],
-        leadingWidth: 200,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child:
-          SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
-        ),
-      ),
-      body: SafeArea(
-        child: Container(
-          child: BlocListener<OrganizationBloc, OrganizationBlocState>(
-            listener: (context, state) {
-              if (state is AllOrganizationsObtained) {
-                _organizationsNotSubscribed = state.organizationsList.items?? [];
-
-              }
-              if(state is SuccessSubscribed){
-
-                String text = _organizationsSelected.length == 1
-                    ? "Una solicitud enviada correctamente":
-                    "${_organizationsSelected.length} solicitudes enviadas correctamente"
-                ;
-
-                emitSnackBar(
-                  context: context,
-                  text: text,
-                  status: ActionStatus.Success
-                );
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const OrganizationsSubscribedScreen()),
-                  ModalRoute.withName('/home')
-                );
-              }else if(state is Failed){
-                emitSnackBar(
-                    context: context,
-                    text: state.response,
-                    status: ActionStatus.Fail
-                );
-              }
-            },
-            child: Container(
-              padding: const EdgeInsets.only(top: 16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        BackButtonLabel(
-                          iconType: BackIcon.backArrow,
-                          labelText: 'Centros Asistenciales',
-                        ),
-
-                        const SizedBox(height: 10),
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                  child: Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Seleccioná los Centros Asistenciales a los que desea "
-                                              "enviar una solicitud",
-                                          style: medicationTextStyle.copyWith(
-                                            color: ConstantsV2.activeText,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )),
-                              ImageViewTypeForm(
-                                height: 54,
-                                width: 54,
-                                border: true,
-                                url: widget.patientSelected.photoUrl,
-                                gender: widget.patientSelected.gender,
-                                borderColor: ConstantsV2.orange,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        BlocBuilder<OrganizationBloc, OrganizationBlocState>(
-                            builder: (context, state){
-                              if (state is Failed){
-                                return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizations(patientSelected: widget.patientSelected)));
-                              } else if(state is Loading){
-                                return const Center(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Constants.primaryColor400),
-                                    backgroundColor: Constants.primaryColor600,
-                                  ),
-                                );
-                              }else{
-                                return Flexible(
-                                  child: Container(
-                                    padding: const EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      color: ConstantsV2.grayLightest,
-                                      boxShadow: [
-                                        shadowRegular,
-                                      ]
-                                    ),
-                                    child: _organizationsNotSubscribed.isNotEmpty? ListView.builder(
-                                        physics: const ClampingScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemCount: _organizationsNotSubscribed.length,
-                                        itemBuilder: selectOrganizationsBox
-                                    ): organizationAvailableEmpty(),
-                                  ),
-                                );
-                              }
-                            }
-                        ),
-                      ],
-                    ),
-                  ),
-                  BotonAdd(organizationsSelected: _organizationsSelected, patientSelected: widget.patientSelected,)
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    ),
-    );
-  }
-
-  Widget selectOrganizationsBox(BuildContext context, int index){
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      decoration: ShapeDecoration(
-        color: const Color(0xffEAEAEA),
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 1,
-            color: ConstantsV2.grayLightAndClear,
-          ),
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: const ShapeDecoration(
-          color: ConstantsV2.grayLight,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topRight: Radius.circular(4),
-              bottomRight: Radius.circular(4),
-            ),
-          ),
-        ),
-        child: CheckboxListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Container(
-            child: Row(
-              children: [
-                OrganizationPhoto(
-                  organization: _organizationsNotSubscribed[index],
-                ),
-                const SizedBox(
-                  width: 16,
-                ),
-                Flexible(
-                  child: Text(
-                    _organizationsNotSubscribed[index].name?? "Sin nombre",
-                    style: bodyLargeBlack,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          value: _organizationsSelected.contains(_organizationsNotSubscribed[index]),
-          activeColor: ConstantsV2.secondaryRegular,
-          checkColor: Colors.white,
-          onChanged: (value) {
-            setState(() {
-              if (_organizationsSelected.contains(_organizationsNotSubscribed[index])) {
-                _organizationsSelected.remove(_organizationsNotSubscribed[index]);
-              } else {
-                _organizationsSelected.add(_organizationsNotSubscribed[index]);
-              }
-            });
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget organizationAvailableEmpty(){
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const EmptyStateV2(
-                picture: "undraw_add_files.svg",
-                titleBottom: "No hay organizaciones",
-                textBottom:
-                "La lista de organizaciones aparecerá "
-                    "aquí una vez que estén disponibles.",
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-}
-
-class BotonAdd extends StatelessWidget {
-
-  BotonAdd({
-    required this.organizationsSelected,
-    required this.patientSelected,
-  });
-  final Patient patientSelected;
-  final List<Organization> organizationsSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          ElevatedButton(
-            onPressed: organizationsSelected.isEmpty ? null : (){
-              BlocProvider.of<OrganizationBloc>(context).add(SubscribeToAnManyOrganizations(organizations: organizationsSelected, patientSelected: patientSelected));
-            },
-            child: Container(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Solicitar${organizationsSelected.isNotEmpty ? '(${organizationsSelected.length})': ''}',
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                  ],
-                )),
-          ),
-        ],
-      ),
-    );
   }
 
 }
@@ -419,6 +136,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                         ],
                       ),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
@@ -462,13 +180,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                         if (state is subscribed.Failed){
                           child = DataFetchErrorWidget(retryCallback: () => BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected)));
                         } else if(state is subscribed.Loading){
-                          child = const Center(
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  Constants.primaryColor400),
-                              backgroundColor: Constants.primaryColor600,
-                            ),
-                          );
+                          child = loadingStatus();
                         }else{
                           if ( _organizationsSubscribed.isEmpty ) {
                             child = emptyView(context);
@@ -501,11 +213,15 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                             width: 12,
                                           ),
                                           InkWell(
-                                            onTap: (){
-                                              Navigator.push(
+                                            onTap: () async {
+                                              dynamic result = await Navigator.push(
                                                 context,
                                                 MaterialPageRoute(builder: (context) => OrganizationsScreen(patientSelected: patientSelected)),
                                               );
+                                              if(result == true){
+                                                BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected));
+                                                BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated(patientSelected: patientSelected));
+                                              }
                                             },
                                             child: Card(
                                               elevation: 0,
@@ -546,10 +262,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                             );
                           }
                         }
-                        return AnimatedSwitcher(
-                          duration: appearWidgetDuration,
-                          child: child,
-                        );
+                        return child;
                       }
                     ),
                     const SizedBox(height: 10),
@@ -559,13 +272,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                         if (state is applied.Failed){
                           child = DataFetchErrorWidget(retryCallback: () => BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated(patientSelected: patientSelected)));
                         } else if(state is applied.Loading){
-                          child = const Center(
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  Constants.primaryColor400),
-                              backgroundColor: Constants.primaryColor600,
-                            ),
-                          );
+                          child = loadingStatus();
                         }else{
                           if ( _organizationsPostulated.isEmpty ) {
                             child = Container();
@@ -607,10 +314,7 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                             );
                           }
                         }
-                        return AnimatedSwitcher(
-                          duration: appearWidgetDuration,
-                          child: child,
-                        );
+                        return child;
                       }
                     ),
                   ],
@@ -627,9 +331,9 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
     return Column(
       children: [
         // this structure prevent overflow in small screens
-        Row(
+        const Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
@@ -641,9 +345,9 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
           ],
         ),
         const SizedBox(height: 16.0),
-        Row(
+        const Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Padding(
                 padding: EdgeInsets.only(left:16.0, right: 16.0, bottom: 16.0),
                 child: Text(
@@ -659,25 +363,29 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Padding(
-              padding: EdgeInsets.only(right: 16.0, bottom: 16.0),
+              padding: const EdgeInsets.only(right: 16.0, bottom: 16.0),
               child: ElevatedButton(
-                onPressed:(){
-                  Navigator.push(
+                onPressed:() async {
+                  dynamic result = await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => OrganizationsScreen(patientSelected: patientSelected)),
                   );
+                  if(result == true){
+                    BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected));
+                    BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated(patientSelected: patientSelected));
+                  }
                 },
                 child: Container(
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
+                        Text(
                           'Agregar',
                         ),
-                        const SizedBox(
+                        SizedBox(
                           width: 8,
                         ),
-                        const Icon(
+                        Icon(
                           Icons.arrow_forward_ios_outlined,
                           size: 16,
                         ),
@@ -895,7 +603,7 @@ class OrganizationSubscribedCard extends StatelessWidget {
     return Expanded(
       child: Container(
         decoration: ShapeDecoration(
-          color: Color(0xFFE9E9E9),
+          color: const Color(0xFFE9E9E9),
           shape: RoundedRectangleBorder(
             side: const BorderSide(
               width: 1,
@@ -1069,18 +777,9 @@ class FamilySelectorState extends State<FamilySelector>{
         }else if(state is family_bloc.Failed){
           child = DataFetchErrorWidget(retryCallback: () => BlocProvider.of<family_bloc.FamilyBloc>(context).add(family_bloc.GetFamilyList()));
         }else {
-          child = const Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(
-                  Constants.primaryColor400),
-              backgroundColor: Constants.primaryColor600,
-            ),
-          );
+          child = loadingStatus();
         }
-        return AnimatedSwitcher(
-          duration: appearWidgetDuration,
-          child: child,
-        );
+        return child;
       }
     );
   }

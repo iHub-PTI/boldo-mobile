@@ -1,12 +1,17 @@
+import 'package:boldo/blocs/download_prescriptions_bloc/download_prescriptions_bloc.dart' as download_prescriptions_bloc;
 import 'package:boldo/blocs/prescriptions_bloc/prescriptionsBloc.dart';
 import 'package:boldo/constants.dart';
-import 'package:boldo/models/Appointment.dart';
+import 'package:boldo/models/Encounter.dart';
 import 'package:boldo/models/Organization.dart';
+import 'package:boldo/models/filters/PrescriptionFilter.dart';
 
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
+import 'package:boldo/screens/prescriptions/filter_precription_screen.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
+import 'package:boldo/widgets/loading.dart';
+import 'package:boldo/widgets/selectable/selectable_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,9 +27,7 @@ class PrescriptionsScreen extends StatefulWidget {
 }
 
 class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
-  bool _dataLoading = true;
-  bool _dataLoaded = false;
-  late List<Appointment> allAppointments = [];
+  late List<Encounter> allEncounters = [];
   @override
   void initState() {
     super.initState();
@@ -32,13 +35,13 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
 
   void _onRefresh() async {
     // monitor network fetch
-    BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList());
+    BlocProvider.of<PrescriptionsBloc>(context).add(GetPastEncounterWithPrescriptionsList());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PrescriptionsBloc>(
-      create: (BuildContext context) => PrescriptionsBloc()..add(GetPastAppointmentWithPrescriptionsList()),
+      create: (BuildContext context) => PrescriptionsBloc()..add(GetPastEncounterWithPrescriptionsList()),
       child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.white,
@@ -51,8 +54,8 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
           ),
           body: BlocListener<PrescriptionsBloc, PrescriptionsState>(
             listener: (context, state) {
-              if(state is AppointmentWithPrescriptionsLoadedState){
-                allAppointments = state.appointments;
+              if(state is EncounterWithPrescriptionsLoadedState){
+                allEncounters = state.encounters;
               }
             },
             child: Container(
@@ -81,7 +84,15 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                             padding: const EdgeInsets.all(8.0),
                             child: GestureDetector(
                               onTap: () async {
-                                await _filterBox(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (newContext) => FilterPrescriptionsScreen(
+                                      initialFilter: BlocProvider.of<PrescriptionsBloc>(context).prescriptionFilter,
+                                      filterCallback: (PrescriptionFilter filter )=> BlocProvider.of<PrescriptionsBloc>(context).prescriptionFilter = filter,
+                                    ),
+                                  )
+                                );
                               },
                               child: SvgPicture.asset(
                                 'assets/icon/filter-list.svg',
@@ -119,8 +130,8 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                     ),
                   ),
                   BlocBuilder<PrescriptionsBloc, PrescriptionsState>(builder: (context, state){
-                    if(state is AppointmentWithPrescriptionsLoadedState){
-                      if(allAppointments.isEmpty){
+                    if(state is EncounterWithPrescriptionsLoadedState){
+                      if(allEncounters.isEmpty){
                         return const Expanded(
                           child:  EmptyStateV2(
                             picture: "empty_prescriptions.svg",
@@ -131,29 +142,31 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                         );
                       }else{
                         return Expanded(
-                          child: ListView.separated(
-                            separatorBuilder: (BuildContext context, int index){
-                              return const SizedBox(height: 10,);
-                            },
-                            itemCount: allAppointments.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return PrescriptionCard(
-                                appointment: allAppointments[index],
+                          child: SelectableWidgets<Encounter, download_prescriptions_bloc.Loading>(
+                            enableSelectAll: false,
+                            downloadEvent: (ids){
+                              return download_prescriptions_bloc.DownloadPrescriptions(
+                                listOfIds: ids,
+                                context: context,
                               );
                             },
+                            bloc: download_prescriptions_bloc.DownloadPrescriptionsBloc(),
+                            items: (allEncounters).map((e) {
+                              return SelectableWidgetItem<Encounter>(
+                                child: PrescriptionCard(
+                                  encounter: e,
+                                ),
+                                item: e,
+                                id: e.prescriptions?.first.encounterId,
+                              );
+                            }).toList(),
                           ),
                         );
                       }
                     }else if(state is Loading){
-                      return const Center(
-                          child: CircularProgressIndicator(
-                            valueColor:
-                            AlwaysStoppedAnimation<Color>(Constants.primaryColor400),
-                            backgroundColor: Constants.primaryColor600,
-                          ));
+                      return loadingStatus();
                     }else if(state is Failed){
-                      return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<PrescriptionsBloc>(context).add(GetPastAppointmentWithPrescriptionsList()) ) ;
+                      return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<PrescriptionsBloc>(context).add(GetPastEncounterWithPrescriptionsList()) ) ;
                     }else{
                       return Container();
                     }
@@ -163,255 +176,6 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
             ),
           )
       ),
-    );
-  }
-
-  Future _filterBox(BuildContext prescriptionBlocContext){
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        TextEditingController dateTextController = TextEditingController();
-        TextEditingController date2TextController = TextEditingController();
-        var inputFormat = DateFormat('dd/MM/yyyy');
-        var outputFormat = DateFormat('yyyy-MM-dd');
-        DateTime date1 = BlocProvider.of<PrescriptionsBloc>(prescriptionBlocContext).getInitialDate();
-        DateTime? date2 = BlocProvider.of<PrescriptionsBloc>(prescriptionBlocContext).getFinalDate();
-        dateTextController.text = inputFormat.format(date1);
-        date2TextController.text = date2 != null? inputFormat.format(date2) :'';
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              contentPadding: const EdgeInsetsDirectional.all(0),
-              scrollable: true,
-              backgroundColor: ConstantsV2.lightGrey,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              content: Container(
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.9,
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height * 0.7,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Filtrar recetas',
-                            style: boldoTitleBlackTextStyle.copyWith(
-                                color: ConstantsV2.activeText
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              Navigator.pop(context);
-                            },
-                            child: SvgPicture.asset(
-                              'assets/icon/close.svg',
-                              color: ConstantsV2.inactiveText,
-                              height: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Card(
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.zero,
-                                ),
-                                color: ConstantsV2.lightest,
-                                child: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(vertical: 10),
-                                        child: Text('Filtrar por fecha',
-                                          style: boldoCorpSmallSTextStyle.copyWith(
-                                              color: ConstantsV2.activeText
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(vertical: 8),
-                                        child: Row(
-                                          children: [
-                                            GestureDetector(
-                                              onTap: () async {
-                                                DateTime? newDate = await showDatePicker(
-                                                    context: context,
-                                                    initialEntryMode: DatePickerEntryMode
-                                                        .calendarOnly,
-                                                    initialDatePickerMode: DatePickerMode.day,
-                                                    initialDate: date1 ?? DateTime.now(),
-                                                    firstDate: DateTime(1900),
-                                                    lastDate: date2?? DateTime.now(),
-                                                    locale: const Locale("es", "ES"),
-                                                    builder: (context, child){
-                                                      return Theme(
-                                                        data: Theme.of(context).copyWith(
-                                                            colorScheme: const ColorScheme.light(
-                                                                primary: ConstantsV2.orange
-                                                            )
-                                                        ),
-                                                        child: child!,
-                                                      );
-                                                    }
-                                                );
-                                                if (newDate == null) {
-                                                  return;
-                                                } else {
-                                                  setState(() {
-                                                    var outputFormat = DateFormat('yyyy-MM-dd');
-                                                    var inputFormat = DateFormat('dd/MM/yyyy');
-                                                    var _date1 =
-                                                    outputFormat.parse(newDate.toString().trim());
-                                                    var _date2 = inputFormat.format(_date1);
-                                                    dateTextController.text = _date2;
-                                                    date1 = _date1;
-                                                  });
-                                                }
-                                              },
-                                              child: Row(
-                                                children: [
-                                                  SvgPicture.asset(
-                                                    'assets/icon/calendar.svg',
-                                                    color: ConstantsV2.orange,
-                                                    height: 20,
-                                                  ),
-                                                  const SizedBox(width: 6,),
-                                                  Text('Desde: ${inputFormat.format(date1)}',
-                                                    style: boldoCorpSmallSTextStyle.copyWith(
-                                                        color: ConstantsV2.activeText
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(vertical: 8),
-                                        child: Row(
-                                          children: [
-                                            GestureDetector(
-                                              onTap: () async {
-                                                DateTime? newDate = await showDatePicker(
-                                                    context: context,
-                                                    initialEntryMode: DatePickerEntryMode
-                                                        .calendarOnly,
-                                                    initialDatePickerMode: DatePickerMode.day,
-                                                    initialDate: date2 ?? date1,
-                                                    firstDate: date1,
-                                                    lastDate: DateTime.now(),
-                                                    locale: const Locale("es", "ES"),
-                                                    builder: (context, child){
-                                                      return Theme(
-                                                        data: Theme.of(context).copyWith(
-                                                            colorScheme: const ColorScheme.light(
-                                                                primary: ConstantsV2.orange
-                                                            )
-                                                        ),
-                                                        child: child!,
-                                                      );
-                                                    }
-                                                );
-                                                if (newDate == null) {
-                                                  return;
-                                                } else {
-                                                  setState(() {
-                                                    var outputFormat = DateFormat('yyyy-MM-dd');
-                                                    var inputFormat = DateFormat('dd/MM/yyyy');
-                                                    var _date1 =
-                                                    outputFormat.parse(newDate.toString().trim());
-                                                    var _date2 = inputFormat.format(_date1);
-                                                    date2TextController.text = _date2;
-                                                    date2 = _date1;
-                                                  });
-                                                }
-                                              },
-                                              child: Row(
-                                                children: [
-                                                  SvgPicture.asset(
-                                                    'assets/icon/calendar.svg',
-                                                    color: ConstantsV2.orange,
-                                                    height: 20,
-                                                  ),
-                                                  const SizedBox(width: 6,),
-                                                  Text('Hasta: ${date2 != null ? inputFormat.format(
-                                                      date2!) : 'indefinido'}',
-                                                    style: boldoCorpSmallSTextStyle.copyWith(
-                                                        color: ConstantsV2.activeText
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          ElevatedButton(
-                            onPressed:() {
-                              BlocProvider.of<PrescriptionsBloc>(prescriptionBlocContext).setInitialDate(date1);
-                              BlocProvider.of<PrescriptionsBloc>(prescriptionBlocContext).setFinalDate(date2);
-                              BlocProvider.of<PrescriptionsBloc>(prescriptionBlocContext).add(GetPastAppointmentWithPrescriptionsList());
-                              Navigator.pop(context);
-                            },
-                            child: Row(
-                              children: [
-                                Text('Aplicar',
-                                  style: boldoCorpSmallSTextStyle.copyWith(
-                                      color: ConstantsV2.lightGrey
-                                  ),
-                                ),
-                                SvgPicture.asset(
-                                  'assets/icon/done.svg',
-                                  color: ConstantsV2.lightGrey,
-                                  height: 20,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-        );
-      },
     );
   }
 
