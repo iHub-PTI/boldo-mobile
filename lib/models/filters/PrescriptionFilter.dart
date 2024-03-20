@@ -94,4 +94,52 @@ class PrescriptionFilter  extends Filter {
     doctors: doctors?? this.doctors,
   );
 
+  @override
+  Map<String, Function()> get filters  {
+
+    Map<String, Function()> filters={};
+
+    if(start != null || end != null){
+
+      bool addYear = false;
+
+      DateTime actualDate = DateTime.now();
+
+      if(start?.year != actualDate.year || end?.year != actualDate.year){
+        addYear = true;
+      }
+
+      DateFormat dateFormat = DateFormat('dd/MM${addYear? '/yyyy': ''}');
+
+      String startDateString = "${ start != null? dateFormat.format(start!): '' }";
+
+      String endDateString = "${ end != null? dateFormat.format(end!): '' }";
+
+      String connectorDateString = "${ (start != null && end != null)? ' al ': '' }";
+
+      String dateString = "$startDateString$connectorDateString$endDateString";
+
+      Function() removeDate = (){
+        start = null;
+        end = null;
+      };
+
+      filters.addAll({dateString: removeDate});
+    }
+
+    if(doctors?.isNotEmpty?? false){
+      doctors?.forEach((doctor) {
+        String doctorName = (doctor?.givenName?? '') + ' ' +  (doctor?.familyName?? '');
+        Function() removeDoctor = (){
+          doctors?.remove(doctor);
+        };
+
+        filters.addAll({doctorName:removeDoctor });
+      });
+    }
+
+    return filters;
+
+  }
+
 }
