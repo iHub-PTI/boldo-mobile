@@ -473,6 +473,11 @@ ThemeData boldoTheme = ThemeData(
       )
     ),
   ),
+  textTheme: TextTheme(
+    titleMedium: boldoCorpSmallSTextStyle.copyWith(
+      color: ConstantsV2.activeText,
+    ),
+  ),
   inputDecorationTheme: InputDecorationTheme(
     enabledBorder: UnderlineInputBorder(
       borderRadius: BorderRadius.circular(6),
