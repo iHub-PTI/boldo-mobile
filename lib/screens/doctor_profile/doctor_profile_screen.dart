@@ -582,20 +582,10 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          ImageViewTypeForm(
-            height: 44,
-            width: 44,
-            border: true,
-            borderColor: ConstantsV2.grayLightAndClear,
-            color: ConstantsV2.grayLightAndClear,
-            opacity: .8,
-            gender: patient.gender,
-          ),
-          const SizedBox(width: 16,),
           Expanded(
             child: Container(
               child: Text(
-                "No tenés acceso a este médico. Agregá una organización",
+                "No tenés acceso a este médico.",
                 style: boldoCardSubtitleTextStyle.copyWith(color: ConstantsV2.inactiveText),
               ),
             ),
