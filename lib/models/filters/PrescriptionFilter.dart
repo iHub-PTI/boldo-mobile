@@ -1,3 +1,6 @@
+import 'package:boldo/models/Doctor.dart';
+import 'package:intl/intl.dart';
+
 import 'Filter.dart';
 import 'package:collection/collection.dart';
 
@@ -21,18 +24,18 @@ class PrescriptionFilter  extends Filter {
   }
 
   /// List of doctors ids
-  List<String?>? _doctors;
+  List<Doctor?>? _doctors;
 
-  List<String?>? get doctors => _doctors;
+  List<Doctor?>? get doctors => _doctors;
 
-  set doctors (List<String?>? newDoctors){
+  set doctors (List<Doctor?>? newDoctors){
     _doctors = newDoctors;
   }
 
   PrescriptionFilter({
     DateTime? start,
     DateTime? end,
-    List<String?>? doctors,
+    List<Doctor?>? doctors,
   }){
     _start = start;
     _end = end;
@@ -44,7 +47,7 @@ class PrescriptionFilter  extends Filter {
     Map<String, dynamic> _json;
 
     _json = {
-      'doctors': doctors,
+      'doctors': doctors?.map((e) => e?.id).toList(),
       'start': start?.toUtc().toIso8601String(),
       'end': end?.toUtc().toIso8601String(),
     };
@@ -84,11 +87,59 @@ class PrescriptionFilter  extends Filter {
   PrescriptionFilter copyWith({
     DateTime? start,
     DateTime? end,
-    List<String?>? doctors,
+    List<Doctor?>? doctors,
   }) => PrescriptionFilter(
     start: start?? this.start,
     end: end?? this.end,
     doctors: doctors?? this.doctors,
   );
+
+  @override
+  Map<String, Function()> get filters  {
+
+    Map<String, Function()> filters={};
+
+    if(start != null || end != null){
+
+      bool addYear = false;
+
+      DateTime actualDate = DateTime.now();
+
+      if(start?.year != actualDate.year || end?.year != actualDate.year){
+        addYear = true;
+      }
+
+      DateFormat dateFormat = DateFormat('dd/MM${addYear? '/yyyy': ''}');
+
+      String startDateString = "${ start != null? dateFormat.format(start!): '' }";
+
+      String endDateString = "${ end != null? dateFormat.format(end!): '' }";
+
+      String connectorDateString = "${ (start != null && end != null)? ' al ': '' }";
+
+      String dateString = "$startDateString$connectorDateString$endDateString";
+
+      Function() removeDate = (){
+        start = null;
+        end = null;
+      };
+
+      filters.addAll({dateString: removeDate});
+    }
+
+    if(doctors?.isNotEmpty?? false){
+      doctors?.forEach((doctor) {
+        String doctorName = (doctor?.givenName?? '') + ' ' +  (doctor?.familyName?? '');
+        Function() removeDoctor = (){
+          doctors?.remove(doctor);
+        };
+
+        filters.addAll({doctorName:removeDoctor });
+      });
+    }
+
+    return filters;
+
+  }
 
 }

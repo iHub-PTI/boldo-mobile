@@ -219,8 +219,19 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                         const SizedBox(height: 40),
                         TextFormField(
                           controller: _nameController,
+                          style: boldoSubTextMediumStyle.copyWith(
+                            color: ConstantsV2.activeText,
+                          ),
                           decoration:
-                          const InputDecoration(hintText: "Nombre"),
+                          InputDecoration(
+                            hintText: "Nombre",
+                            hintStyle: boldoSubTextMediumStyle.copyWith(
+                              color: ConstantsV2.activeText,
+                            ),
+                            labelStyle: boldoSubTextMediumStyle.copyWith(
+                              color: ConstantsV2.activeText,
+                            ),
+                          ),
                           keyboardType: TextInputType.name,
                           onChanged: (value) {
                             givenName = value;
@@ -240,8 +251,19 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                         ),
                         TextFormField(
                           controller: _familyNameController,
+                          style: boldoSubTextMediumStyle.copyWith(
+                            color: ConstantsV2.activeText,
+                          ),
                           decoration:
-                          const InputDecoration(hintText: "Apellido"),
+                          InputDecoration(
+                            hintText: "Apellido",
+                            hintStyle: boldoSubTextMediumStyle.copyWith(
+                              color: ConstantsV2.activeText,
+                            ),
+                            labelStyle: boldoSubTextMediumStyle.copyWith(
+                              color: ConstantsV2.activeText,
+                            ),
+                          ),
                           keyboardType: TextInputType.name,
                           onChanged: (value) {
                             familyName = value;
@@ -266,8 +288,17 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                             DateTextFormatter()
                           ],
                           keyboardType: TextInputType.number,
+                          style: boldoSubTextMediumStyle.copyWith(
+                            color: ConstantsV2.activeText,
+                          ),
                           decoration: InputDecoration(
                             hintText: DateFormat('dd/MM/yyyy').format(DateTime.now()),
+                            hintStyle: boldoSubTextMediumStyle.copyWith(
+                              color: ConstantsV2.activeText,
+                            ),
+                            labelStyle: boldoSubTextMediumStyle.copyWith(
+                              color: ConstantsV2.activeText,
+                            ),
                             labelText: "Fecha de nacimiento (dd/mm/yyyy)",
                             suffixIcon: Align(
                               widthFactor: 1.0,

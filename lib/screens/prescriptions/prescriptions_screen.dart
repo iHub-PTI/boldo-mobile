@@ -9,6 +9,7 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/prescriptions/filter_precription_screen.dart';
 import 'package:boldo/widgets/back_button.dart';
+import 'package:boldo/widgets/filter/filters_applied.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:boldo/widgets/loading.dart';
 import 'package:boldo/widgets/selectable/selectable_list.dart';
@@ -78,29 +79,6 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                           ],
                         ),
                       ),
-                      BlocBuilder<PrescriptionsBloc, PrescriptionsState>(
-                        builder: (context, state) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: GestureDetector(
-                              onTap: () async {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (newContext) => FilterPrescriptionsScreen(
-                                      initialFilter: BlocProvider.of<PrescriptionsBloc>(context).prescriptionFilter,
-                                      filterCallback: (PrescriptionFilter filter )=> BlocProvider.of<PrescriptionsBloc>(context).prescriptionFilter = filter,
-                                    ),
-                                  )
-                                );
-                              },
-                              child: SvgPicture.asset(
-                                'assets/icon/filter-list.svg',
-                              ),
-                            ),
-                          );
-                        }
-                      ),
                     ],
                   ),
                   Container(
@@ -125,51 +103,108 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                               color: ConstantsV2.blueDark,
                             ),
                           ),
-                        )
+                        ),
+                        BlocBuilder<PrescriptionsBloc, PrescriptionsState>(
+                            builder: (context, state) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextButton.icon(
+                                  onPressed: () async {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (newContext) => FilterPrescriptionsScreen(
+                                            initialFilter: BlocProvider.of<PrescriptionsBloc>(context).prescriptionFilter,
+                                            filterCallback: (PrescriptionFilter filter )=> BlocProvider.of<PrescriptionsBloc>(context).prescriptionFilter = filter,
+                                          ),
+                                        )
+                                    );
+                                  },
+                                  icon: SvgPicture.asset(
+                                    'assets/icon/filter.svg',
+                                    color: ConstantsV2.blueDark,
+                                  ),
+                                  label: Text(
+                                    'Filtrar',
+                                    style: label.copyWith(
+                                      color: ConstantsV2.blueDark,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                        ),
                       ],
                     ),
                   ),
                   BlocBuilder<PrescriptionsBloc, PrescriptionsState>(builder: (context, state){
+                    bool ifFiltered = BlocProvider.of<PrescriptionsBloc>(context).prescriptionFilter.ifFiltered;
+
+                    Widget body;
                     if(state is EncounterWithPrescriptionsLoadedState){
+
                       if(allEncounters.isEmpty){
-                        return const Expanded(
-                          child:  EmptyStateV2(
-                            picture: "empty_prescriptions.svg",
-                            titleBottom: "Aún no tenés recetas",
-                            textBottom:
-                            "A medida en que uses la aplicación podrás ir viendo tus recetas",
-                          ),
+                        body = EmptyStateV2(
+                          picture: ifFiltered? null : "empty_prescriptions.svg",
+                          titleBottom: ifFiltered? 'No hay resultados': "Aún no tenés recetas",
+                          textBottom: ifFiltered? 'No hay información disponible para los criterios de búsqueda especificados':
+                          "A medida en que uses la aplicación podrás ir viendo tus recetas",
                         );
                       }else{
-                        return Expanded(
-                          child: SelectableWidgets<Encounter, download_prescriptions_bloc.Loading>(
-                            enableSelectAll: false,
-                            downloadEvent: (ids){
-                              return download_prescriptions_bloc.DownloadPrescriptions(
-                                listOfIds: ids,
-                                context: context,
-                              );
-                            },
-                            bloc: download_prescriptions_bloc.DownloadPrescriptionsBloc(),
-                            items: (allEncounters).map((e) {
-                              return SelectableWidgetItem<Encounter>(
-                                child: PrescriptionCard(
-                                  encounter: e,
+                        body = Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Flexible(
+                                child: SelectableWidgets<Encounter, download_prescriptions_bloc.Loading>(
+                                  enableSelectAll: false,
+                                  downloadEvent: (ids){
+                                    return download_prescriptions_bloc.DownloadPrescriptions(
+                                      listOfIds: ids,
+                                      context: context,
+                                    );
+                                  },
+                                  bloc: download_prescriptions_bloc.DownloadPrescriptionsBloc(),
+                                  items: (allEncounters).map((e) {
+                                    return SelectableWidgetItem<Encounter>(
+                                      child: PrescriptionCard(
+                                        encounter: e,
+                                      ),
+                                      item: e,
+                                      id: e.prescriptions?.first.encounterId,
+                                    );
+                                  }).toList(),
                                 ),
-                                item: e,
-                                id: e.prescriptions?.first.encounterId,
-                              );
-                            }).toList(),
+                              ),
+                            ],
                           ),
                         );
                       }
                     }else if(state is Loading){
-                      return loadingStatus();
+                      body = loadingStatus();
                     }else if(state is Failed){
-                      return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<PrescriptionsBloc>(context).add(GetPastEncounterWithPrescriptionsList()) ) ;
+                      body = DataFetchErrorWidget(retryCallback: () => BlocProvider.of<PrescriptionsBloc>(context).add(GetPastEncounterWithPrescriptionsList()) ) ;
                     }else{
-                      return Container();
+                      body = Container();
                     }
+
+                    return Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if(ifFiltered)
+                            Container(
+                              padding: const EdgeInsets.all(4),
+                              child: FiltersApplied<PrescriptionFilter>(
+                                filter: BlocProvider.of<PrescriptionsBloc>(context).prescriptionFilter,
+                                filterCallback: (PrescriptionFilter filter )=> BlocProvider.of<PrescriptionsBloc>(context).prescriptionFilter = filter,
+                              ),
+                            ),
+                          body,
+                        ],
+                      ),
+                    );
+
                   }),
                 ],
               ),

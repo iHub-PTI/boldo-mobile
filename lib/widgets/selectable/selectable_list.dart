@@ -66,11 +66,12 @@ class _SelectableWidgetsState<T, LoadingState> extends State<SelectableWidgets> 
           }
         },
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             tabDownload(
               enableAll: widget.enableSelectAll,
             ),
-            Expanded(
+            Flexible(
               child: ListView.separated(
                 physics: const ClampingScrollPhysics(),
                 separatorBuilder: (BuildContext context, int index) => const Divider(

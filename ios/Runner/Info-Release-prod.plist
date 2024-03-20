@@ -34,6 +34,14 @@
 	<string>Upload a profile picture</string>
 	<key>NSAppleMusicUsageDescription</key>
     <string>Search files into mobile to upload</string>
+    <key>NSPrivacyAccessedAPICategoryFileTimestamp</key>
+    <string>Required to access metadata of files to upload from $(PRODUCT_NAME)</string>
+    <key>NSPrivacyAccessedAPICategoryDiskSpace</key>
+    <string>To calculate free space on the device to download files like studies orders</string>
+    <key>NSPrivacyAccessedAPICategoryUserDefaults</key>
+    <string>Used to save user preferences and tokens access</string>
+    <key>NSPrivacyAccessedAPICategorySystemBootTime</key>
+    <string>Use to analyze errors on resume app since the last boot time</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

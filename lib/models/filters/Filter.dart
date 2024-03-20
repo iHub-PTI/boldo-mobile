@@ -6,4 +6,7 @@ abstract class Filter {
 
   Future<void> clearFilter();
 
+  /// return a list of filters with his respective callback to remove the filter
+  Map<String, Function() > get filters;
+
 }

@@ -36,16 +36,11 @@ class PatientBloc extends Bloc<PatientEvent, PatientState> {
           bindToScope: true,
         );
         emit(Loading());
-        var _post;
-        await Task(() =>
+        Either<Failure, None<dynamic>> _post = await Task(() =>
         _patientRepository.getPatient(event.id)!)
             .attempt()
             .mapLeftToFailure()
-            .run()
-            .then((value) {
-          _post = value;
-        }
-        );
+            .run();
         var response;
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
