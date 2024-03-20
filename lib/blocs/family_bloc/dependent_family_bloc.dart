@@ -142,16 +142,11 @@ class FamilyBloc extends Bloc<FamilyEvent, FamilyState> {
           bindToScope: true,
         );
         emit(Loading());
-        var _post;
-        await Task(() =>
+        Either<Failure, None<dynamic>> _post = await Task(() =>
         _familyRepository.getDependents()!)
             .attempt()
             .mapLeftToFailure()
-            .run()
-            .then((value) {
-          _post = value;
-        }
-        );
+            .run();
         var response;
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
