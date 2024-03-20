@@ -36,8 +36,11 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
   PrescriptionFilter prescriptionFilter = PrescriptionFilter();
   TextEditingController dateTextController = TextEditingController();
   TextEditingController date2TextController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   var inputFormat = DateFormat('dd/MM/yyyy');
   var outputFormat = DateFormat('yyyy-MM-dd');
+
+  bool formValidate = false;
 
   @override
   void initState() {
@@ -229,64 +232,132 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
           children: [
             Container(
               padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Text('Filtrar por fecha',
+              child: Text(name,
                 style: boldoCorpSmallSTextStyle.copyWith(
                     color: ConstantsV2.activeText
                 ),
               ),
             ),
-            datePicker(
-              context: context,
-              firstDate: DateTime(1900),
-              initialDate: prescriptionFilter.start ?? DateTime.now(),
-              lastDate: prescriptionFilter.end ?? DateTime.now(),
-              callback: (DateTime newDate){
-                setState(() {
-                  var _date1 =
-                  outputFormat.parse(newDate.toString().trim());
-                  var _date2 = inputFormat.format(_date1);
-                  dateTextController.text = _date2;
-                  prescriptionFilter.start = _date1;
-                });
-              },
-              cancelCallback: (){
-                setState(() {
-                  dateTextController.text = '';
-                  prescriptionFilter.start = null;
-                });
-              },
-              hintText: "Desde",
-              selectedDate: prescriptionFilter.start,
-            ),
-            const SizedBox(
-              height: 4,
-            ),
-            datePicker(
-              context: context,
-              firstDate: prescriptionFilter.start?? DateTime.now(),
-              initialDate: prescriptionFilter.end ?? prescriptionFilter.start?? DateTime.now(),
-              lastDate: DateTime.now(),
-              callback: (DateTime newDate){
-                setState(() {
-                  var _date1 =
-                  outputFormat.parse(newDate.toString().trim());
-                  var _date2 = inputFormat.format(_date1);
-                  date2TextController.text = _date2;
-                  prescriptionFilter.end = _date1;
-                });
-              },
-              cancelCallback: (){
-                setState(() {
-                  date2TextController.text = '';
-                  prescriptionFilter.end = null;
-                });
-              },
-              hintText: "Hasta",
-              selectedDate: prescriptionFilter.end,
-            ),
+            if(child != null)
+              child,
           ],
         ),
       ),
+    );
+  }
+
+  Widget dateFilter(){
+
+    return FormField<MapEntry<DateTime?, DateTime?>>(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+
+      validator: (value){
+        if(prescriptionFilter.start == null && prescriptionFilter.end != null){
+          return 'Por favor, coloca la fecha "Desde" para definir un rango válido';
+        } else if(prescriptionFilter.start != null && prescriptionFilter.end == null) {
+          return 'Por favor, coloca la fecha "Hasta" para definir un rango válido';
+        }
+        return null;
+      },
+      builder: (FormFieldState<MapEntry<DateTime?, DateTime?>> state){
+
+        InputBorder? shape = InputBorder.none;
+
+        if(state.hasError){
+          shape = OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).inputDecorationTheme.errorBorder?.borderSide.color
+                  ?? ConstantsV2.systemFail,
+            )
+          );
+        }
+
+        return Container(
+          decoration: BoxDecoration(
+            boxShadow: state.hasError? null: [
+              shadowRegular,
+            ],
+          ),
+          child: InputDecorator(
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.all(16),
+              fillColor: ConstantsV2.lightest,
+              filled: true,
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              errorBorder: shape,
+              errorText: state.errorText,
+            ),
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text('Filtrar por fecha',
+                      style: boldoCorpSmallSTextStyle.copyWith(
+                          color: ConstantsV2.activeText
+                      ),
+                    ),
+                  ),
+                  datePicker(
+                    context: context,
+                    firstDate: DateTime(1900),
+                    initialDate: prescriptionFilter.start ?? DateTime.now(),
+                    lastDate: prescriptionFilter.end ?? DateTime.now(),
+                    callback: (DateTime newDate){
+                      setState(() {
+                        var _date1 =
+                        outputFormat.parse(newDate.toString().trim());
+                        var _date2 = inputFormat.format(_date1);
+                        dateTextController.text = _date2;
+                        prescriptionFilter.start = _date1;
+                        state.didChange(MapEntry(prescriptionFilter.start, prescriptionFilter.end,));
+                      });
+                    },
+                    cancelCallback: (){
+                      setState(() {
+                        dateTextController.text = '';
+                        prescriptionFilter.start = null;
+                      });
+                    },
+                    hintText: "Desde",
+                    selectedDate: prescriptionFilter.start,
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  datePicker(
+                    context: context,
+                    firstDate: prescriptionFilter.start?? DateTime.now(),
+                    initialDate: prescriptionFilter.end ?? prescriptionFilter.start?? DateTime.now(),
+                    lastDate: DateTime.now(),
+                    callback: (DateTime newDate){
+                      setState(() {
+                        var _date1 =
+                        outputFormat.parse(newDate.toString().trim());
+                        var _date2 = inputFormat.format(_date1);
+                        date2TextController.text = _date2;
+                        prescriptionFilter.end = _date1;
+                        state.didChange(MapEntry(prescriptionFilter.start, prescriptionFilter.end,));
+                      });
+                    },
+                    cancelCallback: (){
+                      setState(() {
+                        date2TextController.text = '';
+                        prescriptionFilter.end = null;
+                      });
+                    },
+                    hintText: "Hasta",
+                    selectedDate: prescriptionFilter.end,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -340,11 +411,39 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
                               vertical: 10,
                               horizontal: 16,
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                dateFilter(),
-                              ],
+                            child: Theme(
+                              data: Theme.of(context).copyWith(
+                                inputDecorationTheme: InputDecorationTheme(
+                                  enabledBorder: Theme.of(context).inputDecorationTheme.enabledBorder?.copyWith(
+                                    borderSide: Theme.of(context).inputDecorationTheme.enabledBorder?.borderSide.copyWith(
+                                      color: ConstantsV2.secondaryRegular,
+                                      width: 1.32,
+                                    ),
+                                  ),
+                                  focusedBorder: Theme.of(context).inputDecorationTheme.focusedBorder?.copyWith(
+                                    borderSide: Theme.of(context).inputDecorationTheme.focusedBorder?.borderSide.copyWith(
+                                      color: ConstantsV2.secondaryRegular,
+                                      width: 1.32,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              child: Form(
+                                key: _formKey,
+                                onChanged: (){
+                                  formValidate = _formKey.currentState?.validate()?? false;
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    dateFilter(),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
+                                    doctorBoxFilter(),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -396,7 +495,7 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
               ),
             ),
             TextButton(
-              onPressed: prescriptionFilter != widget.initialFilter? () {
+              onPressed: prescriptionFilter != widget.initialFilter && formValidate? () {
                 BlocProvider.of<FilterPrescriptionBloc>(context).add(
                     ApplyFilter(
                         filter: prescriptionFilter,
