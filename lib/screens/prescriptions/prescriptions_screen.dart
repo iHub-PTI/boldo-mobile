@@ -151,31 +151,33 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                           "A medida en que uses la aplicación podrás ir viendo tus recetas",
                         );
                       }else{
-                        body = Expanded(
+                        body = Flexible(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SelectableWidgets<Encounter, download_prescriptions_bloc.Loading>(
-                              enableSelectAll: false,
-                              downloadEvent: (ids){
-                                return download_prescriptions_bloc.DownloadPrescriptions(
-                                  listOfIds: ids,
-                                  context: context,
-                                );
-                              },
-                              bloc: download_prescriptions_bloc.DownloadPrescriptionsBloc(),
-                              items: (allEncounters).map((e) {
-                                return SelectableWidgetItem<Encounter>(
-                                  child: PrescriptionCard(
-                                    encounter: e,
-                                  ),
-                                  item: e,
-                                  id: e.prescriptions?.first.encounterId,
-                                );
-                              }).toList(),
-                            ),
-                          ],
-                        ),
+                            children: [
+                              Flexible(
+                                child: SelectableWidgets<Encounter, download_prescriptions_bloc.Loading>(
+                                  enableSelectAll: false,
+                                  downloadEvent: (ids){
+                                    return download_prescriptions_bloc.DownloadPrescriptions(
+                                      listOfIds: ids,
+                                      context: context,
+                                    );
+                                  },
+                                  bloc: download_prescriptions_bloc.DownloadPrescriptionsBloc(),
+                                  items: (allEncounters).map((e) {
+                                    return SelectableWidgetItem<Encounter>(
+                                      child: PrescriptionCard(
+                                        encounter: e,
+                                      ),
+                                      item: e,
+                                      id: e.prescriptions?.first.encounterId,
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ],
+                          ),
                         );
                       }
                     }else if(state is Loading){
@@ -186,7 +188,7 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                       body = Container();
                     }
 
-                    return Expanded(
+                    return Flexible(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
