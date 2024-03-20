@@ -500,14 +500,17 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
                     ApplyFilter(
                         filter: prescriptionFilter,
                         function:
-                            (filter)=> widget.filterCallback(filter as PrescriptionFilter),
+                            (filter) =>
+                            widget.filterCallback(
+                                filter as PrescriptionFilter),
                         context: context
                     )
                 );
               }: null,
               child: const Row(
                 children: [
-                  const Text('Ver resultados',
+                  Text(
+                    'Ver resultados',
                   ),
                   Icon(Icons.arrow_forward_rounded)
                 ],
