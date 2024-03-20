@@ -133,7 +133,7 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
                             ? inputFormat.format(
                             selectedDate
                         ): ''}',
-                          style: boldoCorpSmallSTextStyle.copyWith(
+                          style: boldoBodyLRegularTextStyle.copyWith(
                               color: ConstantsV2.activeText
                           ),
                         ),
