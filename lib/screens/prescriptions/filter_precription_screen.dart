@@ -3,7 +3,12 @@
 import 'package:boldo/blocs/filter_bloc/filter_bloc.dart';
 import 'package:boldo/blocs/filter_prescription_bloc/filter_prescription_bloc.dart';
 import 'package:boldo/constants.dart';
+import 'package:boldo/models/Doctor.dart';
+import 'package:boldo/models/PagList.dart';
 import 'package:boldo/models/filters/PrescriptionFilter.dart';
+import 'package:boldo/network/doctor_repository.dart';
+import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
+import 'package:boldo/widgets/dropdownSearch.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/header_page.dart';
 import 'package:flutter/material.dart';
@@ -152,7 +157,61 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
     );
   }
 
-  Widget dateFilter(){
+  Widget doctorBoxFilter(){
+    return FormField<Doctor>(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      builder: (FormFieldState<Doctor> state){
+        return boxFilter(
+          name: 'Doctor',
+          child: DropdownSearch<Doctor>(
+            listObjects: (String name) async {
+              var result = DoctorRepository().getDoctorsFilter(
+                0,
+                [],
+                true,
+                true,
+                [],
+                [name],
+              );
+
+              PagList<Doctor> pageDoctors = await result;
+
+              List<Doctor> doctors = pageDoctors.items?? [];
+
+              return doctors;
+            },
+            emptyBuilder: (context, text){
+              return const EmptyStateV2(
+                titleBottom: 'No hay resultados',
+                textBottom: 'No hay información disponible para los criterios de búsqueda especificados',
+              );
+            },
+            toStringItem: (Doctor? doctor){
+              return doctor?.givenName?? '';
+            },
+            onSelectItem: (Doctor? doctor){
+              setState(() {
+                prescriptionFilter.doctors = [doctor];
+                state.didChange(doctor);
+              });
+            },
+            selected: (prescriptionFilter.doctors?.isEmpty?? true)? null : prescriptionFilter.doctors?.first,
+            onRemoveElement: (Doctor? doctor){
+              prescriptionFilter.doctors?.removeWhere((element) => element == doctor);
+              if(prescriptionFilter.doctors?.isEmpty?? true){
+                prescriptionFilter.doctors= null;
+              }
+              setState(() {
+                state.didChange(null);
+              });
+            },
+          ),
+        );
+      }
+    );
+  }
+
+  Widget boxFilter({required String name, Widget? child}){
     return Container(
       decoration: ShapeDecoration(
         color: ConstantsV2.lightest,
