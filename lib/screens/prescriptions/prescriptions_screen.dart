@@ -79,29 +79,6 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                           ],
                         ),
                       ),
-                      BlocBuilder<PrescriptionsBloc, PrescriptionsState>(
-                        builder: (context, state) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: GestureDetector(
-                              onTap: () async {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (newContext) => FilterPrescriptionsScreen(
-                                      initialFilter: BlocProvider.of<PrescriptionsBloc>(context).prescriptionFilter,
-                                      filterCallback: (PrescriptionFilter filter )=> BlocProvider.of<PrescriptionsBloc>(context).prescriptionFilter = filter,
-                                    ),
-                                  )
-                                );
-                              },
-                              child: SvgPicture.asset(
-                                'assets/icon/filter-list.svg',
-                              ),
-                            ),
-                          );
-                        }
-                      ),
                     ],
                   ),
                   Container(
@@ -126,7 +103,37 @@ class _PrescriptionsScreenState extends State<PrescriptionsScreen> {
                               color: ConstantsV2.blueDark,
                             ),
                           ),
-                        )
+                        ),
+                        BlocBuilder<PrescriptionsBloc, PrescriptionsState>(
+                            builder: (context, state) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextButton.icon(
+                                  onPressed: () async {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (newContext) => FilterPrescriptionsScreen(
+                                            initialFilter: BlocProvider.of<PrescriptionsBloc>(context).prescriptionFilter,
+                                            filterCallback: (PrescriptionFilter filter )=> BlocProvider.of<PrescriptionsBloc>(context).prescriptionFilter = filter,
+                                          ),
+                                        )
+                                    );
+                                  },
+                                  icon: SvgPicture.asset(
+                                    'assets/icon/filter.svg',
+                                    color: ConstantsV2.blueDark,
+                                  ),
+                                  label: Text(
+                                    'Filtrar',
+                                    style: label.copyWith(
+                                      color: ConstantsV2.blueDark,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                        ),
                       ],
                     ),
                   ),
