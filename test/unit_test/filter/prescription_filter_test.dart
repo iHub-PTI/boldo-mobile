@@ -18,12 +18,12 @@ void main() {
 
      PrescriptionFilter _prescriptionFilter1 = PrescriptionFilter(
        start: DateTime(2022,10,3),
-       doctors: [doctor1.id, doctor2.id],
+       doctors: [doctor1, doctor2],
      );
 
      PrescriptionFilter _prescriptionFilter2 = PrescriptionFilter(
        start: DateTime(2022,10,3),
-       doctors: [doctor2.id, doctor1.id],
+       doctors: [doctor2, doctor1],
      );
 
       expect(_prescriptionFilter1 == _prescriptionFilter2, true);

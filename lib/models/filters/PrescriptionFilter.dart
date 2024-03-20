@@ -1,3 +1,6 @@
+import 'package:boldo/models/Doctor.dart';
+import 'package:intl/intl.dart';
+
 import 'Filter.dart';
 import 'package:collection/collection.dart';
 
@@ -21,18 +24,18 @@ class PrescriptionFilter  extends Filter {
   }
 
   /// List of doctors ids
-  List<String?>? _doctors;
+  List<Doctor?>? _doctors;
 
-  List<String?>? get doctors => _doctors;
+  List<Doctor?>? get doctors => _doctors;
 
-  set doctors (List<String?>? newDoctors){
+  set doctors (List<Doctor?>? newDoctors){
     _doctors = newDoctors;
   }
 
   PrescriptionFilter({
     DateTime? start,
     DateTime? end,
-    List<String?>? doctors,
+    List<Doctor?>? doctors,
   }){
     _start = start;
     _end = end;
@@ -44,7 +47,7 @@ class PrescriptionFilter  extends Filter {
     Map<String, dynamic> _json;
 
     _json = {
-      'doctors': doctors,
+      'doctors': doctors?.map((e) => e?.id).toList(),
       'start': start?.toUtc().toIso8601String(),
       'end': end?.toUtc().toIso8601String(),
     };
@@ -84,7 +87,7 @@ class PrescriptionFilter  extends Filter {
   PrescriptionFilter copyWith({
     DateTime? start,
     DateTime? end,
-    List<String?>? doctors,
+    List<Doctor?>? doctors,
   }) => PrescriptionFilter(
     start: start?? this.start,
     end: end?? this.end,
