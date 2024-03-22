@@ -262,21 +262,20 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                 HomeTabAppBar(
                   controller: _animationController,
                 ),
-                Expanded(
+                Flexible(
                   child: BlocBuilder<HomeOrganizationBloc,HomeOrganizationBlocState>(
                   builder: (context, state){
                     if(state is OrganizationsObtained) {
-                      if (BlocProvider.of<patientBloc.PatientBloc>(context)
-                          .getOrganizations().isNotEmpty){
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.symmetric(vertical: 24),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(vertical: 24),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if(state.organizationsList.isNotEmpty)
                                   SizeTransition(
                                     sizeFactor: _animationController,
                                     child: DividerFeedSectionHome(
@@ -284,99 +283,78 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                                       scale: percentOfHeight,
                                     ),
                                   ),
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children:
-                                      items.map((e) => _buildCarousel(context, e)).toList(),
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                    ),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children:
+                                    items.map((e) => _buildCarousel(context, e)).toList(),
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                   ),
-                                  const SizedBox(
-                                    height: 16,
-                                  ),
-                                  SingleChildScrollView(
-                                    child: InfoCardList(),
-                                  ),
-                                ],
-                              ),
+                                ),
+                                if(state.organizationsList.isNotEmpty)
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                if(state.organizationsList.isNotEmpty)
+                                SingleChildScrollView(
+                                  child: InfoCardList(),
+                                ),
+                              ],
                             ),
-                            BlocBuilder<HomeOrganizationBloc,HomeOrganizationBlocState>(
-                              builder: (context, state){
-                                //show header if the patient has organization
-                                if(state is OrganizationsObtained) {
-                                  if (BlocProvider.of<patientBloc.PatientBloc>(context)
-                                      .getOrganizations().isNotEmpty){
-                                    return BlocBuilder<patientBloc.PatientBloc, patientBloc.PatientState>(
-                                        builder: (context, state) {
-                                          if(BlocProvider.of<patientBloc.PatientBloc>(context)
-                                              .getOrganizations().isNotEmpty) {
-                                            if (state is patientBloc.Success) {
-                                              return SizedBox(
-                                                width: double.infinity,
-                                                child: Container(
-                                                    width: double.maxFinite,
-                                                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                                                    decoration: const BoxDecoration(
-                                                      color: ConstantsV2.lightGrey,
-                                                    ),
-                                                    //sections header
-                                                    child: Container(
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                        children: [
-                                                          Text(
-                                                            'novedades${prefs.getBool(isFamily) ??
-                                                                false ? " de " : ''}',
-                                                            style: boldoSubTextStyle.copyWith(
-                                                                color: ConstantsV2.inactiveText),
-                                                          ),
-                                                          prefs.getBool(isFamily) ?? false
-                                                              ? Text(
-                                                              '${patient
-                                                                  .relationshipDisplaySpan}',
-                                                              style: boldoSubTextStyle
-                                                                  .copyWith(
-                                                                  color:
-                                                                  ConstantsV2.green))
-                                                              : Container(),
-                                                        ],
-                                                      ),
-                                                    )),
-                                              );
-                                            } else {
-                                              return Text(
-                                                'novedades',
-                                                style: boldoSubTextStyle.copyWith(
-                                                    color: ConstantsV2.inactiveText),
-                                              );
-                                            }
-                                          }else{
-                                            return Container();
-                                          }
-                                        }
-                                    );
-                                  }else{
-                                    return Container();
-                                  }
-                                }else {
-                                  // fill the height between carousel and tabview
-                                  // with container with lightGrey color
-                                  return Container(
-                                    width: double.maxFinite,
-                                    height: ConstantsV2.homeFeedTitleContainerMinHeight,
-                                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                                    decoration: const BoxDecoration(
-                                      color: ConstantsV2.lightGrey,
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                            Container(
-                              height: 16,
-                            ),
+                          ),
+                          if(state.organizationsList.isNotEmpty)
+                          BlocBuilder<patientBloc.PatientBloc, patientBloc.PatientState>(
+                            builder: (context, state) {
+                              if (state is patientBloc.Success) {
+                                return SizedBox(
+                                  width: double.infinity,
+                                  child: Container(
+                                      width: double.maxFinite,
+                                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                                      decoration: const BoxDecoration(
+                                        color: ConstantsV2.lightGrey,
+                                      ),
+                                      //sections header
+                                      child: Container(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'novedades${prefs.getBool(isFamily) ??
+                                                  false ? " de " : ''}',
+                                              style: boldoSubTextStyle.copyWith(
+                                                  color: ConstantsV2.inactiveText),
+                                            ),
+                                            prefs.getBool(isFamily) ?? false
+                                                ? Text(
+                                                '${patient
+                                                    .relationshipDisplaySpan}',
+                                                style: boldoSubTextStyle
+                                                    .copyWith(
+                                                    color:
+                                                    ConstantsV2.green))
+                                                : Container(),
+                                          ],
+                                        ),
+                                      )),
+                                );
+                              } else {
+                                return Text(
+                                  'novedades',
+                                  style: boldoSubTextStyle.copyWith(
+                                      color: ConstantsV2.inactiveText),
+                                );
+                              }
+                            },
+                          ),
+                          if(state.organizationsList.isNotEmpty)
+                          Container(
+                            height: 16,
+                          ),
+                          if(state.organizationsList.isEmpty)
+                          _emptyOrganizations(),
+                          if(state.organizationsList.isNotEmpty)
                             Expanded(
                               child: TabBarView(
                                 controller: _controller,
@@ -385,11 +363,8 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                                 ],
                               ),
                             ),
-                          ],
-                        );
-                      }else{
-                        return _emptyOrganizations();
-                      }
+                        ],
+                      );
                     }else if(state is HomeOrganizationFailed){
                       return Container(
                           child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed()) ) );
@@ -527,14 +502,13 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                     );
                     return Column(
                       children: [
-                        const SizedBox(height: 30),
                         Center(child: body),
                       ],
                     );
                   },
                 ),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: ListView(
                     physics: const ClampingScrollPhysics(),
                     children: [
