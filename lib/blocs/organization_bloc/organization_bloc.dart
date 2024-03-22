@@ -1,4 +1,8 @@
 import 'package:boldo/app_config.dart';
+import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart' as home_organization_bloc;
+import 'package:boldo/constants.dart';
+import 'package:boldo/blocs/organizationSubscribed_bloc/organizationSubscribed_bloc.dart' as subscribed;
+import 'package:boldo/blocs/organizationApplied_bloc/organizationApplied_bloc.dart' as applied;
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/PagList.dart';
 import 'package:boldo/models/Patient.dart';
@@ -218,10 +222,23 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
 
     await Future.forEach(organizations, (element) async {
       
-      if(element.organizationSettings?.automaticPatientSubscription?? false)
-        _answers.add(MapEntry(element, await evaluateRequirements(organization: element, context: context)));
-      else
+      if(element.organizationSettings?.automaticPatientSubscription?? false) {
+        bool? _answer = await evaluateRequirements(
+            organization: element, context: context);
+
+        if(_answer == null){
+          throw Failure(cancelActionMessage);
+        }else {
+          _answers.add(
+            MapEntry(
+              element,
+              _answer,
+            ),
+          );
+        }
+      }else {
         _answers.add(MapEntry(element, true));
+      }
 
         
     });
@@ -238,6 +255,82 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
       MaterialPageRoute (
         builder: (BuildContext context) => RequestRequirementPostulation(
           organization: organization,
+          cancelAction: () async {
+            return await showDialog<bool>(
+              context: context,
+              barrierDismissible: false, // user must tap button!
+              builder: (BuildContext contextDialog) {
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  scrollable: true,
+                  titleTextStyle: boldoCardHeadingTextStyle.copyWith(
+                    color: ConstantsV2.blueDark,
+                  ),
+                  title: Container(
+                    child: const Center(
+                      child: Text(
+                        "¿Estás seguro que deseas cancelar las solicitudes?",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.zero,
+                  content: Container(
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.only(
+                            left: 24.0,
+                            top: 20.0,
+                            right: 24.0,
+                            bottom: 24.0,
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "Si cancelas ahora, perderás todo el proceso realizado hasta el momento.",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                        const Divider(
+                          color: Colors.black87,
+                          height: 10.0,
+                        ),
+                      ],
+                    ),
+                  ),
+                  actionsAlignment: MainAxisAlignment.spaceAround,
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text(
+                        'Cerrar',
+                        style: boldoCardHeadingTextStyle.copyWith(
+                          color: ConstantsV2.secondaryRegular,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(contextDialog).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: Text(
+                        'Si, cancelar',
+                        style: boldoCardHeadingTextStyle.copyWith(
+                          color: ConstantsV2.blueDark,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(contextDialog).pop();
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
         ),
       ),
     );

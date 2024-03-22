@@ -9,10 +9,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class RequestRequirementPostulation extends StatefulWidget {
 
   final Organization organization;
+  final Future<bool?> Function()? cancelAction;
 
   RequestRequirementPostulation({
     super.key,
     required this.organization,
+    this.cancelAction,
   });
 
   @override
@@ -58,6 +60,7 @@ class _RequestRequirementPostulationState extends State<RequestRequirementPostul
                   BackButtonLabel(
                     gapSpace: 0,
                     iconType: BackIcon.backClose,
+                    callback: widget.cancelAction,
                   ),
                 ],
               ),
