@@ -120,6 +120,8 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
                 ),
               );
             }else{
+              // send signal to get news with latest organizations list
+              BlocProvider.of<home_organization_bloc.HomeOrganizationBloc>(event.context).add(home_organization_bloc.GetOrganizationsSubscribed());
 
               String text = event.organizations.length == 1
                   ? "Una solicitud enviada correctamente":
