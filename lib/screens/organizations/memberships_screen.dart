@@ -18,15 +18,26 @@ import 'package:boldo/widgets/organization_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get_it/get_it.dart';
 
 part 'request_subscription/organizations_available.dart';
 
 class Organizations extends StatelessWidget {
+  final bool hasPendingOrBelongsToOrganizations;
+
+  Organizations({
+    super.key,
+    this.hasPendingOrBelongsToOrganizations = true,
+  });
 
   @override
   Widget build(BuildContext context) {
 
-    return OrganizationsSubscribedScreen();
+    return hasPendingOrBelongsToOrganizations
+        ? const OrganizationsSubscribedScreen()
+        : OrganizationsScreen(
+          patientSelected: patient,
+        );
 
   }
 
@@ -53,10 +64,10 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
     return MultiBlocProvider(
       providers: [
         BlocProvider<subscribed.OrganizationSubscribedBloc>(
-          create: (BuildContext context) => subscribed.OrganizationSubscribedBloc()..add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected)),
+          create: (BuildContext context) => GetIt.I.registerSingleton<subscribed.OrganizationSubscribedBloc>(subscribed.OrganizationSubscribedBloc())..add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected)),
         ),
         BlocProvider<applied.OrganizationAppliedBloc>(
-          create: (BuildContext context) => applied.OrganizationAppliedBloc()..add(applied.GetOrganizationsPostulated(patientSelected: patientSelected)),
+          create: (BuildContext context) => GetIt.I.registerSingleton<applied.OrganizationAppliedBloc>(applied.OrganizationAppliedBloc())..add(applied.GetOrganizationsPostulated(patientSelected: patientSelected)),
         ),
       ],
       child: Scaffold(
@@ -203,9 +214,9 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                           Flexible(
                                             child: Text(
                                               //'Arrastrá los elementos para establecer el orden de prioridad',
-                                              'Gestioná las organizaciones a las cuales perteneces',
-                                              style: medicationTextStyle.copyWith(
-                                                color: ConstantsV2.activeText,
+                                              'Gestioná los centros a los cuales perteneces',
+                                              style: boldoBodySRegularTextStyle.copyWith(
+                                                color: ConstantsV2.grayDark,
                                               ),
                                             ),
                                           ),
@@ -233,7 +244,10 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                               child: Container(
                                                 padding: const EdgeInsets.all(12),
                                                 child: const Center(
-                                                  child: Icon(Icons.add)
+                                                  child: Icon(
+                                                    Icons.add,
+                                                    color: ConstantsV2.grayLightest,
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -294,8 +308,8 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
                                         Container(
                                           child: Text(
                                             'Centros Asistenciales pendientes de aprobación',
-                                            style: medicationTextStyle.copyWith(
-                                              color: ConstantsV2.activeText,
+                                            style: boldoBodySRegularTextStyle.copyWith(
+                                              color: ConstantsV2.grayDark,
                                             ),
                                           ),
                                         ),
@@ -328,74 +342,59 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
   }
 
   Widget emptyView(BuildContext context) {
-    return Column(
-      children: [
-        // this structure prevent overflow in small screens
-        const Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  'Aún no perteneces a ningún Centro Asistencial',
-                  style: boldoSubTextMediumStyle,
-                )
-              )
-            )
-          ],
-        ),
-        const SizedBox(height: 16.0),
-        const Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(left:16.0, right: 16.0, bottom: 16.0),
-                child: Text(
-                  'Para usar algunos de los servicios que Boldo tiene para ofrecer, es necesario que este perfil de tu grupo familiar sea miembro de la organización que las provee.',
-                  style: boldoInfoTextStyle
+    return Container(
+      decoration: BoxDecoration(
+        color: ConstantsV2.grayLightest,
+        boxShadow: [
+          shadowRegular,
+        ]
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: Text(
+              'Gestioná los centros a los cuales perteneces',
+              style: bodyMediumRegular.copyWith(
+                color: ConstantsV2.grayDark,
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 12,
+          ),
+          InkWell(
+            onTap: () async {
+              dynamic result = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => OrganizationsScreen(patientSelected: patientSelected)),
+              );
+              if(result == true){
+                BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected));
+                BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated(patientSelected: patientSelected));
+              }
+            },
+            child: Card(
+              elevation: 0,
+              margin: EdgeInsets.zero,
+              color: ConstantsV2.secondaryRegular,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                child: const Center(
+                  child: Icon(
+                    Icons.add,
+                    color: ConstantsV2.grayLightest,
+                  ),
                 ),
               ),
-            )
-          ],
-        ),
-        const SizedBox(height: 26.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0, bottom: 16.0),
-              child: ElevatedButton(
-                onPressed:() async {
-                  dynamic result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => OrganizationsScreen(patientSelected: patientSelected)),
-                  );
-                  if(result == true){
-                    BlocProvider.of<subscribed.OrganizationSubscribedBloc>(context).add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected));
-                    BlocProvider.of<applied.OrganizationAppliedBloc>(context).add(applied.GetOrganizationsPostulated(patientSelected: patientSelected));
-                  }
-                },
-                child: Container(
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Agregar',
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios_outlined,
-                          size: 16,
-                        ),
-                      ],
-                    )),
-              ),
-            )
-          ],
-        )
-      ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

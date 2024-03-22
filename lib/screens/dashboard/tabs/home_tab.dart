@@ -2,6 +2,7 @@ import 'package:boldo/blocs/goToTop_bloc/goToTop_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
+import 'package:boldo/blocs/organizationApplied_bloc/organizationApplied_bloc.dart' as applied;
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
@@ -261,21 +262,20 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                 HomeTabAppBar(
                   controller: _animationController,
                 ),
-                Expanded(
+                Flexible(
                   child: BlocBuilder<HomeOrganizationBloc,HomeOrganizationBlocState>(
                   builder: (context, state){
                     if(state is OrganizationsObtained) {
-                      if (BlocProvider.of<patientBloc.PatientBloc>(context)
-                          .getOrganizations().isNotEmpty){
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.symmetric(vertical: 24),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(vertical: 24),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if(state.organizationsList.isNotEmpty)
                                   SizeTransition(
                                     sizeFactor: _animationController,
                                     child: DividerFeedSectionHome(
@@ -283,99 +283,78 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                                       scale: percentOfHeight,
                                     ),
                                   ),
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children:
-                                      items.map((e) => _buildCarousel(context, e)).toList(),
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                    ),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children:
+                                    items.map((e) => _buildCarousel(context, e)).toList(),
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                   ),
-                                  const SizedBox(
-                                    height: 16,
-                                  ),
-                                  SingleChildScrollView(
-                                    child: InfoCardList(),
-                                  ),
-                                ],
-                              ),
+                                ),
+                                if(state.organizationsList.isNotEmpty)
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                if(state.organizationsList.isNotEmpty)
+                                SingleChildScrollView(
+                                  child: InfoCardList(),
+                                ),
+                              ],
                             ),
-                            BlocBuilder<HomeOrganizationBloc,HomeOrganizationBlocState>(
-                              builder: (context, state){
-                                //show header if the patient has organization
-                                if(state is OrganizationsObtained) {
-                                  if (BlocProvider.of<patientBloc.PatientBloc>(context)
-                                      .getOrganizations().isNotEmpty){
-                                    return BlocBuilder<patientBloc.PatientBloc, patientBloc.PatientState>(
-                                        builder: (context, state) {
-                                          if(BlocProvider.of<patientBloc.PatientBloc>(context)
-                                              .getOrganizations().isNotEmpty) {
-                                            if (state is patientBloc.Success) {
-                                              return SizedBox(
-                                                width: double.infinity,
-                                                child: Container(
-                                                    width: double.maxFinite,
-                                                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                                                    decoration: const BoxDecoration(
-                                                      color: ConstantsV2.lightGrey,
-                                                    ),
-                                                    //sections header
-                                                    child: Container(
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                        children: [
-                                                          Text(
-                                                            'novedades${prefs.getBool(isFamily) ??
-                                                                false ? " de " : ''}',
-                                                            style: boldoSubTextStyle.copyWith(
-                                                                color: ConstantsV2.inactiveText),
-                                                          ),
-                                                          prefs.getBool(isFamily) ?? false
-                                                              ? Text(
-                                                              '${patient
-                                                                  .relationshipDisplaySpan}',
-                                                              style: boldoSubTextStyle
-                                                                  .copyWith(
-                                                                  color:
-                                                                  ConstantsV2.green))
-                                                              : Container(),
-                                                        ],
-                                                      ),
-                                                    )),
-                                              );
-                                            } else {
-                                              return Text(
-                                                'novedades',
-                                                style: boldoSubTextStyle.copyWith(
-                                                    color: ConstantsV2.inactiveText),
-                                              );
-                                            }
-                                          }else{
-                                            return Container();
-                                          }
-                                        }
-                                    );
-                                  }else{
-                                    return Container();
-                                  }
-                                }else {
-                                  // fill the height between carousel and tabview
-                                  // with container with lightGrey color
-                                  return Container(
-                                    width: double.maxFinite,
-                                    height: ConstantsV2.homeFeedTitleContainerMinHeight,
-                                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                                    decoration: const BoxDecoration(
-                                      color: ConstantsV2.lightGrey,
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                            Container(
-                              height: 16,
-                            ),
+                          ),
+                          if(state.organizationsList.isNotEmpty)
+                          BlocBuilder<patientBloc.PatientBloc, patientBloc.PatientState>(
+                            builder: (context, state) {
+                              if (state is patientBloc.Success) {
+                                return SizedBox(
+                                  width: double.infinity,
+                                  child: Container(
+                                      width: double.maxFinite,
+                                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                                      decoration: const BoxDecoration(
+                                        color: ConstantsV2.lightGrey,
+                                      ),
+                                      //sections header
+                                      child: Container(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'novedades${prefs.getBool(isFamily) ??
+                                                  false ? " de " : ''}',
+                                              style: boldoSubTextStyle.copyWith(
+                                                  color: ConstantsV2.inactiveText),
+                                            ),
+                                            prefs.getBool(isFamily) ?? false
+                                                ? Text(
+                                                '${patient
+                                                    .relationshipDisplaySpan}',
+                                                style: boldoSubTextStyle
+                                                    .copyWith(
+                                                    color:
+                                                    ConstantsV2.green))
+                                                : Container(),
+                                          ],
+                                        ),
+                                      )),
+                                );
+                              } else {
+                                return Text(
+                                  'novedades',
+                                  style: boldoSubTextStyle.copyWith(
+                                      color: ConstantsV2.inactiveText),
+                                );
+                              }
+                            },
+                          ),
+                          if(state.organizationsList.isNotEmpty)
+                          Container(
+                            height: 16,
+                          ),
+                          if(state.organizationsList.isEmpty)
+                          _emptyOrganizations(),
+                          if(state.organizationsList.isNotEmpty)
                             Expanded(
                               child: TabBarView(
                                 controller: _controller,
@@ -384,11 +363,8 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                                 ],
                               ),
                             ),
-                          ],
-                        );
-                      }else{
-                        return _emptyOrganizations();
-                      }
+                        ],
+                      );
                     }else if(state is HomeOrganizationFailed){
                       return Container(
                           child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed()) ) );
@@ -493,85 +469,109 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
   }
 
   Widget _emptyOrganizations(){
-    return Container(
-      child: SmartRefresher(
-          enablePullDown: true,
-          enablePullUp: true,
-          controller: _refreshControllerOrganizationsCheck!,
-          onLoading: () {
-          },
-          onRefresh: _onRefreshOrganizationsCheck,
-          footer: CustomFooter(
-            height: 140,
-            builder: (BuildContext context, LoadStatus? mode) {
-              Widget body = Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Obteniendo Organizaciones",
-                    style: TextStyle(
-                      color: Constants.primaryColor800,
-                    ),
-                  )
-                ],
-              );
-              return Column(
-                children: [
-                  const SizedBox(height: 30),
-                  Center(child: body),
-                ],
-              );
-            },
-          ),
-          child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: ListView(
-                physics: const ClampingScrollPhysics(),
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+    return Flexible(
+      child: BlocBuilder<applied.OrganizationAppliedBloc, applied.OrganizationAppliedBlocState>(
+        bloc: applied.OrganizationAppliedBloc()..add(applied.GetOrganizationsPostulated(
+          patientSelected: patient,
+        )),
+        builder: (BuildContext context, state) {
+          if(state is applied.Loading){
+            return loadingStatus();
+          }else if(state is applied.OrganizationsObtained){
+            return Container(
+              child: SmartRefresher(
+                enablePullDown: true,
+                enablePullUp: true,
+                controller: _refreshControllerOrganizationsCheck!,
+                onLoading: () {
+                },
+                onRefresh: _onRefreshOrganizationsCheck,
+                footer: CustomFooter(
+                  height: 140,
+                  builder: (BuildContext context, LoadStatus? mode) {
+                    Widget body = Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Obteniendo Organizaciones",
+                          style: TextStyle(
+                            color: Constants.primaryColor800,
+                          ),
+                        ),
+                      ],
+                    );
+                    return Column(
+                      children: [
+                        Center(child: body),
+                      ],
+                    );
+                  },
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ListView(
+                    physics: const ClampingScrollPhysics(),
                     children: [
-                      Text("¿En dónde vas a consultar?",
-                        style: boldoSubTextMediumStyle.copyWith(color: ConstantsV2.activeText),
-                      ),
-                      Text("Para usar algunos servicios que Boldo tiene para vos, "
-                          "es necesario seas miembro de la organización que las provée.",
-                          style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.activeText)
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (BuildContext context) => Organizations()));
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                const Text("Agregar"),
-                                const Icon(Icons.chevron_right_rounded),
-                              ],
+                          Text("¿En dónde vas a consultar?",
+                            style: boldoCardSubtitleTextStyle.copyWith(
+                              color: ConstantsV2.activeText,
                             ),
                           ),
-                        ],
+                          Text("Para usar algunos servicios que Boldo tiene para vos, "
+                              "es necesario seas miembro de la organización que las provee.",
+                              style: boldoBodyLRegularTextStyle.copyWith(
+                                color: ConstantsV2.activeText,
+                              ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (BuildContext context) =>
+                                      Organizations(
+                                        hasPendingOrBelongsToOrganizations: state.organizationsList.isNotEmpty,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    const Text("Continuar"),
+                                    const Icon(Icons.chevron_right_rounded),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset('assets/icon/empty_org_home.svg')
+                            ],
+                          )
+                        ].map(
+                              (e) => Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: e,
+                          ),
+                        ).toList(),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset('assets/icon/empty_org_home.svg')
-                        ],
-                      )
-                    ].map(
-                          (e) => Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: e,
-                      ),
-                    ).toList(),
+                    ],
                   ),
-                ],
-              )
-          )
+                ),
+              ),
+            );
+          }else {
+            return Container();
+          }
+        },
       ),
     );
   }

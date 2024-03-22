@@ -68,7 +68,8 @@ class BackButtonLabel<T> extends StatelessWidget {
 
   final double gapSpace;
 
-  final Function()? callback;
+  /// the pop action will be implements by callBack if this function is passed
+  final Future Function()? callback;
   final Color? iconColor;
   final BackIcon iconType;
 
@@ -100,8 +101,11 @@ class BackButtonLabel<T> extends StatelessWidget {
 
     return InkWell(
       onTap: () async {
-        await callback?.call();
-        Navigator.pop(context, result);
+        if(callback != null) {
+          await callback?.call();
+        }else {
+          Navigator.pop(context, result);
+        }
       },
       child: Container(
         padding: padding,

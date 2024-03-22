@@ -48,15 +48,15 @@ class EmptyStateV2 extends StatelessWidget {
                 titleBottom != null
                     ? Text(
                     titleBottom!,
-                    style: boldoTitleBlackTextStyle.copyWith(
-                      fontSize: 20,
-                    )
+                  style: boldoCardSubtitleTextStyle.copyWith(
+                    color: ConstantsV2.activeText,
+                  ),
                 )
                     : Container(),
                 SizedBox(height: titleBottom != null ? 10 : 0),
                 Text(
                   textBottom ?? '',
-                  style: boldoCorpMediumTextStyle.copyWith(
+                  style: boldoBodyLRegularTextStyle.copyWith(
                     color: ConstantsV2.activeText,
                   ),
                   textAlign: TextAlign.center,
