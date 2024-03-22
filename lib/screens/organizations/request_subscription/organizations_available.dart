@@ -41,6 +41,20 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                 }
                 if(state is SuccessSubscribed){
 
+                  setState(() {
+
+                    _organizationsNotSubscribed.removeWhere(
+                            (selected) => state.organizationSubscribed.any(
+                                (available) => selected.id == available.id
+                        ) == true
+                    );
+
+                    _organizationsSelected.removeWhere(
+                            (selected) => state.organizationSubscribed.any(
+                                (available) => selected.id == available.id
+                        ) == true
+                    );
+                  });
 
                 }else if(state is Failed){
                   emitSnackBar(
