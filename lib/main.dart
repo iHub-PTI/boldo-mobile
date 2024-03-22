@@ -47,6 +47,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sentry_dio/sentry_dio.dart';
@@ -108,6 +109,9 @@ Future<void> mainCommon({
   required FirebaseOptions firebaseOptions,
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
+
+
+  GetIt.I.allowReassignment = true;
 
   environment = Environment(
     envFile: flavor.envFile,
