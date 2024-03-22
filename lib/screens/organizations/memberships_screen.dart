@@ -23,11 +23,21 @@ import 'package:get_it/get_it.dart';
 part 'request_subscription/organizations_available.dart';
 
 class Organizations extends StatelessWidget {
+  final bool hasPendingOrBelongsToOrganizations;
+
+  Organizations({
+    super.key,
+    this.hasPendingOrBelongsToOrganizations = true,
+  });
 
   @override
   Widget build(BuildContext context) {
 
-    return OrganizationsSubscribedScreen();
+    return hasPendingOrBelongsToOrganizations
+        ? const OrganizationsSubscribedScreen()
+        : OrganizationsScreen(
+          patientSelected: patient,
+        );
 
   }
 
