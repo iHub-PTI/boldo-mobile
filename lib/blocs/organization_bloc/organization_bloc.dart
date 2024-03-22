@@ -177,17 +177,16 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
               );
             }
 
-            emit(Success());
           }else{
 
-            String message = postulationEvaluation.asRight().length > 1 ?
+            String message = listPostulation.length == 1 ?
                 "No se pudo enviar la solicitud" : "No se pudo enviar las solicitudes";
 
             message = message + " debido a los requisitos de suscripción no cumplidos";
 
             emitSnackBar(
               context: event.context,
-              text: 'No se pudo enviar la(s) solicitud(es) ',
+              text: message,
               status: ActionStatus.Warning,
             );
             transaction.finish(
