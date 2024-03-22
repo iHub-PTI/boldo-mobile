@@ -13,6 +13,7 @@ import 'package:boldo/utils/helpers.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 
@@ -73,9 +74,6 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
           bindToScope: true,
         );
         emit(Loading());
-        var _post;
-
-        var response;
 
         Either<Failure, List<MapEntry<Organization, bool?>>>
         postulationEvaluation = await Task(() =>
@@ -89,54 +87,90 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
           .run();
 
         if(postulationEvaluation.isLeft()){
-          response = postulationEvaluation.asLeft().message;
-          emit(Failed(response: response));
-          transaction.throwable = postulationEvaluation.asLeft();
-          transaction.finish(
-            status: SpanStatus.fromString(
-              response,
-            ),
-          );
+
+          Failure _failure = postulationEvaluation.asLeft();
+
+          if(_failure.message == cancelActionMessage) {
+            transaction.finish(
+              status: SpanStatus.fromString(
+                _failure.message,
+              ),
+            );
+            emit(Success());
+          }else {
+            emit(Failed(response: _failure.message));
+            transaction.throwable = _failure;
+            transaction.finish(
+              status: SpanStatus.fromString(
+                _failure.message,
+              ),
+            );
+          }
         }else{
-          if(postulationEvaluation.asRight().every((element) => element.value == true)){
+
+          List<MapEntry<Organization, bool?>> listPostulation = postulationEvaluation.asRight();
+
+          List<Organization> _organizationsChecked = listPostulation.where(
+                  (organizationWithResponse) => organizationWithResponse.value == true
+          ).map(
+                  (organizationWithResponse) => organizationWithResponse.key
+          ).toList();
+
+          if(_organizationsChecked.isNotEmpty){
 
             // get organizations that the patient is subscribed
-            await Task(() =>
-            _organizationRepository.subscribeToManyOrganizations(event.organizations, event.patientSelected)!)
+            Either<Failure, None<dynamic>> _post2 =
+             await Task(() =>
+            _organizationRepository.subscribeToManyOrganizations(
+              _organizationsChecked,
+              event.patientSelected,
+            )!)
                 .attempt()
                 .mapLeftToFailure()
-                .run()
-                .then((value) {
-              _post = value;
-            }
-            );
-            if (_post.isLeft()) {
-              _post.leftMap((l) => response = l.message);
-              emit(Failed(response: response));
-              transaction.throwable = _post.asLeft();
+                .run();
+            if (_post2.isLeft()) {
+
+              Failure failure = _post2.asLeft();
+
+              emit(Failed(response: failure.message));
+              transaction.throwable = failure;
               transaction.finish(
                 status: SpanStatus.fromString(
-                  _post.asLeft().message,
+                  failure.message,
                 ),
               );
+
+              emit(SuccessSubscribed(
+                organizationSubscribed: [],
+              ));
+
+
             }else{
               // send signal to get news with latest organizations list
               BlocProvider.of<home_organization_bloc.HomeOrganizationBloc>(event.context).add(home_organization_bloc.GetOrganizationsSubscribed());
 
-              String text = event.organizations.length == 1
+              String text = _organizationsChecked.length == 1
                   ? "Una solicitud enviada correctamente":
-              "${event.organizations.length} solicitudes enviadas correctamente"
+              "${_organizationsChecked.length} solicitudes enviadas correctamente"
               ;
 
               await emitSnackBar(
                   context: event.context,
                   text: text,
                   status: ActionStatus.Success
-              ).then((value) =>
-                  Navigator.of(event.context).pop(true)
-              );
+              ).then((value) {
 
-              emit(SuccessSubscribed());
+                GetIt.I.get<subscribed.OrganizationSubscribedBloc>().add(subscribed.GetOrganizationsSubscribed(patientSelected: event.patientSelected));
+                GetIt.I.get<applied.OrganizationAppliedBloc>().add(applied.GetOrganizationsPostulated(patientSelected: event.patientSelected));
+
+                if (_organizationsChecked.length == event.organizations.length) {
+                  Navigator.of(event.context).pop(true);
+                }
+              });
+
+              emit(SuccessSubscribed(
+                organizationSubscribed: _organizationsChecked,
+              ));
 
               transaction.finish(
                 status: const SpanStatus.ok(),

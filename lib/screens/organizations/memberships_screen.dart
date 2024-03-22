@@ -18,6 +18,7 @@ import 'package:boldo/widgets/organization_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get_it/get_it.dart';
 
 part 'request_subscription/organizations_available.dart';
 
@@ -53,10 +54,10 @@ class _OrganizationsSubscribedScreenState extends State<OrganizationsSubscribedS
     return MultiBlocProvider(
       providers: [
         BlocProvider<subscribed.OrganizationSubscribedBloc>(
-          create: (BuildContext context) => subscribed.OrganizationSubscribedBloc()..add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected)),
+          create: (BuildContext context) => GetIt.I.registerSingleton<subscribed.OrganizationSubscribedBloc>(subscribed.OrganizationSubscribedBloc())..add(subscribed.GetOrganizationsSubscribed(patientSelected: patientSelected)),
         ),
         BlocProvider<applied.OrganizationAppliedBloc>(
-          create: (BuildContext context) => applied.OrganizationAppliedBloc()..add(applied.GetOrganizationsPostulated(patientSelected: patientSelected)),
+          create: (BuildContext context) => GetIt.I.registerSingleton<applied.OrganizationAppliedBloc>(applied.OrganizationAppliedBloc())..add(applied.GetOrganizationsPostulated(patientSelected: patientSelected)),
         ),
       ],
       child: Scaffold(
