@@ -327,6 +327,7 @@ class FullApp extends StatelessWidget {
     return RefreshConfiguration(
         headerBuilder: () => WaterDropHeader(
           refresh: Container(),
+          complete: Container(),
         ),        // Configure the default header indicator. If you have the same header indicator for each page, you need to set this
         child: MaterialApp(
           scrollBehavior: CustomBehavior(),
