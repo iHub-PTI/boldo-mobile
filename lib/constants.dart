@@ -335,6 +335,13 @@ BoxShadow shadowRegular = const BoxShadow(
   spreadRadius: 0,
 );
 
+BoxShadow shadowPin = const BoxShadow(
+  color: Color(0x0C000000),
+  blurRadius: 5.55,
+  offset: Offset(0, 5.55),
+  spreadRadius: 0,
+);
+
 BoxShadow shadowHeader = const BoxShadow(
   color: Color(0x07000000),
   blurRadius: 10,
