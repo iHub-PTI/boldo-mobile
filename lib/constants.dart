@@ -484,6 +484,7 @@ ThemeData boldoTheme = ThemeData(
     titleMedium: boldoCorpSmallSTextStyle.copyWith(
       color: ConstantsV2.activeText,
     ),
+    bodyLarge: bodyLarge,
   ),
   inputDecorationTheme: InputDecorationTheme(
     enabledBorder: UnderlineInputBorder(
