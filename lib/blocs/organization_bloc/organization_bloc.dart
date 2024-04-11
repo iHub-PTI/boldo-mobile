@@ -210,7 +210,7 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
         // emit loading status on first page
         if(event.page == 1)
         emit(Loading());
-        var _post;
+        late Either<Failure, PagList<Organization>> _post;
 
         //get organizations that the patient is subscribed
         await Task(() =>
@@ -230,11 +230,12 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
         var response;
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
+          Failure failure = _post.asLeft();
           emit(Failed(response: response));
-          transaction.throwable = _post.asLeft();
+          transaction.throwable = failure;
           transaction.finish(
             status: SpanStatus.fromString(
-              _post.asLeft().message,
+              failure.message,
             ),
           );
         }else{
