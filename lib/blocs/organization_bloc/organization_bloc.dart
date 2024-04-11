@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:boldo/app_config.dart';
 import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart' as home_organization_bloc;
 import 'package:boldo/constants.dart';
@@ -6,6 +8,7 @@ import 'package:boldo/blocs/organizationApplied_bloc/organizationApplied_bloc.da
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/PagList.dart';
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/models/PositionEntity.dart';
 import 'package:boldo/network/organization_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/screens/organizations/request_subscription/RequestRequirementPostulation.dart';
