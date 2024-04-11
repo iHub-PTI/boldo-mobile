@@ -539,6 +539,7 @@ ThemeData boldoTheme = ThemeData(
     color: Constants.primaryColor400,
     circularTrackColor: Constants.primaryColor600,
   ),
+  appBarTheme: const AppBarTheme()
 );
 
 ButtonStyle elevatedButtonStyleSecondary = ButtonStyle(
