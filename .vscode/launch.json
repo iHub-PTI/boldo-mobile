@@ -13,6 +13,8 @@
             "args": [
                 "--flavor",
                 "dev",
+                "--dart-define-from-file",
+                ".config_dev.json"
             ],
         },
         {
@@ -24,6 +26,8 @@
             "args": [
                 "--flavor",
                 "qa",
+                "--dart-define-from-file",
+                ".config_qa.json"
             ],
         },
         {
@@ -35,6 +39,8 @@
             "args": [
                 "--flavor",
                 "prod",
+                "--dart-define-from-file",
+                ".config_prod.json"
             ],
         }
     ]

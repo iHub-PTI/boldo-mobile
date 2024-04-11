@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:boldo/app_config.dart';
 import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart' as home_organization_bloc;
 import 'package:boldo/constants.dart';
@@ -6,6 +8,7 @@ import 'package:boldo/blocs/organizationApplied_bloc/organizationApplied_bloc.da
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/PagList.dart';
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/models/PositionEntity.dart';
 import 'package:boldo/network/organization_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/screens/organizations/request_subscription/RequestRequirementPostulation.dart';
@@ -204,8 +207,10 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
           description: 'get organization by type',
           bindToScope: true,
         );
+        // emit loading status on first page
+        if(event.page == 1)
         emit(Loading());
-        var _post;
+        late Either<Failure, PagList<Organization>> _post;
 
         //get organizations that the patient is subscribed
         await Task(() =>
@@ -225,17 +230,29 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
         var response;
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
+          Failure failure = _post.asLeft();
           emit(Failed(response: response));
-          transaction.throwable = _post.asLeft();
+          transaction.throwable = failure;
           transaction.finish(
             status: SpanStatus.fromString(
-              _post.asLeft().message,
+              failure.message,
             ),
           );
         }else{
-          late PagList<Organization> allOrganizations;
-          _post.foldRight(
-              PagList<Organization>, (a, previous) => allOrganizations = a);
+
+          PagList<Organization> allOrganizations = _post.asRight();
+
+          // FIXME(Ever Garay): set fake address
+
+          allOrganizations.items?.forEach((organization){
+            organization.position = PositionEntity(
+              latitude: -25.30066 + (Random().nextBool()? 1: -1 )*Random().nextDouble()/50,
+              longitude: -57.63591 + (Random().nextBool()? 1: -1 )*Random().nextDouble()/50,
+              title: "Surcursal: ${organization.name?? 'unwknown'}",
+              subtitle: organization.name,
+            );
+          });
+
           emit(AllOrganizationsObtained(organizationsList: allOrganizations));
           transaction.finish(
             status: const SpanStatus.ok(),

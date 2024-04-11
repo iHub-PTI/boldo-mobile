@@ -5,6 +5,7 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/pharmacy/components/pharmacy_available_card.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
+import 'package:boldo/utils/MapLauncher.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/loading.dart';
@@ -133,18 +134,20 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Container(
-                                                    child: Expanded(
-                                                      child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Text(
-                                                            "Estas farmacias se encuentran adheridas a Boldo",
-                                                            style: bodyMediumRegular.copyWith(
-                                                                color: ConstantsV2.activeText),
+                                                  child: Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(
+                                                          "Estas farmacias se encuentran adheridas a Boldo",
+                                                          style: bodyMediumRegular.copyWith(
+                                                            color: ConstantsV2.activeText,
                                                           ),
-                                                        ],
-                                                      ),
-                                                    )),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -156,13 +159,36 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                                             children: [
                                               CustomSearchInput(
                                                 initialText: nameFiltered,
-                                                maxWidth: 168,
+                                                expanded: true,
                                                 hintText: "Buscar por nombre",
                                                 onEditingComplete: (value){
                                                   BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizationsByType(type: OrganizationType.pharmacy, name: value.trimLeft().trimRight()));
                                                   nameFiltered = value;
                                                 },
                                                 onChange: (value) => nameFiltered = value,
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              TextButton.icon(
+                                                onPressed: (){
+                                                  MapsLauncher.launchAppCoordinates(
+                                                    position: _pharmacies.where((element) => element.position != null).map((e) => e.position!).toList(),
+                                                    context: context,
+                                                  );
+                                                }, 
+                                                icon: const Icon(
+                                                  Icons.map_outlined,
+                                                  color: ConstantsV2.darkBlue,
+                                                ),
+                                                label: Text(
+                                                  "Mapa",
+                                                  style: boldoSubTextMediumStyle.copyWith(
+                                                    color: ConstantsV2.blueDark,
+                                                  ),
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -214,24 +240,6 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
             return Container(
               child: Row(
                 children: [
-                  Center(
-                    child: ImageViewTypeForm(
-                      height: 30,
-                      width: 30,
-                      border: false,
-                      elevation: 0,
-                      text: (index+ 1).toString(),
-                      backgroundColor: ConstantsV2.secondaryLightAndClear,
-                      textStyle: const TextStyle(
-                        color: ConstantsV2.grayDark,
-                        fontSize: 14,
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w500,
-                        height: 0,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12,),
                   Expanded(
                     child: pharmacyAvailable(pharmacies[index]),
                   ),
@@ -275,10 +283,10 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Container(
         padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
+        child: const SingleChildScrollView(
           child: Column(
             children: [
-              const EmptyStateV2(
+              EmptyStateV2(
                 picture: "empty_pharmacies.svg",
                 titleBottom: "No hay farmacias",
                 textBottom:
