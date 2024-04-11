@@ -19,8 +19,8 @@ class CustomSearchInput extends StatefulWidget {
     this.hintText,
     this.onEditingComplete,
     this.onChange,
-  }) : assert( expanded == null && maxWidth != null,
-  'If this is not expanded must bd have a width ')
+  }) : assert( expanded != null || maxWidth != null,
+  'If this is not expanded must be have a width ')
   , super(key: key) ;
 
   @override
