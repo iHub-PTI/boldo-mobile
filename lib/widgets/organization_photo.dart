@@ -24,9 +24,9 @@ class OrganizationPhoto extends StatelessWidget {
       url: organization.logoUrl,
       elevation: 0,
       text: text,
-      backgroundColor: ConstantsV2.green,
+      backgroundColor: ConstantsV2.secondaryLightAndClear,
       textStyle: const TextStyle(
-        color: Color(0xFFF5F5F5),
+        color: Colors.black,
         fontSize: 13,
         fontFamily: 'Montserrat',
         fontWeight: FontWeight.w500,
