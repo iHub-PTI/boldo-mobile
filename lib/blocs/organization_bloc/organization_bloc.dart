@@ -204,6 +204,8 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
           description: 'get organization by type',
           bindToScope: true,
         );
+        // emit loading status on first page
+        if(event.page == 1)
         emit(Loading());
         var _post;
 
