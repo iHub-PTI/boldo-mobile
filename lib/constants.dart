@@ -135,8 +135,8 @@ const boldoSubTextMediumStyle = TextStyle(
 );
 
 TextStyle bodyLarge = GoogleFonts.montserrat().copyWith(
-  fontWeight: FontWeight.w300,
-  fontSize: 14,
+  fontWeight: FontWeight.w400,
+  fontSize: 16,
 );
 
 TextStyle bodyP = GoogleFonts.montserrat().copyWith(
@@ -146,7 +146,7 @@ TextStyle bodyP = GoogleFonts.montserrat().copyWith(
 
 TextStyle bodyLargeBlack = GoogleFonts.montserrat().copyWith(
   fontWeight: FontWeight.w500,
-  fontSize: 14,
+  fontSize: 16,
 );
 
 TextStyle bodySmallRegular = GoogleFonts.montserrat().copyWith(
