@@ -233,9 +233,20 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
             ),
           );
         }else{
-          late PagList<Organization> allOrganizations;
-          _post.foldRight(
-              PagList<Organization>, (a, previous) => allOrganizations = a);
+
+          PagList<Organization> allOrganizations = _post.asRight();
+
+          // FIXME(Ever Garay): set fake address
+
+          allOrganizations.items?.forEach((organization){
+            organization.position = PositionEntity(
+              latitude: -25.30066 + (Random().nextBool()? 1: -1 )*Random().nextDouble()/50,
+              longitude: -57.63591 + (Random().nextBool()? 1: -1 )*Random().nextDouble()/50,
+              title: "Surcursal: ${organization.name?? 'unwknown'}",
+              subtitle: organization.name,
+            );
+          });
+
           emit(AllOrganizationsObtained(organizationsList: allOrganizations));
           transaction.finish(
             status: const SpanStatus.ok(),
