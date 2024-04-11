@@ -518,6 +518,19 @@ ThemeData boldoTheme = ThemeData(
       color: ConstantsV2.systemFail
     )
   ),
+  searchBarTheme: SearchBarThemeData(
+    elevation: MaterialStateProperty.all<double>(0),
+    backgroundColor: MaterialStateProperty.resolveWith((states){
+      switch (states.firstOrNull) {
+        case MaterialState.selected:
+        case MaterialState.pressed:
+        case MaterialState.focused:
+          return ConstantsV2.gray.withOpacity(0.5);
+        default:
+          return ConstantsV2.BGNeutral;
+      }
+    }),
+  ),
   primaryColor: Colors.white,
   scaffoldBackgroundColor: ConstantsV2.BGNeutral,
   brightness: Brightness.light,
