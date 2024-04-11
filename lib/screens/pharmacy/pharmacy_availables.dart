@@ -134,18 +134,20 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Container(
-                                                    child: Expanded(
-                                                      child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Text(
-                                                            "Estas farmacias se encuentran adheridas a Boldo",
-                                                            style: bodyMediumRegular.copyWith(
-                                                                color: ConstantsV2.activeText),
+                                                  child: Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(
+                                                          "Estas farmacias se encuentran adheridas a Boldo",
+                                                          style: bodyMediumRegular.copyWith(
+                                                            color: ConstantsV2.activeText,
                                                           ),
-                                                        ],
-                                                      ),
-                                                    )),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -157,7 +159,7 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                                             children: [
                                               CustomSearchInput(
                                                 initialText: nameFiltered,
-                                                maxWidth: 168,
+                                                expanded: true,
                                                 hintText: "Buscar por nombre",
                                                 onEditingComplete: (value){
                                                   BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizationsByType(type: OrganizationType.pharmacy, name: value.trimLeft().trimRight()));
@@ -238,24 +240,6 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
             return Container(
               child: Row(
                 children: [
-                  Center(
-                    child: ImageViewTypeForm(
-                      height: 30,
-                      width: 30,
-                      border: false,
-                      elevation: 0,
-                      text: (index+ 1).toString(),
-                      backgroundColor: ConstantsV2.secondaryLightAndClear,
-                      textStyle: const TextStyle(
-                        color: ConstantsV2.grayDark,
-                        fontSize: 14,
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w500,
-                        height: 0,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12,),
                   Expanded(
                     child: pharmacyAvailable(pharmacies[index]),
                   ),
@@ -299,10 +283,10 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Container(
         padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
+        child: const SingleChildScrollView(
           child: Column(
             children: [
-              const EmptyStateV2(
+              EmptyStateV2(
                 picture: "empty_pharmacies.svg",
                 titleBottom: "No hay farmacias",
                 textBottom:
