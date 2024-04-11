@@ -64,8 +64,20 @@ The mobile app is specifically for patients.
    - APP_URL_DOWNLOAD represent url to redirect to store for every platform
    - DEFAULT_APP_URL_DOWNLOAD url to redirect page of promotion to get app 
    
+6. Create a `.config_[dev|qa|prod].json` file in the project's root folder to can use the `dart-define-from-file=.config_[env].json`:
 
-6`flutter run` - to start the app on an available device
+   ```
+   {
+      "MAPS_API_KEY_IOS": "your_ios_google_maps_key",
+      "MAPS_API_KEY_ANDROID": "your_android_google_maps_key"
+   }
+   ```
+   
+   Notes:
+   - this keys and values can used on precompile time by AndroidManifest and AppDelegate to keep keys used privately at compile time
+   
+
+7. `flutter run` - to start the app on an available device
 
 Note: You can check the availability of connected devices by running `flutter doctor`.
 
