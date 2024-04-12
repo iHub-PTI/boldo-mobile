@@ -170,7 +170,11 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                                               initialText: context
                                                   .read<OrganizationBloc>()
                                                   .pharmacyNameFilter,
-                                              maxWidth: 168,
+                                              
+                                              maxWidth: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2,
                                               hintText: "Buscar por nombre",
                                               onEditingComplete: (value) {
                                                 BlocProvider.of<
