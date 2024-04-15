@@ -24,20 +24,26 @@ class PharmaciesScreen extends StatefulWidget {
 }
 
 class _OrganizationsScreenState extends State<PharmaciesScreen> {
-
   RefreshController _pharmaciesPageController = RefreshController();
-
   List<Organization> _pharmacies = [];
   int _totalPharmacies = 0;
-  int _page = 1;
 
-  String? nameFiltered;
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider<OrganizationBloc>(
-        create: (context) => OrganizationBloc()..add(GetAllOrganizationsByType(type: OrganizationType.pharmacy)),
+        create: (context) => OrganizationBloc()
+          ..add(GetAllOrganizationsByType(type: OrganizationType.pharmacy)),
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.white,
@@ -45,20 +51,19 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
             leadingWidth: 200,
             leading: Padding(
               padding: const EdgeInsets.only(left: 16.0),
-              child:
-              SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+              child: SvgPicture.asset('assets/Logo.svg',
+                  semanticsLabel: 'BOLDO Logo'),
             ),
           ),
           body: SafeArea(
             child: Container(
               child: BlocListener<OrganizationBloc, OrganizationBlocState>(
                 listener: (context, state) {
-                  if(state is Failed){
+                  if (state is Failed) {
                     emitSnackBar(
                         context: context,
                         text: state.response,
-                        status: ActionStatus.Fail
-                    );
+                        status: ActionStatus.Fail);
                   }
                 },
                 child: Container(
@@ -94,94 +99,122 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                             const SizedBox(
                               height: 16,
                             ),
-                            BlocBuilder<OrganizationBloc, OrganizationBlocState>(
-                                builder: (context, state){
-                                  if (state is Failed){
-                                    //reset refresh status
-                                    _pharmaciesPageController.loadComplete();
-                                    _pharmaciesPageController.refreshCompleted();
-                                    return DataFetchErrorWidget(retryCallback: () => BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizationsByType(type: OrganizationType.pharmacy)));
-                                  } else if(state is AllOrganizationsObtained){
+                            BlocBuilder<OrganizationBloc,
+                                    OrganizationBlocState>(
+                                builder: (context, state) {
+                              if (state is Failed) {
+                                //reset refresh status
+                                _pharmaciesPageController.loadComplete();
+                                _pharmaciesPageController.refreshCompleted();
+                                return DataFetchErrorWidget(
+                                    retryCallback: () => BlocProvider.of<
+                                            OrganizationBloc>(context)
+                                        .add(GetAllOrganizationsByType(
+                                            type: OrganizationType.pharmacy)));
+                              } else if (state is AllOrganizationsObtained) {
+                                //reset refresh status
+                                _pharmaciesPageController.loadComplete();
+                                _pharmaciesPageController.refreshCompleted();
 
-                                    //reset refresh status
-                                    _pharmaciesPageController.loadComplete();
-                                    _pharmaciesPageController.refreshCompleted();
+                                _totalPharmacies =
+                                    state.organizationsList.total ?? 0;
 
-                                    _totalPharmacies = state.organizationsList.total?? 0;
+                                _pharmacies =
+                                    state.organizationsList.items ?? [];
 
-                                    if(_page <= 1){
-                                      _pharmacies = state.organizationsList.items ?? [];
-                                    }else{
-                                      _pharmacies.addAll(state.organizationsList.items?? []);
-                                    }
-
-                                    return Flexible(
-                                      child: Container(
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                          color: const Color(0xFFFAFAFA),
-                                          boxShadow: [
-                                            shadowRegular,
-                                          ]
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Container(
-                                                    child: Expanded(
-                                                      child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Text(
-                                                            "Estas farmacias se encuentran adheridas a Boldo",
-                                                            style: bodyMediumRegular.copyWith(
-                                                                color: ConstantsV2.activeText),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    )),
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 16,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
+                                return Flexible(
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xFFFAFAFA),
+                                        boxShadow: [
+                                          shadowRegular,
+                                        ]),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              CustomSearchInput(
-                                                initialText: nameFiltered,
-                                                maxWidth: 168,
-                                                hintText: "Buscar por nombre",
-                                                onEditingComplete: (value){
-                                                  BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizationsByType(type: OrganizationType.pharmacy, name: value.trimLeft().trimRight()));
-                                                  nameFiltered = value;
-                                                },
-                                                onChange: (value) => nameFiltered = value,
-                                              ),
+                                              Container(
+                                                  child: Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Estas farmacias se encuentran adheridas a Boldo",
+                                                      style: bodyMediumRegular
+                                                          .copyWith(
+                                                              color: ConstantsV2
+                                                                  .activeText),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )),
                                             ],
                                           ),
-                                          const SizedBox(
-                                            height: 16,
-                                          ),
-                                          _pharmacies.isNotEmpty? listPharmacies(
-                                            pharmacies: _pharmacies,
-                                            context: context,
-                                          ) : organizationAvailableEmpty(),
-                                        ],
-                                      ),
+                                        ),
+                                        const SizedBox(
+                                          height: 16,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            CustomSearchInput(
+                                              initialText: context
+                                                  .read<OrganizationBloc>()
+                                                  .pharmacyNameFilter,
+                                              
+                                              maxWidth: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2,
+                                              hintText: "Buscar por nombre",
+                                              onEditingComplete: (value) {
+                                                BlocProvider.of<
+                                                            OrganizationBloc>(
+                                                        context)
+                                                    .add(
+                                                        GetAllOrganizationsByType(
+                                                            type:
+                                                                OrganizationType
+                                                                    .pharmacy,
+                                                            name: value
+                                                                .trimLeft()
+                                                                .trimRight()));
+                                                context
+                                                    .read<OrganizationBloc>()
+                                                    .pharmacyNameFilter = value;
+                                              },
+                                              onChange: (value) => context
+                                                  .read<OrganizationBloc>()
+                                                  .pharmacyNameFilter = value,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 16,
+                                        ),
+                                        _pharmacies.isNotEmpty
+                                            ? listPharmacies(
+                                                pharmacies: _pharmacies,
+                                                context: context,
+                                              )
+                                            : organizationAvailableEmpty(),
+                                      ],
                                     ),
-                                    );
-                                  }else {
-                                    return loadingStatus();
-                                  }
-                                }
-                            ),
+                                  ),
+                                );
+                              } else {
+                                return loadingStatus();
+                              }
+                            }),
                           ],
                         ),
                       ),
@@ -195,11 +228,11 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
       ),
     );
   }
-  
+
   Widget listPharmacies({
     required List<Organization> pharmacies,
     required BuildContext context,
-  }){
+  }) {
     return Flexible(
       child: SmartRefresher(
         physics: const ClampingScrollPhysics(),
@@ -210,7 +243,7 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
           physics: const ClampingScrollPhysics(),
           shrinkWrap: true,
           itemCount: pharmacies.length,
-          itemBuilder: (BuildContext context, int index){
+          itemBuilder: (BuildContext context, int index) {
             return Container(
               child: Row(
                 children: [
@@ -220,7 +253,7 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                       width: 30,
                       border: false,
                       elevation: 0,
-                      text: (index+ 1).toString(),
+                      text: (index + 1).toString(),
                       backgroundColor: ConstantsV2.secondaryLightAndClear,
                       textStyle: const TextStyle(
                         color: ConstantsV2.grayDark,
@@ -231,7 +264,9 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12,),
+                  const SizedBox(
+                    width: 12,
+                  ),
                   Expanded(
                     child: pharmacyAvailable(pharmacies[index]),
                   ),
@@ -244,45 +279,40 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
               height: 16,
             );
           },
+          controller:
+              context.read<OrganizationBloc>().pharmaciesListViewController,
         ),
         onRefresh: () {
-          _page = 1;
-          getPharmacies(context: context);
-        },
-        // this for load more doctors
-        onLoading: () {
-          _page++;
+          context.read<OrganizationBloc>().pharmaciesListPage = 1;
           getPharmacies(context: context);
         },
       ),
     );
   }
 
-  void getPharmacies({required BuildContext context}){
+  void getPharmacies({required BuildContext context}) {
     BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizationsByType(
       type: OrganizationType.pharmacy,
-      page: _page,
-      name: nameFiltered,
     ));
   }
 
-  Widget pharmacyAvailable(Organization organization){
+  Widget pharmacyAvailable(Organization organization) {
     return PharmacyAvailableCard(organization: organization);
   }
 
-  Widget organizationAvailableEmpty(){
+  Widget organizationAvailableEmpty() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Container(
         padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
+        child: const SingleChildScrollView(
           child: Column(
             children: [
-              const EmptyStateV2(
+              EmptyStateV2(
                 picture: "empty_pharmacies.svg",
                 titleBottom: "No hay farmacias",
                 textBottom:
-                "La lista de farmacias aparecerá aquí una vez que estén disponibles",
+                    "La lista de farmacias aparecerá aquí una vez que estén disponibles",
               ),
             ],
           ),
@@ -290,8 +320,4 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
       ),
     );
   }
-
 }
-
-
-

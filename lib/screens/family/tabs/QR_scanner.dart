@@ -2,6 +2,7 @@ import 'package:boldo/blocs/qr_bloc/qr_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/loading_helper.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,7 +21,6 @@ class QRScanner extends StatefulWidget {
 }
 
 class _QRScannerState extends State<QRScanner> {
-
   MobileScannerController? cameraController;
   bool _dataLoading = false;
   bool? _showScanner;
@@ -33,7 +33,7 @@ class _QRScannerState extends State<QRScanner> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    CheckScanner();
+    checkScanner();
     super.initState();
   }
 
@@ -50,114 +50,120 @@ class _QRScannerState extends State<QRScanner> {
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: _showScanner == true
+          ? BackButtonLabel(
+              padding: const EdgeInsets.only(top: 26.0),
+              iconType: BackIcon.backClose,
+              iconColor: ConstantsV2.lightest,
+            )
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       body: BlocProvider(
-          create: (context) => QrBloc(), // <-- first event,
-          child: BlocListener<QrBloc, QrBlocState>(
-            listener: (context, state){
-              setState(() {
-                if(state is Failed){
-                  emitSnackBar(
-                      context: context,
-                      text: state.response,
-                      status: ActionStatus.Fail
-                  );
-                  _dataLoading = false;
-                  Navigator.pop(context);
-                }
-                if(state is Success){
-                  _dataLoading = false;
-                }
-                if(state is QrDecoded){
-                  user.isNew = false;
-                  Navigator.pushNamedAndRemoveUntil(context, '/familyConnectTransition',
-                      ModalRoute.withName('/methods')
-                  );
-                }
-                if(state is Loading){
-                  _dataLoading = true;
-                }
-              });
-            },
-            child : BlocBuilder<QrBloc, QrBlocState>(
-                builder: (context, state){
-                  return Stack(
-                    children: [
-                      if(_showScanner== null)
-                        loadingStatus()
-                      else
-                        if(_showScanner==true)
-                          MobileScanner(
-                            allowDuplicates: false,
-                            controller: cameraController,
-                            onDetect: (Barcode barcode, MobileScannerArguments){
-                              code = barcode.rawValue;
-                              qrImage= QrImage(
-                                data: code!,
-                                size: 200,
-                                embeddedImage: const AssetImage('assets/images/logo.png'),
-                                embeddedImageStyle: QrEmbeddedImageStyle(
-                                ),
-                                eyeStyle: const QrEyeStyle(
-                                  eyeShape: QrEyeShape.circle,
-                                  color: Colors.black,
-                                ),
-                                dataModuleStyle: const QrDataModuleStyle(
-                                  dataModuleShape: QrDataModuleShape.circle,
-                                  color: Colors.black,
-                                ),
-                              );
-                              cameraController!.stop();
-                              BlocProvider.of<QrBloc>(context).add(ValidateQr(qrCode: code?? ''));
-
-                            },
-                          ),
-                      NativeDeviceOrientationReader(
-                        useSensor: true, // --> [2]
-                        builder: (ctx) {
-                          final orientation = NativeDeviceOrientationReader.orientation(ctx);
-                          int turns = 0;
-                          switch (orientation) {
-                            case NativeDeviceOrientation.portraitUp:
-                              turns = 0;
-                              break;
-                            case NativeDeviceOrientation.portraitDown:
-                              turns = 2;
-                              break;
-                            case NativeDeviceOrientation.landscapeLeft:
-                              turns = 1;
-                              break;
-                            case NativeDeviceOrientation.landscapeRight:
-                              turns = 3;
-                              break;
-                            case NativeDeviceOrientation.unknown:
-                              turns = 0;
-                              break;
-                          }
-                          // children with rotation
-                          return Container();
-                        },
-                      ),
-                      if(_dataLoading)
-                        Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                                child: LoadingHelper(qrImage: qrImage,)
-                            )
-                        )
-                    ],
-                  );
-                }
-            ),
-          ),
+        create: (context) => QrBloc(), // <-- first event,
+        child: BlocListener<QrBloc, QrBlocState>(
+          listener: (context, state) {
+            setState(() {
+              if (state is Failed) {
+                emitSnackBar(
+                    context: context,
+                    text: state.response,
+                    status: ActionStatus.Fail);
+                _dataLoading = false;
+                Navigator.pop(context);
+              }
+              if (state is Success) {
+                _dataLoading = false;
+              }
+              if (state is QrDecoded) {
+                user.isNew = false;
+                Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/familyConnectTransition',
+                    ModalRoute.withName('/methods'));
+              }
+              if (state is Loading) {
+                _dataLoading = true;
+              }
+            });
+          },
+          child: BlocBuilder<QrBloc, QrBlocState>(builder: (context, state) {
+            return Stack(
+              children: [
+                if (_showScanner == null)
+                  loadingStatus()
+                else if (_showScanner == true)
+                  MobileScanner(
+                    allowDuplicates: false,
+                    controller: cameraController,
+                    onDetect: (Barcode barcode, MobileScannerArguments) {
+                      code = barcode.rawValue;
+                      qrImage = QrImage(
+                        data: code!,
+                        size: 200,
+                        embeddedImage:
+                            const AssetImage('assets/images/logo.png'),
+                        embeddedImageStyle: QrEmbeddedImageStyle(),
+                        eyeStyle: const QrEyeStyle(
+                          eyeShape: QrEyeShape.circle,
+                          color: Colors.black,
+                        ),
+                        dataModuleStyle: const QrDataModuleStyle(
+                          dataModuleShape: QrDataModuleShape.circle,
+                          color: Colors.black,
+                        ),
+                      );
+                      cameraController!.stop();
+                      BlocProvider.of<QrBloc>(context)
+                          .add(ValidateQr(qrCode: code ?? ''));
+                    },
+                  ),
+                NativeDeviceOrientationReader(
+                  useSensor: true, // --> [2]
+                  builder: (ctx) {
+                    final orientation =
+                        NativeDeviceOrientationReader.orientation(ctx);
+                    int turns = 0;
+                    switch (orientation) {
+                      case NativeDeviceOrientation.portraitUp:
+                        turns = 0;
+                        break;
+                      case NativeDeviceOrientation.portraitDown:
+                        turns = 2;
+                        break;
+                      case NativeDeviceOrientation.landscapeLeft:
+                        turns = 1;
+                        break;
+                      case NativeDeviceOrientation.landscapeRight:
+                        turns = 3;
+                        break;
+                      case NativeDeviceOrientation.unknown:
+                        turns = 0;
+                        break;
+                    }
+                    // children with rotation
+                    return Container();
+                  },
+                ),
+                if (_dataLoading)
+                  Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                          child: LoadingHelper(
+                        qrImage: qrImage,
+                      )))
+              ],
+            );
+          }),
+        ),
       ),
     );
   }
 
-  void CheckScanner() async {
+  void checkScanner() async {
     bool result = await checkQRPermission(context: context);
-    if(result==true){
+    if (result == true) {
       setState(() {
         cameraController = MobileScannerController(
           facing: CameraFacing.back,
@@ -165,9 +171,8 @@ class _QRScannerState extends State<QRScanner> {
         );
         _showScanner = true;
       });
-    }else{
+    } else {
       Navigator.pop(context);
     }
   }
-
 }
