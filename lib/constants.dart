@@ -410,6 +410,7 @@ const BoxDecoration selectedCardDecoration = BoxDecoration(
 );
 
 ThemeData boldoTheme = ThemeData(
+  useMaterial3: true,
   fontFamily: 'Montserrat',
   listTileTheme: const ListTileThemeData(
     horizontalTitleGap: 0
