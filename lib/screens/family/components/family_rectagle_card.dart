@@ -237,7 +237,6 @@ class UnlinkFamilyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
-      surfaceTintColor: ConstantsV2.primaryColor,
       onSelected: (String result) {
         if (onTapCallback != null) {
           onTapCallback!(result.toString());
@@ -249,7 +248,9 @@ class UnlinkFamilyWidget extends StatelessWidget {
           value: 'Desvincular',
           child: Container(
             height: 45,
-            decoration: const BoxDecoration(color: Constants.accordionbg),
+            decoration: const BoxDecoration(
+              color: Constants.accordionbg,
+            ),
             child: Row(
               children: [
                 Padding(
