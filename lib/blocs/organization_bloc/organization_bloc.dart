@@ -1,10 +1,13 @@
 import 'dart:math';
 
 import 'package:boldo/app_config.dart';
-import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart' as home_organization_bloc;
+import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart'
+    as home_organization_bloc;
 import 'package:boldo/constants.dart';
-import 'package:boldo/blocs/organizationSubscribed_bloc/organizationSubscribed_bloc.dart' as subscribed;
-import 'package:boldo/blocs/organizationApplied_bloc/organizationApplied_bloc.dart' as applied;
+import 'package:boldo/blocs/organizationSubscribed_bloc/organizationSubscribed_bloc.dart'
+    as subscribed;
+import 'package:boldo/blocs/organizationApplied_bloc/organizationApplied_bloc.dart'
+    as applied;
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/PagList.dart';
 import 'package:boldo/models/Patient.dart';
@@ -19,15 +22,35 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-
 part 'organization_event.dart';
 part 'organization_state.dart';
 
-class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState> {
-  final OrganizationRepository _organizationRepository = OrganizationRepository();
+class OrganizationBloc
+    extends Bloc<OrganizationBlocEvent, OrganizationBlocState> {
+  final OrganizationRepository _organizationRepository =
+      OrganizationRepository();
+
+  ScrollController pharmaciesListViewController = ScrollController();
+  String? pharmacyNameFilter;
+  int pharmaciesListPage = 1;
+
+  PagList<Organization> get organizationList =>
+      (state as AllOrganizationsObtained).organizationsList;
+
   OrganizationBloc() : super(OrganizationInitialState()) {
+    pharmaciesListViewController.addListener(() {
+      if (pharmaciesListViewController.position.pixels ==
+          pharmaciesListViewController.position.maxScrollExtent) {
+        if ((organizationList.items?.length ?? 0) <
+            (organizationList.total ?? 0)) {
+          pharmaciesListPage++;
+          add(GetAllOrganizationsByType(type: OrganizationType.pharmacy));
+        }
+      }
+    });
+
     on<OrganizationBlocEvent>((event, emit) async {
-      if(event is GetAllOrganizations) {
+      if (event is GetAllOrganizations) {
         ISentrySpan transaction = Sentry.startTransaction(
           event.runtimeType.toString(),
           'GET',
@@ -38,15 +61,14 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
         var _post;
 
         //get organizations that the patient is subscribed
-        await Task(() =>
-        _organizationRepository.getUnsubscribedOrganizations(event.patientSelected)!)
+        await Task(() => _organizationRepository
+                .getUnsubscribedOrganizations(event.patientSelected)!)
             .attempt()
             .mapLeftToFailure()
             .run()
             .then((value) {
           _post = value;
-        }
-        );
+        });
         var response;
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
@@ -57,19 +79,19 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
               _post.asLeft().message,
             ),
           );
-        }else{
-
+        } else {
           List<Organization> allOrganizations = [];
           _post.foldRight(Organization, (a, previous) => allOrganizations = a);
 
-          PagList<Organization> _organizationsPage = PagList<Organization>(total: allOrganizations.length, items: allOrganizations);
+          PagList<Organization> _organizationsPage = PagList<Organization>(
+              total: allOrganizations.length, items: allOrganizations);
 
           emit(AllOrganizationsObtained(organizationsList: _organizationsPage));
           transaction.finish(
             status: const SpanStatus.ok(),
           );
         }
-      }else if(event is SubscribeToAnManyOrganizations) {
+      } else if (event is SubscribeToAnManyOrganizations) {
         ISentrySpan transaction = Sentry.startTransaction(
           event.runtimeType.toString(),
           'POST',
@@ -79,28 +101,23 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
         emit(Loading());
 
         Either<Failure, List<MapEntry<Organization, bool?>>>
-        postulationEvaluation = await Task(() =>
-          checkOrganizationsRequirements(
-            organizations: event.organizations,
-            context: event.context,
-          )
-        )
-          .attempt()
-          .mapLeftToFailure()
-          .run();
+            postulationEvaluation =
+            await Task(() => checkOrganizationsRequirements(
+                  organizations: event.organizations,
+                  context: event.context,
+                )).attempt().mapLeftToFailure().run();
 
-        if(postulationEvaluation.isLeft()){
-
+        if (postulationEvaluation.isLeft()) {
           Failure _failure = postulationEvaluation.asLeft();
 
-          if(_failure.message == cancelActionMessage) {
+          if (_failure.message == cancelActionMessage) {
             transaction.finish(
               status: SpanStatus.fromString(
                 _failure.message,
               ),
             );
             emit(Success());
-          }else {
+          } else {
             emit(Failed(response: _failure.message));
             transaction.throwable = _failure;
             transaction.finish(
@@ -109,30 +126,24 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
               ),
             );
           }
-        }else{
+        } else {
+          List<MapEntry<Organization, bool?>> listPostulation =
+              postulationEvaluation.asRight();
 
-          List<MapEntry<Organization, bool?>> listPostulation = postulationEvaluation.asRight();
+          List<Organization> _organizationsChecked = listPostulation
+              .where((organizationWithResponse) =>
+                  organizationWithResponse.value == true)
+              .map((organizationWithResponse) => organizationWithResponse.key)
+              .toList();
 
-          List<Organization> _organizationsChecked = listPostulation.where(
-                  (organizationWithResponse) => organizationWithResponse.value == true
-          ).map(
-                  (organizationWithResponse) => organizationWithResponse.key
-          ).toList();
-
-          if(_organizationsChecked.isNotEmpty){
-
+          if (_organizationsChecked.isNotEmpty) {
             // get organizations that the patient is subscribed
-            Either<Failure, None<dynamic>> _post2 =
-             await Task(() =>
-            _organizationRepository.subscribeToManyOrganizations(
-              _organizationsChecked,
-              event.patientSelected,
-            )!)
-                .attempt()
-                .mapLeftToFailure()
-                .run();
+            Either<Failure, None<dynamic>> _post2 = await Task(
+                () => _organizationRepository.subscribeToManyOrganizations(
+                      _organizationsChecked,
+                      event.patientSelected,
+                    )!).attempt().mapLeftToFailure().run();
             if (_post2.isLeft()) {
-
               Failure failure = _post2.asLeft();
 
               emit(Failed(response: failure.message));
@@ -146,27 +157,30 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
               emit(SuccessSubscribed(
                 organizationSubscribed: [],
               ));
-
-
-            }else{
+            } else {
               // send signal to get news with latest organizations list
-              BlocProvider.of<home_organization_bloc.HomeOrganizationBloc>(event.context).add(home_organization_bloc.GetOrganizationsSubscribed());
+              BlocProvider.of<home_organization_bloc.HomeOrganizationBloc>(
+                      event.context)
+                  .add(home_organization_bloc.GetOrganizationsSubscribed());
 
               String text = _organizationsChecked.length == 1
-                  ? "Una solicitud enviada correctamente":
-              "${_organizationsChecked.length} solicitudes enviadas correctamente"
-              ;
+                  ? "Una solicitud enviada correctamente"
+                  : "${_organizationsChecked.length} solicitudes enviadas correctamente";
 
               await emitSnackBar(
-                  context: event.context,
-                  text: text,
-                  status: ActionStatus.Success
-              ).then((value) {
+                      context: event.context,
+                      text: text,
+                      status: ActionStatus.Success)
+                  .then((value) {
+                GetIt.I.get<subscribed.OrganizationSubscribedBloc>().add(
+                    subscribed.GetOrganizationsSubscribed(
+                        patientSelected: event.patientSelected));
+                GetIt.I.get<applied.OrganizationAppliedBloc>().add(
+                    applied.GetOrganizationsPostulated(
+                        patientSelected: event.patientSelected));
 
-                GetIt.I.get<subscribed.OrganizationSubscribedBloc>().add(subscribed.GetOrganizationsSubscribed(patientSelected: event.patientSelected));
-                GetIt.I.get<applied.OrganizationAppliedBloc>().add(applied.GetOrganizationsPostulated(patientSelected: event.patientSelected));
-
-                if (_organizationsChecked.length == event.organizations.length) {
+                if (_organizationsChecked.length ==
+                    event.organizations.length) {
                   Navigator.of(event.context).pop(true);
                 }
               });
@@ -179,13 +193,13 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
                 status: const SpanStatus.ok(),
               );
             }
+          } else {
+            String message = listPostulation.length == 1
+                ? "No se pudo enviar la solicitud"
+                : "No se pudo enviar las solicitudes";
 
-          }else{
-
-            String message = listPostulation.length == 1 ?
-                "No se pudo enviar la solicitud" : "No se pudo enviar las solicitudes";
-
-            message = message + " debido a los requisitos de suscripción no cumplidos";
+            message = message +
+                " debido a los requisitos de suscripción no cumplidos";
 
             emitSnackBar(
               context: event.context,
@@ -200,33 +214,29 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
             emit(Success());
           }
         }
-      }else if(event is GetAllOrganizationsByType) {
+      } else if (event is GetAllOrganizationsByType) {
         ISentrySpan transaction = Sentry.startTransaction(
           "${event.runtimeType.toString()}-${event.type.codeType}",
           'GET',
           description: 'get organization by type',
           bindToScope: true,
         );
+
         // emit loading status on first page
-        if(event.page == 1)
-        emit(Loading());
+        if (pharmaciesListPage <= 1) emit(Loading());
         late Either<Failure, PagList<Organization>> _post;
 
+
         //get organizations that the patient is subscribed
-        await Task(() =>
-        _organizationRepository.getOrganizationsByType(
-          organizationType: event.type,
-          name: event.name,
-          page: event.page,
-          pageSize: event.pageSize?? appConfig.ALL_ORGANIZATION_PAGE_SIZE.getValue,
-        )!)
-            .attempt()
-            .mapLeftToFailure()
-            .run()
-            .then((value) {
+        await Task(() => _organizationRepository.getOrganizationsByType(
+              organizationType: event.type,
+              name: pharmacyNameFilter,
+              page: pharmaciesListPage,
+              pageSize: event.pageSize ??
+                  appConfig.ALL_ORGANIZATION_PAGE_SIZE.getValue,
+            )!).attempt().mapLeftToFailure().run().then((value) {
           _post = value;
-        }
-        );
+        });
         var response;
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
@@ -238,11 +248,15 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
               failure.message,
             ),
           );
-        }else{
-
+        } else {
+          final currentList = state is AllOrganizationsObtained
+              ? (state as AllOrganizationsObtained).organizationsList
+              : PagList<Organization>(total: null, items: []);
           PagList<Organization> allOrganizations = _post.asRight();
 
-          // FIXME(Ever Garay): set fake address
+          allOrganizations = PagList<Organization>(
+              total: currentList.total ?? allOrganizations.total,
+              items: [...?currentList.items, ...?allOrganizations.items]);
 
           allOrganizations.items?.forEach((organization){
             organization.position = PositionEntity(
@@ -257,30 +271,25 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
           transaction.finish(
             status: const SpanStatus.ok(),
           );
-
         }
       }
-    }
-
-    );
+    });
   }
 
-  Future<List<MapEntry<Organization, bool?>>> checkOrganizationsRequirements ({
+  Future<List<MapEntry<Organization, bool?>>> checkOrganizationsRequirements({
     required List<Organization> organizations,
     required BuildContext context,
   }) async {
-    
     List<MapEntry<Organization, bool?>> _answers = [];
 
     await Future.forEach(organizations, (element) async {
-      
-      if(element.organizationSettings?.automaticPatientSubscription?? false) {
-        bool? _answer = await evaluateRequirements(
-            organization: element, context: context);
+      if (element.organizationSettings?.automaticPatientSubscription ?? false) {
+        bool? _answer =
+            await evaluateRequirements(organization: element, context: context);
 
-        if(_answer == null){
+        if (_answer == null) {
           throw Failure(cancelActionMessage);
-        }else {
+        } else {
           _answers.add(
             MapEntry(
               element,
@@ -288,11 +297,9 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
             ),
           );
         }
-      }else {
+      } else {
         _answers.add(MapEntry(element, true));
       }
-
-        
     });
 
     return _answers;
@@ -302,9 +309,8 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
     required Organization organization,
     required BuildContext context,
   }) async {
-
     bool? expectedValue = await Navigator.of(context).push(
-      MaterialPageRoute (
+      MaterialPageRoute(
         builder: (BuildContext context) => RequestRequirementPostulation(
           organization: organization,
           cancelAction: () async {
@@ -389,5 +395,4 @@ class OrganizationBloc extends Bloc<OrganizationBlocEvent, OrganizationBlocState
 
     return expectedValue;
   }
-
 }

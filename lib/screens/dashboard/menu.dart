@@ -28,7 +28,6 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-
   final List<ItemMenu> items = [
     const ItemMenu(
       image: 'assets/icon/family.svg',
@@ -42,7 +41,7 @@ class _MenuScreenState extends State<MenuScreen> {
     ),
     const ItemMenu(
       image: 'assets/icon/shield-check.svg',
-      title: 'Polîticas de privacidad',
+      title: 'Políticas de privacidad',
       page: PrivacyPolicy(),
     ),
     const ItemMenu(
@@ -74,149 +73,149 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<UserLogoutBloc, UserLogoutState>(
-      listener: (context, state) {
-        if (state is UserLogoutFailed) {
-          emitSnackBar(
-            context: context,
-            text: state.response,
-            status: ActionStatus.Fail,
-          );
-        }
-      },
-      child: Scaffold(
-        body: Stack(
-            children: [
-              const Background(text: "menu"),
-              SafeArea(
-                child: Container(
-                  child: Column(
-                    children: [
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            BackButtonLabel(
-                              iconType: BackIcon.backClose,
-                              iconColor: ConstantsV2.lightest,
-                            ),
-                          ],
-                        ),
+        listener: (context, state) {
+          if (state is UserLogoutFailed) {
+            emitSnackBar(
+              context: context,
+              text: state.response,
+              status: ActionStatus.Fail,
+            );
+          }
+        },
+        child: Scaffold(
+          body: Stack(children: [
+            const Background(text: "menu"),
+            SafeArea(
+              child: Container(
+                child: Column(
+                  children: [
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          BackButtonLabel(
+                            iconType: BackIcon.backClose,
+                            iconColor: ConstantsV2.lightest,
+                          ),
+                        ],
                       ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Container(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                        child :Column(
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: (){
-                                                      Navigator.pushNamed(context, '/profileScreen');
-                                                    },
-                                                    child: ImageViewTypeForm(
-                                                      height: 170,
-                                                      width: 170,
-                                                      border: true,
-                                                      url: patient.photoUrl,
-                                                      gender: patient.gender,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 15,),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Flexible(
-                                                    child: Text(
-                                                      "${patient.givenName??''} ${patient.familyName??''}",
-                                                      style: boldoTitleRegularTextStyle,
-                                                      textAlign: TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 30,),
-                                            ]
-                                        )
-                                    ),
-                                    Container(
-                                      alignment: Alignment.topLeft,
-                                      child: ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: items.length,
-                                        padding: const EdgeInsets.all(16),
-                                        scrollDirection: Axis.vertical,
-                                        itemBuilder: _buildItem,
-                                        physics: const ClampingScrollPhysics(),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.all(16),
-                                child: Align(
-                                  alignment: Alignment.bottomLeft,
-                                  child: Container(
-                                    padding: const EdgeInsets.only(left: 8),
-                                    child: TextButton.icon(
-                                      onPressed: () {
-                                        BlocProvider.of<UserLogoutBloc>(context).add(GetUserLogout(context: context));
-                                      },
-                                      icon: SvgPicture.asset(
-                                        "assets/icon/power-settings-new.svg",
-                                        color: ConstantsV2.yellow,
-                                      ),
-                                      label: Text(
-                                        "Cerrar Sesión",
-                                        style: boldoSubTextStyle.copyWith(
-                                          color: ConstantsV2.lightest,
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Container(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                      child: Column(children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                                context, '/profileScreen');
+                                          },
+                                          child: ImageViewTypeForm(
+                                            height: 170,
+                                            width: 170,
+                                            border: true,
+                                            url: patient.photoUrl,
+                                            gender: patient.gender,
+                                          ),
                                         ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 15,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            "${patient.givenName ?? ''} ${patient.familyName ?? ''}",
+                                            style: boldoTitleRegularTextStyle,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 30,
+                                    ),
+                                  ])),
+                                  Container(
+                                    alignment: Alignment.topLeft,
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: items.length,
+                                      padding: const EdgeInsets.all(16),
+                                      scrollDirection: Axis.vertical,
+                                      itemBuilder: _buildItem,
+                                      physics: const ClampingScrollPhysics(),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              child: Align(
+                                alignment: Alignment.bottomLeft,
+                                child: Container(
+                                  padding: const EdgeInsets.only(left: 8),
+                                  child: TextButton.icon(
+                                    onPressed: () {
+                                      BlocProvider.of<UserLogoutBloc>(context)
+                                          .add(GetUserLogout(context: context));
+                                    },
+                                    icon: SvgPicture.asset(
+                                      "assets/icon/power-settings-new.svg",
+                                      color: ConstantsV2.yellow,
+                                    ),
+                                    label: Text(
+                                      "Cerrar Sesión",
+                                      style: boldoSubTextStyle.copyWith(
+                                        color: ConstantsV2.lightest,
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              BlocBuilder<UserLogoutBloc, UserLogoutState>(
-                builder: (context, state) {
-                  if (state is UserLogoutLoading) {
-                    return Align(
+            ),
+            BlocBuilder<UserLogoutBloc, UserLogoutState>(
+              builder: (context, state) {
+                if (state is UserLogoutLoading) {
+                  return Align(
                       alignment: Alignment.center,
                       child: Image.asset(
                         'assets/images/loading.gif',
                         height: 60,
                         width: 60,
-                      )
-                    );
-                  } else {
-                    return Container();
-                  }
-                },
-              )
-            ]
-        ),
-      )
-    );
+                      ));
+                } else {
+                  return Container();
+                }
+              },
+            )
+          ]),
+        ));
   }
 
-  Widget _buildItem(BuildContext context, int index){
+  Widget _buildItem(BuildContext context, int index) {
     return items[index];
   }
-
 }

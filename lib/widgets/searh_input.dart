@@ -1,9 +1,7 @@
 import 'package:boldo/constants.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomSearchInput extends StatefulWidget {
-
   final String? initialText;
   final bool? expanded;
   final double? maxWidth;
@@ -20,24 +18,24 @@ class CustomSearchInput extends StatefulWidget {
     this.onEditingComplete,
     this.onChange,
   }) : assert( expanded != null || maxWidth != null,
-  'If this is not expanded must be have a width ')
-  , super(key: key) ;
+      'If this is not expanded must be have a width '),
+      super(key: key) ;
 
   @override
   State<CustomSearchInput> createState() => _StateCustomSearchInput();
-
 }
 
 class _StateCustomSearchInput extends State<CustomSearchInput> {
-
   bool showClearIcon = false;
   TextEditingController _controller = TextEditingController();
 
   @override
-  void initState(){
-    _controller.text = widget.initialText?? '';
+  void initState() {
+    _controller.text = widget.initialText ?? '';
     super.initState();
-    widget.initialText?.isEmpty?? true? showClearIcon = false : showClearIcon = true;
+    widget.initialText?.isEmpty ?? true
+        ? showClearIcon = false
+        : showClearIcon = true;
   }
 
   @override
@@ -85,13 +83,13 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
 
     Widget child;
 
-    widget.expanded?? false ? child = Expanded(child: form)
-    : child = Container(
-      width: widget.maxWidth,
-      child: form,
-    );
+    widget.expanded ?? false
+        ? child = Expanded(child: form)
+        : child = Container(
+            width: widget.maxWidth,
+            child: form,
+          );
 
     return child;
   }
-
 }
