@@ -39,8 +39,8 @@ class DoctorsAvailable extends StatefulWidget {
 }
 
 // STATE CLASS
-class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerProviderStateMixin{
-
+class _DoctorsAvailableState extends State<DoctorsAvailable>
+    with SingleTickerProviderStateMixin {
   // filter provider
   late DoctorFilterProvider _myProvider;
 
@@ -61,8 +61,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
       RefreshController(initialRefresh: false);
 
   RefreshController _refreshFavoriteDoctorController =
-  RefreshController(initialRefresh: false);
-
+      RefreshController(initialRefresh: false);
 
   // scroll controller
   ScrollController scrollDoctorList = ScrollController();
@@ -70,7 +69,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   bool showAnimatedButton = false;
   List<Doctor>? doctorsSaved;
 
-  final GlobalKey<AnimatedGridState> gridFavoriteDoctorsKey = GlobalKey<AnimatedGridState>();
+  final GlobalKey<AnimatedGridState> gridFavoriteDoctorsKey =
+      GlobalKey<AnimatedGridState>();
 
   final Duration durationFavoriteAction = const Duration(seconds: 1);
 
@@ -102,7 +102,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context){
+      create: (BuildContext context) {
         return GoToTopBloc();
       },
       child: Scaffold(
@@ -112,8 +112,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
           leadingWidth: 200,
           leading: Padding(
             padding: const EdgeInsets.only(left: 16.0),
-            child:
-            SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+            child: SvgPicture.asset('assets/Logo.svg',
+                semanticsLabel: 'BOLDO Logo'),
           ),
         ),
         floatingActionButton: ButtonGoTop(
@@ -128,11 +128,11 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
               BlocListener<DoctorsAvailableBloc, DoctorsAvailableState>(
                 listener: (context, state) {
                   if (state is DoctorsLoaded) {
-                    maxSizeAllDoctors = state.doctors.total??0;
+                    maxSizeAllDoctors = state.doctors.total ?? 0;
                     offsetAllDoctors = 0;
                     offsetFavoriteDoctors = 0;
                     setState(() {
-                      doctors = state.doctors.items?? [];
+                      doctors = state.doctors.items ?? [];
                     });
                     getRecentDoctors();
                     getFavoriteDoctors();
@@ -140,24 +140,21 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                     if (mounted) {
                       _refreshDoctorController.refreshCompleted();
                       _refreshDoctorController.loadComplete();
-                      maxSizeAllDoctors = state.doctors.total??0;
+                      maxSizeAllDoctors = state.doctors.total ?? 0;
 
-                      state.doctors.items?.removeWhere(
-                              (newDoctor) => doctors.any(
-                                  (doctor) => newDoctor.id == doctor.id
-                          )
-                      );
+                      state.doctors.items?.removeWhere((newDoctor) =>
+                          doctors.any((doctor) => newDoctor.id == doctor.id));
 
                       setState(() {
-                        doctors = [...doctors, ...state.doctors.items?? [] ];
+                        doctors = [...doctors, ...state.doctors.items ?? []];
                       });
                     }
                   } else if (state is FilterLoadedInDoctorList) {
                     _refreshDoctorController.refreshCompleted();
                     _refreshDoctorController.loadComplete();
-                    maxSizeAllDoctors = state.doctors.total??0;
+                    maxSizeAllDoctors = state.doctors.total ?? 0;
                     setState(() {
-                      doctors = state.doctors.items?? [];
+                      doctors = state.doctors.items ?? [];
                     });
                   }
                 },
@@ -177,52 +174,44 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                     _refreshFavoriteDoctorController.refreshCompleted();
                     _refreshFavoriteDoctorController.loadComplete();
                     favoritesDoctors.clear();
-                    maxSizeFavoriteDoctors = state.doctors.total??0;
+                    maxSizeFavoriteDoctors = state.doctors.total ?? 0;
 
-                    state.doctors.items?.removeWhere(
-                            (newDoctor) => favoritesDoctors.any(
-                                (doctor) => newDoctor.id == doctor.id
-                        )
-                    );
+                    state.doctors.items?.removeWhere((newDoctor) =>
+                        favoritesDoctors
+                            .any((doctor) => newDoctor.id == doctor.id));
 
                     state.doctors.items?.forEach((doctor) {
                       favoritesDoctors.add(doctor);
                       try {
                         gridFavoriteDoctorsKey.currentState!.insertItem(
                             favoritesDoctors.length - 1,
-                            duration: durationFavoriteAction
-                        );
+                            duration: durationFavoriteAction);
                       } catch (error) {
                         //none
                       }
                     });
-                  }else if (state is MoreFavoriteDoctorsLoaded) {
+                  } else if (state is MoreFavoriteDoctorsLoaded) {
                     _refreshFavoriteDoctorController.refreshCompleted();
                     _refreshFavoriteDoctorController.loadComplete();
-                    maxSizeFavoriteDoctors = state.doctors.total??0;
+                    maxSizeFavoriteDoctors = state.doctors.total ?? 0;
 
-                    state.doctors.items?.removeWhere(
-                            (newDoctor) => favoritesDoctors.any(
-                                (doctor) => newDoctor.id == doctor.id
-                        )
-                    );
+                    state.doctors.items?.removeWhere((newDoctor) =>
+                        favoritesDoctors
+                            .any((doctor) => newDoctor.id == doctor.id));
 
                     state.doctors.items?.forEach((doctor) {
                       favoritesDoctors.add(doctor);
                       try {
                         gridFavoriteDoctorsKey.currentState!.insertItem(
                             favoritesDoctors.length - 1,
-                            duration: durationFavoriteAction
-                        );
+                            duration: durationFavoriteAction);
                       } catch (error) {
                         //none
                       }
                     });
                     // reloadScreen
-                    setState(() {
-
-                    });
-                  }else if (state is FailedFavoriteDoctors){
+                    setState(() {});
+                  } else if (state is FailedFavoriteDoctors) {
                     _refreshFavoriteDoctorController.refreshCompleted();
                     _refreshFavoriteDoctorController.loadComplete();
                   }
@@ -241,13 +230,15 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                         color: ConstantsV2.lightAndClear,
                         boxShadow: [
                           shadowHeader,
-                        ]
-                    ),
+                        ]),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        BackButtonLabel(labelText: 'Médicos',padding: null,),
+                        BackButtonLabel(
+                          labelText: 'Médicos',
+                          padding: null,
+                        ),
                         Row(
                           children: [
                             ImageViewTypeForm(
@@ -267,10 +258,11 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                                   ),
                                 );
                               },
-                              child:Card(
+                              child: Card(
                                 color: ConstantsV2.secondaryRegular,
                                 shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(100)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(100)),
                                 ),
                                 child: Container(
                                   padding: const EdgeInsets.all(10),
@@ -289,21 +281,17 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                     ),
                   ),
                   BlocBuilder<DoctorsAvailableBloc, DoctorsAvailableState>(
-                      builder: (context, state){
-                        if(state is Loading || state is FilterLoading)
-                          return loadingStatus();
-                        else if(state is Failed){
-                          return DataFetchErrorWidget(
-                              retryCallback: (){ getDoctors(); }
-                          );
-                        }else{
-                          return
-                            doctors.isNotEmpty
-                                ? _body()
-                                : _emptyDoctor();
-                        }
-                      }
-                  ),
+                      builder: (context, state) {
+                    if (state is Loading || state is FilterLoading)
+                      return loadingStatus();
+                    else if (state is Failed) {
+                      return DataFetchErrorWidget(retryCallback: () {
+                        getDoctors();
+                      });
+                    } else {
+                      return doctors.isNotEmpty ? _body() : _emptyDoctor();
+                    }
+                  }),
                 ],
               ),
             ),
@@ -313,7 +301,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     );
   }
 
-  Widget _body(){
+  Widget _body() {
     return Expanded(
       child: NestedScrollView(
         controller: scrollDoctorList,
@@ -335,7 +323,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     );
   }
 
-  Widget _tabs(){
+  Widget _tabs() {
     return TabBarView(
       physics: const ClampingScrollPhysics(),
       controller: _tabController,
@@ -346,62 +334,62 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     );
   }
 
-  Widget _tabBar(){
+  Widget _tabBar() {
     return Container(
-      padding: const EdgeInsets.all(12),
-      color: ConstantsV2.grayLightest,
-      child: Stack(
-        children: [
-          Center(
-              child: SvgPicture.asset(
-                'assets/decorations/line_separator.svg',
-              )
-          ),
-          TabBar(
-            labelStyle: boldoTabHeaderSelectedTextStyle,
-            unselectedLabelStyle: boldoTabHeaderUnselectedTextStyle,
-            indicatorColor: Colors.transparent,
-            unselectedLabelColor:
-            const Color.fromRGBO(119, 119, 119, 1),
-            labelColor: ConstantsV2.activeText,
-            controller: _tabController,
-            tabs: [
-              const Text(
-                'Recientes',
-              ),
-              const Text(
-                'Favoritos',
-              ),
-            ],
-          ),
-        ],
-      )
-    );
+        padding: const EdgeInsets.all(12),
+        color: ConstantsV2.grayLightest,
+        child: Stack(
+          children: [
+            Center(
+                child: SvgPicture.asset(
+              'assets/decorations/line_separator.svg',
+            )),
+            TabBar(
+              labelStyle: boldoTabHeaderSelectedTextStyle,
+              unselectedLabelStyle: boldoTabHeaderUnselectedTextStyle,
+              indicatorColor: Colors.transparent,
+              unselectedLabelColor: const Color.fromRGBO(119, 119, 119, 1),
+              labelColor: ConstantsV2.activeText,
+              controller: _tabController,
+              dividerColor: Colors.transparent,
+              tabs: [
+                const Text(
+                  'Recientes',
+                ),
+                const Text(
+                  'Favoritos',
+                ),
+              ],
+            ),
+          ],
+        ));
   }
 
-  Widget _recentDoctorTab(){
+  Widget _recentDoctorTab() {
     return Container(
       child: SmartRefresher(
         physics: const ClampingScrollPhysics(),
         controller: _refreshDoctorController,
-        enablePullUp: doctors.length< maxSizeAllDoctors,
+        enablePullUp: doctors.length < maxSizeAllDoctors,
         enablePullDown: true,
         child: ListView(
           shrinkWrap: true,
           physics: const ClampingScrollPhysics(),
           children: [
-            const SizedBox(height: 16,),
+            const SizedBox(
+              height: 16,
+            ),
             _recentDoctors(),
-            const SizedBox(height: 24,),
+            const SizedBox(
+              height: 24,
+            ),
             _allDoctors(),
           ],
         ),
         footer: CustomFooter(
-          builder:
-              (BuildContext context, LoadStatus? mode) {
+          builder: (BuildContext context, LoadStatus? mode) {
             Widget body = Row(
-              mainAxisAlignment:
-              MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(
                   Icons.arrow_upward,
@@ -434,28 +422,27 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         },
         // this for load more doctors
         onLoading: () {
-          offsetAllDoctors = offsetAllDoctors + appConfig.ALL_DOCTORS_PAGE_COUNT;
+          offsetAllDoctors =
+              offsetAllDoctors + appConfig.ALL_DOCTORS_PAGE_COUNT;
           getMoreDoctors();
         },
       ),
     );
   }
 
-  Widget _favoriteDoctorTab(){
+  Widget _favoriteDoctorTab() {
     return Container(
       padding: const EdgeInsets.all(16),
       child: SmartRefresher(
         physics: const ClampingScrollPhysics(),
         controller: _refreshFavoriteDoctorController,
-        enablePullUp: favoritesDoctors.length< maxSizeFavoriteDoctors,
+        enablePullUp: favoritesDoctors.length < maxSizeFavoriteDoctors,
         enablePullDown: true,
         child: _favoritesDoctors(),
         footer: CustomFooter(
-          builder:
-              (BuildContext context, LoadStatus? mode) {
+          builder: (BuildContext context, LoadStatus? mode) {
             Widget body = Row(
-              mainAxisAlignment:
-              MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(
                   Icons.arrow_upward,
@@ -488,14 +475,15 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
         },
         // this for load more doctors
         onLoading: () {
-          offsetFavoriteDoctors = offsetFavoriteDoctors + appConfig.ALL_DOCTORS_PAGE_COUNT;
+          offsetFavoriteDoctors =
+              offsetFavoriteDoctors + appConfig.ALL_DOCTORS_PAGE_COUNT;
           getMoreFavoriteDoctors();
         },
       ),
     );
   }
 
-  Widget _emptyDoctor(){
+  Widget _emptyDoctor() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Column(
@@ -517,7 +505,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 Container(
                   child: Text(
                     "A medida que vayas usando la app, vas a ver algunas "
-                        "sugerencias de médicos en esta sección.",
+                    "sugerencias de médicos en esta sección.",
                     style: bodyMediumRegular.copyWith(color: Colors.black),
                     textAlign: TextAlign.center,
                   ),
@@ -527,8 +515,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 ),
                 Container(
                   child: Text(
-                      "De momento, podés hacer una búsqueda entre los médicos a "
-                          "los que tenés acceso.",
+                    "De momento, podés hacer una búsqueda entre los médicos a "
+                    "los que tenés acceso.",
                     style: bodyMediumRegular.copyWith(color: Colors.black),
                     textAlign: TextAlign.center,
                   ),
@@ -558,7 +546,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                       borderRadius: BorderRadius.all(Radius.circular(100)),
                     ),
                     child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 18),
                         decoration: buttonFXSecondaryStyle.copyWith(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -579,8 +568,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                               'assets/icon/search.svg',
                             ),
                           ],
-                        )
-                    ),
+                        )),
                   ),
                 ],
               ),
@@ -591,7 +579,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     );
   }
 
-  Widget _emptyFavoriteDoctors(){
+  Widget _emptyFavoriteDoctors() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Column(
@@ -644,113 +632,112 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     );
   }
 
-  Widget _emptyRecentDoctors(){
+  Widget _emptyRecentDoctors() {
     return Container(
-      color: ConstantsV2.grayLightest,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 39),
-        child: Column(
-          children: [
-            Container(
-              child: Center(
-                child: SvgPicture.asset(
-                  'assets/icon/empty_recentDoctors.svg',
+        color: ConstantsV2.grayLightest,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 39),
+          child: Column(
+            children: [
+              Container(
+                child: Center(
+                  child: SvgPicture.asset(
+                    'assets/icon/empty_recentDoctors.svg',
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Container(
-              child: Column(
-                children: [
-                  Container(
-                    child: const Text(
-                      "No hay consultas recientes",
-                      style: TextStyle(
-                        color: ConstantsV2.activeText,
-                        fontStyle: FontStyle.normal,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Montserrat',
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    child: Text(
-                      "El listado aparecerá aquí una vez que hayas consultado",
-                      style: bodyMediumRegular.copyWith(color: Colors.black),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
+              const SizedBox(
+                height: 10,
               ),
-            ),
-          ],
-        ),
-      )
-    );
+              Container(
+                child: Column(
+                  children: [
+                    Container(
+                      child: const Text(
+                        "No hay consultas recientes",
+                        style: TextStyle(
+                          color: ConstantsV2.activeText,
+                          fontStyle: FontStyle.normal,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Montserrat',
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      child: Text(
+                        "El listado aparecerá aquí una vez que hayas consultado",
+                        style: bodyMediumRegular.copyWith(color: Colors.black),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 
-  Widget _recentDoctors(){
+  Widget _recentDoctors() {
     return BlocBuilder<RecentDoctorsBloc, RecentDoctorsState>(
-        builder: (context, state){
-          if(state is LoadingRecentDoctors)
-            return loadingStatus();
-          else if(state is FailedRecentDoctors){
-            return DataFetchErrorWidget(
-                retryCallback: () { getRecentDoctors(); }
-            );
-          }else{
-            return
-              recentDoctors.isNotEmpty? Row(
+        builder: (context, state) {
+      if (state is LoadingRecentDoctors)
+        return loadingStatus();
+      else if (state is FailedRecentDoctors) {
+        return DataFetchErrorWidget(retryCallback: () {
+          getRecentDoctors();
+        });
+      } else {
+        return recentDoctors.isNotEmpty
+            ? Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration:const BoxDecoration(
-                      color: ConstantsV2.grayLightest,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0x0C000000),
-                          blurRadius: 4,
-                          offset: Offset(0, 2),
-                          spreadRadius: 0,
-                        )
-                      ],
+                      padding: const EdgeInsets.all(16),
+                      decoration: const BoxDecoration(
+                        color: ConstantsV2.grayLightest,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0x0C000000),
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                            spreadRadius: 0,
+                          )
+                        ],
+                      ),
+                      height: 250,
+                      child: GridView.builder(
+                        physics: const ScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 300,
+                                childAspectRatio: 4 / 3.2,
+                                crossAxisSpacing: 20,
+                                mainAxisSpacing: 20),
+                        itemCount: recentDoctors.length,
+                        itemBuilder: (context, index) {
+                          return doctorItem(context, recentDoctors[index]);
+                        },
+                      ),
                     ),
-                    height: 250,
-                    child: GridView.builder(
-                      physics: const ScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      gridDelegate:
-                      const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 300,
-                          childAspectRatio: 4 / 3.2,
-                          crossAxisSpacing: 20,
-                          mainAxisSpacing: 20),
-                      itemCount: recentDoctors.length,
-                      itemBuilder: (context, index){
-                        return doctorItem(context, recentDoctors[index]);
-                      },
-                    ),
-                  ),
                   ),
                 ],
-              ): _emptyRecentDoctors();
-          }
-        }
-    );
+              )
+            : _emptyRecentDoctors();
+      }
+    });
   }
 
-  Widget _allDoctors(){
+  Widget _allDoctors() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -759,8 +746,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
           child: Text(
             "Todos los médicos",
             style: boldoScreenSubtitleTextStyle.copyWith(
-                color: ConstantsV2.activeText
-            ),
+                color: ConstantsV2.activeText),
           ),
         ),
         Container(
@@ -775,26 +761,24 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
               )
             ],
           ),
-          padding:
-          const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: ReorderableBuilder(
             enableDraggable: false,
             children: doctors.map((e) => doctorItem(context, e)).toList(),
             onReorder: _handleReorder,
             enableScrollingWhileDragging: false,
-            builder: (children){
+            builder: (children) {
               return GridView.builder(
                 physics: const ClampingScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
-                gridDelegate:
-                const SliverGridDelegateWithMaxCrossAxisExtent(
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 200,
                     childAspectRatio: 5 / 4,
                     crossAxisSpacing: 20,
                     mainAxisSpacing: 20),
                 itemCount: children.length,
-                itemBuilder: (context, index){
+                itemBuilder: (context, index) {
                   return children[index];
                 },
               );
@@ -805,32 +789,31 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     );
   }
 
-  Widget _favoritesDoctors(){
+  Widget _favoritesDoctors() {
     return BlocBuilder<FavoriteDoctorsBloc, FavoriteDoctorsState>(
-        builder: (context, state){
-          if(state is LoadingFavoriteDoctors)
-            return loadingStatus();
-          else if(state is FailedFavoriteDoctors){
-            return DataFetchErrorWidget(
-                retryCallback: () { getFavoriteDoctors(); }
-            );
-          }else{
-            return
-              favoritesDoctors.isNotEmpty
-                  ? Container(
+        builder: (context, state) {
+      if (state is LoadingFavoriteDoctors)
+        return loadingStatus();
+      else if (state is FailedFavoriteDoctors) {
+        return DataFetchErrorWidget(retryCallback: () {
+          getFavoriteDoctors();
+        });
+      } else {
+        return favoritesDoctors.isNotEmpty
+            ? Container(
                 child: AnimatedGrid(
                   key: gridFavoriteDoctorsKey,
-                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  padding:
+                      const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                   physics: const ClampingScrollPhysics(),
                   scrollDirection: Axis.vertical,
-                  gridDelegate:
-                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                       maxCrossAxisExtent: 200,
                       childAspectRatio: 5 / 4,
                       crossAxisSpacing: 20,
                       mainAxisSpacing: 20),
                   initialItemCount: favoritesDoctors.length,
-                  itemBuilder: (context, index, animation){
+                  itemBuilder: (context, index, animation) {
                     return FadeTransition(
                       opacity: animation,
                       child: doctorItem(context, favoritesDoctors[index]),
@@ -838,10 +821,9 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                   },
                 ),
               )
-                  : _emptyFavoriteDoctors();
-          }
-        }
-    );
+            : _emptyFavoriteDoctors();
+      }
+    });
   }
 
   void _handleReorder(List<OrderUpdateEntity> onReorderList) {
@@ -852,11 +834,12 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
     setState(() {});
   }
 
-  Widget _availabilityHourCard(List<OrganizationWithAvailability>? organization){
-
-
-    String _firstOrganizationName = "${ ((organization?.isNotEmpty)?? true)? organization?.first.organization?.name?? 'Desconocido' : "Sin org"}";
-    String _countOfMoreOrganizations = "${(organization?.length?? 0) > 1 ? ' +${(organization?.length?? 0)-1}' : '' }";
+  Widget _availabilityHourCard(
+      List<OrganizationWithAvailability>? organization) {
+    String _firstOrganizationName =
+        "${((organization?.isNotEmpty) ?? true) ? organization?.first.organization?.name ?? 'Desconocido' : "Sin org"}";
+    String _countOfMoreOrganizations =
+        "${(organization?.length ?? 0) > 1 ? ' +${(organization?.length ?? 0) - 1}' : ''}";
 
     return Container(
       child: Row(
@@ -879,10 +862,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                 Container(
                   child: Text(
                     "$_firstOrganizationName$_countOfMoreOrganizations",
-                    style: boldoBodySRegularTextStyle
-                        .copyWith(
-                      color: ConstantsV2
-                          .grayLight,
+                    style: boldoBodySRegularTextStyle.copyWith(
+                      color: ConstantsV2.grayLight,
                     ),
                   ),
                 ),
@@ -913,8 +894,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
 
   String availableText(NextAvailability? nextAvailability) {
     String available = 'Sin disponibilidad en los próximos 30 días';
-    if(nextAvailability == null)
-      return available;
+    if (nextAvailability == null) return available;
     bool isToday = false;
     final today = DateTime.now();
     final parsedAvailability =
@@ -934,7 +914,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
 
   Widget doctorItem(BuildContext context, Doctor doctor) {
     return GestureDetector(
-      key: Key(doctor.id?? '0'),
+      key: Key(doctor.id ?? '0'),
       onTap: () {
         Navigator.push(
           context,
@@ -958,49 +938,46 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
           children: <Widget>[
             // the first item in stack is the doctor profile photo
             doctor.photoUrl != null
-                ? Positioned.fill(child: CachedNetworkImage(
-              fit: BoxFit.cover,
-              imageUrl: doctor.photoUrl!,
-              progressIndicatorBuilder:
-                  (context, url, downloadProgress) => Padding(
-                padding: const EdgeInsets.all(26.0),
-                child: Center(
-                  child: loadingStatus(
-                    value: downloadProgress.progress,
-                  ),
-                ),
-              ),
-              errorWidget: (context, url, error) =>
-              const Icon(Icons.error),
-            ))
+                ? Positioned.fill(
+                    child: CachedNetworkImage(
+                    fit: BoxFit.cover,
+                    imageUrl: doctor.photoUrl!,
+                    progressIndicatorBuilder:
+                        (context, url, downloadProgress) => Padding(
+                      padding: const EdgeInsets.all(26.0),
+                      child: Center(
+                        child: loadingStatus(
+                          value: downloadProgress.progress,
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  ))
                 : Positioned.fill(
-              child:doctor.gender == 'female'
-                  ? SvgPicture.asset(
-                'assets/images/femaleDoctor.svg',
-                fit: BoxFit.cover,
-              )
-                  : doctor.gender == 'male'? SvgPicture.asset(
-                'assets/images/maleDoctor.svg',
-                fit: BoxFit.cover,
-              ): SvgPicture.asset(
-                'assets/images/persona.svg',
-                fit: BoxFit.cover,
-              ),
-            ),
+                    child: doctor.gender == 'female'
+                        ? SvgPicture.asset(
+                            'assets/images/femaleDoctor.svg',
+                            fit: BoxFit.cover,
+                          )
+                        : doctor.gender == 'male'
+                            ? SvgPicture.asset(
+                                'assets/images/maleDoctor.svg',
+                                fit: BoxFit.cover,
+                              )
+                            : SvgPicture.asset(
+                                'assets/images/persona.svg',
+                                fit: BoxFit.cover,
+                              ),
+                  ),
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 gradient: RadialGradient(
                     radius: 3,
                     center: Alignment.bottomLeft,
-                    stops: [
-                      0.08,
-                      0.72
-                    ],
-                    colors: [
-                      Colors.black,
-                      Colors.black.withOpacity(0)
-                    ]),
+                    stops: [0.08, 0.72],
+                    colors: [Colors.black, Colors.black.withOpacity(0)]),
               ),
             ),
             // the second item in stack is the column of details
@@ -1027,53 +1004,54 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                             // this for jump if there is overflow
                             Flexible(
                                 child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 8.0, right: 16, bottom: 2),
-                                      child: Text(
-                                        '${doctor.gender == 'female' ? 'Dra.' : 'Dr.'} ${doctor.givenName!.split(" ")[0]} ${doctor.familyName!.split(" ")[0]}',
-                                        style: boldoCardHeadingTextStyle.copyWith(
-                                          color: Colors.white,
-                                        ),
-                                      ),
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 8.0, right: 16, bottom: 2),
+                                  child: Text(
+                                    '${doctor.gender == 'female' ? 'Dra.' : 'Dr.'} ${doctor.givenName!.split(" ")[0]} ${doctor.familyName!.split(" ")[0]}',
+                                    style: boldoCardHeadingTextStyle.copyWith(
+                                      color: Colors.white,
                                     ),
-                                  ],
-                                ))
+                                  ),
+                                ),
+                              ],
+                            ))
                           ],
                         ),
                         // specializations
                         doctor.specializations != null
                             ? doctor.specializations!.length > 0
-                            ? Container(
-                          child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0,
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    for (int i = 0;
-                                    i <
-                                        doctor
-                                            .specializations!
-                                            .length;
-                                    i++)
-                                      Text(
-                                        "${doctor.specializations![i].description}${doctor.specializations!.length-1 != i  ? ", " : ""}",
-                                        style: boldoBodyLRegularTextStyle
-                                            .copyWith(
-                                          color: ConstantsV2
-                                              .buttonPrimaryColor100,
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              )),
-                        )
-                            : Container()
+                                ? Container(
+                                    child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0,
+                                          ),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              for (int i = 0;
+                                                  i <
+                                                      doctor.specializations!
+                                                          .length;
+                                                  i++)
+                                                Text(
+                                                  "${doctor.specializations![i].description}${doctor.specializations!.length - 1 != i ? ", " : ""}",
+                                                  style:
+                                                      boldoBodyLRegularTextStyle
+                                                          .copyWith(
+                                                    color: ConstantsV2
+                                                        .buttonPrimaryColor100,
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        )),
+                                  )
+                                : Container()
                             : Container(),
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0, bottom: 4),
@@ -1090,8 +1068,8 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
       ),
     );
   }
-  
-  Widget favoriteIcon(Doctor doctor){
+
+  Widget favoriteIcon(Doctor doctor) {
     return BlocProvider<FavoriteActionBloc>(
       create: (BuildContext context) => FavoriteActionBloc(),
       child: BlocBuilder<FavoriteActionBloc, FavoriteActionState>(
@@ -1100,7 +1078,7 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
             listener: (context, state) {
               if (state is LoadingFavoriteAction) {
                 Doctor doctorAction = Doctor.fromJson(doctor.toJson());
-                if(!doctorAction.isFavorite) {
+                if (!doctorAction.isFavorite) {
                   doctorAction.isFavorite = true;
                   favoritesDoctors.add(doctorAction);
                   try {
@@ -1111,77 +1089,15 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                   } catch (error) {
                     //none
                   }
-                }else{
-                  try {
-
-                    int index = favoritesDoctors.lastIndexWhere(
-                        (element) => element.id == doctorAction.id
-                    );
-
-                    favoritesDoctors.removeAt(
-                        index
-                    );
-                    gridFavoriteDoctorsKey.currentState!.removeItem(
-                      index, (context, animation) => FadeTransition(
-                      opacity: animation,
-                        child: doctorItem(context, doctorAction),
-                      ),
-                      duration: durationFavoriteAction,
-                    );
-                  } catch (error) {
-                    //none
-                  }
-                }
-
-
-                // update favorite status in list of all doctors
-                doctors.forEach((element) {
-                  if(element.id == doctorAction.id){
-                    element.isFavorite = !element.isFavorite;
-                  }
-                });
-
-                // update favorite status in list of recent doctors
-                recentDoctors.forEach((element) {
-                  if(element.id == doctorAction.id){
-                    element.isFavorite = !element.isFavorite;
-                  }
-                });
-                // update view
-                setState(() {
-                });
-              }
-              if (state is FailedFavoriteAction) {
-                emitSnackBar(
-                    context: context,
-                    text: "No se pudo realizar la acción",
-                    status: ActionStatus.Fail
-                );
-                Doctor doctorAction = Doctor.fromJson(doctor.toJson());
-                if(doctorAction.isFavorite) {
-                  doctorAction.isFavorite = true;
-                  favoritesDoctors.add(doctorAction);
-                  try {
-                    gridFavoriteDoctorsKey.currentState!.insertItem(
-                      favoritesDoctors.length - 1,
-                      duration: durationFavoriteAction,
-                    );
-                  } catch (error) {
-                    //none
-                  }
-                }else{
-                  doctorAction.isFavorite = false;
+                } else {
                   try {
                     int index = favoritesDoctors.lastIndexWhere(
-                            (element) => element.id == doctorAction.id
-                    );
+                        (element) => element.id == doctorAction.id);
 
-                    favoritesDoctors.removeAt(
-                        index
-                    );
-                    favoritesDoctors.lastWhere((element) => element.id == doctorAction.id);
+                    favoritesDoctors.removeAt(index);
                     gridFavoriteDoctorsKey.currentState!.removeItem(
-                      index, (context, animation) => FadeTransition(
+                      index,
+                      (context, animation) => FadeTransition(
                         opacity: animation,
                         child: doctorItem(context, doctorAction),
                       ),
@@ -1192,182 +1108,194 @@ class _DoctorsAvailableState extends State<DoctorsAvailable> with SingleTickerPr
                   }
                 }
 
-
                 // update favorite status in list of all doctors
                 doctors.forEach((element) {
-                  if(element.id == doctorAction.id){
+                  if (element.id == doctorAction.id) {
                     element.isFavorite = !element.isFavorite;
                   }
                 });
 
                 // update favorite status in list of recent doctors
                 recentDoctors.forEach((element) {
-                  if(element.id == doctorAction.id){
+                  if (element.id == doctorAction.id) {
                     element.isFavorite = !element.isFavorite;
                   }
                 });
                 // update view
-                setState(() {
+                setState(() {});
+              }
+              if (state is FailedFavoriteAction) {
+                emitSnackBar(
+                    context: context,
+                    text: "No se pudo realizar la acción",
+                    status: ActionStatus.Fail);
+                Doctor doctorAction = Doctor.fromJson(doctor.toJson());
+                if (doctorAction.isFavorite) {
+                  doctorAction.isFavorite = true;
+                  favoritesDoctors.add(doctorAction);
+                  try {
+                    gridFavoriteDoctorsKey.currentState!.insertItem(
+                      favoritesDoctors.length - 1,
+                      duration: durationFavoriteAction,
+                    );
+                  } catch (error) {
+                    //none
+                  }
+                } else {
+                  doctorAction.isFavorite = false;
+                  try {
+                    int index = favoritesDoctors.lastIndexWhere(
+                        (element) => element.id == doctorAction.id);
+
+                    favoritesDoctors.removeAt(index);
+                    favoritesDoctors
+                        .lastWhere((element) => element.id == doctorAction.id);
+                    gridFavoriteDoctorsKey.currentState!.removeItem(
+                      index,
+                      (context, animation) => FadeTransition(
+                        opacity: animation,
+                        child: doctorItem(context, doctorAction),
+                      ),
+                      duration: durationFavoriteAction,
+                    );
+                  } catch (error) {
+                    //none
+                  }
+                }
+
+                // update favorite status in list of all doctors
+                doctors.forEach((element) {
+                  if (element.id == doctorAction.id) {
+                    element.isFavorite = !element.isFavorite;
+                  }
                 });
+
+                // update favorite status in list of recent doctors
+                recentDoctors.forEach((element) {
+                  if (element.id == doctorAction.id) {
+                    element.isFavorite = !element.isFavorite;
+                  }
+                });
+                // update view
+                setState(() {});
               }
             },
             child: GestureDetector(
-              onTap: state is LoadingFavoriteAction? () => {}: (){
-                BlocProvider.of<FavoriteActionBloc>(context).add(
-                    PutFavoriteStatus(
-                      doctor: doctor,
-                      favoriteStatus: ! doctor.isFavorite,
-                    )
-                );
-              },
+              onTap: state is LoadingFavoriteAction
+                  ? () => {}
+                  : () {
+                      BlocProvider.of<FavoriteActionBloc>(context)
+                          .add(PutFavoriteStatus(
+                        doctor: doctor,
+                        favoriteStatus: !doctor.isFavorite,
+                      ));
+                    },
               child: Container(
                 padding: const EdgeInsets.all(8),
                 child: SvgPicture.asset(
                   'assets/icon/favorite-star.svg',
-                  color: doctor.isFavorite? ConstantsV2.accentRegular: null,
+                  color: doctor.isFavorite ? ConstantsV2.accentRegular : null,
                 ),
               ),
             ),
           );
         },
-
       ),
     );
   }
 
-  void getDoctors(){
-    BlocProvider.of<DoctorsAvailableBloc>(context).add(
-        GetDoctorFilter(
-          organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
-              .getOrganizationsApplied,
-          specializations:
-          Provider.of<DoctorFilterProvider>(context, listen: false)
-              .getSpecializationsApplied,
-          virtualAppointment:
+  void getDoctors() {
+    BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
+      organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
+          .getOrganizationsApplied,
+      specializations: Provider.of<DoctorFilterProvider>(context, listen: false)
+          .getSpecializationsApplied,
+      virtualAppointment:
           Provider.of<DoctorFilterProvider>(context, listen: false)
               .getLastVirtualAppointmentApplied,
-          inPersonAppointment:
+      inPersonAppointment:
           Provider.of<DoctorFilterProvider>(context, listen: false)
               .getLastInPersonAppointmentApplied,
-          names: Provider.of<DoctorFilterProvider>(
-              context,
-              listen: false)
-              .getNamesApplied,
-        )
-    );
+      names: Provider.of<DoctorFilterProvider>(context, listen: false)
+          .getNamesApplied,
+    ));
   }
 
-  void getMoreDoctors(){
-    BlocProvider.of<DoctorsAvailableBloc>(context)
-        .add(GetMoreFilterDoctor(
-        organizations:
-        Provider.of<DoctorFilterProvider>(
-            context,
-            listen: false
-        ).getOrganizationsApplied,
-        offset: offsetAllDoctors,
-        specializations:
-        Provider.of<DoctorFilterProvider>(
-            context,
-            listen: false)
-            .getSpecializationsApplied,
-        virtualAppointment: Provider.of<
-            DoctorFilterProvider>(
-            context,
-            listen: false)
-            .getLastVirtualAppointmentApplied,
-        inPersonAppointment:
-        Provider.of<DoctorFilterProvider>(
-            context,
-            listen: false)
-            .getLastInPersonAppointmentApplied,
-        names: Provider.of<DoctorFilterProvider>(
-            context,
-            listen: false)
-            .getNamesApplied));
-  }
-
-  void getRecentDoctors(){
-    BlocProvider.of<RecentDoctorsBloc>(context)..add(
-      GetRecentDoctors(
+  void getMoreDoctors() {
+    BlocProvider.of<DoctorsAvailableBloc>(context).add(GetMoreFilterDoctor(
         organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
             .getOrganizationsApplied,
+        offset: offsetAllDoctors,
         specializations:
-        Provider.of<DoctorFilterProvider>(context, listen: false)
-            .getSpecializationsApplied,
+            Provider.of<DoctorFilterProvider>(context, listen: false)
+                .getSpecializationsApplied,
         virtualAppointment:
-        Provider.of<DoctorFilterProvider>(context, listen: false)
-            .getLastVirtualAppointmentApplied,
+            Provider.of<DoctorFilterProvider>(context, listen: false)
+                .getLastVirtualAppointmentApplied,
         inPersonAppointment:
-        Provider.of<DoctorFilterProvider>(context, listen: false)
-            .getLastInPersonAppointmentApplied,
-        names: Provider.of<DoctorFilterProvider>(
-            context,
-            listen: false)
-            .getNamesApplied,
-      ),
-    );
-  }
-
-  void getFavoriteDoctors(){
-    BlocProvider.of<FavoriteDoctorsBloc>(context)
-        .add(GetFavoriteDoctors(
-        organizations:
-        Provider.of<DoctorFilterProvider>(
-            context,
-            listen: false)
-            .getOrganizationsApplied,
-        specializations:
-        Provider.of<DoctorFilterProvider>(
-            context,
-            listen: false)
-            .getSpecializationsApplied,
-        virtualAppointment: Provider.of<
-            DoctorFilterProvider>(
-            context,
-            listen: false)
-            .getLastVirtualAppointmentApplied,
-        inPersonAppointment:
-        Provider.of<DoctorFilterProvider>(
-            context,
-            listen: false)
-            .getLastInPersonAppointmentApplied,
-        names: Provider.of<DoctorFilterProvider>(
-            context,
-            listen: false)
-            .getNamesApplied
-    ),
-    );
-  }
-
-  void getMoreFavoriteDoctors(){
-    BlocProvider.of<FavoriteDoctorsBloc>(context)
-        .add(GetMoreFavoriteDoctors(
-        organizations:
-        Provider.of<DoctorFilterProvider>(
-            context,
-            listen: false
-        ).getOrganizationsApplied,
-        offset: offsetFavoriteDoctors,
-        specializations:
-        Provider.of<DoctorFilterProvider>(
-            context,
-            listen: false)
-            .getSpecializationsApplied,
-        virtualAppointment: Provider.of<
-            DoctorFilterProvider>(
-            context,
-            listen: false)
-            .getLastVirtualAppointmentApplied,
-        inPersonAppointment:
-        Provider.of<DoctorFilterProvider>(
-            context,
-            listen: false)
-            .getLastInPersonAppointmentApplied,
-        names: Provider.of<DoctorFilterProvider>(
-            context,
-            listen: false)
+            Provider.of<DoctorFilterProvider>(context, listen: false)
+                .getLastInPersonAppointmentApplied,
+        names: Provider.of<DoctorFilterProvider>(context, listen: false)
             .getNamesApplied));
   }
-  
+
+  void getRecentDoctors() {
+    BlocProvider.of<RecentDoctorsBloc>(context)
+      ..add(
+        GetRecentDoctors(
+          organizations:
+              Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .getOrganizationsApplied,
+          specializations:
+              Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .getSpecializationsApplied,
+          virtualAppointment:
+              Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .getLastVirtualAppointmentApplied,
+          inPersonAppointment:
+              Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .getLastInPersonAppointmentApplied,
+          names: Provider.of<DoctorFilterProvider>(context, listen: false)
+              .getNamesApplied,
+        ),
+      );
+  }
+
+  void getFavoriteDoctors() {
+    BlocProvider.of<FavoriteDoctorsBloc>(context).add(
+      GetFavoriteDoctors(
+          organizations:
+              Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .getOrganizationsApplied,
+          specializations:
+              Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .getSpecializationsApplied,
+          virtualAppointment:
+              Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .getLastVirtualAppointmentApplied,
+          inPersonAppointment:
+              Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .getLastInPersonAppointmentApplied,
+          names: Provider.of<DoctorFilterProvider>(context, listen: false)
+              .getNamesApplied),
+    );
+  }
+
+  void getMoreFavoriteDoctors() {
+    BlocProvider.of<FavoriteDoctorsBloc>(context).add(GetMoreFavoriteDoctors(
+        organizations: Provider.of<DoctorFilterProvider>(context, listen: false)
+            .getOrganizationsApplied,
+        offset: offsetFavoriteDoctors,
+        specializations:
+            Provider.of<DoctorFilterProvider>(context, listen: false)
+                .getSpecializationsApplied,
+        virtualAppointment:
+            Provider.of<DoctorFilterProvider>(context, listen: false)
+                .getLastVirtualAppointmentApplied,
+        inPersonAppointment:
+            Provider.of<DoctorFilterProvider>(context, listen: false)
+                .getLastInPersonAppointmentApplied,
+        names: Provider.of<DoctorFilterProvider>(context, listen: false)
+            .getNamesApplied));
+  }
 }
