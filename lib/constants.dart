@@ -536,6 +536,11 @@ ThemeData boldoTheme = ThemeData(
       color: Constants.primaryColor400,
       circularTrackColor: Constants.primaryColor600,
     ),
+    dialogTheme: const DialogTheme(
+      
+        surfaceTintColor: ConstantsV2.primaryColor,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)))),
     appBarTheme: const AppBarTheme());
 
 ButtonStyle elevatedButtonStyleSecondary = ButtonStyle(

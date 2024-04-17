@@ -215,7 +215,7 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context, 'atrás'),
-            child: const Text('atrás'),
+            child: const Text('Atrás'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, 'cancel'),
@@ -237,6 +237,7 @@ class UnlinkFamilyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
+      surfaceTintColor: ConstantsV2.primaryColor,
       onSelected: (String result) {
         if (onTapCallback != null) {
           onTapCallback!(result.toString());
