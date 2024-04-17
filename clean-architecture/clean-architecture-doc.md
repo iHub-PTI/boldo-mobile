@@ -3,7 +3,7 @@
 > Es básicamente un enfoque utilizado para diseñar software donde se aplica un concepto denominado **separación de responsabilidades**. La idea central de este concepto es que nuestra aplicación esté diseñada de tal manera que el código quede dividido en capas concéntricas donde exista una capa central que sirva de base para la construcción de las demás capas.
 
 ## Gráficamente.
-![Diagrama de Arquitectura Limpia](../assets/diagrama-clean-architecture.png)
+![Diagrama de Arquitectura Limpia](/assets/diagrama-clean-architecture.png)
 
 ## Explicación de cada una de las capas.
 
@@ -17,7 +17,7 @@ Esta es la capa intermedia y depende de la capa de dominio. Ésta capa es la enc
 Esta es la capa más externa de la arquitectura limpia y es la encargada de **definir las pantallas**, **definir los widgets** (componentes más moleculares como botones, formularios, etc.) y **gestionar el manejo de estado** (en este punto podemos referirnos a cualquiera de los distintos gestores de estados que podamos encontrar en el lenguaje de programación que estemos utilizando). 
 
 ## Representación de las interacciones.
-![Flujo de llamadas en arquitectura limpia](../assets/flujo-clean-architecture)
+![Flujo de llamadas en arquitectura limpia](/assets/flujo-clean-architecture.png)
 
 > Cuando los componentes visuales de nuestra aplicación son llamados estos invocan al gestor de estado para que le proporcione la información que debe ser visualizada en pantalla. Aquí, el gestor de estados debe invocar al caso de uso correspondiente a la vista en cuestión y este a su vez desemboca en acciones que invocan a los contratos definidos en la capa de dominio que utiliza las implementaciones definidas en la capa de acceso a los datos para cargar los datos ya sea por medio de una petición a una API o de la carga de datos que se encuentran almacenados localmente.
 
