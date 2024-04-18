@@ -23,7 +23,10 @@ class BookingConfirmScreen extends StatefulWidget {
   final NextAvailability bookingDate;
   final OrganizationWithAvailabilities organization;
   BookingConfirmScreen(
-      {Key? key, required this.bookingDate, required this.doctor, required this.organization})
+      {Key? key,
+      required this.bookingDate,
+      required this.doctor,
+      required this.organization})
       : super(key: key);
 
   @override
@@ -103,29 +106,26 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                 );
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => BookingFinalScreen(
-                    doctor: widget.doctor,
-                    bookingDate: widget.bookingDate,
-                    organization: widget.organization,
-                  )),
+                  MaterialPageRoute(
+                      builder: (context) => BookingFinalScreen(
+                            doctor: widget.doctor,
+                            bookingDate: widget.bookingDate,
+                            organization: widget.organization,
+                          )),
                 );
-
-
-              } on Failure catch(exception, stackTrace){
+              } on Failure catch (exception, stackTrace) {
                 setState(() {
                   _loading = false;
                 });
                 emitSnackBar(
                     context: context,
                     text: exception.message,
-                    status: ActionStatus.Fail
-                );
+                    status: ActionStatus.Fail);
               } catch (exception, stackTrace) {
                 emitSnackBar(
                     context: context,
                     text: genericError,
-                    status: ActionStatus.Fail
-                );
+                    status: ActionStatus.Fail);
                 setState(() {
                   _loading = false;
                 });
@@ -145,7 +145,8 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
 class ShowAppoinmentDescription extends StatelessWidget {
   final NextAvailability nextAvailability;
   final OrganizationWithAvailabilities organization;
-  const ShowAppoinmentDescription({Key? key, required this.nextAvailability, required this.organization})
+  const ShowAppoinmentDescription(
+      {Key? key, required this.nextAvailability, required this.organization})
       : super(key: key);
 
   @override
@@ -157,23 +158,33 @@ class ShowAppoinmentDescription extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: Container(
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(6)),
-              color: Constants.accordionbg),
-          child: Container(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: ListTile(
-                leading: ShowAppoinmentTypeIcon(appointmentType: nextAvailability.appointmentType!),
-                title: Text(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+          color: Constants.accordionbg,
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            children: [
+              ShowAppoinmentTypeIcon(
+                appointmentType: nextAvailability.appointmentType!,
+              ),
+              const SizedBox(width: 10), // Espacio entre el icono y el texto
+              Expanded(
+                child: Text(
                   nextAvailability.appointmentType == 'A'
                       ? inPersonDesc
                       : onlineDesc,
-                  style: boldoSubTextStyle.copyWith(fontSize: 16, height: 1.5),
+                  style: boldoSubTextStyle.copyWith(
+                    fontSize: 16,
+                    height: 1.5,
+                  ),
                 ),
               ),
-            ),
-          )),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -203,17 +214,16 @@ class ShowAppoinmentTypeIcon extends StatelessWidget {
                 child: SvgPicture.asset(
                   'assets/icon/video.svg',
                   color: Constants.secondaryColor500,
-                  
                 ),
               ))
           : const Padding(
-            padding: EdgeInsets.all(4.0),
-            child: Icon(
+              padding: EdgeInsets.all(4.0),
+              child: Icon(
                 Icons.person,
                 color: Constants.primaryColor500,
                 size: 20,
               ),
-          ),
+            ),
     );
   }
 }
@@ -236,7 +246,10 @@ class _DoctorBookingInfoWidget extends StatelessWidget {
           height: 7,
         ),
         Text(
-          DateFormat('EEEE, dd MMMM yyyy', const Locale("es", 'ES').languageCode).format(bookingDate).capitalize(),
+          DateFormat(
+                  'EEEE, dd MMMM yyyy', const Locale("es", 'ES').languageCode)
+              .format(bookingDate)
+              .capitalize(),
           style: boldoSubTextStyle.copyWith(fontSize: 16),
         ),
         const SizedBox(
@@ -274,7 +287,7 @@ class _DoctorProfileWidget extends StatelessWidget {
       ),
       child: Container(
         padding:
-        const EdgeInsets.only(top: 24, right: 19, bottom: 24, left: 19),
+            const EdgeInsets.only(top: 24, right: 19, bottom: 24, left: 19),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -295,43 +308,46 @@ class _DoctorProfileWidget extends StatelessWidget {
                 ),
                 Flexible(
                   child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(child: Text(
-                          "${getDoctorPrefix(doctor.gender!)}${doctor.givenName} ${doctor.familyName}",
-                          style: boldoHeadingTextStyle.copyWith(
-                              fontWeight: FontWeight.normal),
-                        ),)
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    if (doctor.specializations != null &&
-                        doctor.specializations!.isNotEmpty)
-                      SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            for (int i = 0;
-                            i < doctor.specializations!.length;
-                            i++)
-                              Text(
-                                "${doctor.specializations![i].description}${doctor.specializations!.length-1 != i  ? ", " : ""}",
-                                style: boldoSubTextStyle.copyWith(
-                                    color: Constants.otherColor100,fontSize: 12),
-                              ),
-                          ],
-                        ),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              "${getDoctorPrefix(doctor.gender!)}${doctor.givenName} ${doctor.familyName}",
+                              style: boldoHeadingTextStyle.copyWith(
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          )
+                        ],
                       ),
-                  ],
-                ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      if (doctor.specializations != null &&
+                          doctor.specializations!.isNotEmpty)
+                        SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              for (int i = 0;
+                                  i < doctor.specializations!.length;
+                                  i++)
+                                Text(
+                                  "${doctor.specializations![i].description}${doctor.specializations!.length - 1 != i ? ", " : ""}",
+                                  style: boldoSubTextStyle.copyWith(
+                                      color: Constants.otherColor100,
+                                      fontSize: 12),
+                                ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -340,8 +356,7 @@ class _DoctorProfileWidget extends StatelessWidget {
             ),
             if (doctor.biography != null)
               Text(doctor.biography!,
-                  style: boldoSubTextStyle.copyWith(
-                      fontSize: 16, height: 1.5)),
+                  style: boldoSubTextStyle.copyWith(fontSize: 16, height: 1.5)),
           ],
         ),
       ),
