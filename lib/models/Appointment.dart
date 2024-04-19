@@ -1,4 +1,4 @@
-import 'package:boldo/blocs/appointment_bloc/appointmentBloc.dart';
+import 'package:boldo/blocs/appointment_bloc/appointment_bloc.dart';
 import 'package:boldo/models/News.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/Prescription.dart';
@@ -8,7 +8,7 @@ import 'package:flutter/widgets.dart';
 import './Doctor.dart';
 import 'Patient.dart';
 
-enum CancelUserReason {Patient, Practitioner}
+enum CancelUserReason { Patient, Practitioner }
 
 class Appointment extends News {
   String? _status;
@@ -37,42 +37,46 @@ class Appointment extends News {
     this.patient,
     this.appointmentType,
     this.statusAutor,
-  }){
+  }) {
     _status = status;
-    _appointmentStatus = statusesValid[status]?? statusDefault.value;
+    _appointmentStatus = statusesValid[status] ?? statusDefault.value;
   }
 
   AppointmentStatus? get status => _appointmentStatus;
-  set status(AppointmentStatus? newStatus){
+  set status(AppointmentStatus? newStatus) {
     _appointmentStatus = AppointmentBloc.validChangeStatus(
       actualState: _appointmentStatus,
       newState: newStatus,
     );
 
     //set string status
-    _status = statusesValid.entries.firstWhere(
-            (element) => element.value == newStatus, orElse: () => statusDefault
-    ).key;
+    _status = statusesValid.entries
+        .firstWhere((element) => element.value == newStatus,
+            orElse: () => statusDefault)
+        .key;
 
-    if(_appointmentStatus == AppointmentStatus.Cancelled){
+    if (_appointmentStatus == AppointmentStatus.Cancelled) {
       statusAutor = CancelUserReason.Patient;
     }
   }
 
   factory Appointment.fromJson(Map<String, dynamic> json) => Appointment(
-    id: json['id'],
-    start: json['start'],
-    end: json['end'],
-    description: json['description'],
-    status: json["status"],
-    appointmentType: json["appointmentType"],
-    doctor: json['doctor'] != null ? Doctor.fromJson(json['doctor']) : null,
-    organization: json['organization'] != null ? Organization.fromJson(json['organization']) : null,
-    patient: json['patient'] != null ? Patient.fromJson(json['patient']): null,
-    statusAutor: getCancelUserReason(statusAutor: json['statusAutor'] ),
-  );
+        id: json['id'],
+        start: json['start'],
+        end: json['end'],
+        description: json['description'],
+        status: json["status"],
+        appointmentType: json["appointmentType"],
+        doctor: json['doctor'] != null ? Doctor.fromJson(json['doctor']) : null,
+        organization: json['organization'] != null
+            ? Organization.fromJson(json['organization'])
+            : null,
+        patient:
+            json['patient'] != null ? Patient.fromJson(json['patient']) : null,
+        statusAutor: getCancelUserReason(statusAutor: json['statusAutor']),
+      );
 
-  static CancelUserReason? getCancelUserReason({String? statusAutor}){
+  static CancelUserReason? getCancelUserReason({String? statusAutor}) {
     Map<String, CancelUserReason> _users = {
       'Patient': CancelUserReason.Patient,
       'Practitioner': CancelUserReason.Practitioner,
@@ -81,13 +85,13 @@ class Appointment extends News {
     return _users[statusAutor];
   }
 
-  String getCancelUserMessage(){
+  String getCancelUserMessage() {
     Map<CancelUserReason, String> _users = {
       CancelUserReason.Patient: "Cancelado por el paciente",
       CancelUserReason.Practitioner: "Cancelado por el médico",
     };
 
-    return _users[statusAutor]?? "Cancelado";
+    return _users[statusAutor] ?? "Cancelado";
   }
 
   Map<String, dynamic> toJson() {
@@ -105,7 +109,7 @@ class Appointment extends News {
   }
 
   @override
-  Widget show(){
+  Widget show() {
     return AppointmentCard(
       appointment: this,
       isInWaitingRoom: _status == "open",
@@ -129,24 +133,29 @@ class Appointment extends News {
     null: AppointmentType.None,
   };
 
-  static AppointmentType typeFromString({String? type}){
-
+  static AppointmentType typeFromString({String? type}) {
     type = type?.toUpperCase();
 
-    return _typesValid[type]?? AppointmentType.None;
+    return _typesValid[type] ?? AppointmentType.None;
   }
 
-  static String? typeString({required AppointmentType? type }) {
-    return _typesValid.entries.firstWhere(
+  static String? typeString({required AppointmentType? type}) {
+    return _typesValid.entries
+        .firstWhere(
           (element) => element.value == type,
-      orElse: () => const MapEntry(null, AppointmentType.None),
-    ).key;
+          orElse: () => const MapEntry(null, AppointmentType.None),
+        )
+        .key;
   }
 
-  static MapEntry<String, AppointmentStatus>statusDefault = const MapEntry<String, AppointmentStatus>('locked', AppointmentStatus.Locked,);
+  static MapEntry<String, AppointmentStatus> statusDefault =
+      const MapEntry<String, AppointmentStatus>(
+    'locked',
+    AppointmentStatus.Locked,
+  );
 
-  static MapEntry<String?, AppointmentType> typeDefault = _typesValid.entries.last;
-
+  static MapEntry<String?, AppointmentType> typeDefault =
+      _typesValid.entries.last;
 }
 
-enum AppointmentStatus {Upcoming, Open, Closed, Locked, Cancelled}
+enum AppointmentStatus { Upcoming, Open, Closed, Locked, Cancelled }
