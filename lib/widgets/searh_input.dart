@@ -5,7 +5,7 @@ class CustomSearchInput extends StatefulWidget {
   final String? initialText;
   final bool? expanded;
   final double? maxWidth;
-  final hintText;
+  final String? hintText;
   final Function(String)? onEditingComplete;
   final Function(String)? onChange;
 

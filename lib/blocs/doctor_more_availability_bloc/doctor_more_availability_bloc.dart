@@ -11,70 +11,70 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../models/Doctor.dart';
 
-
 part 'doctor_more_availability_event.dart';
 part 'doctor_more_availability_state.dart';
 
-class DoctorMoreAvailabilityBloc extends Bloc<DoctorMoreAvailabilityEvent, DoctorMoreAvailabilityState> {
+class DoctorMoreAvailabilityBloc
+    extends Bloc<DoctorMoreAvailabilityEvent, DoctorMoreAvailabilityState> {
   final UserRepository _patientRepository = UserRepository();
   final DoctorRepository _doctorRepository = DoctorRepository();
   DoctorMoreAvailabilityBloc() : super(DoctorAvailabilityInitial()) {
     on<DoctorMoreAvailabilityEvent>((event, emit) async {
-      if(event is GetAvailability) {
+      if (event is GetAvailability) {
         ISentrySpan transaction = Sentry.startTransaction(
           event.runtimeType.toString(),
           'GET',
-          description: 'get doctor availability for booking an appointment in calendar',
+          description:
+              'get doctor availability for booking an appointment in calendar',
           bindToScope: true,
         );
         emit(Loading());
-        var _post;
-        await Task(() =>
-        _doctorRepository.getAvailabilities(
-          id: event.id,
-          startDate: event.startDate,
-          endDate: event.endDate,
-          organizations: event.organizations,
-          appointmentType: event.appointmentType,
-        )!)
-            .attempt()
-            .mapLeftToFailure()
-            .run()
-            .then((value) {
-          _post = value;
-        }
-        );
-        var response;
-        if (_post.isLeft()) {
-          _post.leftMap((l) => response = l.message);
-          emit(Failed(response: response));
-          transaction.throwable = _post.asLeft();
+        late Either<Failure, List<OrganizationWithAvailabilities>>
+            organizationsOrError;
+        await Task(() => _doctorRepository.getAvailabilities(
+              id: event.id,
+              startDate: event.startDate,
+              endDate: event.endDate,
+              organizations: event.organizations,
+              appointmentType: event.appointmentType,
+            )!).attempt().mapLeftToFailure().run().then((value) {
+          organizationsOrError = value;
+        });
+        if (organizationsOrError.isLeft()) {
+          final failure = organizationsOrError.asLeft();
+          emit(Failed(response: failure.message));
+          transaction.throwable = failure;
           transaction.finish(
             status: SpanStatus.fromString(
-              _post.asLeft().message,
+              failure.message,
             ),
           );
-        }else{
-
+        } else {
           List<Appointment>? appointments =
-          await _patientRepository.getAppointments();
+              await _patientRepository.getAppointments();
 
           // canceled or blocked appointments are not necessary
-          appointments?.removeWhere((element) => element.status != AppointmentStatus.Upcoming);
+          appointments?.removeWhere(
+              (element) => element.status != AppointmentStatus.Upcoming);
 
           late List<OrganizationWithAvailabilities> nextAvailability = [];
-          _post.foldRight(NextAvailability, (a, previous) => nextAvailability = a);
+          nextAvailability = organizationsOrError.asRight();
 
           if (appointments != null) {
             if (appointments.isNotEmpty) {
-              for(OrganizationWithAvailabilities organizationWithAvailabilities in nextAvailability){
+              for (OrganizationWithAvailabilities organizationWithAvailabilities
+                  in nextAvailability) {
                 for (int i = 0; i < appointments.length; i++) {
-                  organizationWithAvailabilities.availabilities.removeWhere((element) {
-                    return element == null || DateTime.parse(element.availability!).toLocal().compareTo(
-                        DateTime.parse(appointments[i].start!).toLocal()) ==
-                        0;
-                    }
-                  );
+                  organizationWithAvailabilities.availabilities
+                      .removeWhere((element) {
+                    return element == null ||
+                        DateTime.parse(element.availability!)
+                                .toLocal()
+                                .compareTo(
+                                    DateTime.parse(appointments[i].start!)
+                                        .toLocal()) ==
+                            0;
+                  });
                 }
               }
             }
@@ -86,8 +86,6 @@ class DoctorMoreAvailabilityBloc extends Bloc<DoctorMoreAvailabilityEvent, Docto
           );
         }
       }
-    }
-
-    );
+    });
   }
 }
