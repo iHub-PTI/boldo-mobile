@@ -351,7 +351,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable>
               unselectedLabelColor: const Color.fromRGBO(119, 119, 119, 1),
               labelColor: ConstantsV2.activeText,
               controller: _tabController,
-              dividerColor: Colors.transparent,
               tabs: [
                 const Text(
                   'Recientes',

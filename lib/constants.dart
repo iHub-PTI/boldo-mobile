@@ -543,7 +543,8 @@ ThemeData boldoTheme = ThemeData(
     popupMenuTheme:
         const PopupMenuThemeData(surfaceTintColor: ConstantsV2.primaryColor),
     cardTheme: const CardTheme(surfaceTintColor: ConstantsV2.primaryColor),
-    appBarTheme: const AppBarTheme(elevation: 6, shadowColor: Colors.black));
+    appBarTheme: const AppBarTheme(elevation: 6, shadowColor: Colors.black),
+    tabBarTheme: const TabBarTheme(dividerColor: Colors.transparent));
 
 ButtonStyle elevatedButtonStyleSecondary = ButtonStyle(
   textStyle: MaterialStateProperty.all(
