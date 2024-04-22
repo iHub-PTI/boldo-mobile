@@ -180,7 +180,7 @@ class _PassportDetailState extends State<PassportDetail> {
                       // vaccinate state
                       Container(
                         width: 225,
-                        height: 100,
+                        //height: 100,
                         child: Card(
                           shape: const RoundedRectangleBorder(
                               borderRadius:
@@ -273,17 +273,14 @@ class _PassportDetailState extends State<PassportDetail> {
                             height: 190,
                             child: Card(
                               shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(10)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
                                   side: BorderSide(
-                                      width: 3,
-                                      color:
-                                          Constants.accordionbg)),
+                                      width: 3, color: Constants.accordionbg)),
                               child: qrUrlCode != null
                                   ? Padding(
                                       padding:
-                                          const EdgeInsets.only(
-                                              left: 15.0),
+                                          const EdgeInsets.only(left: 15.0),
                                       child: QrImage(
                                         data: qrUrlCode!,
                                         version: QrVersions.auto,
@@ -294,11 +291,10 @@ class _PassportDetailState extends State<PassportDetail> {
                             ),
                           ),
                           Padding(
-                            padding:
-                                const EdgeInsets.only(top: 4.0),
+                            padding: const EdgeInsets.only(top: 4.0),
                             child: Text('Escanee para verificar',
-                                style: boldoSubTextStyle.copyWith(
-                                    fontSize: 16)),
+                                style:
+                                    boldoSubTextStyle.copyWith(fontSize: 16)),
                           ),
                         ],
                       )
@@ -491,8 +487,7 @@ class Profile extends StatelessWidget {
                         imageUrl: patient.photoUrl!,
                         progressIndicatorBuilder:
                             (context, url, downloadProgress) =>
-                                loadingStatus(
-                                    value: downloadProgress.progress),
+                                loadingStatus(value: downloadProgress.progress),
                         errorWidget: (context, url, error) =>
                             const Icon(Icons.error),
                       )
