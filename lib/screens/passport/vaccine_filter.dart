@@ -9,7 +9,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../main.dart';
 
 class VaccineFilter extends StatefulWidget {
-  VaccineFilter({Key? key}) : super(key:key);
+  VaccineFilter({Key? key}) : super(key: key);
 
   @override
   State<VaccineFilter> createState() => _VaccineFilterState();
@@ -75,7 +75,6 @@ class _VaccineFilterState extends State<VaccineFilter> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: CustomWrapper(
         children: [
           // button and label for go to back
@@ -87,7 +86,7 @@ class _VaccineFilterState extends State<VaccineFilter> {
               ),
             ],
           ),
-          
+
           const SizedBox(
             height: 15,
           ),
@@ -134,7 +133,6 @@ class _VaccineFilterState extends State<VaccineFilter> {
                       contentPadding: EdgeInsets.zero,
                       title: Text(vaccineFinded[index].name),
                       value: vaccineFinded[index].status,
-                      activeColor: Color(0xff424649),
                       checkColor: Colors.white,
                       onChanged: (value) {
                         if (vaccineFinded[index].name == chooseAll) {

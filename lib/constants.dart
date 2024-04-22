@@ -444,8 +444,8 @@ ThemeData boldoTheme = ThemeData(
     ),
     toggleableActiveColor: ConstantsV2.orange,
     checkboxTheme: CheckboxThemeData(
+      side: const BorderSide(color: ConstantsV2.orange),
       shape: RoundedRectangleBorder(
-        side: const BorderSide(color: ConstantsV2.orange, width: 5),
         borderRadius: BorderRadius.circular(4),
       ),
       fillColor: MaterialStateProperty.resolveWith((states) {
