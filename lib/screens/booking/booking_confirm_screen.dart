@@ -1,18 +1,17 @@
+import 'package:boldo/constants.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/network/appointment_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
+import 'package:boldo/screens/booking/booking_final_screen.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/errors.dart';
+import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/custom_form_button.dart';
+import 'package:boldo/widgets/wrapper.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-
-import '../../constants.dart';
-import '../../utils/helpers.dart';
-import '../../widgets/wrapper.dart';
-import 'booking_final_screen.dart';
 
 class BookingConfirmScreen extends StatefulWidget {
   final Doctor doctor;
