@@ -53,10 +53,10 @@ class _PassportDetailState extends State<PassportDetail> {
       // in this case, we must have annual dose.
       // we get the most recent vaccine date (only year)
       final nearestDate = widget.userVaccinate!.vaccineApplicationList!.reduce(
-          (a, b) =>
-              a.vaccineApplicationDate.year > b.vaccineApplicationDate.year
-                  ? a
-                  : b);
+        (a, b) => a.vaccineApplicationDate.year > b.vaccineApplicationDate.year
+            ? a
+            : b,
+      );
       // if the nearest Date match with the current year, the scheme is complete
       if (today.year == nearestDate.vaccineApplicationDate.year) {
         result = true;
@@ -106,8 +106,9 @@ class _PassportDetailState extends State<PassportDetail> {
                 : MediaQuery.of(context).size.height * 0.4,
             child: Card(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  side: BorderSide(width: 3, color: Constants.accordionbg)),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                side: BorderSide(width: 3, color: Constants.accordionbg),
+              ),
               child: VaccinateCard(
                 userVaccinate: widget.userVaccinate,
                 completeVaccineRecord: completeVaccineRecord,
@@ -133,35 +134,39 @@ class _PassportDetailState extends State<PassportDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: BlocListener<PassportBloc, PassportState>(
-      listener: (context, state) {
-        if (state is QrUrlLoaded) {
-          setState(() {
-            qrUrlCode = state.url;
-          });
-        }
-      },
-      child: Stack(
-        children: [
-          // the first element of the stack is the background
-          const Background(text: "linkFamily"),
-          // the second element is the body which adapts to the rotation
-          MediaQuery.of(context).size.width < MediaQuery.of(context).size.height
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
+      body: BlocListener<PassportBloc, PassportState>(
+        listener: (context, state) {
+          if (state is QrUrlLoaded) {
+            setState(() {
+              qrUrlCode = state.url;
+            });
+          }
+        },
+        child: Stack(
+          children: [
+            // the first element of the stack is the background
+            const Background(text: "linkFamily"),
+            // the second element is the body which adapts to the rotation
+            MediaQuery.of(context).size.width <
+                    MediaQuery.of(context).size.height
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
                       // close the passport
                       Align(
                         alignment: Alignment.topRight,
                         child: Padding(
                           padding: const EdgeInsets.only(top: 25, right: 15),
                           child: IconButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              icon: const Icon(Icons.close,
-                                  color: Colors.black45)),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: const Icon(
+                              Icons.close,
+                              color: Colors.black45,
+                            ),
+                          ),
                         ),
                       ),
                       // health passport
@@ -183,19 +188,23 @@ class _PassportDetailState extends State<PassportDetail> {
                         //height: 100,
                         child: Card(
                           shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              side: BorderSide(
-                                  width: 3, color: Constants.accordionbg)),
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            side: BorderSide(
+                              width: 3,
+                              color: Constants.accordionbg,
+                            ),
+                          ),
                           child: Column(
                             children: [
                               Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                        '${widget.userVaccinate!.diseaseCode}'),
-                                  )),
+                                padding: const EdgeInsets.all(8),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '${widget.userVaccinate!.diseaseCode}',
+                                  ),
+                                ),
+                              ),
                               // there is vaccination list
                               widget.userVaccinate!.vaccineApplicationList !=
                                       null
@@ -207,13 +216,19 @@ class _PassportDetailState extends State<PassportDetail> {
                                                 MainAxisAlignment.center,
                                             children: [
                                               SvgPicture.asset(
-                                                  'assets/icon/check.svg'),
+                                                'assets/icon/check.svg',
+                                              ),
                                               const SizedBox(width: 5),
                                               const Text(
                                                 'Esquema completo',
                                                 style: TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        40, 187, 143, 1)),
+                                                  color: Color.fromRGBO(
+                                                    40,
+                                                    187,
+                                                    143,
+                                                    1,
+                                                  ),
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -235,7 +250,8 @@ class _PassportDetailState extends State<PassportDetail> {
                                         )
                                   : const Align(
                                       alignment: Alignment.center,
-                                      child: Text('No hay lista')),
+                                      child: Text('No hay lista'),
+                                    ),
                               // see more details
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -250,13 +266,18 @@ class _PassportDetailState extends State<PassportDetail> {
                                       child: Text(
                                         'ver detalles',
                                         style: TextStyle(
-                                            color: Color.fromRGBO(
-                                                235, 139, 118, 1)),
+                                          color: Color.fromRGBO(
+                                            235,
+                                            139,
+                                            118,
+                                            1,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -273,10 +294,13 @@ class _PassportDetailState extends State<PassportDetail> {
                             height: 190,
                             child: Card(
                               shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                  side: BorderSide(
-                                      width: 3, color: Constants.accordionbg)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                                side: BorderSide(
+                                  width: 3,
+                                  color: Constants.accordionbg,
+                                ),
+                              ),
                               child: qrUrlCode != null
                                   ? Padding(
                                       padding:
@@ -292,173 +316,221 @@ class _PassportDetailState extends State<PassportDetail> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 4.0),
-                            child: Text('Escanee para verificar',
-                                style:
-                                    boldoSubTextStyle.copyWith(fontSize: 16)),
+                            child: Text(
+                              'Escanee para verificar',
+                              style: boldoSubTextStyle.copyWith(fontSize: 16),
+                            ),
                           ),
                         ],
-                      )
-                    ])
-              : Stack(fit: StackFit.expand, children: [
-                  SingleChildScrollView(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(25.0),
-                          child: Column(
-                            // mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              const Text(
-                                'Vacunaciones',
-                                style: boldoTitleBlackTextStyle,
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              SingleChildScrollView(
-                                keyboardDismissBehavior:
-                                    ScrollViewKeyboardDismissBehavior.onDrag,
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Column(
+                      ),
+                    ],
+                  )
+                : Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      SingleChildScrollView(
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(25.0),
+                              child: Column(
+                                // mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  const Text(
+                                    'Vacunaciones',
+                                    style: boldoTitleBlackTextStyle,
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  SingleChildScrollView(
+                                    keyboardDismissBehavior:
+                                        ScrollViewKeyboardDismissBehavior
+                                            .onDrag,
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Container(
-                                            height: 190,
-                                            width: 150,
-                                            child: Card(
-                                              shape:
-                                                  const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10)),
-                                              ),
-                                              color: Colors.black,
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                                child: patient.photoUrl != null
-                                                    ? CachedNetworkImage(
-                                                        fit: BoxFit.fill,
-                                                        imageUrl:
-                                                            patient.photoUrl!,
-                                                        progressIndicatorBuilder: (context,
+                                        Column(
+                                          children: [
+                                            Container(
+                                              height: 190,
+                                              width: 150,
+                                              child: Card(
+                                                shape:
+                                                    const RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(10),
+                                                  ),
+                                                ),
+                                                color: Colors.black,
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.0),
+                                                  child:
+                                                      patient.photoUrl != null
+                                                          ? CachedNetworkImage(
+                                                              fit: BoxFit.fill,
+                                                              imageUrl: patient
+                                                                  .photoUrl!,
+                                                              progressIndicatorBuilder: (
+                                                                context,
                                                                 url,
-                                                                downloadProgress) =>
-                                                            loadingStatus(
-                                                                value: downloadProgress
-                                                                    .progress),
-                                                        errorWidget: (context,
-                                                                url, error) =>
-                                                            const Icon(
-                                                                Icons.error),
-                                                      )
-                                                    : SvgPicture.asset(
-                                                        'assets/images/malePatient.svg'),
+                                                                downloadProgress,
+                                                              ) =>
+                                                                  loadingStatus(
+                                                                value:
+                                                                    downloadProgress
+                                                                        .progress,
+                                                              ),
+                                                              errorWidget: (
+                                                                context,
+                                                                url,
+                                                                error,
+                                                              ) =>
+                                                                  const Icon(
+                                                                Icons.error,
+                                                              ),
+                                                            )
+                                                          : SvgPicture.asset(
+                                                              'assets/images/malePatient.svg',
+                                                            ),
+                                                ),
                                               ),
-                                            )),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10.0, top: 4.0),
-                                          child: Text(
-                                              '${patient.givenName != null ? capitalize(patient.givenName!.split(" ")[0].toLowerCase().toString()) : ''} ${patient.familyName != null ? capitalize(patient.familyName!.split(" ")[0].toLowerCase().toString()) : ''}',
-                                              style: boldoSubTextStyle.copyWith(
-                                                  fontSize: 16)),
-                                        ),
-                                        if (patient.identifier != null)
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 4.0),
-                                            child: Text(
-                                              patient.identifier!,
-                                              style: boldoSubTextStyle.copyWith(
-                                                  fontSize: 16),
-                                              textAlign: TextAlign.left,
                                             ),
-                                          ),
-                                      ],
-                                    ),
-                                    Container(
-                                      height: 190,
-                                      width: 270,
-                                      child: Card(
-                                        shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10)),
-                                            side: BorderSide(
-                                                width: 3,
-                                                color: Constants.accordionbg)),
-                                        child: VaccinateCard(
-                                          userVaccinate: widget.userVaccinate,
-                                          completeVaccineRecord:
-                                              completeVaccineRecord,
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                left: 10.0,
+                                                top: 4.0,
+                                              ),
+                                              child: Text(
+                                                '${patient.givenName != null ? capitalize(patient.givenName!.split(" ")[0].toLowerCase().toString()) : ''} ${patient.familyName != null ? capitalize(patient.familyName!.split(" ")[0].toLowerCase().toString()) : ''}',
+                                                style:
+                                                    boldoSubTextStyle.copyWith(
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ),
+                                            if (patient.identifier != null)
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 4.0),
+                                                child: Text(
+                                                  patient.identifier!,
+                                                  style: boldoSubTextStyle
+                                                      .copyWith(
+                                                    fontSize: 16,
+                                                  ),
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                              ),
+                                          ],
                                         ),
-                                      ),
-                                    ),
-                                    // QR
-                                    Column(
-                                      children: [
                                         Container(
-                                          width: 225,
                                           height: 190,
+                                          width: 270,
                                           child: Card(
                                             shape: const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10)),
-                                                side: BorderSide(
-                                                    width: 3,
-                                                    color:
-                                                        Constants.accordionbg)),
-                                            child: qrUrlCode != null
-                                                ? Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 15.0),
-                                                    child: QrImage(
-                                                      data: qrUrlCode!,
-                                                      version: QrVersions.auto,
-                                                      // size: 250.0,
-                                                    ),
-                                                  )
-                                                : loadingStatus(),
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(10),
+                                              ),
+                                              side: BorderSide(
+                                                width: 3,
+                                                color: Constants.accordionbg,
+                                              ),
+                                            ),
+                                            child: VaccinateCard(
+                                              userVaccinate:
+                                                  widget.userVaccinate,
+                                              completeVaccineRecord:
+                                                  completeVaccineRecord,
+                                            ),
                                           ),
                                         ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 4.0),
-                                          child: Text('Escanee para verificar',
-                                              style: boldoSubTextStyle.copyWith(
-                                                  fontSize: 16)),
+                                        // QR
+                                        Column(
+                                          children: [
+                                            Container(
+                                              width: 225,
+                                              height: 190,
+                                              child: Card(
+                                                shape:
+                                                    const RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(10),
+                                                  ),
+                                                  side: BorderSide(
+                                                    width: 3,
+                                                    color:
+                                                        Constants.accordionbg,
+                                                  ),
+                                                ),
+                                                child: qrUrlCode != null
+                                                    ? Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                          left: 15.0,
+                                                        ),
+                                                        child: QrImage(
+                                                          data: qrUrlCode!,
+                                                          version:
+                                                              QrVersions.auto,
+                                                          // size: 250.0,
+                                                        ),
+                                                      )
+                                                    : loadingStatus(),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 4.0),
+                                              child: Text(
+                                                'Escanee para verificar',
+                                                style:
+                                                    boldoSubTextStyle.copyWith(
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
-                                    )
-                                  ],
-                                ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.all(25.0),
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon:
+                                const Icon(Icons.close, color: Colors.black45),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.all(25.0),
-                      child: IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(Icons.close, color: Colors.black45)),
-                    ),
-                  ),
-                ])
-        ],
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
 
@@ -469,50 +541,53 @@ class Profile extends StatelessWidget {
       children: [
         // profile photo container
         Container(
-            // adaptive dimensions of the container
-            height: MediaQuery.of(context).size.height * 0.25,
-            width: MediaQuery.of(context).size.width > 600
-                ? MediaQuery.of(context).size.width * 0.28
-                : MediaQuery.of(context).size.width * 0.415,
-            child: Card(
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-              ),
-              color: Colors.black,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: patient.photoUrl != null
-                    ? CachedNetworkImage(
-                        fit: BoxFit.cover,
-                        imageUrl: patient.photoUrl!,
-                        progressIndicatorBuilder:
-                            (context, url, downloadProgress) =>
-                                loadingStatus(value: downloadProgress.progress),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                      )
-                    : SvgPicture.asset('assets/images/malePatient.svg'),
-              ),
-            )),
+          // adaptive dimensions of the container
+          height: MediaQuery.of(context).size.height * 0.25,
+          width: MediaQuery.of(context).size.width > 600
+              ? MediaQuery.of(context).size.width * 0.28
+              : MediaQuery.of(context).size.width * 0.415,
+          child: Card(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            color: Colors.black,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: patient.photoUrl != null
+                  ? CachedNetworkImage(
+                      fit: BoxFit.cover,
+                      imageUrl: patient.photoUrl!,
+                      progressIndicatorBuilder:
+                          (context, url, downloadProgress) =>
+                              loadingStatus(value: downloadProgress.progress),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
+                    )
+                  : SvgPicture.asset('assets/images/malePatient.svg'),
+            ),
+          ),
+        ),
         // person name and ci
         Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // person name
-              Text(
-                  '${patient.givenName != null ? capitalize(patient.givenName!.split(" ")[0].toLowerCase().toString()) : ''} ${patient.familyName != null ? capitalize(patient.familyName!.split(" ")[0].toLowerCase().toString()) : ''}',
-                  style: boldoSubTextMediumStyle.copyWith(fontSize: 16)),
-              // space between name and ci
-              const SizedBox(
-                width: 10,
-              ),
-              // person ci
-              Text(
-                'CI: ${patient.identifier != null ? patient.identifier : 'vacío'}',
-                style: boldoSubTextMediumStyle.copyWith(fontSize: 16),
-              ),
-            ]),
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // person name
+            Text(
+              '${patient.givenName != null ? capitalize(patient.givenName!.split(" ")[0].toLowerCase().toString()) : ''} ${patient.familyName != null ? capitalize(patient.familyName!.split(" ")[0].toLowerCase().toString()) : ''}',
+              style: boldoSubTextMediumStyle.copyWith(fontSize: 16),
+            ),
+            // space between name and ci
+            const SizedBox(
+              width: 10,
+            ),
+            // person ci
+            Text(
+              'CI: ${patient.identifier != null ? patient.identifier : 'vacío'}',
+              style: boldoSubTextMediumStyle.copyWith(fontSize: 16),
+            ),
+          ],
+        ),
       ],
     );
   }

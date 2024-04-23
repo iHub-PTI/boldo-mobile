@@ -75,261 +75,271 @@ class _NewStudyState extends State<NewStudy> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          actions: [],
-          leadingWidth: 200,
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 16.0),
-            child: SvgPicture.asset('assets/Logo.svg',
-                semanticsLabel: 'BOLDO Logo'),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        actions: [],
+        leadingWidth: 200,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: SvgPicture.asset(
+            'assets/Logo.svg',
+            semanticsLabel: 'BOLDO Logo',
           ),
         ),
-        body: SafeArea(
-          child: BlocProvider<NewStudyBloc>(
-            create: (BuildContext context) => NewStudyBloc(),
-            child: SingleChildScrollView(
-              //  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  BackButtonLabel(
-                    labelText: 'Nuevo Estudio',
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                            child: Expanded(
+      ),
+      body: SafeArea(
+        child: BlocProvider<NewStudyBloc>(
+          create: (BuildContext context) => NewStudyBloc(),
+          child: SingleChildScrollView(
+            //  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 16,
+                ),
+                BackButtonLabel(
+                  labelText: 'Nuevo Estudio',
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        child: Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 "Cargá los siguientes datos básicos sobre el resultado de tu estudio.",
                                 style: boldoCorpSmallTextStyle.copyWith(
-                                    color: ConstantsV2.inactiveText,
-                                    fontSize: 14),
+                                  color: ConstantsV2.inactiveText,
+                                  fontSize: 14,
+                                ),
                               ),
                             ],
                           ),
-                        )),
-                        ImageViewTypeForm(
-                          height: 54,
-                          width: 54,
-                          border: true,
-                          url: patient.photoUrl,
-                          gender: patient.gender,
-                          borderColor: ConstantsV2.orange,
+                        ),
+                      ),
+                      ImageViewTypeForm(
+                        height: 54,
+                        width: 54,
+                        border: true,
+                        url: patient.photoUrl,
+                        gender: patient.gender,
+                        borderColor: ConstantsV2.orange,
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    onChanged: () {
+                      enable = _formKey.currentState?.validate() ?? false;
+                      setState(() {});
+                    },
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            hintText: "Nombre del estudio",
+                          ),
+                          onChanged: (value) {
+                            nombre = value;
+                            setState(() {});
+                          },
+                          validator: (value) {
+                            //remove unnecessary spaces
+                            value = value?.trimLeft().trimRight() ?? '';
+                            if (value.isEmpty) {
+                              return "Ingrese un nombre";
+                            }
+                            nombre = value;
+                            _nameController.text =
+                                value.trimLeft().trimRight() ?? '';
+                          },
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        TextFormField(
+                          controller: dateTextController,
+                          inputFormatters: [DateTextFormatter()],
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) {
+                            setState(() {});
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Ingrese la fecha del estudio';
+                            } else {
+                              try {
+                                var inputFormat = DateFormat('dd/MM/yyyy');
+                                var outputFormat = DateFormat('yyyy-MM-dd');
+                                // use parseStrict to not accept overflow date
+                                var date1 = inputFormat
+                                    .parseStrict(value.toString().trim());
+                                if (date1.isBefore(minDate)) {
+                                  throw Failure(
+                                    'Fecha inferior al minimo ${inputFormat.format(minDate)}',
+                                  );
+                                } else if (date1.isAfter(DateTime.now())) {
+                                  throw Failure('Fecha superior a la actual');
+                                }
+                                var date2 = outputFormat.format(date1);
+                                fecha = date2;
+                              } on Failure catch (e) {
+                                return e.message;
+                              } catch (e) {
+                                return 'El formato debe ser "dd/mm/yyyy" ';
+                              }
+                            }
+                          },
+                          decoration: InputDecoration(
+                            hintText:
+                                DateFormat('dd/MM/yyyy').format(DateTime.now()),
+                            suffixIcon: Align(
+                              widthFactor: 1.0,
+                              heightFactor: 1.0,
+                              child: GestureDetector(
+                                onTap: () async {
+                                  DateTime? newDate = await showDatePicker(
+                                    context: context,
+                                    initialEntryMode:
+                                        DatePickerEntryMode.calendarOnly,
+                                    initialDatePickerMode: DatePickerMode.year,
+                                    initialDate: fecha == ''
+                                        ? DateTime.now()
+                                        : DateFormat('yyyy-MM-dd').parseStrict(
+                                            fecha.toString().trim(),
+                                          ),
+                                    firstDate: DateTime(1900),
+                                    lastDate: DateTime.now(),
+                                    locale: const Locale("es", "ES"),
+                                  );
+                                  if (newDate == null) {
+                                    return;
+                                  } else {
+                                    setState(() {
+                                      var outputFormat =
+                                          DateFormat('yyyy-MM-dd');
+                                      var inputFormat =
+                                          DateFormat('dd/MM/yyyy');
+                                      var date1 = outputFormat
+                                          .parse(newDate.toString().trim());
+                                      var date2 = inputFormat.format(date1);
+                                      dateTextController.text = date2;
+                                    });
+                                  }
+                                },
+                                child: SvgPicture.asset(
+                                  'assets/icon/calendar.svg',
+                                  color: ConstantsV2.inactiveText,
+                                  height: 20,
+                                ),
+                              ),
+                            ),
+                            labelText: "Fecha de estudio (dd/mm/yyyy)",
+                            labelStyle: const TextStyle(
+                              fontSize: 12.0,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            hintText: "Notas (opcional)",
+                          ),
+                          onChanged: (value) {
+                            notas = value;
+                          },
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        FormField<String>(
+                          validator: (value) {
+                            if (value == null || value == '')
+                              return 'Selecione un tipo';
+                            return null;
+                          },
+                          builder: (FormFieldState<String> state) {
+                            InputBorder? shape;
+
+                            if (state.hasError) {
+                              shape = Theme.of(context)
+                                  .inputDecorationTheme
+                                  .errorBorder;
+                            }
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ListTile(
+                                  shape: shape,
+                                  title: Center(
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: items
+                                            .asMap()
+                                            .entries
+                                            .map(
+                                              (e) =>
+                                                  _buildCarousel(e.key, state),
+                                            )
+                                            .toList(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                if (state.errorText != null)
+                                  Text(
+                                    state.errorText!,
+                                    style: Theme.of(context)
+                                        .inputDecorationTheme
+                                        .errorStyle,
+                                  ),
+                              ],
+                            );
+                          },
+                        ),
+                        CompleteFormNewStudy(
+                          formKey: _formKey,
+                          fecha: fecha,
+                          nombre: nombre,
+                          notas: notas,
+                          type: type,
+                          enable: enable,
                         ),
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Form(
-                      key: _formKey,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      onChanged: () {
-                        enable = _formKey.currentState?.validate() ?? false;
-                        setState(() {});
-                      },
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            decoration: const InputDecoration(
-                                hintText: "Nombre del estudio"),
-                            onChanged: (value) {
-                              nombre = value;
-                              setState(() {});
-                            },
-                            validator: (value) {
-                              //remove unnecessary spaces
-                              value = value?.trimLeft().trimRight() ?? '';
-                              if (value.isEmpty) {
-                                return "Ingrese un nombre";
-                              }
-                              nombre = value;
-                              _nameController.text =
-                                  value.trimLeft().trimRight() ?? '';
-                            },
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            controller: dateTextController,
-                            inputFormatters: [DateTextFormatter()],
-                            keyboardType: TextInputType.number,
-                            onChanged: (value) {
-                              setState(() {});
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Ingrese la fecha del estudio';
-                              } else {
-                                try {
-                                  var inputFormat = DateFormat('dd/MM/yyyy');
-                                  var outputFormat = DateFormat('yyyy-MM-dd');
-                                  // use parseStrict to not accept overflow date
-                                  var date1 = inputFormat
-                                      .parseStrict(value.toString().trim());
-                                  if (date1.isBefore(minDate)) {
-                                    throw Failure(
-                                        'Fecha inferior al minimo ${inputFormat.format(minDate)}');
-                                  } else if (date1.isAfter(DateTime.now())) {
-                                    throw Failure('Fecha superior a la actual');
-                                  }
-                                  var date2 = outputFormat.format(date1);
-                                  fecha = date2;
-                                } on Failure catch (e) {
-                                  return e.message;
-                                } catch (e) {
-                                  return 'El formato debe ser "dd/mm/yyyy" ';
-                                }
-                              }
-                            },
-                            decoration: InputDecoration(
-                                hintText: DateFormat('dd/MM/yyyy')
-                                    .format(DateTime.now()),
-                                suffixIcon: Align(
-                                  widthFactor: 1.0,
-                                  heightFactor: 1.0,
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      DateTime? newDate = await showDatePicker(
-                                        context: context,
-                                        initialEntryMode:
-                                            DatePickerEntryMode.calendarOnly,
-                                        initialDatePickerMode:
-                                            DatePickerMode.year,
-                                        initialDate: fecha == ''
-                                            ? DateTime.now()
-                                            : DateFormat('yyyy-MM-dd')
-                                                .parseStrict(
-                                                    fecha.toString().trim()),
-                                        firstDate: DateTime(1900),
-                                        lastDate: DateTime.now(),
-                                        locale: const Locale("es", "ES"),
-                                      );
-                                      if (newDate == null) {
-                                        return;
-                                      } else {
-                                        setState(() {
-                                          var outputFormat =
-                                              DateFormat('yyyy-MM-dd');
-                                          var inputFormat =
-                                              DateFormat('dd/MM/yyyy');
-                                          var date1 = outputFormat
-                                              .parse(newDate.toString().trim());
-                                          var date2 = inputFormat.format(date1);
-                                          dateTextController.text = date2;
-                                        });
-                                      }
-                                    },
-                                    child: SvgPicture.asset(
-                                      'assets/icon/calendar.svg',
-                                      color: ConstantsV2.inactiveText,
-                                      height: 20,
-                                    ),
-                                  ),
-                                ),
-                                labelText: "Fecha de estudio (dd/mm/yyyy)",
-                                labelStyle: const TextStyle(
-                                  fontSize: 12.0,
-                                )),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          TextFormField(
-                            decoration: const InputDecoration(
-                                hintText: "Notas (opcional)"),
-                            onChanged: (value) {
-                              notas = value;
-                            },
-                          ),
-                          const SizedBox(
-                            height: 40,
-                          ),
-                          const SizedBox(
-                            height: 40,
-                          ),
-                          FormField<String>(
-                            validator: (value) {
-                              if (value == null || value == '')
-                                return 'Selecione un tipo';
-                              return null;
-                            },
-                            builder: (FormFieldState<String> state) {
-                              InputBorder? shape;
-
-                              if (state.hasError) {
-                                shape = Theme.of(context)
-                                    .inputDecorationTheme
-                                    .errorBorder;
-                              }
-
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ListTile(
-                                    shape: shape,
-                                    title: Center(
-                                      child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          children: items
-                                              .asMap()
-                                              .entries
-                                              .map((e) =>
-                                                  _buildCarousel(e.key, state))
-                                              .toList(),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  if (state.errorText != null)
-                                    Text(
-                                      state.errorText!,
-                                      style: Theme.of(context)
-                                          .inputDecorationTheme
-                                          .errorStyle,
-                                    ),
-                                ],
-                              );
-                            },
-                          ),
-                          CompleteFormNewStudy(
-                            formKey: _formKey,
-                            fecha: fecha,
-                            nombre: nombre,
-                            notas: notas,
-                            type: type,
-                            enable: enable,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   showEmptyList() {
     return Column(
       children: [
         SvgPicture.asset('assets/images/empty_studies.svg', fit: BoxFit.cover),
-        Text('Aun no tenés estudios para visualizar')
+        Text('Aun no tenés estudios para visualizar'),
       ],
     );
   }
@@ -373,19 +383,21 @@ class _NewStudyState extends State<NewStudy> {
                   ),
                 ),
                 Container(
-                    child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      items[index].title,
-                      style: boldoCorpMediumBlackTextStyle.copyWith(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        items[index].title,
+                        style: boldoCorpMediumBlackTextStyle.copyWith(
                           color: type != items[index].value
                               ? ConstantsV2.inactiveText
-                              : ConstantsV2.lightest),
-                    ),
-                  ],
-                )),
+                              : ConstantsV2.lightest,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -449,10 +461,11 @@ class CompleteFormNewStudy extends StatelessWidget {
             onPressed: enable
                 ? () async {
                     DiagnosticReport newDiagnosticReport = DiagnosticReport(
-                        description: nombre,
-                        notes: notas,
-                        effectiveDate: fecha,
-                        type: type);
+                      description: nombre,
+                      notes: notas,
+                      effectiveDate: fecha,
+                      type: type,
+                    );
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context2) => AttachFiles(
@@ -472,7 +485,7 @@ class CompleteFormNewStudy extends StatelessWidget {
                   child: Icon(
                     Icons.chevron_right,
                   ),
-                )
+                ),
               ],
             ),
           ),

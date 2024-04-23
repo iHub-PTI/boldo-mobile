@@ -40,9 +40,10 @@ class _PreRegisterScreenState extends State<PreRegisterScreen> {
             ),
             boxShadow: [
               BoxShadow(
-                  color: Color.fromRGBO(0, 0, 0, 0.10000000149011612),
-                  offset: Offset(0, 1),
-                  blurRadius: 3)
+                color: Color.fromRGBO(0, 0, 0, 0.10000000149011612),
+                offset: Offset(0, 1),
+                blurRadius: 3,
+              ),
             ],
             color: Color.fromRGBO(101, 207, 211, 1),
           ),
@@ -51,12 +52,13 @@ class _PreRegisterScreenState extends State<PreRegisterScreen> {
             'Confirmar',
             textAlign: TextAlign.center,
             style: TextStyle(
-                color: Color.fromRGBO(255, 255, 255, 1),
-                fontFamily: 'Inter',
-                fontSize: 17,
-                letterSpacing: 0,
-                fontWeight: FontWeight.normal,
-                height: 1.1428571428571428),
+              color: Color.fromRGBO(255, 255, 255, 1),
+              fontFamily: 'Inter',
+              fontSize: 17,
+              letterSpacing: 0,
+              fontWeight: FontWeight.normal,
+              height: 1.1428571428571428,
+            ),
           ),
         ),
       ),
@@ -69,50 +71,53 @@ class _PreRegisterScreenState extends State<PreRegisterScreen> {
       body: CustomWrapper(
         children: [
           SingleChildScrollView(
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const SizedBox(height: 24),
-              TextButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(
-                  Icons.chevron_left_rounded,
-                  size: 25,
-                  color: Constants.extraColor400,
-                ),
-                label: Text(
-                  'Antes de continuar',
-                  style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: RichText(
-                  text: const TextSpan(
-                    text:
-                        'Boldo se encuentra en un período de prueba controlado.\n\n'
-                        'Antes de registrarte, tenga en cuenta que por el momento, el servicio está disponible solamente para algunos pacientes en un conjunto de centros asistenciales.\n\n'
-                        'En breve, extenderemos el servicio a todo público.\n\n',
-                    style: TextStyle(
-                      color: Color.fromRGBO(54, 65, 82, 1),
-                      fontFamily: 'PT Serif',
-                      fontSize: 17,
-                      letterSpacing: 0,
-                      fontWeight: FontWeight.normal,
-                      height: 1.5,
-                    ),
-                    children: <TextSpan>[
-                      TextSpan(
-                          text:
-                              'Siga con el proceso de registro solamente si recibió indicación de su médico.',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                    ],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 24),
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.chevron_left_rounded,
+                    size: 25,
+                    color: Constants.extraColor400,
+                  ),
+                  label: Text(
+                    'Antes de continuar',
+                    style: boldoHeadingTextStyle.copyWith(fontSize: 20),
                   ),
                 ),
-              ),
-              const SizedBox(width: 16),
-            ]),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: RichText(
+                    text: const TextSpan(
+                      text:
+                          'Boldo se encuentra en un período de prueba controlado.\n\n'
+                          'Antes de registrarte, tenga en cuenta que por el momento, el servicio está disponible solamente para algunos pacientes en un conjunto de centros asistenciales.\n\n'
+                          'En breve, extenderemos el servicio a todo público.\n\n',
+                      style: TextStyle(
+                        color: Color.fromRGBO(54, 65, 82, 1),
+                        fontFamily: 'PT Serif',
+                        fontSize: 17,
+                        letterSpacing: 0,
+                        fontWeight: FontWeight.normal,
+                        height: 1.5,
+                      ),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text:
+                              'Siga con el proceso de registro solamente si recibió indicación de su médico.',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+              ],
+            ),
           ),
         ],
       ),
@@ -123,17 +128,18 @@ class _PreRegisterScreenState extends State<PreRegisterScreen> {
         backgroundColor: ConstantsV2.orange,
         foregroundColor: ConstantsV2.primaryColor,
         label: Container(
-            child: const Row(
-          children: [
-            Text(
-              'continuar',
-            ),
-            SizedBox(
-              width: 8,
-            ),
-            Icon(Icons.arrow_forward_ios_sharp),
-          ],
-        )),
+          child: const Row(
+            children: [
+              Text(
+                'continuar',
+              ),
+              SizedBox(
+                width: 8,
+              ),
+              Icon(Icons.arrow_forward_ios_sharp),
+            ],
+          ),
+        ),
       ),
     );
   }

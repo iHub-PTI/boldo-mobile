@@ -1,33 +1,29 @@
-import 'package:boldo/main.dart';
-import 'package:boldo/models/Organization.dart';
+import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/network/appointment_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/errors.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:boldo/widgets/custom_form_button.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:dio/dio.dart';
 
-import 'package:boldo/models/Doctor.dart';
-import 'package:boldo/widgets/custom_form_button.dart';
-import '../../network/http.dart';
-import '../../widgets/wrapper.dart';
 import '../../constants.dart';
 import '../../utils/helpers.dart';
+import '../../widgets/wrapper.dart';
 import 'booking_final_screen.dart';
 
 class BookingConfirmScreen extends StatefulWidget {
   final Doctor doctor;
   final NextAvailability bookingDate;
   final OrganizationWithAvailabilities organization;
-  BookingConfirmScreen(
-      {Key? key,
-      required this.bookingDate,
-      required this.doctor,
-      required this.organization})
-      : super(key: key);
+  BookingConfirmScreen({
+    Key? key,
+    required this.bookingDate,
+    required this.doctor,
+    required this.organization,
+  }) : super(key: key);
 
   @override
   _BookingConfirmScreenState createState() => _BookingConfirmScreenState();
@@ -35,7 +31,7 @@ class BookingConfirmScreen extends StatefulWidget {
 
 class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
   bool _loading = false;
-  String _error = "";
+  String _error = '';
   @override
   Widget build(BuildContext context) {
     return CustomWrapper(
@@ -90,14 +86,14 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
           padding: const EdgeInsets.only(left: 16, right: 16),
           margin: const EdgeInsets.only(bottom: 16),
           child: CustomFormButton(
-            text: "Confirmar",
+            text: 'Confirmar',
             loading: _loading,
             actionCallback: () async {
               Response response;
               try {
                 setState(() {
                   _loading = true;
-                  _error = "";
+                  _error = '';
                 });
                 await AppointmentRepository().bookingAppointment(
                   doctor: widget.doctor,
@@ -107,25 +103,28 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => BookingFinalScreen(
-                            doctor: widget.doctor,
-                            bookingDate: widget.bookingDate,
-                            organization: widget.organization,
-                          )),
+                    builder: (context) => BookingFinalScreen(
+                      doctor: widget.doctor,
+                      bookingDate: widget.bookingDate,
+                      organization: widget.organization,
+                    ),
+                  ),
                 );
               } on Failure catch (exception, stackTrace) {
                 setState(() {
                   _loading = false;
                 });
                 emitSnackBar(
-                    context: context,
-                    text: exception.message,
-                    status: ActionStatus.Fail);
+                  context: context,
+                  text: exception.message,
+                  status: ActionStatus.Fail,
+                );
               } catch (exception, stackTrace) {
                 emitSnackBar(
-                    context: context,
-                    text: genericError,
-                    status: ActionStatus.Fail);
+                  context: context,
+                  text: genericError,
+                  status: ActionStatus.Fail,
+                );
                 setState(() {
                   _loading = false;
                 });
@@ -145,16 +144,18 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
 class ShowAppoinmentDescription extends StatelessWidget {
   final NextAvailability nextAvailability;
   final OrganizationWithAvailabilities organization;
-  const ShowAppoinmentDescription(
-      {Key? key, required this.nextAvailability, required this.organization})
-      : super(key: key);
+  const ShowAppoinmentDescription({
+    Key? key,
+    required this.nextAvailability,
+    required this.organization,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final inPersonDesc =
-        "Esta consulta será realizada en persona en el ${organization.nameOrganization}.";
+        'Esta consulta será realizada en persona en el ${organization.nameOrganization}.';
     final onlineDesc =
-        "Esta consulta será realizada de forma remota a través de esta aplicación.";
+        'Esta consulta será realizada de forma remota a través de esta aplicación.';
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: Container(
@@ -203,8 +204,9 @@ class ShowAppoinmentTypeIcon extends StatelessWidget {
       // height: 30,
       width: 40,
       decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          color: Colors.white),
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: Colors.white,
+      ),
       child: appointmentType == 'V'
           ? Padding(
               padding: const EdgeInsets.all(8.0),
@@ -215,7 +217,8 @@ class ShowAppoinmentTypeIcon extends StatelessWidget {
                   'assets/icon/video.svg',
                   color: Constants.secondaryColor500,
                 ),
-              ))
+              ),
+            )
           : const Padding(
               padding: EdgeInsets.all(4.0),
               child: Icon(
@@ -239,7 +242,7 @@ class _DoctorBookingInfoWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Fecha",
+          'Fecha',
           style: boldoHeadingTextStyle,
         ),
         const SizedBox(
@@ -247,16 +250,16 @@ class _DoctorBookingInfoWidget extends StatelessWidget {
         ),
         Text(
           DateFormat(
-                  'EEEE, dd MMMM yyyy', const Locale("es", 'ES').languageCode)
-              .format(bookingDate)
-              .capitalize(),
+            'EEEE, dd MMMM yyyy',
+            const Locale('es', 'ES').languageCode,
+          ).format(bookingDate).capitalize(),
           style: boldoSubTextStyle.copyWith(fontSize: 16),
         ),
         const SizedBox(
           height: 24,
         ),
         const Text(
-          "Hora",
+          'Hora',
           style: boldoHeadingTextStyle,
         ),
         const SizedBox(
@@ -318,9 +321,10 @@ class _DoctorProfileWidget extends StatelessWidget {
                             child: Text(
                               "${getDoctorPrefix(doctor.gender!)}${doctor.givenName} ${doctor.familyName}",
                               style: boldoHeadingTextStyle.copyWith(
-                                  fontWeight: FontWeight.normal),
+                                fontWeight: FontWeight.normal,
+                              ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                       const SizedBox(
@@ -340,8 +344,9 @@ class _DoctorProfileWidget extends StatelessWidget {
                                 Text(
                                   "${doctor.specializations![i].description}${doctor.specializations!.length - 1 != i ? ", " : ""}",
                                   style: boldoSubTextStyle.copyWith(
-                                      color: Constants.otherColor100,
-                                      fontSize: 12),
+                                    color: Constants.otherColor100,
+                                    fontSize: 12,
+                                  ),
                                 ),
                             ],
                           ),
@@ -355,8 +360,10 @@ class _DoctorProfileWidget extends StatelessWidget {
               height: 16,
             ),
             if (doctor.biography != null)
-              Text(doctor.biography!,
-                  style: boldoSubTextStyle.copyWith(fontSize: 16, height: 1.5)),
+              Text(
+                doctor.biography!,
+                style: boldoSubTextStyle.copyWith(fontSize: 16, height: 1.5),
+              ),
           ],
         ),
       ),

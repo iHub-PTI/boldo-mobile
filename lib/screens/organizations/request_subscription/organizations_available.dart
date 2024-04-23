@@ -27,8 +27,10 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
           leadingWidth: 200,
           leading: Padding(
             padding: const EdgeInsets.only(left: 16.0),
-            child: SvgPicture.asset('assets/Logo.svg',
-                semanticsLabel: 'BOLDO Logo'),
+            child: SvgPicture.asset(
+              'assets/Logo.svg',
+              semanticsLabel: 'BOLDO Logo',
+            ),
           ),
         ),
         body: SafeArea(
@@ -41,21 +43,26 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                 }
                 if (state is SuccessSubscribed) {
                   setState(() {
-                    _organizationsNotSubscribed.removeWhere((selected) =>
-                        state.organizationSubscribed
-                            .any((available) => selected.id == available.id) ==
-                        true);
+                    _organizationsNotSubscribed.removeWhere(
+                      (selected) =>
+                          state.organizationSubscribed.any(
+                              (available) => selected.id == available.id) ==
+                          true,
+                    );
 
-                    _organizationsSelected.removeWhere((selected) =>
-                        state.organizationSubscribed
-                            .any((available) => selected.id == available.id) ==
-                        true);
+                    _organizationsSelected.removeWhere(
+                      (selected) =>
+                          state.organizationSubscribed.any(
+                              (available) => selected.id == available.id) ==
+                          true,
+                    );
                   });
                 } else if (state is Failed) {
                   emitSnackBar(
-                      context: context,
-                      text: state.response,
-                      status: ActionStatus.Fail);
+                    context: context,
+                    text: state.response,
+                    status: ActionStatus.Fail,
+                  );
                 }
               },
               child: Container(
@@ -80,21 +87,22 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Container(
-                                    child: Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Seleccioná los Centros Asistenciales a los que desea "
-                                        "enviar una solicitud",
-                                        style: medicationTextStyle.copyWith(
-                                          color: ConstantsV2.activeText,
+                                  child: Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Seleccioná los Centros Asistenciales a los que desea "
+                                          "enviar una solicitud",
+                                          style: medicationTextStyle.copyWith(
+                                            color: ConstantsV2.activeText,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                )),
+                                ),
                                 ImageViewTypeForm(
                                   height: 54,
                                   width: 54,
@@ -110,45 +118,53 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                             height: 16,
                           ),
                           BlocBuilder<OrganizationBloc, OrganizationBlocState>(
-                              builder: (context, state) {
-                            if (state is Failed) {
-                              return DataFetchErrorWidget(
+                            builder: (context, state) {
+                              if (state is Failed) {
+                                return DataFetchErrorWidget(
                                   retryCallback: () =>
                                       BlocProvider.of<OrganizationBloc>(context)
-                                          .add(GetAllOrganizations(
-                                              patientSelected:
-                                                  widget.patientSelected)));
-                            } else if (state is Loading) {
-                              return loadingStatus();
-                            } else {
-                              return Flexible(
-                                child: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
+                                          .add(
+                                    GetAllOrganizations(
+                                      patientSelected: widget.patientSelected,
+                                    ),
+                                  ),
+                                );
+                              } else if (state is Loading) {
+                                return loadingStatus();
+                              } else {
+                                return Flexible(
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
                                       color: ConstantsV2.grayLightest,
                                       boxShadow: [
                                         shadowRegular,
-                                      ]),
-                                  child: _organizationsNotSubscribed.isNotEmpty
-                                      ? ListView.builder(
-                                          physics:
-                                              const ClampingScrollPhysics(),
-                                          shrinkWrap: true,
-                                          itemCount: _organizationsNotSubscribed
-                                              .length,
-                                          itemBuilder: selectOrganizationsBox)
-                                      : organizationAvailableEmpty(),
-                                ),
-                              );
-                            }
-                          }),
+                                      ],
+                                    ),
+                                    child: _organizationsNotSubscribed
+                                            .isNotEmpty
+                                        ? ListView.builder(
+                                            physics:
+                                                const ClampingScrollPhysics(),
+                                            shrinkWrap: true,
+                                            itemCount:
+                                                _organizationsNotSubscribed
+                                                    .length,
+                                            itemBuilder: selectOrganizationsBox,
+                                          )
+                                        : organizationAvailableEmpty(),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
                         ],
                       ),
                     ),
                     ConfirmRequest(
                       organizationsSelected: _organizationsSelected,
                       patientSelected: widget.patientSelected,
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -211,7 +227,8 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
                             ? "Suscripción condicionada"
                             : "Suscripción con verificación por el centro",
                         style: boldoBodySBlackTextStyle.copyWith(
-                            color: ConstantsV2.blueLight),
+                          color: ConstantsV2.blueLight,
+                        ),
                       ),
                     ],
                   ),
@@ -220,16 +237,21 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> {
             ),
           ),
           value: _organizationsSelected.any(
-              (element) => _organizationsNotSubscribed[index].id == element.id),
+            (element) => _organizationsNotSubscribed[index].id == element.id,
+          ),
           activeColor: ConstantsV2.secondaryRegular,
           checkColor: Colors.white,
           side: const BorderSide(color: ConstantsV2.orange),
           onChanged: (value) {
             setState(() {
-              if (_organizationsSelected.any((element) =>
-                  _organizationsNotSubscribed[index].id == element.id)) {
-                _organizationsSelected.removeWhere((element) =>
-                    _organizationsNotSubscribed[index].id == element.id);
+              if (_organizationsSelected.any(
+                (element) =>
+                    _organizationsNotSubscribed[index].id == element.id,
+              )) {
+                _organizationsSelected.removeWhere(
+                  (element) =>
+                      _organizationsNotSubscribed[index].id == element.id,
+                );
               } else {
                 _organizationsSelected.add(_organizationsNotSubscribed[index]);
               }

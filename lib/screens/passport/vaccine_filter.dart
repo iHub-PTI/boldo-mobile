@@ -59,8 +59,11 @@ class _VaccineFilterState extends State<VaccineFilter> {
       results = vaccinesList;
     } else {
       results = vaccinesList
-          .where((vaccine) =>
-              vaccine.name.toLowerCase().contains(enteredKeyword.toLowerCase()))
+          .where(
+            (vaccine) => vaccine.name
+                .toLowerCase()
+                .contains(enteredKeyword.toLowerCase()),
+          )
           .toList();
       // we use the toLowerCase() method to make it case-insensitive
     }
@@ -121,67 +124,69 @@ class _VaccineFilterState extends State<VaccineFilter> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.5,
             child: ListView.builder(
-                itemCount: vaccineFinded.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    elevation: vaccineFinded[index].name == chooseAll ? 0 : 1,
-                    color: vaccineFinded[index].name == chooseAll
-                        ? Colors.transparent
-                        : Colors.white,
-                    child: CheckboxListTile(
-                      controlAffinity: ListTileControlAffinity.leading,
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(vaccineFinded[index].name),
-                      value: vaccineFinded[index].status,
-                      checkColor: Colors.white,
-                      onChanged: (value) {
-                        if (vaccineFinded[index].name == chooseAll) {
-                          setState(() {
-                            isChecked = value!;
-                          });
-                          checkAction();
-                        } else {
-                          setState(() {
-                            vaccineFinded[index].status = value!;
-                            // vaccineFinded.sort((a, b) {
-                            //   if (b.status && a.name != chooseAll ) {
-                            //     return 1;
-                            //   }
-                            //   return -1;
-                            // });
-                          });
-                        }
-                      },
-                    ),
-                  );
-                }),
+              itemCount: vaccineFinded.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  elevation: vaccineFinded[index].name == chooseAll ? 0 : 1,
+                  color: vaccineFinded[index].name == chooseAll
+                      ? Colors.transparent
+                      : Colors.white,
+                  child: CheckboxListTile(
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(vaccineFinded[index].name),
+                    value: vaccineFinded[index].status,
+                    checkColor: Colors.white,
+                    onChanged: (value) {
+                      if (vaccineFinded[index].name == chooseAll) {
+                        setState(() {
+                          isChecked = value!;
+                        });
+                        checkAction();
+                      } else {
+                        setState(() {
+                          vaccineFinded[index].status = value!;
+                          // vaccineFinded.sort((a, b) {
+                          //   if (b.status && a.name != chooseAll ) {
+                          //     return 1;
+                          //   }
+                          //   return -1;
+                          // });
+                        });
+                      }
+                    },
+                  ),
+                );
+              },
+            ),
           ),
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
-                padding: const EdgeInsets.only(bottom: 15.0, right: 8),
-                child: ButtonActionHelper(
-                  title: "mostrar",
-                  svgPath: 'check_white',
-                  onTapAction: () {
-                    print(vaccineFinded);
-                    //this to make sure it's empty
-                    vaccineListQR!.clear();
-                    // for each vaccine in filter, we search matches with diseaseUserList
-                    for (var i = 0; i < vaccineFinded.length; i++) {
-                      // to choose only those that are marked in the filter screen
-                      if (vaccineFinded[i].status) {
-                        for (var j = 0; j < diseaseUserList!.length; j++) {
-                          if (vaccineFinded[i].name ==
-                              diseaseUserList![j].diseaseCode) {
-                            vaccineListQR!.add(diseaseUserList![j]);
-                          }
+              padding: const EdgeInsets.only(bottom: 15.0, right: 8),
+              child: ButtonActionHelper(
+                title: "mostrar",
+                svgPath: 'check_white',
+                onTapAction: () {
+                  print(vaccineFinded);
+                  //this to make sure it's empty
+                  vaccineListQR!.clear();
+                  // for each vaccine in filter, we search matches with diseaseUserList
+                  for (var i = 0; i < vaccineFinded.length; i++) {
+                    // to choose only those that are marked in the filter screen
+                    if (vaccineFinded[i].status) {
+                      for (var j = 0; j < diseaseUserList!.length; j++) {
+                        if (vaccineFinded[i].name ==
+                            diseaseUserList![j].diseaseCode) {
+                          vaccineListQR!.add(diseaseUserList![j]);
                         }
                       }
                     }
-                    Navigator.pushNamed(context, '/user_qr_detail');
-                  },
-                )),
+                  }
+                  Navigator.pushNamed(context, '/user_qr_detail');
+                },
+              ),
+            ),
           ),
         ],
       ),
