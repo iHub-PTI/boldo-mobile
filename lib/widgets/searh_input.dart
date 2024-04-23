@@ -17,9 +17,9 @@ class CustomSearchInput extends StatefulWidget {
     this.hintText,
     this.onEditingComplete,
     this.onChange,
-  }) : assert( expanded != null || maxWidth != null,
-      'If this is not expanded must be have a width '),
-      super(key: key) ;
+  })  : assert(expanded != null || maxWidth != null,
+            'If this is not expanded must be have a width '),
+        super(key: key);
 
   @override
   State<CustomSearchInput> createState() => _StateCustomSearchInput();
@@ -40,13 +40,12 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
 
   @override
   Widget build(BuildContext context) {
-
     Widget form = TapRegion(
       child: SearchBar(
         controller: _controller,
         hintText: widget.hintText,
         leading: IconButton(
-          onPressed: (){
+          onPressed: () {
             widget.onEditingComplete?.call(_controller.text);
           },
           icon: const Icon(
@@ -55,14 +54,12 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
           ),
         ),
         trailing: [
-          if(showClearIcon)
+          if (showClearIcon)
             IconButton(
-              onPressed: (){
+              onPressed: () {
                 _controller.text = '';
                 widget.onEditingComplete?.call('');
-                setState(() {
-
-                });
+                setState(() {});
               },
               icon: const Icon(
                 Icons.clear,
@@ -71,14 +68,19 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
             ),
         ],
         onSubmitted: widget.onEditingComplete,
-        onChanged: (String value){
+        onChanged: (String value) {
           widget.onChange?.call(value);
           setState(() {
             showClearIcon = value.isNotEmpty;
           });
         },
+        shape: MaterialStatePropertyAll(
+          RoundedRectangleBorder(
+              side: BorderSide(width: 1.0, color: ConstantsV2.grayDark),
+              borderRadius: BorderRadius.circular(12.0)),
+        ),
       ),
-      onTapOutside: (_)=> FocusScope.of(context).unfocus(),
+      onTapOutside: (_) => FocusScope.of(context).unfocus(),
     );
 
     Widget child;
