@@ -533,8 +533,15 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                       virtualAppointment: false,
                                       inPersonAppointment: false,
                                       organizations: []));
+                              setState(() {
+                                names = [];
+                                specializationsSelected = [];
+                                virtualAppointment = false;
+                                inPersonAppointment = false;
+                                organizationsSelected = [];
+                              });
                               // call doctor list page
-                              Navigator.pop(context);
+                              //Navigator.pop(context);
                             },
                             child: const Text(
                               'Limpiar filtros',
