@@ -1,10 +1,12 @@
+include: package:very_good_analysis/analysis_options.5.1.0.yaml
 analyzer:
-  strong-mode:
-    implicit-dynamic: true
+  language:
+    strict-casts: false
+    strict-inference: false
+    strict-raw-types: false
   errors:
     missing_required_param: error
     missing_return: error
     todo: ignore
   exclude:
     - "bin/cache/**"
-include: package:very_good_analysis/analysis_options.5.1.0.yaml
