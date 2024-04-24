@@ -29,8 +29,6 @@ class PastAppointmentsScreen extends StatefulWidget {
 
 class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
     with SingleTickerProviderStateMixin {
-  bool _dataLoading = true;
-  bool _dataLoaded = false;
   int _selectedIndex = 0;
   late TabController _tabController;
   late List<Appointment> allAppointments = [];
@@ -103,8 +101,6 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                   _refreshPastAppointmentController!.refreshCompleted();
                   _refreshPastAppointmentController!.loadComplete();
                 }
-                _dataLoading = false;
-                _dataLoaded = false;
               } else if (state is AppointmentsLoadedState) {
                 allAppointments = state.appointments;
                 if (_refreshFutureAppointmentController != null) {
@@ -147,96 +143,80 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                       semanticsLabel: 'BOLDO Logo'),
                 ),
               ),
-              body: _dataLoading == true
-                  ? loadingStatus()
-                  : Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              BackButtonLabel(
-                                gapSpace: 0,
-                              ),
-                              Expanded(
-                                child: header(
-                                  "Mis Consultas",
-                                  "Consultas",
-                                ),
-                              ),
-                            ],
+              body: Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        BackButtonLabel(
+                          gapSpace: 0,
+                        ),
+                        Expanded(
+                          child: header(
+                            "Mis Consultas",
+                            "Consultas",
                           ),
-                          if (!_dataLoading && !_dataLoaded)
-                            const Padding(
-                              padding: EdgeInsets.only(top: 40.0),
-                              child: Center(
-                                child: Text(
-                                  "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Constants.otherColor100,
-                                  ),
-                                ),
-                              ),
+                        ),
+                      ],
+                    ),
+                    Stack(
+                      children: [
+                        Center(
+                            child: SvgPicture.asset(
+                          'assets/decorations/line_separator.svg',
+                        )),
+                        TabBar(
+                          labelStyle: boldoTabHeaderSelectedTextStyle,
+                          unselectedLabelStyle:
+                              boldoTabHeaderUnselectedTextStyle,
+                          indicatorColor: Colors.transparent,
+                          unselectedLabelColor:
+                              const Color.fromRGBO(119, 119, 119, 1),
+                          labelColor: ConstantsV2.activeText,
+                          controller: _tabController,
+                          tabs: [
+                            const Text(
+                              'Próximas',
                             ),
-                          Stack(
-                            children: [
-                              Center(
-                                  child: SvgPicture.asset(
-                                'assets/decorations/line_separator.svg',
-                              )),
-                              TabBar(
-                                labelStyle: boldoTabHeaderSelectedTextStyle,
-                                unselectedLabelStyle:
-                                    boldoTabHeaderUnselectedTextStyle,
-                                indicatorColor: Colors.transparent,
-                                unselectedLabelColor:
-                                    const Color.fromRGBO(119, 119, 119, 1),
-                                labelColor: ConstantsV2.activeText,
-                                controller: _tabController,
-                                tabs: [
-                                  const Text(
-                                    'Próximas',
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Flexible(
-                                        child: Text(
-                                          'Anteriores',
-                                        ),
-                                      ),
-                                      if (_selectedIndex == 1)
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 6.0),
-                                          child: GestureDetector(
-                                            onTap: () async {
-                                              await _filterBox(context);
-                                            },
-                                            child: SvgPicture.asset(
-                                              'assets/icon/filter-list.svg',
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                          Expanded(
-                            child: TabBarView(
-                              controller: _tabController,
+                            Row(
                               children: [
-                                _buildFutureAppointments(),
-                                _buildPastAppointments(context),
+                                const Flexible(
+                                  child: Text(
+                                    'Anteriores',
+                                  ),
+                                ),
+                                if (_selectedIndex == 1)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 6.0),
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        await _filterBox(context);
+                                      },
+                                      child: SvgPicture.asset(
+                                        'assets/icon/filter-list.svg',
+                                      ),
+                                    ),
+                                  ),
                               ],
-                            ),
-                          ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          _buildFutureAppointments(),
+                          _buildPastAppointments(context),
                         ],
                       ),
                     ),
+                  ],
+                ),
+              ),
             );
           })),
     );
