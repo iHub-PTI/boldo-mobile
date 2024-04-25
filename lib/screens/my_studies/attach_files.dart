@@ -61,10 +61,13 @@ class _AttachFilesState extends State<AttachFiles> {
                     text: uploadedStudySuccessfullyMessage,
                   status: ActionStatus.Success,
                 );
-                Navigator.of(context)
-                    .popUntil(ModalRoute.withName("/my_studies"));
+
+                if (context.mounted) {
                 BlocProvider.of<studies_bloc.MyStudiesBloc>(context)
                     .add(studies_bloc.GetPatientStudiesFromServer());
+                  Navigator.of(context)
+                      .popUntil(ModalRoute.withName('/my_studies'));
+                }
               }
               if (state is FailedUpload) {
                 print('failed: ${state.msg}');
