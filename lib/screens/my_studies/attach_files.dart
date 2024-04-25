@@ -54,12 +54,12 @@ class _AttachFilesState extends State<AttachFiles> {
         body: SafeArea(
           child: BlocListener<NewStudyBloc, NewStudyState>(
             bloc: widget.newStudyBloc,
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is Uploaded) {
-                emitSnackBar(
+                await emitSnackBar(
                     context: context,
                     text: uploadedStudySuccessfullyMessage,
-                    status: ActionStatus.Success
+                  status: ActionStatus.Success,
                 );
                 Navigator.of(context)
                     .popUntil(ModalRoute.withName("/my_studies"));
