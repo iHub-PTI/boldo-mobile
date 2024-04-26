@@ -89,14 +89,15 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
       create: (BuildContext context) =>
           AppointmentsBloc()..add(GetPastAppointmentsBetweenDatesList()),
       child: MultiBlocListener(
-          listeners: [
-            BlocListener<AppointmentsBloc, AppointmentsState>(
-                listener: (context, state) {
+        listeners: [
+          BlocListener<AppointmentsBloc, AppointmentsState>(
+            listener: (context, state) {
               if (state is Failed) {
                 emitSnackBar(
-                    context: context,
-                    text: state.response,
-                    status: ActionStatus.Fail);
+                  context: context,
+                  text: state.response,
+                  status: ActionStatus.Fail,
+                );
                 if (_refreshPastAppointmentController != null) {
                   _refreshPastAppointmentController!.refreshCompleted();
                   _refreshPastAppointmentController!.loadComplete();
@@ -108,117 +109,121 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                   _refreshPastAppointmentController!.loadComplete();
                 }
               }
-            }),
-            BlocListener<FutureAppointmentsBloc, FutureAppointmentsState>(
-              listener: (context, state) {
-                if (state is FailedLoadedAppointments) {
-                  emitSnackBar(
-                      context: context,
-                      text: state.response,
-                      status: ActionStatus.Fail);
-                  if (_refreshFutureAppointmentController != null) {
-                    _refreshFutureAppointmentController!.refreshCompleted();
-                    _refreshFutureAppointmentController!.loadComplete();
-                  }
+            },
+          ),
+          BlocListener<FutureAppointmentsBloc, FutureAppointmentsState>(
+            listener: (context, state) {
+              if (state is FailedLoadedAppointments) {
+                emitSnackBar(
+                  context: context,
+                  text: state.response,
+                  status: ActionStatus.Fail,
+                );
+                if (_refreshFutureAppointmentController != null) {
+                  _refreshFutureAppointmentController!.refreshCompleted();
+                  _refreshFutureAppointmentController!.loadComplete();
                 }
-                if (state is AppointmentsHomeLoaded) {
-                  futureAppointments = state.appointments;
-                  if (_refreshFutureAppointmentController != null) {
-                    _refreshFutureAppointmentController!.refreshCompleted();
-                    _refreshFutureAppointmentController!.loadComplete();
-                  }
+              }
+              if (state is AppointmentsHomeLoaded) {
+                futureAppointments = state.appointments;
+                if (_refreshFutureAppointmentController != null) {
+                  _refreshFutureAppointmentController!.refreshCompleted();
+                  _refreshFutureAppointmentController!.loadComplete();
                 }
-              },
-            ),
-          ],
-          child: BlocBuilder<AppointmentsBloc, AppointmentsState>(
-              builder: (context, state) {
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<AppointmentsBloc, AppointmentsState>(
+          builder: (context, state) {
             return Scaffold(
               appBar: AppBar(
                 backgroundColor: Colors.white,
                 leadingWidth: 200,
                 leading: Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: SvgPicture.asset('assets/Logo.svg',
-                      semanticsLabel: 'BOLDO Logo'),
+                  padding: const EdgeInsets.only(left: 16),
+                  child: SvgPicture.asset(
+                    'assets/Logo.svg',
+                    semanticsLabel: 'BOLDO Logo',
+                  ),
                 ),
               ),
-              body: Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        BackButtonLabel(
-                          gapSpace: 0,
+              body: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      BackButtonLabel(
+                        gapSpace: 0,
+                      ),
+                      Expanded(
+                        child: header(
+                          'Mis Consultas',
+                          'Consultas',
                         ),
-                        Expanded(
-                          child: header(
-                            "Mis Consultas",
-                            "Consultas",
-                          ),
-                        ),
-                      ],
-                    ),
-                    Stack(
-                      children: [
-                        Center(
-                            child: SvgPicture.asset(
+                      ),
+                    ],
+                  ),
+                  Stack(
+                    children: [
+                      Center(
+                        child: SvgPicture.asset(
                           'assets/decorations/line_separator.svg',
-                        )),
-                        TabBar(
-                          labelStyle: boldoTabHeaderSelectedTextStyle,
-                          unselectedLabelStyle:
-                              boldoTabHeaderUnselectedTextStyle,
-                          indicatorColor: Colors.transparent,
-                          unselectedLabelColor:
-                              const Color.fromRGBO(119, 119, 119, 1),
-                          labelColor: ConstantsV2.activeText,
-                          controller: _tabController,
-                          tabs: [
-                            const Text(
-                              'Próximas',
-                            ),
-                            Row(
-                              children: [
-                                const Flexible(
-                                  child: Text(
-                                    'Anteriores',
-                                  ),
+                        ),
+                      ),
+                      TabBar(
+                        labelStyle: boldoTabHeaderSelectedTextStyle,
+                        unselectedLabelStyle: boldoTabHeaderUnselectedTextStyle,
+                        indicatorColor: Colors.transparent,
+                        unselectedLabelColor:
+                            const Color.fromRGBO(119, 119, 119, 1),
+                        labelColor: ConstantsV2.activeText,
+                        controller: _tabController,
+                        tabs: [
+                          const Text(
+                            'Próximas',
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Flexible(
+                                child: Text(
+                                  'Anteriores',
                                 ),
-                                if (_selectedIndex == 1)
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 6.0),
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        await _filterBox(context);
-                                      },
-                                      child: SvgPicture.asset(
-                                        'assets/icon/filter-list.svg',
-                                      ),
+                              ),
+                              if (_selectedIndex == 1)
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 6.0),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      await _filterBox(context);
+                                    },
+                                    child: SvgPicture.asset(
+                                      'assets/icon/filter-list.svg',
                                     ),
                                   ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: TabBarView(
-                        controller: _tabController,
-                        children: [
-                          _buildFutureAppointments(),
-                          _buildPastAppointments(context),
+                                ),
+                            ],
+                          ),
                         ],
                       ),
+                    ],
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _buildFutureAppointments(),
+                        _buildPastAppointments(context),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
-          })),
+          },
+        ),
+      ),
     );
   }
 
@@ -252,34 +257,37 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
           },
         ),
         child: BlocBuilder<FutureAppointmentsBloc, FutureAppointmentsState>(
-            builder: (context, state) {
-          if (state is AppointmentsHomeLoaded) {
-            return futureAppointments.isNotEmpty
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: futureAppointments.length,
-                    scrollDirection: Axis.vertical,
-                    itemBuilder: _appointment,
-                    physics: const ClampingScrollPhysics(),
-                  )
-                : const EmptyStateV2(
-                    picture: "empty_appointments.svg",
-                    titleBottom: "Aún no tenés consultas",
-                    textBottom:
-                        "A medida en que uses la aplicación podrás ir viendo tus consultas",
-                  );
-          } else if (state is LoadingAppointments) {
-            return Container(child: loadingStatus());
-          } else if (state is FailedLoadedAppointments) {
-            return Container(
+          builder: (context, state) {
+            if (state is AppointmentsHomeLoaded) {
+              return futureAppointments.isNotEmpty
+                  ? ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: futureAppointments.length,
+                      scrollDirection: Axis.vertical,
+                      itemBuilder: _appointment,
+                      physics: const ClampingScrollPhysics(),
+                    )
+                  : const EmptyStateV2(
+                      picture: 'empty_appointments.svg',
+                      titleBottom: 'Aún no tenés consultas',
+                      textBottom:
+                          'A medida en que uses la aplicación podrás ir viendo tus consultas',
+                    );
+            } else if (state is LoadingAppointments) {
+              return Container(child: loadingStatus());
+            } else if (state is FailedLoadedAppointments) {
+              return Container(
                 child: DataFetchErrorWidget(
-                    retryCallback: () =>
-                        BlocProvider.of<FutureAppointmentsBloc>(context)
-                            .add(GetAppointmentsHome())));
-          } else {
-            return Container();
-          }
-        }),
+                  retryCallback: () =>
+                      BlocProvider.of<FutureAppointmentsBloc>(context)
+                          .add(GetAppointmentsHome()),
+                ),
+              );
+            } else {
+              return Container();
+            }
+          },
+        ),
       ),
     );
   }
@@ -317,34 +325,37 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
           },
         ),
         child: BlocBuilder<AppointmentsBloc, AppointmentsState>(
-            builder: (context, state) {
-          if (state is AppointmentsLoadedState) {
-            return allAppointments.isNotEmpty
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: allAppointments.length,
-                    scrollDirection: Axis.vertical,
-                    itemBuilder: _pastAppointment,
-                    physics: const ClampingScrollPhysics(),
-                  )
-                : const EmptyStateV2(
-                    picture: "empty_appointments.svg",
-                    titleBottom: "Aún no tenés consultas",
-                    textBottom:
-                        "A medida en que uses la aplicación podrás ir viendo tus consultas",
-                  );
-          } else if (state is Loading) {
-            return Container(child: loadingStatus());
-          } else if (state is Failed) {
-            return Container(
+          builder: (context, state) {
+            if (state is AppointmentsLoadedState) {
+              return allAppointments.isNotEmpty
+                  ? ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: allAppointments.length,
+                      scrollDirection: Axis.vertical,
+                      itemBuilder: _pastAppointment,
+                      physics: const ClampingScrollPhysics(),
+                    )
+                  : const EmptyStateV2(
+                      picture: 'empty_appointments.svg',
+                      titleBottom: 'Aún no tenés consultas',
+                      textBottom:
+                          'A medida en que uses la aplicación podrás ir viendo tus consultas',
+                    );
+            } else if (state is Loading) {
+              return Container(child: loadingStatus());
+            } else if (state is Failed) {
+              return Container(
                 child: DataFetchErrorWidget(
-                    retryCallback: () =>
-                        BlocProvider.of<AppointmentsBloc>(context)
-                            .add(GetPastAppointmentsBetweenDatesList())));
-          } else {
-            return Container();
-          }
-        }),
+                  retryCallback: () =>
+                      BlocProvider.of<AppointmentsBloc>(context)
+                          .add(GetPastAppointmentsBetweenDatesList()),
+                ),
+              );
+            } else {
+              return Container();
+            }
+          },
+        ),
       ),
     );
   }
@@ -383,51 +394,53 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
         dateTextController.text = inputFormat.format(date1);
         date2TextController.text =
             date2 != null ? inputFormat.format(date2) : '';
-        return StatefulBuilder(builder: (context, setState) {
-          return AlertDialog(
-            contentPadding: const EdgeInsetsDirectional.all(0),
-            scrollable: true,
-            backgroundColor: ConstantsV2.lightGrey,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            content: Container(
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: MediaQuery.of(context).size.height * 0.7,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Filtrar citas',
-                          style: boldoTitleBlackTextStyle.copyWith(
-                              color: ConstantsV2.activeText),
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            Navigator.pop(context);
-                          },
-                          child: SvgPicture.asset(
-                            'assets/icon/close.svg',
-                            color: ConstantsV2.inactiveText,
-                            height: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              contentPadding: const EdgeInsetsDirectional.all(0),
+              scrollable: true,
+              backgroundColor: ConstantsV2.lightGrey,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              content: Container(
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.7,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Card(
+                          Text(
+                            'Filtrar citas',
+                            style: boldoTitleBlackTextStyle.copyWith(
+                              color: ConstantsV2.activeText,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              Navigator.pop(context);
+                            },
+                            child: SvgPicture.asset(
+                              'assets/icon/close.svg',
+                              color: ConstantsV2.inactiveText,
+                              height: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Card(
                               shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.zero,
                               ),
@@ -439,30 +452,33 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                                   children: [
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 10),
+                                        vertical: 10,
+                                      ),
                                       child: Text(
                                         'Modalidad',
                                         style:
                                             boldoCorpSmallSTextStyle.copyWith(
-                                                color: ConstantsV2.activeText),
+                                          color: ConstantsV2.activeText,
+                                        ),
                                       ),
                                     ),
                                     Row(
                                       children: [
                                         Checkbox(
-                                            value: inPerson,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                inPerson = value!;
-                                              });
-                                            }),
+                                          value: inPerson,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              inPerson = value!;
+                                            });
+                                          },
+                                        ),
                                         Container(
                                           child: Text(
-                                            "Presencial",
+                                            'Presencial',
                                             style: boldoCorpMediumTextStyle
                                                 .copyWith(
-                                                    color:
-                                                        ConstantsV2.activeText),
+                                              color: ConstantsV2.activeText,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -470,27 +486,29 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                                     Row(
                                       children: [
                                         Checkbox(
-                                            value: virtual,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                virtual = value!;
-                                              });
-                                            }),
+                                          value: virtual,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              virtual = value!;
+                                            });
+                                          },
+                                        ),
                                         Container(
                                           child: Text(
-                                            "Remoto",
+                                            'Remoto',
                                             style: boldoCorpMediumTextStyle
                                                 .copyWith(
-                                                    color:
-                                                        ConstantsV2.activeText),
+                                              color: ConstantsV2.activeText,
+                                            ),
                                           ),
                                         ),
                                       ],
                                     ),
                                   ],
                                 ),
-                              )),
-                          Card(
+                              ),
+                            ),
+                            Card(
                               shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.zero,
                               ),
@@ -502,48 +520,55 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                                   children: [
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 10),
+                                        vertical: 10,
+                                      ),
                                       child: Text(
                                         'Filtrar por fecha',
                                         style:
                                             boldoCorpSmallSTextStyle.copyWith(
-                                                color: ConstantsV2.activeText),
+                                          color: ConstantsV2.activeText,
+                                        ),
                                       ),
                                     ),
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 8),
+                                        vertical: 8,
+                                      ),
                                       child: Row(
                                         children: [
                                           GestureDetector(
                                             onTap: () async {
                                               DateTime? newDate =
                                                   await showDatePicker(
-                                                      context: context,
-                                                      initialEntryMode:
-                                                          DatePickerEntryMode
-                                                              .calendarOnly,
-                                                      initialDatePickerMode:
-                                                          DatePickerMode.day,
-                                                      initialDate: date1,
-                                                      firstDate: DateTime(1900),
-                                                      lastDate: date2 ??
-                                                          DateTime.now(),
-                                                      locale: const Locale(
-                                                          "es", "ES"),
-                                                      builder:
-                                                          (context, child) {
-                                                        return Theme(
-                                                          data: Theme.of(context).copyWith(
-                                                              colorScheme:
-                                                                  const ColorScheme
-                                                                      .light(
-                                                                      primary:
-                                                                          ConstantsV2
-                                                                              .orange)),
-                                                          child: child!,
-                                                        );
-                                                      });
+                                                context: context,
+                                                initialEntryMode:
+                                                    DatePickerEntryMode
+                                                        .calendarOnly,
+                                                initialDatePickerMode:
+                                                    DatePickerMode.day,
+                                                initialDate: date1,
+                                                firstDate: DateTime(1900),
+                                                lastDate:
+                                                    date2 ?? DateTime.now(),
+                                                locale: const Locale(
+                                                  'es',
+                                                  'ES',
+                                                ),
+                                                builder: (context, child) {
+                                                  return Theme(
+                                                    data: Theme.of(context)
+                                                        .copyWith(
+                                                      colorScheme:
+                                                          const ColorScheme
+                                                              .light(
+                                                        primary:
+                                                            ConstantsV2.orange,
+                                                      ),
+                                                    ),
+                                                    child: child!,
+                                                  );
+                                                },
+                                              );
                                               if (newDate == null) {
                                                 return;
                                               } else {
@@ -553,9 +578,9 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                                                   var inputFormat =
                                                       DateFormat('dd/MM/yyyy');
                                                   var _date1 =
-                                                      outputFormat.parse(newDate
-                                                          .toString()
-                                                          .trim());
+                                                      outputFormat.parse(
+                                                    newDate.toString().trim(),
+                                                  );
                                                   var _date2 = inputFormat
                                                       .format(_date1);
                                                   dateTextController.text =
@@ -579,8 +604,9 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                                                   style:
                                                       boldoCorpSmallSTextStyle
                                                           .copyWith(
-                                                              color: ConstantsV2
-                                                                  .activeText),
+                                                    color:
+                                                        ConstantsV2.activeText,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -590,38 +616,42 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                                     ),
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 8),
+                                        vertical: 8,
+                                      ),
                                       child: Row(
                                         children: [
                                           GestureDetector(
                                             onTap: () async {
                                               DateTime? newDate =
                                                   await showDatePicker(
-                                                      context: context,
-                                                      initialEntryMode:
-                                                          DatePickerEntryMode
-                                                              .calendarOnly,
-                                                      initialDatePickerMode:
-                                                          DatePickerMode.day,
-                                                      initialDate:
-                                                          date2 ?? date1,
-                                                      firstDate: date1,
-                                                      lastDate: DateTime.now(),
-                                                      locale: const Locale(
-                                                          "es", "ES"),
-                                                      builder:
-                                                          (context, child) {
-                                                        return Theme(
-                                                          data: Theme.of(context).copyWith(
-                                                              colorScheme:
-                                                                  const ColorScheme
-                                                                      .light(
-                                                                      primary:
-                                                                          ConstantsV2
-                                                                              .orange)),
-                                                          child: child!,
-                                                        );
-                                                      });
+                                                context: context,
+                                                initialEntryMode:
+                                                    DatePickerEntryMode
+                                                        .calendarOnly,
+                                                initialDatePickerMode:
+                                                    DatePickerMode.day,
+                                                initialDate: date2 ?? date1,
+                                                firstDate: date1,
+                                                lastDate: DateTime.now(),
+                                                locale: const Locale(
+                                                  'es',
+                                                  'ES',
+                                                ),
+                                                builder: (context, child) {
+                                                  return Theme(
+                                                    data: Theme.of(context)
+                                                        .copyWith(
+                                                      colorScheme:
+                                                          const ColorScheme
+                                                              .light(
+                                                        primary:
+                                                            ConstantsV2.orange,
+                                                      ),
+                                                    ),
+                                                    child: child!,
+                                                  );
+                                                },
+                                              );
                                               if (newDate == null) {
                                                 return;
                                               } else {
@@ -631,9 +661,9 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                                                   var inputFormat =
                                                       DateFormat('dd/MM/yyyy');
                                                   var _date1 =
-                                                      outputFormat.parse(newDate
-                                                          .toString()
-                                                          .trim());
+                                                      outputFormat.parse(
+                                                    newDate.toString().trim(),
+                                                  );
                                                   var _date2 = inputFormat
                                                       .format(_date1);
                                                   date2TextController.text =
@@ -657,8 +687,9 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                                                   style:
                                                       boldoCorpSmallSTextStyle
                                                           .copyWith(
-                                                              color: ConstantsV2
-                                                                  .activeText),
+                                                    color:
+                                                        ConstantsV2.activeText,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -668,54 +699,57 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                                     ),
                                   ],
                                 ),
-                              )),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              BlocProvider.of<AppointmentsBloc>(contextPage)
+                                  .setInitialDate(date1);
+                              BlocProvider.of<AppointmentsBloc>(contextPage)
+                                  .setFinalDate(date2);
+                              BlocProvider.of<AppointmentsBloc>(contextPage)
+                                  .setInPersonStatus(inPersonStatus: inPerson);
+                              BlocProvider.of<AppointmentsBloc>(contextPage)
+                                  .setVirtualStatus(virtualStatus: virtual);
+                              BlocProvider.of<AppointmentsBloc>(contextPage)
+                                  .add(GetPastAppointmentsBetweenDatesList());
+                              Navigator.pop(context);
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Aplicar',
+                                  style: boldoCorpSmallSTextStyle.copyWith(
+                                    color: ConstantsV2.lightGrey,
+                                  ),
+                                ),
+                                SvgPicture.asset(
+                                  'assets/icon/done.svg',
+                                  color: ConstantsV2.lightGrey,
+                                  height: 20,
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            BlocProvider.of<AppointmentsBloc>(contextPage)
-                                .setInitialDate(date1);
-                            BlocProvider.of<AppointmentsBloc>(contextPage)
-                                .setFinalDate(date2);
-                            BlocProvider.of<AppointmentsBloc>(contextPage)
-                                .setInPersonStatus(inPersonStatus: inPerson);
-                            BlocProvider.of<AppointmentsBloc>(contextPage)
-                                .setVirtualStatus(virtualStatus: virtual);
-                            BlocProvider.of<AppointmentsBloc>(contextPage)
-                                .add(GetPastAppointmentsBetweenDatesList());
-                            Navigator.pop(context);
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                'Aplicar',
-                                style: boldoCorpSmallSTextStyle.copyWith(
-                                    color: ConstantsV2.lightGrey),
-                              ),
-                              SvgPicture.asset(
-                                'assets/icon/done.svg',
-                                color: ConstantsV2.lightGrey,
-                                height: 20,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        });
+            );
+          },
+        );
       },
     );
   }
@@ -731,7 +765,9 @@ class PastAppointmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int daysDifference = daysBetween(
-        DateTime.parse(appointment.start!).toLocal(), DateTime.now());
+      DateTime.parse(appointment.start!).toLocal(),
+      DateTime.now(),
+    );
 
     AppointmentType? appointmentType;
     String locationDescription = 'Desconocido';
@@ -754,128 +790,145 @@ class PastAppointmentCard extends StatelessWidget {
           ),
         );
       },
-      child: Container(
-        child: Card(
-          margin: const EdgeInsets.symmetric(vertical: 4.0),
-          elevation: 2,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 10,
+          ),
+          Container(
+            decoration: cardDecoration,
             child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Spacer(),
-                    Text(
-                      passedDays(daysDifference, showPrefixText: true),
-                      style: boldoCorpSmallTextStyle.copyWith(
-                          color: ConstantsV2.inactiveText),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: ImageViewTypeForm(
-                        width: 54,
-                        height: 54,
-                        border: false,
-                        url: appointment.doctor?.photoUrl,
-                        gender: appointment.doctor?.gender,
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Spacer(),
+                            Text(
+                              passedDays(daysDifference, showPrefixText: true),
+                              style: boldoCorpSmallTextStyle.copyWith(
+                                color: ConstantsV2.inactiveText,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: Column(
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Text(
-                                "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor?.givenName?.split(" ")[0] ?? ''} ${appointment.doctor?.familyName?.split(" ")[0] ?? ''}",
-                                style: boldoSubTextMediumStyle,
-                              ),
-                            ],
+                          Container(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: ImageViewTypeForm(
+                              width: 54,
+                              height: 54,
+                              border: false,
+                              url: appointment.doctor?.photoUrl,
+                              gender: appointment.doctor?.gender,
+                            ),
                           ),
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          if (appointment.doctor!.specializations != null &&
-                              appointment.doctor!.specializations!.isNotEmpty)
-                            Wrap(
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                for (int i = 0;
-                                    i <
-                                        appointment
-                                            .doctor!.specializations!.length;
-                                    i++)
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        right: i == 0 ? 0 : 3.0, bottom: 5),
-                                    child: Text(
-                                      "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length - 1 != i ? ", " : ""}",
-                                      style: boldoCorpMediumTextStyle.copyWith(
-                                          color: ConstantsV2.inactiveText),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "${getDoctorPrefix(appointment.doctor!.gender!)}${appointment.doctor?.givenName?.split(" ")[0] ?? ''} ${appointment.doctor?.familyName?.split(" ")[0] ?? ''}",
+                                      style: boldoSubTextMediumStyle,
                                     ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 4,
+                                ),
+                                if (appointment.doctor!.specializations !=
+                                        null &&
+                                    appointment
+                                        .doctor!.specializations!.isNotEmpty)
+                                  Wrap(
+                                    children: [
+                                      for (int i = 0;
+                                          i <
+                                              appointment.doctor!
+                                                  .specializations!.length;
+                                          i++)
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                            right: i == 0 ? 0 : 3.0,
+                                            bottom: 5,
+                                          ),
+                                          child: Text(
+                                            "${appointment.doctor!.specializations![i].description}${appointment.doctor!.specializations!.length - 1 != i ? ", " : ""}",
+                                            style: boldoCorpMediumTextStyle
+                                                .copyWith(
+                                              color: ConstantsV2.inactiveText,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
                                   ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    showAppointmentTypeIcon(appointmentType),
+                                    const SizedBox(
+                                      width: 4,
+                                    ),
+                                    Text(
+                                      appointment.appointmentType == 'V'
+                                          ? 'Remoto'
+                                          : 'Presencial',
+                                      style: TextStyle(
+                                        color:
+                                            appointment.appointmentType == 'V'
+                                                ? ConstantsV2.orange
+                                                : ConstantsV2.green,
+                                        fontSize: 12,
+                                        // fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 4,
+                                ),
+                                Row(
+                                  children: [
+                                    locationType(AppointmentType.InPerson),
+                                    const SizedBox(
+                                      width: 4,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        locationDescription,
+                                        style: boldoCorpSmallTextStyle.copyWith(
+                                          color: ConstantsV2.inactiveText,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
+                          ),
                         ],
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                Column(
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        showAppointmentTypeIcon(appointmentType),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          appointment.appointmentType == 'V'
-                              ? "Remoto"
-                              : "Presencial",
-                          style: TextStyle(
-                            color: appointment.appointmentType == 'V'
-                                ? ConstantsV2.orange
-                                : ConstantsV2.green,
-                            fontSize: 12,
-                            // fontWeight: FontWeight.bold
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Row(
-                      children: [
-                        locationType(AppointmentType.InPerson),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        Expanded(
-                          child: Text(
-                            locationDescription,
-                            style: boldoCorpSmallTextStyle.copyWith(
-                                color: ConstantsV2.veryLightBlue),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                )
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }

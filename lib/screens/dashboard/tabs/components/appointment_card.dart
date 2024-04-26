@@ -1,3 +1,5 @@
+// ignore_for_file: require_trailing_commas
+
 import 'dart:async';
 
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
@@ -110,52 +112,53 @@ class _AppointmentCardState extends State<AppointmentCard> {
   void _appointmentStatusTimer() {
     appointmentTimer?.stop();
     appointmentTimer = ScheduledTimer(
-        id: widget.appointment.id ?? '',
-        onExecute: () {
-          if (widget.appointment.status == AppointmentStatus.Cancelled) {
-            appointmentTimer?.stop();
-            if (mounted) setState(() {});
-            return;
-          }
-          actualDay = DateTime.now();
+      id: widget.appointment.id ?? '',
+      onExecute: () {
+        if (widget.appointment.status == AppointmentStatus.Cancelled) {
+          appointmentTimer?.stop();
+          if (mounted) setState(() {});
+          return;
+        }
+        actualDay = DateTime.now();
+        if (mounted)
+          setState(() {
+            minutes = appointmentDay.difference(actualDay).inMinutes + 1;
+          });
+        if (actualDay.isBefore(appointmentOpenDate)) {
           if (mounted)
             setState(() {
-              minutes = appointmentDay.difference(actualDay).inMinutes + 1;
+              widget.appointment.status = AppointmentStatus.Upcoming;
+              appointmentTimer?.schedule(appointmentOpenDate);
             });
-          if (actualDay.isBefore(appointmentOpenDate)) {
-            if (mounted)
-              setState(() {
-                widget.appointment.status = AppointmentStatus.Upcoming;
-                appointmentTimer?.schedule(appointmentOpenDate);
-              });
-          } else if (actualDay.isBefore(appointmentDay)) {
-            if (mounted)
-              setState(() {
-                widget.appointment.status = AppointmentStatus.Open;
-                appointmentTimer?.schedule(appointmentDay);
-              });
-          } else if (actualDay.isBefore(appointmentCloseDate)) {
-            if (mounted)
-              setState(() {
-                widget.appointment.status = AppointmentStatus.Open;
-                appointmentTimer?.schedule(appointmentCloseDate);
-              });
-          } else {
-            if (mounted)
-              // deactivate task once the room is close
-              setState(() {
-                widget.appointment.status = AppointmentStatus.Locked;
-                appointmentTimer?.stop();
-                // notify at home to delete this appointment
-                BlocProvider.of<HomeNewsBloc>(context)
-                    .add(DeleteNews(news: widget.appointment));
-              });
-          }
-        },
-        defaultScheduledTime: appointmentOpenDate,
-        onMissedSchedule: () {
-          appointmentTimer?.execute();
-        });
+        } else if (actualDay.isBefore(appointmentDay)) {
+          if (mounted)
+            setState(() {
+              widget.appointment.status = AppointmentStatus.Open;
+              appointmentTimer?.schedule(appointmentDay);
+            });
+        } else if (actualDay.isBefore(appointmentCloseDate)) {
+          if (mounted)
+            setState(() {
+              widget.appointment.status = AppointmentStatus.Open;
+              appointmentTimer?.schedule(appointmentCloseDate);
+            });
+        } else {
+          if (mounted)
+            // deactivate task once the room is close
+            setState(() {
+              widget.appointment.status = AppointmentStatus.Locked;
+              appointmentTimer?.stop();
+              // notify at home to delete this appointment
+              BlocProvider.of<HomeNewsBloc>(context)
+                  .add(DeleteNews(news: widget.appointment));
+            });
+        }
+      },
+      defaultScheduledTime: appointmentOpenDate,
+      onMissedSchedule: () {
+        appointmentTimer?.execute();
+      },
+    );
   }
 
   @override
@@ -172,27 +175,27 @@ class _AppointmentCardState extends State<AppointmentCard> {
               Container(
                 padding: const EdgeInsets.only(top: 8, left: 8),
                 child: Column(
-                  mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
                       padding: const EdgeInsets.only(right: 8),
                       child: Row(
-                        mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             widget.appointment.status ==
                                     AppointmentStatus.Cancelled
-                                ? "Esta cita se ha cancelado"
-                                : "Esta cita se aproxima",
+                                ? 'Esta cita se ha cancelado'
+                                : 'Esta cita se aproxima',
                             style: boldoCorpSmallTextStyle.copyWith(
-                                color: ConstantsV2.darkBlue),
+                              color: ConstantsV2.darkBlue,
+                            ),
                           ),
                           Text(
-                            dateBetween(date: appointmentDay) ?? "",
+                            dateBetween(date: appointmentDay) ?? '',
                             style: boldoCorpSmallTextStyle.copyWith(
-                                color: ConstantsV2.darkBlue),
+                              color: ConstantsV2.darkBlue,
+                            ),
                           ),
                         ],
                       ),
@@ -205,15 +208,12 @@ class _AppointmentCardState extends State<AppointmentCard> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 7),
-                            child: ImageViewTypeForm(
-                              width: 40,
-                              height: 40,
-                              border: false,
-                              url: widget.appointment.doctor?.photoUrl,
-                              gender: widget.appointment.doctor?.gender,
-                            ),
+                          ImageViewTypeForm(
+                            width: 54,
+                            height: 54,
+                            border: false,
+                            url: widget.appointment.doctor?.photoUrl,
+                            gender: widget.appointment.doctor?.gender,
                           ),
                           const SizedBox(
                             width: 8,
@@ -249,14 +249,15 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                           i++)
                                         Padding(
                                           padding: EdgeInsets.only(
-                                              right: i == 0 ? 0 : 3.0,
-                                              bottom: 5),
+                                            right: i == 0 ? 0 : 3.0,
+                                            bottom: 5,
+                                          ),
                                           child: Text(
                                             "${widget.appointment.doctor!.specializations![i].description}${widget.appointment.doctor!.specializations!.length - 1 != i ? ", " : ""}",
                                             style: boldoCorpMediumTextStyle
                                                 .copyWith(
-                                                    color: ConstantsV2
-                                                        .inactiveText),
+                                              color: ConstantsV2.inactiveText,
+                                            ),
                                           ),
                                         ),
                                     ],
@@ -267,101 +268,100 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            child: SvgPicture.asset(
-                                              'assets/icon/access-time.svg',
-                                              color: ConstantsV2.inactiveText,
-                                            ),
+                                    Row(
+                                      children: [
+                                        showAppointmentTypeIcon(
+                                            appointmentType),
+                                        const SizedBox(
+                                          width: 4,
+                                        ),
+                                        Text(
+                                          widget.appointment.appointmentType ==
+                                                  'V'
+                                              ? 'Remoto'
+                                              : 'Presencial',
+                                          style: TextStyle(
+                                            color: widget.appointment
+                                                        .appointmentType ==
+                                                    'V'
+                                                ? ConstantsV2.orange
+                                                : ConstantsV2.green,
+                                            fontSize: 12,
+                                            // fontWeight: FontWeight.bold
                                           ),
-                                          const SizedBox(
-                                            width: 4,
-                                          ),
-                                          Text(
-                                            formatDate(
-                                              appointmentDay,
-                                              [
-                                                d,
-                                                '/',
-                                                mm,
-                                                '/',
-                                                yyyy,
-                                                ' ',
-                                                HH,
-                                                ':',
-                                                nn,
-                                                'hs'
-                                              ],
-                                              locale: const SpanishDateLocale(),
-                                            ),
-                                            style: boldoCorpSmallTextStyle
-                                                .copyWith(
-                                                    color: ConstantsV2
-                                                        .inactiveText),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                     const SizedBox(
                                       width: 4,
                                     ),
-                                    Expanded(
-                                      child: Container(
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              child: SvgPicture.asset(
-                                                'assets/icon/location_marker.svg',
-                                                color: ConstantsV2.inactiveText,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              width: 4,
-                                            ),
-                                            Flexible(
-                                              child: Text(
-                                                "$locationDescription",
-                                                style: boldoCorpSmallTextStyle
-                                                    .copyWith(
-                                                        color: ConstantsV2
-                                                            .inactiveText),
-                                              ),
-                                            )
-                                          ],
+                                    Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          'assets/icon/access-time.svg',
+                                          color: ConstantsV2.inactiveText,
                                         ),
-                                      ),
-                                    )
+                                        const SizedBox(
+                                          width: 4,
+                                        ),
+                                        Text(
+                                          formatDate(
+                                            appointmentDay,
+                                            [
+                                              d,
+                                              '/',
+                                              mm,
+                                              '/',
+                                              yyyy,
+                                              ' ',
+                                              HH,
+                                              ':',
+                                              nn,
+                                              'hs',
+                                            ],
+                                            locale: const SpanishDateLocale(),
+                                          ),
+                                          style:
+                                              boldoCorpSmallTextStyle.copyWith(
+                                                  color:
+                                                      ConstantsV2.inactiveText,
+                                                  fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(
                                   height: 4,
                                 ),
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      showAppointmentTypeIcon(appointmentType),
-                                      const SizedBox(
-                                        width: 4,
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SvgPicture.asset(
+                                            'assets/icon/location_marker.svg',
+                                            color: ConstantsV2.inactiveText,
+                                          ),
+                                          const SizedBox(
+                                            width: 4,
+                                          ),
+                                          Flexible(
+                                            child: Text(
+                                              locationDescription,
+                                              style: boldoCorpSmallTextStyle
+                                                  .copyWith(
+                                                      color: ConstantsV2
+                                                          .inactiveText,
+                                                      fontSize: 12),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        widget.appointment.appointmentType ==
-                                                'V'
-                                            ? "Remoto"
-                                            : "Presencial",
-                                        style: boldoCorpSmallTextStyle.copyWith(
-                                          color: widget.appointment
-                                                      .appointmentType ==
-                                                  'V'
-                                              ? ConstantsV2.orange
-                                              : ConstantsV2.green,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(
                                   height: 4,
@@ -381,8 +381,8 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                           virtualDescription,
                                           style:
                                               boldoCorpSmallTextStyle.copyWith(
-                                                  color:
-                                                      ConstantsV2.inactiveText),
+                                            color: ConstantsV2.inactiveText,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -418,27 +418,31 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => VideoCall(
-                                      appointment: widget.appointment),
+                                    appointment: widget.appointment,
+                                  ),
                                 ),
                               );
                             },
                             child: Card(
-                                margin: EdgeInsets.zero,
-                                clipBehavior: Clip.antiAlias,
-                                elevation: 0,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(5)),
+                              margin: EdgeInsets.zero,
+                              clipBehavior: Clip.antiAlias,
+                              elevation: 0,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(5),
                                 ),
-                                color: ConstantsV2.orange.withOpacity(0.10),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 7),
-                                  child: appointmentDay.compareTo(actualDay) <=
-                                          0
-                                      ? const Text("entrar")
-                                      : const Text("ingresar a sala de espera"),
-                                )),
+                              ),
+                              color: ConstantsV2.orange.withOpacity(0.10),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                  vertical: 7,
+                                ),
+                                child: appointmentDay.compareTo(actualDay) <= 0
+                                    ? const Text('entrar')
+                                    : const Text('ingresar a sala de espera'),
+                              ),
+                            ),
                           ),
                         )
                       : Container(
@@ -448,9 +452,11 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => MedicalRecordsScreen(
-                                      appointment: widget.appointment),
+                                    appointment: widget.appointment,
+                                  ),
                                   settings: RouteSettings(
-                                      name: (MedicalRecordsScreen).toString()),
+                                    name: (MedicalRecordsScreen).toString(),
+                                  ),
                                 ),
                               );
                               if (result == AppointmentStatus.Cancelled) {
@@ -460,23 +466,27 @@ class _AppointmentCardState extends State<AppointmentCard> {
                               }
                             },
                             child: Card(
-                                margin: EdgeInsets.zero,
-                                clipBehavior: Clip.antiAlias,
-                                elevation: 0,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(5)),
+                              margin: EdgeInsets.zero,
+                              clipBehavior: Clip.antiAlias,
+                              elevation: 0,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(5),
                                 ),
-                                color: ConstantsV2.orange.withOpacity(0.10),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 7),
-                                  child: const Text("ver"),
-                                )),
+                              ),
+                              color: ConstantsV2.orange.withOpacity(0.10),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                  vertical: 7,
+                                ),
+                                child: const Text('ver'),
+                              ),
+                            ),
                           ),
                         ),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -486,98 +496,111 @@ class _AppointmentCardState extends State<AppointmentCard> {
 
   Widget hourContainer() {
     return Container(
-        width: 65,
-        child: Card(
-          clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: appointmentDay.compareTo(actualDay) <= 0
-              ? Container(
-                  color: ConstantsV2.orange,
-                  padding: const EdgeInsets.only(
-                      left: 6.5, right: 6.5, bottom: 2, top: 2),
-                  child: const Text(
-                    "ahora",
-                    style: TextStyle(
-                      color: ConstantsV2.lightGrey,
-                      fontStyle: FontStyle.normal,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Montserrat',
-                    ),
+      width: 65,
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: appointmentDay.compareTo(actualDay) <= 0
+            ? Container(
+                color: ConstantsV2.orange,
+                padding: const EdgeInsets.only(
+                  left: 6.5,
+                  right: 6.5,
+                  bottom: 2,
+                  top: 2,
+                ),
+                child: const Text(
+                  'ahora',
+                  style: TextStyle(
+                    color: ConstantsV2.lightGrey,
+                    fontStyle: FontStyle.normal,
+                    fontSize: 8,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Montserrat',
                   ),
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    appointmentDay
-                                .difference(actualDay)
-                                .compareTo(const Duration(minutes: 15)) <=
-                            0
-                        ? Container(
-                            padding: const EdgeInsets.only(
-                                left: 6.5, right: 6.5, bottom: 2, top: 2),
-                            color: ConstantsV2.orange,
-                            child: const Text(
-                              "dentro de",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: ConstantsV2.lightGrey,
-                                fontStyle: FontStyle.normal,
-                                fontSize: 8,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Montserrat',
-                              ),
-                            ),
-                          )
-                        : Container(
-                            padding: const EdgeInsets.only(
-                                left: 6.5, right: 6.5, bottom: 2, top: 2),
-                            color: ConstantsV2.green,
-                            child: Text(
-                              isToday
-                                  ? "hoy"
-                                  : '${DateFormat('dd/MM').format(DateTime.parse(widget.appointment.start!).toLocal())}',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: ConstantsV2.lightGrey,
-                                fontStyle: FontStyle.normal,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Montserrat',
-                              ),
+                ),
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  appointmentDay
+                              .difference(actualDay)
+                              .compareTo(const Duration(minutes: 15)) <=
+                          0
+                      ? Container(
+                          padding: const EdgeInsets.only(
+                            left: 6.5,
+                            right: 6.5,
+                            bottom: 2,
+                            top: 2,
+                          ),
+                          color: ConstantsV2.orange,
+                          child: const Text(
+                            'dentro de',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: ConstantsV2.lightGrey,
+                              fontStyle: FontStyle.normal,
+                              fontSize: 8,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Montserrat',
                             ),
                           ),
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      child: isToday && minutes <= 15
-                          ? Text(
-                              "${minutes} min",
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: ConstantsV2.activeText,
-                                fontStyle: FontStyle.normal,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Montserrat',
-                              ),
-                            )
-                          : Text(
-                              "${DateFormat('HH:mm').format(appointmentDay.toLocal())}",
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: ConstantsV2.activeText,
-                                fontStyle: FontStyle.normal,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Montserrat',
-                              ),
+                        )
+                      : Container(
+                          padding: const EdgeInsets.only(
+                            left: 6.5,
+                            right: 6.5,
+                            bottom: 2,
+                            top: 2,
+                          ),
+                          color: ConstantsV2.green,
+                          child: Text(
+                            isToday
+                                ? 'hoy'
+                                : '${DateFormat('dd/MM').format(DateTime.parse(widget.appointment.start!).toLocal())}',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: ConstantsV2.lightGrey,
+                              fontStyle: FontStyle.normal,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Montserrat',
                             ),
-                    )
-                  ],
-                ),
-        ));
+                          ),
+                        ),
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    child: isToday && minutes <= 15
+                        ? Text(
+                            '${minutes} min',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: ConstantsV2.activeText,
+                              fontStyle: FontStyle.normal,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Montserrat',
+                            ),
+                          )
+                        : Text(
+                            "${DateFormat('HH:mm').format(appointmentDay.toLocal())}",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: ConstantsV2.activeText,
+                              fontStyle: FontStyle.normal,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Montserrat',
+                            ),
+                          ),
+                  ),
+                ],
+              ),
+      ),
+    );
   }
 }
 
@@ -615,7 +638,7 @@ class CancelAppointmentWidget extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.only(left: 8.0, right: 2.0),
                   child: Text('Cancelar cita'),
-                )
+                ),
               ],
             ),
           ),
