@@ -410,81 +410,84 @@ class _AppointmentCardState extends State<AppointmentCard> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  widget.appointment.appointmentType == 'V' && minutes <= 15
-                      ? Container(
-                          child: GestureDetector(
-                            onTap: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => VideoCall(
-                                    appointment: widget.appointment,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Card(
-                              margin: EdgeInsets.zero,
-                              clipBehavior: Clip.antiAlias,
-                              elevation: 0,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(5),
-                                ),
+                  if (widget.appointment.appointmentType == 'V' &&
+                      minutes <= 15)
+                    Container(
+                      child: GestureDetector(
+                        onTap: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => VideoCall(
+                                appointment: widget.appointment,
                               ),
-                              color: ConstantsV2.orange.withOpacity(0.10),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 15,
-                                  vertical: 7,
-                                ),
-                                child: appointmentDay.compareTo(actualDay) <= 0
-                                    ? const Text('entrar')
-                                    : const Text('ingresar a sala de espera'),
-                              ),
+                            ),
+                          );
+                        },
+                        child: Card(
+                          margin: EdgeInsets.zero,
+                          clipBehavior: Clip.antiAlias,
+                          elevation: 0,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(5),
                             ),
                           ),
-                        )
-                      : Container(
-                          child: GestureDetector(
-                            onTap: () async {
-                              var result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MedicalRecordsScreen(
-                                    appointment: widget.appointment,
-                                  ),
-                                  settings: RouteSettings(
-                                    name: (MedicalRecordsScreen).toString(),
-                                  ),
-                                ),
-                              );
-                              if (result == AppointmentStatus.Cancelled) {
-                                widget.appointment.status =
-                                    AppointmentStatus.Cancelled;
-                                setState(() {});
-                              }
-                            },
-                            child: Card(
-                              margin: EdgeInsets.zero,
-                              clipBehavior: Clip.antiAlias,
-                              elevation: 0,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(5),
-                                ),
-                              ),
-                              color: ConstantsV2.orange.withOpacity(0.10),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 15,
-                                  vertical: 7,
-                                ),
-                                child: const Text('ver'),
-                              ),
+                          color: ConstantsV2.orange.withOpacity(0.10),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 7,
                             ),
+                            child: appointmentDay.compareTo(actualDay) <= 0
+                                ? const Text('entrar')
+                                : const Text('ingresar a sala de espera'),
                           ),
                         ),
+                      ),
+                    )
+                  else
+                    Container(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: GestureDetector(
+                        onTap: () async {
+                          var result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MedicalRecordsScreen(
+                                appointment: widget.appointment,
+                              ),
+                              settings: RouteSettings(
+                                name: (MedicalRecordsScreen).toString(),
+                              ),
+                            ),
+                          );
+                          if (result == AppointmentStatus.Cancelled) {
+                            widget.appointment.status =
+                                AppointmentStatus.Cancelled;
+                            setState(() {});
+                          }
+                        },
+                        child: Card(
+                          margin: EdgeInsets.zero,
+                          clipBehavior: Clip.antiAlias,
+                          elevation: 0,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(5),
+                            ),
+                          ),
+                          color: ConstantsV2.orange.withOpacity(0.10),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 7,
+                            ),
+                            child: const Text('ver'),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ],
