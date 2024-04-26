@@ -1,3 +1,5 @@
+// ignore_for_file: require_trailing_commas
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -553,7 +555,10 @@ ThemeData boldoTheme = ThemeData(
   popupMenuTheme:
       const PopupMenuThemeData(surfaceTintColor: ConstantsV2.primaryColor),
   cardTheme: const CardTheme(surfaceTintColor: ConstantsV2.primaryColor),
-  appBarTheme: const AppBarTheme(elevation: 6, shadowColor: Colors.black),
+  appBarTheme: const AppBarTheme(
+      elevation: 6,
+      shadowColor: Colors.black,
+      surfaceTintColor: ConstantsV2.grayLightest),
   tabBarTheme: const TabBarTheme(dividerColor: Colors.transparent),
 );
 
