@@ -98,7 +98,7 @@ const boldoTitleBlackTextStyle = TextStyle(
   color: ConstantsV2.activeText,
   fontStyle: FontStyle.normal,
   fontSize: 24,
-  fontWeight: FontWeight.w500,
+  fontWeight: FontWeight.w400,
   fontFamily: 'Montserrat',
 );
 
