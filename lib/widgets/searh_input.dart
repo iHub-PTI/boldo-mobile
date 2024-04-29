@@ -79,6 +79,7 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
               side: BorderSide(width: 1.0, color: ConstantsV2.grayDark),
               borderRadius: BorderRadius.circular(12.0)),
         ),
+        constraints: BoxConstraints(maxHeight: 100),
       ),
       onTapOutside: (_) => FocusScope.of(context).unfocus(),
     );
