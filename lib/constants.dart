@@ -135,8 +135,8 @@ const boldoSubTextMediumStyle = TextStyle(
 );
 
 TextStyle bodyLarge = GoogleFonts.montserrat().copyWith(
-  fontWeight: FontWeight.w300,
-  fontSize: 14,
+  fontWeight: FontWeight.w400,
+  fontSize: 16,
 );
 
 TextStyle bodyP = GoogleFonts.montserrat().copyWith(
@@ -146,7 +146,7 @@ TextStyle bodyP = GoogleFonts.montserrat().copyWith(
 
 TextStyle bodyLargeBlack = GoogleFonts.montserrat().copyWith(
   fontWeight: FontWeight.w500,
-  fontSize: 14,
+  fontSize: 16,
 );
 
 TextStyle bodySmallRegular = GoogleFonts.montserrat().copyWith(
@@ -179,7 +179,7 @@ const boldoInfoTextStyle = TextStyle(
   fontFamily: 'Montserrat',
   fontStyle: FontStyle.normal,
   fontWeight: FontWeight.w300,
-  fontSize: 14
+  fontSize: 14,
 );
 
 const boldoCardHeadingTextStyle = TextStyle(
@@ -335,6 +335,13 @@ BoxShadow shadowRegular = const BoxShadow(
   spreadRadius: 0,
 );
 
+BoxShadow shadowPin = const BoxShadow(
+  color: Color(0x0C000000),
+  blurRadius: 5.55,
+  offset: Offset(0, 5.55),
+  spreadRadius: 0,
+);
+
 BoxShadow shadowHeader = const BoxShadow(
   color: Color(0x07000000),
   blurRadius: 10,
@@ -373,15 +380,13 @@ const BoxDecoration buttonFXSecondaryStyle = BoxDecoration(
       offset: Offset(0, 0),
       color: Color.fromRGBO(253, 165, 125, 0.5),
       blurRadius: 4,
-    )
-  ]
+    ),
+  ],
 );
 
 BoxDecoration cardDecoration = BoxDecoration(
   color: ConstantsV2.lightest,
-  boxShadow: [
-    shadowRegular
-  ],
+  boxShadow: [shadowRegular],
 );
 
 const BoxDecoration selectedCardDecoration = BoxDecoration(
@@ -398,22 +403,25 @@ const BoxDecoration selectedCardDecoration = BoxDecoration(
       blurRadius: 4,
       offset: Offset(0, 4),
       spreadRadius: 0,
-    )
+    ),
   ],
 );
 
 ThemeData boldoTheme = ThemeData(
+  useMaterial3: true,
   fontFamily: 'Montserrat',
-  listTileTheme: const ListTileThemeData(
-    horizontalTitleGap: 0
-  ),
+  listTileTheme: const ListTileThemeData(horizontalTitleGap: 0),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
       textStyle: MaterialStateProperty.all(
-        const TextStyle(fontWeight: FontWeight.w500, fontSize: 16,
-            color: ConstantsV2.BGNeutral
+        const TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 16,
+          color: ConstantsV2.BGNeutral,
         ),
       ),
+      foregroundColor:
+          MaterialStateProperty.all<Color?>(ConstantsV2.primaryColor),
       padding: MaterialStateProperty.all(
         const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       ),
@@ -433,18 +441,20 @@ ThemeData boldoTheme = ThemeData(
   textButtonTheme: TextButtonThemeData(
     style: TextButton.styleFrom(
       foregroundColor: ConstantsV2.secondaryRegular,
-      textStyle: boldoSubTextMediumStyle.copyWith(color: ConstantsV2.secondaryRegular),
+      textStyle: boldoSubTextMediumStyle.copyWith(
+        color: ConstantsV2.secondaryRegular,
+      ),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
     ),
   ),
   toggleableActiveColor: ConstantsV2.orange,
   checkboxTheme: CheckboxThemeData(
+    side: const BorderSide(color: ConstantsV2.orange),
     shape: RoundedRectangleBorder(
-      side: const BorderSide(color: ConstantsV2.orange, width: 5),
       borderRadius: BorderRadius.circular(4),
     ),
     fillColor: MaterialStateProperty.resolveWith((states) {
-      if(states.contains(MaterialState.selected)){
+      if (states.contains(MaterialState.selected)) {
         return ConstantsV2.orange;
       }
     }),
@@ -462,7 +472,11 @@ ThemeData boldoTheme = ThemeData(
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      textStyle: const TextStyle(fontWeight: FontWeight.w400, fontSize: 16, color: ConstantsV2.orange),
+      textStyle: const TextStyle(
+        fontWeight: FontWeight.w400,
+        fontSize: 16,
+        color: ConstantsV2.orange,
+      ),
       foregroundColor: ConstantsV2.orange,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(100),
@@ -470,13 +484,14 @@ ThemeData boldoTheme = ThemeData(
       side: const BorderSide(
         color: ConstantsV2.orange,
         width: 1,
-      )
+      ),
     ),
   ),
   textTheme: TextTheme(
     titleMedium: boldoCorpSmallSTextStyle.copyWith(
       color: ConstantsV2.activeText,
     ),
+    bodyLarge: bodyLarge,
   ),
   inputDecorationTheme: InputDecorationTheme(
     enabledBorder: UnderlineInputBorder(
@@ -506,9 +521,20 @@ ThemeData boldoTheme = ThemeData(
         width: 1.0,
       ),
     ),
-    errorStyle: bodySmallRegular.copyWith(
-      color: ConstantsV2.systemFail
-    )
+    errorStyle: bodySmallRegular.copyWith(color: ConstantsV2.systemFail),
+  ),
+  searchBarTheme: SearchBarThemeData(
+    elevation: MaterialStateProperty.all<double>(0),
+    backgroundColor: MaterialStateProperty.resolveWith((states) {
+      switch (states.firstOrNull) {
+        case MaterialState.selected:
+        case MaterialState.pressed:
+        case MaterialState.focused:
+          return ConstantsV2.gray.withOpacity(0.5);
+        default:
+          return ConstantsV2.BGNeutral;
+      }
+    }),
   ),
   primaryColor: Colors.white,
   scaffoldBackgroundColor: ConstantsV2.BGNeutral,
@@ -518,12 +544,25 @@ ThemeData boldoTheme = ThemeData(
     color: Constants.primaryColor400,
     circularTrackColor: Constants.primaryColor600,
   ),
+  dialogTheme: const DialogTheme(
+    surfaceTintColor: ConstantsV2.primaryColor,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+    ),
+  ),
+  popupMenuTheme:
+      const PopupMenuThemeData(surfaceTintColor: ConstantsV2.primaryColor),
+  cardTheme: const CardTheme(surfaceTintColor: ConstantsV2.primaryColor),
+  appBarTheme: const AppBarTheme(elevation: 6, shadowColor: Colors.black),
+  tabBarTheme: const TabBarTheme(dividerColor: Colors.transparent),
 );
 
 ButtonStyle elevatedButtonStyleSecondary = ButtonStyle(
   textStyle: MaterialStateProperty.all(
-    const TextStyle(fontWeight: FontWeight.w500, fontSize: 16,
-        color: ConstantsV2.BGNeutral
+    const TextStyle(
+      fontWeight: FontWeight.w500,
+      fontSize: 16,
+      color: ConstantsV2.BGNeutral,
     ),
   ),
   padding: MaterialStateProperty.all(
@@ -664,7 +703,8 @@ class ConstantsV2 {
   static Color primaryLightAndClear = const Color(0xff28B3BB).withOpacity(.13);
 
   static const Color secondaryRegular = Color(0xffEB8B76);
-  static Color secondaryLightAndClear = const Color(0xffEB8B76).withOpacity(0.1);
+  static Color secondaryLightAndClear =
+      const Color(0xffEB8B76).withOpacity(0.1);
 
   static const Color systemSuccess = Color(0xff4AB648);
   static const Color systemFail = Color(0xffC53030);
@@ -688,9 +728,8 @@ class ConstantsV2 {
   static double homeFeedTitleContainerMinHeight = 32.0;
   static double homeCarouselPadding = 24.0;
 
-  static double homeExpandedMaxHeight = homeAppBarMaxHeight ;
-  static double homeExpandedMinHeight = homeAppBarMinHeight ;
-
+  static double homeExpandedMaxHeight = homeAppBarMaxHeight;
+  static double homeExpandedMinHeight = homeAppBarMinHeight;
 }
 
 // Constants
@@ -703,7 +742,9 @@ const String dependentSuccessAdded = '¡Dependiente agregado!';
 const String cancelActionMessage = 'Acción cancelada';
 DateTime minDate = DateTime(1900, 1, 1);
 DateTime minDateDigit = DateTime(1000, 1, 1);
-enum StatusRequestOrganization  {Approved, Pending, Rejected}
+
+enum StatusRequestOrganization { Approved, Pending, Rejected }
+
 const int timeToShowAppointmentsOnHoldInMonth = 1;
 const int timeToShowStudyOrderInMonth = 2;
 const Duration appearWidgetDuration = Duration(seconds: 1);

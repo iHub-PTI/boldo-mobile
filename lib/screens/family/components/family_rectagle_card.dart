@@ -39,27 +39,41 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
         color: ConstantsV2.lightest,
         boxShadow: [
           shadowRegular,
-        ]
+        ],
       ),
       child: Column(
         children: [
           InkWell(
-            onTap: widget.isDependent ? (){} : (){
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => MyManagersTab()
-                ),
-              );
-            },
+            onTap: widget.isDependent
+                ? () {}
+                : () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MyManagersTab(),
+                      ),
+                    );
+                  },
             child: Container(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     child: widget.isDependent
-                        ? ImageViewTypeForm(height: 60, width: 60, border: false, url: widget.patient?.photoUrl, gender: widget.patient?.photoUrl,)
-                        : ImageViewTypeForm(height: 60, width: 60, border: false, url: prefs.getString('profile_url'), gender: prefs.getString('gender')),
+                        ? ImageViewTypeForm(
+                            height: 60,
+                            width: 60,
+                            border: false,
+                            url: widget.patient?.photoUrl,
+                            gender: widget.patient?.photoUrl,
+                          )
+                        : ImageViewTypeForm(
+                            height: 60,
+                            width: 60,
+                            border: false,
+                            url: prefs.getString('profile_url'),
+                            gender: prefs.getString('gender'),
+                          ),
                   ),
                   const SizedBox(
                     width: 16,
@@ -76,43 +90,60 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
                               Container(
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Flexible(
                                       child: widget.isDependent
                                           ? Text(
-                                        "${widget.patient!.givenName} ${widget.patient!.familyName}",
-                                        style: boldoSubTextMediumStyle.copyWith(
-                                            color: ConstantsV2.activeText
-                                        ),
-                                      )
-                                          :Text(
-                                        "${prefs.getString('name') ?? ''} ${prefs.getString('lastName') ?? ''}",
-                                        style: boldoSubTextMediumStyle.copyWith(
-                                            color: ConstantsV2.activeText
-                                        ),
-                                      ),
+                                              "${widget.patient!.givenName} ${widget.patient!.familyName}",
+                                              style: boldoSubTextMediumStyle
+                                                  .copyWith(
+                                                color: ConstantsV2.activeText,
+                                              ),
+                                            )
+                                          : Text(
+                                              "${prefs.getString('name') ?? ''} ${prefs.getString('lastName') ?? ''}",
+                                              style: boldoSubTextMediumStyle
+                                                  .copyWith(
+                                                color: ConstantsV2.activeText,
+                                              ),
+                                            ),
                                     ),
-                                    widget.isDependent && !(prefs.getBool(isFamily)?? false) ? UnlinkFamilyWidget(
-                                      onTapCallback: (result) async {
-                                        if (result == 'Desvincular') {
-                                          String? action = await unlinkFamilyDialog(context);
-                                          if(action == 'cancel') {
-                                            BlocProvider.of<FamilyBloc>(context).add(
-                                                UnlinkDependent(
-                                                    id: widget.patient!.id!));
-                                          }
-                                        }
-                                      },
-                                    ): const Icon(
-                                      Icons.chevron_right_rounded,
-                                      size: 24,
-                                    ),
+                                    widget.isDependent &&
+                                            !(prefs.getBool(isFamily) ?? false)
+                                        ? UnlinkFamilyWidget(
+                                            onTapCallback: (result) async {
+                                              if (result == 'Desvincular') {
+                                                String? action =
+                                                    await unlinkFamilyDialog(
+                                                  context,
+                                                );
+                                                if (action == 'cancel') {
+                                                  BlocProvider.of<FamilyBloc>(
+                                                    context,
+                                                  ).add(
+                                                    UnlinkDependent(
+                                                      id: widget.patient!.id!,
+                                                    ),
+                                                  );
+                                                }
+                                              }
+                                            },
+                                          )
+                                        : const Icon(
+                                            Icons.chevron_right_rounded,
+                                            size: 24,
+                                          ),
                                   ],
                                 ),
                               ),
                               Text(
-                                ! widget.isDependent ? "mi perfil" : widget.patient!.relationshipDisplaySpan?.capitalize()??'',
+                                !widget.isDependent
+                                    ? "mi perfil"
+                                    : widget.patient!.relationshipDisplaySpan
+                                            ?.capitalize() ??
+                                        '',
                                 style: boldoCorpMediumTextStyle.copyWith(
                                   color: ConstantsV2.green,
                                 ),
@@ -120,17 +151,16 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
                             ],
                           ),
                         ),
-                        if(widget.isDependent)
+                        if (widget.isDependent)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Text("agregado el ${formatDateToString(
-                                    widget.patient?.startDependenceDate?? DateTime.now().toString()
-                                )}",
+                              Text(
+                                "agregado el ${formatDateToString(widget.patient?.startDependenceDate ?? DateTime.now().toString())}",
                                 style: boldoCorpSmallTextStyle.copyWith(
                                   color: ConstantsV2.inactiveText,
                                 ),
-                              )
+                              ),
                             ],
                           ),
                       ],
@@ -140,17 +170,17 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
               ),
             ),
           ),
-          if(!widget.isDependent)
+          if (!widget.isDependent)
             const SizedBox(
               height: 8,
             ),
-          if(!widget.isDependent)
+          if (!widget.isDependent)
             InkWell(
-              onTap: (){
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const QRGenerator()
+                    builder: (context) => const QRGenerator(),
                   ),
                 );
               },
@@ -172,6 +202,7 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
                           color: ConstantsV2.secondaryRegular,
                           fontWeight: FontWeight.w400,
                           decoration: TextDecoration.underline,
+                          decorationColor: ConstantsV2.secondaryRegular,
                         ),
                       ),
                     ),
@@ -180,11 +211,11 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
               ),
             ),
         ],
-      )
+      ),
     );
   }
 
-  Future<String?> unlinkFamilyDialog(BuildContext context){
+  Future<String?> unlinkFamilyDialog(BuildContext context) {
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -193,7 +224,7 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context, 'atrás'),
-            child: const Text('atrás'),
+            child: const Text('Atrás'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, 'cancel'),
@@ -203,7 +234,6 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
       ),
     );
   }
-
 }
 
 class UnlinkFamilyWidget extends StatelessWidget {
@@ -227,7 +257,9 @@ class UnlinkFamilyWidget extends StatelessWidget {
           value: 'Desvincular',
           child: Container(
             height: 45,
-            decoration: const BoxDecoration(color: Constants.accordionbg),
+            decoration: const BoxDecoration(
+              color: Constants.accordionbg,
+            ),
             child: Row(
               children: [
                 Padding(
@@ -237,7 +269,7 @@ class UnlinkFamilyWidget extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.only(left: 8.0, right: 2.0),
                   child: Text('Desvincular familiar'),
-                )
+                ),
               ],
             ),
           ),

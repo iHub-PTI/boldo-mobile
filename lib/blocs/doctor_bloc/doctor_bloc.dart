@@ -26,7 +26,7 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
           bindToScope: true,
         );
         emit(Loading());
-        var _post;
+        late Either<Failure,List<OrganizationWithAvailabilities>> _post;
         await Task(() =>
         _doctorRepository.getAvailabilities(
             id: event.id,
@@ -41,19 +41,18 @@ class DoctorBloc extends Bloc<DoctorEvent, DoctorState> {
           _post = value;
         }
         );
-        var response;
         if (_post.isLeft()) {
-          _post.leftMap((l) => response = l.message);
-          emit(Failed(response: response));
-          transaction.throwable = _post.asLeft();
+          final failure = _post.asLeft();
+          emit(Failed(response: failure.message));
+          transaction.throwable = failure;
           transaction.finish(
             status: SpanStatus.fromString(
-              _post.asLeft().message,
+              failure.message,
             ),
           );
         }else{
           late List<OrganizationWithAvailabilities> nextAvailability = [];
-          _post.foldRight(NextAvailability, (a, previous) => nextAvailability = a);
+          nextAvailability = _post.asRight();
 
           nextAvailability.sort(orderByAvailabilities);
 

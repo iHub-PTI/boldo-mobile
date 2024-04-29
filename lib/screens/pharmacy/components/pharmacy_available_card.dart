@@ -1,7 +1,6 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/models/Contact.dart';
 import 'package:boldo/models/Organization.dart';
-import 'package:boldo/screens/profile/components/profile_image.dart';
-import 'package:boldo/utils/MapLauncher.dart';
 import 'package:boldo/widgets/organization_photo.dart';
 import 'package:flutter/material.dart';
 
@@ -17,42 +16,41 @@ class PharmacyAvailableCard extends StatelessWidget {
   @override
   Widget build(BuildContext context){
     return Container(
-      decoration: ShapeDecoration(
-        color: ConstantsV2.lightAndClear,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 2,
-            color: ConstantsV2.grayLightAndClear,
-          ),
-          borderRadius: BorderRadius.circular(4),
-        ),
+      padding: const EdgeInsets.only(top: 4),
+      decoration: BoxDecoration(
+        color: ConstantsV2.lightest,
+        boxShadow: [
+          shadowRegular,
+        ]
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 56,
-            child: Center(
-              child: OrganizationPhoto(organization: organization),
-            ),
-          ),
-          const SizedBox(
-            width: 3,
-          ),
-          Expanded(
-            child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                organizationDescription(organization: organization),
-                const SizedBox(
-                  height: 4,
+      child: Container(
+        padding: const EdgeInsets.only(
+          top: 0, 
+          right: 8, 
+          bottom: 4, 
+          left: 16,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    organizationDescription(organization: organization),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    organizationDirection(
+                      organization: organization,
+                      context: context,
+                    ),
+                  ],
                 ),
-                organizationDirection(organization: organization),
-              ],
+              ),
             ),
-          ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -62,95 +60,130 @@ class PharmacyAvailableCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _getFinancerHeader(),
+        ],
+      ),
+    );
+  }
+
+  Widget _getFinancerHeader(){
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: const ShapeDecoration(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(4),
+            bottomRight: Radius.circular(4),
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          Center(
+            child: OrganizationPhoto(organization: organization),
+          ),
+          const SizedBox(
+            width: 8,
+          ),
+          _getFinancerDescription(),
+        ],
+      ),
+    );
+  }
+
+  Widget _getFinancerDescription(){
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
             organization.name?? "Sin nombre",
             style: bodyLargeBlack.copyWith(
-              color: ConstantsV2.blueDark,
+              color: ConstantsV2.activeText,
             ),
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Contacto: ",
-                style: bodySmallRegular.copyWith(
-                  color: ConstantsV2.activeText,
-                ),
-              ),
-              const SizedBox(
-                width: 6,
-              ),
-              Text(
-                organization.contactList?.firstWhere((element) => element.type == 'phone', orElse: ()=> organization.contactList!.first).value?? "sin contacto",
-                style: bodySmallRegular.copyWith(
-                  color: ConstantsV2.activeText,
-                ),
-              ),
-            ],
+          const SizedBox(
+            height: 6,
+          ),
+          Text(
+            organization.organzationName?? "Sin nombre",
+            style: regularText.copyWith(
+              color: ConstantsV2.activeText,
+              decoration: TextDecoration.underline,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget organizationDirection({required Organization organization}){
+  Widget organizationDirection({
+    required Organization organization,
+    required BuildContext context,
+  }){
     return Container(
       padding: const EdgeInsets.only(right: 5, bottom: 5),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          const Expanded(
+          Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Text(
-                //   "Av. Gral Santos 1254 casi Las Marias",
-                //   style: TextStyle(
-                //     color: ConstantsV2.darkBlue,
-                //     fontSize: 9,
-                //     fontFamily: 'Montserrat',
-                //     fontWeight: FontWeight.w500,
-                //     height: 0,
-                //   ),
-                // ),
-              ],
-            ),
-          ),
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: ()=> MapsLauncher.launchQuery(organization.name?? 'Paraguay'),
-              child: Container(
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                _getAddress(),
+                const SizedBox(
+                  height: 4,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.location_on_outlined,
-                      color: ConstantsV2.primaryRegular,
-                      size: 9,
-                    ),
-                    SizedBox(
-                      width: 6,
-                    ),
-                    Text(
-                      "ver en el mapa",
-                      style: TextStyle(
-                        color: ConstantsV2.primaryRegular,
-                        fontSize: 9,
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w500,
-                        height: 0,
-                      ),
-                    ),
+                    _getContact(),
                   ],
                 ),
-              ),
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _getAddress(){
+    return Text(
+      organization.address?.addressDescription?? "Av. Gral Santos 1254 casi Las Marias",
+      style: bodySmallRegular.copyWith(
+        color: ConstantsV2.activeText,
+      ),
+    );
+  }
+
+  Widget _getContact(){
+
+      //get phone type
+      Contact? _contactDescription = organization.contactList?.firstWhere((element) => element.type == 'phone', orElse: ()=> organization.contactList!.first);
+
+      //get other contact type
+      _contactDescription = _contactDescription?? organization.contactList?.first;
+
+
+    return Row(
+      children: [
+        if(_contactDescription != null)
+        _contactDescription.typeIcon(
+          color: ConstantsV2.orange,
+        ),
+        if(_contactDescription != null)
+        const SizedBox(
+          width: 5,
+        ),
+        Text(
+          _contactDescription?.value?? "sin contacto",
+          style: bodySmallRegular.copyWith(
+            color: ConstantsV2.activeText,
+          ),
+        ),
+      ],
     );
   }
 

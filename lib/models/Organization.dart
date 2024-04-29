@@ -1,28 +1,40 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/models/AddressEntity.dart';
 import 'package:boldo/models/Contact.dart';
+import 'package:boldo/models/PositionEntity.dart';
 import 'package:boldo/screens/organizations/memberships_screen.dart';
 import 'package:boldo/screens/pharmacy/pharmacy_availables.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:flutter/material.dart';
 
 class Organization {
 
   OrganizationType? organizationType;
 
-  String? id,
-      name,
-      type,
-      coloCode,
-      logoUrl,
-      typeDisplay,
-      visibilityDisplay,
-      visibility
-  ;
+  String? id;
+  String? name;
+  String? type;
+  String? coloCode;
+  String? logoUrl;
+  String? typeDisplay;
+  String? visibilityDisplay;
+  String? visibility;
+
+  /// Organization father id
+  String? organizationId;
+
+  /// Organization father id
+  String? organzationName;
 
   bool? active;
 
   OrganizationSettings? organizationSettings;
 
   List<Contact>? contactList;
+
+  AddressEntity? address;
+
+  PositionEntity? position;
 
   /// integer that define the user preference to get doctors by organization
   int? priority;
@@ -36,36 +48,87 @@ class Organization {
     this.priority,
     this.organizationSettings,
     this.contactList,
-  });
-
-  Organization.fromJson(Map<String, dynamic> json) {
-    active = json['active'];
-    id = json['id'];
-    name = json['name'];
-    name = name?.trimRight().trimLeft();
-    type = json['type'];
-    try {
+    this.address,
+    this.logoUrl,
+    this.typeDisplay,
+    this.visibility,
+    this.visibilityDisplay,
+    this.organizationId,
+    this.organzationName,
+    this.position,
+  }){
+try {
       organizationType =
           OrganizationType.values.firstWhere((element) => element.codeType ==
               type);
     }on StateError catch(exception, stacktrace) {
-      // if not has a Type defined
+      captureError(
+        exception: exception,
+        stackTrace: stacktrace,
+        data: {
+          'type': type,
+        }
+      );
     }
-    coloCode = json['colorCode'];
-    priority = json['priority'];
+  }
+
+  factory Organization.fromJson(Map<String, dynamic> json) {
+    bool? _active = json['active'];
+    String? _id = json['id'];
+    String? _name = json['name'];
+    _name = _name?.trimRight().trimLeft();
+    String? _type = json['type'];
+    String? _coloCode = json['colorCode'];
+    int? _priority = json['priority'];
+
+    List<Contact>? _contactList;
     if (json['contactDtoList'] != null) {
-      contactList = [];
+      _contactList = [];
       json['contactDtoList'].forEach((v) {
-        contactList!.add(Contact.fromJson(v));
+        _contactList!.add(Contact.fromJson(v));
       });
     }
-    logoUrl = json['logoUrl'];
-    typeDisplay = json['typeDisplay'];
-    visibilityDisplay = json['visibilityDisplay'];
-    visibility = json['visibility'];
-    if( json['organizationSettings'] != null ){
-      organizationSettings = OrganizationSettings.fromJson(json['organizationSettings']);
+    String? _logoUrl = json['logoUrl'];
+    String? _typeDisplay = json['typeDisplay'];
+    AddressEntity? _address;
+    if (json['addressDto'] != null) {
+      _address = AddressEntity.fromJson(json['addressDto']);
     }
+    String? _visibilityDisplay = json['visibilityDisplay'];
+    String? _visibility = json['visibility'];
+    OrganizationSettings? _organizationSettings;
+    if( json['organizationSettings'] != null ){
+      _organizationSettings = OrganizationSettings.fromJson(json['organizationSettings']);
+    }
+
+    String? _organizationId = json['organizationId'];
+
+    String? _organizationName = json['organizationName'];
+
+    PositionEntity? _position;
+
+    if( json['position'] != null ){
+      _position = PositionEntity.fromJson(json['position']);
+    }
+
+    return Organization(
+      id: _id,
+      active: _active,
+      name: _name,
+      type: _type,
+      coloCode: _coloCode,
+      priority: _priority,
+      contactList: _contactList,
+      logoUrl: _logoUrl,
+      typeDisplay: _typeDisplay,
+      address: _address,
+      visibilityDisplay: _visibilityDisplay,
+      visibility: _visibility,
+      organizationSettings: _organizationSettings,
+      organizationId: _organizationId,
+      organzationName: _organizationName,
+      position: _position,
+    );
 
   }
 

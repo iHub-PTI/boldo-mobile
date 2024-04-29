@@ -1,14 +1,18 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:boldo/app_config.dart';
 import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart'
     as home_organization_bloc;
-import 'package:boldo/constants.dart';
-import 'package:boldo/blocs/organizationSubscribed_bloc/organizationSubscribed_bloc.dart'
-    as subscribed;
 import 'package:boldo/blocs/organizationApplied_bloc/organizationApplied_bloc.dart'
     as applied;
+import 'package:boldo/blocs/organizationSubscribed_bloc/organizationSubscribed_bloc.dart'
+    as subscribed;
+import 'package:boldo/constants.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/PagList.dart';
 import 'package:boldo/models/Patient.dart';
+import 'package:boldo/models/PositionEntity.dart';
 import 'package:boldo/network/organization_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/screens/organizations/request_subscription/RequestRequirementPostulation.dart';
@@ -22,18 +26,10 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 part 'organization_event.dart';
 part 'organization_state.dart';
 
+/// Bloc for get organizations
 class OrganizationBloc
     extends Bloc<OrganizationBlocEvent, OrganizationBlocState> {
-  final OrganizationRepository _organizationRepository =
-      OrganizationRepository();
-
-  ScrollController pharmaciesListViewController = ScrollController();
-  String? pharmacyNameFilter;
-  int pharmaciesListPage = 1;
-
-  PagList<Organization> get organizationList =>
-      (state as AllOrganizationsObtained).organizationsList;
-
+  /// Bloc constructor
   OrganizationBloc() : super(OrganizationInitialState()) {
     pharmaciesListViewController.addListener(() {
       if (pharmaciesListViewController.position.pixels ==
@@ -48,48 +44,50 @@ class OrganizationBloc
 
     on<OrganizationBlocEvent>((event, emit) async {
       if (event is GetAllOrganizations) {
-        ISentrySpan transaction = Sentry.startTransaction(
+        final transaction = Sentry.startTransaction(
           event.runtimeType.toString(),
           'GET',
           description: 'get all organizations unsubscribed',
           bindToScope: true,
         );
         emit(Loading());
-        var _post;
+        late Either<Failure, List<Organization>> organizationsOrError;
 
         //get organizations that the patient is subscribed
-        await Task(() => _organizationRepository
-                .getUnsubscribedOrganizations(event.patientSelected)!)
-            .attempt()
-            .mapLeftToFailure()
-            .run()
-            .then((value) {
-          _post = value;
+        await Task(
+          () => _organizationRepository
+              .getUnsubscribedOrganizations(event.patientSelected)!,
+        ).attempt().mapLeftToFailure().run().then((value) {
+          organizationsOrError = value;
         });
-        var response;
-        if (_post.isLeft()) {
-          _post.leftMap((l) => response = l.message);
-          emit(Failed(response: response));
-          transaction.throwable = _post.asLeft();
-          transaction.finish(
-            status: SpanStatus.fromString(
-              _post.asLeft().message,
+        if (organizationsOrError.isLeft()) {
+          final failure = organizationsOrError.asLeft();
+          emit(Failed(response: failure.message));
+          transaction.throwable = failure;
+          unawaited(
+            transaction.finish(
+              status: SpanStatus.fromString(
+                failure.message,
+              ),
             ),
           );
         } else {
-          List<Organization> allOrganizations = [];
-          _post.foldRight(Organization, (a, previous) => allOrganizations = a);
+          final allOrganizations = organizationsOrError.asRight();
 
-          PagList<Organization> _organizationsPage = PagList<Organization>(
-              total: allOrganizations.length, items: allOrganizations);
+          final organizationsPage = PagList<Organization>(
+            total: allOrganizations.length,
+            items: allOrganizations,
+          );
 
-          emit(AllOrganizationsObtained(organizationsList: _organizationsPage));
-          transaction.finish(
-            status: const SpanStatus.ok(),
+          emit(AllOrganizationsObtained(organizationsList: organizationsPage));
+          unawaited(
+            transaction.finish(
+              status: const SpanStatus.ok(),
+            ),
           );
         }
       } else if (event is SubscribeToAnManyOrganizations) {
-        ISentrySpan transaction = Sentry.startTransaction(
+        final transaction = Sentry.startTransaction(
           event.runtimeType.toString(),
           'POST',
           description: 'post a request to join an organization',
@@ -97,210 +95,281 @@ class OrganizationBloc
         );
         emit(Loading());
 
-        Either<Failure, List<MapEntry<Organization, bool?>>>
-            postulationEvaluation =
-            await Task(() => checkOrganizationsRequirements(
-                  organizations: event.organizations,
-                  context: event.context,
-                )).attempt().mapLeftToFailure().run();
+        final context = event.context;
 
-        if (postulationEvaluation.isLeft()) {
-          Failure _failure = postulationEvaluation.asLeft();
+        final postulationEvaluationOrError = await Task(
+          () => _checkOrganizationsRequirements(
+            organizations: event.organizations,
+            context: event.context,
+          ),
+        ).attempt().mapLeftToFailure().run();
 
-          if (_failure.message == cancelActionMessage) {
-            transaction.finish(
-              status: SpanStatus.fromString(
-                _failure.message,
-              ),
-            );
-            emit(Success());
-          } else {
-            emit(Failed(response: _failure.message));
-            transaction.throwable = _failure;
-            transaction.finish(
-              status: SpanStatus.fromString(
-                _failure.message,
-              ),
-            );
-          }
-        } else {
-          List<MapEntry<Organization, bool?>> listPostulation =
-              postulationEvaluation.asRight();
+        if (postulationEvaluationOrError.isLeft()) {
+          final failure = postulationEvaluationOrError.asLeft();
 
-          List<Organization> _organizationsChecked = listPostulation
-              .where((organizationWithResponse) =>
-                  organizationWithResponse.value == true)
-              .map((organizationWithResponse) => organizationWithResponse.key)
-              .toList();
-
-          if (_organizationsChecked.isNotEmpty) {
-            // get organizations that the patient is subscribed
-            Either<Failure, None<dynamic>> _post2 = await Task(
-                () => _organizationRepository.subscribeToManyOrganizations(
-                      _organizationsChecked,
-                      event.patientSelected,
-                    )!).attempt().mapLeftToFailure().run();
-            if (_post2.isLeft()) {
-              Failure failure = _post2.asLeft();
-
-              emit(Failed(response: failure.message));
-              transaction.throwable = failure;
+          if (failure.message == cancelActionMessage) {
+            unawaited(
               transaction.finish(
                 status: SpanStatus.fromString(
                   failure.message,
                 ),
+              ),
+            );
+            emit(Success());
+          } else {
+            emit(Failed(response: failure.message));
+            transaction.throwable = failure;
+            unawaited(
+              transaction.finish(
+                status: SpanStatus.fromString(
+                  failure.message,
+                ),
+              ),
+            );
+          }
+        } else {
+          final listPostulation = postulationEvaluationOrError.asRight();
+
+          final organizationsChecked = listPostulation
+              .where(
+                (organizationWithResponse) =>
+                    organizationWithResponse.value ?? false,
+              )
+              .map((organizationWithResponse) => organizationWithResponse.key)
+              .toList();
+
+          if (organizationsChecked.isNotEmpty) {
+            // get organizations that the patient is subscribed
+            final subscribedSuccessOrError = await Task(
+              () => _organizationRepository.subscribeToManyOrganizations(
+                organizationsChecked,
+                event.patientSelected,
+              )!,
+            ).attempt().mapLeftToFailure().run();
+            if (subscribedSuccessOrError.isLeft()) {
+              final failure = subscribedSuccessOrError.asLeft();
+
+              emit(Failed(response: failure.message));
+              transaction.throwable = failure;
+              unawaited(
+                transaction.finish(
+                  status: SpanStatus.fromString(
+                    failure.message,
+                  ),
+                ),
               );
 
-              emit(SuccessSubscribed(
-                organizationSubscribed: [],
-              ));
+              emit(
+                SuccessSubscribed(
+                  organizationSubscribed: const [],
+                ),
+              );
             } else {
+              if (!context.mounted) return;
               // send signal to get news with latest organizations list
               BlocProvider.of<home_organization_bloc.HomeOrganizationBloc>(
-                      event.context)
-                  .add(home_organization_bloc.GetOrganizationsSubscribed());
+                event.context,
+              ).add(home_organization_bloc.GetOrganizationsSubscribed());
 
-              String text = _organizationsChecked.length == 1
-                  ? "Una solicitud enviada correctamente"
-                  : "${_organizationsChecked.length} solicitudes enviadas correctamente";
+              final text = organizationsChecked.length == 1
+                  ? 'Una solicitud enviada correctamente'
+                  : '${organizationsChecked.length} '
+                      'solicitudes enviadas correctamente';
 
+              if (!context.mounted) return;
               await emitSnackBar(
-                      context: event.context,
-                      text: text,
-                      status: ActionStatus.Success)
-                  .then((value) {
+                context: event.context,
+                text: text,
+                status: ActionStatus.Success,
+              ).then((value) {
                 GetIt.I.get<subscribed.OrganizationSubscribedBloc>().add(
-                    subscribed.GetOrganizationsSubscribed(
-                        patientSelected: event.patientSelected));
+                      subscribed.GetOrganizationsSubscribed(
+                        patientSelected: event.patientSelected,
+                      ),
+                    );
                 GetIt.I.get<applied.OrganizationAppliedBloc>().add(
-                    applied.GetOrganizationsPostulated(
-                        patientSelected: event.patientSelected));
+                      applied.GetOrganizationsPostulated(
+                        patientSelected: event.patientSelected,
+                      ),
+                    );
 
-                if (_organizationsChecked.length ==
-                    event.organizations.length) {
+                if (organizationsChecked.length == event.organizations.length) {
                   Navigator.of(event.context).pop(true);
                 }
               });
 
-              emit(SuccessSubscribed(
-                organizationSubscribed: _organizationsChecked,
-              ));
+              emit(
+                SuccessSubscribed(
+                  organizationSubscribed: organizationsChecked,
+                ),
+              );
 
-              transaction.finish(
-                status: const SpanStatus.ok(),
+              unawaited(
+                transaction.finish(
+                  status: const SpanStatus.ok(),
+                ),
               );
             }
           } else {
-            String message = listPostulation.length == 1
-                ? "No se pudo enviar la solicitud"
-                : "No se pudo enviar las solicitudes";
+            var message = listPostulation.length == 1
+                ? 'No se pudo enviar la solicitud'
+                : 'No se pudo enviar las solicitudes';
 
-            message = message +
-                " debido a los requisitos de suscripción no cumplidos";
+            message = '$message debido a los requisitos de '
+                'suscripción no cumplidos';
 
-            emitSnackBar(
-              context: event.context,
-              text: message,
-              status: ActionStatus.Warning,
+            if (!context.mounted) return;
+            unawaited(
+              emitSnackBar(
+                context: context,
+                text: message,
+                status: ActionStatus.Warning,
+              ),
             );
-            transaction.finish(
-              status: SpanStatus.fromString(
-                'failed some form to postulate',
+            unawaited(
+              transaction.finish(
+                status: SpanStatus.fromString(
+                  'failed some form to postulate',
+                ),
               ),
             );
             emit(Success());
           }
         }
       } else if (event is GetAllOrganizationsByType) {
-        ISentrySpan transaction = Sentry.startTransaction(
-          "${event.runtimeType.toString()}-${event.type.codeType}",
+        final transaction = Sentry.startTransaction(
+          '${event.runtimeType}-${event.type.codeType}',
           'GET',
           description: 'get organization by type',
           bindToScope: true,
         );
+
+        // emit loading status on first page
         if (pharmaciesListPage <= 1) emit(Loading());
-        var _post;
+        late Either<Failure, PagList<Organization>> organizationPageOrError;
 
         //get organizations that the patient is subscribed
-        await Task(() => _organizationRepository.getOrganizationsByType(
-              organizationType: event.type,
-              name: pharmacyNameFilter,
-              page: pharmaciesListPage,
-              pageSize: event.pageSize ??
-                  appConfig.ALL_ORGANIZATION_PAGE_SIZE.getValue,
-            )!).attempt().mapLeftToFailure().run().then((value) {
-          _post = value;
+        await Task(
+          () => _organizationRepository.getOrganizationsByType(
+            organizationType: event.type,
+            name: pharmacyNameFilter,
+            page: pharmaciesListPage,
+            pageSize:
+                event.pageSize ?? appConfig.ALL_ORGANIZATION_PAGE_SIZE.getValue,
+          )!,
+        ).attempt().mapLeftToFailure().run().then((value) {
+          organizationPageOrError = value;
         });
-        var response;
-        if (_post.isLeft()) {
-          _post.leftMap((l) => response = l.message);
-          emit(Failed(response: response));
-          transaction.throwable = _post.asLeft();
-          transaction.finish(
-            status: SpanStatus.fromString(
-              _post.asLeft().message,
+        if (organizationPageOrError.isLeft()) {
+          final failure = organizationPageOrError.asLeft();
+          emit(Failed(response: failure.message));
+          transaction.throwable = failure;
+          unawaited(
+            transaction.finish(
+              status: SpanStatus.fromString(
+                failure.message,
+              ),
             ),
           );
         } else {
-          late PagList<Organization> allOrganizations;
           final currentList = state is AllOrganizationsObtained
               ? (state as AllOrganizationsObtained).organizationsList
-              : PagList<Organization>(total: null, items: []);
-          _post.foldRight(
-              PagList<Organization>, (a, previous) => allOrganizations = a);
+              : PagList<Organization>(items: []);
+          var allOrganizationsPage = organizationPageOrError.asRight();
 
-          allOrganizations = PagList<Organization>(
-              total: currentList.total ?? allOrganizations.total,
-              items: [...?currentList.items, ...?allOrganizations.items]);
+          allOrganizationsPage = PagList<Organization>(
+            total: currentList.total ?? allOrganizationsPage.total,
+            items: [...?currentList.items, ...?allOrganizationsPage.items],
+          );
 
-          emit(AllOrganizationsObtained(organizationsList: allOrganizations));
-          transaction.finish(
-            status: const SpanStatus.ok(),
+          allOrganizationsPage.items?.forEach((organization) {
+            organization.position = PositionEntity(
+              latitude: -25.30066 +
+                  (Random().nextBool() ? 1 : -1) * Random().nextDouble() / 50,
+              longitude: -57.63591 +
+                  (Random().nextBool() ? 1 : -1) * Random().nextDouble() / 50,
+              title: "Surcursal: ${organization.name ?? 'unwknown'}",
+              subtitle: organization.name,
+            );
+          });
+
+          emit(
+            AllOrganizationsObtained(
+              organizationsList: allOrganizationsPage,
+            ),
+          );
+          unawaited(
+            transaction.finish(
+              status: const SpanStatus.ok(),
+            ),
           );
         }
       }
     });
   }
 
-  Future<List<MapEntry<Organization, bool?>>> checkOrganizationsRequirements({
+  final OrganizationRepository _organizationRepository =
+      OrganizationRepository();
+
+  /// used to listen the value of scroll and call event on maxScroll
+  ScrollController pharmaciesListViewController = ScrollController();
+
+  /// containt the name that was filter the list of [Organization]
+  String? pharmacyNameFilter;
+
+  /// contain the actual page
+  int pharmaciesListPage = 1;
+
+  /// get list of organizations in a page
+  PagList<Organization> get organizationList {
+    if (state is AllOrganizationsObtained) {
+      return (state as AllOrganizationsObtained).organizationsList;
+    } else {
+      return PagList();
+    }
+  }
+
+  Future<List<MapEntry<Organization, bool?>>> _checkOrganizationsRequirements({
     required List<Organization> organizations,
     required BuildContext context,
   }) async {
-    List<MapEntry<Organization, bool?>> _answers = [];
+    final answers = <MapEntry<Organization, bool?>>[];
 
     await Future.forEach(organizations, (element) async {
       if (element.organizationSettings?.automaticPatientSubscription ?? false) {
-        bool? _answer =
-            await evaluateRequirements(organization: element, context: context);
+        final answer = await _evaluateRequirements(
+          organization: element,
+          context: context,
+        );
 
-        if (_answer == null) {
+        if (answer == null) {
           throw Failure(cancelActionMessage);
         } else {
-          _answers.add(
+          answers.add(
             MapEntry(
               element,
-              _answer,
+              answer,
             ),
           );
         }
       } else {
-        _answers.add(MapEntry(element, true));
+        answers.add(MapEntry(element, true));
       }
     });
 
-    return _answers;
+    return answers;
   }
 
-  Future<bool?> evaluateRequirements({
+  Future<bool?> _evaluateRequirements({
     required Organization organization,
     required BuildContext context,
   }) async {
-    bool? expectedValue = await Navigator.of(context).push(
-      MaterialPageRoute(
+    final expectedValue = await Navigator.of(context).push(
+      MaterialPageRoute<bool?>(
         builder: (BuildContext context) => RequestRequirementPostulation(
           organization: organization,
           cancelAction: () async {
-            return await showDialog<bool>(
+            return showDialog<bool>(
               context: context,
               barrierDismissible: false, // user must tap button!
               builder: (BuildContext contextDialog) {
@@ -312,38 +381,35 @@ class OrganizationBloc
                   titleTextStyle: boldoCardHeadingTextStyle.copyWith(
                     color: ConstantsV2.blueDark,
                   ),
-                  title: Container(
-                    child: const Center(
-                      child: Text(
-                        "¿Estás seguro que deseas cancelar las solicitudes?",
-                        textAlign: TextAlign.center,
-                      ),
+                  title: const Center(
+                    child: Text(
+                      '¿Estás seguro que deseas cancelar las solicitudes?',
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   contentPadding: EdgeInsets.zero,
-                  content: Container(
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.only(
-                            left: 24.0,
-                            top: 20.0,
-                            right: 24.0,
-                            bottom: 24.0,
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Si cancelas ahora, perderás todo el proceso realizado hasta el momento.",
-                              textAlign: TextAlign.center,
-                            ),
+                  content: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.only(
+                          left: 24,
+                          top: 20,
+                          right: 24,
+                          bottom: 24,
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'Si cancelas ahora, perderás todo el proceso '
+                            'realizado hasta el momento.',
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                        const Divider(
-                          color: Colors.black87,
-                          height: 10.0,
-                        ),
-                      ],
-                    ),
+                      ),
+                      const Divider(
+                        color: Colors.black87,
+                        height: 10,
+                      ),
+                    ],
                   ),
                   actionsAlignment: MainAxisAlignment.spaceAround,
                   actions: <Widget>[

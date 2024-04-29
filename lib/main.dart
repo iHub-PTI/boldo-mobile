@@ -59,7 +59,7 @@ import 'package:boldo/network/http.dart';
 import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/constants.dart';
 
-import 'blocs/attach_study_order_bloc/attachStudyOrder_bloc.dart';
+import 'blocs/attach_study_order_bloc/attach_study_order_bloc.dart';
 import 'blocs/doctorFilter_bloc/doctorFilter_bloc.dart';
 import 'blocs/doctor_availability_bloc/doctor_availability_bloc.dart';
 import 'blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
@@ -110,7 +110,6 @@ Future<void> mainCommon({
 }) async {
   WidgetsFlutterBinding.ensureInitialized();
 
-
   GetIt.I.allowReassignment = true;
 
   environment = Environment(
@@ -150,18 +149,37 @@ Future<void> mainCommon({
   });
 
   //GestureBinding.instance!.resamplingEnabled = true;
-  ByteData data = await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
-  SecurityContext.defaultContext.setTrustedCertificatesBytes(data.buffer.asUint8List());
+  ByteData data =
+      await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
+  // SecurityContext.defaultContext
+  //     .setTrustedCertificatesBytes(data.buffer.asUint8List());
 
   ConnectionStatusSingleton.getInstance().initialize();
 
   prefs = await SharedPreferences.getInstance();
   prefs.setBool(isFamily, false);
 
-  initDio(navKey: navKey, dio: dio, baseUrl: environment.SERVER_ADDRESS, header: dioHeader);
-  initDio(navKey: navKey, dio: dioBCM, baseUrl: environment.BCM_SERVER_ADDRESS.getValue, header: dioHeader);
-  initDio(navKey: navKey, dio: dioPassport, baseUrl: environment.SERVER_ADDRESS_PASSPORT, contentType: Headers.jsonContentType, );
-  initDio(navKey: navKey, dio: dioDownloader, baseUrl: environment.SERVER_ADDRESS_PASSPORT, responseType: ResponseType.bytes);
+  initDio(
+      navKey: navKey,
+      dio: dio,
+      baseUrl: environment.SERVER_ADDRESS,
+      header: dioHeader);
+  initDio(
+      navKey: navKey,
+      dio: dioBCM,
+      baseUrl: environment.BCM_SERVER_ADDRESS.getValue,
+      header: dioHeader);
+  initDio(
+    navKey: navKey,
+    dio: dioPassport,
+    baseUrl: environment.SERVER_ADDRESS_PASSPORT,
+    contentType: Headers.jsonContentType,
+  );
+  initDio(
+      navKey: navKey,
+      dio: dioDownloader,
+      baseUrl: environment.SERVER_ADDRESS_PASSPORT,
+      responseType: ResponseType.bytes);
   const storage = FlutterSecureStorage();
   String? session;
   try {
@@ -189,12 +207,10 @@ Future<void> mainCommon({
         options.tracesSampleRate = appConfig.TRACE_RATE_ERROR;
         options.captureFailedRequests = true;
       },
-      appRunner: ()=>{
-
+      appRunner: () => {
         dio.addSentry(),
         dioDownloader.addSentry(),
         dioPassport.addSentry(),
-
         runApp(MyApp(
           session: session ?? '',
           hasUpdate: hasUpdate,
@@ -202,14 +218,13 @@ Future<void> mainCommon({
         ))
       },
     );
-  }else{
+  } else {
     runApp(MyApp(
       session: session ?? '',
       hasUpdate: hasUpdate,
       hasRequiredUpdate: hasRequiredUpdate,
     ));
   }
-
 }
 
 class MyApp extends StatefulWidget {
@@ -254,7 +269,7 @@ class _MyAppState extends State<MyApp> {
             create: (BuildContext context) => FutureAppointmentsBloc(),
           ),
           BlocProvider<PassportBloc>(
-            create: (BuildContext context)=> PassportBloc(),
+            create: (BuildContext context) => PassportBloc(),
           ),
           BlocProvider<StudyOrderBloc>(
             create: (BuildContext context) => StudyOrderBloc(),
@@ -263,8 +278,7 @@ class _MyAppState extends State<MyApp> {
             create: (BuildContext context) => AttachStudyOrderBloc(),
           ),
           BlocProvider<UserLogoutBloc>(
-              create: (BuildContext context) => UserLogoutBloc()
-          ),
+              create: (BuildContext context) => UserLogoutBloc()),
           BlocProvider<HomeOrganizationBloc>(
             create: (BuildContext context) => HomeOrganizationBloc(),
           ),
@@ -299,7 +313,8 @@ class _MyAppState extends State<MyApp> {
                 // ignore: unnecessary_null_comparison
                 create: (_) =>
                     AuthProvider(widget.session != null ? true : false)),
-            ChangeNotifierProvider<DoctorFilterProvider>(create: (_) => DoctorFilterProvider())
+            ChangeNotifierProvider<DoctorFilterProvider>(
+                create: (_) => DoctorFilterProvider())
           ],
           child: FullApp(
             onboardingCompleted: widget.session,
@@ -325,55 +340,62 @@ class FullApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RefreshConfiguration(
-        headerBuilder: () => WaterDropHeader(
-          refresh: Container(),
-        ),        // Configure the default header indicator. If you have the same header indicator for each page, you need to set this
-        child: MaterialApp(
-          scrollBehavior: CustomBehavior(),
-          localizationsDelegates: [
-            RefreshLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          navigatorObservers: [
-            AppNavigatorObserver(),
-          ],
-          supportedLocales: [
-            const Locale("es", 'ES'),
-            const Locale('en'),
-            const Locale('fr'),
-          ],
-          debugShowCheckedModeBanner: false,
-          navigatorKey: navKey,
-          title: 'Boldo',
-          theme: boldoTheme,
-          initialRoute: hasUpdate? '/updateAvailable' :
-          onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
-          routes: {
-            '/onboarding': (context) => HeroScreenV2(),
-            '/home': (context) => DashboardScreen(),
-            '/login': (context) => const LoginWebViewHelper(),
-            '/methods' : (context) => const FamilyMetodsAdd(),
-            '/familyScreen' : (context) => FamilyScreen(),
-            '/defineRelationship' : (context) => DefinedRelationshipScreen(),
-            '/familyTransition' : (context) => FamilyConnectTransition(),
-            '/SignInSuccess' : (context) => SingInTransition(),
-            '/FamilyTransition' : (context) => FamilyTransition(),
-            '/familyDniRegister' : (context) => DniFamilyRegister(),
-            '/my_studies' : (context) => MyStudies(),
-            '/pastAppointmentsScreen' : (context) => const PastAppointmentsScreen(),
-            '/prescriptionsScreen' : (context) => const PrescriptionsScreen(),
-            '/user_qr_detail': (context) => UserQrDetail(),
-            '/familyConnectTransition': (context) => FamilyConnectTransition(),
-            '/familyWithoutDniRegister': (context) => WithoutDniFamilyRegister(),
-            '/profileScreen': (context) => const ProfileScreen(),
-            '/updateAvailable': (context) => UpdateAvailable(
-              onboardingCompleted: onboardingCompleted != '' ? '/SignInSuccess' : "/onboarding",
-              isRequiredUpdate: hasRequiredUpdate,
-            ),
-          },
-        ),
+      headerBuilder: () => WaterDropHeader(
+        refresh: Container(),
+        complete: Container(),
+      ), // Configure the default header indicator. If you have the same header indicator for each page, you need to set this
+      child: MaterialApp(
+        scrollBehavior: CustomBehavior(),
+        localizationsDelegates: [
+          RefreshLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        navigatorObservers: [
+          AppNavigatorObserver(),
+        ],
+        supportedLocales: [
+          const Locale("es", 'ES'),
+          const Locale('en'),
+          const Locale('fr'),
+        ],
+        debugShowCheckedModeBanner: false,
+        navigatorKey: navKey,
+        title: 'Boldo',
+        theme: boldoTheme,
+        initialRoute: hasUpdate
+            ? '/updateAvailable'
+            : onboardingCompleted != ''
+                ? '/SignInSuccess'
+                : "/onboarding",
+        routes: {
+          '/onboarding': (context) => HeroScreenV2(),
+          '/home': (context) => DashboardScreen(),
+          '/login': (context) => const LoginWebViewHelper(),
+          '/methods': (context) => const FamilyMetodsAdd(),
+          '/familyScreen': (context) => FamilyScreen(),
+          '/defineRelationship': (context) => DefinedRelationshipScreen(),
+          '/familyTransition': (context) => FamilyConnectTransition(),
+          '/SignInSuccess': (context) => SingInTransition(),
+          '/FamilyTransition': (context) => FamilyTransition(),
+          '/familyDniRegister': (context) => DniFamilyRegister(),
+          '/my_studies': (context) => MyStudies(),
+          '/pastAppointmentsScreen': (context) =>
+              const PastAppointmentsScreen(),
+          '/prescriptionsScreen': (context) => const PrescriptionsScreen(),
+          '/user_qr_detail': (context) => UserQrDetail(),
+          '/familyConnectTransition': (context) => FamilyConnectTransition(),
+          '/familyWithoutDniRegister': (context) => WithoutDniFamilyRegister(),
+          '/profileScreen': (context) => const ProfileScreen(),
+          '/updateAvailable': (context) => UpdateAvailable(
+                onboardingCompleted: onboardingCompleted != ''
+                    ? '/SignInSuccess'
+                    : "/onboarding",
+                isRequiredUpdate: hasRequiredUpdate,
+              ),
+        },
+      ),
     );
   }
 }

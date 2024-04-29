@@ -1,12 +1,11 @@
 import 'package:boldo/constants.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomSearchInput extends StatefulWidget {
   final String? initialText;
   final bool? expanded;
   final double? maxWidth;
-  final hintText;
+  final String? hintText;
   final Function(String)? onEditingComplete;
   final Function(String)? onChange;
 
@@ -18,8 +17,8 @@ class CustomSearchInput extends StatefulWidget {
     this.hintText,
     this.onEditingComplete,
     this.onChange,
-  })  : assert(expanded == null && maxWidth != null,
-            'If this is not expanded must bd have a width '),
+  })  : assert(expanded != null || maxWidth != null,
+            'If this is not expanded must be have a width '),
         super(key: key);
 
   @override
@@ -41,78 +40,47 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
 
   @override
   Widget build(BuildContext context) {
-    Widget form = TextFormField(
-      controller: _controller,
-      style: const TextStyle(
-        color: ConstantsV2.activeText,
-        fontSize: 12,
-        fontFamily: 'Montserrat',
-        fontWeight: FontWeight.w400,
-      ),
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.zero,
-        prefixIcon: InkWell(
-          onTap: () {
+    Widget form = TapRegion(
+      child: SearchBar(
+        controller: _controller,
+        hintText: widget.hintText,
+        leading: IconButton(
+          onPressed: () {
             widget.onEditingComplete?.call(_controller.text);
           },
-          child: const Icon(
+          icon: const Icon(
             Icons.search_outlined,
-            size: 12,
             color: ConstantsV2.grayDark,
           ),
         ),
-        suffixIcon: showClearIcon
-            ? InkWell(
-                onTap: () {
-                  _controller.text = '';
-                  widget.onEditingComplete?.call('');
-                  setState(() {});
-                },
-                child: const Icon(
-                  Icons.clear,
-                  size: 12,
-                  color: ConstantsV2.grayDark,
-                ),
-              )
-            : null,
-        hintText: widget.hintText,
-        hintStyle: const TextStyle(
-          color: ConstantsV2.gray,
-          fontSize: 12,
-          fontFamily: 'Montserrat',
-          fontWeight: FontWeight.w400,
-          height: 0,
+        trailing: [
+          if (showClearIcon)
+            IconButton(
+              onPressed: () {
+                _controller.text = '';
+                widget.onEditingComplete?.call('');
+                setState(() {});
+              },
+              icon: const Icon(
+                Icons.clear,
+                color: ConstantsV2.grayDark,
+              ),
+            ),
+        ],
+        onSubmitted: widget.onEditingComplete,
+        onChanged: (String value) {
+          widget.onChange?.call(value);
+          setState(() {
+            showClearIcon = value.isNotEmpty;
+          });
+        },
+        shape: MaterialStatePropertyAll(
+          RoundedRectangleBorder(
+              side: BorderSide(width: 1.0, color: ConstantsV2.grayDark),
+              borderRadius: BorderRadius.circular(12.0)),
         ),
-        enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(
-              width: 1,
-              color: Color(0xFFAFBACA),
-            )),
-        focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(
-              width: 1,
-              color: ConstantsV2.blueDark,
-            )),
-        fillColor: const Color(0xFFF9FAFB),
       ),
-      keyboardType: TextInputType.name,
-      onFieldSubmitted: widget.onEditingComplete,
-      onChanged: (String value) {
-        widget.onChange?.call(value);
-        setState(() {
-          showClearIcon = value.isNotEmpty;
-        });
-      },
-      validator: (value) {
-        //remove unnecessary spaces
-        value = value?.trimLeft().trimRight() ?? '';
-        if (value.isEmpty) {
-          return "Ingrese al menos un valor";
-        }
-        return null;
-      },
+      onTapOutside: (_) => FocusScope.of(context).unfocus(),
     );
 
     Widget child;
@@ -124,12 +92,6 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
             child: form,
           );
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [child],
-      ),
-    );
+    return child;
   }
 }
