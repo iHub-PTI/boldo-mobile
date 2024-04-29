@@ -7,11 +7,13 @@ import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/custom_form_button.dart';
+import 'package:boldo/widgets/header_page.dart';
 import 'package:boldo/widgets/wrapper.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:boldo/widgets/back_button.dart';
 
 class BookingConfirmScreen extends StatefulWidget {
   final Doctor doctor;
@@ -38,19 +40,12 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
         const SizedBox(
           height: 20,
         ),
-        TextButton.icon(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(
-            Icons.chevron_left_rounded,
-            size: 25,
-            color: Constants.extraColor400,
-          ),
-          label: Text(
-            'Agendar',
-            style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-          ),
+        Row(
+          children: [
+            BackButtonLabel(
+              labelText: 'Agendar',
+            ),
+          ],
         ),
         const SizedBox(
           height: 20,
