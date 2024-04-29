@@ -47,28 +47,16 @@ class _DoctorFilterState extends State<DoctorFilter> {
   List<Specializations>? specializationsSelectedCopy;
   List<String> names = [];
 
-  void submitName(String value){
-    if(formNameKey.currentState?.validate()?? false) {
+  void submitName(String value) {
+    if (formNameKey.currentState?.validate() ?? false) {
       // save name in filters
-      Provider.of<
-          DoctorFilterProvider>(
-          context,
-          listen: false)
-          .addName(
-          name: value,
-          context: context);
+      Provider.of<DoctorFilterProvider>(context, listen: false)
+          .addName(name: value, context: context);
       // get the update list
       names =
-          Provider
-              .of<
-              DoctorFilterProvider>(
-              context,
-              listen: false)
-              .getNames;
+          Provider.of<DoctorFilterProvider>(context, listen: false).getNames;
       _controllerNames.text = '';
-      setState(() {
-
-      });
+      setState(() {});
     }
   }
 
@@ -83,22 +71,23 @@ class _DoctorFilterState extends State<DoctorFilter> {
     inPersonAppointment =
         Provider.of<DoctorFilterProvider>(context, listen: false)
             .getInPersonAppointment;
-    organizationsSelected = Provider.of<DoctorFilterProvider>(context, listen: false)
-        .getOrganizations;
+    organizationsSelected =
+        Provider.of<DoctorFilterProvider>(context, listen: false)
+            .getOrganizations;
     names = Provider.of<DoctorFilterProvider>(context, listen: false).getNames;
-    if(Provider.of<DoctorFilterProvider>(context, listen: false)
+    if (Provider.of<DoctorFilterProvider>(context, listen: false)
         .getFilterState)
-      BlocProvider.of<DoctorFilterBloc>(context).add(
-        GetDoctorsPreview(
-          specializations: specializationsSelected,
-          virtualAppointment: virtualAppointment,
-          inPersonAppointment: inPersonAppointment,
-          organizations: organizationsSelected,
-          names: names,
-        )
-      );
-    BlocProvider.of<SpecializationFilterBloc>(context).add(GetSpecializations());
-    BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed());
+      BlocProvider.of<DoctorFilterBloc>(context).add(GetDoctorsPreview(
+        specializations: specializationsSelected,
+        virtualAppointment: virtualAppointment,
+        inPersonAppointment: inPersonAppointment,
+        organizations: organizationsSelected,
+        names: names,
+      ));
+    BlocProvider.of<SpecializationFilterBloc>(context)
+        .add(GetSpecializations());
+    BlocProvider.of<HomeOrganizationBloc>(context)
+        .add(GetOrganizationsSubscribed());
     super.initState();
   }
 
@@ -119,8 +108,8 @@ class _DoctorFilterState extends State<DoctorFilter> {
           leadingWidth: 200,
           leading: Padding(
             padding: const EdgeInsets.only(left: 16.0),
-            child:
-            SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+            child: SvgPicture.asset('assets/Logo.svg',
+                semanticsLabel: 'BOLDO Logo'),
           ),
         ),
         body: SafeArea(
@@ -128,63 +117,61 @@ class _DoctorFilterState extends State<DoctorFilter> {
             listeners: [
               BlocListener<DoctorFilterBloc, DoctorFilterState>(
                   listener: (context, state) {
-                    if (state is SuccessDoctorFilter) {
-                      setState(() {
-                        virtualAppointment =
-                            Provider.of<DoctorFilterProvider>(context, listen: false)
-                                .getVirtualAppointment;
-                        inPersonAppointment =
-                            Provider.of<DoctorFilterProvider>(context, listen: false)
-                                .getInPersonAppointment;
-                        doctors = state.doctorList;
-                      });
-                    } else if (state is FilterFailed) {
-                      setState(() {
-                        emitSnackBar(
-                          context: context,
-                          text: _filterFailed,
-                          status: ActionStatus.Fail,
-                        );
-                      });
-                    }
-                  }
-              ),
+                if (state is SuccessDoctorFilter) {
+                  setState(() {
+                    virtualAppointment = Provider.of<DoctorFilterProvider>(
+                            context,
+                            listen: false)
+                        .getVirtualAppointment;
+                    inPersonAppointment = Provider.of<DoctorFilterProvider>(
+                            context,
+                            listen: false)
+                        .getInPersonAppointment;
+                    doctors = state.doctorList;
+                  });
+                } else if (state is FilterFailed) {
+                  setState(() {
+                    emitSnackBar(
+                      context: context,
+                      text: _filterFailed,
+                      status: ActionStatus.Fail,
+                    );
+                  });
+                }
+              }),
               BlocListener<SpecializationFilterBloc, SpecializationFilterState>(
                   listener: (context, state) {
-                    if (state is SuccessSpecializationFilter) {
-                      specializations = state.specializationsList;
-                    } else if (state is FailedSpecializationFilter) {
-                      setState(() {
-                        emitSnackBar(
-                          context: context,
-                          text: _filterFailed,
-                          status: ActionStatus.Fail,
-                        );
-                      });
-                    }
-                  }
-              ),
+                if (state is SuccessSpecializationFilter) {
+                  specializations = state.specializationsList;
+                } else if (state is FailedSpecializationFilter) {
+                  setState(() {
+                    emitSnackBar(
+                      context: context,
+                      text: _filterFailed,
+                      status: ActionStatus.Fail,
+                    );
+                  });
+                }
+              }),
               BlocListener<HomeOrganizationBloc, HomeOrganizationBlocState>(
                   listener: (context, state) {
-                    if (state is OrganizationsObtained) {
-                      organizations = state.organizationsList;
-                    } else if (state is FailedSpecializationFilter) {
-                      setState(() {
-                        emitSnackBar(
-                          context: context,
-                          text: _filterFailed,
-                          status: ActionStatus.Fail,
-                        );
-                      });
-                    }
-                  }
-              )
+                if (state is OrganizationsObtained) {
+                  organizations = state.organizationsList;
+                } else if (state is FailedSpecializationFilter) {
+                  setState(() {
+                    emitSnackBar(
+                      context: context,
+                      text: _filterFailed,
+                      status: ActionStatus.Fail,
+                    );
+                  });
+                }
+              })
             ],
             child: Column(
               // all the possible space between the filter and button to apply the filters
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-
                 // button to go to back
                 Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -216,116 +203,139 @@ class _DoctorFilterState extends State<DoctorFilter> {
                           child: Consumer<DoctorFilterProvider>(
                             builder: (_, doctorFilterProvider, __) {
                               List<dynamic> products = [];
-                              products = [...products,...doctorFilterProvider.getOrganizations];
-                              products = [...products,...doctorFilterProvider.getNames];
-                              products = [...products,...doctorFilterProvider.getSpecializations];
-                              products = [...products,doctorFilterProvider.getAppointmentType() ];
+                              products = [
+                                ...products,
+                                ...doctorFilterProvider.getOrganizations
+                              ];
+                              products = [
+                                ...products,
+                                ...doctorFilterProvider.getNames
+                              ];
+                              products = [
+                                ...products,
+                                ...doctorFilterProvider.getSpecializations
+                              ];
+                              products = [
+                                ...products,
+                                doctorFilterProvider.getAppointmentType()
+                              ];
                               return Wrap(
-                                  children: products.map(buildSubscriptionButtons).toList()
-                              );
+                                  children: products
+                                      .map(buildSubscriptionButtons)
+                                      .toList());
                             },
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                         ),
-                        BlocBuilder<SpecializationFilterBloc, SpecializationFilterState>(
-                            builder: (context, state){
-                              if(state is FailedSpecializationFilter){
-                                DataFetchErrorWidget(
-                                    retryCallback: () =>
-                                        BlocProvider.of<SpecializationFilterBloc>(context)
-                                            .add(GetSpecializations()));
-                              }if (state is SuccessSpecializationFilter){
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                                      child: Column(
-                                        children: [
-                                          TextField(
-                                            decoration: InputDecoration(
-                                              floatingLabelStyle: labelMedium.copyWith(
-                                                color: ConstantsV2.secondaryRegular,
-                                              ),
-                                              floatingLabelBehavior: FloatingLabelBehavior.always,
-                                              hintText: "Clínico",
-                                              hintStyle: bodyLarge.copyWith(
-                                                color: ConstantsV2.gray,
-                                              ),
-                                              labelText: "Especialidad",
-                                              labelStyle: labelMedium.copyWith(
-                                                color: ConstantsV2.secondaryRegular,
-                                              ),
-                                              enabledBorder: const UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: ConstantsV2.secondaryRegular,
-                                                    width: 2
-                                                ),
-                                              ),
-                                              focusedBorder: const UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: ConstantsV2.secondaryRegular,
-                                                    width: 2
-                                                ),
-                                              ),
-                                            ),
-                                            controller: _controller,
-                                            onChanged: (value){
-                                              if(value.isEmpty){
-                                                _searchSpecialities = false;
-                                              }else{
-                                                _searchSpecialities = true;
-                                              }
-                                              setState(() {
-
-                                              });
-                                            },
+                        BlocBuilder<SpecializationFilterBloc,
+                                SpecializationFilterState>(
+                            builder: (context, state) {
+                          if (state is FailedSpecializationFilter) {
+                            DataFetchErrorWidget(
+                                retryCallback: () =>
+                                    BlocProvider.of<SpecializationFilterBloc>(
+                                            context)
+                                        .add(GetSpecializations()));
+                          }
+                          if (state is SuccessSpecializationFilter) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  child: Column(
+                                    children: [
+                                      TextField(
+                                        decoration: InputDecoration(
+                                          floatingLabelStyle:
+                                              labelMedium.copyWith(
+                                            color: ConstantsV2.secondaryRegular,
                                           ),
-                                          if(_searchSpecialities)
-                                            Wrap(
-                                              children:
-                                              specializations.where(
-                                                      (element) => element.description?.toLowerCase().contains(_controller.value.text.toLowerCase())?? false
-                                              ).map((e) =>
-                                                  InkWell(
+                                          floatingLabelBehavior:
+                                              FloatingLabelBehavior.always,
+                                          hintText: "Clínico",
+                                          hintStyle: bodyLarge.copyWith(
+                                            color: ConstantsV2.gray,
+                                          ),
+                                          labelText: "Especialidad",
+                                          labelStyle: labelMedium.copyWith(
+                                            color: ConstantsV2.secondaryRegular,
+                                          ),
+                                          enabledBorder:
+                                              const UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: ConstantsV2
+                                                    .secondaryRegular,
+                                                width: 2),
+                                          ),
+                                          focusedBorder:
+                                              const UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: ConstantsV2
+                                                    .secondaryRegular,
+                                                width: 2),
+                                          ),
+                                        ),
+                                        controller: _controller,
+                                        onChanged: (value) {
+                                          if (value.isEmpty) {
+                                            _searchSpecialities = false;
+                                          } else {
+                                            _searchSpecialities = true;
+                                          }
+                                          setState(() {});
+                                        },
+                                      ),
+                                      if (_searchSpecialities)
+                                        Wrap(
+                                          children: specializations
+                                              .where((element) =>
+                                                  element.description
+                                                      ?.toLowerCase()
+                                                      .contains(_controller
+                                                          .value.text
+                                                          .toLowerCase()) ??
+                                                  false)
+                                              .map(
+                                                (e) => InkWell(
                                                     child: Card(
                                                       child: Container(
-                                                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 8,
+                                                                horizontal: 4),
                                                         child: Text(
-                                                            "${e.description?? ''}"
-                                                        ),
+                                                            "${e.description ?? ''}"),
                                                       ),
                                                     ),
                                                     onTap: () {
-                                                      Provider.of<
-                                                          DoctorFilterProvider>(
-                                                          context,
-                                                          listen: false)
-                                                          .addSpecializations(
-                                                          specialization: e,
-                                                          context: context);
-                                                      // get the update list
-                                                      specializationsSelected =
-                                                          Provider
-                                                              .of<
-                                                              DoctorFilterProvider>(
+                                                      Provider.of<DoctorFilterProvider>(
                                                               context,
                                                               listen: false)
+                                                          .addSpecializations(
+                                                              specialization: e,
+                                                              context: context);
+                                                      // get the update list
+                                                      specializationsSelected =
+                                                          Provider.of<DoctorFilterProvider>(
+                                                                  context,
+                                                                  listen: false)
                                                               .getSpecializations;
-                                                    }
-                                                  ),
-                                              ).toList(),
-                                            )
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              }else{
-                                return loadingStatus();
-                              }
-                            }
-                        ),
+                                                    }),
+                                              )
+                                              .toList(),
+                                        )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else {
+                            return loadingStatus();
+                          }
+                        }),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Column(
@@ -337,15 +347,15 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                     color: ConstantsV2.secondaryRegular,
                                   ),
                                   suffix: InkWell(
-                                    onTap: (){
+                                    onTap: () {
                                       submitName(_controllerNames.value.text);
                                       _controllerNames.text = '';
                                     },
                                     child: SvgPicture.asset(
-                                      'assets/icon/arrow-upward.svg'
-                                    ),
+                                        'assets/icon/arrow-upward.svg'),
                                   ),
-                                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
                                   hintText: "Juan Pérez",
                                   hintStyle: bodyLarge.copyWith(
                                     color: ConstantsV2.gray,
@@ -357,19 +367,18 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                   enabledBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(
                                         color: ConstantsV2.secondaryRegular,
-                                        width: 2
-                                    ),
+                                        width: 2),
                                   ),
                                   focusedBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(
                                         color: ConstantsV2.secondaryRegular,
-                                        width: 2
-                                    ),
+                                        width: 2),
                                   ),
                                 ),
-                                validator: (value){
-                                  if((value?.isEmpty?? true) || (value?.trimRight().trimRight().isEmpty?? true))
-                                    return "Ingrese el nombre";
+                                validator: (value) {
+                                  if ((value?.isEmpty ?? true) ||
+                                      (value?.trimRight().trimRight().isEmpty ??
+                                          true)) return "Ingrese el nombre";
                                   return null;
                                 },
                                 controller: _controllerNames,
@@ -381,7 +390,8 @@ class _DoctorFilterState extends State<DoctorFilter> {
                         const SizedBox(height: 8),
                         Card(
                             shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(8)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8)),
                             ),
                             color: ConstantsV2.lightest,
                             child: Container(
@@ -395,34 +405,37 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                           value: inPersonAppointment,
                                           onChanged: (value) {
                                             setState(() {
-                                              Provider.of<DoctorFilterProvider>(context,
-                                                  listen: false)
-                                                  .setInPersonAppointment(context: context);
-                                              inPersonAppointment = Provider.of<DoctorFilterProvider>(context,
-                                                  listen: false)
+                                              Provider.of<DoctorFilterProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .setInPersonAppointment(
+                                                      context: context);
+                                              inPersonAppointment = Provider.of<
+                                                          DoctorFilterProvider>(
+                                                      context,
+                                                      listen: false)
                                                   .getInPersonAppointment;
                                             });
-                                          }
-                                      ),
+                                          }),
                                       Container(
                                           child: Row(
-                                            children: [
-                                              Text(
-                                                "Presencial",
-                                                style: boldoCorpMediumTextStyle.copyWith(
-                                                    color: ConstantsV2.activeText
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                width: 4,
-                                              ),
-                                              SvgPicture.asset(
-                                                'assets/icon/in_person.svg',
-                                                color: ConstantsV2.green,
-                                              ),
-                                            ],
-                                          )
-                                      ),
+                                        children: [
+                                          Text(
+                                            "Presencial",
+                                            style: boldoCorpMediumTextStyle
+                                                .copyWith(
+                                                    color:
+                                                        ConstantsV2.activeText),
+                                          ),
+                                          const SizedBox(
+                                            width: 4,
+                                          ),
+                                          SvgPicture.asset(
+                                            'assets/icon/in_person.svg',
+                                            color: ConstantsV2.green,
+                                          ),
+                                        ],
+                                      )),
                                     ],
                                   ),
                                   Row(
@@ -431,68 +444,73 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                           value: virtualAppointment,
                                           onChanged: (value) {
                                             setState(() {
-                                              Provider.of<DoctorFilterProvider>(context,
-                                                  listen: false)
-                                                  .setVirtualAppointment(context: context);
-                                              virtualAppointment = Provider.of<DoctorFilterProvider>(context,
-                                                  listen: false)
+                                              Provider.of<DoctorFilterProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .setVirtualAppointment(
+                                                      context: context);
+                                              virtualAppointment = Provider.of<
+                                                          DoctorFilterProvider>(
+                                                      context,
+                                                      listen: false)
                                                   .getVirtualAppointment;
                                             });
-                                          }
-                                      ),
+                                          }),
                                       Container(
                                         child: Container(
                                             child: Row(
-                                              children: [
-                                                Text(
-                                                  "Remoto",
-                                                  style: boldoCorpMediumTextStyle.copyWith(
-                                                      color: ConstantsV2.activeText
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 4,
-                                                ),
-                                                SvgPicture.asset(
-                                                  'assets/icon/videocam.svg',
-                                                  color: ConstantsV2.orange,
-                                                ),
-                                              ],
-                                            )
-                                        ),
+                                          children: [
+                                            Text(
+                                              "Remoto",
+                                              style: boldoCorpMediumTextStyle
+                                                  .copyWith(
+                                                      color: ConstantsV2
+                                                          .activeText),
+                                            ),
+                                            const SizedBox(
+                                              width: 4,
+                                            ),
+                                            SvgPicture.asset(
+                                              'assets/icon/videocam.svg',
+                                              color: ConstantsV2.orange,
+                                            ),
+                                          ],
+                                        )),
                                       ),
                                     ],
                                   ),
                                 ],
                               ),
-                            )
-                        ),
-                        BlocBuilder<HomeOrganizationBloc, HomeOrganizationBlocState>(
-                            builder: (context, state){
-                              if(state is HomeOrganizationFailed){
-                                DataFetchErrorWidget(
-                                    retryCallback: () =>
-                                        BlocProvider.of<HomeOrganizationBloc>(context)
-                                            .add(GetOrganizationsSubscribed()));
-                              }if (state is OrganizationsObtained){
-                                return Card(
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                                  ),
-                                  color: ConstantsV2.lightest,
-                                  child: ListView.builder(
-                                    padding: const EdgeInsets.all(4),
-                                    shrinkWrap: true,
-                                    itemCount: organizations.length,
-                                    itemBuilder: _organizationSelector,
-                                    physics: const ClampingScrollPhysics(),
-                                  ),
-                                );
-                              }else{
-                                return loadingStatus();
-                              }
-                            }
-                        ),
+                            )),
+                        BlocBuilder<HomeOrganizationBloc,
+                                HomeOrganizationBlocState>(
+                            builder: (context, state) {
+                          if (state is HomeOrganizationFailed) {
+                            DataFetchErrorWidget(
+                                retryCallback: () =>
+                                    BlocProvider.of<HomeOrganizationBloc>(
+                                            context)
+                                        .add(GetOrganizationsSubscribed()));
+                          }
+                          if (state is OrganizationsObtained) {
+                            return Card(
+                              shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                              ),
+                              color: ConstantsV2.lightest,
+                              child: ListView.builder(
+                                padding: const EdgeInsets.all(4),
+                                shrinkWrap: true,
+                                itemCount: organizations.length,
+                                itemBuilder: _organizationSelector,
+                                physics: const ClampingScrollPhysics(),
+                              ),
+                            );
+                          } else {
+                            return loadingStatus();
+                          }
+                        }),
                       ],
                     ),
                   ),
@@ -506,21 +524,21 @@ class _DoctorFilterState extends State<DoctorFilter> {
                         child: TextButton(
                             onPressed: () {
                               Provider.of<DoctorFilterProvider>(context,
-                                  listen: false)
+                                      listen: false)
                                   .clearFilter();
-                              BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
-                                  names: [],
-                                  specializations: [],
-                                  virtualAppointment: false,
-                                  inPersonAppointment: false,
-                                  organizations: []));
+                              BlocProvider.of<DoctorsAvailableBloc>(context)
+                                  .add(GetDoctorFilter(
+                                      names: [],
+                                      specializations: [],
+                                      virtualAppointment: false,
+                                      inPersonAppointment: false,
+                                      organizations: []));
                               // call doctor list page
                               Navigator.pop(context);
                             },
                             child: const Text(
                               'Limpiar filtros',
-                            )
-                        ),
+                            )),
                       ),
                     ),
                     Padding(
@@ -530,103 +548,104 @@ class _DoctorFilterState extends State<DoctorFilter> {
                           // to disable the button
                           if (doctors != null && doctors!.items!.length > 0) {
                             Provider.of<DoctorFilterProvider>(context,
-                                listen: false)
+                                    listen: false)
                                 .filterApplied(
-                                specializationsApplied:
-                                specializationsSelected,
-                                virtualAppointmentApplied:
-                                virtualAppointment,
-                                inPersonAppointmentApplied:
-                                inPersonAppointment,
-                                organizationsApplied: organizationsSelected,
-                                namesApplied: names,
+                              specializationsApplied: specializationsSelected,
+                              virtualAppointmentApplied: virtualAppointment,
+                              inPersonAppointmentApplied: inPersonAppointment,
+                              organizationsApplied: organizationsSelected,
+                              namesApplied: names,
                             );
                             Provider.of<DoctorFilterProvider>(context,
-                                listen: false)
+                                    listen: false)
                                 .setDoctors(doctors: doctors!.items!);
-                            BlocProvider.of<DoctorsAvailableBloc>(context).add(GetDoctorFilter(
-                                names: names,
-                                specializations: specializationsSelected,
-                                virtualAppointment: virtualAppointment,
-                                inPersonAppointment: inPersonAppointment,
-                                organizations: organizationsSelected));
+                            BlocProvider.of<DoctorsAvailableBloc>(context).add(
+                                GetDoctorFilter(
+                                    names: names,
+                                    specializations: specializationsSelected,
+                                    virtualAppointment: virtualAppointment,
+                                    inPersonAppointment: inPersonAppointment,
+                                    organizations: organizationsSelected));
                             // call doctor list page
                             Navigator.pop(context);
                           }
                         },
                         child: BlocBuilder<DoctorFilterBloc, DoctorFilterState>(
-                          builder: (context, state){
-                            if(state is LoadingDoctorFilter){
+                          builder: (context, state) {
+                            if (state is LoadingDoctorFilter) {
                               return loadingStatus();
-                            }else if(state is SuccessDoctorFilter || state is DoctorFilterInitial){
+                            } else if (state is SuccessDoctorFilter ||
+                                state is DoctorFilterInitial) {
                               return Container(
                                 decoration: BoxDecoration(
                                   color: !Provider.of<DoctorFilterProvider>(
-                                      context,
-                                      listen: false).getFilterState
+                                              context,
+                                              listen: false)
+                                          .getFilterState
                                       ? ConstantsV2.gray
-                                      : (doctors?.total?? 0) > 0
-                                      ? ConstantsV2
-                                      .buttonPrimaryColor100
-                                      : ConstantsV2.gray,
-                                  borderRadius:
-                                  BorderRadius.circular(100),
+                                      : (doctors?.total ?? 0) > 0
+                                          ? ConstantsV2.buttonPrimaryColor100
+                                          : ConstantsV2.gray,
+                                  borderRadius: BorderRadius.circular(100),
                                   boxShadow: !Provider.of<DoctorFilterProvider>(
-                                      context,
-                                      listen: false).getFilterState
+                                              context,
+                                              listen: false)
+                                          .getFilterState
                                       ? [
-                                    const BoxShadow(
-                                      color: Color(0x00000000),
-                                      blurRadius: 4,
-                                      offset: Offset(0,
-                                          2), // changes position of shadow
-                                    ),
-                                  ]
+                                          const BoxShadow(
+                                            color: Color(0x00000000),
+                                            blurRadius: 4,
+                                            offset: Offset(0,
+                                                2), // changes position of shadow
+                                          ),
+                                        ]
                                       : [],
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(16.0),
                                   child: !Provider.of<DoctorFilterProvider>(
-                                      context,
-                                      listen: false).getFilterState
+                                              context,
+                                              listen: false)
+                                          .getFilterState
                                       ? Text(
-                                    'aplique algún filtro',
-                                    style: boldoCorpMediumBlackTextStyle
-                                        .copyWith(
-                                        fontSize: 16,
-                                        color: ConstantsV2
-                                            .inactiveText),
-                                  )
-                                      : (doctors?.total?? 0) > 0
-                                      ? Row(
-                                    children: [
-                                      Text(
-                                        'ver ${(doctors?.total?? 0)} ${(doctors?.total?? 0) == 1 ? 'coincidencia' : 'coincidencias'}',
-                                        style:
-                                        boldoCorpMediumBlackTextStyle
-                                            .copyWith(
-                                            fontSize:
-                                            16),
-                                      ),
-                                      const SizedBox(
-                                          width: 8),
-                                      SvgPicture.asset(
-                                        'assets/icon/chevron-right.svg',
-                                        color: Colors.white,
-                                      )
-                                    ],
-                                  )
-                                      : Text(
-                                    'sin coincidencias',
-                                    style: boldoCorpMediumBlackTextStyle
-                                        .copyWith(
-                                        fontSize: 16,
-                                        color: ConstantsV2
-                                            .inactiveText),
-                                  ),
+                                          'aplique algún filtro',
+                                          style: boldoCorpMediumBlackTextStyle
+                                              .copyWith(
+                                                  fontSize: 16,
+                                                  color:
+                                                      ConstantsV2.inactiveText),
+                                        )
+                                      : (doctors?.total ?? 0) > 0
+                                          ? Row(
+                                              children: [
+                                                Text(
+                                                  'ver ${(doctors?.total ?? 0)} ${(doctors?.total ?? 0) == 1 ? 'coincidencia' : 'coincidencias'}',
+                                                  style:
+                                                      boldoCorpMediumBlackTextStyle
+                                                          .copyWith(
+                                                              fontSize: 16,
+                                                              color: ConstantsV2
+                                                                  .primaryColor),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                SvgPicture.asset(
+                                                  'assets/icon/chevron-right.svg',
+                                                  color: Colors.white,
+                                                )
+                                              ],
+                                            )
+                                          : Text(
+                                              'sin coincidencias',
+                                              style:
+                                                  boldoCorpMediumBlackTextStyle
+                                                      .copyWith(
+                                                          fontSize: 16,
+                                                          color: ConstantsV2
+                                                              .inactiveText),
+                                            ),
                                 ),
                               );
-                            }else {
+                            } else {
                               return Container();
                             }
                           },
@@ -644,76 +663,66 @@ class _DoctorFilterState extends State<DoctorFilter> {
   }
 
   Widget _organizationSelector(BuildContext context, index) {
-
-    return
-      Row(
-        children: [
-          Checkbox(
-              value: organizationsSelected.any((element) => element.id == organizations[index].id),
-              onChanged: (value) {
-                setState(() {
-                  bool status = value?? false;
-                  if(status) {
-                    Provider.of<DoctorFilterProvider>(context,
-                        listen: false)
-                        .addOrganization(
-                        context: context, organization: organizations[index]);
-                    organizationsSelected = Provider
-                        .of<DoctorFilterProvider>(context,
-                        listen: false)
-                        .getOrganizations;
-                  }else{
-                    Provider.of<DoctorFilterProvider>(context,
-                        listen: false)
-                        .removeOrganization(
-                        context: context, organizationId: organizations[index].id?? '0');
-                    organizationsSelected = Provider
-                        .of<DoctorFilterProvider>(context,
-                        listen: false)
-                        .getOrganizations;
-                  }
-                });
-              }
-          ),
-          Container(
-            child: Container(
-                child: Row(
-                  children: [
-                    Text(
-                      "${organizations[index].name?? 'Desconocido'}",
-                      style: boldoCorpMediumTextStyle.copyWith(
-                          color: ConstantsV2.activeText
-                      ),
-                    ),
-                  ],
-                )
-            ),
-          ),
-        ],
-      );
+    return Row(
+      children: [
+        Checkbox(
+            value: organizationsSelected
+                .any((element) => element.id == organizations[index].id),
+            onChanged: (value) {
+              setState(() {
+                bool status = value ?? false;
+                if (status) {
+                  Provider.of<DoctorFilterProvider>(context, listen: false)
+                      .addOrganization(
+                          context: context, organization: organizations[index]);
+                  organizationsSelected =
+                      Provider.of<DoctorFilterProvider>(context, listen: false)
+                          .getOrganizations;
+                } else {
+                  Provider.of<DoctorFilterProvider>(context, listen: false)
+                      .removeOrganization(
+                          context: context,
+                          organizationId: organizations[index].id ?? '0');
+                  organizationsSelected =
+                      Provider.of<DoctorFilterProvider>(context, listen: false)
+                          .getOrganizations;
+                }
+              });
+            }),
+        Container(
+          child: Container(
+              child: Row(
+            children: [
+              Text(
+                "${organizations[index].name ?? 'Desconocido'}",
+                style: boldoCorpMediumTextStyle.copyWith(
+                    color: ConstantsV2.activeText),
+              ),
+            ],
+          )),
+        ),
+      ],
+    );
   }
 
   Widget buildSubscriptionButtons(dynamic product) {
-
     Widget child = Container(
       width: 10,
       height: 10,
       color: Colors.orange,
     );
 
-    if(product.runtimeType == Specializations().runtimeType)
-
+    if (product.runtimeType == Specializations().runtimeType)
       child = Row(
         children: [
           Expanded(
-            child: Text(product?.description?? ''),
+            child: Text(product?.description ?? ''),
           ),
           InkWell(
-            onTap: (){
+            onTap: () {
               Provider.of<DoctorFilterProvider>(context, listen: false)
                   .removeSpecialization(
-                  specializationId: product?.id?? "0",
-                  context: context);
+                      specializationId: product?.id ?? "0", context: context);
               // get the update list
               specializationsSelected =
                   Provider.of<DoctorFilterProvider>(context, listen: false)
@@ -729,23 +738,19 @@ class _DoctorFilterState extends State<DoctorFilter> {
         ],
       );
 
-    if(product.runtimeType == "".runtimeType)
-
+    if (product.runtimeType == "".runtimeType)
       child = Row(
         children: [
           Expanded(
-            child: Text(product?? ''),
+            child: Text(product ?? ''),
           ),
           InkWell(
-            onTap: (){
+            onTap: () {
               Provider.of<DoctorFilterProvider>(context, listen: false)
-                  .removeName(
-                  name: product?? "",
-                  context: context);
+                  .removeName(name: product ?? "", context: context);
               // get the update list
-              names =
-                  Provider.of<DoctorFilterProvider>(context, listen: false)
-                      .getNames;
+              names = Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .getNames;
             },
             child: SvgPicture.asset(
               'assets/icon/close.svg',
@@ -757,24 +762,22 @@ class _DoctorFilterState extends State<DoctorFilter> {
         ],
       );
 
-    if(product.runtimeType == Organization().runtimeType)
-
+    if (product.runtimeType == Organization().runtimeType)
       child = Row(
         children: [
           Expanded(
-            child: Text(product?.name?? ''),
+            child: Text(product?.name ?? ''),
           ),
           InkWell(
-            onTap: (){
+            onTap: () {
               Provider.of<DoctorFilterProvider>(context, listen: false)
-                .removeOrganization(
-                organizationId: product.id?? "",
+                  .removeOrganization(
+                organizationId: product.id ?? "",
                 context: context,
               );
               // get the update list
-              names =
-                  Provider.of<DoctorFilterProvider>(context, listen: false)
-                      .getNames;
+              names = Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .getNames;
             },
             child: SvgPicture.asset(
               'assets/icon/close.svg',
@@ -786,8 +789,8 @@ class _DoctorFilterState extends State<DoctorFilter> {
         ],
       );
 
-    if(product.runtimeType == AppointmentType) {
-      if(AppointmentType.None== product ){
+    if (product.runtimeType == AppointmentType) {
+      if (AppointmentType.None == product) {
         return Container();
       }
       child = Row(
@@ -797,16 +800,20 @@ class _DoctorFilterState extends State<DoctorFilter> {
             children: [
               SvgPicture.asset(
                 'assets/icon/in_person.svg',
-                color: AppointmentType.Both== product || AppointmentType.InPerson== product?
-                ConstantsV2.primaryRegular : ConstantsV2.blueLight,
+                color: AppointmentType.Both == product ||
+                        AppointmentType.InPerson == product
+                    ? ConstantsV2.primaryRegular
+                    : ConstantsV2.blueLight,
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 2),
               ),
               SvgPicture.asset(
                 'assets/icon/videocam.svg',
-                  color: AppointmentType.Both== product || AppointmentType.Virtual== product?
-                  ConstantsV2.secondaryRegular : ConstantsV2.blueLight,
+                color: AppointmentType.Both == product ||
+                        AppointmentType.Virtual == product
+                    ? ConstantsV2.secondaryRegular
+                    : ConstantsV2.blueLight,
               ),
             ],
           ),
@@ -817,10 +824,8 @@ class _DoctorFilterState extends State<DoctorFilter> {
                 context: context,
               );
               // get the update list
-              names =
-                  Provider
-                      .of<DoctorFilterProvider>(context, listen: false)
-                      .getNames;
+              names = Provider.of<DoctorFilterProvider>(context, listen: false)
+                  .getNames;
             },
             child: SvgPicture.asset(
               'assets/icon/close.svg',
