@@ -554,7 +554,7 @@ ThemeData boldoTheme = ThemeData(
   ),
   popupMenuTheme:
       const PopupMenuThemeData(surfaceTintColor: ConstantsV2.primaryColor),
-  cardTheme: const CardTheme(surfaceTintColor: ConstantsV2.primaryColor),
+  cardTheme: const CardTheme(color: Colors.white),
   appBarTheme: const AppBarTheme(
       elevation: 6,
       shadowColor: Colors.black,
