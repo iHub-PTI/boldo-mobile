@@ -534,7 +534,7 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                       inPersonAppointment: false,
                                       organizations: []));
                               // call doctor list page
-                              Navigator.pop(context);
+                              //Navigator.pop(context);
                             },
                             child: const Text(
                               'Limpiar filtros',
@@ -776,8 +776,9 @@ class _DoctorFilterState extends State<DoctorFilter> {
                 context: context,
               );
               // get the update list
-              names = Provider.of<DoctorFilterProvider>(context, listen: false)
-                  .getNames;
+              organizationsSelected =
+                  Provider.of<DoctorFilterProvider>(context, listen: false)
+                      .getOrganizations;
             },
             child: SvgPicture.asset(
               'assets/icon/close.svg',
