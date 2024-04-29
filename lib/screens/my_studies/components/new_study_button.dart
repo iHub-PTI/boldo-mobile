@@ -63,9 +63,9 @@ class _NewStudyButtonState extends State<NewStudyButton>{
         },
         child: BlocBuilder<MyStudiesBloc, MyStudiesState>(
           builder: (BuildContext context, state) {
-            if(state is Loading){
-              return loadingStatus();
-            }else{
+            if (state is Loading) {
+              return loadingStatus(center: false);
+            } else {
               return Container(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,

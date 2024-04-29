@@ -73,16 +73,19 @@ class _AttachStudyByOrderScreenState extends State<AttachStudyByOrderScreen> {
         ),
         body: SafeArea(
           child: BlocListener<AttachStudyOrderBloc, AttachStudyOrderState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is SendSuccess) {
-                emitSnackBar(
+                await emitSnackBar(
                     context: context,
                     text: uploadedStudySuccessfullyMessage,
-                    status: ActionStatus.Success);
-                BlocProvider.of<StudyOrderBloc>(context).add(
-                    GetNewsId(encounter: widget.studyOrder.encounterId ?? "0"));
-                Navigator.of(context).pop();
-              } else if (state is FailedUploadFiles) {
+                  status: ActionStatus.Success,
+                );
+                BlocProvider.of<StudyOrderBloc>(context)
+                    .add(GetNewsId(encounter: widget.studyOrder.encounterId ?? "0"));
+                Navigator.of(context)
+                    .pop();
+              }
+              else if (state is FailedUploadFiles) {
                 emitSnackBar(
                     context: context,
                     text: state.response,
