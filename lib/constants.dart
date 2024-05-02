@@ -706,6 +706,7 @@ class ConstantsV2 {
   static const Color CardBG = Color(0xffEAEAEA);
   static const Color primaryRegular = Color(0xff28B3BB);
   static Color primaryLightAndClear = const Color(0xff28B3BB).withOpacity(.13);
+  static const Color grayLight100 = const Color(0xffafbaca);
 
   static const Color secondaryRegular = Color(0xffEB8B76);
   static Color secondaryLightAndClear =
