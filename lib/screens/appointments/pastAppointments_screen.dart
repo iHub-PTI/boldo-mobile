@@ -179,31 +179,12 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                             const Color.fromRGBO(119, 119, 119, 1),
                         labelColor: ConstantsV2.activeText,
                         controller: _tabController,
-                        tabs: [
-                          const Text(
+                        tabs: const [
+                          Text(
                             'Próximas',
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Flexible(
-                                child: Text(
-                                  'Anteriores',
-                                ),
-                              ),
-                              if (_selectedIndex == 1)
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 6.0),
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      await _filterBox(context);
-                                    },
-                                    child: SvgPicture.asset(
-                                      'assets/icon/filter-list.svg',
-                                    ),
-                                  ),
-                                ),
-                            ],
+                          Text(
+                            'Anteriores',
                           ),
                         ],
                       ),
@@ -239,7 +220,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
           builder: (BuildContext context, LoadStatus? mode) {
             Widget body = Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: const [
                 /*Text(
             "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
             style: const TextStyle(
@@ -307,7 +288,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
           builder: (BuildContext context, LoadStatus? mode) {
             Widget body = Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: const [
                 /*Text(
             "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
             style: const TextStyle(
@@ -327,20 +308,46 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
         child: BlocBuilder<AppointmentsBloc, AppointmentsState>(
           builder: (context, state) {
             if (state is AppointmentsLoadedState) {
-              return allAppointments.isNotEmpty
-                  ? ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: allAppointments.length,
-                      scrollDirection: Axis.vertical,
-                      itemBuilder: _pastAppointment,
-                      physics: const ClampingScrollPhysics(),
+              return Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton.icon(
+                          onPressed: () async {
+                            await _filterBox(context);
+                          },
+                          icon: SvgPicture.asset(
+                            'assets/icon/filter.svg',
+                            color: ConstantsV2.blueDark,
+                          ),
+                          label: Text(
+                            'Filtrar',
+                            style: label.copyWith(
+                              color: ConstantsV2.blueDark,
+                            ),
+                          )),
+                    ],
+                  ),
+                  if (allAppointments.isNotEmpty)
+                    Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: allAppointments.length,
+                        scrollDirection: Axis.vertical,
+                        itemBuilder: _pastAppointment,
+                        physics: const ClampingScrollPhysics(),
+                      ),
                     )
-                  : const EmptyStateV2(
+                  else
+                    const EmptyStateV2(
                       picture: 'empty_appointments.svg',
                       titleBottom: 'Aún no tenés consultas',
                       textBottom:
                           'A medida en que uses la aplicación podrás ir viendo tus consultas',
-                    );
+                    )
+                ],
+              );
             } else if (state is Loading) {
               return Container(child: loadingStatus());
             } else if (state is Failed) {
