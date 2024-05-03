@@ -1,3 +1,5 @@
+// ignore_for_file: require_trailing_commas
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -98,7 +100,7 @@ const boldoTitleBlackTextStyle = TextStyle(
   color: ConstantsV2.activeText,
   fontStyle: FontStyle.normal,
   fontSize: 24,
-  fontWeight: FontWeight.w500,
+  fontWeight: FontWeight.w400,
   fontFamily: 'Montserrat',
 );
 
@@ -552,8 +554,11 @@ ThemeData boldoTheme = ThemeData(
   ),
   popupMenuTheme:
       const PopupMenuThemeData(surfaceTintColor: ConstantsV2.primaryColor),
-  cardTheme: const CardTheme(surfaceTintColor: ConstantsV2.primaryColor),
-  appBarTheme: const AppBarTheme(elevation: 6, shadowColor: Colors.black),
+  cardTheme: const CardTheme(color: Colors.white),
+  appBarTheme: const AppBarTheme(
+      elevation: 6,
+      shadowColor: Colors.black,
+      surfaceTintColor: ConstantsV2.grayLightest),
   tabBarTheme: const TabBarTheme(dividerColor: Colors.transparent),
 );
 
@@ -701,6 +706,7 @@ class ConstantsV2 {
   static const Color CardBG = Color(0xffEAEAEA);
   static const Color primaryRegular = Color(0xff28B3BB);
   static Color primaryLightAndClear = const Color(0xff28B3BB).withOpacity(.13);
+  static const Color grayLight100 = const Color(0xffafbaca);
 
   static const Color secondaryRegular = Color(0xffEB8B76);
   static Color secondaryLightAndClear =

@@ -533,13 +533,6 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                       virtualAppointment: false,
                                       inPersonAppointment: false,
                                       organizations: []));
-                              setState(() {
-                                names = [];
-                                specializationsSelected = [];
-                                virtualAppointment = false;
-                                inPersonAppointment = false;
-                                organizationsSelected = [];
-                              });
                               // call doctor list page
                               //Navigator.pop(context);
                             },
@@ -630,7 +623,9 @@ class _DoctorFilterState extends State<DoctorFilter> {
                                                   style:
                                                       boldoCorpMediumBlackTextStyle
                                                           .copyWith(
-                                                              fontSize: 16),
+                                                              fontSize: 16,
+                                                              color: ConstantsV2
+                                                                  .primaryColor),
                                                 ),
                                                 const SizedBox(width: 8),
                                                 SvgPicture.asset(

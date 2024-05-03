@@ -107,7 +107,6 @@ class _DoctorsAvailableState extends State<DoctorsAvailable>
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
           actions: [],
           leadingWidth: 200,
           leading: Padding(

@@ -44,6 +44,8 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
       child: SearchBar(
         controller: _controller,
         hintText: widget.hintText,
+        hintStyle:
+            MaterialStatePropertyAll(TextStyle(fontWeight: FontWeight.w400)),
         leading: IconButton(
           onPressed: () {
             widget.onEditingComplete?.call(_controller.text);
@@ -74,11 +76,7 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
             showClearIcon = value.isNotEmpty;
           });
         },
-        shape: MaterialStatePropertyAll(
-          RoundedRectangleBorder(
-              side: BorderSide(width: 1.0, color: ConstantsV2.grayDark),
-              borderRadius: BorderRadius.circular(12.0)),
-        ),
+        constraints: BoxConstraints(maxHeight: 44),
       ),
       onTapOutside: (_) => FocusScope.of(context).unfocus(),
     );
