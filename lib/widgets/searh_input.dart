@@ -53,7 +53,6 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
           icon: const Icon(
             Icons.search_outlined,
             color: ConstantsV2.grayDark,
-            size: 20,
           ),
         ),
         trailing: [
@@ -77,12 +76,7 @@ class _StateCustomSearchInput extends State<CustomSearchInput> {
             showClearIcon = value.isNotEmpty;
           });
         },
-        shape: MaterialStatePropertyAll(
-          RoundedRectangleBorder(
-              side: BorderSide(width: 1, color: ConstantsV2.grayLight100),
-              borderRadius: BorderRadius.circular(12.0)),
-        ),
-        constraints: BoxConstraints(minHeight: 10, maxHeight: 40),
+        constraints: BoxConstraints(maxHeight: 44),
       ),
       onTapOutside: (_) => FocusScope.of(context).unfocus(),
     );
