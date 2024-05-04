@@ -28,6 +28,45 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
+  final List<ItemMenu> accountItems = [
+    const ItemMenu(
+      image: 'assets/icon/family.svg',
+      title: 'Editar perfil',
+      route: '/familyScreen',
+    ),
+    const ItemMenu(
+      image: 'assets/icon/family.svg',
+      title: 'Mi cuenta',
+      route: '/familyScreen',
+    ),
+    const ItemMenu(
+      image: 'assets/icon/family.svg',
+      title: 'Mi familia',
+      route: '/familyScreen',
+    ),
+  ];
+
+  final List<ItemMenu> settingsItems = [
+    const ItemMenu(
+      image: 'assets/icon/family.svg',
+      title: 'Notificaciones',
+      route: '/familyScreen',
+    ),
+    const ItemMenu(
+      image: 'assets/icon/family.svg',
+      title: 'Seguridad',
+      route: '/familyScreen',
+    ),
+  ];
+
+  final List<ItemMenu> appItems = [
+    const ItemMenu(
+      image: 'assets/icon/family.svg',
+      title: 'Centro de ayuda',
+      route: '/familyScreen',
+    ),
+  ];
+
   final List<ItemMenu> items = [
     const ItemMenu(
       image: 'assets/icon/family.svg',
@@ -83,72 +122,78 @@ class _MenuScreenState extends State<MenuScreen> {
           }
         },
         child: Scaffold(
+          floatingActionButton: BackButtonLabel(
+            iconType: BackIcon.backClose,
+            iconColor: ConstantsV2.lightest,
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
           body: Stack(children: [
-            const Background(text: "menu"),
+            //const Background(text: "menu"),
+            Container(
+              width: double.infinity,
+              height: 122,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                    // radius: MediaQuery.of(context).size.width / 180,
+                    colors: <Color>[
+                      ConstantsV2.patientAppBarColor300,
+                      ConstantsV2.patientAppBarColor200,
+                      ConstantsV2.patientAppBarColor100,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight),
+              ),
+            ),
             SafeArea(
               child: Container(
                 child: Column(
                   children: [
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          BackButtonLabel(
-                            iconType: BackIcon.backClose,
-                            iconColor: ConstantsV2.lightest,
-                          ),
-                        ],
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    Center(
+                        child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/profileScreen');
+                      },
+                      child: ImageViewTypeForm(
+                        height: 100,
+                        width: 100,
+                        border: true,
+                        url: patient.photoUrl,
+                        gender: patient.gender,
+                        borderWidth: 3,
                       ),
+                    )),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      "${patient.givenName ?? ''} ${patient.familyName ?? ''}",
+                      style: boldoMenuUserName,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(
+                      height: 8,
                     ),
                     Expanded(
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
                             Container(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Container(
-                                      child: Column(children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                                context, '/profileScreen');
-                                          },
-                                          child: ImageViewTypeForm(
-                                            height: 170,
-                                            width: 170,
-                                            border: true,
-                                            url: patient.photoUrl,
-                                            gender: patient.gender,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 15,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Flexible(
-                                          child: Text(
-                                            "${patient.givenName ?? ''} ${patient.familyName ?? ''}",
-                                            style: boldoTitleRegularTextStyle,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 30,
-                                    ),
-                                  ])),
+                                  _buildMenuSection(
+                                      context, 'Cuenta', accountItems),
+                                  _buildMenuSection(context, 'Configuraciones',
+                                      settingsItems),
+                                  _buildMenuSection(
+                                    context,
+                                    'Aplicación',
+                                    appItems,
+                                  ),
                                   Container(
                                     alignment: Alignment.topLeft,
                                     child: ListView.builder(
@@ -181,7 +226,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                     label: Text(
                                       "Cerrar Sesión",
                                       style: boldoSubTextStyle.copyWith(
-                                        color: ConstantsV2.lightest,
+                                        color: ConstantsV2.grayDark,
                                       ),
                                     ),
                                   ),
@@ -215,7 +260,49 @@ class _MenuScreenState extends State<MenuScreen> {
         ));
   }
 
+  Widget _buildMenuSection(
+      BuildContext context, String sectionTitle, List<ItemMenu> sectionItems) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 10,
+          ),
+          child: Text(
+            sectionTitle,
+            textAlign: TextAlign.start,
+          ),
+        ),
+        Container(
+          color: Colors.white,
+          child: Container(
+            alignment: Alignment.topLeft,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: sectionItems.length * 2 - 1,
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              scrollDirection: Axis.vertical,
+              itemBuilder: (context, index) {
+                if (index.isOdd) {
+                  return Divider(); // Divider between items
+                }
+
+                return _buildItemList(context, (index ~/ 2), sectionItems);
+              },
+              physics: const ClampingScrollPhysics(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildItem(BuildContext context, int index) {
+    return items[index];
+  }
+
+  Widget _buildItemList(BuildContext context, int index, List<ItemMenu> items) {
     return items[index];
   }
 }
