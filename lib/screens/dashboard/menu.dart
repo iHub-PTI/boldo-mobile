@@ -15,6 +15,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 
 import 'package:boldo/constants.dart';
+import 'package:path/path.dart';
 
 import '../../main.dart';
 
@@ -30,14 +31,14 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   final List<ItemMenu> accountItems = [
     const ItemMenu(
-      image: 'assets/icon/family.svg',
+      image: 'assets/icon/person-outline.svg',
       title: 'Editar perfil',
-      route: '/familyScreen',
+      route: '/profileScreen',
     ),
     const ItemMenu(
-      image: 'assets/icon/family.svg',
+      image: 'assets/icon/identification.svg',
       title: 'Mi cuenta',
-      route: '/familyScreen',
+      route: null,
     ),
     const ItemMenu(
       image: 'assets/icon/family.svg',
@@ -48,36 +49,32 @@ class _MenuScreenState extends State<MenuScreen> {
 
   final List<ItemMenu> settingsItems = [
     const ItemMenu(
-      image: 'assets/icon/family.svg',
+      image: 'assets/icon/bell.svg',
       title: 'Notificaciones',
-      route: '/familyScreen',
+      route: null,
     ),
     const ItemMenu(
-      image: 'assets/icon/family.svg',
+      image: 'assets/icon/security.svg',
       title: 'Seguridad',
-      route: '/familyScreen',
+      route: null,
     ),
   ];
 
   final List<ItemMenu> appItems = [
     const ItemMenu(
-      image: 'assets/icon/family.svg',
+      image: 'assets/icon/help-outline.svg',
       title: 'Centro de ayuda',
-      route: '/familyScreen',
+      route: null,
+    ),
+    const ItemMenu(
+      image: 'assets/icon/share.svg',
+      title: 'Compartir',
+      page: null,
+      showRightIcon: false,
     ),
   ];
 
   final List<ItemMenu> items = [
-    const ItemMenu(
-      image: 'assets/icon/family.svg',
-      title: 'Mi Familia',
-      route: '/familyScreen',
-    ),
-    ItemMenu(
-      image: 'assets/icon/credit-card.svg',
-      title: 'Mis Centros Asistenciales',
-      page: Organizations(),
-    ),
     const ItemMenu(
       image: 'assets/icon/shield-check.svg',
       title: 'Políticas de privacidad',
@@ -88,16 +85,6 @@ class _MenuScreenState extends State<MenuScreen> {
       title: 'Términos de servicio',
       page: TermsOfServices(),
     ),
-    const ItemMenu(
-      image: 'assets/icon/share.svg',
-      title: 'Compartir',
-      page: null,
-    ),
-    // const ItemMenu(
-    //   image: 'assets/icon/adjustments.svg',
-    //   title: 'Configuraciones',
-    //   page: null,
-    // ),
   ];
 
   FlutterAppAuth appAuth = FlutterAppAuth();
@@ -181,7 +168,8 @@ class _MenuScreenState extends State<MenuScreen> {
                         child: Column(
                           children: [
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              padding: const EdgeInsets.only(
+                                  left: 20, right: 20, bottom: 20),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -194,43 +182,34 @@ class _MenuScreenState extends State<MenuScreen> {
                                     'Aplicación',
                                     appItems,
                                   ),
+                                  const Divider(height: 0.3),
                                   Container(
-                                    alignment: Alignment.topLeft,
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: items.length,
-                                      padding: const EdgeInsets.all(16),
-                                      scrollDirection: Axis.vertical,
-                                      itemBuilder: _buildItem,
-                                      physics: const ClampingScrollPhysics(),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              child: Align(
-                                alignment: Alignment.bottomLeft,
-                                child: Container(
-                                  padding: const EdgeInsets.only(left: 8),
-                                  child: TextButton.icon(
-                                    onPressed: () {
-                                      BlocProvider.of<UserLogoutBloc>(context)
-                                          .add(GetUserLogout(context: context));
-                                    },
-                                    icon: SvgPicture.asset(
-                                      "assets/icon/power-settings-new.svg",
-                                      color: ConstantsV2.yellow,
-                                    ),
-                                    label: Text(
-                                      "Cerrar Sesión",
-                                      style: boldoSubTextStyle.copyWith(
-                                        color: ConstantsV2.grayDark,
+                                    color: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 12),
+                                    child: InkWell(
+                                      onTap: () {
+                                        BlocProvider.of<UserLogoutBloc>(context)
+                                            .add(GetUserLogout(
+                                                context: context));
+                                      },
+                                      child: Row(
+                                        children: [
+                                          SvgPicture.asset(
+                                            'assets/icon/power-settings-new.svg',
+                                            color: ConstantsV2.activeText,
+                                          ),
+                                          const SizedBox(
+                                            width: 8,
+                                          ),
+                                          Text('Cerrar sesión',
+                                              style: boldoTitleBlackTextStyle
+                                                  .copyWith(fontSize: 16))
+                                        ],
                                       ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
                           ],
@@ -285,7 +264,7 @@ class _MenuScreenState extends State<MenuScreen> {
               scrollDirection: Axis.vertical,
               itemBuilder: (context, index) {
                 if (index.isOdd) {
-                  return Divider(); // Divider between items
+                  return const Divider(); // Divider between items
                 }
 
                 return _buildItemList(context, (index ~/ 2), sectionItems);
@@ -296,10 +275,6 @@ class _MenuScreenState extends State<MenuScreen> {
         ),
       ],
     );
-  }
-
-  Widget _buildItem(BuildContext context, int index) {
-    return items[index];
   }
 
   Widget _buildItemList(BuildContext context, int index, List<ItemMenu> items) {
