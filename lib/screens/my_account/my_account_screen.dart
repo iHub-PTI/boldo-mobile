@@ -1,4 +1,5 @@
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
+import 'package:boldo/screens/my_account/delete_account_screen.dart';
 import 'package:boldo/screens/privacy_policy/privacy_policy.dart';
 import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
 import 'package:boldo/widgets/back_button.dart';
@@ -33,7 +34,7 @@ class _MyAccountState extends State<MyAccount> {
     const ItemMenu(
       image: 'assets/icon/delete.svg',
       title: 'Eliminar cuenta',
-      page: null,
+      page: DeleteAccount(),
     ),
   ];
 
