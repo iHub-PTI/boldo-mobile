@@ -1,6 +1,7 @@
 import 'package:boldo/blocs/logout_bloc/userLogoutBloc.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
+import 'package:boldo/screens/my_account/my_account_screen.dart';
 import 'package:boldo/screens/organizations/memberships_screen.dart';
 import 'package:boldo/screens/privacy_policy/privacy_policy.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
@@ -38,7 +39,7 @@ class _MenuScreenState extends State<MenuScreen> {
     const ItemMenu(
       image: 'assets/icon/identification.svg',
       title: 'Mi cuenta',
-      route: null,
+      page: MyAccount(),
     ),
     const ItemMenu(
       image: 'assets/icon/family.svg',
@@ -71,19 +72,6 @@ class _MenuScreenState extends State<MenuScreen> {
       title: 'Compartir',
       page: null,
       showRightIcon: false,
-    ),
-  ];
-
-  final List<ItemMenu> items = [
-    const ItemMenu(
-      image: 'assets/icon/shield-check.svg',
-      title: 'Políticas de privacidad',
-      page: PrivacyPolicy(),
-    ),
-    const ItemMenu(
-      image: 'assets/icon/document-text.svg',
-      title: 'Términos de servicio',
-      page: TermsOfServices(),
     ),
   ];
 
