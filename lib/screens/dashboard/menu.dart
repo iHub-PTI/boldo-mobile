@@ -115,8 +115,8 @@ class _MenuScreenState extends State<MenuScreen> {
                       ConstantsV2.patientAppBarColor200,
                       ConstantsV2.patientAppBarColor100,
                     ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight),
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter),
               ),
             ),
             SafeArea(
