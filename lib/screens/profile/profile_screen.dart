@@ -251,7 +251,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           onChanged: (String val) =>
                                               (editingPatient.phone = val),
                                         ),
-                                      const SizedBox(height: 20),
+                                      /* const SizedBox(height: 20),
                                       ListTile(
                                         onTap: () {
                                           Navigator.push(
@@ -278,6 +278,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ),
                                         trailing:
                                             const Icon(Icons.chevron_right),
+                                      ), */
+                                    ])),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text('Dirección'),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                                color: Colors.white,
+                                padding: const EdgeInsets.all(20),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      //const SizedBox(height: 20),
+                                      CustomFormInput(
+                                        initialValue: editingPatient.city,
+                                        label: "Ciudad",
+                                        secondaryLabel: "Opcional",
+                                        onChanged: (String val) =>
+                                            editingPatient.city = val,
+                                      ),
+
+                                      const SizedBox(height: 20),
+                                      CustomFormInput(
+                                        initialValue:
+                                            editingPatient.neighborhood,
+                                        label: "Barrio",
+                                        secondaryLabel: "Opcional",
+                                        onChanged: (String val) =>
+                                            editingPatient.neighborhood = val,
+                                      ),
+                                      const SizedBox(height: 20),
+                                      CustomFormInput(
+                                        initialValue: editingPatient.street,
+                                        label: "Calle",
+                                        secondaryLabel: "Opcional",
+                                        onChanged: (String val) =>
+                                            editingPatient.street = val,
+                                      ),
+                                      const SizedBox(height: 20),
+                                      CustomFormInput(
+                                        initialValue:
+                                            editingPatient.addressDescription,
+                                        maxLines: 6,
+                                        label: "Referencia",
+                                        secondaryLabel: "Opcional",
+                                        onChanged: (String val) =>
+                                            editingPatient.addressDescription =
+                                                val,
                                       ),
                                     ])),
                             const SizedBox(
@@ -289,7 +341,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             Container(
                                 color: Colors.white,
-                                padding: EdgeInsets.all(20),
+                                padding: const EdgeInsets.all(20),
                                 child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -303,14 +355,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ])),
                             const SizedBox(height: 20),
-                            const SizedBox(height: 8),
-                            const SizedBox(height: 8),
                             CustomFormButton(
                               loading: _dataLoading,
                               text: "Guardar",
                               actionCallback: _updateProfile,
                             ),
-                            const SizedBox(height: 30),
+                            const SizedBox(height: 20),
                           ],
                         ),
                       ),
