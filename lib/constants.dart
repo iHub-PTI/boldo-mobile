@@ -303,6 +303,15 @@ const boldoTabHeaderUnselectedTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+final boldoCustomActiveInputTextStyle = const TextStyle(
+    fontFamily: 'Montserrat',
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: ConstantsV2.activeText);
+
+final boldoCustomInactiveInputTextStyle =
+    boldoCustomActiveInputTextStyle.copyWith(color: ConstantsV2.inactiveText);
+
 const BigButton = TextStyle(
   color: ConstantsV2.lightest,
   fontStyle: FontStyle.normal,

@@ -17,7 +17,7 @@ class CustomFormInput extends StatefulWidget {
   final String? customSVGIcon;
   final bool isDateTime;
   final String? Function(String?)? validator;
-  final  Function(String)? changeValueCallback;
+  final Function(String)? changeValueCallback;
   final bool obscureText;
   final bool enable;
   final Function(String)? onChanged;
@@ -123,7 +123,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
                 locale: const Locale("es", "ES"),
                 initialDate: DateTime.parse(birthDate ?? "1980-01-01"),
               );
-              if(dt!= null){
+              if (dt != null) {
                 _textEditingController.text =
                     DateFormat('dd.MM.yyyy').format(dt).toString();
                 widget.onChanged!(dt.toString());
@@ -143,10 +143,9 @@ class _CustomFormInputState extends State<CustomFormInput> {
                   obscureText: widget.obscureText,
                   focusNode: _textFocus,
                   controller: _textEditingController,
-                  style: TextStyle(
-                      height: 1,
-                      color: Constants.extraColor300,
-                      fontSize: safeBlockHorizontal * 4.40),
+                  style: widget.enable
+                      ? boldoCustomActiveInputTextStyle
+                      : boldoCustomInactiveInputTextStyle,
                   decoration: InputDecoration(
                     isCollapsed: true,
                     prefixIcon: widget.isPhoneNumber

@@ -1,6 +1,7 @@
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/utils/helpers.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/custom_form_button.dart';
 import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +45,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _fetchProfileData() async {
-
     //copy the patient to edit
     editingPatient = Patient.fromJson(patient.toJson());
 
@@ -71,6 +71,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    dynamic _mediaQueryData = MediaQuery.of(context);
+
+    double _safeAreaHorizontal =
+        _mediaQueryData.padding.left + _mediaQueryData.padding.right;
+    double screenWidth = _mediaQueryData.size.width;
+
+    double safeBlockHorizontal = (screenWidth - _safeAreaHorizontal) / 100;
+
     return Scaffold(
       body: BlocListener<PatientBloc, PatientState>(
         listener: (context, state) {
@@ -82,34 +90,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
             emitSnackBar(
                 context: context,
                 text: "Perfil actualizado",
-                status: ActionStatus.Success
-            );
+                status: ActionStatus.Success);
           } else if (state is Failed) {
             _dataLoading = false;
             emitSnackBar(
                 context: context,
                 text: state.response,
-                status: ActionStatus.Fail
-            );
+                status: ActionStatus.Fail);
           }
         },
         child: BlocBuilder<PatientBloc, PatientState>(
           builder: (context, state) {
             return CustomWrapper(children: [
-              const SizedBox(height: 24),
-              TextButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(
-                  Icons.chevron_left_rounded,
-                  size: 25,
-                  color: Constants.extraColor400,
-                ),
-                label: Text(
-                  'Mi perfil',
-                  style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                ),
+              const SizedBox(height: 20),
+              BackButtonLabel(
+                labelText: 'Editar perfil',
               ),
               if (_dataLoading)
                 Center(
@@ -131,9 +126,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               if (!_dataLoading && _dataLoaded)
                 Column(
                   children: [
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 10),
                     const Center(child: ProfileImageEdit()),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Form(
@@ -145,162 +140,198 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CustomFormInput(
-                              enable: false,
-                              initialValue: editingPatient.givenName,
-                              label: "Nombre",
-                              validator: (value) => valdiateFirstName(value!),
-                              onChanged: (String val) =>
-                                  (editingPatient.givenName = val),
+                            const Text('Datos personales'),
+                            const SizedBox(
+                              height: 10,
                             ),
-
-                            const SizedBox(height: 20),
-                            CustomFormInput(
-                              enable: false,
-                              initialValue: editingPatient.familyName,
-                              label: "Apellido",
-                              validator: (value) => valdiateLasttName(value!),
-                              onChanged: (String val) =>
-                                  (editingPatient.familyName = val),
-                            ),
-
-                            //CustomDropdown(),
-                            const SizedBox(height: 20),
-                            CustomFormInput(
-                              initialValue: editingPatient.job,
-                              secondaryLabel: "Opcional",
-                              label: "Ocupación",
-                              onChanged: (String val) =>
-                                  (editingPatient.job = val),
-                            ),
-
-                            const SizedBox(height: 20),
-                             const Text(
-                              'Sexo',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                                color: Constants.extraColor400,
-                              ),
-                            ),
-                            DropdownButtonFormField<String>(
-                                value: editingPatient.gender == 'unknown'
-                                    ? null
-                                    : editingPatient.gender,
-                                hint: Text(
-                                  "Género",
-                                  style: boldoSubTextMediumStyle.copyWith(
-                                      color: ConstantsV2.activeText),
-                                ),
-                                style: boldoSubTextMediumStyle.copyWith(
-                                    color: Colors.black),
-                                onChanged: null,
-                                items: ['male', 'female']
-                                    .map((gender) => DropdownMenuItem<String>(
-                                          child: Text(gender == 'male'
-                                              ? 'Masculino'
-                                              : gender == 'female'
-                                                  ? "Femenino"
-                                                  : "desconocido"),
-                                          value: gender,
-                                        ))
-                                    .toList(),
-                                isExpanded: true,
-                                ),
-                            const SizedBox(height: 20),
-                            const Text(
-                              'Fecha de nacimiento (dd/mm/yyyy)',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                                color: Constants.extraColor400,
-                              ),
-                            ),
-                            const SizedBox(height: 7,),
-                             Text(
-                              '${ DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd').parse(editingPatient.birthDate!))}',
-                              style: const TextStyle(
-                                // fontWeight: FontWeight.w600,
-                                fontSize: 15,
-                                color: Constants.extraColor300,
-                              ),
-                            ),
-
-                            const SizedBox(height: 20),
-                            if (!(prefs.getBool(isFamily)?? false))
-                              CustomFormInput(
-                                initialValue: editingPatient.email,
-                                label: "Correo electrónico",
-                                validator: (value) => validateEmail(value),
-                                onChanged: (String val) =>
-                                    (editingPatient.email = val),
-                              ),
-                            if (!(prefs.getBool(isFamily)?? false))
-                              const SizedBox(height: 20),
-
-                            CustomFormInput(
-                              initialValue: editingPatient.phone,
-                              isPhoneNumber: true,
-                              secondaryLabel: "Opcional",
-                              label: "Número de teléfono",
-                              inputFormatters: [ValidatorInputFormatter()],
-                              onChanged: (String val) =>
-                                  (editingPatient.phone = val),
-                            ),
-                            const SizedBox(height: 20),
-                            ListTile(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddressScreen(),
-                                  ),
-                                );
-                              },
-                              leading: SizedBox(
-                                height: double.infinity,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
+                            Container(
+                                color: Colors.white,
+                                padding: EdgeInsets.all(20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SvgPicture.asset(
-                                      'assets/icon/marker.svg',
+                                    CustomFormInput(
+                                      enable: false,
+                                      initialValue: editingPatient.givenName,
+                                      label: "Nombre",
+                                      validator: (value) =>
+                                          valdiateFirstName(value!),
+                                      onChanged: (String val) =>
+                                          (editingPatient.givenName = val),
                                     ),
-                                    const SizedBox(width: 10),
-                                    const Text('Dirección',
-                                        style: boldoSubTextStyle)
-                                  ],
-                                ),
-                              ),
-                              trailing: const Icon(Icons.chevron_right),
-                            ),
-                            //TODO: not implemented for dependents
-                            if (!(prefs.getBool(isFamily)?? false))
-                              ListTile(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          PasswordResetScreen(),
+                                    const SizedBox(height: 20),
+                                    CustomFormInput(
+                                      enable: false,
+                                      initialValue: editingPatient.familyName,
+                                      label: "Apellido",
+                                      validator: (value) =>
+                                          valdiateLasttName(value!),
+                                      onChanged: (String val) =>
+                                          (editingPatient.familyName = val),
                                     ),
-                                  );
-                                },
-                                leading: SizedBox(
-                                  height: double.infinity,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      SvgPicture.asset(
-                                        'assets/icon/key.svg',
+                                    const SizedBox(height: 20),
+                                    const Text(
+                                      'Sexo',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                        color: Constants.extraColor400,
                                       ),
-                                      const SizedBox(width: 10),
-                                      const Text('Contraseña',
-                                          style: boldoSubTextStyle)
-                                    ],
-                                  ),
-                                ),
-                                trailing: const Icon(Icons.chevron_right),
-                              ),
+                                    ),
+                                    DropdownButtonFormField<String>(
+                                      decoration: const InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                      ),
+                                      value: editingPatient.gender == 'unknown'
+                                          ? null
+                                          : editingPatient.gender,
+                                      hint: const Text(
+                                        "Género",
+                                      ),
+                                      style: boldoCustomInactiveInputTextStyle,
+                                      onChanged: null,
+                                      items: ['male', 'female']
+                                          .map((gender) =>
+                                              DropdownMenuItem<String>(
+                                                child: Text(gender == 'male'
+                                                    ? 'Masculino'
+                                                    : gender == 'female'
+                                                        ? "Femenino"
+                                                        : "desconocido"),
+                                                value: gender,
+                                              ))
+                                          .toList(),
+                                      isExpanded: true,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    CustomFormInput(
+                                      label: 'Fecha de nacimiento (dd/mm/yyyy)',
+                                      enable: false,
+                                      initialValue:
+                                          '${DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd').parse(editingPatient.birthDate!))}',
+                                    ),
+                                  ],
+                                )),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text('Datos de contacto'),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                                color: Colors.white,
+                                padding: EdgeInsets.all(20),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (!(prefs.getBool(isFamily) ?? false))
+                                        CustomFormInput(
+                                          initialValue: editingPatient.email,
+                                          label: "Correo electrónico",
+                                          validator: (value) =>
+                                              validateEmail(value),
+                                          onChanged: (String val) =>
+                                              (editingPatient.email = val),
+                                        ),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      if (!(prefs.getBool(isFamily) ?? false))
+                                        CustomFormInput(
+                                          initialValue: editingPatient.phone,
+                                          isPhoneNumber: true,
+                                          secondaryLabel: "Opcional",
+                                          label: "Número de teléfono",
+                                          inputFormatters: [
+                                            ValidatorInputFormatter()
+                                          ],
+                                          onChanged: (String val) =>
+                                              (editingPatient.phone = val),
+                                        ),
+                                      const SizedBox(height: 20),
+                                      ListTile(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AddressScreen(),
+                                            ),
+                                          );
+                                        },
+                                        leading: SizedBox(
+                                          height: double.infinity,
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              SvgPicture.asset(
+                                                'assets/icon/marker.svg',
+                                              ),
+                                              const SizedBox(width: 10),
+                                              const Text('Dirección',
+                                                  style: boldoSubTextStyle)
+                                            ],
+                                          ),
+                                        ),
+                                        trailing:
+                                            const Icon(Icons.chevron_right),
+                                      ),
+                                      //TODO: not implemented for dependents
+                                      if (!(prefs.getBool(isFamily) ?? false))
+                                        ListTile(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    PasswordResetScreen(),
+                                              ),
+                                            );
+                                          },
+                                          leading: SizedBox(
+                                            height: double.infinity,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                SvgPicture.asset(
+                                                  'assets/icon/key.svg',
+                                                ),
+                                                const SizedBox(width: 10),
+                                                const Text('Contraseña',
+                                                    style: boldoSubTextStyle)
+                                              ],
+                                            ),
+                                          ),
+                                          trailing:
+                                              const Icon(Icons.chevron_right),
+                                        ),
+                                    ])),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text('Ocupación'),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                                color: Colors.white,
+                                padding: EdgeInsets.all(20),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomFormInput(
+                                        initialValue: editingPatient.job,
+                                        secondaryLabel: "Opcional",
+                                        label: "Ocupación",
+                                        onChanged: (String val) =>
+                                            (editingPatient.job = val),
+                                      ),
+                                    ])),
+                            const SizedBox(height: 20),
                             const SizedBox(height: 8),
                             const SizedBox(height: 8),
                             CustomFormButton(
@@ -308,7 +339,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               text: "Guardar",
                               actionCallback: _updateProfile,
                             ),
-
                             const SizedBox(height: 30),
                           ],
                         ),

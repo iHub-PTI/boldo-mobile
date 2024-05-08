@@ -33,8 +33,8 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
     return Stack(
       children: <Widget>[
         SizedBox(
-          height: 128,
-          width: 128,
+          height: 120,
+          width: 120,
           child: Card(
             child: _isLoading
                 ? Padding(
@@ -65,13 +65,14 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                                 const Icon(Icons.error),
                           )),
             elevation: 4.0,
-            shape: const CircleBorder(),
+            shape: const StadiumBorder(
+                side: BorderSide(color: Colors.white, width: 3)),
             clipBehavior: Clip.antiAlias,
           ),
         ),
         Positioned(
-          top: 90,
-          left: 90,
+          top: 85,
+          left: 85,
           child: GestureDetector(
             onTap: () async {
               try {
@@ -149,15 +150,15 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
               }
             },
             child: SizedBox(
-              height: 32,
-              width: 32,
+              height: 25,
+              width: 25,
               child: Card(
                 margin: const EdgeInsets.all(0),
-                color: const Color.fromRGBO(0, 0, 0, 0.5),
+                color: ConstantsV2.orange,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(2.0),
                   child: SvgPicture.asset(
-                    'assets/icon/camera.svg',
+                    'assets/icon/pencil.svg',
                   ),
                 ),
                 elevation: 4.0,
