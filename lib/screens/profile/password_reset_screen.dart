@@ -16,7 +16,7 @@ import '../../network/http.dart';
 import '../../utils/form_utils.dart';
 
 class PasswordResetScreen extends StatefulWidget {
-  PasswordResetScreen({Key? key}) : super(key: key);
+  const PasswordResetScreen({Key? key}) : super(key: key);
 
   @override
   _PasswordResetScreenState createState() => _PasswordResetScreenState();
@@ -164,7 +164,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
       children: [
         const SizedBox(height: 20),
         BackButtonLabel(
-          labelText: 'Contraseña',
+          labelText: 'Cambiar contraseña',
         ),
         Padding(
           padding: const EdgeInsets.all(20.0),

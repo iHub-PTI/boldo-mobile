@@ -279,35 +279,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         trailing:
                                             const Icon(Icons.chevron_right),
                                       ),
-                                      //TODO: not implemented for dependents
-                                      if (!(prefs.getBool(isFamily) ?? false))
-                                        ListTile(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PasswordResetScreen(),
-                                              ),
-                                            );
-                                          },
-                                          leading: SizedBox(
-                                            height: double.infinity,
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                SvgPicture.asset(
-                                                  'assets/icon/key.svg',
-                                                ),
-                                                const SizedBox(width: 10),
-                                                const Text('Contraseña',
-                                                    style: boldoSubTextStyle)
-                                              ],
-                                            ),
-                                          ),
-                                          trailing:
-                                              const Icon(Icons.chevron_right),
-                                        ),
                                     ])),
                             const SizedBox(
                               height: 10,

@@ -1,6 +1,7 @@
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
 import 'package:boldo/screens/my_account/delete_account_screen.dart';
 import 'package:boldo/screens/privacy_policy/privacy_policy.dart';
+import 'package:boldo/screens/profile/password_reset_screen.dart';
 import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/wrapper.dart';
@@ -26,10 +27,11 @@ class _MyAccountState extends State<MyAccount> {
       title: 'Términos de servicio',
       page: TermsOfServices(),
     ),
+    //TODO: not implemented for dependents
     const ItemMenu(
       image: 'assets/icon/edit.svg',
       title: 'Cambiar contraseña',
-      page: null,
+      page: PasswordResetScreen(),
     ),
     const ItemMenu(
       image: 'assets/icon/delete.svg',
