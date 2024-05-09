@@ -312,6 +312,15 @@ final boldoCustomActiveInputTextStyle = const TextStyle(
 final boldoCustomInactiveInputTextStyle =
     boldoCustomActiveInputTextStyle.copyWith(color: ConstantsV2.inactiveText);
 
+final boldoActiveInputLabel = const TextStyle(
+  fontWeight: FontWeight.w600,
+  fontSize: 13,
+  color: Constants.extraColor400,
+);
+
+final boldoInactiveInputLabel = boldoActiveInputLabel.copyWith(
+    fontWeight: FontWeight.w400, color: ConstantsV2.inactiveText);
+
 const BigButton = TextStyle(
   color: ConstantsV2.lightest,
   fontStyle: FontStyle.normal,

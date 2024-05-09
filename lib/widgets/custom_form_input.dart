@@ -87,11 +87,9 @@ class _CustomFormInputState extends State<CustomFormInput> {
             children: [
               Text(
                 widget.label,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                  color: Constants.extraColor400,
-                ),
+                style: widget.enable
+                    ? boldoActiveInputLabel
+                    : boldoInactiveInputLabel,
               ),
               if (widget.secondaryLabel != null)
                 Text(

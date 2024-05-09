@@ -140,7 +140,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Datos personales'),
+                            const Text(
+                              'Datos personales',
+                            ),
                             const SizedBox(
                               height: 10,
                             ),
@@ -173,10 +175,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     const Text(
                                       'Sexo',
                                       style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 13,
-                                        color: Constants.extraColor400,
-                                      ),
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 13,
+                                          color: ConstantsV2.inactiveText),
                                     ),
                                     DropdownButtonFormField<String>(
                                       decoration: const InputDecoration(
