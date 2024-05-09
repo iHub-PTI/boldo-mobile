@@ -126,8 +126,8 @@ class _MenuScreenState extends State<MenuScreen> {
                     const SizedBox(
                       height: 50,
                     ),
-                    Center(
-                        child: GestureDetector(
+                    Center(child: ProfileImageEdit()
+                        /* GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, '/profileScreen');
                       },
@@ -139,7 +139,8 @@ class _MenuScreenState extends State<MenuScreen> {
                         gender: patient.gender,
                         borderWidth: 3,
                       ),
-                    )),
+                    ) */
+                        ),
                     const SizedBox(
                       height: 8,
                     ),
