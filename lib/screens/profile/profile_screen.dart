@@ -148,7 +148,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             Container(
                                 color: Colors.white,
-                                padding: EdgeInsets.all(20),
+                                padding: EdgeInsets.only(
+                                    right: 20, left: 20, bottom: 20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -161,7 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       onChanged: (String val) =>
                                           (editingPatient.givenName = val),
                                     ),
-                                    const SizedBox(height: 20),
+                                    const SizedBox(height: 10),
                                     CustomFormInput(
                                       enable: false,
                                       initialValue: editingPatient.familyName,
@@ -172,15 +173,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           (editingPatient.familyName = val),
                                     ),
                                     const SizedBox(height: 20),
-                                    const Text(
+                                    /* const Text(
                                       'Sexo',
                                       style: TextStyle(
                                           fontWeight: FontWeight.w400,
                                           fontSize: 13,
                                           color: ConstantsV2.inactiveText),
-                                    ),
+                                    ), */
                                     DropdownButtonFormField<String>(
                                       decoration: const InputDecoration(
+                                        labelText: 'Sexo',
+                                        labelStyle: TextStyle(fontSize: 16),
                                         contentPadding: EdgeInsets.symmetric(
                                             horizontal: 16),
                                       ),
@@ -223,7 +226,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             Container(
                                 color: Colors.white,
-                                padding: EdgeInsets.all(20),
+                                padding: EdgeInsets.only(
+                                    right: 20, left: 20, bottom: 20),
                                 child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,

@@ -80,7 +80,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
 
     return Column(
       children: [
-        Padding(
+        /* Padding(
           padding: EdgeInsets.only(bottom: safeBlockHorizontal * 1),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -102,7 +102,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
                 ),
             ],
           ),
-        ),
+        ), */
         ConstrainedBox(
           constraints: BoxConstraints(
               minHeight: safeBlockHorizontal * 11,
@@ -128,7 +128,6 @@ class _CustomFormInputState extends State<CustomFormInput> {
               }
             },
             child: Container(
-              color: Colors.transparent,
               width: double.infinity,
               child: IgnorePointer(
                 ignoring: widget.isDateTime,
@@ -145,7 +144,11 @@ class _CustomFormInputState extends State<CustomFormInput> {
                       ? boldoCustomActiveInputTextStyle
                       : boldoCustomInactiveInputTextStyle,
                   decoration: InputDecoration(
-                    isCollapsed: true,
+                    //isCollapsed: true,
+                    labelText: widget.label,
+                    labelStyle: widget.enable
+                        ? boldoActiveInputLabel
+                        : boldoInactiveInputLabel,
                     prefixIcon: widget.isPhoneNumber
                         ? Container(
                             height: 50,
@@ -194,7 +197,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
                               )
                             : null,
                     contentPadding: const EdgeInsets.only(
-                        left: 15, right: 15, top: 18, bottom: 15),
+                        left: 15, right: 15, top: 18, bottom: 10),
                   ),
                   //keyboardType: TextInputType.emailAddress,
                   // validator: widget.validator,

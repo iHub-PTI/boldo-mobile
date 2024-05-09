@@ -305,17 +305,17 @@ const boldoTabHeaderUnselectedTextStyle = TextStyle(
 
 final boldoCustomActiveInputTextStyle = const TextStyle(
     fontFamily: 'Montserrat',
-    fontWeight: FontWeight.w400,
-    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    fontSize: 19,
     color: ConstantsV2.activeText);
 
 final boldoCustomInactiveInputTextStyle =
     boldoCustomActiveInputTextStyle.copyWith(color: ConstantsV2.inactiveText);
 
 final boldoActiveInputLabel = const TextStyle(
-  fontWeight: FontWeight.w600,
-  fontSize: 13,
-  color: Constants.extraColor400,
+  fontWeight: FontWeight.w400,
+  fontSize: 16,
+  color: ConstantsV2.activeText,
 );
 
 final boldoInactiveInputLabel = boldoActiveInputLabel.copyWith(
