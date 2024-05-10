@@ -144,6 +144,9 @@ class Organization {
 
   PositionEntity? position;
 
+  /// list of services available to offer the subsidiary
+  List<Service>? services;
+
   /// integer that define the user preference to get doctors by organization
   int? priority;
 
