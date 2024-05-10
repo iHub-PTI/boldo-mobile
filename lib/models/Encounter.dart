@@ -1,28 +1,12 @@
+import 'package:boldo/core/core.dart';
+import 'package:boldo/models/Appointment.dart';
+import 'package:boldo/models/Doctor.dart';
+import 'package:boldo/models/Prescription.dart';
 import 'package:boldo/utils/helpers.dart';
 
-import 'Appointment.dart';
-import 'Doctor.dart';
-import 'Prescription.dart';
-
+/// An effective medical consultation
 class Encounter {
-  String? encounterId;
-  String? appointmentId;
-  String? diagnosis;
-  String? instructions;
-  String? doctorId;
-  String? patientId;
-  String? _encounterClass;
-  String? status;
-  String? mainReason;
-  DateTime? startTimeDate;
-  DateTime? finishTimeDate;
-
-  AppointmentType? encounterClass;
-
-  Doctor? doctor;
-
-  List<Prescription>? prescriptions;
-
+  /// An effective medical consultation
   Encounter({
     this.appointmentId,
     this.diagnosis,
@@ -37,26 +21,34 @@ class Encounter {
     this.finishTimeDate,
     this.mainReason,
     this.status,
-  }){
+    this.service,
+  }) {
     _encounterClass = encounterClassString;
     encounterClass = Appointment.typeFromString(type: _encounterClass);
   }
 
+  /// An effective medical consultation from a map
   factory Encounter.fromJson(Map<String, dynamic> json) {
+    final doctor =
+        json['doctorDto'] != null ? Doctor.fromJson(json['doctorDto']) : null;
 
-    Doctor? _doctor = json['doctorDto'] != null
-        ? Doctor.fromJson(json['doctorDto']): null;
-
-    List<Prescription>? _prescriptions = json['prescriptions'] != null
-        ? List<Prescription>.from(json["prescriptions"]
-        .map((x) => Prescription.fromJson(x)))
+    final prescriptions = json['prescriptions'] != null
+        ? List<Prescription>.from(
+            (json['prescriptions'] as List<Map<String, dynamic>>)
+                .map(Prescription.fromJson),
+          )
         : null;
 
-    DateTime? _start = json['startTimeDate'] != null ? DateTime.parse(
-        json['startTimeDate']) : null;
+    final start = json['startTimeDate'] != null
+        ? DateTime.parse(json['startTimeDate'])
+        : null;
 
-    DateTime? _end = json['finishTimeDate'] != null ? DateTime.parse(
-        json['finishTimeDate']) : null;
+    final end = json['finishTimeDate'] != null
+        ? DateTime.parse(json['finishTimeDate'])
+        : null;
+
+    final service =
+        json['service'] != null ? Service.fromJson(json['service']) : null;
 
     return Encounter(
       appointmentId: json['appointmentId'],
@@ -64,24 +56,58 @@ class Encounter {
       instructions: json['instructions'],
       encounterId: json['encounterId'],
       doctorId: json['encounterId'],
-      doctor: _doctor,
+      doctor: doctor,
       patientId: json['patientId'],
       encounterClassString: json['encounterClass'],
-      prescriptions: _prescriptions,
-      startTimeDate: _start,
-      finishTimeDate: _end,
+      prescriptions: prescriptions,
+      startTimeDate: start,
+      finishTimeDate: end,
       mainReason: json['patientId'],
       status: json['status'],
+      service: service,
     );
-
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {};
-    data['appointmentId'] = appointmentId;
-    data['diagnosis'] = diagnosis;
-    data['instructions'] = instructions;
+  /// the FHIR id
+  String? encounterId;
 
-    return data;
-  }
+  /// the appointment scheduled origin id
+  String? appointmentId;
+
+  /// diagnosis from SOEP
+  String? diagnosis;
+
+  /// instructions from SOEP (for prescriptions)
+  String? instructions;
+
+  /// doctor id that make the anotations
+  String? doctorId;
+
+  /// the patient that participe in the encounter
+  String? patientId;
+  String? _encounterClass;
+
+  /// status string of the consult
+  String? status;
+
+  /// main reason of the encounter
+  String? mainReason;
+
+  /// when the encounter start (input data)
+  DateTime? startTimeDate;
+
+  /// when the encounter end
+  DateTime? finishTimeDate;
+
+  /// modality of the encounter
+  AppointmentType? encounterClass;
+
+  /// doctor data
+  Doctor? doctor;
+
+  /// list of prescriptions
+  List<Prescription>? prescriptions;
+
+  /// represent the category of speciality of the appointment
+  Service? service;
 }
