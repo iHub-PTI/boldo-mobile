@@ -149,40 +149,16 @@ class _CustomFormInputState extends State<CustomFormInput> {
                     labelStyle: widget.enable
                         ? boldoActiveInputLabel
                         : boldoInactiveInputLabel,
-                    prefixIcon: widget.isPhoneNumber
+                    prefix: widget.isPhoneNumber
                         ? Container(
-                            height: 50,
-                            width: 60,
-                            margin: const EdgeInsets.only(right: 10),
-                            decoration: const BoxDecoration(
-                              color: Constants.extraColor200,
-
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(6),
-                                bottomLeft: Radius.circular(6),
-                              ), // BorderRadius
-                            ), // BoxDecoration
-                            child: Container(
-                              child: const Center(
-                                child: Text(
-                                  "+595",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Constants.extraColor300,
-                                      fontSize: 16),
-                                ),
+                            padding: const EdgeInsets.only(right: 8),
+                            child: const Text(
+                              "+595",
+                              style: TextStyle(
+                                color: Constants.extraColor300,
+                                fontSize: 16,
                               ),
-                              margin: const EdgeInsetsDirectional.only(
-                                  start: 1, top: 1, bottom: 1),
-                              decoration: const BoxDecoration(
-                                color: Color(0xffF9FAFB),
-
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(6),
-                                  bottomLeft: Radius.circular(6),
-                                ), // BorderRadius
-                              ), // BoxDecoration
-                            ), // Container
+                            ),
                           )
                         : null,
                     suffixIcon: widget.customIcon != null
