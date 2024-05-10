@@ -33,186 +33,147 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
   bool _isLoading = false;
 
   @override
-  void initState() {
-    super.initState();
-    _fetchProfileData();
-  }
-
-  Future<void> _fetchProfileData() async {
-    //copy the patient to edit
-    editingPatient = Patient.fromJson(patient.toJson());
-
-    //remove +595
-    editingPatient.phone = removeInternationalPyNumber(editingPatient.phone);
-  }
-
-  Future<void> _updateProfile() async {
-    Provider.of<UserProvider>(context, listen: false)
-        .clearProfileFormMessages();
-
-    BlocProvider.of<PatientBloc>(context)
-        .add(EditProfile(editingPatient: editingPatient));
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocListener<PatientBloc, PatientState>(
-      listener: (context, state) {
-        if (state is Success) {
-          emitSnackBar(
-              context: context,
-              text: "Perfil actualizado",
-              status: ActionStatus.Success);
-        } else if (state is Failed) {
-          emitSnackBar(
-              context: context,
-              text: state.response,
-              status: ActionStatus.Fail);
-        }
-      },
-      child: Stack(
-        children: <Widget>[
-          SizedBox(
-            height: 100,
-            width: 100,
-            child: Card(
-              child: _isLoading
-                  ? Padding(
-                      padding: const EdgeInsets.all(26.0),
-                      child: loadingStatus())
-                  : ClipOval(
-                      child: editingPatient.photoUrl == null ||
-                              editingPatient.photoUrl == ''
-                          ? SvgPicture.asset(
-                              editingPatient.gender != null
-                                  ? editingPatient.gender == "female"
-                                      ? 'assets/images/femalePatient.svg'
-                                      : editingPatient.gender == "male"
-                                          ? 'assets/images/malePatient.svg'
-                                          : 'assets/images/persona.svg'
-                                  : 'assets/images/persona.svg',
-                            )
-                          : CachedNetworkImage(
-                              fit: BoxFit.cover,
-                              imageUrl: editingPatient.photoUrl!,
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) => Padding(
-                                padding: const EdgeInsets.all(26.0),
-                                child: loadingStatus(
-                                  value: downloadProgress.progress,
-                                ),
+    return Stack(
+      children: <Widget>[
+        SizedBox(
+          height: 100,
+          width: 100,
+          child: Card(
+            child: _isLoading
+                ? Padding(
+                    padding: const EdgeInsets.all(26.0), child: loadingStatus())
+                : ClipOval(
+                    child: editingPatient.photoUrl == null ||
+                            editingPatient.photoUrl == ''
+                        ? SvgPicture.asset(
+                            editingPatient.gender != null
+                                ? editingPatient.gender == "female"
+                                    ? 'assets/images/femalePatient.svg'
+                                    : editingPatient.gender == "male"
+                                        ? 'assets/images/malePatient.svg'
+                                        : 'assets/images/persona.svg'
+                                : 'assets/images/persona.svg',
+                          )
+                        : CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl: editingPatient.photoUrl!,
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) => Padding(
+                              padding: const EdgeInsets.all(26.0),
+                              child: loadingStatus(
+                                value: downloadProgress.progress,
                               ),
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.error),
-                            )),
-              elevation: 4.0,
-              shape: const StadiumBorder(
-                  side: BorderSide(color: Colors.white, width: 3)),
-              clipBehavior: Clip.antiAlias,
-            ),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                          )),
+            elevation: 4.0,
+            shape: const StadiumBorder(
+                side: BorderSide(color: Colors.white, width: 3)),
+            clipBehavior: Clip.antiAlias,
           ),
-          Positioned(
-            top: 70,
-            left: 70,
-            child: GestureDetector(
-              onTap: () async {
-                try {
-                  XFile? result = await pickImage(
-                      context: context,
-                      source: ImageSource.gallery,
-                      permissionDescription:
-                          'Se requiere acceso para seleccionar fotos');
-                  if (result != null) {
-                    File? croppedFile = await cropPhoto(file: result);
+        ),
+        Positioned(
+          top: 70,
+          left: 70,
+          child: GestureDetector(
+            onTap: () async {
+              try {
+                XFile? result = await pickImage(
+                    context: context,
+                    source: ImageSource.gallery,
+                    permissionDescription:
+                        'Se requiere acceso para seleccionar fotos');
+                if (result != null) {
+                  File? croppedFile = await cropPhoto(file: result);
 
-                    if (croppedFile != null) {
-                      try {
-                        setState(() {
-                          _isLoading = true;
-                        });
-                        UploadUrl response =
-                            await FilesRepository.getUploadURL();
+                  if (croppedFile != null) {
+                    try {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      UploadUrl response = await FilesRepository.getUploadURL();
 
-                        imageCache!.clear();
+                      imageCache!.clear();
 
-                        await FilesRepository.uploadFile(
-                          file: File(result.path),
-                          url: response,
-                        );
+                      await FilesRepository.uploadFile(
+                        file: File(result.path),
+                        url: response,
+                      );
 
-                        editingPatient.photoUrl = response.location;
-                        _updateProfile();
-                        setState(() {
-                          _isLoading = false;
-                        });
-                      } on Failure catch (exception, stackTrace) {
-                        setState(() {
-                          _isLoading = false;
-                        });
-                        emitSnackBar(
-                            context: context,
-                            text: exception.message,
-                            status: ActionStatus.Fail);
-                        captureMessage(
-                          message: exception.message,
-                          stackTrace: stackTrace,
-                          response: exception.response,
-                        );
-                      } on DioError catch (exception, stackTrace) {
-                        setState(() {
-                          _isLoading = false;
-                        });
-                        emitSnackBar(
-                            context: context,
-                            text: exception.message,
-                            status: ActionStatus.Fail);
-                        captureError(
-                          exception: exception,
-                          stackTrace: stackTrace,
-                        );
-                      } on Exception catch (exception, stackTrace) {
-                        setState(() {
-                          _isLoading = false;
-                        });
-                        emitSnackBar(
-                            context: context,
-                            text: genericError,
-                            status: ActionStatus.Fail);
-                        captureError(
-                          exception: exception,
-                          stackTrace: stackTrace,
-                        );
-                      }
+                      editingPatient.photoUrl = response.location;
+
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    } on Failure catch (exception, stackTrace) {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      emitSnackBar(
+                          context: context,
+                          text: exception.message,
+                          status: ActionStatus.Fail);
+                      captureMessage(
+                        message: exception.message,
+                        stackTrace: stackTrace,
+                        response: exception.response,
+                      );
+                    } on DioError catch (exception, stackTrace) {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      emitSnackBar(
+                          context: context,
+                          text: exception.message,
+                          status: ActionStatus.Fail);
+                      captureError(
+                        exception: exception,
+                        stackTrace: stackTrace,
+                      );
+                    } on Exception catch (exception, stackTrace) {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      emitSnackBar(
+                          context: context,
+                          text: genericError,
+                          status: ActionStatus.Fail);
+                      captureError(
+                        exception: exception,
+                        stackTrace: stackTrace,
+                      );
                     }
                   }
-                } on PlatformException catch (e) {
-                  setState(() {
-                    _isLoading = false;
-                  });
-                  print("Unsupported operation" + e.toString());
                 }
-              },
-              child: SizedBox(
-                height: 28,
-                width: 28,
-                child: Card(
-                  margin: const EdgeInsets.all(0),
-                  color: ConstantsV2.orange,
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: SvgPicture.asset(
-                      'assets/icon/pencil.svg',
-                    ),
+              } on PlatformException catch (e) {
+                setState(() {
+                  _isLoading = false;
+                });
+                print("Unsupported operation" + e.toString());
+              }
+            },
+            child: SizedBox(
+              height: 28,
+              width: 28,
+              child: Card(
+                margin: const EdgeInsets.all(0),
+                color: ConstantsV2.orange,
+                child: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: SvgPicture.asset(
+                    'assets/icon/pencil.svg',
                   ),
-                  elevation: 4.0,
-                  shape: const CircleBorder(),
-                  clipBehavior: Clip.antiAlias,
                 ),
+                elevation: 4.0,
+                shape: const CircleBorder(),
+                clipBehavior: Clip.antiAlias,
               ),
             ),
-          )
-        ],
-      ),
+          ),
+        )
+      ],
     );
   }
 }
