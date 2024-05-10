@@ -1,4 +1,5 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/core/core.dart';
 import 'package:boldo/models/AddressEntity.dart';
 import 'package:boldo/models/Contact.dart';
 import 'package:boldo/models/PositionEntity.dart';
@@ -132,7 +133,7 @@ class Organization {
   String? organizationId;
 
   /// Organization father id
-  String? organzationName;
+  String? organizationName;
 
   bool? active;
 
@@ -159,7 +160,6 @@ class Organization {
 }
 
 class OrganizationRequest {
-
   String? id,
       organizationId,
       organizationName,
@@ -189,35 +189,35 @@ class OrganizationRequest {
     statusCode = json['statusCode'];
     statusDisplay = json['statusDisplay'];
 
-    switch (statusCode){
+    switch (statusCode) {
       case 'PD':
         status = StatusRequestOrganization.Pending;
-        break;
       case 'AP':
         status = StatusRequestOrganization.Approved;
-        break;
       case 'RJ':
         status = StatusRequestOrganization.Rejected;
-        break;
       default:
         status = null;
     }
-
   }
 }
 
+/// Types or {Organization} available in App
 enum OrganizationType {
+  /// A pharmacy
   pharmacy(
     svgPath: 'assets/icon/local-pharmacy.svg',
     infoCardTitle: 'Farmacias adheridas',
     page: PharmaciesScreen(),
-    codeType: 'PHARMACY'
+    codeType: 'PHARMACY',
   ),
+
+  /// An HEALTHCARE-PROVIDER
   hospital(
     svgPath: 'assets/icon/local-hospital.svg',
     infoCardTitle: 'Centros asistenciales',
     page: OrganizationsSubscribedScreen(),
-    codeType: 'HEALTHCARE-PROVIDER'
+    codeType: 'HEALTHCARE-PROVIDER',
   );
 
   const OrganizationType({
@@ -234,41 +234,55 @@ enum OrganizationType {
   final String codeType;
 }
 
+/// A setting that describe if the organization is free to subscribed
 class OrganizationSettings {
-
-  bool? setLogoInReports,
-  automaticPatientSubscription;
-  
-  List<OrganizationRequirement>? organizationRequirements;
-
+  /// A setting that describe if the organization is free to subscribed
   OrganizationSettings({
     this.setLogoInReports,
     this.automaticPatientSubscription,
     this.organizationRequirements,
   });
 
-  factory OrganizationSettings.fromJson(Map<String, dynamic> json,) => OrganizationSettings(
-    setLogoInReports: json["setLogoInReports"],
-    automaticPatientSubscription: json["automaticPatientSubscription"],
-    organizationRequirements: json["organizationRequirements"] != null
-        ? List<OrganizationRequirement>.from(
-        json["organizationRequirements"].map((element) => OrganizationRequirement.fromJson(element))
-    ) : json["automaticPatientSubscription"] ? List<OrganizationRequirement>.from([
-      OrganizationRequirement(
-        title: "¿Cuenta con seguro médico?",
-        description: "Para acceder a los servicios del centro es requisito NO contar con seguro médico",
-        answer: false,
-      ),
-    ]) : null,
-  );
+  /// A setting that describe if the organization is free to subscribed
+  factory OrganizationSettings.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      OrganizationSettings(
+        setLogoInReports: json['setLogoInReports'],
+        automaticPatientSubscription: json['automaticPatientSubscription'],
+        organizationRequirements: json['organizationRequirements'] != null
+            ? List<OrganizationRequirement>.from(
+                (json['organizationRequirements'] as List<Map<String, dynamic>>)
+                    .map(
+                  OrganizationRequirement.fromJson,
+                ),
+              )
+            : json['automaticPatientSubscription']
+                ? List<OrganizationRequirement>.from([
+                    OrganizationRequirement(
+                      title: '¿Cuenta con seguro médico?',
+                      description:
+                          'Para acceder a los servicios del centro es requisito NO contar con seguro médico',
+                      answer: false,
+                    ),
+                  ])
+                : null,
+      );
 
+  /// if has logo in reports like Study order
+  bool? setLogoInReports;
+
+  /// if the patient can autoSubscribe, his request was automatic approved
+  bool? automaticPatientSubscription;
+
+  /// List of questions to postulate
+  List<OrganizationRequirement>? organizationRequirements;
 }
 
 class OrganizationRequirement {
-
-  String? title,
-  description,
-  observation;
+  String? title;
+  String? description;
+  String? observation;
 
   bool? answer;
 
@@ -279,11 +293,13 @@ class OrganizationRequirement {
     this.answer,
   });
 
-  factory OrganizationRequirement.fromJson(Map<String, dynamic> json,) => OrganizationRequirement(
-    title: json["title"],
-    description: json["description"],
-    observation: json["observation"],
-    answer: json["answer"],
-  );
-
+  factory OrganizationRequirement.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      OrganizationRequirement(
+        title: json["title"],
+        description: json["description"],
+        observation: json["observation"],
+        answer: json["answer"],
+      );
 }
