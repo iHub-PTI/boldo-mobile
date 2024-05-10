@@ -144,11 +144,11 @@ class _CustomFormInputState extends State<CustomFormInput> {
                       ? boldoCustomActiveInputTextStyle
                       : boldoCustomInactiveInputTextStyle,
                   decoration: InputDecoration(
-                    //isCollapsed: true,
                     labelText: widget.label,
                     labelStyle: widget.enable
                         ? boldoActiveInputLabel
                         : boldoInactiveInputLabel,
+                    helperText: widget.secondaryLabel,
                     prefix: widget.isPhoneNumber
                         ? Container(
                             padding: const EdgeInsets.only(right: 8),
@@ -181,6 +181,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
                     if (widget.validator != null)
                       return widget.validator!(string);
                   },
+
                   onChanged: widget.onChanged,
                   onSaved: (string) {
                     // if (widget.changeValueCallback != null)

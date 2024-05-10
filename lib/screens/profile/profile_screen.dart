@@ -148,7 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             Container(
                                 color: Colors.white,
-                                padding: EdgeInsets.only(
+                                padding: const EdgeInsets.only(
                                     right: 20, left: 20, bottom: 20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,7 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     CustomFormInput(
                                       enable: false,
                                       initialValue: editingPatient.givenName,
-                                      label: "Nombre",
+                                      label: "Nombre *",
                                       validator: (value) =>
                                           valdiateFirstName(value!),
                                       onChanged: (String val) =>
@@ -166,23 +166,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     CustomFormInput(
                                       enable: false,
                                       initialValue: editingPatient.familyName,
-                                      label: "Apellido",
+                                      label: "Apellido *",
                                       validator: (value) =>
                                           valdiateLasttName(value!),
                                       onChanged: (String val) =>
                                           (editingPatient.familyName = val),
                                     ),
                                     const SizedBox(height: 20),
-                                    /* const Text(
-                                      'Sexo',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 13,
-                                          color: ConstantsV2.inactiveText),
-                                    ), */
                                     DropdownButtonFormField<String>(
                                       decoration: const InputDecoration(
-                                        labelText: 'Sexo',
+                                        labelText: 'Sexo *',
                                         labelStyle: TextStyle(fontSize: 16),
                                         contentPadding: EdgeInsets.symmetric(
                                             horizontal: 16),
@@ -191,7 +184,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ? null
                                           : editingPatient.gender,
                                       hint: const Text(
-                                        "Género",
+                                        "Género *",
                                       ),
                                       style: boldoCustomInactiveInputTextStyle,
                                       onChanged: null,
@@ -210,7 +203,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                     const SizedBox(height: 20),
                                     CustomFormInput(
-                                      label: 'Fecha de nacimiento (dd/mm/yyyy)',
+                                      label:
+                                          'Fecha de nacimiento (dd/mm/yyyy) *',
                                       enable: false,
                                       initialValue:
                                           '${DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd').parse(editingPatient.birthDate!))}',
@@ -226,7 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             Container(
                                 color: Colors.white,
-                                padding: EdgeInsets.only(
+                                padding: const EdgeInsets.only(
                                     right: 20, left: 20, bottom: 20),
                                 child: Column(
                                     crossAxisAlignment:
@@ -235,7 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       if (!(prefs.getBool(isFamily) ?? false))
                                         CustomFormInput(
                                           initialValue: editingPatient.email,
-                                          label: "Correo electrónico",
+                                          label: "Correo electrónico *",
                                           validator: (value) =>
                                               validateEmail(value),
                                           onChanged: (String val) =>
@@ -256,34 +250,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           onChanged: (String val) =>
                                               (editingPatient.phone = val),
                                         ),
-                                      /* const SizedBox(height: 20),
-                                      ListTile(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  AddressScreen(),
-                                            ),
-                                          );
-                                        },
-                                        leading: SizedBox(
-                                          height: double.infinity,
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              SvgPicture.asset(
-                                                'assets/icon/marker.svg',
-                                              ),
-                                              const SizedBox(width: 10),
-                                              const Text('Dirección',
-                                                  style: boldoSubTextStyle)
-                                            ],
-                                          ),
-                                        ),
-                                        trailing:
-                                            const Icon(Icons.chevron_right),
-                                      ), */
                                     ])),
                             const SizedBox(
                               height: 10,
