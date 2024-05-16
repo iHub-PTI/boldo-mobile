@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../provider/user_provider.dart';
 import '../constants.dart';
+import '../provider/user_provider.dart';
 
 class CustomFormInput extends StatefulWidget {
   final int maxLines;
@@ -22,23 +22,23 @@ class CustomFormInput extends StatefulWidget {
   final bool enable;
   final Function(String)? onChanged;
   final List<TextInputFormatter> inputFormatters;
-  CustomFormInput(
-      {Key? key,
-      required this.label,
-      this.validator,
-      this.changeValueCallback,
-      this.isDateTime = false,
-      this.inputFormatters = const [],
-      this.maxLines = 1,
-      this.customSVGIcon,
-      this.isPhoneNumber = false,
-      this.customIcon,
-      this.initialValue,
-      this.secondaryLabel,
-      this.onChanged,
-      this.enable = true,
-      this.obscureText = false})
-      : super(key: key);
+  CustomFormInput({
+    Key? key,
+    required this.label,
+    this.validator,
+    this.changeValueCallback,
+    this.isDateTime = false,
+    this.inputFormatters = const [],
+    this.maxLines = 1,
+    this.customSVGIcon,
+    this.isPhoneNumber = false,
+    this.customIcon,
+    this.initialValue,
+    this.secondaryLabel,
+    this.onChanged,
+    this.enable = true,
+    this.obscureText = false,
+  }) : super(key: key);
 
   @override
   _CustomFormInputState createState() => _CustomFormInputState();
@@ -105,8 +105,9 @@ class _CustomFormInputState extends State<CustomFormInput> {
         ), */
         ConstrainedBox(
           constraints: BoxConstraints(
-              minHeight: safeBlockHorizontal * 11,
-              maxHeight: widget.maxLines == 1 ? safeBlockHorizontal * 20 : 999),
+            minHeight: safeBlockHorizontal * 11,
+            maxHeight: widget.maxLines == 1 ? safeBlockHorizontal * 20 : 999,
+          ),
           child: GestureDetector(
             onTap: () async {
               if (!widget.isDateTime) return;
@@ -173,7 +174,11 @@ class _CustomFormInputState extends State<CustomFormInput> {
                               )
                             : null,
                     contentPadding: const EdgeInsets.only(
-                        left: 15, right: 15, top: 18, bottom: 10),
+                      left: 15,
+                      right: 15,
+                      top: 18,
+                      bottom: 10,
+                    ),
                   ),
                   //keyboardType: TextInputType.emailAddress,
                   // validator: widget.validator,

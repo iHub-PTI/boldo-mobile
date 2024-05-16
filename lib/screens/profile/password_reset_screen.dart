@@ -1,19 +1,16 @@
 import 'package:boldo/environment.dart';
-import 'package:boldo/main.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:boldo/widgets/back_button.dart';
-import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../widgets/wrapper.dart';
-
-import '../../widgets/custom_form_button.dart';
-import '../../widgets/custom_form_input.dart';
 import '../../constants.dart';
 import '../../network/http.dart';
 import '../../utils/form_utils.dart';
+import '../../widgets/custom_form_button.dart';
+import '../../widgets/custom_form_input.dart';
+import '../../widgets/wrapper.dart';
 
 class PasswordResetScreen extends StatefulWidget {
   const PasswordResetScreen({Key? key}) : super(key: key);
@@ -123,7 +120,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
         data: {
           "currentPassword": _currentPassword,
           "newPassword": _newPassword,
-          "confirmation": _confirmation
+          "confirmation": _confirmation,
         },
       );
 

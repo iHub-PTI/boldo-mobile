@@ -5,7 +5,6 @@ import 'package:boldo/screens/profile/password_reset_screen.dart';
 import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/wrapper.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MyAccount extends StatefulWidget {
@@ -42,37 +41,39 @@ class _MyAccountState extends State<MyAccount> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomWrapper(children: [
-      const SizedBox(height: 20),
-      BackButtonLabel(
-        labelText: 'Mi cuenta',
-      ),
-      SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Container(
-            color: Colors.white,
+    return CustomWrapper(
+      children: [
+        const SizedBox(height: 20),
+        BackButtonLabel(
+          labelText: 'Mi cuenta',
+        ),
+        SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
             child: Container(
-              alignment: Alignment.topLeft,
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: items.length * 2 - 1,
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                scrollDirection: Axis.vertical,
-                itemBuilder: (context, index) {
-                  if (index.isOdd) {
-                    return const Divider(); // Divider between items
-                  }
+              color: Colors.white,
+              child: Container(
+                alignment: Alignment.topLeft,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: items.length * 2 - 1,
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  scrollDirection: Axis.vertical,
+                  itemBuilder: (context, index) {
+                    if (index.isOdd) {
+                      return const Divider(); // Divider between items
+                    }
 
-                  return _buildItemList(context, (index ~/ 2), items);
-                },
-                physics: const ClampingScrollPhysics(),
+                    return _buildItemList(context, (index ~/ 2), items);
+                  },
+                  physics: const ClampingScrollPhysics(),
+                ),
               ),
             ),
           ),
         ),
-      )
-    ]);
+      ],
+    );
   }
 }
 

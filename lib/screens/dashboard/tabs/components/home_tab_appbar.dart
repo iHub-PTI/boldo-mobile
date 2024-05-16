@@ -43,55 +43,58 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
         listener: (context, state) {
           setState(() {});
         },
-        child:
-            BlocBuilder<PatientBloc, PatientState>(builder: (context, state) {
-          return Row(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ProfileScreen(),
-                    ),
-                  );
-                },
-                child: Container(
-                  margin: const EdgeInsets.all(10),
-                  child: ImageViewTypeForm(
+        child: BlocBuilder<PatientBloc, PatientState>(
+          builder: (context, state) {
+            return Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ProfileScreen(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    child: ImageViewTypeForm(
                       height: 60 + (100 - 60) * widget.controller.value,
                       width: 60 + (100 - 60) * widget.controller.value,
                       url: patient.photoUrl,
                       gender: patient.gender,
                       border: true,
-                      borderWidth: 3),
+                      borderWidth: 3,
+                    ),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if ((prefs.getBool(isFamily) ?? false))
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if ((prefs.getBool(isFamily) ?? false))
+                        Flexible(
+                          child: Text(
+                            "mostrando a",
+                            style: boldoCorpMediumTextStyle.copyWith(
+                              color: ConstantsV2.lightGrey,
+                              fontSize:
+                                  10 + (14 - 10) * widget.controller.value,
+                            ),
+                          ),
+                        ),
                       Flexible(
                         child: Text(
-                          "mostrando a",
-                          style: boldoCorpMediumTextStyle.copyWith(
-                            color: ConstantsV2.lightGrey,
-                            fontSize: 10 + (14 - 10) * widget.controller.value,
+                          "${patient.givenName ?? ''} ${patient.familyName ?? ''}",
+                          style: boldoCardHeadingTextStyle.copyWith(
+                            fontSize: 14 + (17 - 14) * widget.controller.value,
+                            color: ConstantsV2.lightest,
                           ),
                         ),
                       ),
-                    Flexible(
-                      child: Text(
-                        "${patient.givenName ?? ''} ${patient.familyName ?? ''}",
-                        style: boldoCardHeadingTextStyle.copyWith(
-                            fontSize: 14 + (17 - 14) * widget.controller.value,
-                            color: ConstantsV2.lightest),
-                      ),
-                    ),
-                    if (!(prefs.getBool(isFamily) ?? false))
-                      Row(
+                      if (!(prefs.getBool(isFamily) ?? false))
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
@@ -101,140 +104,145 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                                     10 + (14 - 10) * widget.controller.value,
                               ),
                             ),
-                          ]),
-                    SizedBox(height: 4 + (10 - 4) * widget.controller.value),
-                    !(prefs.getBool(isFamily) ?? false)
-                        ? Text(
-                            formatDate(
-                              DateTime.now(),
-                              [d, ' de ', MM, ' de ', yyyy],
-                              locale: const SpanishDateLocale(),
-                            ),
-                            style: boldoCorpMediumTextStyle.copyWith(
-                              fontSize:
-                                  10 + (14 - 10) * widget.controller.value,
-                            ),
-                          )
-                        : Flexible(
-                            child: Text(
-                              "${patient.relationshipDisplaySpan ?? ''}",
+                          ],
+                        ),
+                      SizedBox(height: 4 + (10 - 4) * widget.controller.value),
+                      !(prefs.getBool(isFamily) ?? false)
+                          ? Text(
+                              formatDate(
+                                DateTime.now(),
+                                [d, ' de ', MM, ' de ', yyyy],
+                                locale: const SpanishDateLocale(),
+                              ),
                               style: boldoCorpMediumTextStyle.copyWith(
-                                color: ConstantsV2.lightGrey,
                                 fontSize:
                                     10 + (14 - 10) * widget.controller.value,
                               ),
+                            )
+                          : Flexible(
+                              child: Text(
+                                "${patient.relationshipDisplaySpan ?? ''}",
+                                style: boldoCorpMediumTextStyle.copyWith(
+                                  color: ConstantsV2.lightGrey,
+                                  fontSize:
+                                      10 + (14 - 10) * widget.controller.value,
+                                ),
+                              ),
                             ),
-                          ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 16, right: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizeTransition(
-                      sizeFactor: widget.controller,
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.push(
+                Container(
+                  margin: const EdgeInsets.only(bottom: 16, right: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizeTransition(
+                        sizeFactor: widget.controller,
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MenuScreen()));
-                        },
-                        icon: SvgPicture.asset(
-                          'assets/icon/menu-alt-1.svg',
-                          color: ConstantsV2.lightest,
+                                builder: (context) => MenuScreen(),
+                              ),
+                            );
+                          },
+                          icon: SvgPicture.asset(
+                            'assets/icon/menu-alt-1.svg',
+                            color: ConstantsV2.lightest,
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      constraints:
-                          const BoxConstraints(maxHeight: 33, maxWidth: 33),
-                      child: FloatingActionButton(
-                        onPressed: () {
-                          if (families.length > 0)
-                            _showFamilyBox();
-                          else
-                            Navigator.pushNamed(context, '/methods');
-                        },
-                        backgroundColor: ConstantsV2.orange,
-                        child: SvgPicture.asset('assets/icon/family.svg'),
-                        elevation: 0,
+                      Container(
+                        constraints:
+                            const BoxConstraints(maxHeight: 33, maxWidth: 33),
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            if (families.length > 0)
+                              _showFamilyBox();
+                            else
+                              Navigator.pushNamed(context, '/methods');
+                          },
+                          backgroundColor: ConstantsV2.orange,
+                          child: SvgPicture.asset('assets/icon/family.svg'),
+                          elevation: 0,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          );
-        }),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
 
   _showFamilyBox() {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          BlocProvider.of<family.FamilyBloc>(context)
-              .add(family.GetFamilyList());
-          bool expand = false;
-          double start = 0;
-          bool _loading = false;
-          return BlocListener<family.FamilyBloc, family.FamilyState>(
-              listener: (context, state) {
+      context: context,
+      builder: (BuildContext context) {
+        BlocProvider.of<family.FamilyBloc>(context).add(family.GetFamilyList());
+        bool expand = false;
+        double start = 0;
+        bool _loading = false;
+        return BlocListener<family.FamilyBloc, family.FamilyState>(
+          listener: (context, state) {
             if (state is family.Success) {
               setState(() {
                 _loading = false;
               });
             } else if (state is family.Failed) {
               emitSnackBar(
-                  context: context,
-                  text: state.response,
-                  status: ActionStatus.Fail);
+                context: context,
+                text: state.response,
+                status: ActionStatus.Fail,
+              );
               _loading = false;
             } else if (state is family.Loading) {
               setState(() {
                 _loading = true;
               });
             }
-          }, child: BlocBuilder<family.FamilyBloc, family.FamilyState>(
-                  builder: (context, state) {
-            return StatefulBuilder(
-              builder: (BuildContext context, setState) {
-                return AlertDialog(
-                  contentPadding: const EdgeInsetsDirectional.all(0),
-                  scrollable: true,
-                  backgroundColor: ConstantsV2.lightGrey,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  content: Container(
-                    // screen rotation control
-                    width: MediaQuery.of(context).size.height >=
-                            MediaQuery.of(context).size.width
-                        // vertical orientation
-                        ? MediaQuery.of(context).size.width > 600
-                            // its a tablet
-                            ? MediaQuery.of(context).size.width * 0.5
-                            // its a phone
-                            : MediaQuery.of(context).size.width * 0.8
-                        // horizontal orientation
-                        : MediaQuery.of(context).size.width * 0.3,
-                    // screen rotation and expand control
-                    height: expand
-                        ? MediaQuery.of(context).size.height >=
-                                MediaQuery.of(context).size.width
-                            ? MediaQuery.of(context).size.height * 0.5
-                            : MediaQuery.of(context).size.height * 0.6
-                        : 100,
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: Column(
+          },
+          child: BlocBuilder<family.FamilyBloc, family.FamilyState>(
+            builder: (context, state) {
+              return StatefulBuilder(
+                builder: (BuildContext context, setState) {
+                  return AlertDialog(
+                    contentPadding: const EdgeInsetsDirectional.all(0),
+                    scrollable: true,
+                    backgroundColor: ConstantsV2.lightGrey,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    content: Container(
+                      // screen rotation control
+                      width: MediaQuery.of(context).size.height >=
+                              MediaQuery.of(context).size.width
+                          // vertical orientation
+                          ? MediaQuery.of(context).size.width > 600
+                              // its a tablet
+                              ? MediaQuery.of(context).size.width * 0.5
+                              // its a phone
+                              : MediaQuery.of(context).size.width * 0.8
+                          // horizontal orientation
+                          : MediaQuery.of(context).size.width * 0.3,
+                      // screen rotation and expand control
+                      height: expand
+                          ? MediaQuery.of(context).size.height >=
+                                  MediaQuery.of(context).size.width
+                              ? MediaQuery.of(context).size.height * 0.5
+                              : MediaQuery.of(context).size.height * 0.6
+                          : 100,
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.topCenter,
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -242,7 +250,9 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                                     ? Container(
                                         height: 54,
                                         margin: const EdgeInsets.symmetric(
-                                            vertical: 10, horizontal: 6),
+                                          vertical: 10,
+                                          horizontal: 6,
+                                        ),
                                         // screen rotation control
                                         width:
                                             MediaQuery.of(context).size.width *
@@ -254,7 +264,8 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                                                 itemCount: families.length + 2,
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                        horizontal: 4),
+                                                  horizontal: 4,
+                                                ),
                                                 scrollDirection:
                                                     Axis.horizontal,
                                                 itemBuilder:
@@ -359,44 +370,54 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                                     width: 200,
                                     color: ConstantsV2.lightGrey,
                                     child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          expand
-                                              ? OutlinedButton(
-                                                  onPressed: () {
-                                                    Navigator.pushNamed(context,
-                                                        '/familyScreen');
-                                                  },
-                                                  child: const Text(
-                                                      "más opciones"))
-                                              : Container(),
-                                          Container(
-                                            width: 55,
-                                            height: 6,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                              color: ConstantsV2.inactiveText,
-                                            ),
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        expand
+                                            ? OutlinedButton(
+                                                onPressed: () {
+                                                  Navigator.pushNamed(
+                                                    context,
+                                                    '/familyScreen',
+                                                  );
+                                                },
+                                                child: const Text(
+                                                  "más opciones",
+                                                ),
+                                              )
+                                            : Container(),
+                                        Container(
+                                          width: 55,
+                                          height: 6,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                            color: ConstantsV2.inactiveText,
                                           ),
-                                        ]),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ]),
-                        ),
-                        if (_loading)
-                          Align(
+                              ],
+                            ),
+                          ),
+                          if (_loading)
+                            Align(
                               alignment: Alignment.center,
-                              child: Container(child: const LoadingHelper())),
-                      ],
+                              child: Container(child: const LoadingHelper()),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            );
-          }));
-        });
+                  );
+                },
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildPictureRoundedFamily(BuildContext context, int index) {
@@ -426,26 +447,34 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                                     prefs.getBool(isFamily) ?? false;
                                 prefs.setBool(isFamily, false);
                                 Navigator.pushNamed(
-                                    context, '/FamilyTransition',
-                                    arguments: {'isFamily': previous});
+                                  context,
+                                  '/FamilyTransition',
+                                  arguments: {'isFamily': previous},
+                                );
                               },
                               child: ImageViewTypeForm(
-                                  height: height,
-                                  width: width,
-                                  border: false,
-                                  form: type,
-                                  url: prefs.getString('profile_url'),
-                                  gender: prefs.getString('gender')))
+                                height: height,
+                                width: width,
+                                border: false,
+                                form: type,
+                                url: prefs.getString('profile_url'),
+                                gender: prefs.getString('gender'),
+                              ),
+                            )
                           : InkWell(
                               onTap: () {
                                 prefs.setString(
-                                    "idFamily", families[index - 1].id!);
+                                  "idFamily",
+                                  families[index - 1].id!,
+                                );
                                 bool previous =
                                     prefs.getBool(isFamily) ?? false;
                                 prefs.setBool(isFamily, true);
                                 Navigator.pushNamed(
-                                    context, '/FamilyTransition',
-                                    arguments: {'isFamily': previous});
+                                  context,
+                                  '/FamilyTransition',
+                                  arguments: {'isFamily': previous},
+                                );
                               },
                               child: ImageViewTypeForm(
                                 height: height,
@@ -454,7 +483,8 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                                 url: families[index - 1].photoUrl,
                                 gender: families[index - 1].gender,
                                 form: type,
-                              ))
+                              ),
+                            )
                       : InkWell(
                           onTap: () {
                             Navigator.pushNamed(context, '/methods');
@@ -470,17 +500,20 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                           ? Text(
                               "Yo",
                               style: boldoCorpMediumTextStyle.copyWith(
-                                  color: ConstantsV2.activeText),
+                                color: ConstantsV2.activeText,
+                              ),
                             )
                           : Text(
                               families[index - 1].relationshipDisplaySpan!,
                               style: boldoCorpMediumTextStyle.copyWith(
-                                  color: ConstantsV2.activeText),
+                                color: ConstantsV2.activeText,
+                              ),
                             )
                       : Text(
                           "agregar",
                           style: boldoCorpSmallTextStyle.copyWith(
-                              color: ConstantsV2.green),
+                            color: ConstantsV2.green,
+                          ),
                         ),
                   index <= families.length
                       ? index == 0
@@ -488,7 +521,8 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                           : Text(
                               "${families[index - 1].givenName ?? ''} ${families[index - 1].familyName ?? ''}",
                               style: boldoCorpSmallTextStyle.copyWith(
-                                  color: ConstantsV2.green),
+                                color: ConstantsV2.green,
+                              ),
                             )
                       : Container(),
                 ],
@@ -500,23 +534,31 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                           prefs.remove("idFamily");
                           bool previous = prefs.getBool(isFamily) ?? false;
                           prefs.setBool(isFamily, false);
-                          Navigator.pushNamed(context, '/FamilyTransition',
-                              arguments: {'isFamily': previous});
+                          Navigator.pushNamed(
+                            context,
+                            '/FamilyTransition',
+                            arguments: {'isFamily': previous},
+                          );
                         },
                         child: ImageViewTypeForm(
-                            height: height,
-                            width: width,
-                            border: false,
-                            form: type,
-                            url: prefs.getString('profile_url'),
-                            gender: prefs.getString('gender')))
+                          height: height,
+                          width: width,
+                          border: false,
+                          form: type,
+                          url: prefs.getString('profile_url'),
+                          gender: prefs.getString('gender'),
+                        ),
+                      )
                     : InkWell(
                         onTap: () {
                           prefs.setString("idFamily", families[index - 1].id!);
                           bool previous = prefs.getBool(isFamily) ?? false;
                           prefs.setBool(isFamily, true);
-                          Navigator.pushNamed(context, '/FamilyTransition',
-                              arguments: {'isFamily': previous});
+                          Navigator.pushNamed(
+                            context,
+                            '/FamilyTransition',
+                            arguments: {'isFamily': previous},
+                          );
                         },
                         child: ImageViewTypeForm(
                           height: height,
@@ -525,7 +567,8 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                           url: families[index - 1].photoUrl,
                           gender: families[index - 1].gender,
                           form: type,
-                        ))
+                        ),
+                      )
                 : InkWell(
                     onTap: () {
                       Navigator.pushNamed(context, '/methods');
@@ -546,36 +589,38 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
       return BoxDecoration(
         borderRadius: const BorderRadius.only(bottomRight: Radius.circular(24)),
         gradient: RadialGradient(
-            center: const Alignment(1.04, 0.77),
-            radius: 2 * MediaQuery.of(context).size.width / 360,
-            colors: <Color>[
-              ConstantsV2.familyAppBarColor100,
-              ConstantsV2.familyAppBarColor200,
-              ConstantsV2.familyAppBarColor300,
-            ],
-            stops: <double>[
-              ConstantsV2.familyAppBarStop100,
-              ConstantsV2.familyAppBarStop200,
-              ConstantsV2.familyAppBarStop300,
-            ]),
+          center: const Alignment(1.04, 0.77),
+          radius: 2 * MediaQuery.of(context).size.width / 360,
+          colors: <Color>[
+            ConstantsV2.familyAppBarColor100,
+            ConstantsV2.familyAppBarColor200,
+            ConstantsV2.familyAppBarColor300,
+          ],
+          stops: <double>[
+            ConstantsV2.familyAppBarStop100,
+            ConstantsV2.familyAppBarStop200,
+            ConstantsV2.familyAppBarStop300,
+          ],
+        ),
         boxShadow: [shadowRegular],
       );
     } else {
       return BoxDecoration(
         borderRadius: const BorderRadius.only(bottomRight: Radius.circular(24)),
         gradient: RadialGradient(
-            center: const Alignment(1.04, 0.77),
-            radius: 2 * MediaQuery.of(context).size.width / 360,
-            colors: <Color>[
-              ConstantsV2.patientAppBarColor100,
-              ConstantsV2.patientAppBarColor200,
-              ConstantsV2.patientAppBarColor300,
-            ],
-            stops: <double>[
-              ConstantsV2.patientAppBarStop100,
-              ConstantsV2.patientAppBarStop200,
-              ConstantsV2.patientAppBarStop300,
-            ]),
+          center: const Alignment(1.04, 0.77),
+          radius: 2 * MediaQuery.of(context).size.width / 360,
+          colors: <Color>[
+            ConstantsV2.patientAppBarColor100,
+            ConstantsV2.patientAppBarColor200,
+            ConstantsV2.patientAppBarColor300,
+          ],
+          stops: <double>[
+            ConstantsV2.patientAppBarStop100,
+            ConstantsV2.patientAppBarStop200,
+            ConstantsV2.patientAppBarStop300,
+          ],
+        ),
         boxShadow: [shadowRegular],
       );
     }

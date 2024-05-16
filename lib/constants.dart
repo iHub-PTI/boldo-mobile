@@ -175,11 +175,12 @@ TextStyle bigButton = GoogleFonts.montserrat().copyWith(
 );
 
 const boldoInfoTextStyle = TextStyle(
-    color: ConstantsV2.activeText,
-    fontFamily: 'Montserrat',
-    fontStyle: FontStyle.normal,
-    fontWeight: FontWeight.w300,
-    fontSize: 14);
+  color: ConstantsV2.activeText,
+  fontFamily: 'Montserrat',
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w300,
+  fontSize: 14,
+);
 
 const boldoCardHeadingTextStyle = TextStyle(
   fontStyle: FontStyle.normal,
@@ -304,10 +305,11 @@ const boldoTabHeaderUnselectedTextStyle = TextStyle(
 );
 
 final boldoCustomActiveInputTextStyle = const TextStyle(
-    fontFamily: 'Montserrat',
-    fontWeight: FontWeight.w500,
-    fontSize: 19,
-    color: ConstantsV2.activeText);
+  fontFamily: 'Montserrat',
+  fontWeight: FontWeight.w500,
+  fontSize: 19,
+  color: ConstantsV2.activeText,
+);
 
 final boldoCustomInactiveInputTextStyle =
     boldoCustomActiveInputTextStyle.copyWith(color: ConstantsV2.inactiveText);
@@ -319,7 +321,9 @@ final boldoActiveInputLabel = const TextStyle(
 );
 
 final boldoInactiveInputLabel = boldoActiveInputLabel.copyWith(
-    fontWeight: FontWeight.w400, color: ConstantsV2.inactiveText);
+  fontWeight: FontWeight.w400,
+  color: ConstantsV2.inactiveText,
+);
 
 const BigButton = TextStyle(
   color: ConstantsV2.lightest,
@@ -346,10 +350,11 @@ const medicationTextStyle = TextStyle(
 );
 
 const boldoMenuUserName = TextStyle(
-    color: ConstantsV2.activeText,
-    fontFamily: 'Roboto',
-    fontSize: 12,
-    fontWeight: FontWeight.w600);
+  color: ConstantsV2.activeText,
+  fontFamily: 'Roboto',
+  fontSize: 12,
+  fontWeight: FontWeight.w600,
+);
 
 BoxShadow shadowRegular = const BoxShadow(
   color: Color(0x0C000000),
@@ -379,24 +384,26 @@ BoxShadow shadowHourAvailable = BoxShadow(
   spreadRadius: 0,
 );
 
-const BoxDecoration buttonFXSecondaryStyle = BoxDecoration(boxShadow: [
-  BoxShadow(
-    offset: Offset(0, 2),
-    color: Color(0xffFEAD88),
-    spreadRadius: -4,
-    blurRadius: 4,
-  ),
-  BoxShadow(
-    offset: Offset(0, 2),
-    color: Color.fromRGBO(0, 0, 0, 0.1),
-    blurRadius: 4,
-  ),
-  BoxShadow(
-    offset: Offset(0, 0),
-    color: Color.fromRGBO(253, 165, 125, 0.5),
-    blurRadius: 4,
-  )
-]);
+const BoxDecoration buttonFXSecondaryStyle = BoxDecoration(
+  boxShadow: [
+    BoxShadow(
+      offset: Offset(0, 2),
+      color: Color(0xffFEAD88),
+      spreadRadius: -4,
+      blurRadius: 4,
+    ),
+    BoxShadow(
+      offset: Offset(0, 2),
+      color: Color.fromRGBO(0, 0, 0, 0.1),
+      blurRadius: 4,
+    ),
+    BoxShadow(
+      offset: Offset(0, 0),
+      color: Color.fromRGBO(253, 165, 125, 0.5),
+      blurRadius: 4,
+    ),
+  ],
+);
 
 BoxDecoration cardDecoration = BoxDecoration(
   color: ConstantsV2.lightest,
@@ -417,7 +424,7 @@ const BoxDecoration selectedCardDecoration = BoxDecoration(
       blurRadius: 4,
       offset: Offset(0, 4),
       spreadRadius: 0,
-    )
+    ),
   ],
 );
 
@@ -428,9 +435,10 @@ ThemeData boldoTheme = ThemeData(
     style: ButtonStyle(
       textStyle: MaterialStateProperty.all(
         const TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 16,
-            color: ConstantsV2.BGNeutral),
+          fontWeight: FontWeight.w500,
+          fontSize: 16,
+          color: ConstantsV2.BGNeutral,
+        ),
       ),
       padding: MaterialStateProperty.all(
         const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
@@ -480,19 +488,21 @@ ThemeData boldoTheme = ThemeData(
   ),
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-        textStyle: const TextStyle(
-            fontWeight: FontWeight.w400,
-            fontSize: 16,
-            color: ConstantsV2.orange),
-        foregroundColor: ConstantsV2.orange,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(100),
-        ),
-        side: const BorderSide(
-          color: ConstantsV2.orange,
-          width: 1,
-        )),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      textStyle: const TextStyle(
+        fontWeight: FontWeight.w400,
+        fontSize: 16,
+        color: ConstantsV2.orange,
+      ),
+      foregroundColor: ConstantsV2.orange,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(100),
+      ),
+      side: const BorderSide(
+        color: ConstantsV2.orange,
+        width: 1,
+      ),
+    ),
   ),
   textTheme: TextTheme(
     titleMedium: boldoCorpSmallSTextStyle.copyWith(
@@ -500,34 +510,35 @@ ThemeData boldoTheme = ThemeData(
     ),
   ),
   inputDecorationTheme: InputDecorationTheme(
-      enabledBorder: UnderlineInputBorder(
-        borderRadius: BorderRadius.circular(6),
-        borderSide: const BorderSide(
-          color: ConstantsV2.enableBorded,
-          width: 1.0,
-        ),
+    enabledBorder: UnderlineInputBorder(
+      borderRadius: BorderRadius.circular(6),
+      borderSide: const BorderSide(
+        color: ConstantsV2.enableBorded,
+        width: 1.0,
       ),
-      focusedBorder: UnderlineInputBorder(
-        borderRadius: BorderRadius.circular(6),
-        borderSide: const BorderSide(
-          color: ConstantsV2.focuseBorder,
-          width: 1.25,
-        ),
+    ),
+    focusedBorder: UnderlineInputBorder(
+      borderRadius: BorderRadius.circular(6),
+      borderSide: const BorderSide(
+        color: ConstantsV2.focuseBorder,
+        width: 1.25,
       ),
-      focusedErrorBorder: UnderlineInputBorder(
-        borderRadius: BorderRadius.circular(6),
-        borderSide: const BorderSide(
-          color: ConstantsV2.buttonPrimaryColor100,
-        ),
+    ),
+    focusedErrorBorder: UnderlineInputBorder(
+      borderRadius: BorderRadius.circular(6),
+      borderSide: const BorderSide(
+        color: ConstantsV2.buttonPrimaryColor100,
       ),
-      errorBorder: UnderlineInputBorder(
-        borderRadius: BorderRadius.circular(6),
-        borderSide: const BorderSide(
-          color: ConstantsV2.buttonPrimaryColor100,
-          width: 1.0,
-        ),
+    ),
+    errorBorder: UnderlineInputBorder(
+      borderRadius: BorderRadius.circular(6),
+      borderSide: const BorderSide(
+        color: ConstantsV2.buttonPrimaryColor100,
+        width: 1.0,
       ),
-      errorStyle: bodySmallRegular.copyWith(color: ConstantsV2.systemFail)),
+    ),
+    errorStyle: bodySmallRegular.copyWith(color: ConstantsV2.systemFail),
+  ),
   primaryColor: Colors.white,
   scaffoldBackgroundColor: ConstantsV2.BGNeutral,
   brightness: Brightness.light,
@@ -541,9 +552,10 @@ ThemeData boldoTheme = ThemeData(
 ButtonStyle elevatedButtonStyleSecondary = ButtonStyle(
   textStyle: MaterialStateProperty.all(
     const TextStyle(
-        fontWeight: FontWeight.w500,
-        fontSize: 16,
-        color: ConstantsV2.BGNeutral),
+      fontWeight: FontWeight.w500,
+      fontSize: 16,
+      color: ConstantsV2.BGNeutral,
+    ),
   ),
   padding: MaterialStateProperty.all(
     const EdgeInsets.symmetric(vertical: 10, horizontal: 16),

@@ -1,25 +1,22 @@
+import 'dart:io';
 import 'dart:ui';
 
-import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/upload_url_model.dart';
 import 'package:boldo/network/files_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
-import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/photos_helpers.dart';
 import 'package:boldo/widgets/loading.dart';
-import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart';
-import 'dart:io';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
+
 import '../../../main.dart';
 
 class ProfileImageEdit extends StatefulWidget {
@@ -42,7 +39,7 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
           child: Card(
             child: _isLoading
                 ? Padding(
-                    padding: const EdgeInsets.all(26.0), child: loadingStatus())
+                    padding: const EdgeInsets.all(26.0), child: loadingStatus(),)
                 : ClipOval(
                     child: editingPatient.photoUrl == null ||
                             editingPatient.photoUrl == ''
@@ -67,10 +64,10 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                             ),
                             errorWidget: (context, url, error) =>
                                 const Icon(Icons.error),
-                          )),
+                          ),),
             elevation: 4.0,
             shape: const StadiumBorder(
-                side: BorderSide(color: Colors.white, width: 3)),
+                side: BorderSide(color: Colors.white, width: 3),),
             clipBehavior: Clip.antiAlias,
           ),
         ),
@@ -84,7 +81,7 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                     context: context,
                     source: ImageSource.gallery,
                     permissionDescription:
-                        'Se requiere acceso para seleccionar fotos');
+                        'Se requiere acceso para seleccionar fotos',);
                 if (result != null) {
                   File? croppedFile = await cropPhoto(file: result);
 
@@ -114,7 +111,7 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                       emitSnackBar(
                           context: context,
                           text: exception.message,
-                          status: ActionStatus.Fail);
+                          status: ActionStatus.Fail,);
                       captureMessage(
                         message: exception.message,
                         stackTrace: stackTrace,
@@ -127,7 +124,7 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                       emitSnackBar(
                           context: context,
                           text: exception.message,
-                          status: ActionStatus.Fail);
+                          status: ActionStatus.Fail,);
                       captureError(
                         exception: exception,
                         stackTrace: stackTrace,
@@ -139,7 +136,7 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                       emitSnackBar(
                           context: context,
                           text: genericError,
-                          status: ActionStatus.Fail);
+                          status: ActionStatus.Fail,);
                       captureError(
                         exception: exception,
                         stackTrace: stackTrace,
@@ -172,7 +169,7 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
               ),
             ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -234,14 +231,14 @@ class _ProfileImageViewState extends State<ProfileImageView> {
                             ),
                             errorWidget: (context, url, error) =>
                                 const Icon(Icons.error),
-                          )),
+                          ),),
             elevation: 4.0,
             shape: widget.border
                 ? const StadiumBorder(
                     side: BorderSide(
                     color: Colors.white,
                     width: 3,
-                  ))
+                  ),)
                 : const CircleBorder(),
             clipBehavior: Clip.antiAlias,
           ),
@@ -311,14 +308,14 @@ class _ProfileImageViewState2 extends State<ProfileImageView2> {
                                 errorWidget: (context, url, error) =>
                                     const Icon(Icons.error),
                               )
-                        : SvgPicture.asset('assets/images/LogoIcon.svg')),
+                        : SvgPicture.asset('assets/images/LogoIcon.svg'),),
             elevation: 4.0,
             shape: widget.border
                 ? StadiumBorder(
                     side: BorderSide(
                     color: widget.color ?? Colors.white,
                     width: 3,
-                  ))
+                  ),)
                 : const CircleBorder(),
             clipBehavior: Clip.antiAlias,
           ),
@@ -399,7 +396,7 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
                             image: imageProvider,
                             fit: BoxFit.cover,
                             colorFilter: ColorFilter.mode(
-                                widget.color!, BlendMode.color)),
+                                widget.color!, BlendMode.color,),),
                       ),
                     )
                 : null,

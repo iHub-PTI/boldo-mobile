@@ -4,11 +4,11 @@ import 'package:boldo/widgets/back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../widgets/custom_form_button.dart';
-import '../../widgets/wrapper.dart';
-import '../../widgets/custom_form_input.dart';
-import '../../provider/user_provider.dart';
 import '../../constants.dart';
+import '../../provider/user_provider.dart';
+import '../../widgets/custom_form_button.dart';
+import '../../widgets/custom_form_input.dart';
+import '../../widgets/wrapper.dart';
 
 class AddressScreen extends StatefulWidget {
   AddressScreen({Key? key}) : super(key: key);
@@ -41,8 +41,9 @@ class _AddressScreenState extends State<AddressScreen> {
     });
     Map<String, String>? updateResponse = await updateProfile(context: context);
     Provider.of<UserProvider>(context, listen: false).updateProfileEditMessages(
-        updateResponse["successMessage"] ?? '',
-        updateResponse["errorMessage"] ?? '');
+      updateResponse["successMessage"] ?? '',
+      updateResponse["errorMessage"] ?? '',
+    );
     setState(() {
       loading = false;
     });

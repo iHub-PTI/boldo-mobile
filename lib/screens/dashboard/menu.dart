@@ -87,36 +87,38 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<UserLogoutBloc, UserLogoutState>(
-        listener: (context, state) {
-          if (state is UserLogoutFailed) {
-            emitSnackBar(
-              context: context,
-              text: state.response,
-              status: ActionStatus.Fail,
-            );
-          }
-        },
-        child: Scaffold(
-          floatingActionButton: BackButtonLabel(
-            iconType: BackIcon.backClose,
-            iconColor: ConstantsV2.lightest,
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
-          body: Stack(children: [
+      listener: (context, state) {
+        if (state is UserLogoutFailed) {
+          emitSnackBar(
+            context: context,
+            text: state.response,
+            status: ActionStatus.Fail,
+          );
+        }
+      },
+      child: Scaffold(
+        floatingActionButton: BackButtonLabel(
+          iconType: BackIcon.backClose,
+          iconColor: ConstantsV2.lightest,
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+        body: Stack(
+          children: [
             //const Background(text: "menu"),
             Container(
               width: double.infinity,
               height: 122,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                    // radius: MediaQuery.of(context).size.width / 180,
-                    colors: <Color>[
-                      ConstantsV2.patientAppBarColor300,
-                      ConstantsV2.patientAppBarColor200,
-                      ConstantsV2.patientAppBarColor100,
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter),
+                  // radius: MediaQuery.of(context).size.width / 180,
+                  colors: <Color>[
+                    ConstantsV2.patientAppBarColor300,
+                    ConstantsV2.patientAppBarColor200,
+                    ConstantsV2.patientAppBarColor100,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
               ),
             ),
             SafeArea(
@@ -127,14 +129,15 @@ class _MenuScreenState extends State<MenuScreen> {
                       height: 50,
                     ),
                     Center(
-                        child: ImageViewTypeForm(
-                      height: 100,
-                      width: 100,
-                      border: true,
-                      url: patient.photoUrl,
-                      gender: patient.gender,
-                      borderWidth: 3,
-                    )),
+                      child: ImageViewTypeForm(
+                        height: 100,
+                        width: 100,
+                        border: true,
+                        url: patient.photoUrl,
+                        gender: patient.gender,
+                        borderWidth: 3,
+                      ),
+                    ),
                     const SizedBox(
                       height: 8,
                     ),
@@ -152,14 +155,23 @@ class _MenuScreenState extends State<MenuScreen> {
                           children: [
                             Container(
                               padding: const EdgeInsets.only(
-                                  left: 20, right: 20, bottom: 20),
+                                left: 20,
+                                right: 20,
+                                bottom: 20,
+                              ),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   _buildMenuSection(
-                                      context, 'Cuenta', accountItems),
-                                  _buildMenuSection(context, 'Configuraciones',
-                                      settingsItems),
+                                    context,
+                                    'Cuenta',
+                                    accountItems,
+                                  ),
+                                  _buildMenuSection(
+                                    context,
+                                    'Configuraciones',
+                                    settingsItems,
+                                  ),
                                   _buildMenuSection(
                                     context,
                                     'Aplicación',
@@ -169,12 +181,17 @@ class _MenuScreenState extends State<MenuScreen> {
                                   Container(
                                     color: Colors.white,
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 12),
+                                      horizontal: 20,
+                                      vertical: 12,
+                                    ),
                                     child: InkWell(
                                       onTap: () {
                                         BlocProvider.of<UserLogoutBloc>(context)
-                                            .add(GetUserLogout(
-                                                context: context));
+                                            .add(
+                                          GetUserLogout(
+                                            context: context,
+                                          ),
+                                        );
                                       },
                                       child: Row(
                                         children: [
@@ -185,9 +202,11 @@ class _MenuScreenState extends State<MenuScreen> {
                                           const SizedBox(
                                             width: 8,
                                           ),
-                                          Text('Cerrar sesión',
-                                              style: boldoTitleBlackTextStyle
-                                                  .copyWith(fontSize: 16))
+                                          Text(
+                                            'Cerrar sesión',
+                                            style: boldoTitleBlackTextStyle
+                                                .copyWith(fontSize: 16),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -207,23 +226,29 @@ class _MenuScreenState extends State<MenuScreen> {
               builder: (context, state) {
                 if (state is UserLogoutLoading) {
                   return Align(
-                      alignment: Alignment.center,
-                      child: Image.asset(
-                        'assets/images/loading.gif',
-                        height: 60,
-                        width: 60,
-                      ));
+                    alignment: Alignment.center,
+                    child: Image.asset(
+                      'assets/images/loading.gif',
+                      height: 60,
+                      width: 60,
+                    ),
+                  );
                 } else {
                   return Container();
                 }
               },
-            )
-          ]),
-        ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildMenuSection(
-      BuildContext context, String sectionTitle, List<ItemMenu> sectionItems) {
+    BuildContext context,
+    String sectionTitle,
+    List<ItemMenu> sectionItems,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

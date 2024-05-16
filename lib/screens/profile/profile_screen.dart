@@ -6,22 +6,16 @@ import 'package:boldo/widgets/custom_form_button.dart';
 import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import '../../blocs/user_bloc/patient_bloc.dart';
-import './address_screen.dart';
-import './password_reset_screen.dart';
-import './components/profile_image.dart';
+import 'package:provider/provider.dart';
 
+import './components/profile_image.dart';
+import '../../blocs/user_bloc/patient_bloc.dart';
+import '../../constants.dart';
+import '../../provider/user_provider.dart';
+import '../../utils/form_utils.dart';
 import '../../widgets/custom_form_input.dart';
 import '../../widgets/wrapper.dart';
-
-import '../../utils/form_utils.dart';
-
-import '../../provider/user_provider.dart';
-
-import '../../constants.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -88,68 +82,74 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (state is Success) {
             _dataLoading = false;
             emitSnackBar(
-                context: context,
-                text: "Perfil actualizado",
-                status: ActionStatus.Success);
+              context: context,
+              text: "Perfil actualizado",
+              status: ActionStatus.Success,
+            );
           } else if (state is Failed) {
             _dataLoading = false;
             emitSnackBar(
-                context: context,
-                text: state.response,
-                status: ActionStatus.Fail);
+              context: context,
+              text: state.response,
+              status: ActionStatus.Fail,
+            );
           }
         },
         child: BlocBuilder<PatientBloc, PatientState>(
           builder: (context, state) {
-            return CustomWrapper(children: [
-              const SizedBox(height: 20),
-              BackButtonLabel(
-                labelText: 'Editar perfil',
-              ),
-              if (_dataLoading)
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 48.0),
-                    child: loadingStatus(),
-                  ),
+            return CustomWrapper(
+              children: [
+                const SizedBox(height: 20),
+                BackButtonLabel(
+                  labelText: 'Editar perfil',
                 ),
-              if (!_dataLoading && !_dataLoaded)
-                const Center(
-                  child: Text(
-                    "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Constants.otherColor100,
+                if (_dataLoading)
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 48.0),
+                      child: loadingStatus(),
                     ),
                   ),
-                ),
-              if (!_dataLoading && _dataLoaded)
-                Column(
-                  children: [
-                    const SizedBox(height: 10),
-                    const Center(child: ProfileImageEdit()),
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Form(
-                        autovalidateMode: _validate
-                            ? AutovalidateMode.always
-                            : AutovalidateMode.disabled,
-                        key: _formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Datos personales',
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Container(
+                if (!_dataLoading && !_dataLoaded)
+                  const Center(
+                    child: Text(
+                      "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Constants.otherColor100,
+                      ),
+                    ),
+                  ),
+                if (!_dataLoading && _dataLoaded)
+                  Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      const Center(child: ProfileImageEdit()),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Form(
+                          autovalidateMode: _validate
+                              ? AutovalidateMode.always
+                              : AutovalidateMode.disabled,
+                          key: _formKey,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Datos personales',
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Container(
                                 color: Colors.white,
                                 padding: const EdgeInsets.only(
-                                    right: 20, left: 20, bottom: 20),
+                                  right: 20,
+                                  left: 20,
+                                  bottom: 20,
+                                ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -178,7 +178,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         labelText: 'Sexo *',
                                         labelStyle: TextStyle(fontSize: 16),
                                         contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 16),
+                                          horizontal: 16,
+                                        ),
                                       ),
                                       value: editingPatient.gender == 'unknown'
                                           ? null
@@ -189,15 +190,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       style: boldoCustomInactiveInputTextStyle,
                                       onChanged: null,
                                       items: ['male', 'female']
-                                          .map((gender) =>
-                                              DropdownMenuItem<String>(
-                                                child: Text(gender == 'male'
+                                          .map(
+                                            (gender) =>
+                                                DropdownMenuItem<String>(
+                                              child: Text(
+                                                gender == 'male'
                                                     ? 'Masculino'
                                                     : gender == 'female'
                                                         ? "Femenino"
-                                                        : "desconocido"),
-                                                value: gender,
-                                              ))
+                                                        : "desconocido",
+                                              ),
+                                              value: gender,
+                                            ),
+                                          )
                                           .toList(),
                                       isExpanded: true,
                                     ),
@@ -210,135 +215,141 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           '${DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd').parse(editingPatient.birthDate!))}',
                                     ),
                                   ],
-                                )),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            const Text('Datos de contacto'),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Container(
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text('Datos de contacto'),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Container(
                                 color: Colors.white,
                                 padding: const EdgeInsets.only(
-                                    right: 20, left: 20, bottom: 20),
+                                  right: 20,
+                                  left: 20,
+                                  bottom: 20,
+                                ),
                                 child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      if (!(prefs.getBool(isFamily) ?? false))
-                                        CustomFormInput(
-                                          initialValue: editingPatient.email,
-                                          label: "Correo electrónico *",
-                                          validator: (value) =>
-                                              validateEmail(value),
-                                          onChanged: (String val) =>
-                                              (editingPatient.email = val),
-                                        ),
-                                      const SizedBox(
-                                        height: 20,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (!(prefs.getBool(isFamily) ?? false))
+                                      CustomFormInput(
+                                        initialValue: editingPatient.email,
+                                        label: "Correo electrónico *",
+                                        validator: (value) =>
+                                            validateEmail(value),
+                                        onChanged: (String val) =>
+                                            (editingPatient.email = val),
                                       ),
-                                      if (!(prefs.getBool(isFamily) ?? false))
-                                        CustomFormInput(
-                                          initialValue: editingPatient.phone,
-                                          isPhoneNumber: true,
-                                          secondaryLabel: "Opcional",
-                                          label: "Número de teléfono",
-                                          inputFormatters: [
-                                            ValidatorInputFormatter()
-                                          ],
-                                          onChanged: (String val) =>
-                                              (editingPatient.phone = val),
-                                        ),
-                                    ])),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            const Text('Dirección'),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Container(
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    if (!(prefs.getBool(isFamily) ?? false))
+                                      CustomFormInput(
+                                        initialValue: editingPatient.phone,
+                                        isPhoneNumber: true,
+                                        secondaryLabel: "Opcional",
+                                        label: "Número de teléfono",
+                                        inputFormatters: [
+                                          ValidatorInputFormatter(),
+                                        ],
+                                        onChanged: (String val) =>
+                                            (editingPatient.phone = val),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text('Dirección'),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Container(
                                 color: Colors.white,
                                 padding: const EdgeInsets.all(20),
                                 child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      //const SizedBox(height: 20),
-                                      CustomFormInput(
-                                        initialValue: editingPatient.city,
-                                        label: "Ciudad",
-                                        secondaryLabel: "Opcional",
-                                        onChanged: (String val) =>
-                                            editingPatient.city = val,
-                                      ),
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    //const SizedBox(height: 20),
+                                    CustomFormInput(
+                                      initialValue: editingPatient.city,
+                                      label: "Ciudad",
+                                      secondaryLabel: "Opcional",
+                                      onChanged: (String val) =>
+                                          editingPatient.city = val,
+                                    ),
 
-                                      const SizedBox(height: 20),
-                                      CustomFormInput(
-                                        initialValue:
-                                            editingPatient.neighborhood,
-                                        label: "Barrio",
-                                        secondaryLabel: "Opcional",
-                                        onChanged: (String val) =>
-                                            editingPatient.neighborhood = val,
-                                      ),
-                                      const SizedBox(height: 20),
-                                      CustomFormInput(
-                                        initialValue: editingPatient.street,
-                                        label: "Calle",
-                                        secondaryLabel: "Opcional",
-                                        onChanged: (String val) =>
-                                            editingPatient.street = val,
-                                      ),
-                                      const SizedBox(height: 20),
-                                      CustomFormInput(
-                                        initialValue:
-                                            editingPatient.addressDescription,
-                                        maxLines: 6,
-                                        label: "Referencia",
-                                        secondaryLabel: "Opcional",
-                                        onChanged: (String val) =>
-                                            editingPatient.addressDescription =
-                                                val,
-                                      ),
-                                    ])),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            const Text('Ocupación'),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Container(
+                                    const SizedBox(height: 20),
+                                    CustomFormInput(
+                                      initialValue: editingPatient.neighborhood,
+                                      label: "Barrio",
+                                      secondaryLabel: "Opcional",
+                                      onChanged: (String val) =>
+                                          editingPatient.neighborhood = val,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    CustomFormInput(
+                                      initialValue: editingPatient.street,
+                                      label: "Calle",
+                                      secondaryLabel: "Opcional",
+                                      onChanged: (String val) =>
+                                          editingPatient.street = val,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    CustomFormInput(
+                                      initialValue:
+                                          editingPatient.addressDescription,
+                                      maxLines: 6,
+                                      label: "Referencia",
+                                      secondaryLabel: "Opcional",
+                                      onChanged: (String val) => editingPatient
+                                          .addressDescription = val,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text('Ocupación'),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Container(
                                 color: Colors.white,
                                 padding: const EdgeInsets.all(20),
                                 child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      CustomFormInput(
-                                        initialValue: editingPatient.job,
-                                        secondaryLabel: "Opcional",
-                                        label: "Ocupación",
-                                        onChanged: (String val) =>
-                                            (editingPatient.job = val),
-                                      ),
-                                    ])),
-                            const SizedBox(height: 20),
-                            CustomFormButton(
-                              loading: _dataLoading,
-                              text: "Guardar",
-                              actionCallback: _updateProfile,
-                            ),
-                            const SizedBox(height: 20),
-                          ],
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CustomFormInput(
+                                      initialValue: editingPatient.job,
+                                      secondaryLabel: "Opcional",
+                                      label: "Ocupación",
+                                      onChanged: (String val) =>
+                                          (editingPatient.job = val),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              CustomFormButton(
+                                loading: _dataLoading,
+                                text: "Guardar",
+                                actionCallback: _updateProfile,
+                              ),
+                              const SizedBox(height: 20),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                )
-            ]);
+                    ],
+                  ),
+              ],
+            );
           },
         ),
       ),
