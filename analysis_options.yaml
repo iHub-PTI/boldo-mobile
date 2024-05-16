@@ -63,3 +63,4 @@ linter:
     - unnecessary_statements
     - unnecessary_this
     - package_names
+    - require_trailing_commas
