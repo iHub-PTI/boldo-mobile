@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:boldo/constants.dart';
@@ -9,13 +10,13 @@ import 'package:boldo/utils/errors.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/utils/photos_helpers.dart';
 import 'package:boldo/widgets/loading.dart';
-import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart';
-import 'dart:io';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+
 import '../../../main.dart';
 
 class ProfileImageEdit extends StatefulWidget {
@@ -33,56 +34,54 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
     return Stack(
       children: <Widget>[
         SizedBox(
-          height: 128,
-          width: 128,
+          height: 100,
+          width: 100,
           child: Card(
             child: _isLoading
-            ? Padding(
-                padding: const EdgeInsets.all(26.0),
-                child: loadingStatus()
-              )
-            : ClipOval(
-            child: editingPatient.photoUrl == null || editingPatient.photoUrl == ''
-                ?
-            SvgPicture.asset(
-              editingPatient.gender != null ? editingPatient.gender == "female"
-                  ? 'assets/images/femalePatient.svg'
-                  : editingPatient.gender == "male"
-                  ? 'assets/images/malePatient.svg'
-                  :'assets/images/persona.svg'
-                  : 'assets/images/persona.svg',
-            )
-                :CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: editingPatient.photoUrl!,
-                  progressIndicatorBuilder:
-                      (context, url, downloadProgress) => Padding(
-                    padding: const EdgeInsets.all(26.0),
-                    child: loadingStatus(
-                      value: downloadProgress.progress,
-                    ),
-                  ),
-                  errorWidget: (context, url, error) =>
-                  const Icon(Icons.error),
-                )
-            ),
+                ? Padding(
+                    padding: const EdgeInsets.all(26.0), child: loadingStatus(),)
+                : ClipOval(
+                    child: editingPatient.photoUrl == null ||
+                            editingPatient.photoUrl == ''
+                        ? SvgPicture.asset(
+                            editingPatient.gender != null
+                                ? editingPatient.gender == "female"
+                                    ? 'assets/images/femalePatient.svg'
+                                    : editingPatient.gender == "male"
+                                        ? 'assets/images/malePatient.svg'
+                                        : 'assets/images/persona.svg'
+                                : 'assets/images/persona.svg',
+                          )
+                        : CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl: editingPatient.photoUrl!,
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) => Padding(
+                              padding: const EdgeInsets.all(26.0),
+                              child: loadingStatus(
+                                value: downloadProgress.progress,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                          ),),
             elevation: 4.0,
-            shape: const CircleBorder(),
+            shape: const StadiumBorder(
+                side: BorderSide(color: Colors.white, width: 3),),
             clipBehavior: Clip.antiAlias,
           ),
         ),
         Positioned(
-          top: 90,
-          left: 90,
+          top: 70,
+          left: 70,
           child: GestureDetector(
             onTap: () async {
               try {
-                XFile? result =
-                    await pickImage(
-                      context: context,
-                      source: ImageSource.gallery,
-                      permissionDescription: 'Se requiere acceso para seleccionar fotos'
-                    );
+                XFile? result = await pickImage(
+                    context: context,
+                    source: ImageSource.gallery,
+                    permissionDescription:
+                        'Se requiere acceso para seleccionar fotos',);
                 if (result != null) {
                   File? croppedFile = await cropPhoto(file: result);
 
@@ -101,6 +100,7 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                       );
 
                       editingPatient.photoUrl = response.location;
+
                       setState(() {
                         _isLoading = false;
                       });
@@ -111,8 +111,7 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                       emitSnackBar(
                           context: context,
                           text: exception.message,
-                          status: ActionStatus.Fail
-                      );
+                          status: ActionStatus.Fail,);
                       captureMessage(
                         message: exception.message,
                         stackTrace: stackTrace,
@@ -125,8 +124,7 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                       emitSnackBar(
                           context: context,
                           text: exception.message,
-                          status: ActionStatus.Fail
-                      );
+                          status: ActionStatus.Fail,);
                       captureError(
                         exception: exception,
                         stackTrace: stackTrace,
@@ -138,8 +136,7 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
                       emitSnackBar(
                           context: context,
                           text: genericError,
-                          status: ActionStatus.Fail
-                      );
+                          status: ActionStatus.Fail,);
                       captureError(
                         exception: exception,
                         stackTrace: stackTrace,
@@ -155,15 +152,15 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
               }
             },
             child: SizedBox(
-              height: 32,
-              width: 32,
+              height: 28,
+              width: 28,
               child: Card(
                 margin: const EdgeInsets.all(0),
-                color: const Color.fromRGBO(0, 0, 0, 0.5),
+                color: ConstantsV2.orange,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(2.0),
                   child: SvgPicture.asset(
-                    'assets/icon/camera.svg',
+                    'assets/icon/pencil.svg',
                   ),
                 ),
                 elevation: 4.0,
@@ -172,7 +169,7 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
               ),
             ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -180,7 +177,6 @@ class _ProfileImageEditState extends State<ProfileImageEdit> {
 
 @deprecated
 class ProfileImageView extends StatefulWidget {
-
   final double height;
   final double width;
   final bool border;
@@ -208,42 +204,42 @@ class _ProfileImageViewState extends State<ProfileImageView> {
           width: widget.width,
           child: Card(
             child: _isLoading
-              ? Padding(
-                padding: const EdgeInsets.all(26.0),
-                child: loadingStatus(),
-              )
-              : ClipOval(
-                child: patient.photoUrl == null || patient.photoUrl == ''
-                ?
-                SvgPicture.asset(
-                  patient.gender != null ? patient.gender == "female"
-                      ? 'assets/images/femalePatient.svg'
-                      : patient.gender == "male"
-                        ? 'assets/images/malePatient.svg'
-                        :'assets/images/LogoIcon.svg'
-                    : 'assets/images/LogoIcon.svg',
-                )
-                :CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: patient.photoUrl!,
-                  progressIndicatorBuilder:
-                      (context, url, downloadProgress) => Padding(
+                ? Padding(
                     padding: const EdgeInsets.all(26.0),
-                    child: loadingStatus(
-                      value: downloadProgress.progress,
-                    ),
-                  ),
-                  errorWidget: (context, url, error) =>
-                  const Icon(Icons.error),
-                )
-              ),
+                    child: loadingStatus(),
+                  )
+                : ClipOval(
+                    child: patient.photoUrl == null || patient.photoUrl == ''
+                        ? SvgPicture.asset(
+                            patient.gender != null
+                                ? patient.gender == "female"
+                                    ? 'assets/images/femalePatient.svg'
+                                    : patient.gender == "male"
+                                        ? 'assets/images/malePatient.svg'
+                                        : 'assets/images/LogoIcon.svg'
+                                : 'assets/images/LogoIcon.svg',
+                          )
+                        : CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl: patient.photoUrl!,
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) => Padding(
+                              padding: const EdgeInsets.all(26.0),
+                              child: loadingStatus(
+                                value: downloadProgress.progress,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                          ),),
             elevation: 4.0,
-            shape: widget.border ? const StadiumBorder(
-              side: BorderSide(
-                color: Colors.white,
-                width: 3,
-              )
-            ) : const CircleBorder(),
+            shape: widget.border
+                ? const StadiumBorder(
+                    side: BorderSide(
+                    color: Colors.white,
+                    width: 3,
+                  ),)
+                : const CircleBorder(),
             clipBehavior: Clip.antiAlias,
           ),
         ),
@@ -254,7 +250,6 @@ class _ProfileImageViewState extends State<ProfileImageView> {
 
 @deprecated
 class ProfileImageView2 extends StatefulWidget {
-
   final double height;
   final double width;
   final bool border;
@@ -287,38 +282,41 @@ class _ProfileImageViewState2 extends State<ProfileImageView2> {
           child: Card(
             child: _isLoading
                 ? Padding(
-              padding: const EdgeInsets.all(26.0),
-              child: loadingStatus(),
-            )
-            : ClipOval(
-              child: widget.patient != null ? widget.patient!.photoUrl == null || widget.patient!.photoUrl == '' ?
-                SvgPicture.asset(
-                  widget.patient!.gender == null || widget.patient!.gender == 'unknown'
-                      ? 'assets/images/LogoIcon.svg'
-                      : widget.patient!.gender == "female"
-                      ? 'assets/images/femalePatient.svg'
-                      : 'assets/images/malePatient.svg',
-                ) :
-               CachedNetworkImage(
-                fit: BoxFit.cover,
-                imageUrl: widget.patient!.photoUrl!,
-                progressIndicatorBuilder:
-                    (context, url, downloadProgress) => Padding(
-                  padding: const EdgeInsets.all(26.0),
-                  child: loadingStatus(),
-                ),
-                errorWidget: (context, url, error) =>
-                const Icon(Icons.error),
-              ): SvgPicture.asset('assets/images/LogoIcon.svg')
-
-            ),
+                    padding: const EdgeInsets.all(26.0),
+                    child: loadingStatus(),
+                  )
+                : ClipOval(
+                    child: widget.patient != null
+                        ? widget.patient!.photoUrl == null ||
+                                widget.patient!.photoUrl == ''
+                            ? SvgPicture.asset(
+                                widget.patient!.gender == null ||
+                                        widget.patient!.gender == 'unknown'
+                                    ? 'assets/images/LogoIcon.svg'
+                                    : widget.patient!.gender == "female"
+                                        ? 'assets/images/femalePatient.svg'
+                                        : 'assets/images/malePatient.svg',
+                              )
+                            : CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                imageUrl: widget.patient!.photoUrl!,
+                                progressIndicatorBuilder:
+                                    (context, url, downloadProgress) => Padding(
+                                  padding: const EdgeInsets.all(26.0),
+                                  child: loadingStatus(),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                              )
+                        : SvgPicture.asset('assets/images/LogoIcon.svg'),),
             elevation: 4.0,
-            shape: widget.border ? StadiumBorder(
-                side: BorderSide(
-                  color: widget.color?? Colors.white,
-                  width: 3,
-                )
-            ) : const CircleBorder(),
+            shape: widget.border
+                ? StadiumBorder(
+                    side: BorderSide(
+                    color: widget.color ?? Colors.white,
+                    width: 3,
+                  ),)
+                : const CircleBorder(),
             clipBehavior: Clip.antiAlias,
           ),
         ),
@@ -331,7 +329,6 @@ class _ProfileImageViewState2 extends State<ProfileImageView2> {
 /// is null.
 /// The forms accepted are "rounded" and "square", by default is "rounded"
 class ImageViewTypeForm extends StatefulWidget {
-
   final double height;
   final double width;
   final Color? color;
@@ -347,7 +344,7 @@ class ImageViewTypeForm extends StatefulWidget {
   final double elevation;
   final String? text;
   final TextStyle? textStyle;
-
+  final double borderWidth;
   const ImageViewTypeForm({
     Key? key,
     required this.height,
@@ -365,6 +362,7 @@ class ImageViewTypeForm extends StatefulWidget {
     this.elevation = 1.0,
     this.text,
     this.textStyle,
+    this.borderWidth = 2,
   }) : super(key: key);
 
   @override
@@ -372,7 +370,6 @@ class ImageViewTypeForm extends StatefulWidget {
 }
 
 class _ImageViewTypeForm extends State<ImageViewTypeForm> {
-
   @override
   void initState() {
     super.initState();
@@ -380,45 +377,48 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
 
   @override
   Widget build(BuildContext context) {
-
-
-    Widget child =
-    widget.url != null && widget.url != ""
+    Widget child = widget.url != null && widget.url != ""
         ? CachedNetworkImage(
-      fit: BoxFit.cover,
-      imageUrl: widget.url!,
-      progressIndicatorBuilder: (context, url, downloadProgress) =>
-          Padding(
-            padding: const EdgeInsets.all(26.0),
-            child: loadingStatus(
-              value: downloadProgress.progress,
+            fit: BoxFit.cover,
+            imageUrl: widget.url!,
+            progressIndicatorBuilder: (context, url, downloadProgress) =>
+                Padding(
+              padding: const EdgeInsets.all(26.0),
+              child: loadingStatus(
+                value: downloadProgress.progress,
+              ),
             ),
-          ),
-      errorWidget: (context, url, error) => const Icon(Icons.error),
-      imageBuilder: widget.color != null ? (context, imageProvider) => Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-              image: imageProvider,
-              fit: BoxFit.cover,
-              colorFilter:
-              ColorFilter.mode(widget.color!, BlendMode.color)),
-        ),
-      ) : null,
-    )
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+            imageBuilder: widget.color != null
+                ? (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                            colorFilter: ColorFilter.mode(
+                                widget.color!, BlendMode.color,),),
+                      ),
+                    )
+                : null,
+          )
         : widget.text != null
-        ? Center(
-      child: Text(
-        widget.text?? '',
-        style: widget.textStyle,
-      ),
-    )
-        : SvgPicture.asset(
-      widget.gender == 'male'
-          ? widget.isPatient? 'assets/images/malePatient.svg': 'assets/images/maleDoctor.svg'
-          : widget.gender == "female"
-          ? widget.isPatient? 'assets/images/femalePatient.svg': 'assets/images/femaleDoctor.svg'
-          : 'assets/images/persona.svg',
-    );
+            ? Center(
+                child: Text(
+                  widget.text ?? '',
+                  style: widget.textStyle,
+                ),
+              )
+            : SvgPicture.asset(
+                widget.gender == 'male'
+                    ? widget.isPatient
+                        ? 'assets/images/malePatient.svg'
+                        : 'assets/images/maleDoctor.svg'
+                    : widget.gender == "female"
+                        ? widget.isPatient
+                            ? 'assets/images/femalePatient.svg'
+                            : 'assets/images/femaleDoctor.svg'
+                        : 'assets/images/persona.svg',
+              );
 
     return Card(
       elevation: widget.elevation,
@@ -432,34 +432,38 @@ class _ImageViewTypeForm extends State<ImageViewTypeForm> {
             width: widget.width,
           ),
           Container(
-            child: widget.blur ? BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
-              child: Container(
-                color: widget.color?.withOpacity(widget.opacity),
-                width: widget.width,
-                height: widget.height,
-              ),
-            ) :
-            Container(
-              color: widget.color?.withOpacity(widget.opacity),
-              width: widget.width,
-              height: widget.height,
-            ),
+            child: widget.blur
+                ? BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 1.0, sigmaY: 1.0),
+                    child: Container(
+                      color: widget.color?.withOpacity(widget.opacity),
+                      width: widget.width,
+                      height: widget.height,
+                    ),
+                  )
+                : Container(
+                    color: widget.color?.withOpacity(widget.opacity),
+                    width: widget.width,
+                    height: widget.height,
+                  ),
             height: widget.height,
             width: widget.width,
           ),
         ],
       ),
-      shape: widget.form == "rounded" ? StadiumBorder(
-        side: widget.border ? BorderSide(
-          color: widget.borderColor?? Colors.white,
-          width: 2,
-        ) : BorderSide.none,
-      ) : widget.form == "square" ? RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(3)) : const CircleBorder(),
+      shape: widget.form == "rounded"
+          ? StadiumBorder(
+              side: widget.border
+                  ? BorderSide(
+                      color: widget.borderColor ?? Colors.white,
+                      width: widget.borderWidth,
+                    )
+                  : BorderSide.none,
+            )
+          : widget.form == "square"
+              ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(3))
+              : const CircleBorder(),
       clipBehavior: Clip.antiAlias,
     );
-
   }
-
 }

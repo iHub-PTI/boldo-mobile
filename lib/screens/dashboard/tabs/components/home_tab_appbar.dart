@@ -24,11 +24,9 @@ class HomeTabAppBar extends StatefulWidget {
 
   @override
   _HomeTabAppBarState createState() => _HomeTabAppBarState();
-
 }
 
 class _HomeTabAppBarState extends State<HomeTabAppBar> {
-
   @override
   void initState() {
     super.initState();
@@ -37,145 +35,153 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: (
-          ConstantsV2.homeAppBarMinHeight+
-              (ConstantsV2.homeAppBarMaxHeight-ConstantsV2.homeAppBarMinHeight)*widget.controller.value
-      ),
+      height: (ConstantsV2.homeAppBarMinHeight +
+          (ConstantsV2.homeAppBarMaxHeight - ConstantsV2.homeAppBarMinHeight) *
+              widget.controller.value),
       decoration: _decoration(),
       child: BlocListener<PatientBloc, PatientState>(
-        listener: (context, state){
-          setState(() {
-
-          });
+        listener: (context, state) {
+          setState(() {});
         },
         child: BlocBuilder<PatientBloc, PatientState>(
-            builder: (context, state) {
-              return Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ProfileScreen(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.all(10),
-                      child: ImageViewTypeForm(
-                          height: 60+(100-60)*widget.controller.value,
-                          width: 60+(100-60)*widget.controller.value,
-                          url: patient.photoUrl,
-                          gender: patient.gender,
-                          border: true),
+          builder: (context, state) {
+            return Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ProfileScreen(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    child: ImageViewTypeForm(
+                      height: 60 + (100 - 60) * widget.controller.value,
+                      width: 60 + (100 - 60) * widget.controller.value,
+                      url: patient.photoUrl,
+                      gender: patient.gender,
+                      border: true,
+                      borderWidth: 3,
                     ),
                   ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if((prefs.getBool(isFamily)?? false))
-                          Flexible(
-                            child: Text(
-                              "mostrando a",
-                              style: boldoCorpMediumTextStyle.copyWith(
-                                color: ConstantsV2.lightGrey,
-                                fontSize: 10+(14-10)*widget.controller.value,
-                              ),
-                            ),
-                          ),
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if ((prefs.getBool(isFamily) ?? false))
                         Flexible(
                           child: Text(
-                            "${patient.givenName ?? ''} ${patient.familyName ??
-                                ''}",
-                            style: boldoCardHeadingTextStyle.copyWith(
-                                fontSize: 14+(17-14)*widget.controller.value,
-                                color: ConstantsV2.lightest
-                            ),
-                          ),
-                        ),
-                        if(!(prefs.getBool(isFamily)?? false))
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  patient.city ?? '',
-                                  style: boldoCorpMediumTextStyle.copyWith(
-                                    fontSize: 10+(14-10)*widget.controller.value,
-                                  ),
-                                ),
-                              ]
-                          ),
-                        SizedBox(height: 4+(10-4)*widget.controller.value),
-                        !(prefs.getBool(isFamily)?? false) ?Text(
-                          formatDate(
-                            DateTime.now(),
-                            [d, ' de ', MM, ' de ', yyyy],
-                            locale: const SpanishDateLocale(),
-                          ),
-                          style: boldoCorpMediumTextStyle.copyWith(
-                            fontSize: 10+(14-10)*widget.controller.value,
-                          ),
-                        ): Flexible(
-                          child: Text(
-                            "${patient.relationshipDisplaySpan?? ''}",
+                            "mostrando a",
                             style: boldoCorpMediumTextStyle.copyWith(
                               color: ConstantsV2.lightGrey,
-                              fontSize: 10+(14-10)*widget.controller.value,
+                              fontSize:
+                                  10 + (14 - 10) * widget.controller.value,
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 16, right: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizeTransition(
-                          sizeFactor: widget.controller,
-                          child: IconButton(
-                            onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (
-                                  context) => MenuScreen()));
-                            },
-                            icon: SvgPicture.asset(
-                              'assets/icon/menu-alt-1.svg',
-                              color: ConstantsV2.lightest,
-                            ),
+                      Flexible(
+                        child: Text(
+                          "${patient.givenName ?? ''} ${patient.familyName ?? ''}",
+                          style: boldoCardHeadingTextStyle.copyWith(
+                            fontSize: 14 + (17 - 14) * widget.controller.value,
+                            color: ConstantsV2.lightest,
                           ),
-                        ) ,
-                        Container(
-                          constraints: const BoxConstraints(
-                              maxHeight: 33, maxWidth: 33),
-                          child: FloatingActionButton(
-                            onPressed: () {
-                              if(families.length > 0)
-                                _showFamilyBox();
-                              else
-                                Navigator.pushNamed(context, '/methods');
-                            },
-                            backgroundColor: ConstantsV2.orange,
-                            child: SvgPicture.asset('assets/icon/family.svg'),
-                            elevation: 0,
-                          ) ,
-                        ) ,
-                      ],
-                    ),
+                        ),
+                      ),
+                      if (!(prefs.getBool(isFamily) ?? false))
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              patient.city ?? '',
+                              style: boldoCorpMediumTextStyle.copyWith(
+                                fontSize:
+                                    10 + (14 - 10) * widget.controller.value,
+                              ),
+                            ),
+                          ],
+                        ),
+                      SizedBox(height: 4 + (10 - 4) * widget.controller.value),
+                      !(prefs.getBool(isFamily) ?? false)
+                          ? Text(
+                              formatDate(
+                                DateTime.now(),
+                                [d, ' de ', MM, ' de ', yyyy],
+                                locale: const SpanishDateLocale(),
+                              ),
+                              style: boldoCorpMediumTextStyle.copyWith(
+                                fontSize:
+                                    10 + (14 - 10) * widget.controller.value,
+                              ),
+                            )
+                          : Flexible(
+                              child: Text(
+                                "${patient.relationshipDisplaySpan ?? ''}",
+                                style: boldoCorpMediumTextStyle.copyWith(
+                                  color: ConstantsV2.lightGrey,
+                                  fontSize:
+                                      10 + (14 - 10) * widget.controller.value,
+                                ),
+                              ),
+                            ),
+                    ],
                   ),
-                ],
-              );
-            }
+                ),
+                Container(
+                  margin: const EdgeInsets.only(bottom: 16, right: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizeTransition(
+                        sizeFactor: widget.controller,
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MenuScreen(),
+                              ),
+                            );
+                          },
+                          icon: SvgPicture.asset(
+                            'assets/icon/menu-alt-1.svg',
+                            color: ConstantsV2.lightest,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        constraints:
+                            const BoxConstraints(maxHeight: 33, maxWidth: 33),
+                        child: FloatingActionButton(
+                          onPressed: () {
+                            if (families.length > 0)
+                              _showFamilyBox();
+                            else
+                              Navigator.pushNamed(context, '/methods');
+                          },
+                          backgroundColor: ConstantsV2.orange,
+                          child: SvgPicture.asset('assets/icon/family.svg'),
+                          elevation: 0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
-  _showFamilyBox(){
+  _showFamilyBox() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -184,19 +190,19 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
         double start = 0;
         bool _loading = false;
         return BlocListener<family.FamilyBloc, family.FamilyState>(
-          listener: (context, state){
-            if(state is family.Success) {
+          listener: (context, state) {
+            if (state is family.Success) {
               setState(() {
                 _loading = false;
               });
-            }else if(state is family.Failed){
+            } else if (state is family.Failed) {
               emitSnackBar(
-                  context: context,
-                  text: state.response,
-                  status: ActionStatus.Fail
+                context: context,
+                text: state.response,
+                status: ActionStatus.Fail,
               );
               _loading = false;
-            }else if(state is family.Loading){
+            } else if (state is family.Loading) {
               setState(() {
                 _loading = true;
               });
@@ -215,21 +221,23 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                     ),
                     content: Container(
                       // screen rotation control
-                      width: MediaQuery.of(context).size.height >= MediaQuery.of(context).size.width 
-                        // vertical orientation
-                        ? MediaQuery.of(context).size.width > 600 
-                          // its a tablet
-                          ? MediaQuery.of(context).size.width*0.5
-                          // its a phone
-                          : MediaQuery.of(context).size.width*0.8
-                        // horizontal orientation
-                        : MediaQuery.of(context).size.width*0.3,
+                      width: MediaQuery.of(context).size.height >=
+                              MediaQuery.of(context).size.width
+                          // vertical orientation
+                          ? MediaQuery.of(context).size.width > 600
+                              // its a tablet
+                              ? MediaQuery.of(context).size.width * 0.5
+                              // its a phone
+                              : MediaQuery.of(context).size.width * 0.8
+                          // horizontal orientation
+                          : MediaQuery.of(context).size.width * 0.3,
                       // screen rotation and expand control
-                      height: expand 
-                        ? MediaQuery.of(context).size.height >= MediaQuery.of(context).size.width 
-                          ? MediaQuery.of(context).size.height*0.5
-                          : MediaQuery.of(context).size.height*0.6
-                        : 100,
+                      height: expand
+                          ? MediaQuery.of(context).size.height >=
+                                  MediaQuery.of(context).size.width
+                              ? MediaQuery.of(context).size.height * 0.5
+                              : MediaQuery.of(context).size.height * 0.6
+                          : 100,
                       child: Stack(
                         children: [
                           Align(
@@ -239,106 +247,165 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 !expand
-                                  ? Container(
-                                    height: 54,
-                                    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
-                                    // screen rotation control
-                                    width: MediaQuery.of(context).size.width*0.7,
-                                    alignment: Alignment.topCenter,
-                                    child: families.length > 0 
-                                      ? ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: families.length + 2,
-                                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                                        scrollDirection: Axis.horizontal,
-                                        itemBuilder: _buildPictureRoundedFamily,
-                                      )
-                                      : Container(),
-                                  ) 
-                                  : Container(
-                                    width: MediaQuery.of(context).size.height >= MediaQuery.of(context).size.width 
-                                      // its a vertical orientation
-                                      ? MediaQuery.of(context).size.width > 600
-                                        // its a tablet
-                                        ? MediaQuery.of(context).size.width*0.35
-                                        // its a phone
-                                        : MediaQuery.of(context).size.width*0.7
-                                      // its a horizontal orientation
-                                      : MediaQuery.of(context).size.height > 600 
-                                        ? MediaQuery.of(context).size.width*0.25
-                                        : MediaQuery.of(context).size.width*0.35,
-                                    height: MediaQuery.of(context).size.height >= MediaQuery.of(context).size.width 
-                                      // its a vertical orientation
-                                      ? MediaQuery.of(context).size.height*0.4
-                                      // its a horizontal orientation
-                                      : MediaQuery.of(context).size.height > 600 
-                                        // its a tablet
-                                        ? MediaQuery.of(context).size.height*0.5
-                                        // its a phone
-                                        : MediaQuery.of(context).size.height*0.38,
-                                    alignment: Alignment.topCenter,
-                                    child: families.length > 0 
-                                      ? GridView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: families.length + 2,
-                                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2,
-                                          crossAxisSpacing: 4,
-                                          mainAxisSpacing: 4,
+                                    ? Container(
+                                        height: 54,
+                                        margin: const EdgeInsets.symmetric(
+                                          vertical: 10,
+                                          horizontal: 6,
                                         ),
-                                        scrollDirection: Axis.vertical,
-                                        itemBuilder:  _buildPictureSquareFamily,
-                                      ) 
-                                      : Container(),
-                                  ),
-                                  Listener(
-                                    onPointerDown: (PointerDownEvent event) {
-                                      setState ((){
-                                        start = event.localPosition.dy;
-                                      });
-                                    },
-                                    onPointerUp: (PointerUpEvent event) {
-                                      setState ((){
-                                        if(start < event.localPosition.dy)
-                                          expand = true;
-                                        else if( start > event.localPosition.dy )
-                                          expand = false;
-                                      });
-                                    },
-                                    child: Container(
-                                      height: expand? 55: 20,
-                                      width: 200,
-                                      color: ConstantsV2.lightGrey,
-                                      child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                          children: [
-                                            expand? OutlinedButton(
-                                                onPressed: () {
-                                                  Navigator.pushNamed(context, '/familyScreen');
-                                                },
-                                                child: const Text("más opciones")
-                                            ) : Container(),
-                                            Container(
-                                              width: 55,
-                                              height: 6,
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(16),
-                                                color: ConstantsV2.inactiveText,
-                                              ),
-                                            ),
-                                          ]
+                                        // screen rotation control
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.7,
+                                        alignment: Alignment.topCenter,
+                                        child: families.length > 0
+                                            ? ListView.builder(
+                                                shrinkWrap: true,
+                                                itemCount: families.length + 2,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 4,
+                                                ),
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemBuilder:
+                                                    _buildPictureRoundedFamily,
+                                              )
+                                            : Container(),
+                                      )
+                                    : Container(
+                                        width: MediaQuery.of(context)
+                                                    .size
+                                                    .height >=
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width
+                                            // its a vertical orientation
+                                            ? MediaQuery.of(context)
+                                                        .size
+                                                        .width >
+                                                    600
+                                                // its a tablet
+                                                ? MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.35
+                                                // its a phone
+                                                : MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.7
+                                            // its a horizontal orientation
+                                            : MediaQuery.of(context)
+                                                        .size
+                                                        .height >
+                                                    600
+                                                ? MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.25
+                                                : MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.35,
+                                        height: MediaQuery.of(context)
+                                                    .size
+                                                    .height >=
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width
+                                            // its a vertical orientation
+                                            ? MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.4
+                                            // its a horizontal orientation
+                                            : MediaQuery.of(context)
+                                                        .size
+                                                        .height >
+                                                    600
+                                                // its a tablet
+                                                ? MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.5
+                                                // its a phone
+                                                : MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.38,
+                                        alignment: Alignment.topCenter,
+                                        child: families.length > 0
+                                            ? GridView.builder(
+                                                shrinkWrap: true,
+                                                itemCount: families.length + 2,
+                                                gridDelegate:
+                                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                                  crossAxisCount: 2,
+                                                  crossAxisSpacing: 4,
+                                                  mainAxisSpacing: 4,
+                                                ),
+                                                scrollDirection: Axis.vertical,
+                                                itemBuilder:
+                                                    _buildPictureSquareFamily,
+                                              )
+                                            : Container(),
                                       ),
+                                Listener(
+                                  onPointerDown: (PointerDownEvent event) {
+                                    setState(() {
+                                      start = event.localPosition.dy;
+                                    });
+                                  },
+                                  onPointerUp: (PointerUpEvent event) {
+                                    setState(() {
+                                      if (start < event.localPosition.dy)
+                                        expand = true;
+                                      else if (start > event.localPosition.dy)
+                                        expand = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    height: expand ? 55 : 20,
+                                    width: 200,
+                                    color: ConstantsV2.lightGrey,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        expand
+                                            ? OutlinedButton(
+                                                onPressed: () {
+                                                  Navigator.pushNamed(
+                                                    context,
+                                                    '/familyScreen',
+                                                  );
+                                                },
+                                                child: const Text(
+                                                  "más opciones",
+                                                ),
+                                              )
+                                            : Container(),
+                                        Container(
+                                          width: 55,
+                                          height: 6,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                            color: ConstantsV2.inactiveText,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ]
+                                ),
+                              ],
                             ),
                           ),
-                          if(_loading)
+                          if (_loading)
                             Align(
-                                alignment: Alignment.center,
-                                child: Container(
-                                    child: const LoadingHelper()
-                                )
+                              alignment: Alignment.center,
+                              child: Container(child: const LoadingHelper()),
                             ),
                         ],
                       ),
@@ -346,146 +413,216 @@ class _HomeTabAppBarState extends State<HomeTabAppBar> {
                   );
                 },
               );
-            }
-          )
+            },
+          ),
         );
-      }
+      },
     );
   }
 
-  Widget _buildPictureRoundedFamily(BuildContext context, int index){
+  Widget _buildPictureRoundedFamily(BuildContext context, int index) {
     return _profileFamily(index, "rounded");
   }
 
-  Widget _buildPictureSquareFamily(BuildContext context, int index){
+  Widget _buildPictureSquareFamily(BuildContext context, int index) {
     return _profileFamily(index, "square");
   }
 
-  Widget _profileFamily(int index, String type){
-    double height = type == "rounded"? 54 : 85;
-    double width = type == "rounded"? 54 : 120;
+  Widget _profileFamily(int index, String type) {
+    double height = type == "rounded" ? 54 : 85;
+    double width = type == "rounded" ? 54 : 120;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       constraints: const BoxConstraints(maxHeight: 125, maxWidth: 120),
       child: GestureDetector(
-        child: type == "square"? Column(
-          children: [
-            index <= families.length ?
-              index == 0
-                ? InkWell(
-                  onTap: () {
-                    prefs.remove("idFamily");
-                    bool previous = prefs.getBool(isFamily)?? false ;
-                    prefs.setBool(isFamily, false);
-                    Navigator.pushNamed(context, '/FamilyTransition', arguments: {'isFamily': previous});
-                  },
-                  child:ImageViewTypeForm(height: height, width: width, border: false, form: type, url: prefs.getString('profile_url'), gender: prefs.getString('gender'))
-                )
-                :InkWell(
-                  onTap: () {
-                    prefs.setString("idFamily", families[index-1].id!);
-                    bool previous = prefs.getBool(isFamily)?? false ;
-                    prefs.setBool(isFamily, true);
-                    Navigator.pushNamed(context, '/FamilyTransition', arguments: {'isFamily': previous});
-                  },
-                  child:ImageViewTypeForm(height: height, width: width, border: false, url: families[index-1].photoUrl, gender: families[index-1].gender, form: type,)
-                )
-              : InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, '/methods');
-                },
-                child: SvgPicture.asset('assets/icon/family-add.svg', height: height, width: width,),
-              ),
-
-            index <= families.length ?
-              index == 0
-                ? Text("Yo", style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.activeText),)
-                :Text(families[index-1].relationshipDisplaySpan!, style: boldoCorpMediumTextStyle.copyWith(color: ConstantsV2.activeText),)
-              :Text("agregar", style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.green),),
-
-            index <= families.length ?
-              index == 0
-                ? Container()
-                :Text("${families[index-1].givenName?? ''} ${families[index-1].familyName?? ''}", style: boldoCorpSmallTextStyle.copyWith(color: ConstantsV2.green),)
-                : Container(),
-          ],
-        )
-        :index <= families.length ?
-          index == 0
-            ? InkWell(
-              onTap: () {
-                prefs.remove("idFamily");
-                bool previous = prefs.getBool(isFamily)?? false ;
-                prefs.setBool(isFamily, false);
-                Navigator.pushNamed(context, '/FamilyTransition', arguments: {'isFamily': previous});
-              },
-              child:ImageViewTypeForm(height: height, width: width, border: false, form: type, url: prefs.getString('profile_url'), gender: prefs.getString('gender'))
-            )
-            :InkWell(
-              onTap: () {
-                prefs.setString("idFamily", families[index-1].id!);
-                bool previous = prefs.getBool(isFamily)?? false ;
-                prefs.setBool(isFamily, true);
-                Navigator.pushNamed(context, '/FamilyTransition', arguments: {'isFamily': previous});
-              },
-              child:ImageViewTypeForm(height: height, width: width, border: false, url: families[index-1].photoUrl, gender: families[index-1].gender, form: type,)
-            )
-          :InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, '/methods');
-            },
-            child: SvgPicture.asset('assets/icon/family-add.svg', height: height, width: width,),
-          ),
-
+        child: type == "square"
+            ? Column(
+                children: [
+                  index <= families.length
+                      ? index == 0
+                          ? InkWell(
+                              onTap: () {
+                                prefs.remove("idFamily");
+                                bool previous =
+                                    prefs.getBool(isFamily) ?? false;
+                                prefs.setBool(isFamily, false);
+                                Navigator.pushNamed(
+                                  context,
+                                  '/FamilyTransition',
+                                  arguments: {'isFamily': previous},
+                                );
+                              },
+                              child: ImageViewTypeForm(
+                                height: height,
+                                width: width,
+                                border: false,
+                                form: type,
+                                url: prefs.getString('profile_url'),
+                                gender: prefs.getString('gender'),
+                              ),
+                            )
+                          : InkWell(
+                              onTap: () {
+                                prefs.setString(
+                                  "idFamily",
+                                  families[index - 1].id!,
+                                );
+                                bool previous =
+                                    prefs.getBool(isFamily) ?? false;
+                                prefs.setBool(isFamily, true);
+                                Navigator.pushNamed(
+                                  context,
+                                  '/FamilyTransition',
+                                  arguments: {'isFamily': previous},
+                                );
+                              },
+                              child: ImageViewTypeForm(
+                                height: height,
+                                width: width,
+                                border: false,
+                                url: families[index - 1].photoUrl,
+                                gender: families[index - 1].gender,
+                                form: type,
+                              ),
+                            )
+                      : InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/methods');
+                          },
+                          child: SvgPicture.asset(
+                            'assets/icon/family-add.svg',
+                            height: height,
+                            width: width,
+                          ),
+                        ),
+                  index <= families.length
+                      ? index == 0
+                          ? Text(
+                              "Yo",
+                              style: boldoCorpMediumTextStyle.copyWith(
+                                color: ConstantsV2.activeText,
+                              ),
+                            )
+                          : Text(
+                              families[index - 1].relationshipDisplaySpan!,
+                              style: boldoCorpMediumTextStyle.copyWith(
+                                color: ConstantsV2.activeText,
+                              ),
+                            )
+                      : Text(
+                          "agregar",
+                          style: boldoCorpSmallTextStyle.copyWith(
+                            color: ConstantsV2.green,
+                          ),
+                        ),
+                  index <= families.length
+                      ? index == 0
+                          ? Container()
+                          : Text(
+                              "${families[index - 1].givenName ?? ''} ${families[index - 1].familyName ?? ''}",
+                              style: boldoCorpSmallTextStyle.copyWith(
+                                color: ConstantsV2.green,
+                              ),
+                            )
+                      : Container(),
+                ],
+              )
+            : index <= families.length
+                ? index == 0
+                    ? InkWell(
+                        onTap: () {
+                          prefs.remove("idFamily");
+                          bool previous = prefs.getBool(isFamily) ?? false;
+                          prefs.setBool(isFamily, false);
+                          Navigator.pushNamed(
+                            context,
+                            '/FamilyTransition',
+                            arguments: {'isFamily': previous},
+                          );
+                        },
+                        child: ImageViewTypeForm(
+                          height: height,
+                          width: width,
+                          border: false,
+                          form: type,
+                          url: prefs.getString('profile_url'),
+                          gender: prefs.getString('gender'),
+                        ),
+                      )
+                    : InkWell(
+                        onTap: () {
+                          prefs.setString("idFamily", families[index - 1].id!);
+                          bool previous = prefs.getBool(isFamily) ?? false;
+                          prefs.setBool(isFamily, true);
+                          Navigator.pushNamed(
+                            context,
+                            '/FamilyTransition',
+                            arguments: {'isFamily': previous},
+                          );
+                        },
+                        child: ImageViewTypeForm(
+                          height: height,
+                          width: width,
+                          border: false,
+                          url: families[index - 1].photoUrl,
+                          gender: families[index - 1].gender,
+                          form: type,
+                        ),
+                      )
+                : InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/methods');
+                    },
+                    child: SvgPicture.asset(
+                      'assets/icon/family-add.svg',
+                      height: height,
+                      width: width,
+                    ),
+                  ),
         onTap: null,
       ),
     );
   }
 
-  BoxDecoration _decoration(){
-    if((prefs.getBool(isFamily)?? false)){
+  BoxDecoration _decoration() {
+    if ((prefs.getBool(isFamily) ?? false)) {
       return BoxDecoration(
-          borderRadius: const BorderRadius.only(bottomRight: Radius.circular(24)),
-          gradient: RadialGradient(
-              center: const Alignment(1.04, 0.77),
-              radius: 2*MediaQuery.of(context).size.width/360,
-              colors: <Color>[
-                ConstantsV2.familyAppBarColor100,
-                ConstantsV2.familyAppBarColor200,
-                ConstantsV2.familyAppBarColor300,
-              ],
-              stops: <double>[
-                ConstantsV2.familyAppBarStop100,
-                ConstantsV2.familyAppBarStop200,
-                ConstantsV2.familyAppBarStop300,
-              ]
-          ),
-        boxShadow: [
-          shadowRegular
-        ],
+        borderRadius: const BorderRadius.only(bottomRight: Radius.circular(24)),
+        gradient: RadialGradient(
+          center: const Alignment(1.04, 0.77),
+          radius: 2 * MediaQuery.of(context).size.width / 360,
+          colors: <Color>[
+            ConstantsV2.familyAppBarColor100,
+            ConstantsV2.familyAppBarColor200,
+            ConstantsV2.familyAppBarColor300,
+          ],
+          stops: <double>[
+            ConstantsV2.familyAppBarStop100,
+            ConstantsV2.familyAppBarStop200,
+            ConstantsV2.familyAppBarStop300,
+          ],
+        ),
+        boxShadow: [shadowRegular],
       );
-    }else{
+    } else {
       return BoxDecoration(
-          borderRadius: const BorderRadius.only(bottomRight: Radius.circular(24)),
-          gradient: RadialGradient(
-              center: const Alignment(1.04, 0.77),
-              radius: 2*MediaQuery.of(context).size.width/360,
-              colors: <Color>[
-                ConstantsV2.patientAppBarColor100,
-                ConstantsV2.patientAppBarColor200,
-                ConstantsV2.patientAppBarColor300,
-              ],
-              stops: <double>[
-                ConstantsV2.patientAppBarStop100,
-                ConstantsV2.patientAppBarStop200,
-                ConstantsV2.patientAppBarStop300,
-              ]
-          ),
-        boxShadow: [
-          shadowRegular
-        ],
+        borderRadius: const BorderRadius.only(bottomRight: Radius.circular(24)),
+        gradient: RadialGradient(
+          center: const Alignment(1.04, 0.77),
+          radius: 2 * MediaQuery.of(context).size.width / 360,
+          colors: <Color>[
+            ConstantsV2.patientAppBarColor100,
+            ConstantsV2.patientAppBarColor200,
+            ConstantsV2.patientAppBarColor300,
+          ],
+          stops: <double>[
+            ConstantsV2.patientAppBarStop100,
+            ConstantsV2.patientAppBarStop200,
+            ConstantsV2.patientAppBarStop300,
+          ],
+        ),
+        boxShadow: [shadowRegular],
       );
     }
   }
-
 }
