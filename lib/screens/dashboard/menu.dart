@@ -75,7 +75,7 @@ class _MenuScreenState extends State<MenuScreen> {
     ),
   ];
 
-  FlutterAppAuth appAuth = FlutterAppAuth();
+  FlutterAppAuth appAuth = const FlutterAppAuth();
 
   GlobalKey scaffoldKey = GlobalKey();
 

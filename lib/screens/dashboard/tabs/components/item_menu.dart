@@ -42,11 +42,13 @@ class ItemMenu extends StatelessWidget {
                 const SizedBox(
                   width: 8,
                 ),
-                Text(title,
-                    style: boldoTitleBlackTextStyle.copyWith(fontSize: 16))
+                Text(
+                  title,
+                  style: boldoTitleBlackTextStyle.copyWith(fontSize: 16),
+                ),
               ],
             ),
-            if (showRightIcon == true) const Icon(Icons.chevron_right)
+            if (showRightIcon == true) const Icon(Icons.chevron_right),
           ],
         )
         /* TextButton.icon(
