@@ -9,7 +9,7 @@ class ItemMenu extends StatelessWidget {
   final Widget? page;
   final String? route;
   final bool? showRightIcon;
-  final VoidCallback? onTap;
+  final void Function(BuildContext)? onTap;
 
   const ItemMenu({
     Key? key,
@@ -85,5 +85,21 @@ class ItemMenu extends StatelessWidget {
         ,
       ),
     );
+  }
+
+  Function() _getCallback({required BuildContext context}) {
+    switch ([route != null, page != null, onTap != null]) {
+      case [true, _, _]:
+        return () => Navigator.pushNamed(context, route!);
+      case [false, true, _]:
+        return () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => page!),
+            );
+      case [false, false, true]:
+        return () => onTap?.call(context);
+      default:
+        return () {};
+    }
   }
 }
