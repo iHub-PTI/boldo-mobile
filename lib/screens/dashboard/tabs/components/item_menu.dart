@@ -24,20 +24,7 @@ class ItemMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap != null
-          ? onTap
-          : page == null && route == null
-              ? () {}
-              : route == null
-                  ? () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => page!),
-                      );
-                    }
-                  : () {
-                      Navigator.pushNamed(context, route!);
-                    },
+      onTap: _getCallback(context: context),
       child: Container(
         alignment: Alignment.center,
         constraints:
