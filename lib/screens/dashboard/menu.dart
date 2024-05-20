@@ -1,3 +1,4 @@
+import 'package:boldo/app_config.dart';
 import 'package:boldo/blocs/logout_bloc/userLogoutBloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
@@ -286,8 +287,9 @@ class _MenuScreenState extends State<MenuScreen> {
 
 Future<void> _shareApp({required BuildContext context}) async {
   final box = context.findRenderObject() as RenderBox?;
+  final url = appConfig.DEFAULT_APP_URL_DOWNLOAD;
   Share.share(
-    'Estoy usando Boldo, el ecosistema de productos digitales de salud del Paraguay. \n Descargalo gratis en: \nbol.do/pacientes',
+    'Estoy usando Boldo, el ecosistema de productos digitales de salud del Paraguay. \n Descargalo gratis en: \n$url',
     sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
   );
   return null;
