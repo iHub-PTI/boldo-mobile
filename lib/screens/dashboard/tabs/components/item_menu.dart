@@ -9,7 +9,7 @@ class ItemMenu extends StatelessWidget {
   final Widget? page;
   final String? route;
   final bool? showRightIcon;
-  final VoidCallback? onTap;
+  final void Function(BuildContext)? onTap;
 
   const ItemMenu({
     Key? key,
@@ -24,20 +24,7 @@ class ItemMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap != null
-          ? onTap
-          : page == null && route == null
-              ? () {}
-              : route == null
-                  ? () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => page!),
-                      );
-                    }
-                  : () {
-                      Navigator.pushNamed(context, route!);
-                    },
+      onTap: _getCallback(context: context),
       child: Container(
         alignment: Alignment.center,
         constraints:
@@ -55,11 +42,13 @@ class ItemMenu extends StatelessWidget {
                 const SizedBox(
                   width: 8,
                 ),
-                Text(title,
-                    style: boldoTitleBlackTextStyle.copyWith(fontSize: 16))
+                Text(
+                  title,
+                  style: boldoTitleBlackTextStyle.copyWith(fontSize: 16),
+                ),
               ],
             ),
-            if (showRightIcon == true) const Icon(Icons.chevron_right)
+            if (showRightIcon == true) const Icon(Icons.chevron_right),
           ],
         )
         /* TextButton.icon(
@@ -85,5 +74,21 @@ class ItemMenu extends StatelessWidget {
         ,
       ),
     );
+  }
+
+  Function() _getCallback({required BuildContext context}) {
+    switch ([route != null, page != null, onTap != null]) {
+      case [true, _, _]:
+        return () => Navigator.pushNamed(context, route!);
+      case [false, true, _]:
+        return () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => page!),
+            );
+      case [false, false, true]:
+        return () => onTap?.call(context);
+      default:
+        return () {};
+    }
   }
 }

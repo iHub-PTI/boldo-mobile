@@ -1,22 +1,16 @@
+import 'package:boldo/app_config.dart';
 import 'package:boldo/blocs/logout_bloc/userLogoutBloc.dart';
-import 'package:boldo/network/user_repository.dart';
+import 'package:boldo/constants.dart';
 import 'package:boldo/screens/dashboard/tabs/components/item_menu.dart';
 import 'package:boldo/screens/my_account/my_account_screen.dart';
-import 'package:boldo/screens/organizations/memberships_screen.dart';
-import 'package:boldo/screens/privacy_policy/privacy_policy.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
-import 'package:boldo/screens/terms_of_services/terms_of_services.dart';
 import 'package:boldo/utils/helpers.dart';
-import 'package:boldo/utils/loading_helper.dart';
 import 'package:boldo/widgets/back_button.dart';
-import 'package:boldo/widgets/background.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_appauth/flutter_appauth.dart';
-
-import 'package:boldo/constants.dart';
-import 'package:path/path.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../main.dart';
 
@@ -67,15 +61,16 @@ class _MenuScreenState extends State<MenuScreen> {
       title: 'Centro de ayuda',
       route: null,
     ),
-    const ItemMenu(
+    ItemMenu(
       image: 'assets/icon/share.svg',
       title: 'Compartir',
       page: null,
       showRightIcon: false,
+      onTap: (context) => _shareApp(context: context),
     ),
   ];
 
-  FlutterAppAuth appAuth = FlutterAppAuth();
+  FlutterAppAuth appAuth = const FlutterAppAuth();
 
   GlobalKey scaffoldKey = GlobalKey();
 
@@ -288,4 +283,14 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget _buildItemList(BuildContext context, int index, List<ItemMenu> items) {
     return items[index];
   }
+}
+
+Future<void> _shareApp({required BuildContext context}) async {
+  final box = context.findRenderObject() as RenderBox?;
+  final url = appConfig.DEFAULT_APP_URL_DOWNLOAD;
+  Share.share(
+    'Estoy usando Boldo, el ecosistema de productos digitales de salud del Paraguay. \n Descargalo gratis en: \n$url',
+    sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+  );
+  return null;
 }
