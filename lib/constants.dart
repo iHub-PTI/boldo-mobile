@@ -1,5 +1,3 @@
-// ignore_for_file: require_trailing_commas
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -306,6 +304,27 @@ const boldoTabHeaderUnselectedTextStyle = TextStyle(
   fontFamily: 'Montserrat',
 );
 
+final boldoCustomActiveInputTextStyle = const TextStyle(
+  fontFamily: 'Montserrat',
+  fontWeight: FontWeight.w500,
+  fontSize: 19,
+  color: ConstantsV2.activeText,
+);
+
+final boldoCustomInactiveInputTextStyle =
+    boldoCustomActiveInputTextStyle.copyWith(color: ConstantsV2.inactiveText);
+
+final boldoActiveInputLabel = const TextStyle(
+  fontWeight: FontWeight.w400,
+  fontSize: 16,
+  color: ConstantsV2.activeText,
+);
+
+final boldoInactiveInputLabel = boldoActiveInputLabel.copyWith(
+  fontWeight: FontWeight.w400,
+  color: ConstantsV2.inactiveText,
+);
+
 const BigButton = TextStyle(
   color: ConstantsV2.lightest,
   fontStyle: FontStyle.normal,
@@ -328,6 +347,13 @@ const medicationTextStyle = TextStyle(
   fontSize: 12,
   fontWeight: FontWeight.w500,
   fontFamily: 'Montserrat',
+);
+
+const boldoMenuUserName = TextStyle(
+  color: ConstantsV2.activeText,
+  fontFamily: 'Roboto',
+  fontSize: 12,
+  fontWeight: FontWeight.w600,
 );
 
 BoxShadow shadowRegular = const BoxShadow(
