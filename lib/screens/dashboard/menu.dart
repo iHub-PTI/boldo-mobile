@@ -81,6 +81,9 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double gradientHeight = screenHeight * 0.18;
+    final double picturePadding = (screenHeight * 0.15) / 2;
     return BlocListener<UserLogoutBloc, UserLogoutState>(
       listener: (context, state) {
         if (state is UserLogoutFailed) {
@@ -120,8 +123,8 @@ class _MenuScreenState extends State<MenuScreen> {
               child: Container(
                 child: Column(
                   children: [
-                    const SizedBox(
-                      height: 50,
+                    SizedBox(
+                      height: picturePadding,
                     ),
                     Center(
                       child: ImageViewTypeForm(
