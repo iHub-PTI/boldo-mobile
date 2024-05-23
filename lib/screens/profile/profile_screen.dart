@@ -145,11 +145,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                               Container(
                                 color: Colors.white,
-                                padding: const EdgeInsets.only(
-                                  right: 20,
-                                  left: 20,
-                                  bottom: 20,
-                                ),
+                                padding: const EdgeInsets.all(20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -226,11 +222,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                               Container(
                                 color: Colors.white,
-                                padding: const EdgeInsets.only(
-                                  right: 20,
-                                  left: 20,
-                                  bottom: 20,
-                                ),
+                                padding: const EdgeInsets.all(20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [

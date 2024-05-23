@@ -173,11 +173,9 @@ class _CustomFormInputState extends State<CustomFormInput> {
                                 ),
                               )
                             : null,
-                    contentPadding: const EdgeInsets.only(
-                      left: 15,
-                      right: 15,
-                      top: 18,
-                      bottom: 10,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 10,
                     ),
                   ),
                   //keyboardType: TextInputType.emailAddress,
