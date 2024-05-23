@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../provider/user_provider.dart';
 import '../constants.dart';
+import '../provider/user_provider.dart';
 
 class CustomFormInput extends StatefulWidget {
   final int maxLines;
@@ -17,28 +17,28 @@ class CustomFormInput extends StatefulWidget {
   final String? customSVGIcon;
   final bool isDateTime;
   final String? Function(String?)? validator;
-  final  Function(String)? changeValueCallback;
+  final Function(String)? changeValueCallback;
   final bool obscureText;
   final bool enable;
   final Function(String)? onChanged;
   final List<TextInputFormatter> inputFormatters;
-  CustomFormInput(
-      {Key? key,
-      required this.label,
-      this.validator,
-      this.changeValueCallback,
-      this.isDateTime = false,
-      this.inputFormatters = const [],
-      this.maxLines = 1,
-      this.customSVGIcon,
-      this.isPhoneNumber = false,
-      this.customIcon,
-      this.initialValue,
-      this.secondaryLabel,
-      this.onChanged,
-      this.enable = true,
-      this.obscureText = false})
-      : super(key: key);
+  CustomFormInput({
+    Key? key,
+    required this.label,
+    this.validator,
+    this.changeValueCallback,
+    this.isDateTime = false,
+    this.inputFormatters = const [],
+    this.maxLines = 1,
+    this.customSVGIcon,
+    this.isPhoneNumber = false,
+    this.customIcon,
+    this.initialValue,
+    this.secondaryLabel,
+    this.onChanged,
+    this.enable = true,
+    this.obscureText = false,
+  }) : super(key: key);
 
   @override
   _CustomFormInputState createState() => _CustomFormInputState();
@@ -80,18 +80,16 @@ class _CustomFormInputState extends State<CustomFormInput> {
 
     return Column(
       children: [
-        Padding(
+        /* Padding(
           padding: EdgeInsets.only(bottom: safeBlockHorizontal * 1),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 widget.label,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                  color: Constants.extraColor400,
-                ),
+                style: widget.enable
+                    ? boldoActiveInputLabel
+                    : boldoInactiveInputLabel,
               ),
               if (widget.secondaryLabel != null)
                 Text(
@@ -104,11 +102,12 @@ class _CustomFormInputState extends State<CustomFormInput> {
                 ),
             ],
           ),
-        ),
+        ), */
         ConstrainedBox(
           constraints: BoxConstraints(
-              minHeight: safeBlockHorizontal * 11,
-              maxHeight: widget.maxLines == 1 ? safeBlockHorizontal * 20 : 999),
+            minHeight: safeBlockHorizontal * 11,
+            maxHeight: widget.maxLines == 1 ? safeBlockHorizontal * 20 : 999,
+          ),
           child: GestureDetector(
             onTap: () async {
               if (!widget.isDateTime) return;
@@ -123,14 +122,13 @@ class _CustomFormInputState extends State<CustomFormInput> {
                 locale: const Locale("es", "ES"),
                 initialDate: DateTime.parse(birthDate ?? "1980-01-01"),
               );
-              if(dt!= null){
+              if (dt != null) {
                 _textEditingController.text =
                     DateFormat('dd.MM.yyyy').format(dt).toString();
                 widget.onChanged!(dt.toString());
               }
             },
             child: Container(
-              color: Colors.transparent,
               width: double.infinity,
               child: IgnorePointer(
                 ignoring: widget.isDateTime,
@@ -143,46 +141,25 @@ class _CustomFormInputState extends State<CustomFormInput> {
                   obscureText: widget.obscureText,
                   focusNode: _textFocus,
                   controller: _textEditingController,
-                  style: TextStyle(
-                      height: 1,
-                      color: Constants.extraColor300,
-                      fontSize: safeBlockHorizontal * 4.40),
+                  style: widget.enable
+                      ? boldoCustomActiveInputTextStyle
+                      : boldoCustomInactiveInputTextStyle,
                   decoration: InputDecoration(
-                    isCollapsed: true,
-                    prefixIcon: widget.isPhoneNumber
+                    labelText: widget.label,
+                    labelStyle: widget.enable
+                        ? boldoActiveInputLabel
+                        : boldoInactiveInputLabel,
+                    helperText: widget.secondaryLabel,
+                    prefix: widget.isPhoneNumber
                         ? Container(
-                            height: 50,
-                            width: 60,
-                            margin: const EdgeInsets.only(right: 10),
-                            decoration: const BoxDecoration(
-                              color: Constants.extraColor200,
-
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(6),
-                                bottomLeft: Radius.circular(6),
-                              ), // BorderRadius
-                            ), // BoxDecoration
-                            child: Container(
-                              child: const Center(
-                                child: Text(
-                                  "+595",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Constants.extraColor300,
-                                      fontSize: 16),
-                                ),
+                            padding: const EdgeInsets.only(right: 8),
+                            child: const Text(
+                              "+595",
+                              style: TextStyle(
+                                color: Constants.extraColor300,
+                                fontSize: 16,
                               ),
-                              margin: const EdgeInsetsDirectional.only(
-                                  start: 1, top: 1, bottom: 1),
-                              decoration: const BoxDecoration(
-                                color: Color(0xffF9FAFB),
-
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(6),
-                                  bottomLeft: Radius.circular(6),
-                                ), // BorderRadius
-                              ), // BoxDecoration
-                            ), // Container
+                            ),
                           )
                         : null,
                     suffixIcon: widget.customIcon != null
@@ -197,7 +174,11 @@ class _CustomFormInputState extends State<CustomFormInput> {
                               )
                             : null,
                     contentPadding: const EdgeInsets.only(
-                        left: 15, right: 15, top: 18, bottom: 15),
+                      left: 15,
+                      right: 15,
+                      top: 18,
+                      bottom: 10,
+                    ),
                   ),
                   //keyboardType: TextInputType.emailAddress,
                   // validator: widget.validator,
@@ -205,6 +186,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
                     if (widget.validator != null)
                       return widget.validator!(string);
                   },
+
                   onChanged: widget.onChanged,
                   onSaved: (string) {
                     // if (widget.changeValueCallback != null)

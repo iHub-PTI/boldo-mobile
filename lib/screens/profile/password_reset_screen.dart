@@ -1,21 +1,19 @@
 import 'package:boldo/environment.dart';
-import 'package:boldo/main.dart';
 import 'package:boldo/utils/errors.dart';
-import 'package:flutter/material.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../widgets/wrapper.dart';
-
-import '../../widgets/custom_form_button.dart';
-import '../../widgets/custom_form_input.dart';
 import '../../constants.dart';
 import '../../network/http.dart';
 import '../../utils/form_utils.dart';
+import '../../widgets/custom_form_button.dart';
+import '../../widgets/custom_form_input.dart';
+import '../../widgets/wrapper.dart';
 
 class PasswordResetScreen extends StatefulWidget {
-  PasswordResetScreen({Key? key}) : super(key: key);
+  const PasswordResetScreen({Key? key}) : super(key: key);
 
   @override
   _PasswordResetScreenState createState() => _PasswordResetScreenState();
@@ -59,7 +57,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
     });
   }
 
-  Widget obscureTextToggle(){
+  Widget obscureTextToggle() {
     return GestureDetector(
       onTap: _toggle,
       child: Padding(
@@ -72,7 +70,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
     );
   }
 
-  Widget obscureText1Toggle(){
+  Widget obscureText1Toggle() {
     return GestureDetector(
       onTap: _toggle1,
       child: Padding(
@@ -85,7 +83,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
     );
   }
 
-  Widget obscureText2Toggle(){
+  Widget obscureText2Toggle() {
     return GestureDetector(
       onTap: _toggle2,
       child: Padding(
@@ -122,7 +120,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
         data: {
           "currentPassword": _currentPassword,
           "newPassword": _newPassword,
-          "confirmation": _confirmation
+          "confirmation": _confirmation,
         },
       );
 
@@ -130,7 +128,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
         _successMessage = "¡La contraseña ha sido actualizada!";
         loading = false;
       });
-    } on DioError catch(exception, stackTrace){
+    } on DioError catch (exception, stackTrace) {
       captureError(
         exception: exception,
         stackTrace: stackTrace,
@@ -162,87 +160,81 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
     return CustomWrapper(
       children: [
         const SizedBox(height: 20),
-        TextButton.icon(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(
-            Icons.chevron_left_rounded,
-            size: 25,
-            color: Constants.extraColor400,
-          ),
-          label: Text(
-            'Contraseña',
-            style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-          ),
+        BackButtonLabel(
+          labelText: 'Cambiar contraseña',
         ),
-        const SizedBox(height: 20),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Form(
-            autovalidateMode:
-                _validate ? AutovalidateMode.always : AutovalidateMode.disabled,
-            key: _formKey,
-            child: Column(
-              children: [
-                CustomFormInput(
-                  label: "Contraseña actual",
-                  customIcon: obscureTextToggle(),
-                  validator: (value) => validatePassword(value!),
-                  obscureText: _obscureText,
-                  onChanged: (String val) => setState(() => _currentPassword = val),
-                  
-                ),
-                const SizedBox(height: 48),
-                CustomFormInput(
-                  label: "Contraseña nueva",
-                  customIcon: obscureText1Toggle(),
-                  validator: (value) => validatePassword(value!),
-                  obscureText: _obscureText1,
-                  onChanged: (String val) => setState(() => _newPassword = val),
-                ),
-                const SizedBox(height: 20),
-                CustomFormInput(
-                  label: "Confirmar contraseña nueva",
-                  customIcon: obscureText2Toggle(),
-                  validator: (pass2) =>
-                      validatePasswordConfirmation(pass2, _newPassword),
-                  obscureText: _obscureText2,
-                    onChanged: (String val) => setState(() => _confirmation = val),
-                  
-                ),
-                const SizedBox(height: 26),
-                SizedBox(
-                  height: 18,
-                  child: Column(
-                    children: [
-                      if (_errorMessage != null)
-                        Text(
-                          _errorMessage!,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Constants.otherColor100,
-                          ),
-                        ),
-                      if (_successMessage != null)
-                        Text(
-                          _successMessage!,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Constants.primaryColor600,
-                          ),
-                        ),
-                    ],
+          padding: const EdgeInsets.all(20.0),
+          child: Container(
+            padding: const EdgeInsets.all(20.0),
+            color: Colors.white,
+            child: Form(
+              autovalidateMode: _validate
+                  ? AutovalidateMode.always
+                  : AutovalidateMode.disabled,
+              key: _formKey,
+              child: Column(
+                children: [
+                  CustomFormInput(
+                    label: "Contraseña actual",
+                    customIcon: obscureTextToggle(),
+                    validator: (value) => validatePassword(value!),
+                    obscureText: _obscureText,
+                    onChanged: (String val) =>
+                        setState(() => _currentPassword = val),
                   ),
-                ),
-                const SizedBox(height: 8),
-                CustomFormButton(
-                  loading: loading,
-                  text: "Guardar",
-                  actionCallback: _updatePassword,
-                ),
-                const SizedBox(height: 16),
-              ],
+                  const SizedBox(height: 48),
+                  CustomFormInput(
+                    label: "Contraseña nueva",
+                    customIcon: obscureText1Toggle(),
+                    validator: (value) => validatePassword(value!),
+                    obscureText: _obscureText1,
+                    onChanged: (String val) =>
+                        setState(() => _newPassword = val),
+                  ),
+                  const SizedBox(height: 20),
+                  CustomFormInput(
+                    label: "Confirmar contraseña nueva",
+                    customIcon: obscureText2Toggle(),
+                    validator: (pass2) =>
+                        validatePasswordConfirmation(pass2, _newPassword),
+                    obscureText: _obscureText2,
+                    onChanged: (String val) =>
+                        setState(() => _confirmation = val),
+                  ),
+                  const SizedBox(height: 26),
+                  SizedBox(
+                    height: 18,
+                    child: Column(
+                      children: [
+                        if (_errorMessage != null)
+                          Text(
+                            _errorMessage!,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Constants.otherColor100,
+                            ),
+                          ),
+                        if (_successMessage != null)
+                          Text(
+                            _successMessage!,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Constants.primaryColor600,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  CustomFormButton(
+                    loading: loading,
+                    text: "Guardar",
+                    actionCallback: _updatePassword,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
           ),
         ),
