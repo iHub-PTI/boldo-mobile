@@ -56,11 +56,13 @@ class _MenuScreenState extends State<MenuScreen> {
   ];
 
   final List<ItemMenu> appItems = [
+    /* 
+    //TODO: implement this item
     const ItemMenu(
       image: 'assets/icon/help-outline.svg',
       title: 'Centro de ayuda',
       route: null,
-    ),
+    ), */
     ItemMenu(
       image: 'assets/icon/share.svg',
       title: 'Compartir',
@@ -166,11 +168,13 @@ class _MenuScreenState extends State<MenuScreen> {
                                     'Cuenta',
                                     accountItems,
                                   ),
+                                  /* 
+                                  //TODO: implement this section
                                   _buildMenuSection(
                                     context,
                                     'Configuraciones',
                                     settingsItems,
-                                  ),
+                                  ), */
                                   _buildMenuSection(
                                     context,
                                     'Aplicación',
@@ -197,6 +201,8 @@ class _MenuScreenState extends State<MenuScreen> {
                                           SvgPicture.asset(
                                             'assets/icon/power-settings-new.svg',
                                             color: ConstantsV2.activeText,
+                                            width: 24,
+                                            height: 24,
                                           ),
                                           const SizedBox(
                                             width: 8,
