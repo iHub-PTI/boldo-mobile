@@ -34,31 +34,40 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
   Widget build(BuildContext context) {
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-            color: ConstantsV2.lightest,
-            boxShadow: [
-              shadowRegular,
-            ]
-        ),
+        decoration: BoxDecoration(color: ConstantsV2.lightest, boxShadow: [
+          shadowRegular,
+        ]),
         child: Column(
           children: [
             InkWell(
-              onTap: widget.isDependent ? (){} : (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MyManagersTab()
-                  ),
-                );
-              },
+              onTap: widget.isDependent
+                  ? () {}
+                  : () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MyManagersTab()),
+                      );
+                    },
               child: Container(
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       child: widget.isDependent
-                          ? ImageViewTypeForm(height: 60, width: 60, border: false, url: widget.patient?.photoUrl, gender: widget.patient?.photoUrl,)
-                          : ImageViewTypeForm(height: 60, width: 60, border: false, url: prefs.getString('profile_url'), gender: prefs.getString('gender')),
+                          ? ImageViewTypeForm(
+                              height: 60,
+                              width: 60,
+                              border: false,
+                              url: widget.patient?.photoUrl,
+                              gender: widget.patient?.photoUrl,
+                            )
+                          : ImageViewTypeForm(
+                              height: 60,
+                              width: 60,
+                              border: false,
+                              url: prefs.getString('profile_url'),
+                              gender: prefs.getString('gender')),
                     ),
                     const SizedBox(
                       width: 16,
@@ -75,41 +84,57 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                                 Container(
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Flexible(
                                         child: widget.isDependent
                                             ? Text(
-                                          "${widget.patient!.givenName} ${widget.patient!.familyName}",
-                                          style: boldoSubTextMediumStyle.copyWith(
-                                              color: ConstantsV2.activeText
-                                          ),
-                                        )
-                                            :Text(
-                                          "${prefs.getString('name') ?? ''} ${prefs.getString('lastName') ?? ''}",
-                                          style: boldoSubTextMediumStyle.copyWith(
-                                              color: ConstantsV2.activeText
-                                          ),
-                                        ),
+                                                "${widget.patient!.givenName} ${widget.patient!.familyName}",
+                                                style: boldoSubTextMediumStyle
+                                                    .copyWith(
+                                                        color: ConstantsV2
+                                                            .activeText),
+                                              )
+                                            : Text(
+                                                "${prefs.getString('name') ?? ''} ${prefs.getString('lastName') ?? ''}",
+                                                style: boldoSubTextMediumStyle
+                                                    .copyWith(
+                                                        color: ConstantsV2
+                                                            .activeText),
+                                              ),
                                       ),
-                                      widget.isDependent && !(prefs.getBool(isFamily)?? false) ? UnlinkCaretakerWidget(
-                                        onTapCallback: (result) async {
-                                          if (result == 'Desvincular') {
-                                            String? action = await unlinkCaretakerDialog(context);
-                                            if(action == 'cancel') {
-                                              BlocProvider.of<FamilyBloc>(context).add(
-                                                  UnlinkCaretaker(
-                                                      id: widget.patient!.id!));
-                                            }
-                                          }
-                                        },
-                                      ): Container(),
+                                      widget.isDependent &&
+                                              !(prefs.getBool(isFamily) ??
+                                                  false)
+                                          ? UnlinkCaretakerWidget(
+                                              onTapCallback: (result) async {
+                                                if (result == 'Desvincular') {
+                                                  String? action =
+                                                      await unlinkCaretakerDialog(
+                                                          context);
+                                                  if (action == 'cancel') {
+                                                    BlocProvider.of<FamilyBloc>(
+                                                            context)
+                                                        .add(UnlinkCaretaker(
+                                                            id: widget
+                                                                .patient!.id!));
+                                                  }
+                                                }
+                                              },
+                                            )
+                                          : Container(),
                                     ],
                                   ),
                                 ),
                                 Text(
-                                  ! widget.isDependent ? "mi perfil" : widget.patient!.relationshipDisplaySpan?.capitalize()??'',
+                                  !widget.isDependent
+                                      ? "mi perfil"
+                                      : widget.patient!.relationshipDisplaySpan
+                                              ?.capitalize() ??
+                                          '',
                                   style: boldoCorpMediumTextStyle.copyWith(
                                     color: ConstantsV2.green,
                                   ),
@@ -117,11 +142,12 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
                               ],
                             ),
                           ),
-                          if(widget.isDependent)
+                          if (widget.isDependent)
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Text("agregado el ${widget.patient!.startDependenceDate!}",
+                                Text(
+                                  "agregado el ${widget.patient!.startDependenceDate!}",
                                   style: boldoCorpSmallTextStyle.copyWith(
                                     color: ConstantsV2.inactiveText,
                                   ),
@@ -136,11 +162,10 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
               ),
             ),
           ],
-        )
-    );
+        ));
   }
 
-  Future<String?> unlinkCaretakerDialog(BuildContext context){
+  Future<String?> unlinkCaretakerDialog(BuildContext context) {
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -148,8 +173,8 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
         content: const Text('¿Desea desvincular al gestor?'),
         actions: <Widget>[
           TextButton(
-            onPressed: () => Navigator.pop(context, 'atrás'),
-            child: const Text('atrás'),
+            onPressed: () => Navigator.pop(context, 'Atrás'),
+            child: const Text('Atrás'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, 'cancel'),
@@ -159,7 +184,6 @@ class _CaretakerRectangleCardState extends State<CaretakerRectangleCard> {
       ),
     );
   }
-
 }
 
 class UnlinkCaretakerWidget extends StatelessWidget {
@@ -178,7 +202,7 @@ class UnlinkCaretakerWidget extends StatelessWidget {
         }
       },
       child: Container(
-        padding: const EdgeInsets.only(left:20.0, bottom: 20.0),
+        padding: const EdgeInsets.only(left: 20.0, bottom: 20.0),
         child: SvgPicture.asset('assets/icon/familyTrash.svg'),
       ),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[

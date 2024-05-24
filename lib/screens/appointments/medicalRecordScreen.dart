@@ -350,8 +350,8 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
         content: const Text('¿Desea cancelar la cita?'),
         actions: <Widget>[
           TextButton(
-            onPressed: () => Navigator.pop(context, 'atrás'),
-            child: const Text('atrás'),
+            onPressed: () => Navigator.pop(context, 'Atrás'),
+            child: const Text('Atrás'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, 'cancel'),
