@@ -587,7 +587,13 @@ ThemeData boldoTheme = ThemeData(
       elevation: 6,
       shadowColor: Colors.black,
       surfaceTintColor: ConstantsV2.grayLightest),
-  tabBarTheme: const TabBarTheme(dividerColor: Colors.transparent),
+  tabBarTheme: const TabBarTheme(
+      dividerColor: Colors.transparent,
+      overlayColor: MaterialStatePropertyAll(ConstantsV2.veryLightOrange)),
+  splashColor: ConstantsV2.orange.withOpacity(0.3), // Color de la tinta
+  highlightColor: ConstantsV2.veryLightOrange, // Color de resaltado
+  splashFactory: InkRipple
+      .splashFactory, // Tipo de efecto de la tinta (InkRipple es el predeterminado)
 );
 
 ButtonStyle elevatedButtonStyleSecondary = ButtonStyle(
