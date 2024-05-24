@@ -78,9 +78,11 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
                 locale: const Locale("es", "ES"),
                 builder: (context, child) {
                   return Theme(
-                    data: Theme.of(context).copyWith(
-                      colorScheme: const ColorScheme.light(
-                        primary: ConstantsV2.orange,
+                    data: ThemeData.light().copyWith(
+                      colorScheme:
+                          const ColorScheme.light(primary: ConstantsV2.orange),
+                      buttonTheme: const ButtonThemeData(
+                        textTheme: ButtonTextTheme.primary,
                       ),
                     ),
                     child: child!,

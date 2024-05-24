@@ -119,8 +119,20 @@ class _CustomFormInputState extends State<CustomFormInput> {
                 context: context,
                 firstDate: DateTime(1900),
                 lastDate: DateTime.now(),
-                locale: const Locale("es", "ES"),
-                initialDate: DateTime.parse(birthDate ?? "1980-01-01"),
+                locale: const Locale('es', 'ES'),
+                initialDate: DateTime.parse(birthDate ?? '1980-01-01'),
+                builder: (context, child) {
+                  return Theme(
+                    data: ThemeData.light().copyWith(
+                      colorScheme:
+                          const ColorScheme.light(primary: ConstantsV2.orange),
+                      buttonTheme: const ButtonThemeData(
+                        textTheme: ButtonTextTheme.primary,
+                      ),
+                    ),
+                    child: child!,
+                  );
+                },
               );
               if (dt != null) {
                 _textEditingController.text =
@@ -154,7 +166,7 @@ class _CustomFormInputState extends State<CustomFormInput> {
                         ? Container(
                             padding: const EdgeInsets.only(right: 8),
                             child: const Text(
-                              "+595",
+                              '+595',
                               style: TextStyle(
                                 color: Constants.extraColor300,
                                 fontSize: 16,

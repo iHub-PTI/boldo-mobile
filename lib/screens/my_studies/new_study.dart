@@ -222,6 +222,19 @@ class _NewStudyState extends State<NewStudy> {
                                     firstDate: DateTime(1900),
                                     lastDate: DateTime.now(),
                                     locale: const Locale("es", "ES"),
+                                    builder: (context, child) {
+                                      return Theme(
+                                        data: ThemeData.light().copyWith(
+                                          colorScheme: const ColorScheme.light(
+                                            primary: ConstantsV2.orange,
+                                          ),
+                                          buttonTheme: const ButtonThemeData(
+                                            textTheme: ButtonTextTheme.primary,
+                                          ),
+                                        ),
+                                        child: child!,
+                                      );
+                                    },
                                   );
                                   if (newDate == null) {
                                     return;
@@ -339,7 +352,7 @@ class _NewStudyState extends State<NewStudy> {
     return Column(
       children: [
         SvgPicture.asset('assets/images/empty_studies.svg', fit: BoxFit.cover),
-        Text('Aun no tenés estudios para visualizar'),
+        const Text('Aun no tenés estudios para visualizar'),
       ],
     );
   }
@@ -476,11 +489,11 @@ class CompleteFormNewStudy extends StatelessWidget {
                     );
                   }
                 : null,
-            child: Row(
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('siguiente'),
-                const Padding(
+                Text('siguiente'),
+                Padding(
                   padding: EdgeInsets.only(left: 8.0),
                   child: Icon(
                     Icons.chevron_right,
