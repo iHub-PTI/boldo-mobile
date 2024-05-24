@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:boldo/models/PositionEntity.dart';
+import 'package:boldo/screens/map/map.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MapsLauncher {
@@ -72,5 +75,24 @@ class MapsLauncher {
   static Future<bool> launchCoordinates(double latitude, double longitude,
       [String? label]) {
     return launchUrl(createCoordinatesUri(latitude, longitude, label), mode: LaunchMode.externalApplication);
+  }
+
+  /// Launches the maps application for this platform.
+  /// The maps application will show the specified coordinates.
+  /// Returns a Future that resolves to true if the maps application
+  /// was launched successfully, false otherwise.
+  static Future<dynamic> launchAppCoordinates({
+    required List<PositionEntity> position, 
+    required BuildContext context,
+  }) {
+    return Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            MapScreen(
+              positions: position,
+            ),
+      ),
+    );
   }
 }

@@ -86,12 +86,15 @@ dependencies:
   firebase_core: ^2.9.0
   firebase_remote_config: ^4.0.0
   firebase_analytics: ^10.2.0
+  google_maps_flutter: ^2.5.3
+  geolocator: ^11.0.0
 
 dev_dependencies:
   pedantic: ^1.9.2
   flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
+  very_good_analysis: ^5.1.0
 
 flutter_icons:
   android: "launcher_icon"

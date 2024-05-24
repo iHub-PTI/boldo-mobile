@@ -1,5 +1,3 @@
-
-
 import 'package:boldo/blocs/filter_bloc/filter_bloc.dart';
 import 'package:boldo/blocs/filter_prescription_bloc/filter_prescription_bloc.dart';
 import 'package:boldo/constants.dart';
@@ -17,7 +15,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
 class FilterPrescriptionsScreen extends StatefulWidget {
-
   final PrescriptionFilter initialFilter;
   final Function(PrescriptionFilter filter) filterCallback;
 
@@ -28,11 +25,11 @@ class FilterPrescriptionsScreen extends StatefulWidget {
   }) : super();
 
   @override
-  _FilterPrescriptionsScreenState createState() => _FilterPrescriptionsScreenState();
+  _FilterPrescriptionsScreenState createState() =>
+      _FilterPrescriptionsScreenState();
 }
 
 class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
-
   PrescriptionFilter prescriptionFilter = PrescriptionFilter();
   TextEditingController dateTextController = TextEditingController();
   TextEditingController date2TextController = TextEditingController();
@@ -47,16 +44,13 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
     super.initState();
 
     prescriptionFilter = widget.initialFilter.copyWith();
-    if( prescriptionFilter.start != null) {
-      dateTextController.text =
-          inputFormat.format(prescriptionFilter.start!);
+    if (prescriptionFilter.start != null) {
+      dateTextController.text = inputFormat.format(prescriptionFilter.start!);
     }
 
-    if( prescriptionFilter.end != null) {
-      date2TextController.text =
-          inputFormat.format(prescriptionFilter.end!);
+    if (prescriptionFilter.end != null) {
+      date2TextController.text = inputFormat.format(prescriptionFilter.end!);
     }
-
   }
 
   Widget datePicker({
@@ -68,31 +62,30 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
     String? hintText,
     Function? cancelCallback,
     DateTime? selectedDate,
-  }){
+  }) {
     return Container(
       child: Row(
         children: [
           GestureDetector(
             onTap: () async {
               DateTime? newDate = await showDatePicker(
-                  context: context,
-                  initialEntryMode: DatePickerEntryMode
-                      .calendarOnly,
-                  initialDatePickerMode: DatePickerMode.day,
-                  initialDate: initialDate,
-                  firstDate: firstDate,
-                  lastDate: lastDate,
-                  locale: const Locale("es", "ES"),
-                  builder: (context, child){
-                    return Theme(
-                      data: Theme.of(context).copyWith(
-                          colorScheme: const ColorScheme.light(
-                              primary: ConstantsV2.orange
-                          )
+                context: context,
+                initialEntryMode: DatePickerEntryMode.calendarOnly,
+                initialDatePickerMode: DatePickerMode.day,
+                initialDate: initialDate,
+                firstDate: firstDate,
+                lastDate: lastDate,
+                locale: const Locale("es", "ES"),
+                builder: (context, child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      colorScheme: const ColorScheme.light(
+                        primary: ConstantsV2.orange,
                       ),
-                      child: child!,
-                    );
-                  }
+                    ),
+                    child: child!,
+                  );
+                },
               );
               if (newDate == null) {
                 return;
@@ -102,17 +95,17 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 4),
-              decoration: selectedDate != null? const ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                      Radius.circular(16)
-                  ),
-                  side: BorderSide(
-                    width: 0.5,
-                    color: ConstantsV2.gray,
-                  ),
-                ),
-              ) : null,
+              decoration: selectedDate != null
+                  ? const ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                        side: BorderSide(
+                          width: 0.5,
+                          color: ConstantsV2.gray,
+                        ),
+                      ),
+                    )
+                  : null,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
@@ -120,7 +113,10 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 8,
+                        ),
                         child: SvgPicture.asset(
                           'assets/icon/calendar.svg',
                           color: ConstantsV2.orange,
@@ -129,12 +125,10 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text('$hintText: ${selectedDate != null
-                            ? inputFormat.format(
-                            selectedDate
-                        ): ''}',
+                        child: Text(
+                          '$hintText: ${selectedDate != null ? inputFormat.format(selectedDate) : ''}',
                           style: boldoBodyLRegularTextStyle.copyWith(
-                              color: ConstantsV2.activeText
+                            color: ConstantsV2.activeText,
                           ),
                         ),
                       ),
@@ -148,7 +142,7 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
                         color: ConstantsV2.gray,
                         size: 18,
                       ),
-                      onTap: ()=> cancelCallback?.call(),
+                      onTap: () => cancelCallback?.call(),
                     ),
                   ),
                 ],
@@ -160,10 +154,10 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
     );
   }
 
-  Widget doctorBoxFilter(){
+  Widget doctorBoxFilter() {
     return FormField<Doctor>(
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      builder: (FormFieldState<Doctor> state){
+      builder: (FormFieldState<Doctor> state) {
         return boxFilter(
           name: 'Doctor',
           child: DropdownSearch<Doctor>(
@@ -179,30 +173,34 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
 
               PagList<Doctor> pageDoctors = await result;
 
-              List<Doctor> doctors = pageDoctors.items?? [];
+              List<Doctor> doctors = pageDoctors.items ?? [];
 
               return doctors;
             },
-            emptyBuilder: (context, text){
+            emptyBuilder: (context, text) {
               return const EmptyStateV2(
                 titleBottom: 'No hay resultados',
-                textBottom: 'No hay información disponible para los criterios de búsqueda especificados',
+                textBottom:
+                    'No hay información disponible para los criterios de búsqueda especificados',
               );
             },
-            toStringItem: (Doctor? doctor){
-              return doctor?.givenName?? '';
+            toStringItem: (Doctor? doctor) {
+              return doctor?.givenName ?? '';
             },
-            onSelectItem: (Doctor? doctor){
+            onSelectItem: (Doctor? doctor) {
               setState(() {
                 prescriptionFilter.doctors = [doctor];
                 state.didChange(doctor);
               });
             },
-            selected: (prescriptionFilter.doctors?.isEmpty?? true)? null : prescriptionFilter.doctors?.first,
-            onRemoveElement: (Doctor? doctor){
-              prescriptionFilter.doctors?.removeWhere((element) => element == doctor);
-              if(prescriptionFilter.doctors?.isEmpty?? true){
-                prescriptionFilter.doctors= null;
+            selected: (prescriptionFilter.doctors?.isEmpty ?? true)
+                ? null
+                : prescriptionFilter.doctors?.first,
+            onRemoveElement: (Doctor? doctor) {
+              prescriptionFilter.doctors
+                  ?.removeWhere((element) => element == doctor);
+              if (prescriptionFilter.doctors?.isEmpty ?? true) {
+                prescriptionFilter.doctors = null;
               }
               setState(() {
                 state.didChange(null);
@@ -210,11 +208,11 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
             },
           ),
         );
-      }
+      },
     );
   }
 
-  Widget boxFilter({required String name, Widget? child}){
+  Widget boxFilter({required String name, Widget? child}) {
     return Container(
       decoration: ShapeDecoration(
         color: ConstantsV2.lightest,
@@ -232,51 +230,56 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
           children: [
             Container(
               padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Text(name,
+              child: Text(
+                name,
                 style: boldoCorpSmallSTextStyle.copyWith(
-                    color: ConstantsV2.activeText
+                  color: ConstantsV2.activeText,
                 ),
               ),
             ),
-            if(child != null)
-              child,
+            if (child != null) child,
           ],
         ),
       ),
     );
   }
 
-  Widget dateFilter(){
-
+  Widget dateFilter() {
     return FormField<MapEntry<DateTime?, DateTime?>>(
       autovalidateMode: AutovalidateMode.onUserInteraction,
-
-      validator: (value){
-        if(prescriptionFilter.start == null && prescriptionFilter.end != null){
+      validator: (value) {
+        if (prescriptionFilter.start == null &&
+            prescriptionFilter.end != null) {
           return 'Por favor, coloca la fecha "Desde" para definir un rango válido';
-        } else if(prescriptionFilter.start != null && prescriptionFilter.end == null) {
+        } else if (prescriptionFilter.start != null &&
+            prescriptionFilter.end == null) {
           return 'Por favor, coloca la fecha "Hasta" para definir un rango válido';
         }
         return null;
       },
-      builder: (FormFieldState<MapEntry<DateTime?, DateTime?>> state){
-
+      builder: (FormFieldState<MapEntry<DateTime?, DateTime?>> state) {
         InputBorder? shape = InputBorder.none;
 
-        if(state.hasError){
+        if (state.hasError) {
           shape = OutlineInputBorder(
             borderSide: BorderSide(
-              color: Theme.of(context).inputDecorationTheme.errorBorder?.borderSide.color
-                  ?? ConstantsV2.systemFail,
-            )
+              color: Theme.of(context)
+                      .inputDecorationTheme
+                      .errorBorder
+                      ?.borderSide
+                      .color ??
+                  ConstantsV2.systemFail,
+            ),
           );
         }
 
         return Container(
           decoration: BoxDecoration(
-            boxShadow: state.hasError? null: [
-              shadowRegular,
-            ],
+            boxShadow: state.hasError
+                ? null
+                : [
+                    shadowRegular,
+                  ],
           ),
           child: InputDecorator(
             decoration: InputDecoration(
@@ -295,9 +298,10 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text('Filtrar por fecha',
+                    child: Text(
+                      'Filtrar por fecha',
                       style: boldoCorpSmallSTextStyle.copyWith(
-                          color: ConstantsV2.activeText
+                        color: ConstantsV2.activeText,
                       ),
                     ),
                   ),
@@ -306,17 +310,22 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
                     firstDate: DateTime(1900),
                     initialDate: prescriptionFilter.start ?? DateTime.now(),
                     lastDate: prescriptionFilter.end ?? DateTime.now(),
-                    callback: (DateTime newDate){
+                    callback: (DateTime newDate) {
                       setState(() {
                         var _date1 =
-                        outputFormat.parse(newDate.toString().trim());
+                            outputFormat.parse(newDate.toString().trim());
                         var _date2 = inputFormat.format(_date1);
                         dateTextController.text = _date2;
                         prescriptionFilter.start = _date1;
-                        state.didChange(MapEntry(prescriptionFilter.start, prescriptionFilter.end,));
+                        state.didChange(
+                          MapEntry(
+                            prescriptionFilter.start,
+                            prescriptionFilter.end,
+                          ),
+                        );
                       });
                     },
-                    cancelCallback: (){
+                    cancelCallback: () {
                       setState(() {
                         dateTextController.text = '';
                         prescriptionFilter.start = null;
@@ -330,20 +339,27 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
                   ),
                   datePicker(
                     context: context,
-                    firstDate: prescriptionFilter.start?? DateTime.now(),
-                    initialDate: prescriptionFilter.end ?? prescriptionFilter.start?? DateTime.now(),
+                    firstDate: prescriptionFilter.start ?? DateTime.now(),
+                    initialDate: prescriptionFilter.end ??
+                        prescriptionFilter.start ??
+                        DateTime.now(),
                     lastDate: DateTime.now(),
-                    callback: (DateTime newDate){
+                    callback: (DateTime newDate) {
                       setState(() {
                         var _date1 =
-                        outputFormat.parse(newDate.toString().trim());
+                            outputFormat.parse(newDate.toString().trim());
                         var _date2 = inputFormat.format(_date1);
                         date2TextController.text = _date2;
                         prescriptionFilter.end = _date1;
-                        state.didChange(MapEntry(prescriptionFilter.start, prescriptionFilter.end,));
+                        state.didChange(
+                          MapEntry(
+                            prescriptionFilter.start,
+                            prescriptionFilter.end,
+                          ),
+                        );
                       });
                     },
-                    cancelCallback: (){
+                    cancelCallback: () {
                       setState(() {
                         date2TextController.text = '';
                         prescriptionFilter.end = null;
@@ -367,12 +383,13 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
       create: (BuildContext context) => FilterPrescriptionBloc(),
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
           leadingWidth: 200,
           leading: Padding(
             padding: const EdgeInsets.only(left: 16.0),
-            child:
-            SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+            child: SvgPicture.asset(
+              'assets/Logo.svg',
+              semanticsLabel: 'BOLDO Logo',
+            ),
           ),
         ),
         body: SafeArea(
@@ -414,24 +431,42 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
                             child: Theme(
                               data: Theme.of(context).copyWith(
                                 inputDecorationTheme: InputDecorationTheme(
-                                  enabledBorder: Theme.of(context).inputDecorationTheme.enabledBorder?.copyWith(
-                                    borderSide: Theme.of(context).inputDecorationTheme.enabledBorder?.borderSide.copyWith(
-                                      color: ConstantsV2.secondaryRegular,
-                                      width: 1.32,
-                                    ),
-                                  ),
-                                  focusedBorder: Theme.of(context).inputDecorationTheme.focusedBorder?.copyWith(
-                                    borderSide: Theme.of(context).inputDecorationTheme.focusedBorder?.borderSide.copyWith(
-                                      color: ConstantsV2.secondaryRegular,
-                                      width: 1.32,
-                                    ),
-                                  ),
+                                  enabledBorder: Theme.of(context)
+                                      .inputDecorationTheme
+                                      .enabledBorder
+                                      ?.copyWith(
+                                        borderSide: Theme.of(context)
+                                            .inputDecorationTheme
+                                            .enabledBorder
+                                            ?.borderSide
+                                            .copyWith(
+                                              color:
+                                                  ConstantsV2.secondaryRegular,
+                                              width: 1.32,
+                                            ),
+                                      ),
+                                  focusedBorder: Theme.of(context)
+                                      .inputDecorationTheme
+                                      .focusedBorder
+                                      ?.copyWith(
+                                        borderSide: Theme.of(context)
+                                            .inputDecorationTheme
+                                            .focusedBorder
+                                            ?.borderSide
+                                            .copyWith(
+                                              color:
+                                                  ConstantsV2.secondaryRegular,
+                                              width: 1.32,
+                                            ),
+                                      ),
                                 ),
                               ),
                               child: Form(
                                 key: _formKey,
-                                onChanged: (){
-                                  formValidate = _formKey.currentState?.validate()?? false;
+                                onChanged: () {
+                                  formValidate =
+                                      _formKey.currentState?.validate() ??
+                                          false;
                                 },
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -460,67 +495,76 @@ class _FilterPrescriptionsScreenState extends State<FilterPrescriptionsScreen> {
     );
   }
 
-  Widget actions(){
+  Widget actions() {
     return BlocBuilder<FilterPrescriptionBloc, FilterState>(
-      builder: (context, state){
+      builder: (context, state) {
         return Container(
-        decoration: BoxDecoration(
+          decoration: BoxDecoration(
             boxShadow: [
               shadowRegular,
             ],
-            color: ConstantsV2.grayLightest
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TextButton(
-              onPressed: prescriptionFilter.ifFiltered? () {
-                prescriptionFilter.clearFilter();
-                BlocProvider.of<FilterPrescriptionBloc>(context).add(
-                    ApplyFilter(
-                      filter: prescriptionFilter,
-                      function:
-                          (filter)=> widget.filterCallback(filter as PrescriptionFilter),
-                      context: context,
-                    )
-                );
-              }: null,
-              child: const Row(
-                children: [
-                  Text('Limpiar filtros',
-                  ),
-                ],
+            color: ConstantsV2.grayLightest,
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: prescriptionFilter.ifFiltered
+                    ? () {
+                        prescriptionFilter.clearFilter();
+                        BlocProvider.of<FilterPrescriptionBloc>(context).add(
+                          ApplyFilter(
+                            filter: prescriptionFilter,
+                            function: (filter) => widget
+                                .filterCallback(filter as PrescriptionFilter),
+                            context: context,
+                          ),
+                        );
+                      }
+                    : null,
+                child: const Row(
+                  children: [
+                    Text(
+                      'Limpiar filtros',
+                    ),
+                  ],
+                ),
               ),
-            ),
-            TextButton(
-              onPressed: prescriptionFilter != widget.initialFilter && formValidate? () {
-                BlocProvider.of<FilterPrescriptionBloc>(context).add(
-                    ApplyFilter(
-                        filter: prescriptionFilter,
-                        function:
-                            (filter) =>
-                            widget.filterCallback(
-                                filter as PrescriptionFilter),
-                        context: context
-                    )
-                );
-              }: null,
-              child: const Row(
-                children: [
-                  Text(
-                    'Ver resultados',
-                  ),
-                  Icon(Icons.arrow_forward_rounded)
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
+              ElevatedButton(
+                  onPressed: prescriptionFilter != widget.initialFilter &&
+                          formValidate
+                      ? () {
+                          BlocProvider.of<FilterPrescriptionBloc>(context).add(
+                            ApplyFilter(
+                              filter: prescriptionFilter,
+                              function: (filter) => widget.filterCallback(
+                                filter as PrescriptionFilter,
+                              ),
+                              context: context,
+                            ),
+                          );
+                        }
+                      : null,
+                  child: Row(
+                    children: [
+                      const Text(
+                        'Ver resultados',
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      SvgPicture.asset(
+                        'assets/icon/chevron-right.svg',
+                        color: Colors.white,
+                      ),
+                    ],
+                  )),
+            ],
+          ),
+        );
       },
     );
   }
-
 }

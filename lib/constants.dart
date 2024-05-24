@@ -98,7 +98,7 @@ const boldoTitleBlackTextStyle = TextStyle(
   color: ConstantsV2.activeText,
   fontStyle: FontStyle.normal,
   fontSize: 24,
-  fontWeight: FontWeight.w500,
+  fontWeight: FontWeight.w400,
   fontFamily: 'Montserrat',
 );
 
@@ -135,8 +135,8 @@ const boldoSubTextMediumStyle = TextStyle(
 );
 
 TextStyle bodyLarge = GoogleFonts.montserrat().copyWith(
-  fontWeight: FontWeight.w300,
-  fontSize: 14,
+  fontWeight: FontWeight.w400,
+  fontSize: 16,
 );
 
 TextStyle bodyP = GoogleFonts.montserrat().copyWith(
@@ -146,7 +146,7 @@ TextStyle bodyP = GoogleFonts.montserrat().copyWith(
 
 TextStyle bodyLargeBlack = GoogleFonts.montserrat().copyWith(
   fontWeight: FontWeight.w500,
-  fontSize: 14,
+  fontSize: 16,
 );
 
 TextStyle bodySmallRegular = GoogleFonts.montserrat().copyWith(
@@ -363,6 +363,13 @@ BoxShadow shadowRegular = const BoxShadow(
   spreadRadius: 0,
 );
 
+BoxShadow shadowPin = const BoxShadow(
+  color: Color(0x0C000000),
+  blurRadius: 5.55,
+  offset: Offset(0, 5.55),
+  spreadRadius: 0,
+);
+
 BoxShadow shadowHeader = const BoxShadow(
   color: Color(0x07000000),
   blurRadius: 10,
@@ -429,6 +436,7 @@ const BoxDecoration selectedCardDecoration = BoxDecoration(
 );
 
 ThemeData boldoTheme = ThemeData(
+  useMaterial3: true,
   fontFamily: 'Montserrat',
   listTileTheme: const ListTileThemeData(horizontalTitleGap: 0),
   elevatedButtonTheme: ElevatedButtonThemeData(
@@ -440,6 +448,8 @@ ThemeData boldoTheme = ThemeData(
           color: ConstantsV2.BGNeutral,
         ),
       ),
+      foregroundColor:
+          MaterialStateProperty.all<Color?>(ConstantsV2.primaryColor),
       padding: MaterialStateProperty.all(
         const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       ),
@@ -459,15 +469,16 @@ ThemeData boldoTheme = ThemeData(
   textButtonTheme: TextButtonThemeData(
     style: TextButton.styleFrom(
       foregroundColor: ConstantsV2.secondaryRegular,
-      textStyle:
-          boldoSubTextMediumStyle.copyWith(color: ConstantsV2.secondaryRegular),
+      textStyle: boldoSubTextMediumStyle.copyWith(
+        color: ConstantsV2.secondaryRegular,
+      ),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
     ),
   ),
   toggleableActiveColor: ConstantsV2.orange,
   checkboxTheme: CheckboxThemeData(
+    side: const BorderSide(color: ConstantsV2.orange),
     shape: RoundedRectangleBorder(
-      side: const BorderSide(color: ConstantsV2.orange, width: 5),
       borderRadius: BorderRadius.circular(4),
     ),
     fillColor: MaterialStateProperty.resolveWith((states) {
@@ -508,6 +519,7 @@ ThemeData boldoTheme = ThemeData(
     titleMedium: boldoCorpSmallSTextStyle.copyWith(
       color: ConstantsV2.activeText,
     ),
+    bodyLarge: bodyLarge,
   ),
   inputDecorationTheme: InputDecorationTheme(
     enabledBorder: UnderlineInputBorder(
@@ -539,6 +551,19 @@ ThemeData boldoTheme = ThemeData(
     ),
     errorStyle: bodySmallRegular.copyWith(color: ConstantsV2.systemFail),
   ),
+  searchBarTheme: SearchBarThemeData(
+    elevation: MaterialStateProperty.all<double>(0),
+    backgroundColor: MaterialStateProperty.resolveWith((states) {
+      switch (states.firstOrNull) {
+        case MaterialState.selected:
+        case MaterialState.pressed:
+        case MaterialState.focused:
+          return ConstantsV2.gray.withOpacity(0.5);
+        default:
+          return ConstantsV2.BGNeutral;
+      }
+    }),
+  ),
   primaryColor: Colors.white,
   scaffoldBackgroundColor: ConstantsV2.BGNeutral,
   brightness: Brightness.light,
@@ -547,6 +572,20 @@ ThemeData boldoTheme = ThemeData(
     color: Constants.primaryColor400,
     circularTrackColor: Constants.primaryColor600,
   ),
+  dialogTheme: const DialogTheme(
+    surfaceTintColor: ConstantsV2.primaryColor,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+    ),
+  ),
+  popupMenuTheme:
+      const PopupMenuThemeData(surfaceTintColor: ConstantsV2.primaryColor),
+  cardTheme: const CardTheme(color: Colors.white),
+  appBarTheme: const AppBarTheme(
+      elevation: 6,
+      shadowColor: Colors.black,
+      surfaceTintColor: ConstantsV2.grayLightest),
+  tabBarTheme: const TabBarTheme(dividerColor: Colors.transparent),
 );
 
 ButtonStyle elevatedButtonStyleSecondary = ButtonStyle(
@@ -693,6 +732,7 @@ class ConstantsV2 {
   static const Color CardBG = Color(0xffEAEAEA);
   static const Color primaryRegular = Color(0xff28B3BB);
   static Color primaryLightAndClear = const Color(0xff28B3BB).withOpacity(.13);
+  static const Color grayLight100 = const Color(0xffafbaca);
 
   static const Color secondaryRegular = Color(0xffEB8B76);
   static Color secondaryLightAndClear =
