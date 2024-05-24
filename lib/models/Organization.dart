@@ -61,9 +61,9 @@ class Organization {
     List<Contact>? contactList;
     if (json['contactDtoList'] != null) {
       contactList = [];
-      (json['contactDtoList'] as List<Map<String, dynamic>>).forEach((v) {
-        contactList!.add(Contact.fromJson(v));
-      });
+      for (final v in json['contactDtoList'] as List<dynamic>) {
+        contactList.add(Contact.fromJson(v));
+      }
     }
     final logoUrl = json['logoUrl'] as String?;
     final typeDisplay = json['typeDisplay'] as String?;
@@ -92,7 +92,7 @@ class Organization {
     List<Service>? services;
     if (json['services'] != null) {
       services = [];
-      for (final service in json['services'] as List<Map<String, dynamic>>) {
+      for (final service in json['services'] as List<dynamic>) {
         services.add(Service.fromJson(service));
       }
     }
@@ -246,28 +246,31 @@ class OrganizationSettings {
   /// A setting that describe if the organization is free to subscribed
   factory OrganizationSettings.fromJson(
     Map<String, dynamic> json,
-  ) =>
-      OrganizationSettings(
-        setLogoInReports: json['setLogoInReports'],
-        automaticPatientSubscription: json['automaticPatientSubscription'],
-        organizationRequirements: json['organizationRequirements'] != null
-            ? List<OrganizationRequirement>.from(
-                (json['organizationRequirements'] as List<Map<String, dynamic>>)
-                    .map(
-                  OrganizationRequirement.fromJson,
-                ),
-              )
-            : json['automaticPatientSubscription']
-                ? List<OrganizationRequirement>.from([
-                    OrganizationRequirement(
-                      title: '¿Cuenta con seguro médico?',
-                      description:
-                          'Para acceder a los servicios del centro es requisito NO contar con seguro médico',
-                      answer: false,
-                    ),
-                  ])
-                : null,
-      );
+  ) {
+    List<OrganizationRequirement>? organizationsRequirement;
+    if (json['organizationRequirements'] != null) {
+      organizationsRequirement = [];
+      for (final v in json['organizationRequirements'] as List<dynamic>) {
+        organizationsRequirement.add(OrganizationRequirement.fromJson(v));
+      }
+    }
+    return OrganizationSettings(
+      setLogoInReports: json['setLogoInReports'],
+      automaticPatientSubscription: json['automaticPatientSubscription'],
+      organizationRequirements: json['organizationRequirements'] != null
+          ? organizationsRequirement
+          : json['automaticPatientSubscription']
+              ? List<OrganizationRequirement>.from([
+                  OrganizationRequirement(
+                    title: '¿Cuenta con seguro médico?',
+                    description:
+                        'Para acceder a los servicios del centro es requisito NO contar con seguro médico',
+                    answer: false,
+                  ),
+                ])
+              : null,
+    );
+  }
 
   /// if has logo in reports like Study order
   bool? setLogoInReports;
