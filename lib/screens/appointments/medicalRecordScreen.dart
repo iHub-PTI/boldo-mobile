@@ -40,30 +40,30 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
   MedicalRecord? medicalRecord;
   AppointmentType? appointmentType;
 
-
-  final bool fromOrderStudy = AppNavigatorObserver.containRoute(routeName: (StudyOrderScreen).toString());
+  final bool fromOrderStudy = AppNavigatorObserver.containRoute(
+      routeName: (StudyOrderScreen).toString());
 
   @override
   void initState() {
     //set the appointment type
     appointmentType = widget.appointment.appointmentType == 'V'
-        ? AppointmentType.Virtual : AppointmentType.InPerson;
+        ? AppointmentType.Virtual
+        : AppointmentType.InPerson;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (BuildContext context) => MedicalRecordBloc()
-          ..add(GetMedicalRecord(appointmentId: widget.appointment.id ?? "0")),
+      create: (BuildContext context) => MedicalRecordBloc()
+        ..add(GetMedicalRecord(appointmentId: widget.appointment.id ?? "0")),
       child: BlocListener<MedicalRecordBloc, MedicalRecordState>(
           listener: (context, state) {
             if (state is Failed) {
               emitSnackBar(
                   context: context,
                   text: state.response,
-                  status: ActionStatus.Fail
-              );
+                  status: ActionStatus.Fail);
             } else if (state is MedicalRecordLoadedState) {
               medicalRecord = state.medicalRecord;
             }
@@ -90,193 +90,219 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                     },
                     child: Row(
                       children: [
-                        BackButtonLabel(),
-                        Text(
-                          'Detalles de Cita',
-                          style: boldoHeadingTextStyle.copyWith(fontSize: 20),
-                        ),
+                        BackButtonLabel(labelText: 'Detalles de Cita'),
                       ],
                     ),
                   ),
                   BlocBuilder<MedicalRecordBloc, MedicalRecordState>(
-                    builder: (context, state) {
-                      if (state is Loading) {
-                        return Center(
-                          child: loadingStatus(),
-                        );
-                      } else if (state is Success) {
-                        return Expanded(
-                          child: SingleChildScrollView(
-                            physics: const ClampingScrollPhysics(),
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 16),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '${dateBetween( date:
-                                          DateTime.parse(widget.appointment.start ??
-                                              DateTime.now().toIso8601String()).toLocal(),
-                                          afterText: "para esta cita")}',
-                                          style: boldoSubTextMediumStyle.copyWith(
-                                              color: ConstantsV2.inactiveText),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(top: 15.0),
-                                          child: Text(
-                                              medicalRecord?.mainReason ?? '',
-                                              style: boldoCorpMediumBlackTextStyle
-                                                  .copyWith(
-                                                  color: ConstantsV2.darkBlue)),
-                                        ),
-                                      ],
-                                    ),
+                      builder: (context, state) {
+                    if (state is Loading) {
+                      return Center(
+                        child: loadingStatus(),
+                      );
+                    } else if (state is Success) {
+                      return Expanded(
+                        child: SingleChildScrollView(
+                          physics: const ClampingScrollPhysics(),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${dateBetween(date: DateTime.parse(widget.appointment.start ?? DateTime.now().toIso8601String()).toLocal(), afterText: "para esta cita")}',
+                                        style: boldoSubTextMediumStyle.copyWith(
+                                            color: ConstantsV2.inactiveText),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 15.0),
+                                        child: Text(
+                                            medicalRecord?.mainReason ?? '',
+                                            style: boldoCorpMediumBlackTextStyle
+                                                .copyWith(
+                                                    color:
+                                                        ConstantsV2.darkBlue)),
+                                      ),
+                                    ],
                                   ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: ConstantsV2.grayLightest,
-                                      boxShadow: [
-                                        shadowRegular
-                                      ],
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.center,
-                                      children: [
-                                        // doctor
-                                        ProfileDescription(
-                                          doctor: widget.appointment.doctor,
-                                          type: "doctor",
-                                        ),
-                                        const SizedBox(height: 20),
-                                        // patient
-                                        ProfileDescription(
-                                          patient: patient, type: "patient",
-                                        ),
-                                      ],
-                                    ),
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: ConstantsV2.grayLightest,
+                                    boxShadow: [shadowRegular],
                                   ),
-                                  const SizedBox(
-                                    height: 8,
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      // doctor
+                                      ProfileDescription(
+                                        doctor: widget.appointment.doctor,
+                                        type: "doctor",
+                                      ),
+                                      const SizedBox(height: 20),
+                                      // patient
+                                      ProfileDescription(
+                                        patient: patient,
+                                        type: "patient",
+                                      ),
+                                    ],
                                   ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      boxShadow: [
-                                        shadowRegular
-                                      ],
-                                      color: ConstantsV2.grayLightest,
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Row(
-                                            children: [
-                                              SvgPicture.asset(
-                                                'assets/icon/calendar-today.svg',
-                                                height: 24,
-                                                width: 24,
-                                              ),
-                                              const SizedBox(width: 16,),
-                                              Flexible(
-                                                child: Text(
-                                                    formatDate(
-                                                      DateTime.parse(widget.appointment.start?? DateTime.now().toString())
-                                                          .toLocal(),
-                                                      [ DD, ' ', d, ' de ', MM, ' del ', yyyy, ' a las ', HH, ':', nn, 'hs'],
-                                                      locale: const SpanishDateLocale(),
-                                                    ),
-                                                    style: boldoCardHeadingTextStyle.copyWith(
-                                                        color: ConstantsV2.activeText,
-                                                        fontSize: 14
-                                                    )
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        // TODO: payment information
-                                        // Container(
-                                        //   padding: const EdgeInsets.all(8),
-                                        //   child: Row(
-                                        //     children: [
-                                        //       SvgPicture.asset(
-                                        //         'assets/icon/credit-card.svg',
-                                        //         height: 24,
-                                        //         width: 24,
-                                        //       ),
-                                        //       const SizedBox(width: 16,),
-                                        //       Text(
-                                        //           'payment information',
-                                        //           style: boldoCardHeadingTextStyle.copyWith(
-                                        //               color: ConstantsV2.activeText,
-                                        //               fontSize: 14
-                                        //           )
-                                        //       )
-                                        //     ],
-                                        //   ),
-                                        // ),
-                                        Container(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Row(
-                                            children: [
-                                              SvgPicture.asset(
-                                                'assets/icon/pin-drop.svg',
-                                                height: 24,
-                                                width: 24,
-                                              ),
-                                              const SizedBox(width: 16,),
-                                              Flexible(
-                                                child: Text(
-                                                  widget.appointment.organization?.name?? 'Ubicacion desconocida',
-                                                  style: boldoCardHeadingTextStyle.copyWith(
-                                                      color: ConstantsV2.activeText,
-                                                      fontSize: 14
+                                ),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    boxShadow: [shadowRegular],
+                                    color: ConstantsV2.grayLightest,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Row(
+                                          children: [
+                                            SvgPicture.asset(
+                                              'assets/icon/calendar-today.svg',
+                                              height: 24,
+                                              width: 24,
+                                            ),
+                                            const SizedBox(
+                                              width: 16,
+                                            ),
+                                            Flexible(
+                                              child: Text(
+                                                  formatDate(
+                                                    DateTime.parse(widget
+                                                                .appointment
+                                                                .start ??
+                                                            DateTime.now()
+                                                                .toString())
+                                                        .toLocal(),
+                                                    [
+                                                      DD,
+                                                      ' ',
+                                                      d,
+                                                      ' de ',
+                                                      MM,
+                                                      ' del ',
+                                                      yyyy,
+                                                      ' a las ',
+                                                      HH,
+                                                      ':',
+                                                      nn,
+                                                      'hs'
+                                                    ],
+                                                    locale:
+                                                        const SpanishDateLocale(),
                                                   ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                                  style: boldoCardHeadingTextStyle
+                                                      .copyWith(
+                                                          color: ConstantsV2
+                                                              .activeText,
+                                                          fontSize: 14)),
+                                            ),
+                                          ],
                                         ),
-                                        Container(
-                                          padding: const EdgeInsets.all(8),
-                                          child: Row(
-                                            children: [
-                                              SvgPicture.asset(
-                                                appointmentType == AppointmentType.InPerson?
-                                                  'assets/icon/supervisor-account.svg' :
-                                                'assets/icon/videocam.svg',
-                                                height: 24,
-                                                width: 24,
+                                      ),
+                                      // TODO: payment information
+                                      // Container(
+                                      //   padding: const EdgeInsets.all(8),
+                                      //   child: Row(
+                                      //     children: [
+                                      //       SvgPicture.asset(
+                                      //         'assets/icon/credit-card.svg',
+                                      //         height: 24,
+                                      //         width: 24,
+                                      //       ),
+                                      //       const SizedBox(width: 16,),
+                                      //       Text(
+                                      //           'payment information',
+                                      //           style: boldoCardHeadingTextStyle.copyWith(
+                                      //               color: ConstantsV2.activeText,
+                                      //               fontSize: 14
+                                      //           )
+                                      //       )
+                                      //     ],
+                                      //   ),
+                                      // ),
+                                      Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Row(
+                                          children: [
+                                            SvgPicture.asset(
+                                              'assets/icon/pin-drop.svg',
+                                              height: 24,
+                                              width: 24,
+                                            ),
+                                            const SizedBox(
+                                              width: 16,
+                                            ),
+                                            Flexible(
+                                              child: Text(
+                                                widget.appointment.organization
+                                                        ?.name ??
+                                                    'Ubicacion desconocida',
+                                                style: boldoCardHeadingTextStyle
+                                                    .copyWith(
+                                                        color: ConstantsV2
+                                                            .activeText,
+                                                        fontSize: 14),
                                               ),
-                                              const SizedBox(width: 16,),
-                                              Flexible(
-                                                child: Text(
-                                                  appointmentType == AppointmentType.InPerson? 'Modalidad presencial' : 'Modalidad virtual',
-                                                  style: boldoCardHeadingTextStyle.copyWith(
-                                                      color: ConstantsV2.activeText,
-                                                      fontSize: 14
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Row(
+                                          children: [
+                                            SvgPicture.asset(
+                                              appointmentType ==
+                                                      AppointmentType.InPerson
+                                                  ? 'assets/icon/supervisor-account.svg'
+                                                  : 'assets/icon/videocam.svg',
+                                              height: 24,
+                                              width: 24,
+                                            ),
+                                            const SizedBox(
+                                              width: 16,
+                                            ),
+                                            Flexible(
+                                              child: Text(
+                                                appointmentType ==
+                                                        AppointmentType.InPerson
+                                                    ? 'Modalidad presencial'
+                                                    : 'Modalidad virtual',
+                                                style: boldoCardHeadingTextStyle
+                                                    .copyWith(
+                                                        color: ConstantsV2
+                                                            .activeText,
+                                                        fontSize: 14),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(
-                                    height: 8,
-                                  ),
-                                  if(widget.appointment.status != AppointmentStatus.Upcoming)
+                                ),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                if (widget.appointment.status !=
+                                    AppointmentStatus.Upcoming)
                                   Column(
                                     children: [
                                       notesBox(),
@@ -290,24 +316,25 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                       studyOrderBox(),
                                     ],
                                   ),
-                                  if(widget.appointment.status == AppointmentStatus.Upcoming)
-                                    cancelAppointmentBox(),
-                                ],
-                              ),
+                                if (widget.appointment.status ==
+                                    AppointmentStatus.Upcoming)
+                                  cancelAppointmentBox(),
+                              ],
                             ),
                           ),
-                        );
-                      } else if (state is Failed) {
-                        return DataFetchErrorWidget(
-                            retryCallback: () =>
-                                BlocProvider.of<MedicalRecordBloc>(context).add(
-                                    GetMedicalRecord(
-                                        appointmentId:
-                                        widget.appointment.id ?? "0")));
-                      } else {
-                        return Container();
-                      }
-                    }),
+                        ),
+                      );
+                    } else if (state is Failed) {
+                      return DataFetchErrorWidget(
+                          retryCallback: () =>
+                              BlocProvider.of<MedicalRecordBloc>(context).add(
+                                  GetMedicalRecord(
+                                      appointmentId:
+                                          widget.appointment.id ?? "0")));
+                    } else {
+                      return Container();
+                    }
+                  }),
                 ],
               ),
             ),
@@ -315,115 +342,103 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
     );
   }
 
-  Future<String?> cancelAppointment(){
+  Future<String?> cancelAppointment() {
     return showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-      title: const Text('Cancelar cita'),
-      content: const Text('¿Desea cancelar la cita?'),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () => Navigator.pop(context, 'atrás'),
-          child: const Text('atrás'),
-        ),
-        TextButton(
-          onPressed: () => Navigator.pop(context, 'cancel'),
-          child: const Text('aceptar'),
-        ),
-      ],
-    ),
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Cancelar cita'),
+        content: const Text('¿Desea cancelar la cita?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'atrás'),
+            child: const Text('atrás'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'cancel'),
+            child: const Text('aceptar'),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget notesBox(){
-    return
-      Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            shadowRegular
-          ],
-          color: ConstantsV2.grayLightest,
-        ),
-        child: Column(
-          crossAxisAlignment:
-          CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  SvgPicture.asset(
-                    'assets/icon/clipboard.svg',
-                    height: 12,
-                    width: 12,
-                  ),
-                  Text(
-                    'Notas',
-                    style: boldoCardHeadingTextStyle.copyWith(
-                        color: ConstantsV2.activeText,
-                        fontSize: 14
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SoepAccordion(
-                title: Constants.plan,
-                medicalRecord: medicalRecord),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  child: GestureDetector(
-                    onTap: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                AnnotationsDetails(
-                                  appointment: widget.appointment,
-                                  medicalRecord: medicalRecord,
-                                )
-                        ),
-                      );
-                    },
-                    child: Card(
-                        margin: EdgeInsets.zero,
-                        clipBehavior: Clip.antiAlias,
-                        elevation: 0,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(5)),
-                        ),
-                        color: ConstantsV2.orange.withOpacity(0.10),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 7),
-                          child: Text(
-                            "explorar notas",
-                            style: BigButton.copyWith(color: ConstantsV2.darkBlue),
-                          ),
-                        )),
-                  ),
-                ),
-              ],
-            )
-          ],
-        ),
-      );
-  }
-
-  Widget medicationBox(){
+  Widget notesBox() {
     return Container(
       decoration: BoxDecoration(
-        boxShadow: [
-          shadowRegular
-        ],
+        boxShadow: [shadowRegular],
         color: ConstantsV2.grayLightest,
       ),
       child: Column(
-        crossAxisAlignment:
-        CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  'assets/icon/clipboard.svg',
+                  height: 12,
+                  width: 12,
+                ),
+                Text(
+                  'Notas',
+                  style: boldoCardHeadingTextStyle.copyWith(
+                      color: ConstantsV2.activeText, fontSize: 14),
+                )
+              ],
+            ),
+          ),
+          SoepAccordion(title: Constants.plan, medicalRecord: medicalRecord),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AnnotationsDetails(
+                                appointment: widget.appointment,
+                                medicalRecord: medicalRecord,
+                              )),
+                    );
+                  },
+                  child: Card(
+                      margin: EdgeInsets.zero,
+                      clipBehavior: Clip.antiAlias,
+                      elevation: 0,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.only(topLeft: Radius.circular(5)),
+                      ),
+                      color: ConstantsV2.orange.withOpacity(0.10),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 7),
+                        child: Text(
+                          "explorar notas",
+                          style:
+                              BigButton.copyWith(color: ConstantsV2.darkBlue),
+                        ),
+                      )),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget medicationBox() {
+    return Container(
+      decoration: BoxDecoration(
+        boxShadow: [shadowRegular],
+        color: ConstantsV2.grayLightest,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(8),
@@ -434,105 +449,99 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                   height: 12,
                   width: 12,
                 ),
-                Text(
-                    'Receta',
+                Text('Receta',
                     style: boldoCardHeadingTextStyle.copyWith(
-                        color: ConstantsV2.activeText,
-                        fontSize: 14
-                    )
-                ),
+                        color: ConstantsV2.activeText, fontSize: 14)),
               ],
             ),
           ),
           medicalRecord?.prescription != null
               ? medicalRecord!.prescription!.length > 0
-              ? ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: medicalRecord!.prescription!.length > 3 ? 3 : medicalRecord!.prescription!.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ShowPrescription(
-                    context, medicalRecord!.prescription![index]
-                );
-              }
-          )
+                  ? ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: medicalRecord!.prescription!.length > 3
+                          ? 3
+                          : medicalRecord!.prescription!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return ShowPrescription(
+                            context, medicalRecord!.prescription![index]);
+                      })
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'No posee medicamentos recetados',
+                        style: boldoCorpMediumTextStyle.copyWith(
+                            color: ConstantsV2.darkBlue),
+                      ),
+                    )
               : Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'No posee medicamentos recetados',
-              style: boldoCorpMediumTextStyle.copyWith(
-                  color: ConstantsV2.darkBlue),
-            ),
-          )
-              : Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'No posee medicamentos recetados',
-              style: boldoCorpMediumTextStyle.copyWith(
-                  color: ConstantsV2.darkBlue),
-            ),
-          ),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'No posee medicamentos recetados',
+                    style: boldoCorpMediumTextStyle.copyWith(
+                        color: ConstantsV2.darkBlue),
+                  ),
+                ),
           medicalRecord?.prescription != null
               ? medicalRecord!.prescription!.length > 0
-              ? Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children:[
-                Container(
-                  child: GestureDetector(
-                    onTap: medicalRecord!.prescription!.length > 0
-                        ? () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PrescriptionRecordScreen(
-                                medicalRecordId: medicalRecord?.appointmentId ?? '',
-                              doctor: widget.appointment.doctor?? Doctor(),
-                            )),
-                      );
-                    }
-                        : null,
-                    child: Card(
-                        margin: EdgeInsets.zero,
-                        clipBehavior: Clip.antiAlias,
-                        elevation: 0,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(5)),
+                  ? Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                      Container(
+                        child: GestureDetector(
+                          onTap: medicalRecord!.prescription!.length > 0
+                              ? () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            PrescriptionRecordScreen(
+                                              medicalRecordId: medicalRecord
+                                                      ?.appointmentId ??
+                                                  '',
+                                              doctor:
+                                                  widget.appointment.doctor ??
+                                                      Doctor(),
+                                            )),
+                                  );
+                                }
+                              : null,
+                          child: Card(
+                              margin: EdgeInsets.zero,
+                              clipBehavior: Clip.antiAlias,
+                              elevation: 0,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(5)),
+                              ),
+                              color: ConstantsV2.orange.withOpacity(0.10),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 7),
+                                child: Text(
+                                  "ver receta",
+                                  style: BigButton.copyWith(
+                                      color: ConstantsV2.darkBlue),
+                                ),
+                              )),
                         ),
-                        color: ConstantsV2.orange.withOpacity(0.10),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 7),
-                          child: Text(
-                            "ver receta",
-                            style: BigButton.copyWith(color: ConstantsV2.darkBlue),
-                          ),
-                        )
-                    ),
-                  ),
-                )
-              ]
-          )
-              : Container()
+                      )
+                    ])
+                  : Container()
               : Container(),
         ],
       ),
     );
   }
 
-
-  Widget studyOrderBox(){
+  Widget studyOrderBox() {
     return Container(
       decoration: BoxDecoration(
-        boxShadow: [
-          shadowRegular
-        ],
+        boxShadow: [shadowRegular],
         color: ConstantsV2.grayLightest,
       ),
       child: Column(
-        crossAxisAlignment:
-        CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(8),
@@ -544,13 +553,9 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                   width: 12,
                   color: const Color.fromRGBO(54, 79, 107, 1),
                 ),
-                Text(
-                    'Órdenes de estudio',
+                Text('Órdenes de estudio',
                     style: boldoCardHeadingTextStyle.copyWith(
-                        color: ConstantsV2.activeText,
-                        fontSize: 14
-                    )
-                ),
+                        color: ConstantsV2.activeText, fontSize: 14)),
               ],
             ),
           ),
@@ -560,64 +565,66 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: medicalRecord?.serviceRequests!.length,
               itemBuilder: (BuildContext context, int index) {
-                return ShowStudy(
-                    context, medicalRecord?.serviceRequests![index] ??  ServiceRequest());
-              }
-          ),
+                return ShowStudy(context,
+                    medicalRecord?.serviceRequests![index] ?? ServiceRequest());
+              }),
           medicalRecord?.serviceRequests != null
               ? medicalRecord!.serviceRequests!.length > 0
-              ? Container()
-              : Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'No posee órdenes de estudios',
-              style: boldoCorpMediumTextStyle.copyWith(
-                  color: ConstantsV2.darkBlue),
-            ),
-          )
+                  ? Container()
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'No posee órdenes de estudios',
+                        style: boldoCorpMediumTextStyle.copyWith(
+                            color: ConstantsV2.darkBlue),
+                      ),
+                    )
               : Container(),
           medicalRecord?.serviceRequests != null
-          // show button to go at the order screen if
-          // contains elements and is not coming
-          // from a study order screen
+              // show button to go at the order screen if
+              // contains elements and is not coming
+              // from a study order screen
               ? medicalRecord!.serviceRequests!.length > 0 && !fromOrderStudy
-              ? Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                child: GestureDetector(
-                  onTap: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              StudyOrderScreen(callFromHome: false, encounterId: medicalRecord?.id?? "0"),
-                        settings: RouteSettings(name: (StudyOrderScreen).toString()),
-                      ),
-                    );
-                  },
-                  child: Card(
-                      margin: EdgeInsets.zero,
-                      clipBehavior: Clip.antiAlias,
-                      elevation: 0,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(5)),
-                      ),
-                      color: ConstantsV2.orange.withOpacity(0.10),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 7),
-                        child: Text(
-                          "ver órdenes",
-                          style: BigButton.copyWith(color: ConstantsV2.darkBlue),
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => StudyOrderScreen(
+                                      callFromHome: false,
+                                      encounterId: medicalRecord?.id ?? "0"),
+                                  settings: RouteSettings(
+                                      name: (StudyOrderScreen).toString()),
+                                ),
+                              );
+                            },
+                            child: Card(
+                                margin: EdgeInsets.zero,
+                                clipBehavior: Clip.antiAlias,
+                                elevation: 0,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(5)),
+                                ),
+                                color: ConstantsV2.orange.withOpacity(0.10),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 7),
+                                  child: Text(
+                                    "ver órdenes",
+                                    style: BigButton.copyWith(
+                                        color: ConstantsV2.darkBlue),
+                                  ),
+                                )),
+                          ),
                         ),
-                      )),
-                ),
-              ),
-            ],
-          )
-              : Container()
+                      ],
+                    )
+                  : Container()
               : Container(),
         ],
       ),
@@ -625,27 +632,25 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
   }
 
   void cancelAppointmentAction() async {
-    try{
-      await AppointmentRepository().cancelAppointment(appointment: widget.appointment);
+    try {
+      await AppointmentRepository()
+          .cancelAppointment(appointment: widget.appointment);
 
-      widget.appointment.status=AppointmentStatus.Cancelled;
+      widget.appointment.status = AppointmentStatus.Cancelled;
 
       //set status to previous page to update view
       Navigator.of(context).pop(AppointmentStatus.Cancelled);
 
       emitSnackBar(
         context: navKey.currentState!.context,
-        text: "Tu consulta ha sido cancelada. Enviaremos la notificación al médico",
+        text:
+            "Tu consulta ha sido cancelada. Enviaremos la notificación al médico",
         snackBarPosition: SnackBarPosition.TOP,
         status: ActionStatus.Success,
       );
-
-    } on Failure catch(exception){
+    } on Failure catch (exception) {
       emitSnackBar(
-          context: context,
-          text: exception.message,
-          status: ActionStatus.Fail
-      );
+          context: context, text: exception.message, status: ActionStatus.Fail);
     } on Exception catch (exception, stackTrace) {
       captureError(
         exception: exception,
@@ -654,12 +659,11 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
       emitSnackBar(
           context: context,
           text: 'No se pudo cancelar la cita',
-          status: ActionStatus.Fail
-      );
+          status: ActionStatus.Fail);
     }
   }
 
-  Widget cancelAppointmentBox(){
+  Widget cancelAppointmentBox() {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: Column(
@@ -681,14 +685,12 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                     width: 24,
                     color: ConstantsV2.secondaryRegular,
                   ),
-                  const SizedBox(width: 16,),
-                  Text(
-                      "Cancelar cita",
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  Text("Cancelar cita",
                       style: boldoCardHeadingTextStyle.copyWith(
-                          color: ConstantsV2.secondaryRegular,
-                          fontSize: 14
-                      )
-                  )
+                          color: ConstantsV2.secondaryRegular, fontSize: 14))
                 ],
               ),
             ),
@@ -697,9 +699,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
       ),
     );
   }
-
 }
-
 
 Widget ShowStudy(BuildContext context, ServiceRequest study) {
   return Column(
@@ -725,9 +725,12 @@ Widget ShowStudy(BuildContext context, ServiceRequest study) {
                         ? 'Imágenes'
                         : 'Otros'
                 : 'Desconocido',
-            style: boldoSubTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
+            style: boldoSubTextStyle.copyWith(
+                fontSize: 14, color: ConstantsV2.activeText),
           ),
-          const SizedBox(width: 10,),
+          const SizedBox(
+            width: 10,
+          ),
           study.urgent ?? false
               ? Card(
                   shape: RoundedRectangleBorder(
@@ -762,18 +765,17 @@ Widget ShowStudy(BuildContext context, ServiceRequest study) {
       Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 24.0),
-                  child: Text(
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 24.0),
+                child: Text(
                     study.description != null ? '${study.description}' : '',
-                    style: boldoSubTextStyle.copyWith(fontSize: 12)
-                  ),
-                ),
+                    style: boldoSubTextStyle.copyWith(fontSize: 12)),
               ),
             ),
+          ),
         ],
       ),
       const SizedBox(height: 10),
@@ -781,7 +783,7 @@ Widget ShowStudy(BuildContext context, ServiceRequest study) {
   );
 }
 
-Widget ShowPrescription (BuildContext context, Prescription prescription) {
+Widget ShowPrescription(BuildContext context, Prescription prescription) {
   return Column(
     children: [
       Row(
@@ -799,9 +801,10 @@ Widget ShowPrescription (BuildContext context, Prescription prescription) {
           // name of the medicine
           Text(
             prescription.medicationName != null
-              ? prescription.medicationName!
-              : 'Nombre desconocido',
-            style: boldoSubTextStyle.copyWith(fontSize: 14, color: ConstantsV2.activeText),
+                ? prescription.medicationName!
+                : 'Nombre desconocido',
+            style: boldoSubTextStyle.copyWith(
+                fontSize: 14, color: ConstantsV2.activeText),
           ),
         ],
       ),
@@ -813,14 +816,17 @@ Widget ShowPrescription (BuildContext context, Prescription prescription) {
             child: Padding(
               padding: const EdgeInsets.only(left: 24),
               child: Text(
-                prescription.instructions != null ? prescription.instructions! : 'Este medicamento no posee instrucciones',
-                style: boldoSubTextStyle.copyWith(fontSize: 12)
-              ),
+                  prescription.instructions != null
+                      ? prescription.instructions!
+                      : 'Este medicamento no posee instrucciones',
+                  style: boldoSubTextStyle.copyWith(fontSize: 12)),
             ),
           )
         ],
       ),
-      const SizedBox(height: 10,)
+      const SizedBox(
+        height: 10,
+      )
     ],
   );
 }
@@ -935,4 +941,3 @@ class SoepScreen extends StatelessWidget {
     );
   }
 }
-

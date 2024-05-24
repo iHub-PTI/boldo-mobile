@@ -28,7 +28,7 @@ class DoctorAvailabilityBloc extends Bloc<DoctorAvailabilityEvent, DoctorAvailab
           bindToScope: true,
         );
         emit(Loading());
-        var _post;
+        late Either<Failure,List<OrganizationWithAvailabilities>> _post;
         await Task(() =>
         _doctorRepository.getAvailabilities(
           id: event.id,
@@ -63,7 +63,7 @@ class DoctorAvailabilityBloc extends Bloc<DoctorAvailabilityEvent, DoctorAvailab
           appointments?.removeWhere((element) => element.status != AppointmentStatus.Upcoming);
 
           late List<OrganizationWithAvailabilities> nextAvailability = [];
-          _post.foldRight(NextAvailability, (a, previous) => nextAvailability = a);
+          nextAvailability = _post.asRight();
 
           if (appointments != null) {
             if (appointments.isNotEmpty) {

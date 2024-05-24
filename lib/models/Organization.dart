@@ -1,32 +1,16 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/core/core.dart';
+import 'package:boldo/models/AddressEntity.dart';
 import 'package:boldo/models/Contact.dart';
+import 'package:boldo/models/PositionEntity.dart';
 import 'package:boldo/screens/organizations/memberships_screen.dart';
 import 'package:boldo/screens/pharmacy/pharmacy_availables.dart';
+import 'package:boldo/utils/errors.dart';
 import 'package:flutter/material.dart';
 
+/// Represent an organization or a subsidiary
 class Organization {
-
-  OrganizationType? organizationType;
-
-  String? id,
-      name,
-      type,
-      coloCode,
-      logoUrl,
-      typeDisplay,
-      visibilityDisplay,
-      visibility
-  ;
-
-  bool? active;
-
-  OrganizationSettings? organizationSettings;
-
-  List<Contact>? contactList;
-
-  /// integer that define the user preference to get doctors by organization
-  int? priority;
-
+  /// Represent an organization or a subsidiary
   Organization({
     this.active,
     this.id,
@@ -36,38 +20,136 @@ class Organization {
     this.priority,
     this.organizationSettings,
     this.contactList,
-  });
-
-  Organization.fromJson(Map<String, dynamic> json) {
-    active = json['active'];
-    id = json['id'];
-    name = json['name'];
-    name = name?.trimRight().trimLeft();
-    type = json['type'];
+    this.address,
+    this.logoUrl,
+    this.typeDisplay,
+    this.visibility,
+    this.visibilityDisplay,
+    this.organizationId,
+    this.organizationName,
+    this.position,
+    this.services,
+  }) {
     try {
-      organizationType =
-          OrganizationType.values.firstWhere((element) => element.codeType ==
-              type);
-    }on StateError catch(exception, stacktrace) {
-      // if not has a Type defined
+      organizationType = OrganizationType.values.firstWhere(
+        (element) => element.codeType == type,
+        orElse: () => throw OrganizationTypeNotFound(
+          type: type,
+        ),
+      );
+    } on OrganizationTypeNotFound catch (exception, stacktrace) {
+      captureMessage(
+        message: exception.message,
+        stackTrace: stacktrace,
+        data: {
+          'type': type,
+        },
+      );
     }
-    coloCode = json['colorCode'];
-    priority = json['priority'];
+  }
+
+  /// Represent an organization or a subsidiary
+  factory Organization.fromJson(Map<String, dynamic> json) {
+    final active = json['active'] as bool?;
+    final id = json['id'] as String?;
+    var name = json['name'] as String?;
+    name = name?.trimRight().trimLeft();
+    final type = json['type'] as String?;
+    final coloCode = json['colorCode'] as String?;
+    final priority = json['priority'] as int?;
+
+    List<Contact>? contactList;
     if (json['contactDtoList'] != null) {
       contactList = [];
-      json['contactDtoList'].forEach((v) {
+      (json['contactDtoList'] as List<Map<String, dynamic>>).forEach((v) {
         contactList!.add(Contact.fromJson(v));
       });
     }
-    logoUrl = json['logoUrl'];
-    typeDisplay = json['typeDisplay'];
-    visibilityDisplay = json['visibilityDisplay'];
-    visibility = json['visibility'];
-    if( json['organizationSettings'] != null ){
-      organizationSettings = OrganizationSettings.fromJson(json['organizationSettings']);
+    final logoUrl = json['logoUrl'] as String?;
+    final typeDisplay = json['typeDisplay'] as String?;
+    AddressEntity? address;
+    if (json['addressDto'] != null) {
+      address = AddressEntity.fromJson(json['addressDto']);
+    }
+    final visibilityDisplay = json['visibilityDisplay'] as String?;
+    final visibility = json['visibility'] as String?;
+    OrganizationSettings? organizationSettings;
+    if (json['organizationSettings'] != null) {
+      organizationSettings =
+          OrganizationSettings.fromJson(json['organizationSettings']);
     }
 
+    final organizationId = json['organizationId'] as String?;
+
+    final organizationName = json['organizationName'] as String?;
+
+    PositionEntity? position;
+
+    if (json['position'] != null) {
+      position = PositionEntity.fromJson(json['position']);
+    }
+
+    List<Service>? services;
+    if (json['services'] != null) {
+      services = [];
+      for (final service in json['services'] as List<Map<String, dynamic>>) {
+        services.add(Service.fromJson(service));
+      }
+    }
+
+    return Organization(
+      id: id,
+      active: active,
+      name: name,
+      type: type,
+      coloCode: coloCode,
+      priority: priority,
+      contactList: contactList,
+      logoUrl: logoUrl,
+      typeDisplay: typeDisplay,
+      address: address,
+      visibilityDisplay: visibilityDisplay,
+      visibility: visibility,
+      organizationSettings: organizationSettings,
+      organizationId: organizationId,
+      organizationName: organizationName,
+      position: position,
+      services: services,
+    );
   }
+
+  OrganizationType? organizationType;
+
+  String? id;
+  String? name;
+  String? type;
+  String? coloCode;
+  String? logoUrl;
+  String? typeDisplay;
+  String? visibilityDisplay;
+  String? visibility;
+
+  /// Organization father id
+  String? organizationId;
+
+  /// Organization father id
+  String? organizationName;
+
+  bool? active;
+
+  OrganizationSettings? organizationSettings;
+
+  List<Contact>? contactList;
+
+  AddressEntity? address;
+
+  PositionEntity? position;
+
+  /// list of services available to offer the subsidiary
+  List<Service>? services;
+
+  /// integer that define the user preference to get doctors by organization
+  int? priority;
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
@@ -78,7 +160,6 @@ class Organization {
 }
 
 class OrganizationRequest {
-
   String? id,
       organizationId,
       organizationName,
@@ -108,35 +189,35 @@ class OrganizationRequest {
     statusCode = json['statusCode'];
     statusDisplay = json['statusDisplay'];
 
-    switch (statusCode){
+    switch (statusCode) {
       case 'PD':
         status = StatusRequestOrganization.Pending;
-        break;
       case 'AP':
         status = StatusRequestOrganization.Approved;
-        break;
       case 'RJ':
         status = StatusRequestOrganization.Rejected;
-        break;
       default:
         status = null;
     }
-
   }
 }
 
+/// Types or {Organization} available in App
 enum OrganizationType {
+  /// A pharmacy
   pharmacy(
     svgPath: 'assets/icon/local-pharmacy.svg',
     infoCardTitle: 'Farmacias adheridas',
     page: PharmaciesScreen(),
-    codeType: 'PHARMACY'
+    codeType: 'PHARMACY',
   ),
+
+  /// An HEALTHCARE-PROVIDER
   hospital(
     svgPath: 'assets/icon/local-hospital.svg',
     infoCardTitle: 'Centros asistenciales',
     page: OrganizationsSubscribedScreen(),
-    codeType: 'HEALTHCARE-PROVIDER'
+    codeType: 'HEALTHCARE-PROVIDER',
   );
 
   const OrganizationType({
@@ -153,41 +234,55 @@ enum OrganizationType {
   final String codeType;
 }
 
+/// A setting that describe if the organization is free to subscribed
 class OrganizationSettings {
-
-  bool? setLogoInReports,
-  automaticPatientSubscription;
-  
-  List<OrganizationRequirement>? organizationRequirements;
-
+  /// A setting that describe if the organization is free to subscribed
   OrganizationSettings({
     this.setLogoInReports,
     this.automaticPatientSubscription,
     this.organizationRequirements,
   });
 
-  factory OrganizationSettings.fromJson(Map<String, dynamic> json,) => OrganizationSettings(
-    setLogoInReports: json["setLogoInReports"],
-    automaticPatientSubscription: json["automaticPatientSubscription"],
-    organizationRequirements: json["organizationRequirements"] != null
-        ? List<OrganizationRequirement>.from(
-        json["organizationRequirements"].map((element) => OrganizationRequirement.fromJson(element))
-    ) : json["automaticPatientSubscription"] ? List<OrganizationRequirement>.from([
-      OrganizationRequirement(
-        title: "¿Cuenta con seguro médico?",
-        description: "Para acceder a los servicios del centro es requisito NO contar con seguro médico",
-        answer: false,
-      ),
-    ]) : null,
-  );
+  /// A setting that describe if the organization is free to subscribed
+  factory OrganizationSettings.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      OrganizationSettings(
+        setLogoInReports: json['setLogoInReports'],
+        automaticPatientSubscription: json['automaticPatientSubscription'],
+        organizationRequirements: json['organizationRequirements'] != null
+            ? List<OrganizationRequirement>.from(
+                (json['organizationRequirements'] as List<Map<String, dynamic>>)
+                    .map(
+                  OrganizationRequirement.fromJson,
+                ),
+              )
+            : json['automaticPatientSubscription']
+                ? List<OrganizationRequirement>.from([
+                    OrganizationRequirement(
+                      title: '¿Cuenta con seguro médico?',
+                      description:
+                          'Para acceder a los servicios del centro es requisito NO contar con seguro médico',
+                      answer: false,
+                    ),
+                  ])
+                : null,
+      );
 
+  /// if has logo in reports like Study order
+  bool? setLogoInReports;
+
+  /// if the patient can autoSubscribe, his request was automatic approved
+  bool? automaticPatientSubscription;
+
+  /// List of questions to postulate
+  List<OrganizationRequirement>? organizationRequirements;
 }
 
 class OrganizationRequirement {
-
-  String? title,
-  description,
-  observation;
+  String? title;
+  String? description;
+  String? observation;
 
   bool? answer;
 
@@ -198,11 +293,13 @@ class OrganizationRequirement {
     this.answer,
   });
 
-  factory OrganizationRequirement.fromJson(Map<String, dynamic> json,) => OrganizationRequirement(
-    title: json["title"],
-    description: json["description"],
-    observation: json["observation"],
-    answer: json["answer"],
-  );
-
+  factory OrganizationRequirement.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      OrganizationRequirement(
+        title: json["title"],
+        description: json["description"],
+        observation: json["observation"],
+        answer: json["answer"],
+      );
 }

@@ -21,7 +21,6 @@ class NewStudy extends StatefulWidget {
 }
 
 class _NewStudyState extends State<NewStudy> {
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController dateTextController = TextEditingController();
   final _nameController = TextEditingController();
@@ -76,16 +75,18 @@ class _NewStudyState extends State<NewStudy> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          actions: [],
-          leadingWidth: 200,
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 16.0),
-            child:
-            SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        actions: [],
+        leadingWidth: 200,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: SvgPicture.asset(
+            'assets/Logo.svg',
+            semanticsLabel: 'BOLDO Logo',
           ),
         ),
+      ),
       body: SafeArea(
         child: BlocProvider<NewStudyBloc>(
           create: (BuildContext context) => NewStudyBloc(),
@@ -95,7 +96,7 @@ class _NewStudyState extends State<NewStudy> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-               const SizedBox(
+                const SizedBox(
                   height: 16,
                 ),
                 BackButtonLabel(
@@ -108,19 +109,21 @@ class _NewStudyState extends State<NewStudy> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                          child: Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Cargá los siguientes datos básicos sobre el resultado de tu estudio.",
-                              style: boldoCorpSmallTextStyle.copyWith(
+                        child: Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Cargá los siguientes datos básicos sobre el resultado de tu estudio.",
+                                style: boldoCorpSmallTextStyle.copyWith(
                                   color: ConstantsV2.inactiveText,
-                                  fontSize: 14),
-                            ),
-                          ],
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      )),
+                      ),
                       ImageViewTypeForm(
                         height: 54,
                         width: 54,
@@ -137,26 +140,24 @@ class _NewStudyState extends State<NewStudy> {
                   child: Form(
                     key: _formKey,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    onChanged: (){
-                      enable = _formKey.currentState?.validate()?? false;
-                      setState(() {
-
-                      });
+                    onChanged: () {
+                      enable = _formKey.currentState?.validate() ?? false;
+                      setState(() {});
                     },
                     child: Column(
                       children: [
                         TextFormField(
-                          decoration: const InputDecoration(hintText: "Nombre del estudio"),
-                          onChanged: (value){
+                          decoration: const InputDecoration(
+                            hintText: "Nombre del estudio",
+                          ),
+                          onChanged: (value) {
                             nombre = value;
-                            setState(() {
-
-                            });
+                            setState(() {});
                           },
-                          validator: (value){
+                          validator: (value) {
                             //remove unnecessary spaces
                             value = value?.trimLeft().trimRight() ?? '';
-                            if(value.isEmpty){
+                            if (value.isEmpty) {
                               return "Ingrese un nombre";
                             }
                             nombre = value;
@@ -171,10 +172,8 @@ class _NewStudyState extends State<NewStudy> {
                           controller: dateTextController,
                           inputFormatters: [DateTextFormatter()],
                           keyboardType: TextInputType.number,
-                          onChanged: (value){
-                            setState(() {
-
-                            });
+                          onChanged: (value) {
+                            setState(() {});
                           },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -186,9 +185,11 @@ class _NewStudyState extends State<NewStudy> {
                                 // use parseStrict to not accept overflow date
                                 var date1 = inputFormat
                                     .parseStrict(value.toString().trim());
-                                if(date1.isBefore(minDate)){
-                                  throw Failure('Fecha inferior al minimo ${inputFormat.format(minDate)}');
-                                }else if(date1.isAfter(DateTime.now())){
+                                if (date1.isBefore(minDate)) {
+                                  throw Failure(
+                                    'Fecha inferior al minimo ${inputFormat.format(minDate)}',
+                                  );
+                                } else if (date1.isAfter(DateTime.now())) {
                                   throw Failure('Fecha superior a la actual');
                                 }
                                 var date2 = outputFormat.format(date1);
@@ -201,7 +202,8 @@ class _NewStudyState extends State<NewStudy> {
                             }
                           },
                           decoration: InputDecoration(
-                            hintText: DateFormat('dd/MM/yyyy').format(DateTime.now()),
+                            hintText:
+                                DateFormat('dd/MM/yyyy').format(DateTime.now()),
                             suffixIcon: Align(
                               widthFactor: 1.0,
                               heightFactor: 1.0,
@@ -209,11 +211,14 @@ class _NewStudyState extends State<NewStudy> {
                                 onTap: () async {
                                   DateTime? newDate = await showDatePicker(
                                     context: context,
-                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                    initialEntryMode:
+                                        DatePickerEntryMode.calendarOnly,
                                     initialDatePickerMode: DatePickerMode.year,
-                                    initialDate: fecha == '' ? DateTime.now() :
-                                    DateFormat('yyyy-MM-dd')
-                                        .parseStrict(fecha.toString().trim()),
+                                    initialDate: fecha == ''
+                                        ? DateTime.now()
+                                        : DateFormat('yyyy-MM-dd').parseStrict(
+                                            fecha.toString().trim(),
+                                          ),
                                     firstDate: DateTime(1900),
                                     lastDate: DateTime.now(),
                                     locale: const Locale("es", "ES"),
@@ -222,10 +227,12 @@ class _NewStudyState extends State<NewStudy> {
                                     return;
                                   } else {
                                     setState(() {
-                                      var outputFormat = DateFormat('yyyy-MM-dd');
-                                      var inputFormat = DateFormat('dd/MM/yyyy');
-                                      var date1 =
-                                      outputFormat.parse(newDate.toString().trim());
+                                      var outputFormat =
+                                          DateFormat('yyyy-MM-dd');
+                                      var inputFormat =
+                                          DateFormat('dd/MM/yyyy');
+                                      var date1 = outputFormat
+                                          .parse(newDate.toString().trim());
                                       var date2 = inputFormat.format(date1);
                                       dateTextController.text = date2;
                                     });
@@ -239,14 +246,19 @@ class _NewStudyState extends State<NewStudy> {
                               ),
                             ),
                             labelText: "Fecha de estudio (dd/mm/yyyy)",
+                            labelStyle: const TextStyle(
+                              fontSize: 12.0,
+                            ),
                           ),
                         ),
                         const SizedBox(
                           height: 20,
                         ),
                         TextFormField(
-                          decoration: const InputDecoration(hintText: "Notas (opcional)"),
-                          onChanged: (value){
+                          decoration: const InputDecoration(
+                            hintText: "Notas (opcional)",
+                          ),
+                          onChanged: (value) {
                             notas = value;
                           },
                         ),
@@ -257,17 +269,18 @@ class _NewStudyState extends State<NewStudy> {
                           height: 40,
                         ),
                         FormField<String>(
-                          validator: (value){
-                            if(value== null || value == '')
+                          validator: (value) {
+                            if (value == null || value == '')
                               return 'Selecione un tipo';
                             return null;
                           },
-                          builder: (FormFieldState<String> state){
-
+                          builder: (FormFieldState<String> state) {
                             InputBorder? shape;
 
-                            if(state.hasError){
-                              shape = Theme.of(context).inputDecorationTheme.errorBorder;
+                            if (state.hasError) {
+                              shape = Theme.of(context)
+                                  .inputDecorationTheme
+                                  .errorBorder;
                             }
 
                             return Column(
@@ -279,14 +292,24 @@ class _NewStudyState extends State<NewStudy> {
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       child: Row(
-                                        children: items.asMap().entries.map((e) => _buildCarousel(e.key, state)).toList(),),
+                                        children: items
+                                            .asMap()
+                                            .entries
+                                            .map(
+                                              (e) =>
+                                                  _buildCarousel(e.key, state),
+                                            )
+                                            .toList(),
+                                      ),
                                     ),
                                   ),
                                 ),
-                                if(state.errorText!= null)
+                                if (state.errorText != null)
                                   Text(
                                     state.errorText!,
-                                    style: Theme.of(context).inputDecorationTheme.errorStyle,
+                                    style: Theme.of(context)
+                                        .inputDecorationTheme
+                                        .errorStyle,
                                   ),
                               ],
                             );
@@ -308,7 +331,7 @@ class _NewStudyState extends State<NewStudy> {
             ),
           ),
         ),
-      )
+      ),
     );
   }
 
@@ -316,12 +339,12 @@ class _NewStudyState extends State<NewStudy> {
     return Column(
       children: [
         SvgPicture.asset('assets/images/empty_studies.svg', fit: BoxFit.cover),
-        Text('Aun no tenés estudios para visualizar')
+        Text('Aun no tenés estudios para visualizar'),
       ],
     );
   }
 
-  Widget _buildCarousel(int index, FormFieldState formState){
+  Widget _buildCarousel(int index, FormFieldState formState) {
     return Container(
       child: Card(
         margin: const EdgeInsets.all(6),
@@ -330,20 +353,22 @@ class _NewStudyState extends State<NewStudy> {
           borderRadius: BorderRadius.circular(8),
         ),
         child: InkWell(
-          onTap:() {
-              if(type == items[index].value) {
-                type = "";
-                formState.didChange(type);
-              }else{
-                type = items[index].value;
-                formState.didChange(type);
-              }
+          onTap: () {
+            if (type == items[index].value) {
+              type = "";
+              formState.didChange(type);
+            } else {
+              type = items[index].value;
+              formState.didChange(type);
+            }
           },
           child: Container(
-            color: type != items[index].value ? ConstantsV2.lightest : ConstantsV2.orange,
+            color: type != items[index].value
+                ? ConstantsV2.lightest
+                : ConstantsV2.orange,
             width: 60,
-            padding: const EdgeInsets.only(
-                left: 6, right: 6, bottom: 7, top: 7),
+            padding:
+                const EdgeInsets.only(left: 6, right: 6, bottom: 7, top: 7),
             child: Column(
               children: [
                 // Container that define the image background
@@ -352,7 +377,9 @@ class _NewStudyState extends State<NewStudy> {
                     items[index].image,
                     fit: items[index].boxFit,
                     alignment: items[index].alignment,
-                    color: type != items[index].value ? ConstantsV2.inactiveText : ConstantsV2.lightest,
+                    color: type != items[index].value
+                        ? ConstantsV2.inactiveText
+                        : ConstantsV2.lightest,
                   ),
                 ),
                 Container(
@@ -362,10 +389,14 @@ class _NewStudyState extends State<NewStudy> {
                     children: [
                       Text(
                         items[index].title,
-                        style: boldoCorpMediumBlackTextStyle.copyWith(color: type != items[index].value ? ConstantsV2.inactiveText : ConstantsV2.lightest),
+                        style: boldoCorpMediumBlackTextStyle.copyWith(
+                          color: type != items[index].value
+                              ? ConstantsV2.inactiveText
+                              : ConstantsV2.lightest,
+                        ),
                       ),
                     ],
-                  )
+                  ),
                 ),
               ],
             ),
@@ -374,7 +405,6 @@ class _NewStudyState extends State<NewStudy> {
       ),
     );
   }
-
 }
 
 class StudiesCards extends StatelessWidget {
@@ -402,7 +432,6 @@ class StudiesCards extends StatelessWidget {
 }
 
 class CompleteFormNewStudy extends StatelessWidget {
-
   CompleteFormNewStudy({
     Key? key,
     required this.formKey,
@@ -415,8 +444,8 @@ class CompleteFormNewStudy extends StatelessWidget {
 
   final GlobalKey<FormState> formKey;
   final String nombre;
-  final String fecha ;
-  final String notas ;
+  final String fecha;
+  final String notas;
   final String? type;
   final bool enable;
 
@@ -428,24 +457,25 @@ class CompleteFormNewStudy extends StatelessWidget {
       children: [
         Container(
           width: 136,
-          child: ElevatedButton (
-            onPressed: enable ? () async {
-              DiagnosticReport newDiagnosticReport = DiagnosticReport(
-                  description: nombre,
-                  notes: notas,
-                  effectiveDate: fecha,
-                  type: type);
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context2) =>
-                      AttachFiles(
-                        diagnosticReport:
-                        newDiagnosticReport,
-                        newStudyBloc: BlocProvider.of<NewStudyBloc>(context),
+          child: ElevatedButton(
+            onPressed: enable
+                ? () async {
+                    DiagnosticReport newDiagnosticReport = DiagnosticReport(
+                      description: nombre,
+                      notes: notas,
+                      effectiveDate: fecha,
+                      type: type,
+                    );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context2) => AttachFiles(
+                          diagnosticReport: newDiagnosticReport,
+                          newStudyBloc: BlocProvider.of<NewStudyBloc>(context),
+                        ),
                       ),
-                ),
-              );
-            }: null,
+                    );
+                  }
+                : null,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -455,7 +485,7 @@ class CompleteFormNewStudy extends StatelessWidget {
                   child: Icon(
                     Icons.chevron_right,
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -463,5 +493,4 @@ class CompleteFormNewStudy extends StatelessWidget {
       ],
     );
   }
-
 }

@@ -15,6 +15,14 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		99892720E80E154BA3A762EB /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C5CAA112EE7517383491182 /* Pods_Runner.framework */; };
 		A87056227E9066CB8522E605 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 461C28DBFDC168CF668F3A8A /* GoogleService-Info.plist */; };
+		EA465FCB2C00AFAD0020C306 /* Info-Debug-dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = EA465FC32C00AFAD0020C306 /* Info-Debug-dev.plist */; };
+		EA465FCC2C00AFAD0020C306 /* Info-Release.plist in Resources */ = {isa = PBXBuildFile; fileRef = EA465FC42C00AFAD0020C306 /* Info-Release.plist */; };
+		EA465FCD2C00AFAD0020C306 /* Info-Release-dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = EA465FC52C00AFAD0020C306 /* Info-Release-dev.plist */; };
+		EA465FCE2C00AFAD0020C306 /* Info-Debug-prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = EA465FC62C00AFAD0020C306 /* Info-Debug-prod.plist */; };
+		EA465FCF2C00AFAD0020C306 /* Info-Debug.plist in Resources */ = {isa = PBXBuildFile; fileRef = EA465FC72C00AFAD0020C306 /* Info-Debug.plist */; };
+		EA465FD02C00AFAD0020C306 /* Info-Debug-qa.plist in Resources */ = {isa = PBXBuildFile; fileRef = EA465FC82C00AFAD0020C306 /* Info-Debug-qa.plist */; };
+		EA465FD12C00AFAD0020C306 /* Info-Release-prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = EA465FC92C00AFAD0020C306 /* Info-Release-prod.plist */; };
+		EA465FD22C00AFAD0020C306 /* Info-Release-qa.plist in Resources */ = {isa = PBXBuildFile; fileRef = EA465FCA2C00AFAD0020C306 /* Info-Release-qa.plist */; };
 		EA708B0328EDEFAD006BDD27 /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -60,6 +68,14 @@
 		B4326B01B3C866568218605F /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		BCD50A5406E7C3F510756B89 /* Pods-Runner.profile-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-dev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-dev.xcconfig"; sourceTree = "<group>"; };
 		D56ADF222578C56F00D08BBF /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
+		EA465FC32C00AFAD0020C306 /* Info-Debug-dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-Debug-dev.plist"; sourceTree = "<group>"; };
+		EA465FC42C00AFAD0020C306 /* Info-Release.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-Release.plist"; sourceTree = "<group>"; };
+		EA465FC52C00AFAD0020C306 /* Info-Release-dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-Release-dev.plist"; sourceTree = "<group>"; };
+		EA465FC62C00AFAD0020C306 /* Info-Debug-prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-Debug-prod.plist"; sourceTree = "<group>"; };
+		EA465FC72C00AFAD0020C306 /* Info-Debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-Debug.plist"; sourceTree = "<group>"; };
+		EA465FC82C00AFAD0020C306 /* Info-Debug-qa.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-Debug-qa.plist"; sourceTree = "<group>"; };
+		EA465FC92C00AFAD0020C306 /* Info-Release-prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-Release-prod.plist"; sourceTree = "<group>"; };
+		EA465FCA2C00AFAD0020C306 /* Info-Release-qa.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-Release-qa.plist"; sourceTree = "<group>"; };
 		EAAEEDB82A8D7C6D0082A862 /* dev-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "dev-debug.xcconfig"; path = "Flutter/dev-debug.xcconfig"; sourceTree = "<group>"; };
 		EAAEEDB92A8D7C810082A862 /* qa-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "qa-debug.xcconfig"; path = "Flutter/qa-debug.xcconfig"; sourceTree = "<group>"; };
 		EAAEEDBA2A8D7C810082A862 /* prod-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "prod-debug.xcconfig"; path = "Flutter/prod-debug.xcconfig"; sourceTree = "<group>"; };
@@ -141,6 +157,14 @@
 			isa = PBXGroup;
 			children = (
 				D56ADF222578C56F00D08BBF /* Runner.entitlements */,
+				EA465FC32C00AFAD0020C306 /* Info-Debug-dev.plist */,
+				EA465FC62C00AFAD0020C306 /* Info-Debug-prod.plist */,
+				EA465FC82C00AFAD0020C306 /* Info-Debug-qa.plist */,
+				EA465FC72C00AFAD0020C306 /* Info-Debug.plist */,
+				EA465FC52C00AFAD0020C306 /* Info-Release-dev.plist */,
+				EA465FC92C00AFAD0020C306 /* Info-Release-prod.plist */,
+				EA465FCA2C00AFAD0020C306 /* Info-Release-qa.plist */,
+				EA465FC42C00AFAD0020C306 /* Info-Release.plist */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
@@ -177,6 +201,7 @@
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				EAAEEDA12A8CF7CF0082A862 /* Firebase setup */,
 				A340AAA90DB4C6F432746222 /* [CP] Embed Pods Frameworks */,
+				87BA011FEEF7A19E1A3B2D20 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -226,11 +251,19 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA465FD22C00AFAD0020C306 /* Info-Release-qa.plist in Resources */,
 				97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */,
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
+				EA465FD02C00AFAD0020C306 /* Info-Debug-qa.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
+				EA465FCC2C00AFAD0020C306 /* Info-Release.plist in Resources */,
+				EA465FD12C00AFAD0020C306 /* Info-Release-prod.plist in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
+				EA465FCB2C00AFAD0020C306 /* Info-Debug-dev.plist in Resources */,
+				EA465FCD2C00AFAD0020C306 /* Info-Release-dev.plist in Resources */,
 				A87056227E9066CB8522E605 /* GoogleService-Info.plist in Resources */,
+				EA465FCF2C00AFAD0020C306 /* Info-Debug.plist in Resources */,
+				EA465FCE2C00AFAD0020C306 /* Info-Debug-prod.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,6 +306,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		87BA011FEEF7A19E1A3B2D20 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		9740EEB61CF901F6004384FC /* Run Script */ = {

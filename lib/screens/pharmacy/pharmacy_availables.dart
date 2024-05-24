@@ -5,6 +5,7 @@ import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
 import 'package:boldo/screens/pharmacy/components/pharmacy_available_card.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
+import 'package:boldo/utils/MapLauncher.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/loading.dart';
@@ -122,95 +123,100 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                                 _pharmacies =
                                     state.organizationsList.items ?? [];
 
-                                return Flexible(
-                                  child: Container(
-                                    padding: const EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                        color: const Color(0xFFFAFAFA),
-                                        boxShadow: [
-                                          shadowRegular,
-                                        ]),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Container(
+                                    return Flexible(
+                                      child: Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                          color: const Color(0xFFFAFAFA),
+                                          boxShadow: [
+                                            shadowRegular,
+                                          ]
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Container(
                                                   child: Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "Estas farmacias se encuentran adheridas a Boldo",
-                                                      style: bodyMediumRegular
-                                                          .copyWith(
-                                                              color: ConstantsV2
-                                                                  .activeText),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(
+                                                          "Estas farmacias se encuentran adheridas a Boldo",
+                                                          style: bodyMediumRegular.copyWith(
+                                                            color: ConstantsV2.activeText,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ],
+                                                  ),
                                                 ),
-                                              )),
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(
-                                          height: 16,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            CustomSearchInput(
-                                              initialText: context
+                                          const SizedBox(
+                                            height: 16,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              CustomSearchInput(
+                                                initialText: context
                                                   .read<OrganizationBloc>()
                                                   .pharmacyNameFilter,
-                                              
-                                              maxWidth: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  2,
-                                              hintText: "Buscar por nombre",
-                                              onEditingComplete: (value) {
-                                                BlocProvider.of<
-                                                            OrganizationBloc>(
-                                                        context)
-                                                    .add(
-                                                        GetAllOrganizationsByType(
-                                                            type:
-                                                                OrganizationType
-                                                                    .pharmacy,
-                                                            name: value
-                                                                .trimLeft()
-                                                                .trimRight()));
-                                                context
+                                                expanded: true,
+                                                hintText: "Buscar por nombre",
+                                                onEditingComplete: (value){
+                                                  BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizationsByType(type: OrganizationType.pharmacy, name: value.trimLeft().trimRight()));
+                                                  context
                                                     .read<OrganizationBloc>()
                                                     .pharmacyNameFilter = value;
-                                              },
-                                              onChange: (value) => context
+
+                                                },
+                                                onChange: (value) => context
                                                   .read<OrganizationBloc>()
                                                   .pharmacyNameFilter = value,
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 16,
-                                        ),
-                                        _pharmacies.isNotEmpty
-                                            ? listPharmacies(
-                                                pharmacies: _pharmacies,
-                                                context: context,
-                                              )
-                                            : organizationAvailableEmpty(),
-                                      ],
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              TextButton.icon(
+                                                onPressed: (){
+                                                  MapsLauncher.launchAppCoordinates(
+                                                    position: _pharmacies.where((element) => element.position != null).map((e) => e.position!).toList(),
+                                                    context: context,
+                                                  );
+                                                }, 
+                                                icon: const Icon(
+                                                  Icons.map_outlined,
+                                                  color: ConstantsV2.darkBlue,
+                                                ),
+                                                label: Text(
+                                                  "Mapa",
+                                                  style: boldoSubTextMediumStyle.copyWith(
+                                                    color: ConstantsV2.blueDark,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 16,
+                                          ),
+                                          _pharmacies.isNotEmpty? listPharmacies(
+                                            pharmacies: _pharmacies,
+                                            context: context,
+                                          ) : organizationAvailableEmpty(),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
                               } else {
                                 return loadingStatus();
                               }
@@ -247,26 +253,6 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
             return Container(
               child: Row(
                 children: [
-                  Center(
-                    child: ImageViewTypeForm(
-                      height: 30,
-                      width: 30,
-                      border: false,
-                      elevation: 0,
-                      text: (index + 1).toString(),
-                      backgroundColor: ConstantsV2.secondaryLightAndClear,
-                      textStyle: const TextStyle(
-                        color: ConstantsV2.grayDark,
-                        fontSize: 14,
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w500,
-                        height: 0,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 12,
-                  ),
                   Expanded(
                     child: pharmacyAvailable(pharmacies[index]),
                   ),

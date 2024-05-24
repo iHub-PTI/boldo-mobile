@@ -2,12 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Used to show Organizations in a embedded app</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Used to show Organizations in a embedded app</string>
 	<key>CF Bundle Display Name</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Allow flutter to conect and debug the application</string>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<string>es_ES</string>
 	<key>CFBundleDisplayName</key>
 	<string>Boldo</string>
 	<key>CFBundleExecutable</key>
@@ -26,6 +30,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>DART_DEFINES</key>
+	<string>$(DART_DEFINES)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -67,7 +73,5 @@
 	<true/>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<true/>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>es_ES</string>
 </dict>
 </plist>
