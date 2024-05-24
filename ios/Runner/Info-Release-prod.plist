@@ -2,8 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Used to show Organizations in a embedded app</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Used to show Organizations in a embedded app</string>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<string>es_ES</string>
 	<key>CFBundleDisplayName</key>
 	<string>Boldo</string>
 	<key>CFBundleExecutable</key>
@@ -35,15 +39,15 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Upload a profile picture</string>
 	<key>NSAppleMusicUsageDescription</key>
-    <string>Search files into mobile to upload</string>
-    <key>NSPrivacyAccessedAPICategoryFileTimestamp</key>
-    <string>Required to access metadata of files to upload from $(PRODUCT_NAME)</string>
-    <key>NSPrivacyAccessedAPICategoryDiskSpace</key>
-    <string>To calculate free space on the device to download files like studies orders</string>
-    <key>NSPrivacyAccessedAPICategoryUserDefaults</key>
-    <string>Used to save user preferences and tokens access</string>
-    <key>NSPrivacyAccessedAPICategorySystemBootTime</key>
-    <string>Use to analyze errors on resume app since the last boot time</string>
+	<string>Search files into mobile to upload</string>
+	<key>NSPrivacyAccessedAPICategoryFileTimestamp</key>
+	<string>Required to access metadata of files to upload from $(PRODUCT_NAME)</string>
+	<key>NSPrivacyAccessedAPICategoryDiskSpace</key>
+	<string>To calculate free space on the device to download files like studies orders</string>
+	<key>NSPrivacyAccessedAPICategoryUserDefaults</key>
+	<string>Used to save user preferences and tokens access</string>
+	<key>NSPrivacyAccessedAPICategorySystemBootTime</key>
+	<string>Use to analyze errors on resume app since the last boot time</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -69,7 +73,5 @@
 	<true/>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<true/>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>es_ES</string>
 </dict>
 </plist>
