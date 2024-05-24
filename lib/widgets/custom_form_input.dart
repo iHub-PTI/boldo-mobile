@@ -162,20 +162,19 @@ class _CustomFormInputState extends State<CustomFormInput> {
                             ),
                           )
                         : null,
-                    suffixIcon: widget.customIcon != null
-                        ? widget.customIcon
-                        : widget.customSVGIcon != null
+                    suffixIcon: widget.customIcon ??
+                        (widget.customSVGIcon != null
                             ? Padding(
-                                padding: const EdgeInsets.all(16.0),
+                                padding: const EdgeInsets.all(16),
                                 child: SvgPicture.asset(
                                   widget.customSVGIcon!,
                                   color: Constants.extraColor300,
                                 ),
                               )
-                            : null,
+                            : null),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 15,
-                      vertical: 10,
+                      vertical: 5,
                     ),
                   ),
                   //keyboardType: TextInputType.emailAddress,

@@ -83,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _dataLoading = false;
             emitSnackBar(
               context: context,
-              text: "Perfil actualizado",
+              text: 'Perfil actualizado',
               status: ActionStatus.Success,
             );
           } else if (state is Failed) {
@@ -106,14 +106,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 if (_dataLoading)
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 48.0),
+                      padding: const EdgeInsets.only(top: 48),
                       child: loadingStatus(),
                     ),
                   ),
                 if (!_dataLoading && !_dataLoaded)
                   const Center(
                     child: Text(
-                      "Algo salió mal. Por favor, inténtalo de nuevo más tarde.",
+                      'Algo salió mal. Por favor, inténtalo de nuevo más tarde.',
                       style: TextStyle(
                         fontSize: 14,
                         color: Constants.otherColor100,
@@ -152,27 +152,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     CustomFormInput(
                                       enable: false,
                                       initialValue: editingPatient.givenName,
-                                      label: "Nombre *",
+                                      label: 'Nombre *',
                                       validator: (value) =>
                                           valdiateFirstName(value!),
                                       onChanged: (String val) =>
-                                          (editingPatient.givenName = val),
+                                          editingPatient.givenName = val,
                                     ),
                                     const SizedBox(height: 10),
                                     CustomFormInput(
                                       enable: false,
                                       initialValue: editingPatient.familyName,
-                                      label: "Apellido *",
+                                      label: 'Apellido *',
                                       validator: (value) =>
                                           valdiateLasttName(value!),
                                       onChanged: (String val) =>
-                                          (editingPatient.familyName = val),
+                                          editingPatient.familyName = val,
                                     ),
                                     const SizedBox(height: 20),
                                     DropdownButtonFormField<String>(
-                                      decoration: const InputDecoration(
+                                      decoration: InputDecoration(
                                         labelText: 'Sexo *',
-                                        labelStyle: TextStyle(fontSize: 16),
+                                        labelStyle: boldoInactiveInputLabel,
                                         contentPadding: EdgeInsets.symmetric(
                                           horizontal: 16,
                                         ),
@@ -181,7 +181,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ? null
                                           : editingPatient.gender,
                                       hint: const Text(
-                                        "Género *",
+                                        'Género *',
                                       ),
                                       style: boldoCustomInactiveInputTextStyle,
                                       onChanged: null,
@@ -189,14 +189,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           .map(
                                             (gender) =>
                                                 DropdownMenuItem<String>(
+                                              value: gender,
                                               child: Text(
                                                 gender == 'male'
                                                     ? 'Masculino'
                                                     : gender == 'female'
-                                                        ? "Femenino"
-                                                        : "desconocido",
+                                                        ? 'Femenino'
+                                                        : 'desconocido',
                                               ),
-                                              value: gender,
                                             ),
                                           )
                                           .toList(),
@@ -229,11 +229,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     if (!(prefs.getBool(isFamily) ?? false))
                                       CustomFormInput(
                                         initialValue: editingPatient.email,
-                                        label: "Correo electrónico *",
+                                        label: 'Correo electrónico *',
                                         validator: (value) =>
                                             validateEmail(value),
                                         onChanged: (String val) =>
-                                            (editingPatient.email = val),
+                                            editingPatient.email = val,
                                       ),
                                     const SizedBox(
                                       height: 20,
@@ -242,13 +242,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       CustomFormInput(
                                         initialValue: editingPatient.phone,
                                         isPhoneNumber: true,
-                                        secondaryLabel: "Opcional",
-                                        label: "Número de teléfono",
+                                        secondaryLabel: 'Opcional',
+                                        label: 'Número de teléfono',
                                         inputFormatters: [
                                           ValidatorInputFormatter(),
                                         ],
                                         onChanged: (String val) =>
-                                            (editingPatient.phone = val),
+                                            editingPatient.phone = val,
                                       ),
                                   ],
                                 ),
@@ -269,8 +269,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     //const SizedBox(height: 20),
                                     CustomFormInput(
                                       initialValue: editingPatient.city,
-                                      label: "Ciudad",
-                                      secondaryLabel: "Opcional",
+                                      label: 'Ciudad',
+                                      secondaryLabel: 'Opcional',
                                       onChanged: (String val) =>
                                           editingPatient.city = val,
                                     ),
@@ -278,16 +278,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     const SizedBox(height: 20),
                                     CustomFormInput(
                                       initialValue: editingPatient.neighborhood,
-                                      label: "Barrio",
-                                      secondaryLabel: "Opcional",
+                                      label: 'Barrio',
+                                      secondaryLabel: 'Opcional',
                                       onChanged: (String val) =>
                                           editingPatient.neighborhood = val,
                                     ),
                                     const SizedBox(height: 20),
                                     CustomFormInput(
                                       initialValue: editingPatient.street,
-                                      label: "Calle",
-                                      secondaryLabel: "Opcional",
+                                      label: 'Calle',
+                                      secondaryLabel: 'Opcional',
                                       onChanged: (String val) =>
                                           editingPatient.street = val,
                                     ),
@@ -296,8 +296,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       initialValue:
                                           editingPatient.addressDescription,
                                       maxLines: 6,
-                                      label: "Referencia",
-                                      secondaryLabel: "Opcional",
+                                      label: 'Referencia',
+                                      secondaryLabel: 'Opcional',
                                       onChanged: (String val) => editingPatient
                                           .addressDescription = val,
                                     ),
@@ -319,10 +319,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   children: [
                                     CustomFormInput(
                                       initialValue: editingPatient.job,
-                                      secondaryLabel: "Opcional",
-                                      label: "Ocupación",
+                                      secondaryLabel: 'Opcional',
+                                      label: 'Ocupación',
                                       onChanged: (String val) =>
-                                          (editingPatient.job = val),
+                                          editingPatient.job = val,
                                     ),
                                   ],
                                 ),
@@ -330,7 +330,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               const SizedBox(height: 20),
                               CustomFormButton(
                                 loading: _dataLoading,
-                                text: "Guardar",
+                                text: 'Guardar',
                                 actionCallback: _updateProfile,
                               ),
                               const SizedBox(height: 20),
