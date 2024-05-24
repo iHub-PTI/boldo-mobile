@@ -9,55 +9,47 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 class NewStudyButton extends StatefulWidget {
-
   final TabController? listener;
 
-
-  NewStudyButton({this.listener });
+  NewStudyButton({this.listener});
 
   @override
   State<NewStudyButton> createState() => _NewStudyButtonState();
-
 }
 
-class _NewStudyButtonState extends State<NewStudyButton>{
-
+class _NewStudyButtonState extends State<NewStudyButton> {
   bool showButton = false;
 
   @override
-  void initState(){
+  void initState() {
     widget.listener?.addListener(() {
       showButton = widget.listener?.index == 1;
-      setState(() {
-
-      });
+      setState(() {});
     });
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context){
-
+  Widget build(BuildContext context) {
     return AnimatedCrossFade(
-      firstChild: Row(
+      firstChild: const Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
-
-      ],),
+        children: [],
+      ),
       secondChild: ElevatedButton(
         onPressed: () {
-          if(BlocProvider.of<MyStudiesBloc>(context).state is Loading){
+          if (BlocProvider.of<MyStudiesBloc>(context).state is Loading) {
             emitSnackBar(
               context: context,
               text: "Favor aguardar durante la carga.",
               status: ActionStatus.Fail,
             );
-          }else{
+          } else {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => NewStudy()
-                )
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) => NewStudy(),
+              ),
             );
           }
         },
@@ -67,29 +59,28 @@ class _NewStudyButtonState extends State<NewStudyButton>{
               return loadingStatus(center: false);
             } else {
               return Container(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'nuevo resultado',
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      SvgPicture.asset(
-                        'assets/icon/upload.svg',
-                      ),
-                    ],
-                  )
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Nuevo resultado',
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    SvgPicture.asset(
+                      'assets/icon/upload.svg',
+                    ),
+                  ],
+                ),
               );
             }
           },
         ),
       ),
-      crossFadeState: showButton? CrossFadeState.showSecond : CrossFadeState.showFirst,
-      duration: Duration(milliseconds: 500),
+      crossFadeState:
+          showButton ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+      duration: const Duration(milliseconds: 500),
     );
   }
-
-
 }

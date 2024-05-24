@@ -454,104 +454,102 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
         ),
       ),
       persistentFooterButtons: [
-        _relationLoaded
-            ? Padding(
-                padding: const EdgeInsets.all(8),
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      OutlinedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            width: 1,
-                            color: ConstantsV2.orange,
-                          ),
-                        ),
-                        child: OutlinedButtonTheme(
-                          data: boldoTheme.outlinedButtonTheme,
-                          child: Text(
-                            'lo haré más tarde',
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: MediaQuery.of(context).size.width >= 400
-                                  ? 16
-                                  : 12,
-                            ),
-                          ),
+        if (_relationLoaded)
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  OutlinedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(
+                        width: 1,
+                        color: ConstantsV2.orange,
+                      ),
+                    ),
+                    child: OutlinedButtonTheme(
+                      data: boldoTheme.outlinedButtonTheme,
+                      child: Text(
+                        'Lo haré más tarde',
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: MediaQuery.of(context).size.width >= 400
+                              ? 16
+                              : 12,
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            String _identifier =
-                                prefs.getString('identifier') ?? '';
-                            if (_identifier != '') {
-                              BlocProvider.of<FamilyBloc>(context).add(
-                                LinkWithoutCi(
-                                  givenName: givenName,
-                                  familyName: familyName,
-                                  birthDate: birthDate,
-                                  gender: gender,
-                                  identifier: _identifier,
-                                  relationShipCode: relation,
-                                ),
-                              );
-                            } else {
-                              _showMyDialog();
-                            }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          maximumSize: Size(
-                            MediaQuery.of(context).size.width >= 400
-                                ? 150
-                                : 120,
-                            80,
-                          ),
-                          shape: const StadiumBorder(),
-                          primary: ConstantsV2.buttonPrimaryColor100,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'confirmar',
-                              style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.width >= 400
-                                        ? 16
-                                        : 12,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8),
-                              child: _loadingQuery
-                                  ? Container(
-                                      height: 10,
-                                      width: 10,
-                                      child: const CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : SvgPicture.asset(
-                                      'assets/icon/arrow-right.svg',
-                                    ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              )
-            : loadingStatus(),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        String _identifier =
+                            prefs.getString('identifier') ?? '';
+                        if (_identifier != '') {
+                          BlocProvider.of<FamilyBloc>(context).add(
+                            LinkWithoutCi(
+                              givenName: givenName,
+                              familyName: familyName,
+                              birthDate: birthDate,
+                              gender: gender,
+                              identifier: _identifier,
+                              relationShipCode: relation,
+                            ),
+                          );
+                        } else {
+                          _showMyDialog();
+                        }
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      maximumSize: Size(
+                        MediaQuery.of(context).size.width >= 400 ? 150 : 120,
+                        80,
+                      ),
+                      shape: const StadiumBorder(),
+                      primary: ConstantsV2.buttonPrimaryColor100,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Confirmar',
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width >= 400
+                                ? 16
+                                : 12,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: _loadingQuery
+                              ? Container(
+                                  height: 10,
+                                  width: 10,
+                                  child: const CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : SvgPicture.asset(
+                                  'assets/icon/arrow-right.svg',
+                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else
+          loadingStatus(),
       ],
     );
   }

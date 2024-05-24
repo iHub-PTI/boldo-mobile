@@ -492,7 +492,7 @@ class CompleteFormNewStudy extends StatelessWidget {
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('siguiente'),
+                Text('Siguiente'),
                 Padding(
                   padding: EdgeInsets.only(left: 8.0),
                   child: Icon(
