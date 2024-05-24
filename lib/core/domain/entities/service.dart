@@ -13,12 +13,13 @@ class Service {
   factory Service.fromJson(Map<String, dynamic> json) {
     final id = json['id'] as String?;
     final name = json['name'] as String?;
-    final specializations = json['specializations'] != null
-        ? List<Specialization>.from(
-            (json['specializations'] as List<Map<String, dynamic>>)
-                .map(Specialization.fromJson),
-          )
-        : null;
+    List<Specialization>? specializations;
+    if (json['specializations'] != null) {
+      specializations = [];
+      for (final v in json['specializations'] as List<dynamic>) {
+        specializations.add(Specialization.fromJson(v));
+      }
+    }
     return Service(
       id: id,
       name: name,

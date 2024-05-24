@@ -32,12 +32,13 @@ class Encounter {
     final doctor =
         json['doctorDto'] != null ? Doctor.fromJson(json['doctorDto']) : null;
 
-    final prescriptions = json['prescriptions'] != null
-        ? List<Prescription>.from(
-            (json['prescriptions'] as List<Map<String, dynamic>>)
-                .map(Prescription.fromJson),
-          )
-        : null;
+    List<Prescription>? prescriptions;
+    if (json['prescriptions'] != null) {
+      prescriptions = [];
+      (json['prescriptions'] as List<dynamic>).forEach((v) {
+        prescriptions!.add(Prescription.fromJson(v));
+      });
+    }
 
     final start = json['startTimeDate'] != null
         ? DateTime.parse(json['startTimeDate'])
