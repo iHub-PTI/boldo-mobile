@@ -590,7 +590,7 @@ ThemeData boldoTheme = ThemeData(
   tabBarTheme: const TabBarTheme(
       dividerColor: Colors.transparent,
       overlayColor: MaterialStatePropertyAll(ConstantsV2.veryLightOrange)),
-  splashColor: ConstantsV2.orange.withOpacity(0.3), // Color de la tinta
+  splashColor: ConstantsV2.orange.withOpacity(0.05), // Color de la tinta
   highlightColor: ConstantsV2.veryLightOrange, // Color de resaltado
   splashFactory: InkRipple
       .splashFactory, // Tipo de efecto de la tinta (InkRipple es el predeterminado)

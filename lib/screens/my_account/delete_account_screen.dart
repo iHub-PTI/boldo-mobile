@@ -44,6 +44,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
                         style: boldoCorpSmallSTextStyle.copyWith(
                           fontSize: 16,
                           color: ConstantsV2.activeText,
+                          fontWeight: FontWeight.normal,
                         ),
                         children: const [
                           TextSpan(
@@ -57,7 +58,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
                           ),
                           TextSpan(
                             style: TextStyle(
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                             ),
                             children: [
                               TextSpan(
@@ -90,7 +91,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
                           ),
                           TextSpan(
                             style: TextStyle(
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                             ),
                             text:
                                 '1. Información personal (nombre, dirección, fecha de nacimiento, etc.).\n2. Datos de inicio de sesión y credenciales. \n3. Historial de actividad y uso de la aplicación. \n4. Cualquier otra información relacionada específicamente con tu cuenta. \n',
@@ -105,7 +106,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
                                 'Por favor, ten en cuenta que esta acción es irreversible una vez completada. Si has reconsiderado esta decisión o necesitas alguna asistencia adicional, no dudes en contactarnos antes de que se complete el proceso de eliminación al correo ',
                           ),
                           TextSpan(
-                            style: TextStyle(fontWeight: FontWeight.w500),
+                            style: TextStyle(fontWeight: FontWeight.w600),
                             text: 'info@bol.do',
                           ),
                         ],
