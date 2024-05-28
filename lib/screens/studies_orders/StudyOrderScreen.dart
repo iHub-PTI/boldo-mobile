@@ -3,7 +3,7 @@ import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
-import 'package:boldo/models/MedicalRecord.dart';
+import 'package:boldo/models/Encounter.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
@@ -36,7 +36,7 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
   bool _loading = true;
   bool _error = false;
   int _daysBetween = 0;
-  MedicalRecord? encounter;
+  Encounter? encounter;
   StudyOrder? studiesOrders;
   Appointment? appointment;
   @override
@@ -45,10 +45,8 @@ class _StudyOrderScreenState extends State<StudyOrderScreen> {
         .add(GetNewsId(encounter: widget.encounterId ?? "0"));
 
     super.initState();
-    _daysBetween = daysBetween(
-        DateTime.parse(
-            encounter?.startTimeDate ?? DateTime.now().toIso8601String()),
-        DateTime.now());
+    _daysBetween =
+        daysBetween(encounter?.startTimeDate ?? DateTime.now(), DateTime.now());
   }
 
   @override

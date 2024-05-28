@@ -1,7 +1,7 @@
 import 'package:boldo/constants.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
-import 'package:boldo/models/MedicalRecord.dart';
+import 'package:boldo/models/Encounter.dart';
 import 'package:boldo/screens/appointments/medicalRecordScreen.dart';
 import 'package:boldo/screens/studies_orders/ProfileDescription.dart';
 import 'package:boldo/widgets/back_button.dart';
@@ -9,11 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class AnnotationsDetails extends StatelessWidget {
-  final MedicalRecord? medicalRecord;
+  final Encounter? encounter;
   final Appointment? appointment;
 
   AnnotationsDetails({
-    this.medicalRecord,
+    this.encounter,
     this.appointment,
   });
 
@@ -58,7 +58,7 @@ class AnnotationsDetails extends StatelessWidget {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 15.0),
-                              child: Text(medicalRecord?.mainReason ?? '',
+                              child: Text(encounter?.mainReason ?? '',
                                   style: boldoCorpMediumBlackTextStyle.copyWith(
                                       color: ConstantsV2.darkBlue)),
                             ),
@@ -132,10 +132,10 @@ class AnnotationsDetails extends StatelessWidget {
                                   ),
                                   SoepAccordion(
                                       title: Constants.evaluation,
-                                      medicalRecord: medicalRecord!),
+                                      encounter: encounter!),
                                   SoepAccordion(
                                       title: Constants.plan,
-                                      medicalRecord: medicalRecord),
+                                      encounter: encounter),
                                 ],
                               ),
                             ),

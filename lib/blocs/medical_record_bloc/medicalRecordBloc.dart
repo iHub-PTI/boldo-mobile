@@ -1,6 +1,4 @@
-
-import 'package:boldo/models/MedicalRecord.dart';
-import 'package:boldo/models/StudyOrder.dart';
+import 'package:boldo/models/Encounter.dart';
 import 'package:boldo/network/order_study_repository.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/network/user_repository.dart';
@@ -26,8 +24,8 @@ class MedicalRecordBloc extends Bloc<MedicalRecordEvent, MedicalRecordState> {
         );
         emit(Loading());
         var _post;
-        await Task(() =>
-        _patientRepository.getMedicalRecordByAppointment(event.appointmentId)!)
+        await Task(() => _patientRepository
+                .getEncounterByAppointment(event.appointmentId)!)
             .attempt()
             .mapLeftToFailure()
             .run()
@@ -46,9 +44,9 @@ class MedicalRecordBloc extends Bloc<MedicalRecordEvent, MedicalRecordState> {
             ),
           );
         } else {
-          late MedicalRecord medicalRecord;
-          _post.foldRight(MedicalRecord, (a, previous) => medicalRecord = a);
-          emit(MedicalRecordLoadedState(medicalRecord: medicalRecord));
+          late Encounter encounter;
+          _post.foldRight(Encounter, (a, previous) => encounter = a);
+          emit(MedicalRecordLoadedState(encounter: encounter));
           emit(Success());
           transaction.finish(
             status: const SpanStatus.ok(),
@@ -63,8 +61,7 @@ class MedicalRecordBloc extends Bloc<MedicalRecordEvent, MedicalRecordState> {
         );
         emit(Loading());
         var _post;
-        await Task(() =>
-        _patientRepository.getMedicalRecordById(event.id)!)
+        await Task(() => _patientRepository.getEncounterById(event.id)!)
             .attempt()
             .mapLeftToFailure()
             .run()
@@ -83,9 +80,9 @@ class MedicalRecordBloc extends Bloc<MedicalRecordEvent, MedicalRecordState> {
             ),
           );
         } else {
-          late MedicalRecord medicalRecord;
-          _post.foldRight(MedicalRecord, (a, previous) => medicalRecord = a);
-          emit(MedicalRecordLoadedState(medicalRecord: medicalRecord));
+          late Encounter encounter;
+          _post.foldRight(Encounter, (a, previous) => encounter = a);
+          emit(MedicalRecordLoadedState(encounter: encounter));
           emit(Success());
           transaction.finish(
             status: const SpanStatus.ok(),

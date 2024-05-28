@@ -2,7 +2,7 @@ import 'package:boldo/blocs/medical_record_bloc/medicalRecordBloc.dart';
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
 import 'package:boldo/models/Doctor.dart';
-import 'package:boldo/models/MedicalRecord.dart';
+import 'package:boldo/models/Encounter.dart';
 import 'package:boldo/models/Prescription.dart';
 import 'package:boldo/models/Soep.dart';
 import 'package:boldo/models/StudyOrder.dart';
@@ -37,7 +37,7 @@ class MedicalRecordsScreen extends StatefulWidget {
 }
 
 class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
-  MedicalRecord? medicalRecord;
+  Encounter? encounter;
   AppointmentType? appointmentType;
 
   final bool fromOrderStudy = AppNavigatorObserver.containRoute(
@@ -65,7 +65,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                   text: state.response,
                   status: ActionStatus.Fail);
             } else if (state is MedicalRecordLoadedState) {
-              medicalRecord = state.medicalRecord;
+              encounter = state.encounter;
             }
           },
           child: Scaffold(
@@ -125,8 +125,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(top: 15.0),
-                                        child: Text(
-                                            medicalRecord?.mainReason ?? '',
+                                        child: Text(encounter?.mainReason ?? '',
                                             style: boldoCorpMediumBlackTextStyle
                                                 .copyWith(
                                                     color:
@@ -388,7 +387,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
               ],
             ),
           ),
-          SoepAccordion(title: Constants.plan, medicalRecord: medicalRecord),
+          SoepAccordion(title: Constants.plan, encounter: encounter),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -400,7 +399,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                       MaterialPageRoute(
                           builder: (context) => AnnotationsDetails(
                                 appointment: widget.appointment,
-                                medicalRecord: medicalRecord,
+                                encounter: encounter,
                               )),
                     );
                   },
@@ -455,18 +454,18 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
               ],
             ),
           ),
-          medicalRecord?.prescription != null
-              ? medicalRecord!.prescription!.length > 0
+          encounter?.prescription != null
+              ? encounter!.prescription!.length > 0
                   ? ListView.builder(
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: medicalRecord!.prescription!.length > 3
+                      itemCount: encounter!.prescription!.length > 3
                           ? 3
-                          : medicalRecord!.prescription!.length,
+                          : encounter!.prescription!.length,
                       itemBuilder: (BuildContext context, int index) {
                         return ShowPrescription(
-                            context, medicalRecord!.prescription![index]);
+                            context, encounter!.prescription![index]);
                       })
                   : Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -484,21 +483,21 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                         color: ConstantsV2.darkBlue),
                   ),
                 ),
-          medicalRecord?.prescription != null
-              ? medicalRecord!.prescription!.length > 0
+          encounter?.prescription != null
+              ? encounter!.prescription!.length > 0
                   ? Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                       Container(
                         child: GestureDetector(
-                          onTap: medicalRecord!.prescription!.length > 0
+                          onTap: encounter!.prescription!.length > 0
                               ? () async {
                                   await Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             PrescriptionRecordScreen(
-                                              medicalRecordId: medicalRecord
-                                                      ?.appointmentId ??
-                                                  '',
+                                              medicalRecordId:
+                                                  encounter?.appointmentId ??
+                                                      '',
                                               doctor:
                                                   widget.appointment.doctor ??
                                                       Doctor(),
@@ -563,13 +562,13 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: medicalRecord?.serviceRequests!.length,
+              itemCount: encounter?.serviceRequests!.length,
               itemBuilder: (BuildContext context, int index) {
                 return ShowStudy(context,
-                    medicalRecord?.serviceRequests![index] ?? ServiceRequest());
+                    encounter?.serviceRequests![index] ?? ServiceRequest());
               }),
-          medicalRecord?.serviceRequests != null
-              ? medicalRecord!.serviceRequests!.length > 0
+          encounter?.serviceRequests != null
+              ? encounter!.serviceRequests!.length > 0
                   ? Container()
                   : Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -580,11 +579,11 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                       ),
                     )
               : Container(),
-          medicalRecord?.serviceRequests != null
+          encounter?.serviceRequests != null
               // show button to go at the order screen if
               // contains elements and is not coming
               // from a study order screen
-              ? medicalRecord!.serviceRequests!.length > 0 && !fromOrderStudy
+              ? encounter!.serviceRequests!.length > 0 && !fromOrderStudy
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -596,7 +595,7 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
                                 MaterialPageRoute(
                                   builder: (context) => StudyOrderScreen(
                                       callFromHome: false,
-                                      encounterId: medicalRecord?.id ?? "0"),
+                                      encounterId: encounter?.id ?? "0"),
                                   settings: RouteSettings(
                                       name: (StudyOrderScreen).toString()),
                                 ),
@@ -833,9 +832,9 @@ Widget ShowPrescription(BuildContext context, Prescription prescription) {
 
 class SoepAccordion extends StatefulWidget {
   final String title;
-  final MedicalRecord? medicalRecord;
+  final Encounter? encounter;
 
-  SoepAccordion({required this.title, required this.medicalRecord});
+  SoepAccordion({required this.title, required this.encounter});
   @override
   _SoepAccordionState createState() => _SoepAccordionState();
 }
@@ -858,7 +857,7 @@ class _SoepAccordionState extends State<SoepAccordion> {
           height: 10,
         ),
         Container(
-          child: SoepScreen(widget.medicalRecord, widget.title),
+          child: SoepScreen(widget.encounter, widget.title),
         )
       ]),
     );
@@ -867,8 +866,8 @@ class _SoepAccordionState extends State<SoepAccordion> {
 
 class SoepScreen extends StatelessWidget {
   final String title;
-  final MedicalRecord? medicalRecord;
-  SoepScreen(this.medicalRecord, this.title);
+  final Encounter? encounter;
+  SoepScreen(this.encounter, this.title);
 
   Widget soepDescription(Soep? soep) {
     switch (title) {
@@ -931,8 +930,7 @@ class SoepScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (medicalRecord?.soep != null)
-                  soepDescription(medicalRecord?.soep)
+                if (encounter?.soep != null) soepDescription(encounter?.soep)
               ],
             ),
           ),

@@ -2,8 +2,8 @@ import 'package:boldo/blocs/download_prescriptions_bloc/download_prescriptions_b
 import 'package:boldo/blocs/prescription_bloc/prescriptionBloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/Doctor.dart';
+import 'package:boldo/models/Encounter.dart';
 
-import 'package:boldo/models/MedicalRecord.dart';
 import 'package:boldo/models/Prescription.dart';
 import 'package:boldo/observers/navigatorObserver.dart';
 import 'package:boldo/screens/appointments/components/showAppointmentOrigin.dart';
@@ -34,9 +34,9 @@ class PrescriptionRecordScreen extends StatefulWidget {
 }
 
 class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
-
-  MedicalRecord? medicalRecord;
-  bool fromAppointmentDetail = AppNavigatorObserver.containRoute(routeName: (MedicalRecordsScreen).toString()) ;
+  Encounter? encounter;
+  bool fromAppointmentDetail = AppNavigatorObserver.containRoute(
+      routeName: (MedicalRecordsScreen).toString());
 
   @override
   void initState() {
@@ -59,9 +59,9 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
           create: (BuildContext context) => PrescriptionBloc()..add(GetPrescription(id: widget.medicalRecordId)),
           child: BlocListener<PrescriptionBloc, PrescriptionState>(
             listener: (context, state) {
-              if(state is PrescriptionLoaded){
-                medicalRecord = state.prescription;
-              }else if(state is FailedLoadPrescription){
+            if (state is PrescriptionLoaded) {
+              encounter = state.encounter;
+            } else if (state is FailedLoadPrescription) {
                 emitSnackBar(
                   context: context,
                   text: state.response,
@@ -145,9 +145,17 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
                                                               // show if not loading
                                                               return Text(
                                                                 '${formatDate(
-                                                                  DateTime.parse(medicalRecord?.startTimeDate ??
-                                                                      DateTime.now().toString()),
-                                                                  [d, '/', m, '/', yyyy],
+                                                                encounter
+                                                                        ?.startTimeDate ??
+                                                                    DateTime
+                                                                        .now(),
+                                                                [
+                                                                  d,
+                                                                  '/',
+                                                                  m,
+                                                                  '/',
+                                                                  yyyy
+                                                                ],
                                                                 )}',
                                                                 style: boldoSubTextMediumStyle.copyWith(
                                                                   color: ConstantsV2.inactiveText,
@@ -176,8 +184,11 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
                                           Container(
                                             padding: const EdgeInsets.symmetric(horizontal: 4),
                                             child: Text(
-                                              medicalRecord?.diagnosis?? 'Sin diagnóstico',
-                                              style: boldoCorpMediumWithLineSeparationLargeTextStyle.copyWith(
+                                            encounter?.diagnosis ??
+                                                'Sin diagnóstico',
+                                            style:
+                                                boldoCorpMediumWithLineSeparationLargeTextStyle
+                                                    .copyWith(
                                                 color: ConstantsV2.darkBlue,
                                               ),
                                             ),
@@ -189,7 +200,8 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
                                               mainAxisAlignment: MainAxisAlignment.end,
                                               children: [
                                                 ShowAppointmentOrigin(
-                                                  encounterId: medicalRecord?.id?? '0',
+                                                encounterId:
+                                                    encounter?.id ?? '0',
                                                 ),
                                               ],
                                             ),
