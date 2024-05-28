@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/environment.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
-import 'package:boldo/models/MedicalRecord.dart';
+import 'package:boldo/models/Encounter.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/User.dart';
 import 'package:boldo/models/upload_url_model.dart';
@@ -535,17 +535,15 @@ class UserRepository {
     }
   }
 
-  Future<MedicalRecord>? getMedicalRecordByAppointment(
-      String appointmentId) async {
+  Future<Encounter>? getEncounterByAppointment(String appointmentId) async {
     try {
       String url =
-          "${prefs.getBool(isFamily) == true ? '/profile/caretaker/dependent/${patient.id}/appointments/$appointmentId/encounter?includePrescriptions=true&includeSoep=true' :
-           '/profile/patient/appointments/$appointmentId/encounter?includePrescriptions=true&includeSoep=true'}";
-      MedicalRecord medicalRecord;
+          "${prefs.getBool(isFamily) == true ? '/profile/caretaker/dependent/${patient.id}/appointments/$appointmentId/encounter?includePrescriptions=true&includeSoep=true' : '/profile/patient/appointments/$appointmentId/encounter?includePrescriptions=true&includeSoep=true'}";
+      Encounter encounter;
       Response response = await dio.get(url);
       if (response.statusCode == 200) {
-        medicalRecord = MedicalRecord.fromJson(response.data['encounter']);
-        return medicalRecord;
+        encounter = Encounter.fromJson(response.data['encounter']);
+        return encounter;
       }
       throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
@@ -580,17 +578,15 @@ class UserRepository {
     }
   }
 
-  Future<MedicalRecord>? getMedicalRecordById(
-      String id) async {
+  Future<Encounter>? getEncounterById(String id) async {
     try {
       String url =
-          "${prefs.getBool(isFamily) == true ? '/profile/caretaker/dependent/${patient.id}/encounters/$id' :
-      '/profile/patient/encounters/$id'}";
-      MedicalRecord medicalRecord;
+          "${prefs.getBool(isFamily) == true ? '/profile/caretaker/dependent/${patient.id}/encounters/$id' : '/profile/patient/encounters/$id'}";
+      Encounter encounter;
       Response response = await dio.get(url);
       if (response.statusCode == 200) {
-        medicalRecord = MedicalRecord.fromJson(response.data['encounter']);
-        return medicalRecord;
+        encounter = Encounter.fromJson(response.data['encounter']);
+        return encounter;
       }
       throw Failure('Unknown StatusCode ${response.statusCode}', response: response);
     } on DioError catch(exception, stackTrace){
@@ -746,18 +742,18 @@ class UserRepository {
     }
   }
 
-  Future<MedicalRecord>? getPrescription(String id) async {
-    try{
+  Future<Encounter>? getPrescription(String id) async {
+    try {
       Response responsePrescriptions;
-      if (!(prefs.getBool(isFamily)?? false))
-        responsePrescriptions = await dio.get('/profile/patient/appointments/$id/encounter');
+      if (!(prefs.getBool(isFamily) ?? false))
+        responsePrescriptions =
+            await dio.get('/profile/patient/appointments/$id/encounter');
       else
-        responsePrescriptions = await dio
-            .get('/profile/caretaker/dependent/${patient.id}/appointments/$id/encounter');
+        responsePrescriptions = await dio.get(
+            '/profile/caretaker/dependent/${patient.id}/appointments/$id/encounter');
 
-      if(responsePrescriptions.statusCode == 200) {
-        return MedicalRecord.fromJson(
-            responsePrescriptions.data['encounter']);
+      if (responsePrescriptions.statusCode == 200) {
+        return Encounter.fromJson(responsePrescriptions.data['encounter']);
       }
       throw Failure('Unknown StatusCode ${responsePrescriptions.statusCode}', response: responsePrescriptions);
     } on DioError catch(exception, stackTrace){

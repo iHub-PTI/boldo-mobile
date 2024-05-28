@@ -13,8 +13,8 @@ class Failed extends MedicalRecordState {
 }
 
 class MedicalRecordLoadedState extends MedicalRecordState {
-  final MedicalRecord medicalRecord;
-  MedicalRecordLoadedState({required this.medicalRecord});
+  final Encounter encounter;
+  MedicalRecordLoadedState({required this.encounter});
 }
 
 class Success extends MedicalRecordState {}

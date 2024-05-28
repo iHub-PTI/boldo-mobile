@@ -13,6 +13,6 @@ class FailedLoadPrescription extends PrescriptionState {
 }
 
 class PrescriptionLoaded extends PrescriptionState {
-  final MedicalRecord prescription;
-  PrescriptionLoaded({required this.prescription});
+  final Encounter encounter;
+  PrescriptionLoaded({required this.encounter});
 }

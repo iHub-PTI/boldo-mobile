@@ -68,8 +68,6 @@ import 'blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
 import 'environment.dart';
 import 'firebase_options.dart';
-import 'models/MedicalRecord.dart';
-import 'models/Organization.dart';
 import 'models/Patient.dart';
 import 'models/Relationship.dart';
 import 'models/User.dart';
@@ -84,7 +82,6 @@ UrlUploadType photoStage = UrlUploadType.frontal;
 User user = User();
 Patient patient = Patient();
 Patient editingPatient = Patient();
-late List<MedicalRecord> allMedicalData;
 List<UserVaccinate>? diseaseUserList;
 // list of vaccinate for generate QR url
 List<UserVaccinate>? vaccineListQR = [];

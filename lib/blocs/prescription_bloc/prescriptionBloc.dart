@@ -1,13 +1,10 @@
-
-import 'package:boldo/models/MedicalRecord.dart';
+import 'package:boldo/models/Encounter.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/network/user_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-
-
 
 part 'prescriptionEvent.dart';
 part 'prescriptionState.dart';
@@ -45,7 +42,7 @@ class PrescriptionBloc extends Bloc<PrescriptionEvent, PrescriptionState> {
             ),
           );
         } else {
-          emit(PrescriptionLoaded(prescription: _post.value));
+          emit(PrescriptionLoaded(encounter: _post.value));
           transaction.finish(
             status: const SpanStatus.ok(),
           );
