@@ -74,12 +74,12 @@ class _FamilyScreenState extends State<FamilyScreen> {
                 const Background(text: "family"),
                 SafeArea(
                   child: Container(
-                    padding: const EdgeInsets.only(top: 16),
+                    padding: const EdgeInsets.only(top: 20),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
-                          margin: const EdgeInsets.only(right: 10),
+                          margin: const EdgeInsets.only(right: 20, bottom: 20),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -100,7 +100,8 @@ class _FamilyScreenState extends State<FamilyScreen> {
                                       child: const Column(
                                         children: [
                                           FamilyRectangleCard(
-                                              isDependent: false),
+                                            isDependent: false,
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -116,7 +117,8 @@ class _FamilyScreenState extends State<FamilyScreen> {
                                                 itemCount: families.length,
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                        vertical: 16),
+                                                  vertical: 16,
+                                                ),
                                                 scrollDirection: Axis.vertical,
                                                 itemBuilder: _buildItem,
                                               )
