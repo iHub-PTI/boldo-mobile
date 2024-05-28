@@ -52,8 +52,10 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
             leadingWidth: 200,
             leading: Padding(
               padding: const EdgeInsets.only(left: 16.0),
-              child: SvgPicture.asset('assets/Logo.svg',
-                  semanticsLabel: 'BOLDO Logo'),
+              child: SvgPicture.asset(
+                'assets/Logo.svg',
+                semanticsLabel: 'BOLDO Logo',
+              ),
             ),
           ),
           body: SafeArea(
@@ -62,13 +64,13 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                 listener: (context, state) {
                   if (state is Failed) {
                     emitSnackBar(
-                        context: context,
-                        text: state.response,
-                        status: ActionStatus.Fail);
+                      context: context,
+                      text: state.response,
+                      status: ActionStatus.Fail,
+                    );
                   }
                 },
                 child: Container(
-                  padding: const EdgeInsets.only(top: 16),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -82,7 +84,9 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                               children: [
                                 Expanded(
                                   child: Container(
-                                    padding: const EdgeInsets.all(16),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: ConstantsV2.BGNeutral,
                                       boxShadow: [
@@ -101,54 +105,67 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                               height: 16,
                             ),
                             BlocBuilder<OrganizationBloc,
-                                    OrganizationBlocState>(
-                                builder: (context, state) {
-                              if (state is Failed) {
-                                //reset refresh status
-                                _pharmaciesPageController.loadComplete();
-                                _pharmaciesPageController.refreshCompleted();
-                                return DataFetchErrorWidget(
-                                    retryCallback: () => BlocProvider.of<
-                                            OrganizationBloc>(context)
-                                        .add(GetAllOrganizationsByType(
-                                            type: OrganizationType.pharmacy)));
-                              } else if (state is AllOrganizationsObtained) {
-                                //reset refresh status
-                                _pharmaciesPageController.loadComplete();
-                                _pharmaciesPageController.refreshCompleted();
+                                OrganizationBlocState>(
+                              builder: (context, state) {
+                                if (state is Failed) {
+                                  //reset refresh status
+                                  _pharmaciesPageController.loadComplete();
+                                  _pharmaciesPageController.refreshCompleted();
+                                  return DataFetchErrorWidget(
+                                    retryCallback: () =>
+                                        BlocProvider.of<OrganizationBloc>(
+                                      context,
+                                    ).add(
+                                      GetAllOrganizationsByType(
+                                        type: OrganizationType.pharmacy,
+                                      ),
+                                    ),
+                                  );
+                                } else if (state is AllOrganizationsObtained) {
+                                  //reset refresh status
+                                  _pharmaciesPageController.loadComplete();
+                                  _pharmaciesPageController.refreshCompleted();
 
-                                _totalPharmacies =
-                                    state.organizationsList.total ?? 0;
+                                  _totalPharmacies =
+                                      state.organizationsList.total ?? 0;
 
-                                _pharmacies =
-                                    state.organizationsList.items ?? [];
+                                  _pharmacies =
+                                      state.organizationsList.items ?? [];
 
-                                    return Flexible(
-                                      child: Container(
+                                  return Flexible(
+                                    child: Container(
                                       padding: const EdgeInsets.all(16),
                                       decoration: BoxDecoration(
-                                          color: const Color(0xFFFAFAFA),
-                                          boxShadow: [
-                                            shadowRegular,
-                                          ]
+                                        color: const Color(0xFFFAFAFA),
+                                        boxShadow: [
+                                          shadowRegular,
+                                        ],
                                       ),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Container(
                                             child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Container(
                                                   child: Expanded(
                                                     child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Text(
                                                           "Estas farmacias se encuentran adheridas a Boldo",
-                                                          style: bodyMediumRegular.copyWith(
-                                                            color: ConstantsV2.activeText,
+                                                          style:
+                                                              bodyMediumRegular
+                                                                  .copyWith(
+                                                            color: ConstantsV2
+                                                                .activeText,
                                                           ),
                                                         ),
                                                       ],
@@ -162,44 +179,66 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                                             height: 16,
                                           ),
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
                                             children: [
                                               CustomSearchInput(
                                                 initialText: context
-                                                  .read<OrganizationBloc>()
-                                                  .pharmacyNameFilter,
+                                                    .read<OrganizationBloc>()
+                                                    .pharmacyNameFilter,
                                                 expanded: true,
                                                 hintText: "Buscar por nombre",
-                                                onEditingComplete: (value){
-                                                  BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizationsByType(type: OrganizationType.pharmacy, name: value.trimLeft().trimRight()));
+                                                onEditingComplete: (value) {
+                                                  BlocProvider.of<
+                                                      OrganizationBloc>(
+                                                    context,
+                                                  ).add(
+                                                    GetAllOrganizationsByType(
+                                                      type: OrganizationType
+                                                          .pharmacy,
+                                                      name: value
+                                                          .trimLeft()
+                                                          .trimRight(),
+                                                    ),
+                                                  );
                                                   context
-                                                    .read<OrganizationBloc>()
-                                                    .pharmacyNameFilter = value;
-
+                                                      .read<OrganizationBloc>()
+                                                      .pharmacyNameFilter = value;
                                                 },
                                                 onChange: (value) => context
-                                                  .read<OrganizationBloc>()
-                                                  .pharmacyNameFilter = value,
+                                                    .read<OrganizationBloc>()
+                                                    .pharmacyNameFilter = value,
                                               ),
                                             ],
                                           ),
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
                                             children: [
                                               TextButton.icon(
-                                                onPressed: (){
-                                                  MapsLauncher.launchAppCoordinates(
-                                                    position: _pharmacies.where((element) => element.position != null).map((e) => e.position!).toList(),
+                                                onPressed: () {
+                                                  MapsLauncher
+                                                      .launchAppCoordinates(
+                                                    position: _pharmacies
+                                                        .where(
+                                                          (element) =>
+                                                              element
+                                                                  .position !=
+                                                              null,
+                                                        )
+                                                        .map((e) => e.position!)
+                                                        .toList(),
                                                     context: context,
                                                   );
-                                                }, 
+                                                },
                                                 icon: const Icon(
                                                   Icons.map_outlined,
                                                   color: ConstantsV2.darkBlue,
                                                 ),
                                                 label: Text(
                                                   "Mapa",
-                                                  style: boldoSubTextMediumStyle.copyWith(
+                                                  style: boldoSubTextMediumStyle
+                                                      .copyWith(
                                                     color: ConstantsV2.blueDark,
                                                   ),
                                                 ),
@@ -209,18 +248,21 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
                                           const SizedBox(
                                             height: 16,
                                           ),
-                                          _pharmacies.isNotEmpty? listPharmacies(
-                                            pharmacies: _pharmacies,
-                                            context: context,
-                                          ) : organizationAvailableEmpty(),
+                                          _pharmacies.isNotEmpty
+                                              ? listPharmacies(
+                                                  pharmacies: _pharmacies,
+                                                  context: context,
+                                                )
+                                              : organizationAvailableEmpty(),
                                         ],
                                       ),
                                     ),
                                   );
-                              } else {
-                                return loadingStatus();
-                              }
-                            }),
+                                } else {
+                                  return loadingStatus();
+                                }
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -277,9 +319,11 @@ class _OrganizationsScreenState extends State<PharmaciesScreen> {
   }
 
   void getPharmacies({required BuildContext context}) {
-    BlocProvider.of<OrganizationBloc>(context).add(GetAllOrganizationsByType(
-      type: OrganizationType.pharmacy,
-    ));
+    BlocProvider.of<OrganizationBloc>(context).add(
+      GetAllOrganizationsByType(
+        type: OrganizationType.pharmacy,
+      ),
+    );
   }
 
   Widget pharmacyAvailable(Organization organization) {
