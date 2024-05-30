@@ -249,7 +249,7 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
               onTap: () async {
                 BlocProvider.of<DownloadPrescriptionsBloc>(context).add(
                   DownloadPrescriptions(
-                    listOfIds: [medicalRecord?.prescription?.first.encounterId],
+                    listOfIds: [encounter?.prescription?.first.encounterId],
                     context: context,
                   ),
                 );
@@ -327,15 +327,16 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         MedicationName(
-                          prescription: medicalRecord?.prescription?[i]?? Prescription(),
+                          prescription:
+                              encounter?.prescription?[i] ?? Prescription(),
                           spacing: 11,
                         ),
                         const SizedBox(height: 4),
                         Row(
                           children: [
                             Text(
-                              medicalRecord
-                                  ?.prescription?[i].instructions?? 'Sin instrucciones',
+                              encounter?.prescription?[i].instructions ??
+                                  'Sin instrucciones',
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 11,
@@ -360,7 +361,7 @@ class _PrescriptionScreenState extends State<PrescriptionRecordScreen> {
                     height: 1,
                   );
                 },
-                itemCount: medicalRecord?.prescription?.length?? 0,
+                itemCount: encounter?.prescription?.length ?? 0,
               ),
             ),
           ),
