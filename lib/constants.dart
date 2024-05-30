@@ -312,7 +312,9 @@ final boldoCustomActiveInputTextStyle = const TextStyle(
 );
 
 final boldoCustomInactiveInputTextStyle =
-    boldoCustomActiveInputTextStyle.copyWith(color: ConstantsV2.inactiveText);
+    boldoCustomActiveInputTextStyle.copyWith(
+  color: ConstantsV2.inactiveText.withOpacity(0.4),
+);
 
 final boldoActiveInputLabel = const TextStyle(
   fontWeight: FontWeight.w400,
@@ -322,7 +324,7 @@ final boldoActiveInputLabel = const TextStyle(
 
 final boldoInactiveInputLabel = boldoActiveInputLabel.copyWith(
   fontWeight: FontWeight.w400,
-  color: ConstantsV2.inactiveText,
+  color: ConstantsV2.inactiveText.withOpacity(0.4),
 );
 
 const BigButton = TextStyle(
@@ -585,7 +587,13 @@ ThemeData boldoTheme = ThemeData(
       elevation: 6,
       shadowColor: Colors.black,
       surfaceTintColor: ConstantsV2.grayLightest),
-  tabBarTheme: const TabBarTheme(dividerColor: Colors.transparent),
+  tabBarTheme: const TabBarTheme(
+      dividerColor: Colors.transparent,
+      overlayColor: MaterialStatePropertyAll(ConstantsV2.veryLightOrange)),
+  splashColor: ConstantsV2.orange.withOpacity(0.05), // Color de la tinta
+  highlightColor: ConstantsV2.veryLightOrange, // Color de resaltado
+  splashFactory: InkRipple
+      .splashFactory, // Tipo de efecto de la tinta (InkRipple es el predeterminado)
 );
 
 ButtonStyle elevatedButtonStyleSecondary = ButtonStyle(

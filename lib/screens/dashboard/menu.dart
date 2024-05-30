@@ -56,11 +56,13 @@ class _MenuScreenState extends State<MenuScreen> {
   ];
 
   final List<ItemMenu> appItems = [
+    /* 
+    //TODO: implement this item
     const ItemMenu(
       image: 'assets/icon/help-outline.svg',
       title: 'Centro de ayuda',
       route: null,
-    ),
+    ), */
     ItemMenu(
       image: 'assets/icon/share.svg',
       title: 'Compartir',
@@ -81,6 +83,10 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double gradientHeight = screenHeight * 0.18;
+    final double picturePadding = (screenHeight * 0.15) / 2;
     return BlocListener<UserLogoutBloc, UserLogoutState>(
       listener: (context, state) {
         if (state is UserLogoutFailed) {
@@ -102,17 +108,17 @@ class _MenuScreenState extends State<MenuScreen> {
             //const Background(text: "menu"),
             Container(
               width: double.infinity,
-              height: 122,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  // radius: MediaQuery.of(context).size.width / 180,
+              height: gradientHeight,
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  radius: screenWidth / 49,
                   colors: <Color>[
-                    ConstantsV2.patientAppBarColor300,
-                    ConstantsV2.patientAppBarColor200,
                     ConstantsV2.patientAppBarColor100,
+                    ConstantsV2.patientAppBarColor200,
+                    ConstantsV2.patientAppBarColor300,
                   ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+                  center: Alignment(1, screenWidth / 27.5),
+                  stops: [0.8, 0.85, 1.0],
                 ),
               ),
             ),
@@ -120,8 +126,8 @@ class _MenuScreenState extends State<MenuScreen> {
               child: Container(
                 child: Column(
                   children: [
-                    const SizedBox(
-                      height: 50,
+                    SizedBox(
+                      height: picturePadding,
                     ),
                     Center(
                       child: ImageViewTypeForm(
@@ -162,11 +168,13 @@ class _MenuScreenState extends State<MenuScreen> {
                                     'Cuenta',
                                     accountItems,
                                   ),
+                                  /* 
+                                  //TODO: implement this section
                                   _buildMenuSection(
                                     context,
                                     'Configuraciones',
                                     settingsItems,
-                                  ),
+                                  ), */
                                   _buildMenuSection(
                                     context,
                                     'Aplicación',
@@ -193,6 +201,8 @@ class _MenuScreenState extends State<MenuScreen> {
                                           SvgPicture.asset(
                                             'assets/icon/power-settings-new.svg',
                                             color: ConstantsV2.activeText,
+                                            width: 24,
+                                            height: 24,
                                           ),
                                           const SizedBox(
                                             width: 8,

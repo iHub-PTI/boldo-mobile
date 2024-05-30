@@ -1,12 +1,9 @@
-import 'package:boldo/utils/authenticate_user_helper.dart';
+import 'package:boldo/widgets/back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../widgets/wrapper.dart';
-
 import '../../constants.dart';
+import '../../widgets/wrapper.dart';
 
 class PreRegisterScreen extends StatefulWidget {
   const PreRegisterScreen({Key? key}) : super(key: key);
@@ -79,8 +76,8 @@ class _PreRegisterScreenState extends State<PreRegisterScreen> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: const Icon(
-                    Icons.chevron_left_rounded,
+                  icon: Icon(
+                    BackIcon.backArrow.icon,
                     size: 25,
                     color: Constants.extraColor400,
                   ),
@@ -121,14 +118,37 @@ class _PreRegisterScreenState extends State<PreRegisterScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: IntrinsicWidth(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/login');
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Continuar',
+              ),
+              const SizedBox(
+                width: 8,
+              ),
+              SvgPicture.asset(
+                'assets/icon/arrow-right.svg',
+                semanticsLabel: 'Start icon',
+              ),
+            ],
+          ),
+        ),
+      ),
+      /* floatingActionButton: FloatingActionButton.extended(
+
         onPressed: () {
           Navigator.pushNamed(context, '/login');
         },
         backgroundColor: ConstantsV2.orange,
         foregroundColor: ConstantsV2.primaryColor,
         label: Container(
-          child: const Row(
+          child: Row(
             children: [
               Text(
                 'continuar',
@@ -136,11 +156,14 @@ class _PreRegisterScreenState extends State<PreRegisterScreen> {
               SizedBox(
                 width: 8,
               ),
-              Icon(Icons.arrow_forward_ios_sharp),
+              SvgPicture.asset(
+                'assets/icon/arrow-right.svg',
+                semanticsLabel: 'Start icon',
+              ),
             ],
           ),
         ),
-      ),
+      ), */
     );
   }
 }

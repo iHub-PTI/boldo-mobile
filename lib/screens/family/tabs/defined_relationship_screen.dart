@@ -1,4 +1,5 @@
-import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart' as family_bloc;
+import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart'
+    as family_bloc;
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart';
 import 'package:boldo/models/Patient.dart';
 import 'package:boldo/models/Relationship.dart';
@@ -20,14 +21,15 @@ import '../../../main.dart';
 class DefinedRelationshipScreen extends StatefulWidget {
   final bool setLoggedOut;
 
-  DefinedRelationshipScreen({Key? key, this.setLoggedOut = false}) : super(key: key);
+  DefinedRelationshipScreen({Key? key, this.setLoggedOut = false})
+      : super(key: key);
 
   @override
-  _DefinedRelationshipScreenState createState() => _DefinedRelationshipScreenState();
+  _DefinedRelationshipScreenState createState() =>
+      _DefinedRelationshipScreenState();
 }
 
 class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
-
   Response? response;
   bool _dataLoading = true;
   Patient? dependent;
@@ -39,7 +41,6 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
   GlobalKey scaffoldKey = GlobalKey();
 
   Future _getFamiliesRelationship() async {
-
     //relationship =  relationTypes[0];
     //response = await dio.get("/profile/patient");
   }
@@ -70,34 +71,34 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-          children: [
-            const Background(text: "linkFamily"),
-            SafeArea(
-              child: BlocListener<PatientBloc, PatientState>(
-                listener: (context, state){
-                  setState(() {
-                    if(state is Failed){
-                      emitSnackBar(
-                          context: context,
-                          text: state.response,
-                          status: ActionStatus.Fail
-                      );
-                      _dataLoading = false;
-                    }
-                    if(state is Success){
-                    }
-                    if(state is RedirectNextScreen){
-                      Navigator.of(context).popUntil(ModalRoute.withName("/home"));
-                    }
-                    if(state is RedirectBackScreen){
-                      Navigator.pop(context);
-                    }
-                    if(state is Loading){
-                      _dataLoading = true;
-                    }
-                  });
-                },
-                child: BlocBuilder<PatientBloc, PatientState>(
+        children: [
+          const Background(text: "linkFamily"),
+          SafeArea(
+            child: BlocListener<PatientBloc, PatientState>(
+              listener: (context, state) {
+                setState(() {
+                  if (state is Failed) {
+                    emitSnackBar(
+                      context: context,
+                      text: state.response,
+                      status: ActionStatus.Fail,
+                    );
+                    _dataLoading = false;
+                  }
+                  if (state is Success) {}
+                  if (state is RedirectNextScreen) {
+                    Navigator.of(context)
+                        .popUntil(ModalRoute.withName("/home"));
+                  }
+                  if (state is RedirectBackScreen) {
+                    Navigator.pop(context);
+                  }
+                  if (state is Loading) {
+                    _dataLoading = true;
+                  }
+                });
+              },
+              child: BlocBuilder<PatientBloc, PatientState>(
                 builder: (context, state) {
                   return Container(
                     child: Column(
@@ -107,57 +108,87 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
-                                  child :Column(
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            ImageViewTypeForm(height: 100, width: 100, border: true, url: dependent?.photoUrl, gender: dependent?.gender,),
-                                          ],
+                                        ImageViewTypeForm(
+                                          height: 100,
+                                          width: 100,
+                                          border: true,
+                                          url: dependent?.photoUrl,
+                                          gender: dependent?.gender,
                                         ),
-                                        const SizedBox(height: 10,),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              !_dataLoading ? user.givenName! + " " + user.familyName! : '',
-                                              style: boldoTitleRegularTextStyle,
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 40,),
-                                      ]
-                                  )
-                              ),
-                              _dataLoading? Container() :Container(
-                                alignment: Alignment.topLeft,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: DropdownButton<Relationship>(
-                                    value: relationship,
-                                    hint: Text(
-                                      "¿Cuál es su relación con esta persona?",
-                                      style: boldoSubTextMediumStyle.copyWith(
-                                          color: ConstantsV2.activeText
-                                      ),
+                                      ],
                                     ),
-                                    dropdownColor: ConstantsV2.lightGrey.withOpacity(0.5),
-                                    style: boldoSubTextMediumStyle.copyWith(color: Colors.black),
-                                    onChanged: (value) => setState(() {
-                                      relationship = value!;
-                                      user.relationshipCode = relationship!.code;
-                                      selected = true;
-                                    }),
-                                    items: relationTypes
-                                        .map((relationship) => DropdownMenuItem<Relationship>(
-                                      child: Text(relationship.displaySpan!),
-                                      value: relationship,
-                                    )).toList(),
-                                    isExpanded: true,
-
-                                  ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          !_dataLoading
+                                              ? user.givenName! +
+                                                  " " +
+                                                  user.familyName!
+                                              : '',
+                                          style: boldoTitleRegularTextStyle,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 40,
+                                    ),
+                                  ],
                                 ),
                               ),
+                              _dataLoading
+                                  ? Container()
+                                  : Container(
+                                      alignment: Alignment.topLeft,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(15.0),
+                                        child: DropdownButton<Relationship>(
+                                          value: relationship,
+                                          hint: Text(
+                                            "¿Cuál es su relación con esta persona?",
+                                            style: boldoSubTextMediumStyle
+                                                .copyWith(
+                                              color: ConstantsV2.activeText,
+                                            ),
+                                          ),
+                                          dropdownColor: ConstantsV2.lightGrey
+                                              .withOpacity(0.5),
+                                          style:
+                                              boldoSubTextMediumStyle.copyWith(
+                                            color: Colors.black,
+                                          ),
+                                          onChanged: (value) => setState(() {
+                                            relationship = value!;
+                                            user.relationshipCode =
+                                                relationship!.code;
+                                            selected = true;
+                                          }),
+                                          items: relationTypes
+                                              .map(
+                                                (relationship) =>
+                                                    DropdownMenuItem<
+                                                        Relationship>(
+                                                  child: Text(
+                                                    relationship.displaySpan!,
+                                                  ),
+                                                  value: relationship,
+                                                ),
+                                              )
+                                              .toList(),
+                                          isExpanded: true,
+                                        ),
+                                      ),
+                                    ),
                             ],
                           ),
                         ),
@@ -165,61 +196,68 @@ class _DefinedRelationshipScreenState extends State<DefinedRelationshipScreen> {
                           child: Align(
                             alignment: Alignment.bottomCenter,
                             child: Container(
-                                padding: EdgeInsets.all(16),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      child: OutlinedButton(
-                                        onPressed: () {
-                                          user = User();
-                                          Navigator.of(context)
-                                              .popUntil(ModalRoute.withName("/methods"));
-                                        },
+                              padding: EdgeInsets.all(16),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    child: OutlinedButton(
+                                      onPressed: () {
+                                        user = User();
+                                        Navigator.of(context).popUntil(
+                                          ModalRoute.withName("/methods"),
+                                        );
+                                      },
+                                      child: const Text(
+                                        "Cancelar",
+                                      ),
+                                    ),
+                                  ),
+                                  AnimatedOpacity(
+                                    opacity: selected ? 1 : 0,
+                                    duration: const Duration(milliseconds: 300),
+                                    child: Container(
+                                      child: ElevatedButton(
+                                        onPressed: selected
+                                            ? () async {
+                                                setState(() {
+                                                  user.relationshipCode =
+                                                      relationship!.code;
+                                                });
+                                                BlocProvider.of<
+                                                        family_bloc
+                                                        .FamilyBloc>(context)
+                                                    .add(
+                                                  family_bloc.LinkFamily(),
+                                                );
+                                              }
+                                            : () {},
                                         child: const Text(
-                                          "cancelar",
+                                          "Vincular",
                                         ),
                                       ),
                                     ),
-                                    AnimatedOpacity(
-                                      opacity: selected ? 1 : 0,
-                                      duration: const Duration(milliseconds: 300),
-                                      child: Container(
-                                        child: ElevatedButton(
-                                          onPressed: selected ? () async {
-                                            setState(() {
-                                              user.relationshipCode = relationship!.code;
-                                            });
-                                            BlocProvider.of<family_bloc.FamilyBloc>(context).add(family_bloc.LinkFamily());
-                                          } : (){},
-                                          child: const Text(
-                                            "vincular",
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ],
                     ),
                   );
-                }),
+                },
               ),
             ),
-            if(_dataLoading)
-              Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                      child: LoadingHelper()
-                  )
-              )
-          ]
+          ),
+          if (_dataLoading)
+            Align(
+              alignment: Alignment.center,
+              child: Container(child: LoadingHelper()),
+            ),
+        ],
       ),
     );
   }
-
-
 }

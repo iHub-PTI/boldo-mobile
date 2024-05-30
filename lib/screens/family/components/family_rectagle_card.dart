@@ -223,7 +223,7 @@ class _FamilyRectangleCardState extends State<FamilyRectangleCard> {
         content: const Text('¿Desea desvincular al familiar?'),
         actions: <Widget>[
           TextButton(
-            onPressed: () => Navigator.pop(context, 'atrás'),
+            onPressed: () => Navigator.pop(context, 'Atrás'),
             child: const Text('Atrás'),
           ),
           TextButton(

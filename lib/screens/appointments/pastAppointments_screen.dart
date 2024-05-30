@@ -218,9 +218,9 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
         footer: CustomFooter(
           height: 140,
           builder: (BuildContext context, LoadStatus? mode) {
-            Widget body = Row(
+            Widget body = const Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 /*Text(
             "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
             style: const TextStyle(
@@ -286,9 +286,9 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
         footer: CustomFooter(
           height: 140,
           builder: (BuildContext context, LoadStatus? mode) {
-            Widget body = Row(
+            Widget body = const Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 /*Text(
             "Mostrando datos hasta ${DateFormat('dd MMMM yyyy').format(dateOffset)}",
             style: const TextStyle(
@@ -314,19 +314,20 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton.icon(
-                          onPressed: () async {
-                            await _filterBox(context);
-                          },
-                          icon: SvgPicture.asset(
-                            'assets/icon/filter.svg',
+                        onPressed: () async {
+                          await _filterBox(context);
+                        },
+                        icon: SvgPicture.asset(
+                          'assets/icon/filter.svg',
+                          color: ConstantsV2.blueDark,
+                        ),
+                        label: Text(
+                          'Filtrar',
+                          style: label.copyWith(
                             color: ConstantsV2.blueDark,
                           ),
-                          label: Text(
-                            'Filtrar',
-                            style: label.copyWith(
-                              color: ConstantsV2.blueDark,
-                            ),
-                          )),
+                        ),
+                      ),
                     ],
                   ),
                   if (allAppointments.isNotEmpty)
@@ -345,7 +346,7 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                       titleBottom: 'Aún no tenés consultas',
                       textBottom:
                           'A medida en que uses la aplicación podrás ir viendo tus consultas',
-                    )
+                    ),
                 ],
               );
             } else if (state is Loading) {
@@ -563,13 +564,19 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                                                 ),
                                                 builder: (context, child) {
                                                   return Theme(
-                                                    data: Theme.of(context)
+                                                    data: ThemeData.light()
                                                         .copyWith(
                                                       colorScheme:
                                                           const ColorScheme
                                                               .light(
-                                                        primary:
-                                                            ConstantsV2.orange,
+                                                        primary: ConstantsV2
+                                                            .primaryRegular,
+                                                      ),
+                                                      buttonTheme:
+                                                          const ButtonThemeData(
+                                                        textTheme:
+                                                            ButtonTextTheme
+                                                                .primary,
                                                       ),
                                                     ),
                                                     child: child!,
@@ -646,13 +653,19 @@ class _PastAppointmentsScreenState extends State<PastAppointmentsScreen>
                                                 ),
                                                 builder: (context, child) {
                                                   return Theme(
-                                                    data: Theme.of(context)
+                                                    data: ThemeData.light()
                                                         .copyWith(
                                                       colorScheme:
                                                           const ColorScheme
                                                               .light(
                                                         primary:
                                                             ConstantsV2.orange,
+                                                      ),
+                                                      buttonTheme:
+                                                          const ButtonThemeData(
+                                                        textTheme:
+                                                            ButtonTextTheme
+                                                                .primary,
                                                       ),
                                                     ),
                                                     child: child!,

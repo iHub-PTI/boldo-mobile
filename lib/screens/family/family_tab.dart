@@ -12,7 +12,6 @@ import '../../main.dart';
 import '../../utils/loading_helper.dart';
 
 class FamilyScreen extends StatefulWidget {
-
   FamilyScreen({Key? key}) : super(key: key);
 
   @override
@@ -35,124 +34,140 @@ class _FamilyScreenState extends State<FamilyScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        actions: [],
+        actions: const [],
         leadingWidth: 200,
         leading: Padding(
           padding: const EdgeInsets.only(left: 16.0),
           child:
-          SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+              SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
         ),
       ),
       body: BlocListener<FamilyBloc, FamilyState>(
-        listener: (context, state){
-          if(state is Success) {
+        listener: (context, state) {
+          if (state is Success) {
             setState(() {
               _loading = false;
             });
-          }else if(state is Failed){
+          } else if (state is Failed) {
             emitSnackBar(
-                context: context,
-                text: state.response,
-                status: ActionStatus.Fail
+              context: context,
+              text: state.response,
+              status: ActionStatus.Fail,
             );
             _loading = false;
-          }else if(state is Loading){
+          } else if (state is Loading) {
             setState(() {
               _loading = true;
             });
-          }else if(state is DependentEliminated){
+          } else if (state is DependentEliminated) {
             emitSnackBar(
-                context: context,
-                text: "Familiar desvinculado",
-                status: ActionStatus.Success
+              context: context,
+              text: "Familiar desvinculado",
+              status: ActionStatus.Success,
             );
           }
-      },
-      child: BlocBuilder<FamilyBloc, FamilyState>(
-        builder: (context, state) {
-          return Stack(children: [
-            const Background(text: "family"),
-            SafeArea(
-              child: Container(
-                padding: const EdgeInsets.only(top: 16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(right: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          BackButtonLabel(
-                            labelText: 'Mi Familia',
+        },
+        child: BlocBuilder<FamilyBloc, FamilyState>(
+          builder: (context, state) {
+            return Stack(
+              children: [
+                const Background(text: "family"),
+                SafeArea(
+                  child: Container(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(right: 20, bottom: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              BackButtonLabel(
+                                labelText: 'Mi Familia',
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              children: [
-                                Container(
-                                    child: Column(children: [
-                                      const FamilyRectangleCard(isDependent: false)
-                                    ])),
-                                const SizedBox(height: 16,),
-                                Flexible(
-                                  child: Container(
-                                    alignment: Alignment.topLeft,
-                                    child: families.length > 0
-                                        ? ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: families.length,
-                                      padding: const EdgeInsets.symmetric(vertical: 16),
-                                      scrollDirection: Axis.vertical,
-                                      itemBuilder: _buildItem,
-                                    )
-                                        : const EmptyStateV2(
-                                      picture: "Helping old man 1.svg",
-                                      textBottom:
-                                      "Aún no agregaste ningún perfil para gestionar",
+                        ),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      child: const Column(
+                                        children: [
+                                          FamilyRectangleCard(
+                                            isDependent: false,
+                                          ),
+                                        ],
+                                      ),
                                     ),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
+                                    Flexible(
+                                      child: Container(
+                                        alignment: Alignment.topLeft,
+                                        child: families.length > 0
+                                            ? ListView.builder(
+                                                shrinkWrap: true,
+                                                itemCount: families.length,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  vertical: 16,
+                                                ),
+                                                scrollDirection: Axis.vertical,
+                                                itemBuilder: _buildItem,
+                                              )
+                                            : const EmptyStateV2(
+                                                picture:
+                                                    "Helping old man 1.svg",
+                                                textBottom:
+                                                    "Aún no agregaste ningún perfil para gestionar",
+                                              ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                padding: const EdgeInsets.only(bottom: 16),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, '/methods');
+                                  },
+                                  child: Text(
+                                    families.length > 0
+                                        ? "Nuevo miembro"
+                                        : "Agregar",
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.9,
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.pushNamed(context, '/methods');
-                              },
-                              child: Text(families.length > 0
-                                  ? "nuevo miembro"
-                                  : "agregar"),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            if(_loading)
-              Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                      child: const LoadingHelper()
-                  )
-              ),
-          ]);
-        }),
+                if (_loading)
+                  Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      child: const LoadingHelper(),
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

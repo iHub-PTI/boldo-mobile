@@ -1,5 +1,7 @@
-import 'package:boldo/blocs/download_studies_orders_bloc/download_studies_orders_bloc.dart' as download_studies_orders_bloc;
-import 'package:boldo/blocs/studies_orders_bloc/studiesOrders_bloc.dart' as studies_orders_bloc;
+import 'package:boldo/blocs/download_studies_orders_bloc/download_studies_orders_bloc.dart'
+    as download_studies_orders_bloc;
+import 'package:boldo/blocs/studies_orders_bloc/studiesOrders_bloc.dart'
+    as studies_orders_bloc;
 import 'package:boldo/main.dart';
 import 'package:boldo/models/StudyOrder.dart';
 import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_stateV2.dart';
@@ -31,7 +33,8 @@ class MyStudies extends StatefulWidget {
   State<MyStudies> createState() => _MyStudiesState();
 }
 
-class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMixin {
+class _MyStudiesState extends State<MyStudies>
+    with SingleTickerProviderStateMixin {
   List<DiagnosticReport> diagnosticReport = [];
   ServiceRequest? serviceRequest;
 
@@ -39,7 +42,6 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
 
   @override
   void initState() {
-
     _tabStudiesController = TabController(
       length: 2,
       vsync: this,
@@ -50,7 +52,7 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
   }
 
   @override
-  void dispose(){
+  void dispose() {
     _tabStudiesController.dispose();
     super.dispose();
   }
@@ -72,8 +74,8 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
         child: Container(
           child: BlocProvider(
             create: (BuildContext context) =>
-            studies_orders_bloc.StudiesOrdersBloc()
-              ..add(studies_orders_bloc.GetStudiesOrders()),
+                studies_orders_bloc.StudiesOrdersBloc()
+                  ..add(studies_orders_bloc.GetStudiesOrders()),
             child: BlocListener<MyStudiesBloc, MyStudiesState>(
               listener: (context, state) {
                 if (state is DiagnosticLoaded) {
@@ -87,9 +89,9 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
 
                       try {
                         DateTime dateA =
-                        DateTime.parse(a.effectiveDate as String);
+                            DateTime.parse(a.effectiveDate as String);
                         DateTime dateB =
-                        DateTime.parse(b.effectiveDate as String);
+                            DateTime.parse(b.effectiveDate as String);
 
                         return dateB.compareTo(dateA);
                       } on FormatException catch (e) {
@@ -106,8 +108,7 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
                   emitSnackBar(
                       context: context,
                       text: 'Falló la obtención de estudios',
-                      status: ActionStatus.Fail
-                  );
+                      status: ActionStatus.Fail);
                 }
 
                 if (state is ServiceRequestLoaded) {
@@ -117,7 +118,9 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
                       MaterialPageRoute(
                           builder: (BuildContext context) =>
                               AttachStudyByOrderScreen(
-                                studyOrder: serviceRequest == null ? ServiceRequest() : serviceRequest!,
+                                studyOrder: serviceRequest == null
+                                    ? ServiceRequest()
+                                    : serviceRequest!,
                                 doctor: serviceRequest?.doctor,
                               )));
                 }
@@ -158,7 +161,9 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
           ),
         ),
       ),
-      floatingActionButton: NewStudyButton(listener: _tabStudiesController,),
+      floatingActionButton: NewStudyButton(
+        listener: _tabStudiesController,
+      ),
     );
   }
 
@@ -173,22 +178,20 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
     );
   }
 
-  Widget tab(){
+  Widget tab() {
     return Container(
       padding: const EdgeInsets.all(12),
       child: Stack(
         children: [
           Center(
               child: SvgPicture.asset(
-                'assets/decorations/line_separator.svg',
-              )
-          ),
+            'assets/decorations/line_separator.svg',
+          )),
           TabBar(
             labelStyle: boldoTabHeaderSelectedTextStyle,
             unselectedLabelStyle: boldoTabHeaderUnselectedTextStyle,
             indicatorColor: Colors.transparent,
-            unselectedLabelColor:
-            const Color.fromRGBO(119, 119, 119, 1),
+            unselectedLabelColor: const Color.fromRGBO(119, 119, 119, 1),
             labelColor: ConstantsV2.activeText,
             controller: _tabStudiesController,
             tabs: [
@@ -205,7 +208,7 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
     );
   }
 
-  Widget _tabs(){
+  Widget _tabs() {
     return TabBarView(
       physics: const ClampingScrollPhysics(),
       controller: _tabStudiesController,
@@ -216,16 +219,17 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
     );
   }
 
-  Widget studyResults(){
+  Widget studyResults() {
     return BlocBuilder<MyStudiesBloc, MyStudiesState>(
       builder: (BuildContext context, state) {
-        if(state is Loading){
+        if (state is Loading) {
           return loadingStatus();
-        }else{
-          if(diagnosticReport.isNotEmpty)
+        } else {
+          if (diagnosticReport.isNotEmpty)
             return ListView.separated(
               physics: const ClampingScrollPhysics(),
-              separatorBuilder: (BuildContext context, int index) => const Divider(
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(
                 color: Colors.transparent,
                 height: 10,
               ),
@@ -239,46 +243,50 @@ class _MyStudiesState extends State<MyStudies> with SingleTickerProviderStateMix
               picture: "empty_studies.svg",
               titleBottom: "Aún no tenés estudios",
               textBottom:
-              "A medida en que uses la aplicación podrás ir viendo tus estudios",
+                  "A medida en que uses la aplicación podrás ir viendo tus estudios",
             );
         }
       },
     );
   }
 
-  Widget studiesOrders(){
-    return BlocBuilder<studies_orders_bloc.StudiesOrdersBloc, studies_orders_bloc.StudiesOrdersState>(
-      builder: (BuildContext context, state){
-        if(state is studies_orders_bloc.StudiesOrdersLoaded){
-          return state.studiesOrders.isNotEmpty ? SelectableWidgets<ServiceRequest, download_studies_orders_bloc.Loading>(
-            downloadEvent: (ids){
-              return download_studies_orders_bloc.DownloadStudiesOrders(
-                listOfIds: ids,
-                context: context,
+  Widget studiesOrders() {
+    return BlocBuilder<studies_orders_bloc.StudiesOrdersBloc,
+            studies_orders_bloc.StudiesOrdersState>(
+        builder: (BuildContext context, state) {
+      if (state is studies_orders_bloc.StudiesOrdersLoaded) {
+        return state.studiesOrders.isNotEmpty
+            ? SelectableWidgets<ServiceRequest,
+                download_studies_orders_bloc.Loading>(
+                downloadEvent: (ids) {
+                  return download_studies_orders_bloc.DownloadStudiesOrders(
+                    listOfIds: ids,
+                    context: context,
+                  );
+                },
+                bloc: download_studies_orders_bloc.DownloadStudiesOrdersBloc(),
+                items: (state.studiesOrders ?? []).map((e) {
+                  return SelectableWidgetItem<ServiceRequest>(
+                    child: ServiceRequestCard(
+                      serviceRequest: e,
+                    ),
+                    item: e,
+                    id: e.id,
+                  );
+                }).toList(),
+              )
+            : const EmptyStateV2(
+                picture: "empty_studies.svg",
+                titleBottom: "Aún no tenés órdenes",
+                textBottom:
+                    "Aquí aparecerán las órdenes de estudios solicitadas",
               );
-            },
-            bloc: download_studies_orders_bloc.DownloadStudiesOrdersBloc(),
-            items: (state.studiesOrders?? []).map((e) {
-              return SelectableWidgetItem<ServiceRequest>(
-                child: ServiceRequestCard(
-                  serviceRequest: e,
-                ),
-                item: e,
-                id: e.id,
-              );
-            }).toList(),
-          ): const EmptyStateV2(
-            picture: "empty_studies.svg",
-            titleBottom: "Aún no tenés órdenes",
-            textBottom:
-            "Aquí aparecerán las órdenes de estudios solicitadas",
-          );
-        } else if(state is studies_orders_bloc.LoadingOrders) {
-          return loadingStatus();
-        } else {
-          return Container();
-        }
-      });
+      } else if (state is studies_orders_bloc.LoadingOrders) {
+        return loadingStatus();
+      } else {
+        return Container();
+      }
+    });
   }
 
   Widget showStudy(BuildContext context, int index) {

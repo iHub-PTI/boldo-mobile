@@ -1,7 +1,6 @@
 import 'package:boldo/screens/pre_register_notify/pre_register_screen.dart';
 import 'package:boldo/widgets/background.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../constants.dart';
@@ -40,31 +39,31 @@ class HeroScreenV2 extends StatelessWidget {
       title: 'Estudios',
       description: '',
       secondaryText: '',
-    )
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration( // Background linear gradient
+            decoration: const BoxDecoration(
+              // Background linear gradient
               gradient: LinearGradient(
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
-                colors: <Color> [
+                colors: <Color>[
                   ConstantsV2.primaryColor100,
                   ConstantsV2.primaryColor200,
                   ConstantsV2.primaryColor300,
                 ],
-                stops: <double> [
+                stops: <double>[
                   ConstantsV2.primaryStop100,
                   ConstantsV2.primaryStop200,
                   ConstantsV2.primaryStop300,
-                ]
-              )
+                ],
+              ),
             ),
           ),
           Opacity(
@@ -72,8 +71,8 @@ class HeroScreenV2 extends StatelessWidget {
             child: Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage('assets/images/hero_background.png')
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/images/hero_background.png'),
                 ),
               ),
             ),
@@ -84,122 +83,108 @@ class HeroScreenV2 extends StatelessWidget {
               children: [
                 Expanded(
                   child: Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container (
-                            margin: const EdgeInsets.all(16.0),
-                            child: Align(
-                                child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      SvgPicture.asset('assets/icon/logo_text.svg', height: MediaQuery.of(context).size.height*0.15,),
-                                      const SizedBox(width: 16),
-                                      const Expanded(
-                                        child: Text(
-                                          "Tu ecosistema integral de servicios digitales de salud",
-                                          textAlign: TextAlign.end,
-                                          style: TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.normal,
-                                            fontFamily: 'Montserrat',
-                                            color: ConstantsV2.lightAndClear,
-                                          ),
-                                        ),
-                                      )
-                                    ]
-                                )
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                              height: MediaQuery.of(context).size.height*.50,
-                              child: ListView.builder(
-                                physics: const ClampingScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: items.length*2+1,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: _buildCarousel,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(right: 16, bottom: 16),
-                            alignment: Alignment.bottomRight,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                primary: ConstantsV2.buttonPrimaryColor100,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(100),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.all(16),
+                          child: Align(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/icon/logo_text.svg',
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.15,
                                 ),
-                              ),
+                                const SizedBox(width: 16),
+                                const Expanded(
+                                  child: Text(
+                                    "Tu ecosistema integral de servicios digitales de salud",
+                                    textAlign: TextAlign.end,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                      fontStyle: FontStyle.normal,
+                                      fontFamily: 'Montserrat',
+                                      color: ConstantsV2.lightAndClear,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Align(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * .50,
+                            child: ListView.builder(
+                              physics: const ClampingScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: items.length * 2 + 1,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: _buildCarousel,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.all(16),
+                          alignment: Alignment.bottomRight,
+                          child: IntrinsicWidth(
+                            child: ElevatedButton(
                               onPressed: () async {
-                                /*Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const SignUpPhoneInfo()),
-                      );*/
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const PreRegisterScreen()),
+                                    builder: (context) =>
+                                        const PreRegisterScreen(),
+                                  ),
                                 );
                               },
-                              child: Container(
-                                  constraints: const BoxConstraints(maxWidth: 142, maxHeight: 48),
-                                  child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const Text(
-                                          "comenzar",
-                                          style: TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.normal,
-                                            fontFamily: 'Montserrat',
-                                            color: ConstantsV2.primaryColor,
-                                          ),
-                                        ),
-                                        const Padding(padding: EdgeInsets.only(left: 10.0)),
-                                        SvgPicture.asset(
-                                          'assets/icon/arrow-right.svg',
-                                          semanticsLabel: 'Start icon',
-                                        ),
-                                      ]
-                                  )
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    'Comenzar',
+                                  ),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  SvgPicture.asset(
+                                    'assets/icon/arrow-right.svg',
+                                    semanticsLabel: 'Start icon',
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                  )
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ]
+              ],
             ),
-          )
-        ]
-      )
-
+          ),
+        ],
+      ),
     );
   }
+
   final pageIndexNotifier = ValueNotifier<int>(0);
 
   final pageController = PageController(viewportFraction: 1.1);
 
-
-  Widget _buildCarousel(BuildContext context, int carouselIndex){
-    if ( carouselIndex % 2 == 0 ) // Padding between Cards
-      return const Padding(padding: EdgeInsets.only(left: 16.0));
+  Widget _buildCarousel(BuildContext context, int carouselIndex) {
+    if (carouselIndex % 2 == 0) // Padding between Cards
+      return const Padding(padding: EdgeInsets.only(left: 16));
     return InkWell(
-      child: CustomCardAnimated(carouselSlide: items[(carouselIndex-1)~/2])
+      child: CustomCardAnimated(carouselSlide: items[(carouselIndex - 1) ~/ 2]),
     );
   }
-
 }
 
 class CarouselSlide extends StatelessWidget {
@@ -232,7 +217,6 @@ class CarouselSlide extends StatelessWidget {
 /// a [CarouselSlide] with image and text to use the image as background an text
 /// as description.
 class CustomCardAnimated extends StatefulWidget {
-
   final CarouselSlide? carouselSlide;
 
   const CustomCardAnimated({
@@ -241,10 +225,12 @@ class CustomCardAnimated extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CustomCardAnimated> createState() => _CustomCardAnimatedState(carouselSlide: carouselSlide);
+  State<CustomCardAnimated> createState() =>
+      _CustomCardAnimatedState(carouselSlide: carouselSlide);
 }
 
-class _CustomCardAnimatedState extends State<CustomCardAnimated> with SingleTickerProviderStateMixin {
+class _CustomCardAnimatedState extends State<CustomCardAnimated>
+    with SingleTickerProviderStateMixin {
   // colors and stops that define a visual state of the card
   Color? color100;
   Color? color200;
@@ -258,9 +244,7 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated> with SingleTick
   // text and image
   CarouselSlide? carouselSlide;
 
-  _CustomCardAnimatedState({
-    required this.carouselSlide
-  });
+  _CustomCardAnimatedState({required this.carouselSlide});
 
   // controller to animate background
   late AnimationController _colorController;
@@ -271,8 +255,8 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated> with SingleTick
     textAppear = false;
     showInfoPlayer(animate!);
     _colorController = AnimationController(
-        duration: const Duration(milliseconds: 500),
-        vsync: this
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
     );
     super.initState();
   }
@@ -311,14 +295,14 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated> with SingleTick
       ),
       child: InkWell(
         onTap: () {
-          if(!(animate!)) {
+          if (!(animate!)) {
             //init animation
             _colorController.forward();
             setState(() {
               animate = true;
               showInfoPlayer(animate!);
             });
-          }else {
+          } else {
             //init animation
             _colorController.reverse();
             setState(() {
@@ -328,7 +312,7 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated> with SingleTick
           }
         },
         child: AspectRatio(
-          aspectRatio: 3/5,
+          aspectRatio: 3 / 5,
           child: Container(
             child: Stack(
               children: [
@@ -336,8 +320,8 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated> with SingleTick
                 Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: AssetImage(carouselSlide!.image)
+                      fit: BoxFit.cover,
+                      image: AssetImage(carouselSlide!.image),
                     ),
                   ),
                 ),
@@ -365,92 +349,97 @@ class _CustomCardAnimatedState extends State<CustomCardAnimated> with SingleTick
 
                 // Container used for group text info
                 Container(
-                    margin: const EdgeInsets.only(left:16, right: 16, top: 16, bottom: 16),
-                    child: Stack(
-                        children: [
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Visibility(
-                              visible: !(textAppear?? true),
-                              child: AnimatedOpacity(
-                                opacity: textAppear! ? 0 : 1,
-                                duration: Duration(milliseconds: textAppear! ? 200 : 200),
-                                child:
-                                Text(
-                                  carouselSlide!.title,
-                                  style: const TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.normal,
-                                    fontStyle: FontStyle.normal,
-                                    fontFamily: 'Montserrat',
-                                    color: ConstantsV2.lightAndClear,
-                                  ),
-                                ),
+                  margin: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 16,
+                    bottom: 16,
+                  ),
+                  child: Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Visibility(
+                          visible: !(textAppear ?? true),
+                          child: AnimatedOpacity(
+                            opacity: textAppear! ? 0 : 1,
+                            duration: Duration(
+                              milliseconds: textAppear! ? 200 : 200,
+                            ),
+                            child: Text(
+                              carouselSlide!.title,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                                fontStyle: FontStyle.normal,
+                                fontFamily: 'Montserrat',
+                                color: ConstantsV2.lightAndClear,
                               ),
                             ),
                           ),
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            child: AnimatedOpacity(
-                              opacity: textAppear! ? 1 : 0,
-                              duration: Duration(milliseconds: textAppear! ? 400 : 100),
-                              curve: Curves.easeOut,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    carouselSlide!.title,
+                        ),
+                      ),
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        child: AnimatedOpacity(
+                          opacity: textAppear! ? 1 : 0,
+                          duration:
+                              Duration(milliseconds: textAppear! ? 400 : 100),
+                          curve: Curves.easeOut,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                carouselSlide!.title,
+                                style: boldoCardSubtitleTextStyle.copyWith(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Flexible(
+                                child: SingleChildScrollView(
+                                  physics: const BouncingScrollPhysics(),
+                                  child: Text(
+                                    carouselSlide!.description,
                                     style: boldoCardSubtitleTextStyle.copyWith(
                                       color: Colors.white,
                                     ),
                                   ),
-                                  Flexible(
-                                    child: SingleChildScrollView(
-                                      physics: const BouncingScrollPhysics(),
-                                      child: Text(
-                                        carouselSlide!.description,
-                                        style: boldoCardSubtitleTextStyle.copyWith(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  // Expanded(
-                                  //   child: ElevatedButton(
-                                  //     style: ElevatedButton.styleFrom(
-                                  //       elevation: 0.0,
-                                  //       primary: Constants.primaryColor500.withOpacity(0),
-                                  //       shape: RoundedRectangleBorder(
-                                  //         borderRadius: BorderRadius.circular(6),
-                                  //       ),
-                                  //     ),
-                                  //     onPressed: () async {
-                                  //
-                                  //     },
-                                  //     child: Text(
-                                  //       carouselSlide!.secondaryText,
-                                  //       style: const TextStyle(
-                                  //         fontSize: 16.0,
-                                  //         fontWeight: FontWeight.normal,
-                                  //         fontStyle: FontStyle.normal,
-                                  //         fontFamily: 'Montserrat',
-                                  //         color: Color(0xffF5F5F5),
-                                  //       ),
-                                  //     ),
-                                  //   ),
-                                  // ),
-                                ],
+                                ),
                               ),
-                            ),
+                              // Expanded(
+                              //   child: ElevatedButton(
+                              //     style: ElevatedButton.styleFrom(
+                              //       elevation: 0.0,
+                              //       primary: Constants.primaryColor500.withOpacity(0),
+                              //       shape: RoundedRectangleBorder(
+                              //         borderRadius: BorderRadius.circular(6),
+                              //       ),
+                              //     ),
+                              //     onPressed: () async {
+                              //
+                              //     },
+                              //     child: Text(
+                              //       carouselSlide!.secondaryText,
+                              //       style: const TextStyle(
+                              //         fontSize: 16.0,
+                              //         fontWeight: FontWeight.normal,
+                              //         fontStyle: FontStyle.normal,
+                              //         fontFamily: 'Montserrat',
+                              //         color: Color(0xffF5F5F5),
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                            ],
                           ),
-
-                        ]
-                    )
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-
               ],
             ),
-          )
+          ),
         ),
       ),
     );

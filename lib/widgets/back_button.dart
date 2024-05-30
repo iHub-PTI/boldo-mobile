@@ -24,7 +24,6 @@ enum BackIcon {
 }
 
 class BackButtonLabel<T> extends StatelessWidget {
-
   /// Back Button to pop the context and return [result] to previous page,
   /// if the Widget icon is defined, this will override and unused [iconColor],
   /// [iconSize] and [iconType].
@@ -47,7 +46,7 @@ class BackButtonLabel<T> extends StatelessWidget {
     this.result,
     this.labelText,
     this.labelWidget,
-    this.padding = const EdgeInsets.only(left: 16),
+    this.padding = const EdgeInsets.all(8),
     this.gapSpace = 16,
     this.callback,
     this.iconColor,
@@ -56,7 +55,6 @@ class BackButtonLabel<T> extends StatelessWidget {
     this.icon,
     this.reversed = false,
   }) : super(key: key);
-
 
   final T? result;
 
@@ -73,48 +71,54 @@ class BackButtonLabel<T> extends StatelessWidget {
   final Color? iconColor;
   final BackIcon iconType;
 
-  Widget? icon ;
+  Widget? icon;
   final double? iconSize;
 
   final bool reversed;
 
   @override
   Widget build(BuildContext context) {
+    icon = icon ??
+        Icon(
+          iconType.icon,
+          color: iconColor ?? iconType.iconColor,
+          size: iconSize ?? iconType.iconSize,
+        );
 
-    icon = icon?? Icon(
-      iconType.icon,
-      color: iconColor?? iconType.iconColor,
-      size: iconSize?? iconType.iconSize,
-    );
-
-    List<Widget> children =[
+    List<Widget> children = [
       icon!,
-      if(labelWidget!= null || labelText!= null)
-        SizedBox(width: gapSpace,),
-      Flexible(
-        child: labelWidget?? Text(
-          labelText?? '',
-          style: boldoTitleBlackTextStyle.copyWith(color: ConstantsV2.activeText),
+      if (labelWidget != null || labelText != null)
+        SizedBox(
+          width: gapSpace,
         ),
+      Flexible(
+        child: labelWidget ??
+            Text(
+              labelText ?? '',
+              style: boldoTitleBlackTextStyle.copyWith(
+                color: ConstantsV2.activeText,
+              ),
+            ),
       ),
     ];
 
     return InkWell(
+      borderRadius: BorderRadius.circular(100),
       onTap: () async {
-        if(callback != null) {
+        if (callback != null) {
           await callback?.call();
-        }else {
+        } else {
           Navigator.pop(context, result);
         }
       },
       child: Container(
         padding: padding,
+        margin: const EdgeInsets.symmetric(horizontal: 12),
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          children: reversed? children.reversed.toList(): children,
+          children: reversed ? children.reversed.toList() : children,
         ),
       ),
     );
   }
-
 }

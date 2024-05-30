@@ -38,6 +38,8 @@ class ItemMenu extends StatelessWidget {
                 SvgPicture.asset(
                   image,
                   color: ConstantsV2.activeText,
+                  width: 24,
+                  height: 24,
                 ),
                 const SizedBox(
                   width: 8,
