@@ -216,17 +216,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Datos de contacto'),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Container(
-                                color: Colors.white,
-                                padding: const EdgeInsets.all(20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (!(prefs.getBool(isFamily) ?? false))
+                              if (!(prefs.getBool(isFamily) ?? false)) ...[
+                                const Text('Datos de contacto'),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Container(
+                                  color: Colors.white,
+                                  padding: const EdgeInsets.all(20),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
                                       CustomFormInput(
                                         initialValue: editingPatient.email,
                                         label: 'Correo electrónico *',
@@ -235,10 +236,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         onChanged: (String val) =>
                                             editingPatient.email = val,
                                       ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    if (!(prefs.getBool(isFamily) ?? false))
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
                                       CustomFormInput(
                                         initialValue: editingPatient.phone,
                                         isPhoneNumber: true,
@@ -250,12 +250,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         onChanged: (String val) =>
                                             editingPatient.phone = val,
                                       ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                              ],
                               const Text('Dirección'),
                               const SizedBox(
                                 height: 10,
