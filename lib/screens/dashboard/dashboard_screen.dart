@@ -1,5 +1,5 @@
 import 'package:boldo/screens/appointments/pastAppointments_screen.dart';
-import 'package:boldo/screens/doctor_search/doctors_available.dart';
+import 'package:boldo/features/doctor_search/presentation/screens/doctors_available.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 
@@ -34,7 +34,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
     if (index == 1) {
       //return DoctorsTab();
-      return DoctorsAvailable(callFromHome: true,);
+      return DoctorsAvailable(
+        callFromHome: true,
+      );
     }
     if (index == 2) {
       return const PastAppointmentsScreen();
@@ -48,24 +50,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: () async {
-          MoveToBackground.moveTaskToBack();
-          return false;
-        },
-        child: Scaffold(
-          // appBar: AppBar(
-          //   backgroundColor: Colors.white,
-          //   actions: [],
-          //   leadingWidth: 200,
-          //   leading: Padding(
-          //     padding: const EdgeInsets.only(left: 16.0),
-          //     child:
-          //     SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
-          //   ),
-          // ),
-          key: scaffoldKey,
-          body: getPage(selectedPageIndex),
-          /*bottomNavigationBar: BottomNavigationBar(
+      onWillPop: () async {
+        MoveToBackground.moveTaskToBack();
+        return false;
+      },
+      child: Scaffold(
+        // appBar: AppBar(
+        //   backgroundColor: Colors.white,
+        //   actions: [],
+        //   leadingWidth: 200,
+        //   leading: Padding(
+        //     padding: const EdgeInsets.only(left: 16.0),
+        //     child:
+        //     SvgPicture.asset('assets/Logo.svg', semanticsLabel: 'BOLDO Logo'),
+        //   ),
+        // ),
+        key: scaffoldKey,
+        body: getPage(selectedPageIndex),
+        /*bottomNavigationBar: BottomNavigationBar(
             showUnselectedLabels: false,
             items: <BottomNavigationBarItem>
               [

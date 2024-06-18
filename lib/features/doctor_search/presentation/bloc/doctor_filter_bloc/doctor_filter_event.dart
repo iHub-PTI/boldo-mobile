@@ -1,4 +1,4 @@
-part of 'doctorFilter_bloc.dart';
+part of 'doctor_filter_bloc.dart';
 
 @immutable
 abstract class DoctorFilterEvent {}
@@ -17,4 +17,3 @@ class GetDoctorsPreview extends DoctorFilterEvent {
     required this.organizations,
   });
 }
-

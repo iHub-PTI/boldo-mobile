@@ -1,7 +1,7 @@
-part of 'doctorFilter_bloc.dart';
+part of 'doctor_filter_bloc.dart';
 
 @immutable
-abstract class DoctorFilterState{}
+abstract class DoctorFilterState {}
 
 class DoctorFilterInitial extends DoctorFilterState {}
 

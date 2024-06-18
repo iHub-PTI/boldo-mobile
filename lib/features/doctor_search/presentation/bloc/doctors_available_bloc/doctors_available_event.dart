@@ -3,7 +3,6 @@ part of 'doctors_available_bloc.dart';
 @immutable
 abstract class DoctorsAvailableEvent {}
 
-
 class GetDoctorFilter extends DoctorsAvailableEvent {
   final List<Organization> organizations;
   final List<Specializations> specializations;
@@ -26,12 +25,11 @@ class GetMoreFilterDoctor extends DoctorsAvailableEvent {
   final bool virtualAppointment;
   final bool inPersonAppointment;
   final List<String> names;
-  GetMoreFilterDoctor({
-    required this.names,
-    required this.offset,
-    required this.specializations,
-    required this.virtualAppointment,
-    required this.inPersonAppointment,
-    required this.organizations
-  });
+  GetMoreFilterDoctor(
+      {required this.names,
+      required this.offset,
+      required this.specializations,
+      required this.virtualAppointment,
+      required this.inPersonAppointment,
+      required this.organizations});
 }

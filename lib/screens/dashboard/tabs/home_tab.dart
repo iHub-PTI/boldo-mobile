@@ -2,7 +2,8 @@ import 'package:boldo/blocs/goToTop_bloc/goToTop_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
 import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/home_bloc/home_bloc.dart';
-import 'package:boldo/blocs/organizationApplied_bloc/organizationApplied_bloc.dart' as applied;
+import 'package:boldo/blocs/organizationApplied_bloc/organizationApplied_bloc.dart'
+    as applied;
 import 'package:boldo/blocs/user_bloc/patient_bloc.dart' as patientBloc;
 import 'package:boldo/constants.dart';
 import 'package:boldo/models/DiagnosticReport.dart';
@@ -14,7 +15,7 @@ import 'package:boldo/screens/dashboard/tabs/components/empty_appointments_state
 import 'package:boldo/screens/dashboard/tabs/components/home_tab_appbar.dart';
 import 'package:boldo/screens/dashboard/tabs/components/info_cards_list.dart';
 import 'package:boldo/screens/organizations/memberships_screen.dart';
-import 'package:boldo/screens/doctor_search/doctors_available.dart';
+import 'package:boldo/features/doctor_search/presentation/screens/doctors_available.dart';
 import 'package:boldo/screens/passport/passport.dart';
 import 'package:boldo/screens/prescriptions/prescriptions_screen.dart';
 import 'package:boldo/utils/helpers.dart';
@@ -44,8 +45,6 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
   late TabController _controller;
   // controller for scroll
   ScrollController homeScroll = ScrollController();
-  // flag for show or not the button
-  bool showAnimatedButton = false;
 
   late final AnimationController _animationController = AnimationController(
     duration: const Duration(seconds: 3),
@@ -117,14 +116,15 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
   ];
 
   RefreshController? _refreshControllerNews =
-  RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: false);
 
   RefreshController? _refreshControllerOrganizationsCheck =
-  RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: false);
 
   void _onRefreshOrganizationsCheck() async {
     // monitor network fetch
-    BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed());
+    BlocProvider.of<HomeOrganizationBloc>(context)
+        .add(GetOrganizationsSubscribed());
   }
 
   DateTime dateOffset = DateTime.now().subtract(const Duration(days: 30));
@@ -143,20 +143,22 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
     );
 
     homeScroll.addListener(() {
-      if(homeScroll.offset >=0 &&
+      if (homeScroll.offset >= 0 &&
           homeScroll.offset <=
-              (ConstantsV2.homeAppBarMaxHeight-ConstantsV2.homeAppBarMinHeight )
-      ){
-        percentOfHeight =( (ConstantsV2.homeAppBarMaxHeight-ConstantsV2.homeAppBarMinHeight )
-            - homeScroll.offset ) / (ConstantsV2.homeAppBarMaxHeight-ConstantsV2.homeAppBarMinHeight );
+              (ConstantsV2.homeAppBarMaxHeight -
+                  ConstantsV2.homeAppBarMinHeight)) {
+        percentOfHeight = ((ConstantsV2.homeAppBarMaxHeight -
+                    ConstantsV2.homeAppBarMinHeight) -
+                homeScroll.offset) /
+            (ConstantsV2.homeAppBarMaxHeight - ConstantsV2.homeAppBarMinHeight);
         _animationController.value = percentOfHeight;
-        setState(() {
-          });
+        setState(() {});
       }
     });
 
     // get organizations
-    BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed());
+    BlocProvider.of<HomeOrganizationBloc>(context)
+        .add(GetOrganizationsSubscribed());
     super.initState();
   }
 
@@ -177,7 +179,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context){
+      create: (BuildContext context) {
         return GoToTopBloc();
       },
       child: Scaffold(
@@ -186,7 +188,6 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
           scrollController: homeScroll,
           animationDuration: 1000,
           scrollDuration: 500,
-          showAnimatedButton: showAnimatedButton,
         ),
         body: SafeArea(
           child: MultiBlocListener(
@@ -194,12 +195,10 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
               BlocListener<HomeOrganizationBloc, HomeOrganizationBlocState>(
                 listener: (context, state) {
                   if (state is HomeOrganizationFailed) {
-
                     emitSnackBar(
                         context: context,
                         text: state.response,
-                        status: ActionStatus.Fail
-                    );
+                        status: ActionStatus.Fail);
                     if (_refreshControllerOrganizationsCheck != null) {
                       _refreshControllerOrganizationsCheck!.refreshCompleted();
                       _refreshControllerOrganizationsCheck!.loadComplete();
@@ -211,10 +210,9 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                         .setOrganizations(state.organizationsList);
 
                     // reduce height to remove header for news
-                    if(state.organizationsList.isNotEmpty) {
+                    if (state.organizationsList.isNotEmpty) {
                       BlocProvider.of<HomeNewsBloc>(context).add(GetNews());
                     }
-
 
                     if (_refreshControllerOrganizationsCheck != null) {
                       _refreshControllerOrganizationsCheck!.refreshCompleted();
@@ -227,9 +225,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
               BlocListener<HomeBloc, HomeState>(
                 listener: (context, state) {
                   if (state is HomeSuccess) {
-                    setState(() {
-
-                    });
+                    setState(() {});
                   }
                 },
               ),
@@ -239,8 +235,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                     emitSnackBar(
                         context: context,
                         text: state.response,
-                        status: ActionStatus.Fail
-                    );
+                        status: ActionStatus.Fail);
                     if (_refreshControllerNews != null) {
                       _refreshControllerNews!.refreshCompleted();
                       _refreshControllerNews!.loadComplete();
@@ -263,116 +258,127 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                   controller: _animationController,
                 ),
                 Flexible(
-                  child: BlocBuilder<HomeOrganizationBloc,HomeOrganizationBlocState>(
-                  builder: (context, state){
-                    if(state is OrganizationsObtained) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 24),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if(state.organizationsList.isNotEmpty)
-                                  SizeTransition(
-                                    sizeFactor: _animationController,
-                                    child: DividerFeedSectionHome(
-                                      text: "¿Qué desea hacer?",
-                                      scale: percentOfHeight,
+                  child: BlocBuilder<HomeOrganizationBloc,
+                      HomeOrganizationBlocState>(
+                    builder: (context, state) {
+                      if (state is OrganizationsObtained) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.symmetric(vertical: 24),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (state.organizationsList.isNotEmpty)
+                                    SizeTransition(
+                                      sizeFactor: _animationController,
+                                      child: DividerFeedSectionHome(
+                                        text: "¿Qué desea hacer?",
+                                        scale: percentOfHeight,
+                                      ),
+                                    ),
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: items
+                                          .map(
+                                              (e) => _buildCarousel(context, e))
+                                          .toList(),
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                     ),
                                   ),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children:
-                                    items.map((e) => _buildCarousel(context, e)).toList(),
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                  ),
-                                ),
-                                if(state.organizationsList.isNotEmpty)
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                                if(state.organizationsList.isNotEmpty)
-                                SingleChildScrollView(
-                                  child: InfoCardList(),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if(state.organizationsList.isNotEmpty)
-                          BlocBuilder<patientBloc.PatientBloc, patientBloc.PatientState>(
-                            builder: (context, state) {
-                              if (state is patientBloc.Success) {
-                                return SizedBox(
-                                  width: double.infinity,
-                                  child: Container(
-                                      width: double.maxFinite,
-                                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                                      decoration: const BoxDecoration(
-                                        color: ConstantsV2.lightGrey,
-                                      ),
-                                      //sections header
-                                      child: Container(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'novedades${prefs.getBool(isFamily) ??
-                                                  false ? " de " : ''}',
-                                              style: boldoSubTextStyle.copyWith(
-                                                  color: ConstantsV2.inactiveText),
-                                            ),
-                                            prefs.getBool(isFamily) ?? false
-                                                ? Text(
-                                                '${patient
-                                                    .relationshipDisplaySpan}',
-                                                style: boldoSubTextStyle
-                                                    .copyWith(
-                                                    color:
-                                                    ConstantsV2.green))
-                                                : Container(),
-                                          ],
-                                        ),
-                                      )),
-                                );
-                              } else {
-                                return Text(
-                                  'novedades',
-                                  style: boldoSubTextStyle.copyWith(
-                                      color: ConstantsV2.inactiveText),
-                                );
-                              }
-                            },
-                          ),
-                          if(state.organizationsList.isNotEmpty)
-                          Container(
-                            height: 16,
-                          ),
-                          if(state.organizationsList.isEmpty)
-                          _emptyOrganizations(),
-                          if(state.organizationsList.isNotEmpty)
-                            Expanded(
-                              child: TabBarView(
-                                controller: _controller,
-                                children: [
-                                  _buildNews(),
+                                  if (state.organizationsList.isNotEmpty)
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
+                                  if (state.organizationsList.isNotEmpty)
+                                    SingleChildScrollView(
+                                      child: InfoCardList(),
+                                    ),
                                 ],
                               ),
                             ),
-                        ],
-                      );
-                    }else if(state is HomeOrganizationFailed){
-                      return Container(
-                          child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeOrganizationBloc>(context).add(GetOrganizationsSubscribed()) ) );
-                    } else {
-                      return loadingStatus();
-                    }
-                  },
-                ),
+                            if (state.organizationsList.isNotEmpty)
+                              BlocBuilder<patientBloc.PatientBloc,
+                                  patientBloc.PatientState>(
+                                builder: (context, state) {
+                                  if (state is patientBloc.Success) {
+                                    return SizedBox(
+                                      width: double.infinity,
+                                      child: Container(
+                                          width: double.maxFinite,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                          decoration: const BoxDecoration(
+                                            color: ConstantsV2.lightGrey,
+                                          ),
+                                          //sections header
+                                          child: Container(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'novedades${prefs.getBool(isFamily) ?? false ? " de " : ''}',
+                                                  style: boldoSubTextStyle
+                                                      .copyWith(
+                                                          color: ConstantsV2
+                                                              .inactiveText),
+                                                ),
+                                                prefs.getBool(isFamily) ?? false
+                                                    ? Text(
+                                                        '${patient.relationshipDisplaySpan}',
+                                                        style: boldoSubTextStyle
+                                                            .copyWith(
+                                                                color:
+                                                                    ConstantsV2
+                                                                        .green))
+                                                    : Container(),
+                                              ],
+                                            ),
+                                          )),
+                                    );
+                                  } else {
+                                    return Text(
+                                      'novedades',
+                                      style: boldoSubTextStyle.copyWith(
+                                          color: ConstantsV2.inactiveText),
+                                    );
+                                  }
+                                },
+                              ),
+                            if (state.organizationsList.isNotEmpty)
+                              Container(
+                                height: 16,
+                              ),
+                            if (state.organizationsList.isEmpty)
+                              _emptyOrganizations(),
+                            if (state.organizationsList.isNotEmpty)
+                              Expanded(
+                                child: TabBarView(
+                                  controller: _controller,
+                                  children: [
+                                    _buildNews(),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        );
+                      } else if (state is HomeOrganizationFailed) {
+                        return Container(
+                            child: DataFetchErrorWidget(
+                                retryCallback: () =>
+                                    BlocProvider.of<HomeOrganizationBloc>(
+                                            context)
+                                        .add(GetOrganizationsSubscribed())));
+                      } else {
+                        return loadingStatus();
+                      }
+                    },
+                  ),
                 )
               ],
             ),
@@ -396,8 +402,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
         scrollController: homeScroll,
         enablePullDown: true,
         controller: _refreshControllerNews!,
-        onLoading: () {
-        },
+        onLoading: () {},
         onRefresh: _onRefreshNews,
         footer: CustomFooter(
           height: 140,
@@ -421,42 +426,45 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
             );
           },
         ),
-        child: BlocBuilder<HomeNewsBloc, HomeNewsState>(builder: (context, state) {
-          if(state is NewsLoaded){
+        child:
+            BlocBuilder<HomeNewsBloc, HomeNewsState>(builder: (context, state) {
+          if (state is NewsLoaded) {
             return news.isNotEmpty
                 ? ListView.separated(
-              shrinkWrap: true,
-              itemCount: news.length,
-              scrollDirection: Axis.vertical,
-              itemBuilder: _newsCard,
-              physics: const ClampingScrollPhysics(),
-              separatorBuilder: (BuildContext context, index){
-                return const SizedBox(
-                  height: 10,
-                );
-              },
-            )
-                :SingleChildScrollView(
-              child: Column(
-                children: [
-                  const EmptyStateV2(
-                    picture: "empty_news.svg",
-                    titleBottom: "Aún no hay novedades",
-                    textBottom:
-                    "A medida que uses la app, irás encontrando novedades tales como: "
-                        "próximas consultas, recetas y resultados de estudios.",
-                  ),
-                ],
-              ),
-            );
-          }else if (state is LoadingNews){
+                    shrinkWrap: true,
+                    itemCount: news.length,
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: _newsCard,
+                    physics: const ClampingScrollPhysics(),
+                    separatorBuilder: (BuildContext context, index) {
+                      return const SizedBox(
+                        height: 10,
+                      );
+                    },
+                  )
+                : SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const EmptyStateV2(
+                          picture: "empty_news.svg",
+                          titleBottom: "Aún no hay novedades",
+                          textBottom:
+                              "A medida que uses la app, irás encontrando novedades tales como: "
+                              "próximas consultas, recetas y resultados de estudios.",
+                        ),
+                      ],
+                    ),
+                  );
+          } else if (state is LoadingNews) {
             return Container(
               child: loadingStatus(),
             );
-          }else if(state is FailedLoadedNews){
+          } else if (state is FailedLoadedNews) {
             return Container(
-                child: DataFetchErrorWidget(retryCallback: () => BlocProvider.of<HomeNewsBloc>(context).add(GetNews()) ) );
-          }else{
+                child: DataFetchErrorWidget(
+                    retryCallback: () =>
+                        BlocProvider.of<HomeNewsBloc>(context).add(GetNews())));
+          } else {
             return Container();
           }
         }),
@@ -464,27 +472,28 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
     );
   }
 
-  Widget _newsCard(BuildContext context, int index){
+  Widget _newsCard(BuildContext context, int index) {
     return news[index].show();
   }
 
-  Widget _emptyOrganizations(){
+  Widget _emptyOrganizations() {
     return Flexible(
-      child: BlocBuilder<applied.OrganizationAppliedBloc, applied.OrganizationAppliedBlocState>(
-        bloc: applied.OrganizationAppliedBloc()..add(applied.GetOrganizationsPostulated(
-          patientSelected: patient,
-        )),
+      child: BlocBuilder<applied.OrganizationAppliedBloc,
+          applied.OrganizationAppliedBlocState>(
+        bloc: applied.OrganizationAppliedBloc()
+          ..add(applied.GetOrganizationsPostulated(
+            patientSelected: patient,
+          )),
         builder: (BuildContext context, state) {
-          if(state is applied.Loading){
+          if (state is applied.Loading) {
             return loadingStatus();
-          }else if(state is applied.OrganizationsObtained){
+          } else if (state is applied.OrganizationsObtained) {
             return Container(
               child: SmartRefresher(
                 enablePullDown: true,
                 enablePullUp: true,
                 controller: _refreshControllerOrganizationsCheck!,
-                onLoading: () {
-                },
+                onLoading: () {},
                 onRefresh: _onRefreshOrganizationsCheck,
                 footer: CustomFooter(
                   height: 140,
@@ -515,16 +524,18 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("¿En dónde vas a consultar?",
+                          Text(
+                            "¿En dónde vas a consultar?",
                             style: boldoCardSubtitleTextStyle.copyWith(
                               color: ConstantsV2.activeText,
                             ),
                           ),
-                          Text("Para usar algunos servicios que Boldo tiene para vos, "
-                              "es necesario seas miembro de la organización que las provee.",
-                              style: boldoBodyLRegularTextStyle.copyWith(
-                                color: ConstantsV2.activeText,
-                              ),
+                          Text(
+                            "Para usar algunos servicios que Boldo tiene para vos, "
+                            "es necesario seas miembro de la organización que las provee.",
+                            style: boldoBodyLRegularTextStyle.copyWith(
+                              color: ConstantsV2.activeText,
+                            ),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -533,15 +544,18 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                                 onPressed: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (BuildContext context) =>
-                                      Organizations(
-                                        hasPendingOrBelongsToOrganizations: state.organizationsList.isNotEmpty,
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          Organizations(
+                                        hasPendingOrBelongsToOrganizations:
+                                            state.organizationsList.isNotEmpty,
                                       ),
                                     ),
                                   );
                                 },
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   children: [
                                     const Text("Continuar"),
                                     const Icon(Icons.chevron_right_rounded),
@@ -556,28 +570,28 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                               SvgPicture.asset('assets/icon/empty_org_home.svg')
                             ],
                           )
-                        ].map(
+                        ]
+                            .map(
                               (e) => Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: e,
-                          ),
-                        ).toList(),
+                                padding: const EdgeInsets.all(8),
+                                child: e,
+                              ),
+                            )
+                            .toList(),
                       ),
                     ],
                   ),
                 ),
               ),
             );
-          }else {
+          } else {
             return Container();
           }
         },
       ),
     );
   }
-
 }
-
 
 class CustomCardPage extends StatefulWidget {
   final CarouselCard carouselCard;
@@ -593,33 +607,35 @@ class CustomCardPage extends StatefulWidget {
   State<CustomCardPage> createState() => _CustomCardPageState();
 }
 
-class _CustomCardPageState extends State<CustomCardPage> with TickerProviderStateMixin {
-
+class _CustomCardPageState extends State<CustomCardPage>
+    with TickerProviderStateMixin {
   //percent of elements height to change according of scroll
   double percentOfHeight = 1;
 
   late ShapeDecoration endDecoration;
 
-  late AnimationController _controller ;
+  late AnimationController _controller;
 
   bool enable = true;
 
   @override
-  void initState(){
+  void initState() {
     // indicates if the patient needs to belong to an organization to access this module
-    enable = widget.carouselCard.requiredOrganization ?
-    BlocProvider.of<patientBloc.PatientBloc>(context)
-        .getOrganizations().isNotEmpty : true;
+    enable = widget.carouselCard.requiredOrganization
+        ? BlocProvider.of<patientBloc.PatientBloc>(context)
+            .getOrganizations()
+            .isNotEmpty
+        : true;
     endDecoration = ShapeDecoration(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular((100-10)*(1-percentOfHeight)+10),
+        borderRadius:
+            BorderRadius.circular((100 - 10) * (1 - percentOfHeight) + 10),
       ),
       image: DecorationImage(
         fit: BoxFit.cover,
         colorFilter: widget.carouselCard.appear && enable
             ? null
-            : const ColorFilter.mode(
-            Colors.black, BlendMode.hue),
+            : const ColorFilter.mode(Colors.black, BlendMode.hue),
         image: AssetImage(widget.carouselCard.image),
       ),
     );
@@ -627,131 +643,128 @@ class _CustomCardPageState extends State<CustomCardPage> with TickerProviderStat
       vsync: this,
     );
     widget.controller.addListener(() {
-      if(widget.controller.offset >=0 &&
+      if (widget.controller.offset >= 0 &&
           widget.controller.offset <=
-              (ConstantsV2.homeAppBarMaxHeight-ConstantsV2.homeAppBarMinHeight )
-      ){
-        if(mounted)
-        setState(() {
-          percentOfHeight =( (ConstantsV2.homeAppBarMaxHeight-ConstantsV2.homeAppBarMinHeight )
-              - widget.controller.offset ) / (ConstantsV2.homeAppBarMaxHeight-ConstantsV2.homeAppBarMinHeight );
-          endDecoration = ShapeDecoration(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular((100-10)*(1-percentOfHeight)+10),
-            ),
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              colorFilter: widget.carouselCard.appear && enable
-                  ? null
-                  : const ColorFilter.mode(
-                  Colors.black, BlendMode.hue),
-              image: AssetImage(widget.carouselCard.image),
-            ),
-          );
-          _controller.value = 1-percentOfHeight;
-        });
+              (ConstantsV2.homeAppBarMaxHeight -
+                  ConstantsV2.homeAppBarMinHeight)) {
+        if (mounted)
+          setState(() {
+            percentOfHeight = ((ConstantsV2.homeAppBarMaxHeight -
+                        ConstantsV2.homeAppBarMinHeight) -
+                    widget.controller.offset) /
+                (ConstantsV2.homeAppBarMaxHeight -
+                    ConstantsV2.homeAppBarMinHeight);
+            endDecoration = ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                    (100 - 10) * (1 - percentOfHeight) + 10),
+              ),
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                colorFilter: widget.carouselCard.appear && enable
+                    ? null
+                    : const ColorFilter.mode(Colors.black, BlendMode.hue),
+                image: AssetImage(widget.carouselCard.image),
+              ),
+            );
+            _controller.value = 1 - percentOfHeight;
+          });
       }
     });
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return TweenAnimationBuilder(
       tween: DecorationTween(
         begin: ShapeDecoration(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular((100-10)*(1-percentOfHeight)+10),
+            borderRadius:
+                BorderRadius.circular((100 - 10) * (1 - percentOfHeight) + 10),
           ),
           image: DecorationImage(
             fit: BoxFit.cover,
             colorFilter: widget.carouselCard.appear && enable
                 ? null
-                : const ColorFilter.mode(
-                Colors.black, BlendMode.hue),
+                : const ColorFilter.mode(Colors.black, BlendMode.hue),
             image: AssetImage(widget.carouselCard.image),
           ),
         ),
         end: endDecoration,
       ),
       duration: Duration.zero,
-      builder: (_, Decoration boxDecoration, __){
+      builder: (_, Decoration boxDecoration, __) {
         return InkWell(
-          onTap: widget.carouselCard.appear && enable
-              ? () {
-            if(widget.carouselCard.page != null) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => widget.carouselCard.page!));
-            }
-            else if(widget.carouselCard.pageRoute != null) {
-              Navigator.pushNamed(
-                  context,
-                  '${widget.carouselCard.pageRoute!}');
-            }
-          }
-              : () {},
-          child: Container(
-            clipBehavior: Clip.hardEdge,
-            height: 50+(130-50)*percentOfHeight,
-            width: 50+(110-50)*percentOfHeight,
-            margin: const EdgeInsets.all(6),
-            decoration: boxDecoration,
-            child: BackgroundLinearGradientTransition(
-              begin: Alignment.bottomLeft,
-              end: Alignment.topRight,
-              initialColors: [
-                Colors.black,
-                Colors.black.withOpacity(0.01),
-              ],
-              finalColors: [
-                Colors.transparent,
-                Colors.transparent,
-              ],
-              initialStops: [
-                -.0159,
-                0.9034,
-              ],
-              finalStops: [
-                -.0159,
-                0.9034,
-              ],
-              animationController: _controller,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 7),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      widget.carouselCard.appear
-                          ? const Text("")
-                          : AnimatedOpacity(
-                        opacity: (percentOfHeight),
-                        duration: const Duration(milliseconds: 1),
-                        child: (1-percentOfHeight) < .70
-                            ? CardNotAvailable()
-                            : null,
-                      ),
-                      Flexible(
-                        child: AnimatedOpacity(
-                          opacity: (percentOfHeight),
-                          duration: const Duration(milliseconds: 300),
-                          child: Text(
-                            widget.carouselCard.title,
-                            style: boldoCorpMediumBlackTextStyle.copyWith(
-                              color: ConstantsV2.lightGrey,
+            onTap: widget.carouselCard.appear && enable
+                ? () {
+                    if (widget.carouselCard.page != null) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => widget.carouselCard.page!));
+                    } else if (widget.carouselCard.pageRoute != null) {
+                      Navigator.pushNamed(
+                          context, '${widget.carouselCard.pageRoute!}');
+                    }
+                  }
+                : () {},
+            child: Container(
+                clipBehavior: Clip.hardEdge,
+                height: 50 + (130 - 50) * percentOfHeight,
+                width: 50 + (110 - 50) * percentOfHeight,
+                margin: const EdgeInsets.all(6),
+                decoration: boxDecoration,
+                child: BackgroundLinearGradientTransition(
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
+                    initialColors: [
+                      Colors.black,
+                      Colors.black.withOpacity(0.01),
+                    ],
+                    finalColors: [
+                      Colors.transparent,
+                      Colors.transparent,
+                    ],
+                    initialStops: [
+                      -.0159,
+                      0.9034,
+                    ],
+                    finalStops: [
+                      -.0159,
+                      0.9034,
+                    ],
+                    animationController: _controller,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 7),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            widget.carouselCard.appear
+                                ? const Text("")
+                                : AnimatedOpacity(
+                                    opacity: (percentOfHeight),
+                                    duration: const Duration(milliseconds: 1),
+                                    child: (1 - percentOfHeight) < .70
+                                        ? CardNotAvailable()
+                                        : null,
+                                  ),
+                            Flexible(
+                              child: AnimatedOpacity(
+                                opacity: (percentOfHeight),
+                                duration: const Duration(milliseconds: 300),
+                                child: Text(
+                                  widget.carouselCard.title,
+                                  style: boldoCorpMediumBlackTextStyle.copyWith(
+                                    color: ConstantsV2.lightGrey,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                    ]),
-              )
-            )
-          )
-        );
+                          ]),
+                    ))));
       },
     );
   }
@@ -829,14 +842,14 @@ class TabWidget extends StatelessWidget {
       padding: const EdgeInsets.all(0),
       decoration: (rightDivider)
           ? const BoxDecoration(
-        border: Border(
-          right: BorderSide(
-            color: Colors.grey,
-            width: 1,
-            style: BorderStyle.solid,
-          ),
-        ),
-      )
+              border: Border(
+                right: BorderSide(
+                  color: Colors.grey,
+                  width: 1,
+                  style: BorderStyle.solid,
+                ),
+              ),
+            )
           : null,
       child: Center(child: Text(label)),
     );

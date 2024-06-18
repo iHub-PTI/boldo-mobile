@@ -2,8 +2,7 @@ import 'package:boldo/models/filters/Filter.dart';
 import 'package:boldo/widgets/filter/filter_applied_card.dart';
 import 'package:flutter/material.dart';
 
-class FiltersApplied<T extends Filter> extends StatelessWidget{
-
+class FiltersApplied<T extends Filter> extends StatelessWidget {
   final bool wrapContent;
   final T filter;
   final Function(T filter)? filterCallback;
@@ -17,25 +16,21 @@ class FiltersApplied<T extends Filter> extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-
     Widget separator = const SizedBox(
       width: 4,
       height: 4,
     );
 
-    if(filter.filters.isNotEmpty) {
+    if (filter.filters.isNotEmpty) {
       return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         physics: const ClampingScrollPhysics(),
         child: Row(
-          children: filter.filters.entries
-              .toList()
-              .asMap()
-              .entries
-              .map((entry) {
+          children:
+              filter.filters.entries.toList().asMap().entries.map((entry) {
             Widget child = FilterAppliedCard(
-              text: entry.value.key,
-              removeFilter: (){
+              child: entry.value.key,
+              removeFilter: () {
                 entry.value.value.call();
                 filterCallback?.call(filter);
               },
@@ -58,9 +53,8 @@ class FiltersApplied<T extends Filter> extends StatelessWidget{
           }).toList(),
         ),
       );
-    }else{
+    } else {
       return Container();
     }
   }
-
 }

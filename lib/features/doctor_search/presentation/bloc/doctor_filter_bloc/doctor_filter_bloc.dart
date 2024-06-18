@@ -8,15 +8,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-
-part 'doctorFilter_event.dart';
-part 'doctorFilter_state.dart';
+part 'doctor_filter_event.dart';
+part 'doctor_filter_state.dart';
 
 class DoctorFilterBloc extends Bloc<DoctorFilterEvent, DoctorFilterState> {
   final DoctorRepository _doctorRepository = DoctorRepository();
   DoctorFilterBloc() : super(DoctorFilterInitial()) {
     on<DoctorFilterEvent>((event, emit) async {
-      if(event is GetDoctorsPreview) {
+      if (event is GetDoctorsPreview) {
         ISentrySpan transaction = Sentry.startTransaction(
           event.runtimeType.toString(),
           'GET',
@@ -25,27 +24,21 @@ class DoctorFilterBloc extends Bloc<DoctorFilterEvent, DoctorFilterState> {
         );
         emit(LoadingDoctorFilter());
         //prevent get from server if any filter was selected
-        if(event.organizations.isNotEmpty || event.specializations.isNotEmpty
-        || event.inPersonAppointment || event.virtualAppointment || event.names.isNotEmpty) {
+        if (event.organizations.isNotEmpty ||
+            event.specializations.isNotEmpty ||
+            event.inPersonAppointment ||
+            event.virtualAppointment ||
+            event.names.isNotEmpty) {
           var _post;
-          await Task(() =>
-              _doctorRepository
-                  .getDoctorsFilter(
-                  0,
-                  event.specializations,
-                  event.virtualAppointment,
-                  event.inPersonAppointment,
-                  event.organizations,
-                  event.names
-                )
-              )
-              .attempt()
-              .mapLeftToFailure()
-              .run()
-              .then((value) {
+          await Task(() => _doctorRepository.getDoctorsFilter(
+              0,
+              event.specializations,
+              event.virtualAppointment,
+              event.inPersonAppointment,
+              event.organizations,
+              event.names)).attempt().mapLeftToFailure().run().then((value) {
             _post = value;
-          }
-          );
+          });
           var response;
           if (_post.isLeft()) {
             _post.leftMap((l) => response = l.message);
@@ -65,7 +58,7 @@ class DoctorFilterBloc extends Bloc<DoctorFilterEvent, DoctorFilterState> {
               status: const SpanStatus.ok(),
             );
           }
-        }else{
+        } else {
           PagList<Doctor> doctors = PagList<Doctor>(total: 0, items: []);
           emit(SuccessDoctorFilter(doctorList: doctors));
           transaction.finish(
@@ -73,8 +66,6 @@ class DoctorFilterBloc extends Bloc<DoctorFilterEvent, DoctorFilterState> {
           );
         }
       }
-    }
-
-    );
+    });
   }
 }

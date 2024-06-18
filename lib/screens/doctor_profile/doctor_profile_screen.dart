@@ -5,7 +5,7 @@ import 'package:boldo/blocs/lastAppointment_bloc/lastAppointmentBloc.dart'
 import 'package:boldo/blocs/doctor_bloc/doctor_bloc.dart' as doctor_bloc;
 import 'package:boldo/main.dart';
 import 'package:boldo/models/Appointment.dart';
-import 'package:boldo/provider/doctor_filter_provider.dart';
+import 'package:boldo/features/doctor_search/presentation/provider/filter_provider/doctor_filter_provider.dart';
 import 'package:boldo/screens/booking/booking_confirm_screen.dart';
 import 'package:boldo/screens/booking/booking_screen2.dart';
 import 'package:boldo/screens/profile/components/profile_image.dart';
@@ -219,22 +219,19 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                         ConstantsV2.lightGrey.withOpacity(0.80),
                                     shape: const CircleBorder(),
                                     clipBehavior: Clip.antiAlias,
-                                    child: SizedBox(
-                                        height: 32,
-                                        width: 32,
-                                        child: Align(
-                                          widthFactor: 1.0,
-                                          heightFactor: 1.0,
-                                          child: BackButtonLabel(
-                                            padding: null,
-                                            iconType: BackIcon.backClose,
-                                            iconSize: 24,
-                                          ),
-                                        )),
+                                    child: Align(
+                                      widthFactor: 1.0,
+                                      heightFactor: 1.0,
+                                      child: BackButtonLabel(
+                                        padding: null,
+                                        iconType: BackIcon.backClose,
+                                        iconSize: 24,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
-                            )
+                            ),
                           ],
                         ),
                         Flexible(

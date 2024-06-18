@@ -17,13 +17,14 @@ class DoctorsAvailableBloc
     extends Bloc<DoctorsAvailableEvent, DoctorsAvailableState> {
   final DoctorRepository _doctorRepository = DoctorRepository();
 
-  StreamController<List<Doctor>> _allDoctorsController = StreamController<List<Doctor>>.broadcast();
+  StreamController<List<Doctor>> _allDoctorsController =
+      StreamController<List<Doctor>>.broadcast();
 
   Stream<List<Doctor>> get streamAllDoctors => _allDoctorsController.stream;
 
   DoctorsAvailableBloc() : super(DoctorsAvailableInitial()) {
     on<DoctorsAvailableEvent>((event, emit) async {
-      if(event is GetMoreFilterDoctor) {
+      if (event is GetMoreFilterDoctor) {
         ISentrySpan transaction = Sentry.startTransaction(
           event.runtimeType.toString(),
           'GET',
@@ -31,20 +32,13 @@ class DoctorsAvailableBloc
           bindToScope: true,
         );
         var _post;
-        await Task(() => _doctorRepository
-            .getDoctorsFilter(
+        await Task(() => _doctorRepository.getDoctorsFilter(
             event.offset,
             event.specializations,
             event.virtualAppointment,
             event.inPersonAppointment,
             event.organizations,
-            event.names
-        )
-        )
-            .attempt()
-            .mapLeftToFailure()
-            .run()
-            .then((value) {
+            event.names)).attempt().mapLeftToFailure().run().then((value) {
           _post = value;
         });
         var response;
@@ -83,26 +77,21 @@ class DoctorsAvailableBloc
           description: 'get first page of doctors available',
           bindToScope: true,
         );
-        emit(FilterLoading());
+        emit(Loading());
         var _post;
-        await Task(() => _doctorRepository
-            .getDoctorsFilter(
+        await Task(() => _doctorRepository.getDoctorsFilter(
             0,
             event.specializations,
             event.virtualAppointment,
             event.inPersonAppointment,
             event.organizations,
-            event.names
-        )
-        ).attempt()
-            .mapLeftToFailure()
-            .run().then((value) {
+            event.names)).attempt().mapLeftToFailure().run().then((value) {
           _post = value;
         });
         var response;
         if (_post.isLeft()) {
           _post.leftMap((l) => response = l.message);
-          emit(FilterFailed(response: response));
+          emit(Failed(response: response));
           transaction.throwable = _post.asLeft();
           transaction.finish(
             status: SpanStatus.fromString(
@@ -125,7 +114,6 @@ class DoctorsAvailableBloc
           // result.items?.sort(orderByOrganizationAvailability);
 
           emit(DoctorsLoaded(doctors: result));
-          emit(FilterSucces());
           transaction.finish(
             status: const SpanStatus.ok(),
           );
@@ -133,5 +121,4 @@ class DoctorsAvailableBloc
       }
     });
   }
-
 }

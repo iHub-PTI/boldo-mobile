@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:boldo/app_config.dart';
 import 'package:boldo/blocs/doctor_more_availability_bloc/doctor_more_availability_bloc.dart';
-import 'package:boldo/blocs/doctors_available_bloc/doctors_available_bloc.dart';
-import 'package:boldo/blocs/doctors_favorite_bloc/doctors_favorite_bloc.dart';
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/blocs/homeAppointments_bloc/futureAppointments_bloc.dart';
 import 'package:boldo/blocs/homeNews_bloc/homeNews_bloc.dart';
@@ -12,9 +10,9 @@ import 'package:boldo/blocs/home_bloc/home_bloc.dart';
 import 'package:boldo/blocs/logout_bloc/userLogoutBloc.dart';
 import 'package:boldo/blocs/register_bloc/register_patient_bloc.dart';
 import 'package:boldo/blocs/specializationFilter_bloc/specializationFilter_bloc.dart';
+import 'package:boldo/features/doctor_search/doctor_search.dart';
 import 'package:boldo/flavors.dart';
 import 'package:boldo/provider/auth_provider.dart';
-import 'package:boldo/provider/doctor_filter_provider.dart';
 import 'package:boldo/provider/user_provider.dart';
 import 'package:boldo/provider/utils_provider.dart';
 import 'package:boldo/screens/appointments/pastAppointments_screen.dart';
@@ -60,9 +58,7 @@ import 'package:boldo/screens/dashboard/dashboard_screen.dart';
 import 'package:boldo/constants.dart';
 
 import 'blocs/attach_study_order_bloc/attach_study_order_bloc.dart';
-import 'blocs/doctorFilter_bloc/doctorFilter_bloc.dart';
 import 'blocs/doctor_availability_bloc/doctor_availability_bloc.dart';
-import 'blocs/doctors_recent_bloc/doctors_recent_bloc.dart';
 import 'blocs/passport_bloc/passportBloc.dart';
 import 'blocs/study_order_bloc/studyOrder_bloc.dart';
 import 'blocs/user_bloc/patient_bloc.dart';
@@ -300,6 +296,9 @@ class _MyAppState extends State<MyApp> {
           BlocProvider<FavoriteDoctorsBloc>(
             create: (BuildContext context) => FavoriteDoctorsBloc(),
           ),
+          BlocProvider<DoctorsResultBloc>(
+            create: (BuildContext context) => DoctorsResultBloc(),
+          ),
         ],
         child: MultiProvider(
           providers: [
@@ -391,6 +390,7 @@ class FullApp extends StatelessWidget {
                     : "/onboarding",
                 isRequiredUpdate: hasRequiredUpdate,
               ),
+          DoctorsResult.routeName: (context) => const DoctorsResult(),
         },
       ),
     );

@@ -7,13 +7,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-
 part 'doctors_recent_event.dart';
 part 'doctors_recent_state.dart';
 
 class RecentDoctorsBloc extends Bloc<RecentDoctorsEvent, RecentDoctorsState> {
   final DoctorRepository _doctorRepository = DoctorRepository();
-  RecentDoctorsBloc() : super(DoctorAvailabilityInitial()) {
+  RecentDoctorsBloc() : super(DoctorRecentInitial()) {
     on<RecentDoctorsEvent>((event, emit) async {
       if (event is GetRecentDoctors) {
         ISentrySpan transaction = Sentry.startTransaction(
@@ -24,19 +23,13 @@ class RecentDoctorsBloc extends Bloc<RecentDoctorsEvent, RecentDoctorsState> {
         );
         emit(LoadingRecentDoctors());
         var _post;
-        await Task(() =>
-            _doctorRepository
-                .getRecentDoctors(
-                0,
-                event.specializations,
-                event.virtualAppointment,
-                event.inPersonAppointment,
-                event.organizations,
-                event.names
-            )
-        ).attempt()
-            .mapLeftToFailure()
-            .run().then((value) {
+        await Task(() => _doctorRepository.getRecentDoctors(
+            0,
+            event.specializations,
+            event.virtualAppointment,
+            event.inPersonAppointment,
+            event.organizations,
+            event.names)).attempt().mapLeftToFailure().run().then((value) {
           _post = value;
         });
         var response;
@@ -69,7 +62,6 @@ class RecentDoctorsBloc extends Bloc<RecentDoctorsEvent, RecentDoctorsState> {
           );
         }
       }
-    }
-    );
+    });
   }
 }

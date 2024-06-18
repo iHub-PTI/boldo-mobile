@@ -1,9 +1,9 @@
 part of 'doctors_recent_bloc.dart';
 
 @immutable
-abstract class RecentDoctorsState{}
+abstract class RecentDoctorsState {}
 
-class DoctorAvailabilityInitial extends RecentDoctorsState {}
+class DoctorRecentInitial extends RecentDoctorsState {}
 
 class LoadingRecentDoctors extends RecentDoctorsState {}
 
