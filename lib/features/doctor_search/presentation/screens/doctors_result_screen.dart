@@ -343,7 +343,7 @@ class _DoctorsResultState extends State<DoctorsResult>
           Container(
             padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
             child: Text(
-              'Todos los médicos',
+              'Listado de médicos',
               style: boldoScreenSubtitleTextStyle.copyWith(
                 color: ConstantsV2.activeText,
               ),
@@ -408,10 +408,5 @@ class _DoctorsResultState extends State<DoctorsResult>
     );
   }
 
-  void updateFavoriteStatus({required Doctor doctor}) {
-    doctor.isFavorite = !doctor.isFavorite;
-
-    // update view
-    setState(() {});
-  }
+  void updateFavoriteStatus({required Doctor doctor}) {}
 }

@@ -2,12 +2,10 @@ import 'package:boldo/blocs/homeOrganization_bloc/homeOrganization_bloc.dart';
 import 'package:boldo/blocs/specializationFilter_bloc/specializationFilter_bloc.dart';
 import 'package:boldo/constants.dart';
 import 'package:boldo/features/doctor_search/doctor_search.dart';
-import 'package:boldo/main.dart';
 import 'package:boldo/models/Doctor.dart';
 import 'package:boldo/models/Organization.dart';
 import 'package:boldo/models/PagList.dart';
 import 'package:boldo/screens/dashboard/tabs/components/data_fetch_error.dart';
-import 'package:boldo/screens/profile/components/profile_image.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
 import 'package:boldo/widgets/loading.dart';
@@ -191,15 +189,7 @@ class _DoctorFilterScreenState extends State<DoctorFilterScreen> {
                     children: [
                       BackButtonLabel(
                         padding: null,
-                        labelText: 'Filtros',
-                      ),
-                      ImageViewTypeForm(
-                        height: 44,
-                        width: 44,
-                        border: true,
-                        gender: patient.gender,
-                        url: patient.photoUrl,
-                        borderColor: ConstantsV2.gray,
+                        labelText: 'Filtrar',
                       ),
                     ],
                   ),
@@ -548,168 +538,135 @@ class _DoctorFilterScreenState extends State<DoctorFilterScreen> {
                     ),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 16, bottom: 16),
-                      child: TextButton(
-                        onPressed: () {
-                          Provider.of<DoctorFilterProvider>(
-                            context,
-                            listen: false,
-                          ).clearFilter();
-                          BlocProvider.of<DoctorsAvailableBloc>(context).add(
-                            GetDoctorFilter(
-                              names: const [],
-                              specializations: const [],
-                              virtualAppointment: false,
-                              inPersonAppointment: false,
-                              organizations: const [],
-                            ),
-                          );
-                          setState(() {
-                            names = [];
-                            specializationsSelected = [];
-                            virtualAppointment = false;
-                            inPersonAppointment = false;
-                            organizationsSelected = [];
-                          });
-                          // call doctor list page
-                          //Navigator.pop(context);
-                        },
-                        child: const Text(
-                          'Limpiar filtros',
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 16, bottom: 16),
-                      child: GestureDetector(
-                        onTap: () {
-                          // to disable the button
-                          if (doctors.items?.isNotEmpty ?? false) {
-                            Provider.of<DoctorFilterProvider>(
-                              context,
-                              listen: false,
-                            ).filterApplied(
-                              specializationsApplied: specializationsSelected,
-                              virtualAppointmentApplied: virtualAppointment,
-                              inPersonAppointmentApplied: inPersonAppointment,
-                              organizationsApplied: organizationsSelected,
-                              namesApplied: names,
-                            );
-                            Provider.of<DoctorFilterProvider>(
-                              context,
-                              listen: false,
-                            ).setDoctors(doctors: doctors);
-                            BlocProvider.of<DoctorsResultBloc>(context).add(
-                              SetInitialDoctors(
-                                doctors: Provider.of<DoctorFilterProvider>(
-                                  context,
-                                  listen: false,
-                                ).getDoctorsSaved,
-                              ),
-                            );
-                            if (widget.fromResult) {
-                              Navigator.pop(context);
-                            } else {
-                              Navigator.popAndPushNamed(
-                                context,
-                                DoctorsResult.routeName,
-                              );
-                            }
-                          }
-                        },
-                        child: BlocBuilder<DoctorFilterBloc, DoctorFilterState>(
-                          builder: (context, state) {
-                            if (state is LoadingDoctorFilter) {
-                              return loadingStatus();
-                            } else if (state is SuccessDoctorFilter ||
-                                state is DoctorFilterInitial) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: !Provider.of<DoctorFilterProvider>(
-                                    context,
-                                    listen: false,
-                                  ).getFilterState
-                                      ? ConstantsV2.gray
-                                      : (doctors.total ?? 0) > 0
-                                          ? ConstantsV2.buttonPrimaryColor100
-                                          : ConstantsV2.gray,
-                                  borderRadius: BorderRadius.circular(100),
-                                  boxShadow: !Provider.of<DoctorFilterProvider>(
-                                    context,
-                                    listen: false,
-                                  ).getFilterState
-                                      ? [
-                                          const BoxShadow(
-                                            color: Color(0x00000000),
-                                            blurRadius: 4,
-                                            offset: Offset(
-                                              0,
-                                              2,
-                                            ), // changes position of shadow
-                                          ),
-                                        ]
-                                      : [],
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: !Provider.of<DoctorFilterProvider>(
-                                    context,
-                                    listen: false,
-                                  ).getFilterState
-                                      ? Text(
-                                          'aplique algún filtro',
-                                          style: boldoCorpMediumBlackTextStyle
-                                              .copyWith(
-                                            fontSize: 16,
-                                            color: ConstantsV2.inactiveText,
-                                          ),
-                                        )
-                                      : (doctors.total ?? 0) > 0
-                                          ? Row(
-                                              children: [
-                                                Text(
-                                                  'ver ${doctors.total ?? 0} ${(doctors.total ?? 0) == 1 ? 'coincidencia' : 'coincidencias'}',
-                                                  style:
-                                                      boldoCorpMediumBlackTextStyle
-                                                          .copyWith(
-                                                    fontSize: 16,
-                                                    color: ConstantsV2
-                                                        .primaryColor,
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                SvgPicture.asset(
-                                                  'assets/icon/chevron-right.svg',
-                                                  color: Colors.white,
-                                                ),
-                                              ],
-                                            )
-                                          : Text(
-                                              'sin coincidencias',
-                                              style:
-                                                  boldoCorpMediumBlackTextStyle
-                                                      .copyWith(
-                                                fontSize: 16,
-                                                color: ConstantsV2.inactiveText,
-                                              ),
-                                            ),
-                                ),
-                              );
-                            } else {
-                              return Container();
-                            }
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
+          ),
+        ),
+        bottomSheet: Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewPadding.bottom,
+            left: 16,
+            right: 16,
+          ),
+          color: ConstantsV2.grayLightest,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Provider.of<DoctorFilterProvider>(
+                    context,
+                    listen: false,
+                  ).clearFilter();
+                  BlocProvider.of<DoctorsAvailableBloc>(context).add(
+                    GetDoctorFilter(
+                      names: const [],
+                      specializations: const [],
+                      virtualAppointment: false,
+                      inPersonAppointment: false,
+                      organizations: const [],
+                    ),
+                  );
+                  setState(() {
+                    names = [];
+                    specializationsSelected = [];
+                    virtualAppointment = false;
+                    inPersonAppointment = false;
+                    organizationsSelected = [];
+                  });
+                  // call doctor list page
+                  //Navigator.pop(context);
+                },
+                child: const Text(
+                  'Limpiar filtros',
+                ),
+              ),
+              BlocBuilder<DoctorFilterBloc, DoctorFilterState>(
+                builder: (context, state) {
+                  if (state is LoadingDoctorFilter) {
+                    return loadingStatus(
+                      center: false,
+                    );
+                  } else if (state is SuccessDoctorFilter ||
+                      state is DoctorFilterInitial) {
+                    return Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: ElevatedButton.icon(
+                        onPressed: doctors.items?.isNotEmpty ?? false
+                            ? () {
+                                Provider.of<DoctorFilterProvider>(
+                                  context,
+                                  listen: false,
+                                ).filterApplied(
+                                  specializationsApplied:
+                                      specializationsSelected,
+                                  virtualAppointmentApplied: virtualAppointment,
+                                  inPersonAppointmentApplied:
+                                      inPersonAppointment,
+                                  organizationsApplied: organizationsSelected,
+                                  namesApplied: names,
+                                );
+                                Provider.of<DoctorFilterProvider>(
+                                  context,
+                                  listen: false,
+                                ).setDoctors(doctors: doctors);
+                                BlocProvider.of<DoctorsResultBloc>(
+                                  context,
+                                ).add(
+                                  SetInitialDoctors(
+                                    doctors: Provider.of<DoctorFilterProvider>(
+                                      context,
+                                      listen: false,
+                                    ).getDoctorsSaved,
+                                  ),
+                                );
+                                if (widget.fromResult) {
+                                  Navigator.pop(context);
+                                } else {
+                                  Navigator.popAndPushNamed(
+                                    context,
+                                    DoctorsResult.routeName,
+                                  );
+                                }
+                              }
+                            : null,
+                        icon: const Icon(Icons.arrow_back_outlined),
+                        label: !Provider.of<DoctorFilterProvider>(
+                          context,
+                          listen: false,
+                        ).getFilterState
+                            ? Text(
+                                'Resultados',
+                                style: boldoCorpMediumBlackTextStyle.copyWith(
+                                  fontSize: 16,
+                                  color: ConstantsV2.inactiveText,
+                                ),
+                              )
+                            : (doctors.total ?? 0) > 0
+                                ? Text(
+                                    '${doctors.total ?? 0} ${(doctors.total ?? 0) == 1 ? 'Resultado' : 'Resultados'}',
+                                    style:
+                                        boldoCorpMediumBlackTextStyle.copyWith(
+                                      fontSize: 16,
+                                      color: ConstantsV2.primaryColor,
+                                    ),
+                                  )
+                                : Text(
+                                    'Sin resultados',
+                                    style:
+                                        boldoCorpMediumBlackTextStyle.copyWith(
+                                      fontSize: 16,
+                                      color: ConstantsV2.inactiveText,
+                                    ),
+                                  ),
+                      ),
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+              ),
+            ],
           ),
         ),
       ),

@@ -443,21 +443,30 @@ ThemeData boldoTheme = ThemeData(
   listTileTheme: const ListTileThemeData(horizontalTitleGap: 0),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
-      textStyle: MaterialStateProperty.all(
-        const TextStyle(
+      textStyle: MaterialStateProperty.resolveWith<TextStyle>((states) {
+        if (states.contains(MaterialState.disabled)) {
+          return const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
+          ); // Disabled color
+        }
+        return const TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 16,
-          color: ConstantsV2.BGNeutral,
-        ),
-      ),
-      foregroundColor:
-          MaterialStateProperty.all<Color?>(ConstantsV2.primaryColor),
+        ); // Regular color
+      }),
+      foregroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+        if (states.contains(MaterialState.disabled)) {
+          return ConstantsV2.disableText; // Disabled color
+        }
+        return ConstantsV2.grayLightest; // Regular color
+      }),
       padding: MaterialStateProperty.all(
         const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       ),
       backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
         if (states.contains(MaterialState.disabled)) {
-          return ConstantsV2.gray; // Disabled color
+          return ConstantsV2.grayLightest; // Disabled color
         }
         return ConstantsV2.orange; // Regular color
       }),
