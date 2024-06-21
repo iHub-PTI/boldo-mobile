@@ -35,7 +35,7 @@ class Encounter {
 
   /// An effective medical consultation from a map
   factory Encounter.fromJson(Map<String, dynamic> json) {
-    final id = json['doctorDto'] as String?;
+    final id = json['id'] as String?;
 
     final doctor =
         json['doctorDto'] != null ? Doctor.fromJson(json['doctorDto']) : null;

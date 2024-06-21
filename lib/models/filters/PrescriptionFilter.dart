@@ -1,17 +1,16 @@
 import 'package:boldo/models/Doctor.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'Filter.dart';
 import 'package:collection/collection.dart';
 
-
-class PrescriptionFilter  extends Filter {
-
+class PrescriptionFilter extends Filter {
   DateTime? _start;
 
   DateTime? get start => _start;
 
-  set start (DateTime? newStartDate){
+  set start(DateTime? newStartDate) {
     _start = newStartDate;
   }
 
@@ -19,7 +18,7 @@ class PrescriptionFilter  extends Filter {
 
   DateTime? get end => _end;
 
-  set end (DateTime? newStartDate){
+  set end(DateTime? newStartDate) {
     _end = newStartDate;
   }
 
@@ -28,7 +27,7 @@ class PrescriptionFilter  extends Filter {
 
   List<Doctor?>? get doctors => _doctors;
 
-  set doctors (List<Doctor?>? newDoctors){
+  set doctors(List<Doctor?>? newDoctors) {
     _doctors = newDoctors;
   }
 
@@ -36,7 +35,7 @@ class PrescriptionFilter  extends Filter {
     DateTime? start,
     DateTime? end,
     List<Doctor?>? doctors,
-  }){
+  }) {
     _start = start;
     _end = end;
     _doctors = doctors;
@@ -55,7 +54,6 @@ class PrescriptionFilter  extends Filter {
     _json.removeWhere((key, value) => value == null);
 
     return _json;
-
   }
 
   @override
@@ -73,10 +71,11 @@ class PrescriptionFilter  extends Filter {
   @override
   bool operator ==(Object other) {
     DeepCollectionEquality eq = const DeepCollectionEquality.unordered();
-    if(other is PrescriptionFilter) {
-      return start == other.start && end == other.end && eq.equals(doctors,other.doctors);
-    }
-    else{
+    if (other is PrescriptionFilter) {
+      return start == other.start &&
+          end == other.end &&
+          eq.equals(doctors, other.doctors);
+    } else {
       return false;
     }
   }
@@ -88,58 +87,58 @@ class PrescriptionFilter  extends Filter {
     DateTime? start,
     DateTime? end,
     List<Doctor?>? doctors,
-  }) => PrescriptionFilter(
-    start: start?? this.start,
-    end: end?? this.end,
-    doctors: doctors?? this.doctors,
-  );
+  }) =>
+      PrescriptionFilter(
+        start: start ?? this.start,
+        end: end ?? this.end,
+        doctors: doctors ?? this.doctors,
+      );
 
   @override
-  Map<String, Function()> get filters  {
+  Map<Widget, Function()> get filters {
+    Map<Widget, Function()> filters = {};
 
-    Map<String, Function()> filters={};
-
-    if(start != null || end != null){
-
+    if (start != null || end != null) {
       bool addYear = false;
 
       DateTime actualDate = DateTime.now();
 
-      if(start?.year != actualDate.year || end?.year != actualDate.year){
+      if (start?.year != actualDate.year || end?.year != actualDate.year) {
         addYear = true;
       }
 
-      DateFormat dateFormat = DateFormat('dd/MM${addYear? '/yyyy': ''}');
+      DateFormat dateFormat = DateFormat('dd/MM${addYear ? '/yyyy' : ''}');
 
-      String startDateString = "${ start != null? dateFormat.format(start!): '' }";
+      String startDateString =
+          "${start != null ? dateFormat.format(start!) : ''}";
 
-      String endDateString = "${ end != null? dateFormat.format(end!): '' }";
+      String endDateString = "${end != null ? dateFormat.format(end!) : ''}";
 
-      String connectorDateString = "${ (start != null && end != null)? ' al ': '' }";
+      String connectorDateString =
+          "${(start != null && end != null) ? ' al ' : ''}";
 
       String dateString = "$startDateString$connectorDateString$endDateString";
 
-      Function() removeDate = (){
+      Function() removeDate = () {
         start = null;
         end = null;
       };
 
-      filters.addAll({dateString: removeDate});
+      filters.addAll({Text(dateString): removeDate});
     }
 
-    if(doctors?.isNotEmpty?? false){
+    if (doctors?.isNotEmpty ?? false) {
       doctors?.forEach((doctor) {
-        String doctorName = (doctor?.givenName?? '') + ' ' +  (doctor?.familyName?? '');
-        Function() removeDoctor = (){
+        String doctorName =
+            (doctor?.givenName ?? '') + ' ' + (doctor?.familyName ?? '');
+        Function() removeDoctor = () {
           doctors?.remove(doctor);
         };
 
-        filters.addAll({doctorName:removeDoctor });
+        filters.addAll({Text(doctorName): removeDoctor});
       });
     }
 
     return filters;
-
   }
-
 }

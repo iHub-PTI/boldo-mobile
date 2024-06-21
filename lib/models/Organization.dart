@@ -118,14 +118,28 @@ class Organization {
     );
   }
 
+  /// internal organization type based on [type] string
   OrganizationType? organizationType;
 
+  /// FHIR identifier
   String? id;
+
+  /// Name label of the organization
   String? name;
+
+  /// String type of organization
   String? type;
+
+  /// color code, unused
   String? coloCode;
+
+  /// picture of the organization
   String? logoUrl;
+
+  /// Label of organization type
   String? typeDisplay;
+
+  ///
   String? visibilityDisplay;
   String? visibility;
 

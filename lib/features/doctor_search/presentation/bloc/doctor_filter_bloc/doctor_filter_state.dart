@@ -1,0 +1,18 @@
+part of 'doctor_filter_bloc.dart';
+
+@immutable
+abstract class DoctorFilterState {}
+
+class DoctorFilterInitial extends DoctorFilterState {}
+
+class LoadingDoctorFilter extends DoctorFilterState {}
+
+class FailedDoctorFilter extends DoctorFilterState {
+  final response;
+  FailedDoctorFilter({required this.response});
+}
+
+class SuccessDoctorFilter extends DoctorFilterState {
+  final PagList<Doctor> doctorList;
+  SuccessDoctorFilter({required this.doctorList});
+}
