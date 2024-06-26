@@ -399,6 +399,14 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
     String organizationName =
         organizationsWithAvailabilites[index].nameOrganization ?? "Desconocido";
 
+    final firstAvailability =
+        (organizationsWithAvailabilites[index].availabilities.isNotEmpty
+            ? organizationsWithAvailabilites[index]
+                .availabilities
+                .first
+                ?.availability
+            : null);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -426,26 +434,21 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                         .availabilities
                         .isNotEmpty)
                       if (DateTime(
-                              DateTime.parse(
-                                      organizationsWithAvailabilites[index]
-                                              .nextAvailability
-                                              ?.availability ??
-                                          DateTime.now().toString())
-                                  .year,
-                              DateTime.parse(
-                                      organizationsWithAvailabilites[index]
-                                              .nextAvailability
-                                              ?.availability ??
-                                          DateTime.now().toString())
-                                  .month,
-                              DateTime.parse(
-                                      organizationsWithAvailabilites[index]
-                                              .nextAvailability
-                                              ?.availability ??
-                                          DateTime.now().toString())
-                                  .day) ==
-                          DateTime(DateTime.now().year, DateTime.now().month,
-                              DateTime.now().day))
+                            DateTime.parse(
+                              firstAvailability ?? DateTime.now().toString(),
+                            ).year,
+                            DateTime.parse(
+                              firstAvailability ?? DateTime.now().toString(),
+                            ).month,
+                            DateTime.parse(
+                              firstAvailability ?? DateTime.now().toString(),
+                            ).day,
+                          ) ==
+                          DateTime(
+                            DateTime.now().year,
+                            DateTime.now().month,
+                            DateTime.now().day,
+                          ))
                         Expanded(
                           child: Text(
                             "Hoy - $organizationName",
