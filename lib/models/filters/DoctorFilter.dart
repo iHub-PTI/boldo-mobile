@@ -159,12 +159,12 @@ class DoctorFilter extends Filter {
         ],
       );
 
-      void removeDate() {
+      void removeAppointmentTypeFilter() {
         _inPersonAppointmentApplied = false;
         _virtualAppointmentApplied = false;
       }
 
-      filters.addAll({child: removeDate});
+      filters.addAll({child: removeAppointmentTypeFilter});
     }
 
     if (_organizationsApplied.isNotEmpty) {
@@ -186,17 +186,6 @@ class DoctorFilter extends Filter {
         }
 
         filters.addAll({specializationName: removeOrganization});
-      }
-    }
-
-    if (_specializationsApplied.isNotEmpty) {
-      for (final specialization in _specializationsApplied) {
-        final specializationName = Text(specialization.description ?? '');
-        void removeSpecialization() {
-          _specializationsApplied.remove(specialization);
-        }
-
-        filters.addAll({specializationName: removeSpecialization});
       }
     }
 
