@@ -189,17 +189,6 @@ class DoctorFilter extends Filter {
       }
     }
 
-    if (_specializationsApplied.isNotEmpty) {
-      for (final specialization in _specializationsApplied) {
-        final specializationName = Text(specialization.description ?? '');
-        void removeSpecialization() {
-          _specializationsApplied.remove(specialization);
-        }
-
-        filters.addAll({specializationName: removeSpecialization});
-      }
-    }
-
     if (_selectedNamesApplied.isNotEmpty) {
       for (final nameSelected in _selectedNamesApplied) {
         final name = Text(nameSelected);
