@@ -559,72 +559,74 @@ class _MedicalRecordsScreenState extends State<MedicalRecordsScreen> {
             ),
           ),
           ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: encounter?.serviceRequests!.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ShowStudy(context,
-                    encounter?.serviceRequests![index] ?? ServiceRequest());
-              }),
-          encounter?.serviceRequests != null
-              ? encounter!.serviceRequests!.length > 0
-                  ? Container()
-                  : Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'No posee órdenes de estudios',
-                        style: boldoCorpMediumTextStyle.copyWith(
-                            color: ConstantsV2.darkBlue),
-                      ),
-                    )
-              : Container(),
-          encounter?.serviceRequests != null
-              // show button to go at the order screen if
-              // contains elements and is not coming
-              // from a study order screen
-              ? encounter!.serviceRequests!.length > 0 && !fromOrderStudy
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => StudyOrderScreen(
-                                      callFromHome: false,
-                                      encounterId: encounter?.id ?? "0"),
-                                  settings: RouteSettings(
-                                      name: (StudyOrderScreen).toString()),
-                                ),
-                              );
-                            },
-                            child: Card(
-                                margin: EdgeInsets.zero,
-                                clipBehavior: Clip.antiAlias,
-                                elevation: 0,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(5)),
-                                ),
-                                color: ConstantsV2.orange.withOpacity(0.10),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15, vertical: 7),
-                                  child: Text(
-                                    "ver órdenes",
-                                    style: BigButton.copyWith(
-                                        color: ConstantsV2.darkBlue),
-                                  ),
-                                )),
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: encounter?.serviceRequests?.length ?? 0,
+            itemBuilder: (BuildContext context, int index) {
+              return ShowStudy(
+                context,
+                encounter?.serviceRequests?[index] ?? ServiceRequest(),
+              );
+            },
+          ),
+          if ((encounter?.serviceRequests?.length ?? 0) == 0)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'No posee órdenes de estudios',
+                style: boldoCorpMediumTextStyle.copyWith(
+                  color: ConstantsV2.darkBlue,
+                ),
+              ),
+            )
+          else
+            !fromOrderStudy
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => StudyOrderScreen(
+                                callFromHome: false,
+                                encounterId: encounter?.id ?? '0',
+                              ),
+                              settings: RouteSettings(
+                                name: (StudyOrderScreen).toString(),
+                              ),
+                            ),
+                          );
+                        },
+                        child: Card(
+                          margin: EdgeInsets.zero,
+                          clipBehavior: Clip.antiAlias,
+                          elevation: 0,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(5),
+                            ),
+                          ),
+                          color: ConstantsV2.orange.withOpacity(0.10),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 7,
+                            ),
+                            child: Text(
+                              'ver órdenes',
+                              style: BigButton.copyWith(
+                                color: ConstantsV2.darkBlue,
+                              ),
+                            ),
                           ),
                         ),
-                      ],
-                    )
-                  : Container()
-              : Container(),
+                      ),
+                    ],
+                  )
+                : Container(),
         ],
       ),
     );
