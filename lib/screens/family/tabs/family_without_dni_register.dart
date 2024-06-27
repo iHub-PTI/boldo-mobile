@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:boldo/blocs/family_bloc/dependent_family_bloc.dart';
 import 'package:boldo/constants.dart';
+import 'package:boldo/main.dart';
 import 'package:boldo/network/repository_helper.dart';
 import 'package:boldo/utils/helpers.dart';
 import 'package:boldo/widgets/back_button.dart';
@@ -12,10 +13,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
-import '../../../main.dart';
-
 class WithoutDniFamilyRegister extends StatefulWidget {
-  WithoutDniFamilyRegister({Key? key}) : super(key: key);
+  const WithoutDniFamilyRegister({super.key});
 
   @override
   State<WithoutDniFamilyRegister> createState() =>
@@ -128,12 +127,12 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                 _loadingQuery = false;
               });
               BlocProvider.of<FamilyBloc>(context).add(GetFamilyList());
-              emitSnackBar(
+              await emitSnackBar(
                 context: context,
                 text: dependentSuccessAdded,
                 status: ActionStatus.Success,
               );
-              Navigator.pushNamedAndRemoveUntil(
+              await Navigator.pushNamedAndRemoveUntil(
                 context,
                 '/home',
                 (route) => false,
@@ -163,7 +162,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
               setState(() {
                 _relationLoaded = false;
               });
-              emitSnackBar(
+              await emitSnackBar(
                 context: context,
                 text: state.response,
                 status: ActionStatus.Fail,
@@ -251,9 +250,10 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                 value = value?.trimLeft().trimRight() ?? '';
                                 _nameController.text =
                                     value.trimLeft().trimRight() ?? '';
-                                if (value == null || value.isEmpty) {
+                                if (value.isEmpty) {
                                   return 'Ingrese al menos un nombre';
                                 }
+                                return null;
                               },
                             ),
                             const SizedBox(
@@ -282,9 +282,10 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                 value = value?.trimLeft().trimRight() ?? '';
                                 _familyNameController.text =
                                     value.trimLeft().trimRight() ?? '';
-                                if (value == null || value.isEmpty) {
+                                if (value.isEmpty) {
                                   return 'Ingrese al menos un apellido';
                                 }
+                                return null;
                               },
                             ),
                             const SizedBox(
@@ -293,7 +294,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                             TextFormField(
                               controller: _fecha,
                               inputFormatters: [
-                                UpperCaseTextFormatter(),
+                                const UpperCaseTextFormatter(),
                                 DateTextFormatter(),
                               ],
                               keyboardType: TextInputType.number,
@@ -329,10 +330,11 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                   return 'Ingrese la fecha de nacimiento';
                                 } else {
                                   try {
-                                    var inputFormat = DateFormat('dd/MM/yyy');
-                                    var outputFormat = DateFormat('yyyy-MM-dd');
-                                    var date1 = inputFormat
-                                        .parseStrict(value.toString().trim());
+                                    final inputFormat = DateFormat('dd/MM/yyy');
+                                    final outputFormat =
+                                        DateFormat('yyyy-MM-dd');
+                                    final date1 =
+                                        inputFormat.parseStrict(value.trim());
 
                                     if (date1.isBefore(minDate)) {
                                       throw Failure(
@@ -343,7 +345,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                         'Fecha superior a la actual',
                                       );
                                     }
-                                    var date2 = outputFormat.format(date1);
+                                    final date2 = outputFormat.format(date1);
                                     birthDate = date2;
                                   } on Failure catch (e) {
                                     return e.message;
@@ -351,6 +353,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                     return 'El formato debe ser "dd/mm/yyyy" ';
                                   }
                                 }
+                                return null;
                               },
                             ),
                             const SizedBox(
@@ -370,7 +373,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                               dropdownColor: Colors.white.withOpacity(0.85),
                               onChanged: (value) {
                                 setState(() {
-                                  genderSelected = value!;
+                                  genderSelected = value;
                                   value == 'masculino'
                                       ? gender = 'male'
                                       : value == 'femenino'
@@ -391,6 +394,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                 if (value == null || value == 'sexo') {
                                   return 'Seleccione el sexo';
                                 }
+                                return null;
                               },
                             ),
                             const SizedBox(
@@ -411,7 +415,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                 dropdownColor: Colors.white.withOpacity(0.85),
                                 onChanged: (value) {
                                   setState(() {
-                                    relationSelected = value!;
+                                    relationSelected = value;
                                     // save to send
                                     relation = relationTypes
                                         .where(
@@ -437,6 +441,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                                   if (value == null || value == 'relación') {
                                     return 'Seleccione la relación que tiene el dependiente';
                                   }
+                                  return null;
                                 },
                               )
                             else
@@ -468,7 +473,6 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                     },
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(
-                        width: 1,
                         color: ConstantsV2.orange,
                       ),
                     ),
@@ -489,21 +493,20 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                   ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        String _identifier =
-                            prefs.getString('identifier') ?? '';
-                        if (_identifier != '') {
+                        final identifier = prefs.getString('identifier') ?? '';
+                        if (identifier != '') {
                           BlocProvider.of<FamilyBloc>(context).add(
                             LinkWithoutCi(
                               givenName: givenName,
                               familyName: familyName,
                               birthDate: birthDate,
                               gender: gender,
-                              identifier: _identifier,
+                              identifier: identifier,
                               relationShipCode: relation,
                             ),
                           );
                         } else {
-                          _showMyDialog();
+                          await _showMyDialog();
                         }
                       }
                     },
@@ -513,7 +516,7 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                         80,
                       ),
                       shape: const StadiumBorder(),
-                      primary: ConstantsV2.buttonPrimaryColor100,
+                      backgroundColor: ConstantsV2.buttonPrimaryColor100,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -529,10 +532,10 @@ class _WithoutDniFamilyRegisterState extends State<WithoutDniFamilyRegister> {
                         Padding(
                           padding: const EdgeInsets.only(left: 8),
                           child: _loadingQuery
-                              ? Container(
+                              ? const SizedBox(
                                   height: 10,
                                   width: 10,
-                                  child: const CircularProgressIndicator(
+                                  child: CircularProgressIndicator(
                                     color: Colors.white,
                                     strokeWidth: 2,
                                   ),

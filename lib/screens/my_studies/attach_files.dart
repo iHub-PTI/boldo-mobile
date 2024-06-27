@@ -159,7 +159,7 @@ class _AttachFilesState extends State<AttachFiles> {
                                     vertical: 14,
                                     horizontal: 16,
                                   ),
-                                  primary: ConstantsV2.lightest,
+                                  backgroundColor: ConstantsV2.lightest,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(100),
                                   ),
@@ -168,10 +168,12 @@ class _AttachFilesState extends State<AttachFiles> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      'Tomar foto',
-                                      style: boldoSubTextMediumStyle.copyWith(
-                                        color: ConstantsV2.darkBlue,
+                                    Flexible(
+                                      child: Text(
+                                        'Tomar foto',
+                                        style: boldoSubTextMediumStyle.copyWith(
+                                          color: ConstantsV2.darkBlue,
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(
@@ -196,7 +198,7 @@ class _AttachFilesState extends State<AttachFiles> {
                                     vertical: 14,
                                     horizontal: 16,
                                   ),
-                                  primary: ConstantsV2.lightest,
+                                  backgroundColor: ConstantsV2.lightest,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(100),
                                   ),
@@ -205,10 +207,12 @@ class _AttachFilesState extends State<AttachFiles> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      'Seleccionar archivo',
-                                      style: boldoSubTextMediumStyle.copyWith(
-                                        color: ConstantsV2.darkBlue,
+                                    Flexible(
+                                      child: Text(
+                                        'Seleccionar archivo',
+                                        style: boldoSubTextMediumStyle.copyWith(
+                                          color: ConstantsV2.darkBlue,
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(
@@ -233,7 +237,7 @@ class _AttachFilesState extends State<AttachFiles> {
                                     vertical: 14,
                                     horizontal: 16,
                                   ),
-                                  primary: ConstantsV2.lightest,
+                                  backgroundColor: ConstantsV2.lightest,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(100),
                                   ),
@@ -242,10 +246,12 @@ class _AttachFilesState extends State<AttachFiles> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      'Seleccionar imagen',
-                                      style: boldoSubTextMediumStyle.copyWith(
-                                        color: ConstantsV2.darkBlue,
+                                    Flexible(
+                                      child: Text(
+                                        'Seleccionar imagen',
+                                        style: boldoSubTextMediumStyle.copyWith(
+                                          color: ConstantsV2.darkBlue,
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(

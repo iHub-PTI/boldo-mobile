@@ -399,7 +399,7 @@ SPEC CHECKSUMS:
   FirebaseCoreInternal: d558159ee6cc4b823c2296ecc193de9f6d9a5bb3
   FirebaseInstallations: f672b1eda64e6381c21d424a2f680a943fd83f3b
   FirebaseRemoteConfig: 5ea5834e8c518f377bf1af2d97ebd611914ebf2d
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_appauth: 525652bda90e43ca5eb7ed748ecc106b79d1f5a1
   flutter_secure_storage: 7953c38a04c3fdbb00571bcd87d8e3b5ceb9daec
   flutter_webrtc: 02c023207f972145a3bc8c7aada86754f264d563
@@ -444,6 +444,6 @@ SPEC CHECKSUMS:
   wakelock_plus: 8b09852c8876491e4b6d179e17dfe2a0b5f60d47
   WebRTC-SDK: 082ae4893212534a779ca233f19a9df8efd5f3bd
 
-PODFILE CHECKSUM: 4615583468863664868294ea8262cbcdc894213d
+PODFILE CHECKSUM: 271c12d0dc669c05f0fa21248c1c31a663b3530a
 
 COCOAPODS: 1.13.0

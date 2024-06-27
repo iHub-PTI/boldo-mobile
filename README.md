@@ -9,7 +9,7 @@ The mobile app is specifically for patients.
 
 1. This project has the following dependencies:
 
-   - flutter 3.13.1
+   - flutter 3.19.0
 
 2. Install dependencies: `flutter pub get` (normally happens automatically)
 
@@ -17,53 +17,54 @@ The mobile app is specifically for patients.
 
    ```
    # ###################### locale enviroments ######################
-   SOCKETS_ADDRESS = http://localhost:8000 
+   SOCKETS_ADDRESS = http://localhost:8000
    SERVER_ADDRESS = http://localhost:8008
    KEYCLOAK_REALM_ADDRESS = http://localhost:8080/realms/iHub
-   
+
 
    # ###################### SENTRY credentials to listen erros on release mode ##########
-   # SENTRY_DSN=CREATE A PROJECT IN SENTRY FOR FLUTTER 
+   # SENTRY_DSN=CREATE A PROJECT IN SENTRY FOR FLUTTER
    # SENTRY_ENV=ASK DEVELOPERS FOR KEY
 
    ```
-   
+
    Notes:
+
    - [Sentry flutter documentation](https://docs.sentry.io/platforms/flutter/)
    - For the SOCKETS_ADDRESS build the project [boldo-socket](https://github.com/iHub-PTI/boldo-sockets)
    - For the SERVER_ADDRESS build the project [boldo-server](https://github.com/iHub-PTI/boldo-server)
    - For the KEYCLOAK_REALM_ADDRESS build the project [ihub-keycloak](https://github.com/iHub-PTI/ihub-keycloak)
-   
-   
+
 4. Create a `.env_ice_server_config` file in the project's root folder and add these contents:
-   
+
    ```
-   
+
    ICE_SERVER_TURN_URL = "turn:<your.turn.uri>:<UDP-PORT>"
    ICE_SERVER_TURN_USERNAME = <guest>
    ICE_SERVER_TURN_CREDENTIAL = <credential>
-   
+
    ICE_SERVER_STUN_URL = stun:<your.stun.uri>:<UDP-PORT>
    ICE_SERVER_STUN_USERNAME = <guest>
    ICE_SERVER_STUN_CREDENTIAL = <credential>
-   
+
    ```
 
 5. Create a `.env_app_config` file in the project's root folder and add these contents:
 
    ```
-   
+
    APP_URL_DOWNLOAD=
-   DEFAULT_APP_URL_DOWNLOAD= 
+   DEFAULT_APP_URL_DOWNLOAD=
    LAST_STABLE_VERSION=<LAST APP VERSION WITH BREAKING CHANGES>
    LAST_AVAILABLE_VERSION=<LAST APP VERSION>
-   
+
    ```
-   
-   Notes: 
+
+   Notes:
+
    - APP_URL_DOWNLOAD represent url to redirect to store for every platform
-   - DEFAULT_APP_URL_DOWNLOAD url to redirect page of promotion to get app 
-   
+   - DEFAULT_APP_URL_DOWNLOAD url to redirect page of promotion to get app
+
 6. Create a `.config_[dev|qa|prod].json` file in the project's root folder to can use the `dart-define-from-file=.config_[env].json`:
 
    ```
@@ -72,10 +73,10 @@ The mobile app is specifically for patients.
       "MAPS_API_KEY_ANDROID": "your_android_google_maps_key"
    }
    ```
-   
+
    Notes:
+
    - this keys and values can used on precompile time by AndroidManifest and AppDelegate to keep keys used privately at compile time
-   
 
 7. `flutter run` - to start the app on an available device
 
