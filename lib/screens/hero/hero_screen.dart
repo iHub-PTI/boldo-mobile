@@ -1,15 +1,14 @@
+import 'package:boldo/constants.dart';
 import 'package:boldo/screens/pre_register_notify/pre_register_screen.dart';
 import 'package:boldo/utils/authenticate_user_helper.dart';
 import 'package:flutter/material.dart';
-
-import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../constants.dart';
-
 class HeroScreen extends StatelessWidget {
+  HeroScreen({super.key});
+
   final List<CarouselSlide> items = [
     CarouselSlide(
       key: UniqueKey(),
@@ -31,7 +30,7 @@ class HeroScreen extends StatelessWidget {
       boxFit: BoxFit.cover,
       alignment: Alignment.bottomCenter,
       index: 2,
-    )
+    ),
   ];
 
   final pageIndexNotifier = ValueNotifier<int>(0);
@@ -39,13 +38,13 @@ class HeroScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    dynamic _mediaQueryData = MediaQuery.of(context);
-    double screenWidth = _mediaQueryData.size.width;
+    final dynamic mediaQueryData = MediaQuery.of(context);
+    final double screenWidth = mediaQueryData.size.width;
 
-    double _safeAreaHorizontal =
-        _mediaQueryData.padding.left + _mediaQueryData.padding.right;
+    final double safeAreaHorizontal =
+        mediaQueryData.padding.left + mediaQueryData.padding.right;
 
-    double safeBlockHorizontal = (screenWidth - _safeAreaHorizontal) / 100;
+    final safeBlockHorizontal = (screenWidth - safeAreaHorizontal) / 100;
 
     return Scaffold(
       body: SafeArea(
@@ -53,7 +52,6 @@ class HeroScreen extends StatelessWidget {
           children: [
             const Spacer(),
             Align(
-              alignment: Alignment.center,
               child: SizedBox(
                 width: safeBlockHorizontal * 70,
                 child: AspectRatio(
@@ -83,34 +81,35 @@ class HeroScreen extends StatelessWidget {
             ValueListenableBuilder(
               valueListenable: pageIndexNotifier,
               builder: (context, index, child) {
-                return _buildPageViewIndicator(context, index as int);
+                return _buildPageViewIndicator(context, index);
               },
             ),
             const Spacer(),
             ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: Constants.primaryColor500,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Constants.primaryColor500,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
                 ),
-                onPressed: () async {
-                  final SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  bool onboardingCompleted =
-                      prefs.getBool("preRegisterNotify") ?? false;
-                  if (onboardingCompleted == true) {
-                    _openWebView(context);
-                  } else {
-                    //show pre register
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const PreRegisterScreen()),
-                    );
-                  }
-                },
-                child: const Text("Iniciar Sesión")),
+              ),
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                final onboardingCompleted =
+                    prefs.getBool('preRegisterNotify') ?? false;
+                if (onboardingCompleted == true) {
+                  _openWebView(context);
+                } else {
+                  //show pre register
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PreRegisterScreen(),
+                    ),
+                  );
+                }
+              },
+              child: const Text('Iniciar Sesión'),
+            ),
             const Spacer(),
           ],
         ),
@@ -144,10 +143,10 @@ class HeroScreen extends StatelessWidget {
           width: 220,
           child: Text(
             indexPageView == 0
-                ? "Acceso a médicos de confianza de forma instantánea"
+                ? 'Acceso a médicos de confianza de forma instantánea'
                 : indexPageView == 1
-                    ? "Reserva una consulta en línea con un médico"
-                    : "Fácil acceso a tus citas pasadas y futuras",
+                    ? 'Reserva una consulta en línea con un médico'
+                    : 'Fácil acceso a tus citas pasadas y futuras',
             style: boldoSubTextStyle,
             textAlign: TextAlign.center,
           ),
@@ -158,18 +157,17 @@ class HeroScreen extends StatelessWidget {
 }
 
 class CarouselSlide extends StatelessWidget {
-  final String image;
-  final int index;
-  final BoxFit boxFit;
-  final Alignment alignment;
-
   const CarouselSlide({
-    Key? key,
     required this.image,
     required this.boxFit,
     required this.alignment,
     required this.index,
-  }) : super(key: key);
+    super.key,
+  });
+  final String image;
+  final int index;
+  final BoxFit boxFit;
+  final Alignment alignment;
 
   @override
   Widget build(BuildContext context) {

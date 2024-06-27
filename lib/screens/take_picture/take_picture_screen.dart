@@ -4,25 +4,25 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class TakePictureScreen extends StatefulWidget {
-  final List<CameraDescription> cameras;
-  final String path;
-
   const TakePictureScreen({
     required this.cameras,
     required this.path,
-  }) ;
+    super.key,
+  });
+  final List<CameraDescription> cameras;
+  final String path;
 
   @override
   TakePictureScreenState createState() => TakePictureScreenState();
-
 }
 
-class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindingObserver, TickerProviderStateMixin{
+class TakePictureScreenState extends State<TakePictureScreen>
+    with WidgetsBindingObserver, TickerProviderStateMixin {
   CameraController? controller;
   bool enableAudio = false;
-  double _minAvailableExposureOffset = 0.0;
-  double _maxAvailableExposureOffset = 0.0;
-  double _currentExposureOffset = 0.0;
+  double _minAvailableExposureOffset = 0;
+  double _maxAvailableExposureOffset = 0;
+  double _currentExposureOffset = 0;
   bool front = false;
   XFile? imageFile;
   late AnimationController _flashModeControlRowAnimationController;
@@ -32,10 +32,10 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
   late AnimationController _focusModeControlRowAnimationController;
   late Animation<double> _focusModeControlRowAnimation;
 
-  double _minAvailableZoom = 1.0;
-  double _maxAvailableZoom = 1.0;
-  double _currentScale = 1.0;
-  double _baseScale = 1.0;
+  double _minAvailableZoom = 1;
+  double _maxAvailableZoom = 1;
+  double _currentScale = 1;
+  double _baseScale = 1;
   // Counting pointers (number of user fingers on screen)
   int _pointers = 0;
 
@@ -87,33 +87,32 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: <Widget>[
           Expanded(
             child: Container(
-              child: Padding(
-                padding: const EdgeInsets.all(1.0),
-                child: Center(
-                  child: _cameraPreviewWidget(),
-                ),
-              ),
               decoration: BoxDecoration(
                 color: Colors.black,
                 border: Border.all(
                   color:
-                  controller != null && controller!.value.isRecordingVideo
-                      ? Colors.redAccent
-                      : Colors.grey,
-                  width: 3.0,
+                      controller != null && controller!.value.isRecordingVideo
+                          ? Colors.redAccent
+                          : Colors.grey,
+                  width: 3,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(1),
+                child: Center(
+                  child: _cameraPreviewWidget(),
                 ),
               ),
             ),
           ),
           _captureControlRowWidget(),
           _modeControlRowWidget(),
-
         ],
       ),
     );
@@ -124,7 +123,7 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
       await controller!.dispose();
     }
 
-    final CameraController cameraController = CameraController(
+    final cameraController = CameraController(
       cameraDescription,
       kIsWeb ? ResolutionPreset.medium : ResolutionPreset.medium,
       enableAudio: enableAudio,
@@ -132,8 +131,8 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
     );
 
     controller = cameraController;
-    controller?.setFocusMode(FocusMode.auto);
-    controller?.setFlashMode(FlashMode.off);
+    await controller?.setFocusMode(FocusMode.auto);
+    await controller?.setFlashMode(FlashMode.off);
     // If the controller is updated then update the UI.
     cameraController.addListener(() {
       if (mounted) {
@@ -141,7 +140,8 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
       }
       if (cameraController.value.hasError) {
         showInSnackBar(
-            'Camera error ${cameraController.value.errorDescription}');
+          'Camera error ${cameraController.value.errorDescription}',
+        );
       }
     });
 
@@ -151,12 +151,12 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
         // The exposure mode is currently not supported on the web.
         ...!kIsWeb
             ? <Future<Object?>>[
-          cameraController.getMinExposureOffset().then(
-                  (double value) => _minAvailableExposureOffset = value),
-          cameraController
-              .getMaxExposureOffset()
-              .then((double value) => _maxAvailableExposureOffset = value)
-        ]
+                cameraController.getMinExposureOffset().then(
+                      (double value) => _minAvailableExposureOffset = value,
+                    ),
+                cameraController.getMaxExposureOffset().then(
+                    (double value) => _maxAvailableExposureOffset = value),
+              ]
             : <Future<Object?>>[],
         cameraController
             .getMaxZoomLevel()
@@ -188,11 +188,7 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
   }
 
   void showInSnackBar(String message) {
-    emitSnackBar(
-        context: context,
-        text: message,
-        status: ActionStatus.Fail
-    );
+    emitSnackBar(context: context, text: message, status: ActionStatus.Fail);
   }
 
   /// Display a bar with buttons to change the flash and exposure modes
@@ -201,7 +197,6 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             IconButton(
               icon: const Icon(Icons.flash_on),
@@ -209,9 +204,11 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
               onPressed: controller != null ? onFlashModeButtonPressed : null,
             ),
             IconButton(
-              icon: Icon(controller?.value.isCaptureOrientationLocked ?? false
-                  ? Icons.screen_lock_rotation
-                  : Icons.screen_rotation),
+              icon: Icon(
+                controller?.value.isCaptureOrientationLocked ?? false
+                    ? Icons.screen_lock_rotation
+                    : Icons.screen_rotation,
+              ),
               color: Colors.blue,
               onPressed: controller != null
                   ? onCaptureOrientationLockButtonPressed
@@ -221,10 +218,12 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
               icon: const Icon(Icons.flip_camera_ios),
               color: Colors.blue,
               onPressed: controller != null
-                  ? (){
-                    onNewCameraSelected(front? widget.cameras[0] : widget.cameras[1]);
-                    front = !front;
-                  }
+                  ? () {
+                      onNewCameraSelected(
+                        front ? widget.cameras[0] : widget.cameras[1],
+                      );
+                      front = !front;
+                    }
                   : null,
             ),
           ],
@@ -241,7 +240,6 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
       child: ClipRect(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             IconButton(
               icon: const Icon(Icons.flash_off),
@@ -288,14 +286,15 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
   Future<void> onCaptureOrientationLockButtonPressed() async {
     try {
       if (controller != null) {
-        final CameraController cameraController = controller!;
+        final cameraController = controller!;
         if (cameraController.value.isCaptureOrientationLocked) {
           await cameraController.unlockCaptureOrientation();
           showInSnackBar('Capture orientation unlocked');
         } else {
           await cameraController.lockCaptureOrientation();
           showInSnackBar(
-              'Capture orientation locked to ${cameraController.value.lockedCaptureOrientation.toString().split('.').last}');
+            'Capture orientation locked to ${cameraController.value.lockedCaptureOrientation.toString().split('.').last}',
+          );
         }
       }
     } on CameraException catch (e) {
@@ -386,13 +385,13 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
   }
 
   Widget _exposureModeControlRowWidget() {
-    final ButtonStyle styleAuto = TextButton.styleFrom(
-      primary: controller?.value.exposureMode == ExposureMode.auto
+    final styleAuto = TextButton.styleFrom(
+      backgroundColor: controller?.value.exposureMode == ExposureMode.auto
           ? Colors.orange
           : Colors.blue,
     );
-    final ButtonStyle styleLocked = TextButton.styleFrom(
-      primary: controller?.value.exposureMode == ExposureMode.locked
+    final styleLocked = TextButton.styleFrom(
+      backgroundColor: controller?.value.exposureMode == ExposureMode.locked
           ? Colors.orange
           : Colors.blue,
     );
@@ -409,14 +408,12 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   TextButton(
-                    child: const Text('AUTO'),
                     style: styleAuto,
                     onPressed: controller != null
                         ? () =>
-                        onSetExposureModeButtonPressed(ExposureMode.auto)
+                            onSetExposureModeButtonPressed(ExposureMode.auto)
                         : null,
                     onLongPress: () {
                       if (controller != null) {
@@ -424,21 +421,22 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
                         showInSnackBar('Resetting exposure point');
                       }
                     },
+                    child: const Text('AUTO'),
                   ),
                   TextButton(
-                    child: const Text('LOCKED'),
                     style: styleLocked,
                     onPressed: controller != null
                         ? () =>
-                        onSetExposureModeButtonPressed(ExposureMode.locked)
+                            onSetExposureModeButtonPressed(ExposureMode.locked)
                         : null,
+                    child: const Text('LOCKED'),
                   ),
                   TextButton(
-                    child: const Text('RESET OFFSET'),
                     style: styleLocked,
                     onPressed: controller != null
-                        ? () => controller!.setExposureOffset(0.0)
+                        ? () => controller!.setExposureOffset(0)
                         : null,
+                    child: const Text('RESET OFFSET'),
                   ),
                 ],
               ),
@@ -447,7 +445,6 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Text(_minAvailableExposureOffset.toString()),
                   Slider(
@@ -456,7 +453,7 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
                     max: _maxAvailableExposureOffset,
                     label: _currentExposureOffset.toString(),
                     onChanged: _minAvailableExposureOffset ==
-                        _maxAvailableExposureOffset
+                            _maxAvailableExposureOffset
                         ? null
                         : setExposureOffset,
                   ),
@@ -470,21 +467,19 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
     );
   }
 
-
   /// Display the control bar with buttons to take pictures and record videos.
   Widget _captureControlRowWidget() {
-    final CameraController? cameraController = controller;
+    final cameraController = controller;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      mainAxisSize: MainAxisSize.max,
       children: <Widget>[
         IconButton(
           icon: const Icon(Icons.camera_alt),
           color: Colors.blue,
           onPressed: cameraController != null &&
-              cameraController.value.isInitialized &&
-              !cameraController.value.isRecordingVideo
+                  cameraController.value.isInitialized &&
+                  !cameraController.value.isRecordingVideo
               ? onTakePictureButtonPressed
               : null,
         ),
@@ -539,7 +534,7 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
   }
 
   Future<XFile?> takePicture() async {
-    final CameraController? cameraController = controller;
+    final cameraController = controller;
     if (cameraController == null || !cameraController.value.isInitialized) {
       print('Error: select a camera first.');
       return null;
@@ -551,7 +546,7 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
     }
 
     try {
-      final XFile file = await cameraController.takePicture();
+      final file = await cameraController.takePicture();
       return file;
     } on CameraException catch (e) {
       print(e);
@@ -560,14 +555,14 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
   }
 
   Widget _cameraPreviewWidget() {
-    final CameraController? cameraController = controller;
+    final cameraController = controller;
 
     if (cameraController == null || !cameraController.value.isInitialized) {
       return const Text(
         'Tap a camera',
         style: TextStyle(
           color: Colors.white,
-          fontSize: 24.0,
+          fontSize: 24,
           fontWeight: FontWeight.w900,
         ),
       );
@@ -578,15 +573,16 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
         child: CameraPreview(
           controller!,
           child: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onScaleStart: _handleScaleStart,
-                  onScaleUpdate: _handleScaleUpdate,
-                  onTapDown: (TapDownDetails details) =>
-                      onViewFinderTap(details, constraints),
-                );
-              }),
+            builder: (BuildContext context, BoxConstraints constraints) {
+              return GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onScaleStart: _handleScaleStart,
+                onScaleUpdate: _handleScaleUpdate,
+                onTapDown: (TapDownDetails details) =>
+                    onViewFinderTap(details, constraints),
+              );
+            },
+          ),
         ),
       );
     }
@@ -597,9 +593,9 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
       return;
     }
 
-    final CameraController cameraController = controller!;
+    final cameraController = controller!;
 
-    final Offset offset = Offset(
+    final offset = Offset(
       details.localPosition.dx / constraints.maxWidth,
       details.localPosition.dy / constraints.maxHeight,
     );
@@ -622,7 +618,6 @@ class TakePictureScreenState extends State<TakePictureScreen> with WidgetsBindin
 
     await controller!.setZoomLevel(_currentScale);
   }
-
 }
 
 IconData getCameraLensIcon(CameraLensDirection direction) {

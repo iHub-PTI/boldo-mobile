@@ -1,10 +1,9 @@
 import 'package:boldo/constants.dart';
+import 'package:boldo/network/connection_status.dart';
 import 'package:flutter/material.dart';
 
-import '../../network/connection_status.dart';
-
 class OfflineScreen extends StatelessWidget {
-  const OfflineScreen({Key? key}) : super(key: key);
+  const OfflineScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +16,6 @@ class OfflineScreen extends StatelessWidget {
           width: double.infinity,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Icon(
                 Icons.wifi,
@@ -28,14 +26,14 @@ class OfflineScreen extends StatelessWidget {
                 height: 17,
               ),
               Text(
-                "¿Sin internet?",
+                '¿Sin internet?',
                 style: boldoHeadingTextStyle.copyWith(fontSize: 18),
               ),
               const SizedBox(
                 height: 26,
               ),
               const Text(
-                "Al parecer hay un problema con \n tu conexión. Porfavor revisa el \n estado de tu internet para \n continuar.",
+                'Al parecer hay un problema con \n tu conexión. Porfavor revisa el \n estado de tu internet para \n continuar.',
                 style: boldoSubTextStyle,
                 textAlign: TextAlign.center,
               ),
@@ -47,20 +45,20 @@ class OfflineScreen extends StatelessWidget {
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(6)),
                   ),
-                  primary: const Color(0xffF98080),
+                  backgroundColor: const Color(0xffF98080),
                 ),
                 onPressed: () async {
-                  ConnectionStatusSingleton connectionStatus =
+                  final connectionStatus =
                       ConnectionStatusSingleton.getInstance();
-                  bool hasInternet = await connectionStatus.checkConnection();
+                  final hasInternet = await connectionStatus.checkConnection();
                   if (hasInternet) {
                     Navigator.of(context).pop();
 
                     return;
                   }
                 },
-                child: const Text("Intentar de nuevo"),
-              )
+                child: const Text('Intentar de nuevo'),
+              ),
             ],
           ),
         ),

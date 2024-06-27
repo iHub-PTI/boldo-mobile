@@ -1,15 +1,17 @@
+import 'package:boldo/constants.dart';
 import 'package:boldo/widgets/loading.dart';
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
-
 class CustomFormButton extends StatelessWidget {
+  const CustomFormButton({
+    required this.loading,
+    required this.actionCallback,
+    super.key,
+    this.text = 'Confirmar',
+  });
   final bool loading;
   final String text;
   final void Function() actionCallback;
-  const CustomFormButton(
-      {Key? key, this.text = "Confirmar", required this.loading, required this.actionCallback})
-      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +19,7 @@ class CustomFormButton extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          primary: Constants.primaryColor500,
+          backgroundColor: Constants.primaryColor500,
         ),
         onPressed: loading ? null : actionCallback,
         child: Row(
