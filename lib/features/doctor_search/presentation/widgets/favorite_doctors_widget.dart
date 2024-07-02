@@ -324,24 +324,25 @@ class _DoctorsFavoriteWidgetState extends State<DoctorsFavoriteWidget>
         final index = favoritesDoctors.lastIndexWhere(
           (element) => element.id == doctorAction.id,
         );
-
-        gridFavoriteDoctorsKey.currentState!.removeItem(
-          index,
-          (context, animation) => FadeTransition(
-            opacity: animation,
-            child: DoctorBoxWidget(
-              doctor: doctorAction,
-              onSuccessFavoriteAction: () {
-                updateFavoriteStatus(
-                  doctor: doctorAction,
-                );
-              },
-            ),
-          ),
-          duration: durationFavoriteAction,
-        );
-
         favoritesDoctors.removeAt(index);
+
+        if (index >= 0) {
+          gridFavoriteDoctorsKey.currentState!.removeItem(
+            index,
+            (context, animation) => FadeTransition(
+              opacity: animation,
+              child: DoctorBoxWidget(
+                doctor: doctorAction,
+                onSuccessFavoriteAction: () {
+                  widget.updateFavoriteStatus(
+                    doctor: doctorAction,
+                  );
+                },
+              ),
+            ),
+            duration: durationFavoriteAction,
+          );
+        }
       } catch (error) {
         //none
       }
